@@ -309,17 +309,17 @@ Add `ClassName.methodName` entries to `enrichment/phase1_scanned.txt` for all pr
 ### Single class (most common)
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run phase0, then run phase1 for Console.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console.
 ```
 
 ### Resume interrupted class
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Resume phase1 for Broadcaster.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Resume phase1 for Broadcaster.
 ```
 
 ### Post-process only
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run post-process for Broadcaster.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run post-process for Broadcaster.
 ```

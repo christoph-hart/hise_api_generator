@@ -4,6 +4,8 @@
 
 **Output Location:** `tools/api generator/enrichment/output/api_reference.json`
 
+**Sub-phase details:** See `scripting-api-enrichment/phase0.md` through `phase3.md` for detailed per-phase instructions.
+
 ---
 
 ## Pipeline Overview
@@ -36,7 +38,7 @@ tools/api generator/
 ├── batchCreate.bat                           # existing, unchanged
 ├── xml/selection/                            # existing Doxygen XML output
 ├── api_enrich.py                             # CLI: phase0, prepare, merge
-├── enrichment/                               # git submodule
+├── enrichment/
 │   ├── base/                                 # Phase 0 output (JSON per class)
 │   │   ├── Broadcaster.json
 │   │   ├── Console.json
@@ -346,13 +348,15 @@ Derived from `batchCreate.bat`. Each class is categorized as one of:
 | `component` | UI components created via `Content.addX()` (e.g., `ScriptButton`, `ScriptSlider`) |
 | `scriptnode` | ScriptNode DSP classes |
 
-The exact class-to-category mapping table is maintained in `api-enrichment-phase0.md`.
+The exact class-to-category mapping table is maintained in `scripting-api-enrichment/phase0.md`.
 
 ---
 
 ## Phase 1: C++ Source Analysis
 
 Phase 1 is the core enrichment step. It reads C++ source code and produces structured documentation. It runs in two stages with distinct execution models.
+
+Detailed agent instructions: `scripting-api-enrichment/phase1.md`
 
 ### Step A — Sub-agent (explore): Class-Level Analysis
 
@@ -578,6 +582,8 @@ Real-world usage examples extracted from project analysis datasets. These are ex
 - `commonMistakes`: merged union, each entry tagged `"source": "project"`
 - `crossReferences`: merged union, deduplicated
 
+Detailed format spec: `scripting-api-enrichment/phase2.md`
+
 ---
 
 ## Phase 3: Manual Markdown Overrides
@@ -605,6 +611,8 @@ Manually authored or edited markdown. Common workflows:
 - `commonMistakes`: merged union, each entry tagged `"source": "manual"`
 - `crossReferences`: merged union, deduplicated
 - `constants` / `dynamicConstants`: last-writer-wins per constant
+
+Detailed format spec: `scripting-api-enrichment/phase3.md`
 
 ---
 
@@ -657,76 +665,35 @@ Reads all phases (base → phase1 → phase2 → phase3) and produces `enrichmen
 ### Single class (most common)
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run phase0, then run phase1 for Console.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console.
 ```
 
 ### Multiple classes
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run phase0, then run phase1 for Console and Engine.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console and Engine.
 ```
 
 ### Resume interrupted class
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Resume phase1 for Broadcaster.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Resume phase1 for Broadcaster.
 ```
 
 ### Full automation
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run the full pipeline for all unscanned classes.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run the full pipeline for all unscanned classes.
 ```
 
 ### Post-process only
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run post-process for Broadcaster.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run post-process for Broadcaster.
 ```
 
 ### Merge only
 
 ```
-Follow tools/api generator/doc_builders/scripting_api_pipeline.md. Run merge.
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run merge.
 ```
-
----
-
-## Implementation Deliverables
-
-| # | Deliverable | Description |
-|---|-------------|-------------|
-| 1 | `scripting_api_pipeline.md` | This document. Master orchestration doc. |
-| 2 | `api_enrich.py` phase0 subcommand | Parse Doxygen XML → base JSON. Python stdlib only. |
-| 3 | `api-enrichment-phase0.md` | Documents what phase0 does. Includes class-to-category mapping table. |
-| 4 | `api_enrich.py` prepare + merge subcommands | Worklist printer + multi-phase merge → output JSON. Python stdlib only. |
-| 5 | `api-enrichment-phase1.md` | Detailed instruction doc for Phase 1 agents. Sub-agent exploration checklist, main agent method analysis procedure, compaction recovery rules, post-process rules. |
-| 6 | `api-enrichment-phase2.md` | Format spec and merge rules for project example overrides. |
-| 7 | `api-enrichment-phase3.md` | Format spec and merge rules for manual markdown overrides. |
-
----
-
-## Testing Strategy
-
-Progressive testing, expanding scope after each level validates:
-
-1. **Phase 0 validation:** Run `api_enrich.py phase0` against all XML. Verify base JSON output has correct method signatures, parameter names, and categories for a sample of classes.
-
-2. **Phase 1 — simple class:** Run Phase 1 for `Console` (~5 methods). Validate:
-   - `Readme.md` has correct brief, purpose, obtainedVia
-   - `methods_todo.md` has complete checklist and any forced types
-   - `methods.md` has all methods documented
-   - Post-processed JSON conforms to the output schema
-
-3. **Phase 1 — complex class:** Run Phase 1 for `Broadcaster` (~30 methods). Validate:
-   - Compaction recovery works (class context survives)
-   - Resume from `methods_todo.md` works in a fresh session
-   - `details` field captures the full architecture
-   - Constants and forced types are extracted correctly
-
-4. **Merge validation:** Run `api_enrich.py merge`. Verify:
-   - Output JSON schema compliance
-   - Source tags are present on all tagged fields
-   - Phase 0 data is present as baseline for all classes
-
-5. **Progressive expansion:** Process additional classes, expanding toward full coverage.

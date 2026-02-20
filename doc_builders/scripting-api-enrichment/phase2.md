@@ -68,7 +68,7 @@ When Phase 2 data exists for a method:
 | `pitfalls` | **Merged union** (added to Phase 1 pitfalls) | `"project"` |
 | `crossReferences` | **Merged union** (deduplicated) | — |
 
-Phase 2 also supports class-level overrides via `enrichment/phase2/ClassName/Readme.md`, which would override class-level fields using the same merge rules as Phase 3 (see `api-enrichment-phase3.md`). In practice, Phase 2 is primarily used for method-level example overrides.
+Phase 2 also supports class-level overrides via `enrichment/phase2/ClassName/Readme.md`, which would override class-level fields using the same merge rules as Phase 3 (see `scripting-api-enrichment/phase3.md`). In practice, Phase 2 is primarily used for method-level example overrides.
 
 ### Source Tags
 

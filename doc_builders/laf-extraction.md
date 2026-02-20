@@ -1,7 +1,7 @@
 # LAF Style Guide Extraction Instructions
 
 **Related Documentation:**
-- [mcp-laf-integration.md](mcp-laf-integration.md) - How MCP servers use the extracted LAF data
+- [mcp-laf-integration.md](../../../guidelines/api/mcp-laf-integration.md) - How MCP servers use the extracted LAF data (in main HISE repo)
 
 ## Overview
 
