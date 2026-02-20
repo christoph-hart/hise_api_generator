@@ -1,6 +1,10 @@
 # HISE API Generator
 
-Extraction tooling that produces structured JSON data from the HISE C++ source code. The output is consumed by the [HISE MCP server](https://github.com/christoph-hart/hise_mcp) to provide accurate API documentation and coding assistance for HiseScript development.
+Extraction tooling that produces structured JSON data from the HISE C++ source code. The output serves three deployment targets:
+
+- **[HISE MCP server](https://github.com/christoph-hart/hise_mcp_server)** — LLM coding assistance for HiseScript development
+- **Documentation website** — docs.hise.dev API reference pages
+- **HISE internal autocomplete** — In-editor code completion and parameter hints
 
 ## Extraction Processes
 
