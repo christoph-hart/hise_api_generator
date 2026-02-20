@@ -45,23 +45,74 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 
 ## Quick Start (Scripting API Enrichment)
 
-Prerequisites: Python 3.x, HISE source tree at `../../` relative to this directory.
+Prerequisites: Python 3.x, Doxygen on PATH, HISE source tree at `../../` relative to this directory.
 
 ```bash
-# 1. Generate Doxygen XML (if not already present)
-batchCreate.bat
-
-# 2. Parse XML into base JSON (91 classes, ~2000 methods)
+# 1. Regenerate Doxygen XML + parse into base JSON
+batchCreate.bat > NUL 2>&1
 python api_enrich.py phase0
 
-# 3. Check what still needs Phase 1 processing
+# 2. Check what still needs Phase 1 processing
 python api_enrich.py prepare
+
+# 3. (Phase 1 is agent-driven — see Session Prompts below)
 
 # 4. Merge all phases into final output
 python api_enrich.py merge
 ```
 
-Phase 1 (C++ source analysis) is agent-driven. See the [session prompts](doc_builders/scripting-api-enrichment.md#session-prompts) for how to invoke it.
+## Adding New API Classes
+
+When a new class is added to the HISE scripting API:
+
+1. **Add Doxygen comments** — Add `/** */` doc comments to the public methods in the C++ class header
+2. **Update `batchCreate.bat`** — Add two lines:
+   - An `xcopy` line to copy the Doxygen-generated XML file into `xml\selection` (follow the naming pattern: `classhise_1_1_...` for classes in the `hise` namespace, `structhise_1_1_...` for structs)
+   - A `ren` line to rename it to the friendly scripting class name (e.g., `Console.xml`)
+3. **Update `api_enrich.py`** — Add the class to the `CATEGORY_MAP` dict with the correct category: `namespace`, `object`, `component`, or `scriptnode`
+4. **Run Phase 0** — `batchCreate.bat > NUL 2>&1 && python api_enrich.py phase0`
+5. **Run Phase 1** — Agent-driven C++ source analysis (see Session Prompts below)
+6. **Merge** — `python api_enrich.py merge`
+
+## Session Prompts
+
+Copy-paste these into an agent session to run the enrichment pipeline:
+
+### Single class (most common)
+
+```
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console.
+```
+
+### Multiple classes
+
+```
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console and Engine.
+```
+
+### Resume interrupted class
+
+```
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Resume phase1 for Broadcaster.
+```
+
+### Full automation
+
+```
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run the full pipeline for all unscanned classes.
+```
+
+### Post-process only
+
+```
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run post-process for Broadcaster.
+```
+
+### Merge only
+
+```
+Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run merge.
+```
 
 ## What Gets Tracked vs Regenerated
 

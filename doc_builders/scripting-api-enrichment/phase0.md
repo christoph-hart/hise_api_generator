@@ -1,8 +1,8 @@
 # Phase 0: Doxygen XML → Base JSON
 
-**Tool:** `python api_enrich.py phase0`
-
-**Input:** `tools/api generator/xml/selection/*.xml` (91 Doxygen XML files)
+**Steps:**
+1. `batchCreate.bat` — Runs Doxygen, copies/renames XML into `xml/selection/`, runs ApiExtractor + BinaryBuilder
+2. `python api_enrich.py phase0` — Parses the XML into base JSON
 
 **Output:** `tools/api generator/enrichment/base/ClassName.json` (one file per class)
 
@@ -215,11 +215,13 @@ Created via `Content.addX()` methods.
 ## Running Phase 0
 
 ```
-cd "tools/api generator"
+batchCreate.bat > NUL 2>&1
 python api_enrich.py phase0
 ```
 
-Output:
+The `batchCreate.bat` output is redirected to NUL to avoid polluting the agent's context window. If it fails, re-run without redirection to diagnose.
+
+Expected output from the Python step:
 ```
 Phase 0 complete:
   Classes processed: 91

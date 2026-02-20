@@ -11,10 +11,8 @@
 ## Pipeline Overview
 
 ```
-batchCreate.bat (manual, existing — produces Doxygen XML)
-       │
-Phase 0: xml/selection/*.xml → enrichment/base/*.json
-       │   (Python script, 100% mechanical)
+Phase 0: batchCreate.bat → xml/selection/*.xml → enrichment/base/*.json
+       │   (batch script + Python, 100% mechanical)
        │
 Phase 1: C++ source analysis + example synthesis
        │   Sub-agent  → ClassName/Readme.md (class-level artifact, durable)
@@ -307,15 +305,10 @@ All enrichment data is tagged with its origin:
 
 ## Phase 0: Doxygen XML → Base JSON
 
-### Tool
+### Steps
 
-```
-python api_enrich.py phase0
-```
-
-### Input
-
-`xml/selection/*.xml` — Doxygen XML output from `batchCreate.bat`
+1. Run `batchCreate.bat > NUL 2>&1` — Runs Doxygen, copies/renames XML into `xml/selection/`, runs ApiExtractor + BinaryBuilder
+2. Run `python api_enrich.py phase0` — Parses the XML into base JSON
 
 ### Output
 
@@ -637,10 +630,11 @@ Detailed format spec: `scripting-api-enrichment/phase3.md`
 #### `phase0`
 
 ```
+batchCreate.bat > NUL 2>&1
 python api_enrich.py phase0
 ```
 
-Parses all Doxygen XML files in `xml/selection/` and produces base JSON files in `enrichment/base/`. Fully mechanical, no AI involvement.
+Regenerates Doxygen XML via `batchCreate.bat`, then parses all XML files in `xml/selection/` and produces base JSON files in `enrichment/base/`. Fully mechanical, no AI involvement. The batch script output is redirected to NUL to keep the agent context clean.
 
 #### `prepare`
 
@@ -658,42 +652,4 @@ python api_enrich.py merge
 
 Reads all phases (base → phase1 → phase2 → phase3) and produces `enrichment/output/api_reference.json`. Applies merge rules as specified above.
 
----
 
-## Session Prompts
-
-### Single class (most common)
-
-```
-Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console.
-```
-
-### Multiple classes
-
-```
-Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run phase0, then run phase1 for Console and Engine.
-```
-
-### Resume interrupted class
-
-```
-Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Resume phase1 for Broadcaster.
-```
-
-### Full automation
-
-```
-Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run the full pipeline for all unscanned classes.
-```
-
-### Post-process only
-
-```
-Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run post-process for Broadcaster.
-```
-
-### Merge only
-
-```
-Follow tools/api generator/doc_builders/scripting-api-enrichment.md. Run merge.
-```
