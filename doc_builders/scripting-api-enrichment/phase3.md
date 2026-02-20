@@ -20,7 +20,7 @@ The folder structure mirrors Phase 1. Using `Readme.md` for class-level override
 `enrichment/phase3/ClassName/Readme.md` uses the same format as Phase 1's Readme.md:
 
 ```markdown
-# ClassName — Class Analysis
+# ClassName -- Class Analysis
 
 ## Brief
 ~10-15 words. Search-optimized summary.
@@ -59,10 +59,10 @@ Full structured technical reference.
 Related classes, or "None."
 
 ## Related Preprocessors
-`USE_BACKEND`, etc. — or "None."
+`USE_BACKEND`, etc. -- or "None."
 ```
 
-All sections are optional — only include sections you want to override.
+All sections are optional -- only include sections you want to override.
 
 ---
 
@@ -98,7 +98,7 @@ Manually written description overriding Phase 1.
 ```
 ```
 
-All fields are optional — only include fields you want to override.
+All fields are optional -- only include fields you want to override.
 
 ---
 
@@ -142,7 +142,7 @@ Phase 3 overrides all prior phases for these fields:
 | Field | Merge Behavior | Tag |
 |-------|---------------|-----|
 | `pitfalls` | Added to Phase 1 + Phase 2 entries | `"manual"` |
-| `crossReferences` | Merged, deduplicated | — |
+| `crossReferences` | Merged, deduplicated | -- |
 
 ### Source Tags
 

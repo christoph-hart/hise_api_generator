@@ -9,11 +9,13 @@ Subcommands:
     phase0   - Parse Doxygen XML → base JSON (mechanical)
     prepare  - Print worklist of unscanned classes/methods
     merge    - Merge all phases → output/api_reference.json
+    preview  - Generate HTML preview pages from merged JSON
 
 Usage:
     python api_enrich.py phase0
     python api_enrich.py prepare
     python api_enrich.py merge
+    python api_enrich.py preview [ClassName]
 """
 
 import argparse
@@ -23,6 +25,7 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from html import escape as html_escape
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -506,8 +509,16 @@ def parse_readme_md(filepath: Path) -> dict:
     if "Related Preprocessors" in sections:
         text = sections["Related Preprocessors"].strip()
         if text.lower() not in ("none.", "none", "n/a", ""):
-            # Parse comma-separated or backtick-wrapped preprocessor names
-            preprocessors = re.findall(r"`([^`]+)`", text)
+            # Parse preprocessor names: first backtick-wrapped token per
+            # bullet line, or comma-separated plain names as fallback.
+            preprocessors = []
+            for line in text.splitlines():
+                line = line.strip().lstrip("-").strip()
+                if not line:
+                    continue
+                m = re.match(r"`([^`]+)`", line)
+                if m:
+                    preprocessors.append(m.group(1))
             if not preprocessors:
                 preprocessors = [p.strip() for p in text.split(",") if p.strip()]
             if preprocessors:
@@ -546,14 +557,48 @@ def parse_methods_md(filepath: Path) -> dict:
 
 
 def parse_method_override_md(filepath: Path) -> dict:
-    """Parse a Phase 2/3 method override file (single method)."""
+    """Parse a Phase 2/3 method override file (single method).
+
+    Supports two formats:
+    1. Structured format with **Signature:**, **Description:**, etc.
+    2. Raw docs format: prose paragraph(s) followed by ```code``` blocks.
+       Description = everything before the first code fence.
+       Examples = all fenced code blocks.
+    """
     if not filepath.is_file():
         return {}
 
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
 
-    return parse_single_method(content)
+    # Strip a leading ## heading if present (method name is inferred
+    # from the filename, so the heading is optional).
+    content_stripped = re.sub(r"^##\s+\S+.*\n", "", content, count=1)
+
+    result = parse_single_method(content_stripped)
+    if result:
+        return result
+
+    # Fallback: raw docs format.
+    # Split at the first ``` fence.  Everything before it is description,
+    # all fenced blocks are examples.
+    fence_idx = content.find("```")
+    if fence_idx == -1:
+        # No code blocks -- entire content is description
+        desc = content.strip()
+        if desc:
+            return {"description": desc}
+        return {}
+
+    desc = content[:fence_idx].strip()
+    examples = parse_examples(content[fence_idx:])
+
+    result = {}
+    if desc:
+        result["description"] = desc
+    if examples:
+        result["examples"] = examples
+    return result
 
 
 def parse_single_method(body: str) -> dict:
@@ -981,12 +1026,18 @@ def run_merge():
             p1_readme = parse_readme_md(p1_class_dir / "Readme.md")
             p1_methods = parse_methods_md(p1_class_dir / "methods.md")
 
+        # Case-insensitive method name lookup: lowercase -> canonical name
+        method_name_map = {m.lower(): m for m in base.get("methods", {}).keys()}
+        for m in p1_methods:
+            method_name_map.setdefault(m.lower(), m)
+
         # --- Phase 2 data ---
         p2_methods = {}
         p2_class_dir = PHASE2_DIR / class_name
         if p2_class_dir.is_dir():
             for md_file in p2_class_dir.glob("*.md"):
-                method_name = md_file.stem
+                raw_name = md_file.stem
+                method_name = method_name_map.get(raw_name.lower(), raw_name)
                 p2_methods[method_name] = parse_method_override_md(md_file)
 
         # --- Phase 3 data ---
@@ -998,8 +1049,9 @@ def run_merge():
             if readme_path.is_file():
                 p3_readme = parse_readme_md(readme_path)
             for md_file in p3_class_dir.glob("*.md"):
-                if md_file.name != "Readme.md":
-                    method_name = md_file.stem
+                if md_file.name.lower() != "readme.md":
+                    raw_name = md_file.stem
+                    method_name = method_name_map.get(raw_name.lower(), raw_name)
                     p3_methods[method_name] = parse_method_override_md(md_file)
 
         # --- Build class description ---
@@ -1078,6 +1130,281 @@ def run_merge():
 
 
 # ===================================================================
+# Preview
+# ===================================================================
+
+PREVIEW_DIR = OUTPUT_DIR / "preview"
+
+
+def md_inline(text: str) -> str:
+    """HTML-escape text, then convert markdown `backtick` spans to <code> tags."""
+    text = html_escape(text)
+    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
+    return text
+
+
+def generate_class_html(class_name: str, c: dict) -> str:
+    """Generate a full HTML preview page for one class."""
+    desc = c.get("description", {})
+    methods = c.get("methods", {})
+
+    # --- Collect sidebar section IDs ---
+    sidebar_sections = []
+    if desc.get("purpose"):
+        sidebar_sections.append(("overview", "Overview"))
+    if desc.get("details"):
+        sidebar_sections.append(("details", "Details"))
+    if desc.get("codeExample"):
+        sidebar_sections.append(("usage-example", "Usage Example"))
+    if c.get("commonMistakes"):
+        sidebar_sections.append(("common-mistakes", "Common Mistakes"))
+    if desc.get("relatedPreprocessors"):
+        sidebar_sections.append(("preprocessors", "Preprocessors"))
+
+    # --- Sidebar HTML ---
+    sidebar = f'<div class="sidebar">\n'
+    sidebar += f'<div class="sidebar-title">{class_name}</div>\n'
+    for sid, label in sidebar_sections:
+        sidebar += f'<a class="sidebar-link" href="#{sid}">{label}</a>\n'
+    if methods:
+        sidebar += '<div class="sidebar-divider">Methods</div>\n'
+        for name in methods:
+            sidebar += f'<a class="sidebar-link sidebar-method" href="#{name}">{name}</a>\n'
+    sidebar += '</div>\n'
+
+    # --- Build all section IDs for IntersectionObserver ---
+    all_ids = [sid for sid, _ in sidebar_sections] + list(methods.keys())
+    ids_js = ", ".join(f'"{i}"' for i in all_ids)
+
+    # --- Main content ---
+    main = '<div class="main">\n'
+
+    # Header
+    main += f'<h1>{class_name} <span class="category">{md_inline(c.get("category", ""))}</span></h1>\n'
+    if desc.get("brief"):
+        main += f'<p class="brief">{md_inline(desc["brief"])}</p>\n'
+    if desc.get("obtainedVia"):
+        main += f'<p><strong>Obtained via:</strong> {md_inline(desc["obtainedVia"])}</p>\n'
+
+    # Overview
+    if desc.get("purpose"):
+        main += '<h2 id="overview">Overview</h2>\n'
+        main += f'<p>{md_inline(desc["purpose"])}</p>\n'
+
+    # Details
+    if desc.get("details"):
+        main += '<h2 id="details">Details</h2>\n'
+        for para in desc["details"].split("\n\n"):
+            para = para.strip()
+            if para:
+                main += f"<p>{md_inline(para)}</p>\n"
+
+    # Code example
+    if desc.get("codeExample"):
+        main += '<h2 id="usage-example">Usage Example</h2>\n'
+        main += f'<pre><code class="language-javascript">{html_escape(desc["codeExample"])}</code></pre>\n'
+
+    # Common mistakes
+    if c.get("commonMistakes"):
+        main += '<h2 id="common-mistakes">Common Mistakes</h2>\n'
+        for m in c["commonMistakes"]:
+            main += (
+                '<div class="mistake">'
+                f'<strong>Wrong:</strong> {md_inline(m["wrong"])}<br>'
+                f'<strong>Right:</strong> {md_inline(m["right"])}<br>'
+                f'<em>{md_inline(m["explanation"])}</em></div>\n'
+            )
+
+    # Related preprocessors
+    if desc.get("relatedPreprocessors"):
+        main += '<h2 id="preprocessors">Related Preprocessors</h2>\n'
+        main += "<p>" + ", ".join(
+            f"<code>{p}</code>" for p in desc["relatedPreprocessors"]
+        ) + "</p>\n"
+
+    # Methods
+    if methods:
+        main += '<h2 id="methods-heading">Methods</h2>\n'
+
+        for name, m in methods.items():
+            rt_tag = ""
+            if m.get("realtimeSafe") is True:
+                rt_tag = '<span class="tag tag-true">realtime safe</span>'
+            elif m.get("realtimeSafe") is False:
+                rt_tag = '<span class="tag tag-false">not realtime safe</span>'
+
+            main += f'<div class="method-card" id="{name}">\n'
+            main += f"<h3>{name} {rt_tag}</h3>\n"
+
+            if m.get("signature"):
+                main += f'<div class="signature">{html_escape(m["signature"])}</div>\n'
+
+            main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
+
+            # Params
+            if m.get("parameters"):
+                main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
+                for p in m["parameters"]:
+                    main += (
+                        f'<tr><td><code>{html_escape(p.get("name", ""))}</code></td>'
+                        f'<td><code>{html_escape(p.get("type", ""))}</code></td>'
+                        f'<td>{md_inline(p.get("description", ""))}</td></tr>\n'
+                    )
+                main += "</table>\n"
+
+            # Pitfalls
+            for p in m.get("pitfalls", []):
+                main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
+
+            # Examples
+            for ex in m.get("examples", []):
+                main += f'<pre><code class="language-javascript">{html_escape(ex.get("code", ""))}</code></pre>\n'
+
+            # Cross refs
+            if m.get("crossReferences"):
+                refs = ", ".join(
+                    f'<a href="#{r.split(".")[-1]}">{r}</a>'
+                    for r in m["crossReferences"]
+                )
+                main += f"<p><strong>See also:</strong> {refs}</p>\n"
+
+            main += "</div>\n"
+
+    main += "</div>\n"
+
+    # --- Assemble full HTML ---
+    html = f"""<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>{class_name} - HISE Scripting API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<style>
+* {{ box-sizing: border-box; }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; color: #e0e0e0; background: #1e1e1e; line-height: 1.6; }}
+code, pre, .signature {{ font-family: "JetBrains Mono", Consolas, "Fira Code", monospace; }}
+
+/* Sidebar */
+.sidebar {{ position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: #1a1a1a; border-right: 1px solid #333; padding: 20px 0; overflow-y: auto; }}
+.sidebar-title {{ font-size: 1.1em; font-weight: 700; color: #fff; padding: 0 16px 12px; border-bottom: 1px solid #333; margin-bottom: 8px; }}
+.sidebar-link {{ display: block; padding: 4px 16px; color: #888; text-decoration: none; font-size: 0.85em; transition: color 0.15s, background 0.15s; }}
+.sidebar-link:hover {{ color: #ddd; background: #252525; }}
+.sidebar-link.active {{ color: #66d9ef; background: #252530; border-right: 2px solid #66d9ef; }}
+.sidebar-divider {{ font-size: 0.75em; color: #555; text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 16px 4px; }}
+.sidebar-method {{ font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.8em; }}
+
+/* Main content */
+.main {{ margin-left: 220px; max-width: 1040px; padding: 40px 40px 80px; }}
+h1 {{ color: #fff; border-bottom: 2px solid #444; padding-bottom: 8px; }}
+h2 {{ color: #ddd; margin-top: 40px; border-bottom: 1px solid #333; padding-bottom: 4px; }}
+h3 {{ color: #ccc; margin-top: 24px; }}
+.brief {{ font-size: 1.1em; color: #aaa; margin-bottom: 20px; }}
+.category {{ display: inline-block; background: #333; color: #aaa; padding: 2px 10px; border-radius: 4px; font-size: 0.5em; margin-left: 12px; vertical-align: middle; }}
+code {{ background: #2d2d2d; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; color: #e6db74; }}
+pre {{ background: #2d2d2d; padding: 16px; border-radius: 6px; overflow-x: auto; border: 1px solid #333; }}
+pre code {{ background: none; padding: 0; }}
+
+/* Signature emphasis */
+.signature {{ background: #151518; border-left: 3px solid #66d9ef; padding: 10px 16px; border-radius: 0 6px 6px 0; font-size: 1.05em; color: #66d9ef; margin: 8px 0 16px; }}
+
+/* Tables */
+table {{ border-collapse: collapse; width: 100%; margin: 12px 0; }}
+th, td {{ border: 1px solid #444; padding: 8px 12px; text-align: left; }}
+th {{ background: #2a2a2a; color: #aaa; font-weight: 600; }}
+td {{ color: #ccc; }}
+
+/* Tags */
+.tag {{ display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 0.75em; margin-left: 6px; }}
+.tag-true {{ background: #1a3a1a; color: #4ec94e; }}
+.tag-false {{ background: #3a1a1a; color: #c94e4e; }}
+
+/* Callout boxes */
+.pitfall {{ background: #332b00; border-left: 3px solid #997a00; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; color: #ccc; }}
+.mistake {{ background: #2d1a1a; border-left: 3px solid #994444; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }}
+
+/* Method cards */
+.method-card {{ margin: 24px 0; padding: 16px; background: #252525; border-radius: 8px; border: 1px solid #333; }}
+
+a {{ color: #66d9ef; }}
+</style>
+</head>
+<body>
+{sidebar}
+{main}
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+<script>
+// Highlight active sidebar link on scroll
+(function() {{
+    const ids = [{ids_js}];
+    const links = {{}};
+    ids.forEach(id => {{
+        const el = document.querySelector('.sidebar-link[href="#' + id + '"]');
+        if (el) links[id] = el;
+    }});
+    const observer = new IntersectionObserver(entries => {{
+        entries.forEach(entry => {{
+            if (entry.isIntersecting && links[entry.target.id]) {{
+                Object.values(links).forEach(l => l.classList.remove('active'));
+                links[entry.target.id].classList.add('active');
+            }}
+        }});
+    }}, {{ rootMargin: '0px 0px -70% 0px' }});
+    ids.forEach(id => {{
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+    }});
+}})();
+</script>
+</body></html>"""
+
+    return html
+
+
+def run_preview(class_filter: str = None):
+    """Generate HTML preview pages from api_reference.json."""
+    json_path = OUTPUT_DIR / "api_reference.json"
+    if not json_path.is_file():
+        print("ERROR: No api_reference.json found. Run 'merge' first.")
+        sys.exit(1)
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+
+    classes = data.get("classes", {})
+    if class_filter:
+        # Case-insensitive lookup
+        name_map = {k.lower(): k for k in classes}
+        canonical = name_map.get(class_filter.lower())
+        if not canonical:
+            print(f"ERROR: Class '{class_filter}' not found in api_reference.json.")
+            sys.exit(1)
+        targets = {canonical: classes[canonical]}
+    else:
+        # Only generate for classes that have enrichment data (brief != base description)
+        targets = {}
+        for name, c in classes.items():
+            p1_dir = PHASE1_DIR / name
+            if p1_dir.is_dir():
+                targets[name] = c
+        if not targets:
+            print("No enriched classes found. Run Phase 1 for at least one class.")
+            sys.exit(1)
+
+    for name, c in targets.items():
+        html = generate_class_html(name, c)
+        out_path = PREVIEW_DIR / f"{name}.html"
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"  {out_path}")
+
+    print(f"Preview: {len(targets)} page(s) generated.")
+
+
+# ===================================================================
 # CLI
 # ===================================================================
 
@@ -1101,6 +1428,14 @@ def main():
         "merge",
         help="Merge all phases → output/api_reference.json",
     )
+    preview_parser = subparsers.add_parser(
+        "preview",
+        help="Generate HTML preview pages from merged JSON",
+    )
+    preview_parser.add_argument(
+        "classname", nargs="?", default=None,
+        help="Class name to preview (default: all enriched classes)",
+    )
 
     args = parser.parse_args()
 
@@ -1110,6 +1445,8 @@ def main():
         run_prepare()
     elif args.command == "merge":
         run_merge()
+    elif args.command == "preview":
+        run_preview(args.classname)
     else:
         parser.print_help()
         sys.exit(1)

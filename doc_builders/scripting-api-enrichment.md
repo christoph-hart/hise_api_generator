@@ -153,14 +153,14 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 
 | # | Field | Required? | Source | MCP Serving Tier | Description |
 |---|-------|-----------|--------|------------------|-------------|
-| 1 | `brief` | **Required** | Phase 1 | **Index/search** — return across many classes | ~10-15 words. Search-optimized summary. Token-efficient class listings. |
-| 2 | `purpose` | **Required** | Phase 1 | **Working context** — return for the target class | 2-5 sentences. Concise technical summary — what the class does, its role, key capabilities. |
-| 3 | `details` | Optional | Phase 1 | **Deep reference** — return for deep dives | Full structured technical reference. Architecture, internal patterns, modes, inheritance-derived capabilities. Markdown with tables and headings. `null` for simple classes where `purpose` says everything. |
+| 1 | `brief` | **Required** | Phase 1 | **Index/search** -- return across many classes | ~10-15 words. Search-optimized summary. Token-efficient class listings. |
+| 2 | `purpose` | **Required** | Phase 1 | **Working context** -- return for the target class | 2-5 sentences. Concise technical summary -- what the class does, its role, key capabilities. |
+| 3 | `details` | Optional | Phase 1 | **Deep reference** -- return for deep dives | Full structured technical reference. Architecture, internal patterns, modes, inheritance-derived capabilities. Markdown with tables and headings. `null` for simple classes where `purpose` says everything. |
 | 4 | `obtainedVia` | **Required** | Phase 1 | **Working context** | How to get an instance in HiseScript (e.g., `Engine.createBroadcaster()`, global variable, `Content.addX()`). |
 | 5 | `codeExample` | **Required** | Phase 1 (overridable Phase 3) | **Working context** | Basic usage example showing the class in action. |
 | 6 | `alternatives` | Optional | Phase 1 | **Working context** | Related classes for similar tasks. `null` if N/A. |
 | 7 | `relatedPreprocessors` | Optional | Phase 1 | **Deep reference** | C++ `#define` macros that gate this class's availability (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`). Array of strings. |
-| 8 | `userGuidePage` | Deferred | — | — | Link to a user guide page. Not in MVP — placeholder for later. |
+| 8 | `userGuidePage` | Deferred | -- | -- | Link to a user guide page. Not in MVP -- placeholder for later. |
 
 ---
 
@@ -172,7 +172,7 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `returnType` | String | **Required** | Return type using the VarTypes vocabulary. `undefined` for methods that return nothing. |
 | `description` | String | **Required** | What this method does. |
 | `parameters` | Array | **Required** | Array of parameter objects (see below). |
-| `realtimeSafe` | boolean\|null | **Required** | Can this method be called from the audio thread without risking allocations, locks, or unbounded work? `null` means unknown — consumers should treat as "assume not safe." |
+| `realtimeSafe` | boolean\|null | **Required** | Can this method be called from the audio thread without risking allocations, locks, or unbounded work? `null` means unknown -- consumers should treat as "assume not safe." |
 | `crossReferences` | Array of Strings | Optional | Related methods in the format `ClassName.methodName`. |
 | `pitfalls` | Array | Optional | Non-obvious behaviors or gotchas. Each entry: `{ description, source }`. |
 | `examples` | Array | Optional | Code examples. Each entry: `{ title, code, context, source }`. |
@@ -196,7 +196,7 @@ The `realtimeSafe` flag is determined per-method by examining the C++ implementa
 - I/O operations
 - Any operation that could block
 
-If the agent cannot determine this confidently from the source, set to `null`. Consumers should treat `null` as "assume not safe" — conservative by default.
+If the agent cannot determine this confidently from the source, set to `null`. Consumers should treat `null` as "assume not safe" -- conservative by default.
 
 ### Example Synthesis Heuristics
 
@@ -223,20 +223,20 @@ Parameter and return types use HISE's `VarTypeChecker::VarTypes` names directly.
 
 | Type Name | Meaning | Bitflag | Composition |
 |-----------|---------|---------|-------------|
-| `Integer` | int, int64, bool | 1 | — |
-| `Double` | double | 2 | — |
+| `Integer` | int, int64, bool | 1 | -- |
+| `Double` | double | 2 | -- |
 | `Number` | int or double | 3 | Integer \| Double |
-| `String` | string | 4 | — |
+| `String` | string | 4 | -- |
 | `Colour` | hex string or numeric colour | 7 | String \| Number |
-| `Array` | array | 8 | — |
+| `Array` | array | 8 | -- |
 | `IndexOrArray` | single index or array of indices | 9 | Array \| Integer |
-| `Buffer` | audio buffer | 16 | — |
+| `Buffer` | audio buffer | 16 | -- |
 | `AudioData` | array or audio buffer | 24 | Array \| Buffer |
 | `ObjectWithLength` | string, array, or buffer | 28 | String \| Array \| Buffer |
-| `JSON` | plain JSON/dynamic object | 32 | — |
-| `ScriptObject` | any scripting API object | 64 | — |
+| `JSON` | plain JSON/dynamic object | 32 | -- |
+| `ScriptObject` | any scripting API object | 64 | -- |
 | `Object` | JSON or scripting API object | 96 | JSON \| ScriptObject |
-| `Function` | callable function/lambda | 128 | — |
+| `Function` | callable function/lambda | 128 | -- |
 | `ComplexType` | any non-numeric type | 252 | String \| Array \| Buffer \| JSON \| ScriptObject \| Function |
 | `NotUndefined` | anything except undefined | 255 | ComplexType \| Number |
 
@@ -244,7 +244,7 @@ Parameter and return types use HISE's `VarTypeChecker::VarTypes` names directly.
 
 **Authoritative (forcedType: true):** Methods registered with `ADD_TYPED_API_METHOD_N` macros in the C++ constructor/registration code. The macro arguments specify exact `VarTypes` per parameter. Extracted during Phase 1 class-level analysis from the same constructor code that contains `addConstant()` calls.
 
-**Inferred (forcedType: false):** Methods registered with plain `ADD_API_METHOD_N` macros. The Phase 1 agent infers parameter types from the C++ implementation (how the `var` parameter is used — `isString()`, `isArray()`, `getDynamicObject()`, etc.). Uses the same VarTypes vocabulary.
+**Inferred (forcedType: false):** Methods registered with plain `ADD_API_METHOD_N` macros. The Phase 1 agent infers parameter types from the C++ implementation (how the `var` parameter is used -- `isString()`, `isArray()`, `getDynamicObject()`, etc.). Uses the same VarTypes vocabulary.
 
 **Return types:** Always inferred from the implementation. Not covered by the typed macro system.
 
@@ -279,16 +279,16 @@ When multiple phases provide data for the same field, these rules determine the 
 
 ### Merged Union Fields (all sources combined, tagged)
 
-- `commonMistakes` — entries from all phases, each tagged with `source`
-- `methods.*.pitfalls` — entries from all phases, each tagged with `source`
-- `methods.*.crossReferences` — all references combined, deduplicated
+- `commonMistakes` -- entries from all phases, each tagged with `source`
+- `methods.*.pitfalls` -- entries from all phases, each tagged with `source`
+- `methods.*.crossReferences` -- all references combined, deduplicated
 
 ### Source Tagging
 
 All enrichment data is tagged with its origin:
-- `"auto"` — Phase 1 (AI-synthesized from C++ source analysis)
-- `"project"` — Phase 2 (extracted from project analysis datasets)
-- `"manual"` — Phase 3 (manually authored overrides)
+- `"auto"` -- Phase 1 (AI-synthesized from C++ source analysis)
+- `"project"` -- Phase 2 (extracted from project analysis datasets)
+- `"manual"` -- Phase 3 (manually authored overrides)
 
 ---
 
@@ -307,12 +307,12 @@ All enrichment data is tagged with its origin:
 
 ### Steps
 
-1. Run `batchCreate.bat > NUL 2>&1` — Runs Doxygen, copies/renames XML into `xml/selection/`, runs ApiExtractor + BinaryBuilder
-2. Run `python api_enrich.py phase0` — Parses the XML into base JSON
+1. Run `batchCreate.bat > NUL 2>&1` -- Runs Doxygen, copies/renames XML into `xml/selection/`, runs ApiExtractor + BinaryBuilder
+2. Run `python api_enrich.py phase0` -- Parses the XML into base JSON
 
 ### Output
 
-`enrichment/base/ClassName.json` — one file per class
+`enrichment/base/ClassName.json` -- one file per class
 
 ### What Phase 0 Extracts (Mechanically)
 
@@ -324,11 +324,11 @@ All enrichment data is tagged with its origin:
 
 ### What Phase 0 Does NOT Extract
 
-- Constants — requires reading constructor code (Phase 1)
-- Forced parameter types — requires reading `ADD_TYPED_API_METHOD_N` macros (Phase 1)
-- `realtimeSafe` — requires analyzing method implementations (Phase 1)
-- Examples — requires synthesis (Phase 1)
-- `details` — requires deep C++ source analysis (Phase 1)
+- Constants -- requires reading constructor code (Phase 1)
+- Forced parameter types -- requires reading `ADD_TYPED_API_METHOD_N` macros (Phase 1)
+- `realtimeSafe` -- requires analyzing method implementations (Phase 1)
+- Examples -- requires synthesis (Phase 1)
+- `details` -- requires deep C++ source analysis (Phase 1)
 
 ### Category Mapping
 
@@ -351,14 +351,14 @@ Phase 1 is the core enrichment step. It reads C++ source code and produces struc
 
 Detailed agent instructions: `scripting-api-enrichment/phase1.md`
 
-### Step A — Sub-agent (explore): Class-Level Analysis
+### Step A -- Sub-agent (explore): Class-Level Analysis
 
 **Spawned by:** The main agent, one sub-agent per class.
 
 **Reads:**
-- The class header file (`.h`) — class declaration, inheritance chain, inner types, API method list
-- The constructor in the `.cpp` file — `addConstant()` calls, `ADD_TYPED_API_METHOD_N` registrations
-- Key implementation methods — for architectural understanding
+- The class header file (`.h`) -- class declaration, inheritance chain, inner types, API method list
+- The constructor in the `.cpp` file -- `addConstant()` calls, `ADD_TYPED_API_METHOD_N` registrations
+- Key implementation methods -- for architectural understanding
 
 **Produces two files:**
 
@@ -367,7 +367,7 @@ Detailed agent instructions: `scripting-api-enrichment/phase1.md`
 The durable class-level artifact. Human-editable, reusable as Phase 3 input. Contains:
 
 ```markdown
-# ClassName — Class Analysis
+# ClassName -- Class Analysis
 
 ## Brief
 ~10-15 words. Search-optimized summary.
@@ -381,7 +381,7 @@ inheritance-derived capabilities. Markdown with tables and headings.
 (Omit this section entirely for simple classes.)
 
 ## obtainedVia
-`Engine.createBroadcaster(defaultValues)` — or however the instance is obtained.
+`Engine.createBroadcaster(defaultValues)` -- or however the instance is obtained.
 
 ## Constants
 | Name | Value | Type | Description | Group |
@@ -407,7 +407,7 @@ inheritance-derived capabilities. Markdown with tables and headings.
 Related classes for similar tasks, or "None."
 
 ## Related Preprocessors
-`USE_BACKEND`, `HISE_INCLUDE_LORIS`, etc. — or "None."
+`USE_BACKEND`, `HISE_INCLUDE_LORIS`, etc. -- or "None."
 ```
 
 #### `enrichment/phase1/ClassName/methods_todo.md`
@@ -415,7 +415,7 @@ Related classes for similar tasks, or "None."
 The workbench file. Contains the progress checklist and forced parameter type map:
 
 ```markdown
-# ClassName — Method Workbench
+# ClassName -- Method Workbench
 
 ## Progress
 - [ ] methodA
@@ -427,64 +427,64 @@ The workbench file. Contains the progress checklist and forced parameter type ma
 ## Forced Parameter Types
 | Method | Param 1 | Param 2 | Param 3 | Param 4 | Param 5 |
 |--------|---------|---------|---------|---------|---------|
-| methodA | Number | — | — | — | — |
-| methodC | String | Function | — | — | — |
+| methodA | Number | -- | -- | -- | -- |
+| methodC | String | Function | -- | -- | -- |
 ...
 
-(Methods not listed here use plain ADD_API_METHOD_N — types must be inferred.)
+(Methods not listed here use plain ADD_API_METHOD_N -- types must be inferred.)
 ```
 
 ### Sub-agent Exploration Checklist
 
 The sub-agent must perform all of the following during class-level analysis:
 
-1. **`brief`** — What does this class do? (~10-15 words)
-2. **`purpose`** — Concise technical summary (2-5 sentences)
-3. **`details`** — Full architecture analysis (only for classes that warrant it):
+1. **`brief`** -- What does this class do? (~10-15 words)
+2. **`purpose`** -- Concise technical summary (2-5 sentences)
+3. **`details`** -- Full architecture analysis (only for classes that warrant it):
    - Internal type hierarchy (e.g., base classes, inner classes, listener/target patterns)
    - Messaging or processing modes
    - State management patterns
    - Metadata systems
-4. **`obtainedVia`** — How do you get an instance? Search for factory methods, constructor registration, global variables.
-5. **`codeExample`** — Basic usage example synthesized from the class's API surface.
-6. **`alternatives`** — Related classes for similar tasks? Check sibling classes, related inheritance trees.
-7. **`relatedPreprocessors`** — Is the class gated by `#if` guards? (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`)
-8. **`constants`** — Extract all `addConstant(name, value)` calls from the constructor. Record name, value, and infer type from the value.
-9. **`dynamicConstants`** — Document runtime-dependent constants (structure only, value=null).
-10. **Trace class inheritance** — Identify interface compatibility patterns. For example, if the class derives from `WeakCallbackHolder::CallableObject`, it can be passed wherever a callback function is expected. Document these derived capabilities in `details`.
-11. **Forced parameter types** — Extract all `ADD_TYPED_API_METHOD_N` macro invocations from the constructor. Record the method name and the `VarTypes` per parameter. Write these into `methods_todo.md`.
-12. **Method checklist** — List all API methods (from the `// API Methods` section of the header) in `methods_todo.md` as unchecked items.
+4. **`obtainedVia`** -- How do you get an instance? Search for factory methods, constructor registration, global variables.
+5. **`codeExample`** -- Basic usage example synthesized from the class's API surface.
+6. **`alternatives`** -- Related classes for similar tasks? Check sibling classes, related inheritance trees.
+7. **`relatedPreprocessors`** -- Is the class gated by `#if` guards? (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`)
+8. **`constants`** -- Extract all `addConstant(name, value)` calls from the constructor. Record name, value, and infer type from the value.
+9. **`dynamicConstants`** -- Document runtime-dependent constants (structure only, value=null).
+10. **Trace class inheritance** -- Identify interface compatibility patterns. For example, if the class derives from `WeakCallbackHolder::CallableObject`, it can be passed wherever a callback function is expected. Document these derived capabilities in `details`.
+11. **Forced parameter types** -- Extract all `ADD_TYPED_API_METHOD_N` macro invocations from the constructor. Record the method name and the `VarTypes` per parameter. Write these into `methods_todo.md`.
+12. **Method checklist** -- List all API methods (from the `// API Methods` section of the header) in `methods_todo.md` as unchecked items.
 
 **Source isolation rule:** The sub-agent must derive ALL information from C++ source code only. Do NOT reference external documentation, MCP resources, or existing API reference files.
 
-### Step B — Main Agent: Sequential Method Analysis
+### Step B -- Main Agent: Sequential Method Analysis
 
 After the sub-agent returns, the main agent processes methods one at a time.
 
 **Loads at the start of Step B:**
-- `enrichment/phase1/ClassName/Readme.md` — class context (CRITICAL)
-- `enrichment/phase1/ClassName/methods_todo.md` — checklist + type map
+- `enrichment/phase1/ClassName/Readme.md` -- class context (CRITICAL)
+- `enrichment/phase1/ClassName/methods_todo.md` -- checklist + type map
 
 **For each unchecked method:**
 
-1. Check the forced type map in `methods_todo.md`. If the method has forced types, use them as authoritative — no inference needed for those parameters.
+1. Check the forced type map in `methods_todo.md`. If the method has forced types, use them as authoritative -- no inference needed for those parameters.
 2. Read the method implementation in the `.cpp` file.
 3. Produce the method entry:
-   - `signature` — full signature with VarTypes
-   - `returnType` — inferred from the implementation
-   - `description` — what the method does
-   - `parameters` — name, type (forced or inferred), forcedType flag, description, constraints
-   - `realtimeSafe` — boolean or null, from implementation analysis
-   - `pitfalls` — non-obvious behaviors (if any)
-   - `examples` — synthesized code examples (apply the heuristics above)
-   - `crossReferences` — related methods (if obvious at this point; more added in post-process)
+   - `signature` -- full signature with VarTypes
+   - `returnType` -- inferred from the implementation
+   - `description` -- what the method does
+   - `parameters` -- name, type (forced or inferred), forcedType flag, description, constraints
+   - `realtimeSafe` -- boolean or null, from implementation analysis
+   - `pitfalls` -- non-obvious behaviors (if any)
+   - `examples` -- synthesized code examples (apply the heuristics above)
+   - `crossReferences` -- related methods (if obvious at this point; more added in post-process)
 4. Append the method entry to `enrichment/phase1/ClassName/methods.md`
 5. Mark the method `[x]` in `methods_todo.md`
 6. Write both files to disk immediately
 
 **The method analysis context is expendable.** After writing to disk, the agent does not need to retain any per-method details in its context window. Only the class-level context (`Readme.md`) and the workbench (`methods_todo.md`) are essential.
 
-**HiseScript syntax reference:** The agent may consult the MCP `hisescript-style` resource to ensure synthesized code examples use correct HiseScript syntax. This is the ONLY external reference permitted during method analysis, and it must be used for syntax correctness only — not for API behavior.
+**HiseScript syntax reference:** The agent may consult the MCP `hisescript-style` resource to ensure synthesized code examples use correct HiseScript syntax. This is the ONLY external reference permitted during method analysis, and it must be used for syntax correctness only -- not for API behavior.
 
 ### Method Output Format (methods.md)
 
@@ -525,9 +525,9 @@ What this method does.
 The main agent's context window may be compacted automatically during long sessions. The pipeline is designed to survive this:
 
 **After compaction, the agent MUST:**
-1. Re-read `enrichment/phase1/ClassName/Readme.md` — the class-level context
-2. Re-read `enrichment/phase1/ClassName/methods_todo.md` — to find the first unchecked method
-3. Do NOT re-read `enrichment/phase1/ClassName/methods.md` — completed methods are on disk, no need to burn context
+1. Re-read `enrichment/phase1/ClassName/Readme.md` -- the class-level context
+2. Re-read `enrichment/phase1/ClassName/methods_todo.md` -- to find the first unchecked method
+3. Do NOT re-read `enrichment/phase1/ClassName/methods.md` -- completed methods are on disk, no need to burn context
 
 **The compaction summary should convey:** "Processing methods for ClassName. Class context is in `Readme.md`. Progress is in `methods_todo.md`. Reload both and continue from the first unchecked method."
 
@@ -535,13 +535,13 @@ The main agent's context window may be compacted automatically during long sessi
 
 The `methods_todo.md` file makes any session fully resumable from disk. A fresh session can:
 
-1. Read `Readme.md` — get the full class context
-2. Read `methods_todo.md` — see the checklist and type map
-3. Find the first `- [ ]` entry — resume from there
+1. Read `Readme.md` -- get the full class context
+2. Read `methods_todo.md` -- see the checklist and type map
+3. Find the first `- [ ]` entry -- resume from there
 
 No conversation history, task IDs, or special recovery instructions needed. The state is entirely on disk.
 
-### Step C — Post-Process
+### Step C -- Post-Process
 
 After all methods for a class are complete, run the post-process step:
 
@@ -562,7 +562,7 @@ After all methods for a class are complete, run the post-process step:
 
 ### Source
 
-`enrichment/phase2/ClassName/methodName.md` — one file per method override.
+`enrichment/phase2/ClassName/methodName.md` -- one file per method override.
 
 ### Content
 
@@ -583,8 +583,8 @@ Detailed format spec: `scripting-api-enrichment/phase2.md`
 
 ### Source
 
-- `enrichment/phase3/ClassName/Readme.md` — overrides class-level fields
-- `enrichment/phase3/ClassName/methodName.md` — overrides a specific method
+- `enrichment/phase3/ClassName/Readme.md` -- overrides class-level fields
+- `enrichment/phase3/ClassName/methodName.md` -- overrides a specific method
 
 The folder structure mirrors Phase 1. Using `Readme.md` for class-level overrides allows directly pulling in existing documentation from docs.hise.dev, which uses the same filename convention in its markdown source.
 

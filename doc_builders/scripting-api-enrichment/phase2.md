@@ -10,7 +10,7 @@ Phase 2 provides real-world usage examples extracted from project analysis datas
 enrichment/phase2/ClassName/methodName.md
 ```
 
-One file per method override. Only methods that have project examples need files here — this directory is sparse.
+One file per method override. Only methods that have project examples need files here -- this directory is sparse.
 
 ---
 
@@ -49,7 +49,7 @@ bc.methodName(...);
 ```
 ```
 
-All fields are optional — only include fields you want to override or add.
+All fields are optional -- only include fields you want to override or add.
 
 ---
 
@@ -59,14 +59,14 @@ When Phase 2 data exists for a method:
 
 | Field | Merge Behavior | Tag |
 |-------|---------------|-----|
-| `description` | Last-writer-wins (replaces Phase 1) | — |
-| `signature` | Last-writer-wins | — |
-| `returnType` | Last-writer-wins | — |
-| `parameters` | Last-writer-wins | — |
-| `realtimeSafe` | Last-writer-wins | — |
+| `description` | Last-writer-wins (replaces Phase 1) | -- |
+| `signature` | Last-writer-wins | -- |
+| `returnType` | Last-writer-wins | -- |
+| `parameters` | Last-writer-wins | -- |
+| `realtimeSafe` | Last-writer-wins | -- |
 | `examples` | **Last-writer-wins** (entire array replaced) | `"project"` |
 | `pitfalls` | **Merged union** (added to Phase 1 pitfalls) | `"project"` |
-| `crossReferences` | **Merged union** (deduplicated) | — |
+| `crossReferences` | **Merged union** (deduplicated) | -- |
 
 Phase 2 also supports class-level overrides via `enrichment/phase2/ClassName/Readme.md`, which would override class-level fields using the same merge rules as Phase 3 (see `scripting-api-enrichment/phase3.md`). In practice, Phase 2 is primarily used for method-level example overrides.
 
@@ -99,7 +99,7 @@ All Phase 2 contributions are tagged with `"source": "project"` in the output JS
 
 Phase 2 is populated by:
 
-1. **Automated project analysis** — scanning HISE project codebases for API usage patterns
-2. **Curated real-world examples** — hand-picked examples from production projects that demonstrate best practices or common patterns
+1. **Automated project analysis** -- scanning HISE project codebases for API usage patterns
+2. **Curated real-world examples** -- hand-picked examples from production projects that demonstrate best practices or common patterns
 
 Phase 2 examples have higher practical value than Phase 1's synthesized examples because they come from working code. When Phase 2 provides examples for a method, they replace Phase 1's examples entirely.
