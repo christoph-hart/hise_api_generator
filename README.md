@@ -68,7 +68,7 @@ When a new class is added to the HISE scripting API:
 1. **Add Doxygen comments** — Add `/** */` doc comments to the public methods in the C++ class header
 2. **Update `batchCreate.bat`** — Add two lines:
    - An `xcopy` line to copy the Doxygen-generated XML file into `xml\selection` (follow the naming pattern: `classhise_1_1_...` for classes in the `hise` namespace, `structhise_1_1_...` for structs)
-   - A `ren` line to rename it to the friendly scripting class name (e.g., `Console.xml`)
+   - A `ren` line to rename it to the friendly class name — this must exactly match the string returned by `Identifier Class::getObjectName()` (e.g., `Console.xml`)
 3. **Update `api_enrich.py`** — Add the class to the `CATEGORY_MAP` dict with the correct category: `namespace`, `object`, `component`, or `scriptnode`
 4. **Run Phase 0** — `batchCreate.bat > NUL 2>&1 && python api_enrich.py phase0`
 5. **Run Phase 1** — Agent-driven C++ source analysis (see Session Prompts below)
