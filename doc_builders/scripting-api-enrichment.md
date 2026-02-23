@@ -4,7 +4,7 @@
 
 **Output Location:** `tools/api generator/enrichment/output/api_reference.json`
 
-**Sub-phase details:** See `scripting-api-enrichment/phase0.md` through `phase3.md` for detailed per-phase instructions.
+**Sub-phase details:** See `scripting-api-enrichment/phase0.md` through `phase4.md` for detailed per-phase instructions.
 
 ---
 
@@ -23,6 +23,10 @@ Phase 1: C++ source analysis + example synthesis
 Phase 2: Merge project analysis examples (mechanical merge)
        │
 Phase 3: Merge manual markdown overrides (highest priority, mechanical merge)
+       │
+Phase 4: User-facing documentation authoring
+       │   Agent-driven → phase4/auto/ClassName/*.md (LLM-generated userDocs)
+       │   Human-edited → phase4/manual/ClassName/*.md (overrides auto)
        │
 python api_enrich.py merge → output/api_reference.json
 ```
@@ -61,6 +65,15 @@ tools/api generator/
 │   │   │   ├── Readme.md                     # Override class-level fields
 │   │   │   └── addListener.md                # Override specific method
 │   │   └── ...
+│   ├── phase4/                               # User-facing documentation (userDocs)
+│   │   ├── auto/                             # LLM-generated userDocs
+│   │   │   └── Console/
+│   │   │       ├── Readme.md                 # Class-level prose
+│   │   │       ├── print.md                  # Method-level prose
+│   │   │       └── ...
+│   │   └── manual/                           # Human-edited overrides (wins over auto)
+│   │       └── Console/
+│   │           └── print.md                  # Hand-tuned method doc
 │   └── output/
 │       └── api_reference.json                # Final merged output
 ```
@@ -83,7 +96,9 @@ tools/api generator/
         "codeExample": "// basic usage (required)",
         "alternatives": "Related classes (optional, null if N/A)",
         "relatedPreprocessors": ["DEFINE_NAME"],
-        "userGuidePage": null
+        "userGuidePage": null,
+        "userDocs": "User-facing prose (from Phase 4, null if not yet authored)",
+        "userDocOverride": false
       },
       "category": "namespace|object|component|scriptnode",
       "constants": {
@@ -137,7 +152,9 @@ tools/api generator/
               "context": "When/why to use this",
               "source": "auto|project|manual"
             }
-          ]
+          ],
+          "userDocs": "User-facing method prose (from Phase 4, null if not yet authored)",
+          "userDocOverride": false
         }
       }
     }
@@ -161,6 +178,8 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | 6 | `alternatives` | Optional | Phase 1 | **Working context** | Related classes for similar tasks. `null` if N/A. |
 | 7 | `relatedPreprocessors` | Optional | Phase 1 | **Deep reference** | C++ `#define` macros that gate this class's availability (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`). Array of strings. |
 | 8 | `userGuidePage` | Deferred | -- | -- | Link to a user guide page. Not in MVP -- placeholder for later. |
+| 9 | `userDocs` | Optional | Phase 4 | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. |
+| 10 | `userDocOverride` | Auto | Phase 4 | -- | `true` if `userDocs` came from `phase4/manual/`, `false` if from `phase4/auto/` or absent. |
 
 ---
 
@@ -176,6 +195,8 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `crossReferences` | Array of Strings | Optional | Related methods in the format `ClassName.methodName`. |
 | `pitfalls` | Array | Optional | Non-obvious behaviors or gotchas. Each entry: `{ description, source }`. |
 | `examples` | Array | Optional | Code examples. Each entry: `{ title, code, context, source }`. |
+| `userDocs` | String\|null | Optional | User-facing method prose from Phase 4. `null` if not yet authored. |
+| `userDocOverride` | boolean | Auto | `true` if `userDocs` came from `phase4/manual/`, `false` otherwise. |
 
 ### Parameter Object
 
@@ -609,6 +630,51 @@ Detailed format spec: `scripting-api-enrichment/phase3.md`
 
 ---
 
+## Phase 4: User-Facing Documentation Authoring
+
+Phase 4 transforms the raw C++ analysis (Phases 1-3) into scripter-friendly documentation. It runs after merge, one class at a time, because the authoring agent benefits from seeing the complete merged API surface before writing user-facing prose.
+
+Detailed authoring guidelines: `scripting-api-enrichment/phase4.md`
+
+### Source
+
+Two-tier directory structure with manual overrides winning:
+
+```
+enrichment/phase4/auto/ClassName/     # LLM-generated userDocs
+enrichment/phase4/manual/ClassName/   # Human-edited overrides (wins over auto)
+```
+
+### File Format
+
+- **Class-level:** `Readme.md` -- starts with `# ClassName` heading, followed by prose paragraphs.
+- **Method-level:** `methodName.md` -- bare prose, no heading. File stem must match the method name (case-insensitive matching is applied during merge).
+
+### New JSON Fields
+
+| Field | Level | Type | Description |
+|-------|-------|------|-------------|
+| `userDocs` | Class + Method | String\|null | Flat prose string for end-user display. `null` if not yet authored. |
+| `userDocOverride` | Class + Method | boolean | `true` if sourced from `phase4/manual/`, `false` if from `phase4/auto/` or absent. |
+
+### Merge Rules
+
+- `phase4/manual/` wins over `phase4/auto/` (per file, case-insensitive filename matching)
+- Phase 4 does NOT override any Phase 1-3 fields -- it adds the new `userDocs` / `userDocOverride` fields only
+
+### Preview Output
+
+`python api_enrich.py preview ClassName` generates:
+
+- `ClassName_review.html` -- always generated; shows raw C++ analysis (purpose, details, description) for factual review
+- `ClassName.html` -- generated only when userDocs exist; shows the user-facing documentation with auto/manual source badges
+
+### Progress Tracking
+
+`python api_enrich.py prepare` reports Phase 4 status by comparing files in `phase4/auto/` and `phase4/manual/` against the class's method list. No separate tracking file is needed.
+
+---
+
 ## Diff Mechanism
 
 `enrichment/phase1_scanned.txt` tracks which methods have been processed by Phase 1.
@@ -642,7 +708,7 @@ Regenerates Doxygen XML via `batchCreate.bat`, then parses all XML files in `xml
 python api_enrich.py prepare
 ```
 
-Reads `enrichment/base/*.json` and `enrichment/phase1_scanned.txt`. Prints the worklist of classes and methods that still need Phase 1 processing.
+Reads `enrichment/base/*.json` and `enrichment/phase1_scanned.txt`. Prints the worklist of classes and methods that still need Phase 1 processing. Also reports Phase 4 (userDocs) status for all enriched classes.
 
 #### `merge`
 
@@ -650,6 +716,19 @@ Reads `enrichment/base/*.json` and `enrichment/phase1_scanned.txt`. Prints the w
 python api_enrich.py merge
 ```
 
-Reads all phases (base → phase1 → phase2 → phase3) and produces `enrichment/output/api_reference.json`. Applies merge rules as specified above.
+Reads all phases (base → phase1 → phase2 → phase3 → phase4) and produces `enrichment/output/api_reference.json`. Applies merge rules as specified above.
 
+#### `preview`
+
+```
+python api_enrich.py preview [ClassName]
+```
+
+Generates HTML preview pages from `api_reference.json`. If a class name is given, generates only that class; otherwise generates pages for all enriched classes.
+
+For each class, produces:
+- `ClassName_review.html` -- raw C++ analysis (always generated for enriched classes)
+- `ClassName.html` -- user-facing userDocs view (generated only if any Phase 4 userDocs exist for the class)
+
+Output: `enrichment/output/preview/`
 

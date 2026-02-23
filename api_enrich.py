@@ -39,6 +39,8 @@ BASE_DIR = ENRICHMENT_DIR / "base"
 PHASE1_DIR = ENRICHMENT_DIR / "phase1"
 PHASE2_DIR = ENRICHMENT_DIR / "phase2"
 PHASE3_DIR = ENRICHMENT_DIR / "phase3"
+PHASE4_AUTO_DIR = ENRICHMENT_DIR / "phase4" / "auto"
+PHASE4_MANUAL_DIR = ENRICHMENT_DIR / "phase4" / "manual"
 OUTPUT_DIR = ENRICHMENT_DIR / "output"
 SCANNED_FILE = ENRICHMENT_DIR / "phase1_scanned.txt"
 
@@ -402,6 +404,32 @@ def run_phase0():
 # PREPARE: Print worklist of unscanned classes/methods
 # ===================================================================
 
+def _get_phase4_authored(class_name: str) -> tuple:
+    """Return (auto_set, manual_set, has_auto_readme, has_manual_readme)
+    for a given class, checking both phase4/auto and phase4/manual dirs."""
+    auto_set = set()
+    manual_set = set()
+    has_auto_readme = False
+    has_manual_readme = False
+
+    auto_dir = PHASE4_AUTO_DIR / class_name
+    manual_dir = PHASE4_MANUAL_DIR / class_name
+
+    if auto_dir.is_dir():
+        has_auto_readme = (auto_dir / "Readme.md").is_file()
+        for md_file in auto_dir.glob("*.md"):
+            if md_file.name.lower() != "readme.md":
+                auto_set.add(md_file.stem.lower())
+
+    if manual_dir.is_dir():
+        has_manual_readme = (manual_dir / "Readme.md").is_file()
+        for md_file in manual_dir.glob("*.md"):
+            if md_file.name.lower() != "readme.md":
+                manual_set.add(md_file.stem.lower())
+
+    return auto_set, manual_set, has_auto_readme, has_manual_readme
+
+
 def run_prepare():
     """Read base JSON and scanned manifest, print unscanned worklist."""
     if not BASE_DIR.is_dir():
@@ -422,6 +450,12 @@ def run_prepare():
     total_scanned = 0
     worklist = []
 
+    # Phase 4 tracking
+    p4_total_needed = 0
+    p4_total_auto = 0
+    p4_total_manual = 0
+    p4_worklist = []
+
     for json_path in sorted(BASE_DIR.glob("*.json")):
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -429,6 +463,7 @@ def run_prepare():
         class_name = data["className"]
         methods = data.get("methods", {})
 
+        # Phase 1 worklist
         unscanned_methods = []
         for method_name in sorted(methods.keys()):
             key = f"{class_name}.{method_name}"
@@ -441,19 +476,52 @@ def run_prepare():
         if unscanned_methods:
             worklist.append((class_name, data.get("category", "?"), unscanned_methods))
 
+        # Phase 4 worklist -- only for classes that have Phase 1 data
+        p1_dir = PHASE1_DIR / class_name
+        if p1_dir.is_dir():
+            auto_set, manual_set, has_auto_readme, has_manual_readme = \
+                _get_phase4_authored(class_name)
+            authored = auto_set | manual_set
+            needs_docs = []
+            for method_name in sorted(methods.keys()):
+                if method_name.lower() not in authored:
+                    needs_docs.append(method_name)
+                    p4_total_needed += 1
+                elif method_name.lower() in manual_set:
+                    p4_total_manual += 1
+                else:
+                    p4_total_auto += 1
+
+            needs_readme = not has_auto_readme and not has_manual_readme
+            if needs_docs or needs_readme:
+                p4_worklist.append((class_name, needs_readme, needs_docs))
+
+    # Print Phase 1 worklist
     if not worklist:
-        print("All methods have been scanned. Nothing to do.")
+        print("Phase 1: All methods scanned.")
         print(f"  Total scanned: {total_scanned}")
-        return
+    else:
+        print(f"Phase 1: {total_remaining} methods remaining across {len(worklist)} classes")
+        print(f"  Already scanned: {total_scanned}")
+        print()
+        for class_name, category, methods in worklist:
+            print(f"  {class_name} [{category}] -- {len(methods)} methods:")
+            for m in methods:
+                print(f"    - {m}")
+            print()
 
-    print(f"Worklist: {total_remaining} methods remaining across {len(worklist)} classes")
-    print(f"Already scanned: {total_scanned}")
+    # Print Phase 4 worklist
     print()
-
-    for class_name, category, methods in worklist:
-        print(f"  {class_name} [{category}] — {len(methods)} methods:")
-        for m in methods:
-            print(f"    - {m}")
+    if not p4_worklist:
+        print("Phase 4: All enriched classes have userDocs.")
+        print(f"  Auto: {p4_total_auto}, Manual: {p4_total_manual}")
+    else:
+        print(f"Phase 4: {p4_total_needed} methods need userDocs across {len(p4_worklist)} classes")
+        print(f"  Already authored: {p4_total_auto} auto, {p4_total_manual} manual")
+        print()
+        for class_name, needs_readme, methods in p4_worklist:
+            readme_note = " (+ Readme.md)" if needs_readme else ""
+            print(f"  {class_name} -- {len(methods)} methods{readme_note}")
         print()
 
 
@@ -992,6 +1060,23 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
     return existing
 
 
+def _load_phase4_prose(filepath: Path, strip_heading: bool = False) -> str:
+    """Load a Phase 4 userDocs file as a flat prose string.
+
+    If strip_heading is True, remove a leading '# ClassName' line
+    (used for class-level Readme.md files).
+    """
+    if not filepath.is_file():
+        return ""
+    with open(filepath, "r", encoding="utf-8") as f:
+        text = f.read().strip()
+    if strip_heading and text.startswith("#"):
+        # Remove the first line (heading) and strip leading whitespace
+        lines = text.split("\n", 1)
+        text = lines[1].strip() if len(lines) > 1 else ""
+    return text
+
+
 def run_merge():
     """Merge all phases into output/api_reference.json."""
     if not BASE_DIR.is_dir():
@@ -1054,6 +1139,39 @@ def run_merge():
                     method_name = method_name_map.get(raw_name.lower(), raw_name)
                     p3_methods[method_name] = parse_method_override_md(md_file)
 
+        # --- Phase 4 data (userDocs) ---
+        # manual/ wins over auto/. Files are flat prose (parsed by
+        # _load_phase4_prose which strips an optional # heading).
+        p4_class_userdocs = None
+        p4_class_override = False
+        p4_method_userdocs = {}  # method_name -> (prose, is_override)
+
+        # Class-level Readme.md
+        manual_readme = PHASE4_MANUAL_DIR / class_name / "Readme.md"
+        auto_readme = PHASE4_AUTO_DIR / class_name / "Readme.md"
+        if manual_readme.is_file():
+            p4_class_userdocs = _load_phase4_prose(manual_readme, strip_heading=True)
+            p4_class_override = True
+        elif auto_readme.is_file():
+            p4_class_userdocs = _load_phase4_prose(auto_readme, strip_heading=True)
+
+        # Method-level files
+        for phase4_dir, is_override in ((PHASE4_MANUAL_DIR, True), (PHASE4_AUTO_DIR, False)):
+            method_dir = phase4_dir / class_name
+            if not method_dir.is_dir():
+                continue
+            for md_file in method_dir.glob("*.md"):
+                if md_file.name.lower() == "readme.md":
+                    continue
+                raw_name = md_file.stem
+                canonical = method_name_map.get(raw_name.lower(), raw_name)
+                # manual/ wins: if already set by manual pass, skip auto
+                if canonical in p4_method_userdocs and not is_override:
+                    continue
+                prose = _load_phase4_prose(md_file, strip_heading=False)
+                if prose:
+                    p4_method_userdocs[canonical] = (prose, is_override)
+
         # --- Build class description ---
         # Start with Phase 1, override with Phase 3 (last-writer-wins)
         desc = build_class_description(base.get("description", ""), p1_readme, "auto")
@@ -1063,6 +1181,10 @@ def run_merge():
                        "codeExample", "alternatives", "relatedPreprocessors"):
             if field in p3_readme:
                 desc[field] = p3_readme[field]
+
+        # Phase 4: userDocs for class level
+        desc["userDocs"] = p4_class_userdocs
+        desc["userDocOverride"] = p4_class_override if p4_class_userdocs else False
 
         # --- Constants ---
         constants = build_constants(p1_readme, "auto")
@@ -1101,6 +1223,15 @@ def run_merge():
             # Apply Phase 3 overrides
             if p3_method:
                 entry = merge_method_entries(entry, p3_method, "manual")
+
+            # Phase 4: userDocs for method level
+            if method_name in p4_method_userdocs:
+                prose, is_override = p4_method_userdocs[method_name]
+                entry["userDocs"] = prose
+                entry["userDocOverride"] = is_override
+            else:
+                entry["userDocs"] = None
+                entry["userDocOverride"] = False
 
             methods_output[method_name] = entry
 
@@ -1143,27 +1274,47 @@ def md_inline(text: str) -> str:
     return text
 
 
-def generate_class_html(class_name: str, c: dict) -> str:
-    """Generate a full HTML preview page for one class."""
+def _source_badge(is_override: bool) -> str:
+    """Return an HTML badge indicating auto or manual source."""
+    if is_override:
+        return '<span class="tag tag-manual">manual</span>'
+    return '<span class="tag tag-auto">auto</span>'
+
+
+def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
+    """Generate a full HTML preview page for one class.
+
+    mode="review" -- shows raw C++ analysis (brief/purpose/details + description)
+    mode="web"    -- shows userDocs content with auto/manual badges
+    """
+    is_web = mode == "web"
     desc = c.get("description", {})
     methods = c.get("methods", {})
 
     # --- Collect sidebar section IDs ---
     sidebar_sections = []
-    if desc.get("purpose"):
-        sidebar_sections.append(("overview", "Overview"))
-    if desc.get("details"):
-        sidebar_sections.append(("details", "Details"))
+    if is_web:
+        if desc.get("userDocs"):
+            sidebar_sections.append(("overview", "Overview"))
+    else:
+        if desc.get("purpose"):
+            sidebar_sections.append(("overview", "Overview"))
+        if desc.get("details"):
+            sidebar_sections.append(("details", "Details"))
     if desc.get("codeExample"):
         sidebar_sections.append(("usage-example", "Usage Example"))
     if c.get("commonMistakes"):
         sidebar_sections.append(("common-mistakes", "Common Mistakes"))
-    if desc.get("relatedPreprocessors"):
+    if not is_web and desc.get("relatedPreprocessors"):
         sidebar_sections.append(("preprocessors", "Preprocessors"))
 
     # --- Sidebar HTML ---
     sidebar = f'<div class="sidebar">\n'
     sidebar += f'<div class="sidebar-title">{class_name}</div>\n'
+    if is_web:
+        sidebar += '<div class="sidebar-mode mode-web">userDocs</div>\n'
+    else:
+        sidebar += '<div class="sidebar-mode mode-review">review</div>\n'
     for sid, label in sidebar_sections:
         sidebar += f'<a class="sidebar-link" href="#{sid}">{label}</a>\n'
     if methods:
@@ -1180,31 +1331,40 @@ def generate_class_html(class_name: str, c: dict) -> str:
     main = '<div class="main">\n'
 
     # Header
+    mode_label = "userDocs" if is_web else "review"
     main += f'<h1>{class_name} <span class="category">{md_inline(c.get("category", ""))}</span></h1>\n'
     if desc.get("brief"):
         main += f'<p class="brief">{md_inline(desc["brief"])}</p>\n'
-    if desc.get("obtainedVia"):
+    if not is_web and desc.get("obtainedVia"):
         main += f'<p><strong>Obtained via:</strong> {md_inline(desc["obtainedVia"])}</p>\n'
 
-    # Overview
-    if desc.get("purpose"):
-        main += '<h2 id="overview">Overview</h2>\n'
-        main += f'<p>{md_inline(desc["purpose"])}</p>\n'
+    # Class-level prose
+    if is_web:
+        if desc.get("userDocs"):
+            badge = _source_badge(desc.get("userDocOverride", False))
+            main += f'<h2 id="overview">Overview {badge}</h2>\n'
+            for para in desc["userDocs"].split("\n\n"):
+                para = para.strip()
+                if para:
+                    main += f"<p>{md_inline(para)}</p>\n"
+    else:
+        # Review mode: show purpose + details
+        if desc.get("purpose"):
+            main += '<h2 id="overview">Overview</h2>\n'
+            main += f'<p>{md_inline(desc["purpose"])}</p>\n'
+        if desc.get("details"):
+            main += '<h2 id="details">Details</h2>\n'
+            for para in desc["details"].split("\n\n"):
+                para = para.strip()
+                if para:
+                    main += f"<p>{md_inline(para)}</p>\n"
 
-    # Details
-    if desc.get("details"):
-        main += '<h2 id="details">Details</h2>\n'
-        for para in desc["details"].split("\n\n"):
-            para = para.strip()
-            if para:
-                main += f"<p>{md_inline(para)}</p>\n"
-
-    # Code example
+    # Code example (both modes)
     if desc.get("codeExample"):
         main += '<h2 id="usage-example">Usage Example</h2>\n'
         main += f'<pre><code class="language-javascript">{html_escape(desc["codeExample"])}</code></pre>\n'
 
-    # Common mistakes
+    # Common mistakes (both modes)
     if c.get("commonMistakes"):
         main += '<h2 id="common-mistakes">Common Mistakes</h2>\n'
         for m in c["commonMistakes"]:
@@ -1215,8 +1375,8 @@ def generate_class_html(class_name: str, c: dict) -> str:
                 f'<em>{md_inline(m["explanation"])}</em></div>\n'
             )
 
-    # Related preprocessors
-    if desc.get("relatedPreprocessors"):
+    # Related preprocessors (review mode only)
+    if not is_web and desc.get("relatedPreprocessors"):
         main += '<h2 id="preprocessors">Related Preprocessors</h2>\n'
         main += "<p>" + ", ".join(
             f"<code>{p}</code>" for p in desc["relatedPreprocessors"]
@@ -1239,9 +1399,14 @@ def generate_class_html(class_name: str, c: dict) -> str:
             if m.get("signature"):
                 main += f'<div class="signature">{html_escape(m["signature"])}</div>\n'
 
-            main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
+            # Method description: web mode uses userDocs, review uses description
+            if is_web and m.get("userDocs"):
+                badge = _source_badge(m.get("userDocOverride", False))
+                main += f'<p>{md_inline(m["userDocs"])} {badge}</p>\n'
+            else:
+                main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
 
-            # Params
+            # Params (both modes)
             if m.get("parameters"):
                 main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
                 for p in m["parameters"]:
@@ -1252,15 +1417,15 @@ def generate_class_html(class_name: str, c: dict) -> str:
                     )
                 main += "</table>\n"
 
-            # Pitfalls
+            # Pitfalls (both modes)
             for p in m.get("pitfalls", []):
                 main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
 
-            # Examples
+            # Examples (both modes)
             for ex in m.get("examples", []):
                 main += f'<pre><code class="language-javascript">{html_escape(ex.get("code", ""))}</code></pre>\n'
 
-            # Cross refs
+            # Cross refs (both modes)
             if m.get("crossReferences"):
                 refs = ", ".join(
                     f'<a href="#{r.split(".")[-1]}">{r}</a>'
@@ -1276,7 +1441,7 @@ def generate_class_html(class_name: str, c: dict) -> str:
     html = f"""<!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">
-<title>{class_name} - HISE Scripting API</title>
+<title>{class_name} ({mode_label}) - HISE Scripting API</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
@@ -1318,6 +1483,13 @@ td {{ color: #ccc; }}
 .tag {{ display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 0.75em; margin-left: 6px; }}
 .tag-true {{ background: #1a3a1a; color: #4ec94e; }}
 .tag-false {{ background: #3a1a1a; color: #c94e4e; }}
+.tag-auto {{ background: #1a2a3a; color: #5ba8d9; }}
+.tag-manual {{ background: #2a1a3a; color: #b07ad9; }}
+
+/* Sidebar mode indicator */
+.sidebar-mode {{ font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 16px 8px; border-bottom: 1px solid #333; margin-bottom: 4px; }}
+.mode-review {{ color: #888; }}
+.mode-web {{ color: #5ba8d9; }}
 
 /* Callout boxes */
 .pitfall {{ background: #332b00; border-left: 3px solid #997a00; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; color: #ccc; }}
@@ -1394,14 +1566,33 @@ def run_preview(class_filter: str = None):
             print("No enriched classes found. Run Phase 1 for at least one class.")
             sys.exit(1)
 
+    page_count = 0
     for name, c in targets.items():
-        html = generate_class_html(name, c)
-        out_path = PREVIEW_DIR / f"{name}.html"
-        with open(out_path, "w", encoding="utf-8") as f:
-            f.write(html)
-        print(f"  {out_path}")
+        # Always generate the review page (raw analysis)
+        html_review = generate_class_html(name, c, mode="review")
+        out_review = PREVIEW_DIR / f"{name}_review.html"
+        with open(out_review, "w", encoding="utf-8") as f:
+            f.write(html_review)
+        print(f"  {out_review}")
+        page_count += 1
 
-    print(f"Preview: {len(targets)} page(s) generated.")
+        # Generate web page (userDocs) if any userDocs exist
+        has_userdocs = (
+            c.get("description", {}).get("userDocs") is not None
+            or any(
+                m.get("userDocs") is not None
+                for m in c.get("methods", {}).values()
+            )
+        )
+        if has_userdocs:
+            html_web = generate_class_html(name, c, mode="web")
+            out_web = PREVIEW_DIR / f"{name}.html"
+            with open(out_web, "w", encoding="utf-8") as f:
+                f.write(html_web)
+            print(f"  {out_web}")
+            page_count += 1
+
+    print(f"Preview: {page_count} page(s) generated.")
 
 
 # ===================================================================
