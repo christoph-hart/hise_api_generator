@@ -1,0 +1,1 @@
+Throws a script error if `value` is a string. Catches accidental string-to-number coercion bugs, for example when a parameter that should be numeric has been passed as a string instead.

@@ -1,0 +1,1 @@
+Throws a script error if `v1` and `v2` are not equal. Primitives are compared by value; objects and arrays are compared by reference. The error message includes the string representation of both values.

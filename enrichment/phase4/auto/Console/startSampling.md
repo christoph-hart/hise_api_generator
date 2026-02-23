@@ -1,0 +1,1 @@
+Starts a data sampling session with the given identifier. Once active, calls to `Console.sample()` will record data snapshots into this session for later review.

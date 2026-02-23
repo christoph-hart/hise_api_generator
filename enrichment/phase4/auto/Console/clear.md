@@ -1,0 +1,1 @@
+Clears all output in the HISE console.

@@ -1,0 +1,1 @@
+A conditional breakpoint that halts script execution when `condition` is true. Execution pauses and waits until you resume from the HISE IDE, with debug information available for inspection. While paused, the audio output is silenced. Note that this cannot be used on the message thread -- attempting to do so throws a script error instead of pausing.

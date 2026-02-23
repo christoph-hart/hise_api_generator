@@ -1,0 +1,1 @@
+Flashes the calling line in the HISE code editor as a visual indicator that this code path was reached, without halting execution. The blink is silently ignored if the file containing the call is not currently open in the editor.

@@ -48,11 +48,12 @@ The agent ONLY writes to `phase4/auto/`. Never read or modify files in `phase4/m
 ```markdown
 # ClassName
 
-[2-5 sentences providing a user-facing overview of what this class does,
-how you typically use it, and any important high-level notes.]
+[4-8 sentences providing a user-facing overview of what this class does,
+how you typically use it, the main method groups, and any important
+behavioral notes. One or two paragraphs.]
 ```
 
-The `# ClassName` heading is required. The content below it is a flat prose block -- no subheadings, no bullet lists, no tables. Just clear, well-structured paragraphs.
+The `# ClassName` heading is required. The content below it is a flat prose block -- no subheadings, no bullet lists, no tables. Just clear, well-structured paragraphs. Target a length between the Phase 1 `purpose` and `details` -- substantial enough to orient a scripter, but with all C++ internals stripped.
 
 ### Method-level: `phase4/auto/ClassName/methodName.md`
 
@@ -75,6 +76,20 @@ Bare prose, no heading, no structured fields. Just the user-facing description.
 - **Practical limitations** (e.g. "only one benchmark can be active at a time")
 - **Cross-references** to related methods when it helps understanding (e.g. "Call `Console.startBenchmark()` first, then `Console.stopBenchmark()` to see the result")
 
+### Class-level deduplication
+
+The Phase 1 method descriptions are intentionally self-contained -- each method repeats class-wide facts (e.g. "only works in the HISE IDE") so it can stand alone when served by the MCP server. In Phase 4, the agent sees the full class and writes prose that will be displayed together on a single page. Repeating class-wide facts on individual methods creates noise rather than reinforcement.
+
+Before writing method-level userDocs, identify behavioral patterns that apply across multiple methods:
+
+- Build restrictions (e.g. "IDE-only", "no-op in exported plugins")
+- Prerequisite requirements (e.g. "requires the profiling toolkit")
+- Thread restrictions (e.g. "cannot be called from the message thread")
+
+State these once in the class-level `Readme.md`. Then omit them from individual method files unless a method is a notable *exception* to the class-wide rule (e.g. one method that *does* work in exported plugins when the rest don't).
+
+This means an individual method's userDocs may be shorter and more focused than its Phase 1 description -- that is intentional. The Phase 1 description remains the authoritative standalone reference; the Phase 4 userDocs is the page-context version.
+
 ### What to strip
 
 - C++ class names (e.g. `AudioThreadGuard::Suspender`, `JavascriptThreadPool::ScopedSleeper`)
@@ -93,7 +108,7 @@ Bare prose, no heading, no structured fields. Just the user-facing description.
 
 ### Length
 
-- **Class-level `Readme.md`:** 2-5 sentences. Provide context for the class as a whole -- what it's for, when you'd use it, any high-level grouping of methods.
+- **Class-level `Readme.md`:** 4-8 sentences (one or two substantial paragraphs). The goal is a length between the Phase 1 `purpose` and `details` fields, but with all C++ internals stripped. Cover what the class is for, how you typically obtain/use it, the main method groups, and any important behavioral notes (e.g. "most methods are no-ops in exported plugins"). For simple utility classes 4 sentences may suffice; for complex classes with multiple modes or subsystems, use the full 8.
 - **Method-level files:** 1-3 sentences. Most simple methods (getters, setters, assertions) need just 1 sentence. Methods with non-obvious behavior or multi-step workflows may need 2-3.
 
 ### Examples

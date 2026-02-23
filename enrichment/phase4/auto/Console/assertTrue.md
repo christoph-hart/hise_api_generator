@@ -1,0 +1,1 @@
+Throws a script error if `condition` evaluates to false. Any falsy value -- 0, `false`, empty string, or undefined -- will trigger the assertion. For a custom error message, use `Console.assertWithMessage()` instead.

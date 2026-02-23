@@ -1,0 +1,1 @@
+Stops the benchmark timer started by `Console.startBenchmark()` and prints the elapsed time in milliseconds to the console. Throws a script error if no benchmark was started.

@@ -1,0 +1,1 @@
+Manually triggers a callback on a UI component or scripting object for automated testing. Pass the target object, the callback identifier, and an array of arguments. This allows synchronous execution of callbacks without user interaction, intended for use by automated test tools and AI agents.

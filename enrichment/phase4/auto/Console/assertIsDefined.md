@@ -1,0 +1,1 @@
+Throws a script error if `value` is undefined. Use this to verify that a variable has been properly initialised or that a function returned a meaningful result.

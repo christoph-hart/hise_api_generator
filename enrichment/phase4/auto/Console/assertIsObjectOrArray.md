@@ -1,0 +1,1 @@
+Throws a script error if `value` is not a JSON object or an array. The error message includes the actual type of the value, which helps track down where unexpected data is coming from.

@@ -1,0 +1,1 @@
+Prints a value to the HISE console, converting it to its string representation. The value is also shown as an inline debug value in the code editor at the calling line.

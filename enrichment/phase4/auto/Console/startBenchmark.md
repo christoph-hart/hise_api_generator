@@ -1,0 +1,1 @@
+Starts a high-resolution timer for measuring code execution time. Call `Console.stopBenchmark()` to end the measurement and print the elapsed time in milliseconds. Only one benchmark can be active at a time -- calling this again before stopping overwrites the previous start time.

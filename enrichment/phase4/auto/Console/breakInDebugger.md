@@ -1,0 +1,1 @@
+Triggers a breakpoint in the native C++ debugger (e.g. Visual Studio or Xcode). This is only useful for HISE developers running HISE from a C++ IDE with a debugger attached -- it has no effect otherwise. For normal HISEScript debugging, use `Console.stop()` instead.
