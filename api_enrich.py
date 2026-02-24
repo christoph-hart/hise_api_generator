@@ -22,6 +22,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -153,6 +154,113 @@ CATEGORY_MAP = {
     "NetworkTest": "scriptnode",
     "Node": "scriptnode",
     "Parameter": "scriptnode",
+}
+
+# ---------------------------------------------------------------------------
+# Minimal object tokens: short variable names for method minimalExample
+# ---------------------------------------------------------------------------
+
+MINIMAL_OBJECT_TOKEN = {
+    # namespace -- empty token (methods use ClassName.method() directly)
+    "Array": "",
+    "Colours": "",
+    "Console": "",
+    "Content": "",
+    "Date": "",
+    "Engine": "",
+    "FileSystem": "",
+    "Math": "",
+    "Message": "",
+    "ModuleIds": "",
+    "Sampler": "",
+    "Server": "",
+    "Settings": "",
+    "String": "",
+    "Synth": "",
+    "Threads": "",
+    "TransportHandler": "",
+
+    # component -- Interface Designer default IDs
+    "ScriptAudioWaveform": "AudioWaveform1",
+    "ScriptButton": "Button1",
+    "ScriptComboBox": "ComboBox1",
+    "ScriptDynamicContainer": "Container1",
+    "ScriptFloatingTile": "FloatingTile1",
+    "ScriptImage": "Image1",
+    "ScriptLabel": "Label1",
+    "ScriptModulationMatrix": "ModMatrix1",
+    "ScriptMultipageDialog": "Dialog1",
+    "ScriptPanel": "Panel1",
+    "ScriptSlider": "Knob1",
+    "ScriptSliderPack": "SliderPack1",
+    "ScriptTable": "Table1",
+    "ScriptWebView": "WebView1",
+    "ScriptedViewport": "Viewport1",
+    "ModulatorMeter": "Meter1",
+    "ScriptedPlotter": "Plotter1",
+
+    # object -- short abbreviations
+    "AudioFile": "af",
+    "AudioSampleProcessor": "asp",
+    "BackgroundTask": "task",
+    "BeatportManager": "bp",
+    "Broadcaster": "bc",
+    "Buffer": "buf",
+    "Builder": "b",
+    "ChildSynth": "cs",
+    "ComplexGroupManager": "cgm",
+    "ContainerChild": "cc",
+    "DisplayBuffer": "db",
+    "DisplayBufferSource": "dbs",
+    "Download": "dl",
+    "DspModule": "dsp",
+    "Effect": "fx",
+    "ErrorHandler": "eh",
+    "Expansion": "exp",
+    "ExpansionHandler": "exh",
+    "FFT": "fft",
+    "File": "f",
+    "FixObjectArray": "foa",
+    "FixObjectFactory": "fof",
+    "FixObjectStack": "fos",
+    "GlobalCable": "gc",
+    "GlobalRoutingManager": "grm",
+    "Graphics": "g",
+    "LorisManager": "lm",
+    "MacroHandler": "mh",
+    "MarkdownRenderer": "mr",
+    "MessageHolder": "msg",
+    "MidiAutomationHandler": "mah",
+    "MidiList": "ml",
+    "MidiPlayer": "mp",
+    "MidiProcessor": "mpr",
+    "Modifiers": "mod",
+    "Modulator": "m",
+    "NeuralNetwork": "nn",
+    "Path": "p",
+    "Rectangle": "rect",
+    "RoutingMatrix": "rm",
+    "Sample": "s",
+    "ScriptLookAndFeel": "laf",
+    "ScriptShader": "sh",
+    "SliderPackData": "spd",
+    "SliderPackProcessor": "spp",
+    "SlotFX": "sfx",
+    "Table": "tbl",
+    "TableProcessor": "tp",
+    "ThreadSafeStorage": "tss",
+    "Timer": "t",
+    "Unlocker": "ul",
+    "UnorderedStack": "us",
+    "UserPresetHandler": "uph",
+    "WavetableController": "wtc",
+
+    # scriptnode -- short abbreviations
+    "Connection": "con",
+    "DspNetwork": "net",
+    "NetworkTest": "nt",
+    "Node": "n",
+    "Parameter": "par",
 }
 
 # ---------------------------------------------------------------------------
@@ -566,6 +674,14 @@ def parse_readme_md(filepath: Path) -> dict:
         text = text.strip("`")
         result["obtainedVia"] = text
 
+    if "minimalObjectToken" in sections:
+        # First non-empty line, stripped of backticks and parenthetical notes
+        for line in sections["minimalObjectToken"].splitlines():
+            line = line.strip().strip("`")
+            if line and not line.startswith("("):
+                result["minimalObjectToken"] = line
+                break
+
     if "codeExample" in sections:
         result["codeExample"] = extract_code_block(sections["codeExample"])
 
@@ -601,6 +717,30 @@ def parse_readme_md(filepath: Path) -> dict:
     if "Common Mistakes" in sections:
         result["commonMistakes"] = parse_markdown_table(sections["Common Mistakes"])
 
+    if "Diagrams" in sections:
+        # Multiple diagrams: h3 sub-sections are diagram ids
+        diag_subsections = split_by_headings(sections["Diagrams"], level=3)
+        diagrams = []
+        for diag_id, diag_text in diag_subsections.items():
+            diag_type_m = re.search(r"-\s*\*\*Type:\*\*\s*(\S+)", diag_text)
+            diag_brief_m = re.search(
+                r"-\s*\*\*Brief:\*\*\s*(.*?)(?=\n-\s*\*\*|\Z)",
+                diag_text, re.DOTALL
+            )
+            diag_desc_m = re.search(
+                r"-\s*\*\*Description:\*\*\s*(.*?)(?=\n-\s*\*\*|\Z)",
+                diag_text, re.DOTALL
+            )
+            if diag_type_m:
+                diagrams.append({
+                    "id": diag_id.strip(),
+                    "brief": diag_brief_m.group(1).strip() if diag_brief_m else "",
+                    "type": diag_type_m.group(1).strip(),
+                    "description": diag_desc_m.group(1).strip() if diag_desc_m else "",
+                })
+        if diagrams:
+            result["diagrams"] = diagrams
+
     return result
 
 
@@ -624,14 +764,171 @@ def parse_methods_md(filepath: Path) -> dict:
     return methods
 
 
-def parse_method_override_md(filepath: Path) -> dict:
+# --- Raw docs helpers (Phase 3 unstructured import) ---
+
+def build_class_lookup(base_dir: Path) -> dict:
+    """Build a case-insensitive lookup from base JSON files.
+
+    Returns a dict with two sub-dicts:
+      {
+        "classes": { "array": "Array", "engine": "Engine", ... },
+        "methods": { "array": { "clone": "clone", "find": "find", ... }, ... }
+      }
+    The keys are lowercase slugs (as used in docs.hise.dev URLs).
+    The values are canonical PascalCase/camelCase names from the base JSON.
+    """
+    lookup = {"classes": {}, "methods": {}}
+    for json_path in sorted(base_dir.glob("*.json")):
+        with open(json_path, "r", encoding="utf-8") as f:
+            base = json.load(f)
+        class_name = base["className"]
+        # Map lowercase slug -> canonical name
+        # docs.hise.dev uses "globalcable" for "GlobalCable", etc.
+        slug = class_name.lower()
+        lookup["classes"][slug] = class_name
+        method_map = {}
+        for method_name in base.get("methods", {}).keys():
+            method_map[method_name.lower()] = method_name
+        lookup["methods"][slug] = method_map
+    return lookup
+
+
+def convert_doc_link(url: str, link_text: str, class_lookup: dict) -> tuple:
+    """Convert a docs.hise.dev link to a backtick reference + crossReference.
+
+    Args:
+        url: The link URL, e.g. "/scripting/scripting-api/array#clone"
+        link_text: The display text from the markdown link
+        class_lookup: Output of build_class_lookup()
+
+    Returns:
+        (replacement_text, cross_ref_or_None)
+        replacement_text: backtick-wrapped canonical name, e.g. "`Array.clone()`"
+        cross_ref_or_None: "Array.clone" or None if class-only or non-API link
+    """
+    # Match /scripting/scripting-api/classslug or /scripting/scripting-api/classslug#method
+    m = re.match(r"/scripting/scripting-api/([a-z0-9_-]+?)(?:#([a-z0-9_-]+))?$", url, re.IGNORECASE)
+    if not m:
+        # Non-API link -- strip markup, keep link text
+        return (link_text, None)
+
+    class_slug = m.group(1).lower()
+    method_slug = m.group(2).lower() if m.group(2) else None
+
+    canonical_class = class_lookup["classes"].get(class_slug)
+    if not canonical_class:
+        # Unknown class -- keep link text as-is
+        return (link_text, None)
+
+    if method_slug:
+        method_map = class_lookup["methods"].get(class_slug, {})
+        canonical_method = method_map.get(method_slug, method_slug)
+        ref = f"{canonical_class}.{canonical_method}"
+        return (f"`{ref}()`", ref)
+    else:
+        # Class-level link, no method
+        return (f"`{canonical_class}`", None)
+
+
+def parse_raw_docs(content: str, class_lookup: dict) -> dict:
+    """Parse raw (unstructured) docs content into userDocs + examples + crossReferences.
+
+    Used for Phase 3 files imported from docs.hise.dev that lack structured
+    markers like **Signature:**, **Description:**, etc.
+
+    Args:
+        content: Raw markdown content
+        class_lookup: Output of build_class_lookup()
+
+    Returns:
+        {"userDocs": str_or_None, "examples": list, "crossReferences": list}
+    """
+    cross_refs = []
+
+    # Step 1: Strip image references  ![alt](/path)
+    content = re.sub(r"!\[[^\]]*\]\([^)]+\)", "", content)
+
+    # Step 2: Convert doc-site links  [text](/scripting/scripting-api/class#method)
+    def _replace_link(m):
+        link_text = m.group(1)
+        url = m.group(2)
+        replacement, xref = convert_doc_link(url, link_text, class_lookup)
+        if xref and xref not in cross_refs:
+            cross_refs.append(xref)
+        return replacement
+
+    content = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", _replace_link, content)
+
+    # Step 3: Strip non-API link remnants that slipped through
+    # (already handled by convert_doc_link returning plain text)
+
+    # Step 4: Strip #### Example headings
+    content = re.sub(r"^####\s+[Ee]xample.*$", "", content, flags=re.MULTILINE)
+
+    # Step 5: Split into prose and code blocks
+    # Find all fenced code blocks with their positions
+    code_block_pattern = re.compile(r"```\w*\n(.*?)```", re.DOTALL)
+    code_blocks = list(code_block_pattern.finditer(content))
+
+    if not code_blocks:
+        # No code -- entire content is userDocs
+        prose = content.strip()
+        # Clean up multiple blank lines
+        prose = re.sub(r"\n{3,}", "\n\n", prose)
+        result = {}
+        if prose:
+            result["userDocs"] = prose
+        if cross_refs:
+            result["crossReferences"] = cross_refs
+        return result
+
+    # Extract prose (everything outside code fences)
+    prose_parts = []
+    last_end = 0
+    for block in code_blocks:
+        before = content[last_end:block.start()].strip()
+        if before:
+            prose_parts.append(before)
+        last_end = block.end()
+    # Trailing prose after the last code block
+    trailing = content[last_end:].strip()
+    if trailing:
+        prose_parts.append(trailing)
+
+    prose = "\n\n".join(prose_parts)
+    # Clean up multiple blank lines
+    prose = re.sub(r"\n{3,}", "\n\n", prose)
+
+    # Extract examples
+    examples = []
+    for block in code_blocks:
+        code = block.group(1).strip()
+        if code:
+            examples.append({
+                "title": "Example",
+                "code": code,
+                "source": "manual",
+            })
+
+    result = {}
+    if prose:
+        result["userDocs"] = prose
+    if examples:
+        result["examples"] = examples
+    if cross_refs:
+        result["crossReferences"] = cross_refs
+    return result
+
+
+def parse_method_override_md(filepath: Path, class_lookup: dict = None) -> dict:
     """Parse a Phase 2/3 method override file (single method).
 
     Supports two formats:
     1. Structured format with **Signature:**, **Description:**, etc.
     2. Raw docs format: prose paragraph(s) followed by ```code``` blocks.
-       Description = everything before the first code fence.
-       Examples = all fenced code blocks.
+       When class_lookup is provided, prose goes to userDocs (not description)
+       and doc-site links are converted to cross-references.
+       When class_lookup is None (Phase 2), prose goes to description (legacy).
     """
     if not filepath.is_file():
         return {}
@@ -648,8 +945,12 @@ def parse_method_override_md(filepath: Path) -> dict:
         return result
 
     # Fallback: raw docs format.
-    # Split at the first ``` fence.  Everything before it is description,
-    # all fenced blocks are examples.
+    if class_lookup:
+        # Phase 3 with class_lookup: use parse_raw_docs for proper
+        # userDocs/examples/crossReferences splitting.
+        return parse_raw_docs(content, class_lookup)
+
+    # Legacy path (Phase 2, no class_lookup): prose -> description.
     fence_idx = content.find("```")
     if fence_idx == -1:
         # No code blocks -- entire content is description
@@ -673,6 +974,20 @@ def parse_single_method(body: str) -> dict:
     """Parse a single method's markdown body into structured data."""
     result = {}
 
+    # Check for disabled method (minimal entry -- skip further parsing)
+    disabled_match = re.search(r"\*\*Disabled:\*\*\s*(\S+)", body)
+    if disabled_match:
+        result["disabled"] = True
+        result["disabledReason"] = disabled_match.group(1).strip()
+        # Extract the detail text
+        detail_match = re.search(
+            r"\*\*Disabled Reason:\*\*\s*(.*?)(?=\n\*\*|\n##|\Z)",
+            body, re.DOTALL
+        )
+        if detail_match:
+            result["disabledDetail"] = detail_match.group(1).strip()
+        return result
+
     # Extract bold-prefixed fields
     sig_match = re.search(r"\*\*Signature:\*\*\s*`([^`]+)`", body)
     if sig_match:
@@ -682,15 +997,38 @@ def parse_single_method(body: str) -> dict:
     if rt_match:
         result["returnType"] = rt_match.group(1).strip()
 
-    rts_match = re.search(r"\*\*Realtime Safe:\*\*\s*(\S+)", body)
-    if rts_match:
-        val = rts_match.group(1).strip().lower()
-        if val == "true":
-            result["realtimeSafe"] = True
-        elif val == "false":
-            result["realtimeSafe"] = False
+    # callScope (new five-tier system: safe, caution, unsafe, init, unknown)
+    # Also supports legacy **Realtime Safe:** for backward compatibility during migration
+    cs_match = re.search(r"\*\*Call Scope:\*\*\s*(\S+)", body)
+    if not cs_match:
+        # Fallback: parse legacy **Realtime Safe:** and map to new tiers
+        cs_match = re.search(r"\*\*Realtime Safe:\*\*\s*(\S+)", body)
+        if cs_match:
+            legacy_val = cs_match.group(1).strip().lower()
+            if legacy_val == "true":
+                result["callScope"] = "safe"
+            elif legacy_val == "false":
+                result["callScope"] = "unsafe"
+            else:
+                result["callScope"] = None
+    else:
+        val = cs_match.group(1).strip().lower()
+        if val in ("safe", "caution", "unsafe", "init"):
+            result["callScope"] = val
+        elif val == "unknown":
+            result["callScope"] = None
         else:
-            result["realtimeSafe"] = None
+            result["callScope"] = None
+
+    csn_match = re.search(r"\*\*Call Scope Note:\*\*\s*(.+)", body)
+    if csn_match:
+        note = csn_match.group(1).strip()
+        if note and note.lower() not in ("none", "null", "--", "n/a"):
+            result["callScopeNote"] = note
+
+    me_match = re.search(r"\*\*Minimal Example:\*\*\s*`([^`]+)`", body)
+    if me_match:
+        result["minimalExample"] = me_match.group(1)
 
     # Description
     desc_match = re.search(
@@ -710,6 +1048,35 @@ def parse_single_method(body: str) -> dict:
         params = parse_parameter_table(params_text)
         if params:
             result["parameters"] = params
+
+    # Value Descriptions table
+    vd_match = re.search(
+        r"\*\*Value Descriptions:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
+        body, re.DOTALL
+    )
+    if vd_match:
+        vd_rows = parse_markdown_table(vd_match.group(1))
+        if vd_rows:
+            result["valueDescriptions"] = [
+                {"value": r.get("Value", ""),
+                 "description": r.get("Description", "")}
+                for r in vd_rows
+            ]
+
+    # Callback Properties table
+    cp_match = re.search(
+        r"\*\*Callback Properties:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
+        body, re.DOTALL
+    )
+    if cp_match:
+        cp_rows = parse_markdown_table(cp_match.group(1))
+        if cp_rows:
+            result["callbackProperties"] = [
+                {"property": r.get("Property", ""),
+                 "type": r.get("Type", ""),
+                 "description": r.get("Description", "")}
+                for r in cp_rows
+            ]
 
     # Pitfalls
     pitfalls_match = re.search(
@@ -738,6 +1105,37 @@ def parse_single_method(body: str) -> dict:
                 xrefs.append(line)
         if xrefs:
             result["crossReferences"] = xrefs
+
+    # Diagram (method-owned, single)
+    diag_match = re.search(
+        r"\*\*Diagram:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
+        body, re.DOTALL
+    )
+    if diag_match:
+        diag_text = diag_match.group(1)
+        diag_type_m = re.search(r"-\s*\*\*Type:\*\*\s*(\S+)", diag_text)
+        diag_brief_m = re.search(
+            r"-\s*\*\*Brief:\*\*\s*(.*?)(?=\n-\s*\*\*|\Z)",
+            diag_text, re.DOTALL
+        )
+        diag_desc_m = re.search(
+            r"-\s*\*\*Description:\*\*\s*(.*?)(?=\n-\s*\*\*|\Z)",
+            diag_text, re.DOTALL
+        )
+        if diag_type_m:
+            result["diagram"] = {
+                "type": diag_type_m.group(1).strip(),
+                "brief": diag_brief_m.group(1).strip() if diag_brief_m else "",
+                "description": diag_desc_m.group(1).strip() if diag_desc_m else "",
+            }
+
+    # DiagramRef (reference to class-level diagram, mutually exclusive with Diagram)
+    diag_ref_match = re.search(
+        r"\*\*DiagramRef:\*\*\s*(\S+)",
+        body
+    )
+    if diag_ref_match and "diagram" not in result:
+        result["diagramRef"] = diag_ref_match.group(1).strip()
 
     # Example(s)
     example_match = re.search(
@@ -883,10 +1281,12 @@ def build_class_description(base_desc: str, readme_data: dict, source_tag: str) 
         "purpose": readme_data.get("purpose"),
         "details": readme_data.get("details"),
         "obtainedVia": readme_data.get("obtainedVia"),
+        "minimalObjectToken": readme_data.get("minimalObjectToken"),
         "codeExample": readme_data.get("codeExample"),
         "alternatives": readme_data.get("alternatives"),
         "relatedPreprocessors": readme_data.get("relatedPreprocessors", []),
         "userGuidePage": None,
+        "diagrams": readme_data.get("diagrams", []),
     }
 
     # If no enrichment data, use the base description for brief/purpose
@@ -956,16 +1356,40 @@ def build_common_mistakes(readme_data: dict, source_tag: str) -> list:
 
 def build_method_entry(base_method: dict, enriched: dict, source_tag: str) -> dict:
     """Build a full method entry by merging base data with enrichment."""
+    # If the method is disabled, return a minimal entry
+    if enriched.get("disabled"):
+        return {
+            "signature": base_method.get("signature", ""),
+            "returnType": base_method.get("returnType", ""),
+            "description": base_method.get("description", ""),
+            "parameters": base_method.get("parameters", []),
+            "disabled": True,
+            "disabledReason": enriched.get("disabledReason", ""),
+            "disabledDetail": enriched.get("disabledDetail", ""),
+        }
+
     entry = {
         "signature": enriched.get("signature", base_method.get("signature", "")),
         "returnType": enriched.get("returnType", base_method.get("returnType", "")),
         "description": enriched.get("description", base_method.get("description", "")),
         "parameters": [],
-        "realtimeSafe": enriched.get("realtimeSafe"),
+        "callScope": enriched.get("callScope"),
+        "callScopeNote": enriched.get("callScopeNote"),
+        "minimalExample": enriched.get("minimalExample", ""),
         "crossReferences": enriched.get("crossReferences", []),
         "pitfalls": [],
         "examples": [],
     }
+
+    # Structured value metadata (pass through from enrichment)
+    if enriched.get("valueDescriptions"):
+        entry["valueDescriptions"] = enriched["valueDescriptions"]
+    if enriched.get("callbackProperties"):
+        entry["callbackProperties"] = enriched["callbackProperties"]
+    if enriched.get("diagram"):
+        entry["diagram"] = enriched["diagram"]
+    elif enriched.get("diagramRef"):
+        entry["diagramRef"] = enriched["diagramRef"]
 
     # Parameters: prefer enriched (has forcedType info), fall back to base
     if enriched.get("parameters"):
@@ -1011,6 +1435,13 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
     """Merge an override method entry into an existing one.
     Last-writer-wins for most fields; union merge for pitfalls/crossRefs.
     """
+    # If override marks method as disabled, propagate that
+    if override.get("disabled"):
+        existing["disabled"] = True
+        existing["disabledReason"] = override.get("disabledReason", "")
+        existing["disabledDetail"] = override.get("disabledDetail", "")
+        return existing
+
     # Last-writer-wins fields
     if override.get("signature"):
         existing["signature"] = override["signature"]
@@ -1020,8 +1451,12 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
         existing["description"] = override["description"]
     if override.get("parameters"):
         existing["parameters"] = override["parameters"]
-    if "realtimeSafe" in override and override["realtimeSafe"] is not None:
-        existing["realtimeSafe"] = override["realtimeSafe"]
+    if "callScope" in override and override["callScope"] is not None:
+        existing["callScope"] = override["callScope"]
+    if override.get("callScopeNote"):
+        existing["callScopeNote"] = override["callScopeNote"]
+    if override.get("minimalExample"):
+        existing["minimalExample"] = override["minimalExample"]
 
     # Examples: last-writer-wins (entire array replaced)
     if override.get("examples"):
@@ -1057,19 +1492,41 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
             existing_refs.add(ref)
         existing["crossReferences"] = sorted(existing_refs)
 
+    # Last-writer-wins: structured value metadata
+    if override.get("valueDescriptions"):
+        existing["valueDescriptions"] = override["valueDescriptions"]
+    if override.get("callbackProperties"):
+        existing["callbackProperties"] = override["callbackProperties"]
+
+    # Last-writer-wins: diagram / diagramRef (mutually exclusive)
+    if override.get("diagram"):
+        existing["diagram"] = override["diagram"]
+        existing.pop("diagramRef", None)
+    elif override.get("diagramRef"):
+        existing["diagramRef"] = override["diagramRef"]
+        existing.pop("diagram", None)
+
+    # Last-writer-wins: userDocs from raw docs (Phase 3)
+    if override.get("userDocs"):
+        existing["userDocs"] = override["userDocs"]
+        existing["userDocOverride"] = True  # treat Phase 3 as manual-grade
+
     return existing
 
 
 def _load_phase4_prose(filepath: Path, strip_heading: bool = False) -> str:
     """Load a Phase 4 userDocs file as a flat prose string.
 
-    If strip_heading is True, remove a leading '# ClassName' line
+    Strips HTML comments (e.g. diagram triage annotations) and, if
+    strip_heading is True, removes a leading '# ClassName' line
     (used for class-level Readme.md files).
     """
     if not filepath.is_file():
         return ""
     with open(filepath, "r", encoding="utf-8") as f:
         text = f.read().strip()
+    # Remove HTML comments (internal pipeline annotations like diagram triage)
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL).strip()
     if strip_heading and text.startswith("#"):
         # Remove the first line (heading) and strip leading whitespace
         lines = text.split("\n", 1)
@@ -1095,6 +1552,9 @@ def run_merge():
     if not base_files:
         print("ERROR: No base JSON files found.")
         sys.exit(1)
+
+    # Build class lookup for raw docs link conversion (Phase 3)
+    class_lookup = build_class_lookup(BASE_DIR)
 
     for json_path in base_files:
         with open(json_path, "r", encoding="utf-8") as f:
@@ -1137,7 +1597,7 @@ def run_merge():
                 if md_file.name.lower() != "readme.md":
                     raw_name = md_file.stem
                     method_name = method_name_map.get(raw_name.lower(), raw_name)
-                    p3_methods[method_name] = parse_method_override_md(md_file)
+                    p3_methods[method_name] = parse_method_override_md(md_file, class_lookup)
 
         # --- Phase 4 data (userDocs) ---
         # manual/ wins over auto/. Files are flat prose (parsed by
@@ -1178,9 +1638,17 @@ def run_merge():
 
         # Phase 3 overrides (last-writer-wins)
         for field in ("brief", "purpose", "details", "obtainedVia",
-                       "codeExample", "alternatives", "relatedPreprocessors"):
+                       "minimalObjectToken", "codeExample", "alternatives",
+                       "relatedPreprocessors"):
             if field in p3_readme:
                 desc[field] = p3_readme[field]
+
+        # Phase 3 diagrams override (merge by id, last-writer-wins per id)
+        if p3_readme.get("diagrams"):
+            existing_by_id = {d["id"]: d for d in desc.get("diagrams", [])}
+            for diag in p3_readme["diagrams"]:
+                existing_by_id[diag["id"]] = diag
+            desc["diagrams"] = list(existing_by_id.values())
 
         # Phase 4: userDocs for class level
         desc["userDocs"] = p4_class_userdocs
@@ -1225,15 +1693,36 @@ def run_merge():
                 entry = merge_method_entries(entry, p3_method, "manual")
 
             # Phase 4: userDocs for method level
+            # Priority: Phase 4 manual > Phase 3 raw docs > Phase 4 auto
             if method_name in p4_method_userdocs:
                 prose, is_override = p4_method_userdocs[method_name]
-                entry["userDocs"] = prose
-                entry["userDocOverride"] = is_override
+                if is_override:
+                    # Phase 4 manual wins over everything
+                    entry["userDocs"] = prose
+                    entry["userDocOverride"] = True
+                elif not entry.get("userDocs"):
+                    # Phase 4 auto only if no Phase 3 raw docs userDocs
+                    entry["userDocs"] = prose
+                    entry["userDocOverride"] = False
             else:
-                entry["userDocs"] = None
-                entry["userDocOverride"] = False
+                # No Phase 4 data -- keep Phase 3 userDocs if present
+                if not entry.get("userDocs"):
+                    entry["userDocs"] = None
+                    entry["userDocOverride"] = False
 
             methods_output[method_name] = entry
+
+        # --- Resolve minimalObjectToken and substitute {obj} ---
+        # Priority: Readme > MINIMAL_OBJECT_TOKEN dict > empty string
+        token = desc.get("minimalObjectToken")
+        if token is None:
+            token = MINIMAL_OBJECT_TOKEN.get(class_name, "")
+        desc["minimalObjectToken"] = token
+
+        for m in methods_output.values():
+            me = m.get("minimalExample", "")
+            if me and token:
+                m["minimalExample"] = me.replace("{obj}", token)
 
         # --- Assemble class output ---
         output["classes"][class_name] = {
@@ -1268,17 +1757,194 @@ PREVIEW_DIR = OUTPUT_DIR / "preview"
 
 
 def md_inline(text: str) -> str:
-    """HTML-escape text, then convert markdown `backtick` spans to <code> tags."""
+    """HTML-escape text, then convert inline markdown to HTML tags.
+
+    Handles: `code`, **bold**, *italic*, ![alt](src) images.
+    """
     text = html_escape(text)
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
+    # Bold (**text**) -- must come before italic
+    text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
+    # Italic (*text*) -- single asterisk, not inside bold
+    text = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", text)
+    # Inline images ![alt](src) -- SVG diagrams get a diagram-{id} anchor
+    def _img_replace(m):
+        alt, src = m.group(1), m.group(2)
+        img_tag = f'<img src="images/{src}" alt="{alt}" style="max-width:100%;">'
+        # SVG diagrams: extract id from {type}_{id}.svg pattern
+        svg_match = re.match(r"[a-z]+_(.+)\.svg$", src)
+        if svg_match:
+            diagram_id = svg_match.group(1)
+            return f'<div id="diagram-{diagram_id}" style="margin:16px 0;">{img_tag}</div>'
+        return img_tag
+    text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", _img_replace, text)
+    # Inline links [text](url)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
     return text
 
 
-def _source_badge(is_override: bool) -> str:
-    """Return an HTML badge indicating auto or manual source."""
-    if is_override:
-        return '<span class="tag tag-manual">manual</span>'
-    return '<span class="tag tag-auto">auto</span>'
+def _md_table_to_html(block: str) -> str:
+    """Convert a markdown pipe table block to an HTML <table>.
+
+    Returns empty string if the block is not a valid markdown table.
+    """
+    lines = [l.strip() for l in block.strip().splitlines() if l.strip()]
+    if len(lines) < 2:
+        return ""
+    # All lines must start with '|'
+    if not all(l.startswith("|") for l in lines):
+        return ""
+    # Second line must be the separator (contains only |, -, :, spaces)
+    if not re.match(r"^[\s|:\-]+$", lines[1]):
+        return ""
+
+    def split_row(line: str) -> list:
+        cells = line.strip("|").split("|")
+        return [c.strip() for c in cells]
+
+    headers = split_row(lines[0])
+    html = '<table class="md-table">\n<thead><tr>'
+    for h in headers:
+        html += f"<th>{md_inline(h)}</th>"
+    html += "</tr></thead>\n<tbody>\n"
+    for row_line in lines[2:]:
+        cells = split_row(row_line)
+        html += "<tr>"
+        for cell in cells:
+            html += f"<td>{md_inline(cell)}</td>"
+        html += "</tr>\n"
+    html += "</tbody></table>\n"
+    return html
+
+
+def md_block(block: str) -> str:
+    """Render a markdown block as HTML -- table, heading, list, code fence, or paragraph."""
+    block = block.strip()
+    if not block:
+        return ""
+
+    # Code fence (```...```)
+    if block.startswith("```"):
+        lines = block.split("\n")
+        lang_match = re.match(r"^```(\w+)?", lines[0])
+        lang = lang_match.group(1) if lang_match and lang_match.group(1) else "javascript"
+        # Find closing fence
+        code_lines = []
+        for line in lines[1:]:
+            if line.strip() == "```":
+                break
+            code_lines.append(line)
+        code_text = html_escape("\n".join(code_lines))
+        return f'<pre><code class="language-{lang}">{code_text}</code></pre>\n'
+
+    # Table
+    table_html = _md_table_to_html(block)
+    if table_html:
+        return table_html
+
+    lines = block.split("\n")
+
+    # Heading (###, ##, #)
+    if lines[0].startswith("#"):
+        heading_match = re.match(r"^(#{1,6})\s+(.*)", lines[0])
+        if heading_match:
+            level = len(heading_match.group(1))
+            text = heading_match.group(2)
+            html = f"<h{level}>{md_inline(text)}</h{level}>\n"
+            # If there are more lines after the heading, render them too
+            rest = "\n".join(lines[1:]).strip()
+            if rest:
+                html += md_block(rest)
+            return html
+
+    # Bullet list (lines starting with "- ")
+    if all(l.startswith("- ") or l.startswith("  ") or l == "" for l in lines) and any(l.startswith("- ") for l in lines):
+        html = "<ul>\n"
+        for line in lines:
+            line = line.strip()
+            if line.startswith("- "):
+                html += f"<li>{md_inline(line[2:])}</li>\n"
+            elif line and not line.startswith("- "):
+                # Continuation line -- append to previous li (simplified)
+                html += f"  {md_inline(line)}\n"
+        html += "</ul>\n"
+        return html
+
+    # Default: paragraph
+    return f"<p>{md_inline(block)}</p>\n"
+
+
+# ---------------------------------------------------------------------------
+# Display-type mapping for HTML preview (HISEScript-idiomatic types)
+# ---------------------------------------------------------------------------
+
+# Exact type replacements
+_DISPLAY_TYPE_MAP = {
+    "NotUndefined": "var",
+    "undefined": None,       # None = omit when used as return type
+    "void": None,
+    "int64": "int",
+    "Integer": "int",
+    "float": "double",
+    "Double": "double",
+    "Number": "double",
+    "DynamicObject *": "Object",
+    "MainController *": "var",
+    "NodeBase::Holder *": "var",
+    "JSON": "var",
+    "ScriptObject": "Object",
+}
+
+
+def display_type(raw_type: str):
+    """Map a raw C++ type to a HISEScript-idiomatic display type.
+
+    Returns None for void-like types (caller should omit the return type).
+    Returns the cleaned string for everything else.
+    """
+    t = raw_type.strip()
+
+    # Exact match first
+    if t in _DISPLAY_TYPE_MAP:
+        return _DISPLAY_TYPE_MAP[t]
+
+    # ScriptingObjects::X * -> X
+    if t.startswith("ScriptingObjects::"):
+        t = t.replace("ScriptingObjects::", "")
+        return t.rstrip(" *")
+
+    # Other pointer types: strip trailing " *"
+    if t.endswith(" *"):
+        return t[:-2]
+
+    # ScriptingSamplerSound *, ScriptingSynth * (no namespace prefix)
+    if t.endswith("*"):
+        return t.rstrip("*").rstrip()
+
+    return t
+
+
+def format_signature(class_name: str, method_name: str, m: dict) -> str:
+    """Build a HISEScript-idiomatic signature for HTML display.
+
+    Format: [ReturnType ]ClassName.methodName(Type param, ...)
+    Return type is omitted when void/undefined.
+    """
+    # Return type
+    ret = display_type(m.get("returnType", "undefined"))
+
+    # Parameters
+    param_strs = []
+    for p in m.get("parameters", []):
+        pt = display_type(p.get("type", "var"))
+        if pt is None:
+            pt = "var"
+        param_strs.append(f"{pt} {p.get('name', '')}")
+
+    sig = f"{class_name}.{method_name}({', '.join(param_strs)})"
+    if ret is not None:
+        sig = f"{ret} {sig}"
+    return sig
 
 
 def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
@@ -1319,12 +1985,16 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
         sidebar += f'<a class="sidebar-link" href="#{sid}">{label}</a>\n'
     if methods:
         sidebar += '<div class="sidebar-divider">Methods</div>\n'
-        for name in methods:
+        for name, m in methods.items():
+            # Skip disabled methods in web mode sidebar
+            if is_web and m.get("disabled"):
+                continue
             sidebar += f'<a class="sidebar-link sidebar-method" href="#{name}">{name}</a>\n'
     sidebar += '</div>\n'
 
     # --- Build all section IDs for IntersectionObserver ---
-    all_ids = [sid for sid, _ in sidebar_sections] + list(methods.keys())
+    active_methods = [n for n, m in methods.items() if not (is_web and m.get("disabled"))]
+    all_ids = [sid for sid, _ in sidebar_sections] + active_methods
     ids_js = ", ".join(f'"{i}"' for i in all_ids)
 
     # --- Main content ---
@@ -1341,12 +2011,11 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
     # Class-level prose
     if is_web:
         if desc.get("userDocs"):
-            badge = _source_badge(desc.get("userDocOverride", False))
-            main += f'<h2 id="overview">Overview {badge}</h2>\n'
+            main += '<h2 id="overview">Overview</h2>\n'
             for para in desc["userDocs"].split("\n\n"):
                 para = para.strip()
                 if para:
-                    main += f"<p>{md_inline(para)}</p>\n"
+                    main += md_block(para)
     else:
         # Review mode: show purpose + details
         if desc.get("purpose"):
@@ -1357,7 +2026,7 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             for para in desc["details"].split("\n\n"):
                 para = para.strip()
                 if para:
-                    main += f"<p>{md_inline(para)}</p>\n"
+                    main += md_block(para)
 
     # Code example (both modes)
     if desc.get("codeExample"):
@@ -1387,33 +2056,84 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
         main += '<h2 id="methods-heading">Methods</h2>\n'
 
         for name, m in methods.items():
-            rt_tag = ""
-            if m.get("realtimeSafe") is True:
-                rt_tag = '<span class="tag tag-true">realtime safe</span>'
-            elif m.get("realtimeSafe") is False:
-                rt_tag = '<span class="tag tag-false">not realtime safe</span>'
+            # Disabled methods: skip in web mode, annotate in review mode
+            if m.get("disabled"):
+                if is_web:
+                    continue
+                # Review mode: show a dimmed annotation
+                main += f'<div class="method-card method-disabled" id="{name}">\n'
+                reason = m.get("disabledReason", "")
+                detail = m.get("disabledDetail", "")
+                main += f'<h3 class="signature disabled">{html_escape(name)}</h3>\n'
+                main += f'<p class="disabled-label">Disabled: <strong>{html_escape(reason)}</strong></p>\n'
+                if detail:
+                    main += f'<p class="disabled-detail">{md_inline(detail)}</p>\n'
+                main += "</div>\n"
+                continue
+
+            sig = format_signature(class_name, name, m)
+
+            # Call scope LED
+            call_scope = m.get("callScope")
+            scope_class = {
+                "safe": "scope-safe",
+                "caution": "scope-caution",
+                "unsafe": "scope-unsafe",
+                "init": "scope-init",
+            }.get(call_scope, "scope-unknown")
+            scope_label = call_scope or "unknown"
+            scope_note = m.get("callScopeNote", "")
+            scope_tip = f"{scope_label}: {scope_note}" if scope_note else scope_label
+            scope_led = f' <span class="callscope-led {scope_class}" title="{html_escape(scope_tip)}"></span>'
 
             main += f'<div class="method-card" id="{name}">\n'
-            main += f"<h3>{name} {rt_tag}</h3>\n"
+            main += f'<h3 class="signature">{html_escape(sig)}{scope_led}</h3>\n'
 
-            if m.get("signature"):
-                main += f'<div class="signature">{html_escape(m["signature"])}</div>\n'
+            # Minimal example (right after signature, both modes)
+            if m.get("minimalExample"):
+                main += f'<p class="minimal-example"><code>{html_escape(m["minimalExample"])}</code></p>\n'
 
-            # Method description: web mode uses userDocs, review uses description
-            if is_web and m.get("userDocs"):
-                badge = _source_badge(m.get("userDocOverride", False))
-                main += f'<p>{md_inline(m["userDocs"])} {badge}</p>\n'
-            else:
-                main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
-
-            # Params (both modes)
+            # Params (right after signature, both modes)
             if m.get("parameters"):
                 main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
                 for p in m["parameters"]:
+                    pt = display_type(p.get("type", "var")) or "var"
                     main += (
                         f'<tr><td><code>{html_escape(p.get("name", ""))}</code></td>'
-                        f'<td><code>{html_escape(p.get("type", ""))}</code></td>'
+                        f'<td><code>{html_escape(pt)}</code></td>'
                         f'<td>{md_inline(p.get("description", ""))}</td></tr>\n'
+                    )
+                main += "</table>\n"
+
+            # Method description: web mode uses userDocs, review uses description
+            if is_web and m.get("userDocs"):
+                ud_text = m["userDocs"]
+                # Render multi-block userDocs (may contain tables)
+                for para in ud_text.split("\n\n"):
+                    para = para.strip()
+                    if para:
+                        main += md_block(para)
+            else:
+                main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
+
+            # Value Descriptions (review mode only -- userDocs covers this in web mode)
+            if not is_web and m.get("valueDescriptions"):
+                main += "<table><tr><th>Value</th><th>Description</th></tr>\n"
+                for vd in m["valueDescriptions"]:
+                    main += (
+                        f'<tr><td><code>{html_escape(vd.get("value", ""))}</code></td>'
+                        f'<td>{md_inline(vd.get("description", ""))}</td></tr>\n'
+                    )
+                main += "</table>\n"
+
+            # Callback Properties (review mode only -- userDocs covers this in web mode)
+            if not is_web and m.get("callbackProperties"):
+                main += "<table><tr><th>Property</th><th>Type</th><th>Description</th></tr>\n"
+                for cp in m["callbackProperties"]:
+                    main += (
+                        f'<tr><td><code>{html_escape(cp.get("property", ""))}</code></td>'
+                        f'<td><code>{html_escape(cp.get("type", ""))}</code></td>'
+                        f'<td>{md_inline(cp.get("description", ""))}</td></tr>\n'
                     )
                 main += "</table>\n"
 
@@ -1442,63 +2162,75 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
 <html><head>
 <meta charset="utf-8">
 <title>{class_name} ({mode_label}) - HISE Scripting API</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
 <style>
 * {{ box-sizing: border-box; }}
-body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; color: #e0e0e0; background: #1e1e1e; line-height: 1.6; }}
-code, pre, .signature {{ font-family: "JetBrains Mono", Consolas, "Fira Code", monospace; }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; margin: 0; padding: 0; color: #e6edf3; background: #0d1117; line-height: 1.5; font-size: 16px; }}
+code, pre, .signature {{ font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; }}
 
 /* Sidebar */
-.sidebar {{ position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: #1a1a1a; border-right: 1px solid #333; padding: 20px 0; overflow-y: auto; }}
-.sidebar-title {{ font-size: 1.1em; font-weight: 700; color: #fff; padding: 0 16px 12px; border-bottom: 1px solid #333; margin-bottom: 8px; }}
-.sidebar-link {{ display: block; padding: 4px 16px; color: #888; text-decoration: none; font-size: 0.85em; transition: color 0.15s, background 0.15s; }}
-.sidebar-link:hover {{ color: #ddd; background: #252525; }}
-.sidebar-link.active {{ color: #66d9ef; background: #252530; border-right: 2px solid #66d9ef; }}
-.sidebar-divider {{ font-size: 0.75em; color: #555; text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 16px 4px; }}
-.sidebar-method {{ font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.8em; }}
+.sidebar {{ position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: #010409; border-right: 1px solid #21262d; padding: 16px 0; overflow-y: auto; }}
+.sidebar-title {{ font-size: 1.1em; font-weight: 600; color: #e6edf3; padding: 0 16px 12px; border-bottom: 1px solid #21262d; margin-bottom: 8px; }}
+.sidebar-link {{ display: block; padding: 4px 16px; color: #8b949e; text-decoration: none; font-size: 0.85em; transition: color 0.15s, background 0.15s; }}
+.sidebar-link:hover {{ color: #e6edf3; background: #161b22; }}
+.sidebar-link.active {{ color: #58a6ff; background: #161b22; border-right: 2px solid #58a6ff; }}
+.sidebar-divider {{ font-size: 0.75em; color: #484f58; text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 16px 4px; }}
+.sidebar-method {{ font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 0.8em; }}
 
 /* Main content */
-.main {{ margin-left: 220px; max-width: 1040px; padding: 40px 40px 80px; }}
-h1 {{ color: #fff; border-bottom: 2px solid #444; padding-bottom: 8px; }}
-h2 {{ color: #ddd; margin-top: 40px; border-bottom: 1px solid #333; padding-bottom: 4px; }}
-h3 {{ color: #ccc; margin-top: 24px; }}
-.brief {{ font-size: 1.1em; color: #aaa; margin-bottom: 20px; }}
-.category {{ display: inline-block; background: #333; color: #aaa; padding: 2px 10px; border-radius: 4px; font-size: 0.5em; margin-left: 12px; vertical-align: middle; }}
-code {{ background: #2d2d2d; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; color: #e6db74; }}
-pre {{ background: #2d2d2d; padding: 16px; border-radius: 6px; overflow-x: auto; border: 1px solid #333; }}
-pre code {{ background: none; padding: 0; }}
+.main {{ margin-left: 220px; max-width: 1012px; padding: 32px 32px 80px; }}
+h1 {{ color: #e6edf3; font-weight: 600; font-size: 2em; border-bottom: 1px solid #21262d; padding-bottom: 0.3em; margin-bottom: 16px; }}
+h2 {{ color: #e6edf3; font-weight: 600; font-size: 1.5em; margin-top: 32px; border-bottom: 1px solid #21262d; padding-bottom: 0.3em; }}
+h3 {{ color: #e6edf3; font-weight: 600; font-size: 1.25em; margin-top: 24px; }}
+p {{ margin: 0 0 16px; }}
+.brief {{ font-size: 1.05em; color: #8b949e; margin-bottom: 16px; }}
+.category {{ display: inline-block; background: #21262d; color: #8b949e; padding: 2px 10px; border-radius: 20px; font-size: 0.5em; margin-left: 12px; vertical-align: middle; }}
+code {{ background: rgba(110,118,129,0.4); padding: 0.2em 0.4em; border-radius: 6px; font-size: 85%; color: #e6edf3; }}
+pre {{ background: #161b22; padding: 16px; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; font-size: 85%; line-height: 1.45; }}
+pre code {{ background: none; padding: 0; font-size: inherit; color: inherit; }}
 
-/* Signature emphasis */
-.signature {{ background: #151518; border-left: 3px solid #66d9ef; padding: 10px 16px; border-radius: 0 6px 6px 0; font-size: 1.05em; color: #66d9ef; margin: 8px 0 16px; }}
+/* Signature heading (h3.signature inside method cards) */
+h3.signature {{ font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 0.95em; font-weight: 500; color: #79c0ff; margin: 0 0 16px; }}
 
 /* Tables */
-table {{ border-collapse: collapse; width: 100%; margin: 12px 0; }}
-th, td {{ border: 1px solid #444; padding: 8px 12px; text-align: left; }}
-th {{ background: #2a2a2a; color: #aaa; font-weight: 600; }}
-td {{ color: #ccc; }}
-
-/* Tags */
-.tag {{ display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 0.75em; margin-left: 6px; }}
-.tag-true {{ background: #1a3a1a; color: #4ec94e; }}
-.tag-false {{ background: #3a1a1a; color: #c94e4e; }}
-.tag-auto {{ background: #1a2a3a; color: #5ba8d9; }}
-.tag-manual {{ background: #2a1a3a; color: #b07ad9; }}
+table {{ border-collapse: collapse; width: 100%; margin: 8px 0 16px; }}
+th, td {{ border: 1px solid #30363d; padding: 6px 13px; text-align: left; }}
+th {{ background: #161b22; color: #e6edf3; font-weight: 600; }}
+td {{ color: #c9d1d9; }}
+tr:nth-child(even) {{ background: rgba(110,118,129,0.1); }}
 
 /* Sidebar mode indicator */
-.sidebar-mode {{ font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 16px 8px; border-bottom: 1px solid #333; margin-bottom: 4px; }}
-.mode-review {{ color: #888; }}
-.mode-web {{ color: #5ba8d9; }}
+.sidebar-mode {{ font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 16px 8px; border-bottom: 1px solid #21262d; margin-bottom: 4px; }}
+.mode-review {{ color: #8b949e; }}
+.mode-web {{ color: #58a6ff; }}
 
 /* Callout boxes */
-.pitfall {{ background: #332b00; border-left: 3px solid #997a00; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; color: #ccc; }}
-.mistake {{ background: #2d1a1a; border-left: 3px solid #994444; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }}
+.pitfall {{ background: #272115; border-left: 3px solid #d29922; padding: 8px 16px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; color: #e6edf3; }}
+.mistake {{ background: #2d1117; border-left: 3px solid #f85149; padding: 8px 16px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; color: #e6edf3; }}
 
 /* Method cards */
-.method-card {{ margin: 24px 0; padding: 16px; background: #252525; border-radius: 8px; border: 1px solid #333; }}
+.method-card {{ margin: 24px 0; padding: 16px; background: #161b22; border-radius: 6px; border: 1px solid #30363d; }}
 
-a {{ color: #66d9ef; }}
+a {{ color: #58a6ff; text-decoration: none; }}
+a:hover {{ text-decoration: underline; }}
+
+/* Minimal example */
+.minimal-example {{ margin: 4px 0 12px; }}
+.minimal-example code {{ font-size: 0.85em; color: #7ee787; background: rgba(46,160,67,0.15); }}
+
+/* Call scope LED */
+.callscope-led {{ display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; vertical-align: middle; position: relative; top: -1px; }}
+.callscope-led.scope-safe {{ background: #4E8E35; box-shadow: 0 0 4px #4E8E35; }}
+.callscope-led.scope-caution {{ background: #FFBA00; box-shadow: 0 0 4px #FFBA00; }}
+.callscope-led.scope-unsafe {{ background: #BB3434; box-shadow: 0 0 4px #BB3434; }}
+.callscope-led.scope-init {{ background: #e6edf3; box-shadow: 0 0 4px #e6edf3; }}
+.callscope-led.scope-unknown {{ background: #8b949e; }}
+
+/* Disabled methods (review mode only) */
+.method-disabled {{ opacity: 0.5; }}
+h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
+.disabled-label {{ font-size: 0.85em; color: #d29922; margin: 4px 0; }}
+.disabled-detail {{ font-size: 0.85em; color: #8b949e; margin: 4px 0; }}
 </style>
 </head>
 <body>
@@ -1534,6 +2266,118 @@ a {{ color: #66d9ef; }}
     return html
 
 
+def generate_class_markdown(class_name: str, c: dict) -> str:
+    """Generate a clean markdown page for one class (web/userDocs mode only).
+
+    This produces the same content and ordering as the HTML web preview
+    but in plain markdown suitable for docs.hise.dev or other consumers.
+    Structured fields (valueDescriptions, callbackProperties) are omitted --
+    they exist for machine consumption only.
+    """
+    desc = c.get("description", {})
+    methods = c.get("methods", {})
+    lines = []
+
+    # Header
+    category = c.get("category", "")
+    lines.append(f"# {class_name}")
+    if category:
+        lines.append(f"*{category}*")
+    lines.append("")
+    if desc.get("brief"):
+        lines.append(desc["brief"])
+        lines.append("")
+
+    # Class-level userDocs
+    if desc.get("userDocs"):
+        lines.append("## Overview")
+        lines.append("")
+        lines.append(desc["userDocs"].strip())
+        lines.append("")
+
+    # Code example
+    if desc.get("codeExample"):
+        lines.append("## Usage Example")
+        lines.append("")
+        lines.append("```javascript")
+        lines.append(desc["codeExample"].strip())
+        lines.append("```")
+        lines.append("")
+
+    # Common mistakes
+    if c.get("commonMistakes"):
+        lines.append("## Common Mistakes")
+        lines.append("")
+        for m in c["commonMistakes"]:
+            lines.append(f"- **Wrong:** {m['wrong']}")
+            lines.append(f"  **Right:** {m['right']}")
+            lines.append(f"  *{m['explanation']}*")
+            lines.append("")
+
+    # Methods
+    if methods:
+        lines.append("## Methods")
+        lines.append("")
+
+        for name, m in methods.items():
+            # Skip disabled methods in clean markdown output
+            if m.get("disabled"):
+                continue
+
+            sig = format_signature(class_name, name, m)
+            lines.append(f"### `{sig}`")
+            lines.append("")
+
+            # Minimal example (right after signature)
+            if m.get("minimalExample"):
+                lines.append(f"`{m['minimalExample']}`")
+                lines.append("")
+
+            # Parameter table (right after signature)
+            if m.get("parameters"):
+                lines.append("| Parameter | Type | Description |")
+                lines.append("|-----------|------|-------------|")
+                for p in m["parameters"]:
+                    pt = display_type(p.get("type", "var")) or "var"
+                    lines.append(
+                        f"| `{p.get('name', '')}` "
+                        f"| `{pt}` "
+                        f"| {p.get('description', '')} |"
+                    )
+                lines.append("")
+
+            # userDocs prose (or fall back to base description)
+            if m.get("userDocs"):
+                lines.append(m["userDocs"].strip())
+                lines.append("")
+            elif m.get("description"):
+                lines.append(m["description"])
+                lines.append("")
+
+            # Pitfalls
+            for p in m.get("pitfalls", []):
+                lines.append(f"> **Warning:** {p.get('description', '')}")
+                lines.append("")
+
+            # Examples
+            for ex in m.get("examples", []):
+                lines.append("```javascript")
+                lines.append(ex.get("code", "").strip())
+                lines.append("```")
+                lines.append("")
+
+            # Cross references
+            if m.get("crossReferences"):
+                refs = ", ".join(m["crossReferences"])
+                lines.append(f"**See also:** {refs}")
+                lines.append("")
+
+            lines.append("---")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
 def run_preview(class_filter: str = None):
     """Generate HTML preview pages from api_reference.json."""
     json_path = OUTPUT_DIR / "api_reference.json"
@@ -1545,6 +2389,8 @@ def run_preview(class_filter: str = None):
         data = json.load(f)
 
     PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+    images_dir = PREVIEW_DIR / "images"
+    images_dir.mkdir(parents=True, exist_ok=True)
 
     classes = data.get("classes", {})
     if class_filter:
@@ -1591,6 +2437,27 @@ def run_preview(class_filter: str = None):
                 f.write(html_web)
             print(f"  {out_web}")
             page_count += 1
+
+            # Generate clean markdown (same content as web HTML)
+            md_text = generate_class_markdown(name, c)
+            out_md = PREVIEW_DIR / f"{name}.md"
+            with open(out_md, "w", encoding="utf-8") as f:
+                f.write(md_text)
+            print(f"  {out_md}")
+            page_count += 1
+
+        # Copy SVG diagrams to preview/images/ (manual overrides auto)
+        svg_count = 0
+        for phase4_dir in (PHASE4_MANUAL_DIR, PHASE4_AUTO_DIR):
+            svg_dir = phase4_dir / name
+            if svg_dir.is_dir():
+                for svg_file in svg_dir.glob("*.svg"):
+                    dest = images_dir / svg_file.name
+                    if not dest.exists() or phase4_dir == PHASE4_MANUAL_DIR:
+                        shutil.copy2(svg_file, dest)
+                        svg_count += 1
+        if svg_count:
+            print(f"  Copied {svg_count} SVG(s) to preview/images/")
 
     print(f"Preview: {page_count} page(s) generated.")
 

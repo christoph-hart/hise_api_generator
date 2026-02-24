@@ -75,7 +75,8 @@ All sections are optional -- only include sections you want to override.
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `String`
-**Realtime Safe:** true | false | null
+**Call Scope:** safe | caution | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
 
 **Description:**
 Manually written description overriding Phase 1.
@@ -102,6 +103,81 @@ All fields are optional -- only include fields you want to override.
 
 ---
 
+## Raw Docs Format
+
+Phase 3 also accepts unstructured markdown files from the existing docs.hise.dev documentation. When a method file does NOT contain structured markers (`**Signature:**`, `**Description:**`, etc.), the parser treats it as **raw docs** and splits it automatically.
+
+### Splitting Rules
+
+- **Prose** (everything outside code fences) -> `userDocs` field (tagged as manual-grade)
+- **Code fences** -> `examples` array entries (tagged `"source": "manual"`)
+- **Prose only** (no code fences) -> `userDocs` only, no `examples`
+- **Code fences only** (no prose) -> `examples` only, no `userDocs`
+
+The raw docs `userDocs` does NOT overwrite the Phase 1 technical `description` field. They serve different audiences: `description` is for LLMs/MCP consumers, `userDocs` is for human readers on the docs website.
+
+### Link Conversion
+
+Inline links to other API methods are converted to backtick references in the prose and extracted as `crossReferences`:
+
+| Input | Output in prose | crossReference added |
+|---|---|---|
+| `[Array.push](/scripting/scripting-api/array#push)` | `` `Array.push()` `` | `"Array.push"` |
+| `[Buffer](/scripting/scripting-api/buffer)` | `` `Buffer` `` | -- (class-level, no method) |
+| `[text](/scriptnode/...)` | stripped | -- (non-API link) |
+| `![](/images/...)` | stripped | -- (image reference) |
+
+Link-to-class/method name resolution uses a case-insensitive lookup against the known classes and methods from the base JSON.
+
+### Preserved Elements
+
+- **Blockquotes** (`> Note that...`) -- preserved as-is in `userDocs` (contain valuable caveats)
+- **Tables** (`| Column | ... |`) -- preserved as-is in `userDocs` (e.g. value mode tables)
+- **Bold/italic** and other inline formatting -- preserved
+
+### Stripped Elements
+
+- **`#### Example` headings** -- removed (the code block is extracted to `examples`)
+- **Image references** (`![alt](/path)`) -- removed entirely
+- **Non-API links** (anything not matching `/scripting/scripting-api/...`) -- link markup removed, link text preserved
+
+### userDocs Priority
+
+When Phase 3 raw docs provide a `userDocs` value, it follows this priority in the merge:
+
+**Phase 4 manual > Phase 3 raw docs > Phase 4 auto**
+
+This means:
+- Phase 3 raw docs `userDocs` overrides Phase 4 auto-generated prose
+- Phase 4 manual overrides everything (for human corrections)
+- Phase 4 auto is the fallback for methods without Phase 3 coverage
+
+### Example
+
+Given this raw docs file (`phase3/Array/clone.md`):
+
+```markdown
+If you assign an array reference to another variable, you're only setting the
+reference. Use [Array.clone()](/scripting/scripting-api/array#clone) to create
+an independent copy.
+
+> Note: this also works with JSON objects and component references.
+
+```javascript
+const arr1 = [0, 1];
+var arr2 = arr1;
+arr2[0] = 22;
+Console.print(trace(arr1)); // [22, 1]
+```
+```
+
+The parser produces:
+- `userDocs`: `"If you assign an array reference to another variable, you're only setting the reference. Use \`Array.clone()\` to create an independent copy.\n\n> Note: this also works with JSON objects and component references."`
+- `examples`: `[{ title: "clone", code: "const arr1 = ...", source: "manual" }]`
+- `crossReferences`: `["Array.clone"]`
+
+---
+
 ## Merge Rules
 
 ### Class-Level Fields (Last-Writer-Wins)
@@ -117,6 +193,7 @@ Phase 3 overrides all prior phases for these fields:
 | `description.codeExample` | Replaces Phase 1 value |
 | `description.alternatives` | Replaces Phase 1 value |
 | `description.relatedPreprocessors` | Replaces Phase 1 value |
+| `description.diagram` | Replaces Phase 1 value (entire object) |
 | `constants.*` | Last-writer-wins per constant |
 | `dynamicConstants.*` | Last-writer-wins per constant |
 
@@ -134,8 +211,11 @@ Phase 3 overrides all prior phases for these fields:
 | `signature` | Replaces all prior |
 | `returnType` | Replaces all prior |
 | `parameters` | Replaces all prior |
-| `realtimeSafe` | Replaces all prior |
+| `callScope` | Replaces all prior |
+| `callScopeNote` | Replaces all prior |
 | `examples` | **Entire array replaced** |
+| `userDocs` | See userDocs Priority above |
+| `diagram` | Replaces all prior (entire object) |
 
 ### Method-Level Fields (Merged Union)
 
@@ -171,7 +251,7 @@ All Phase 3 contributions are tagged with `"source": "manual"`:
 3. Run: python api_enrich.py merge
 ```
 
-### 2. Import Existing docs.hise.dev Documentation
+### 2. Import Existing docs.hise.dev Class Documentation
 
 ```
 1. Copy the markdown source from docs.hise.dev for the class
@@ -180,7 +260,17 @@ All Phase 3 contributions are tagged with `"source": "manual"`:
 3. Run: python api_enrich.py merge
 ```
 
-### 3. Override a Specific Method
+### 3. Import docs.hise.dev Method Pages (Raw Docs)
+
+```
+1. Copy the method page markdown from docs.hise.dev
+      → enrichment/phase3/ClassName/methodName.md
+2. No reformatting needed -- prose becomes userDocs, code blocks become examples
+3. Doc-site links are auto-converted to cross-references
+4. Run: python api_enrich.py merge
+```
+
+### 4. Override a Specific Method
 
 ```
 1. Create enrichment/phase3/ClassName/methodName.md

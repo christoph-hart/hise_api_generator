@@ -93,12 +93,17 @@ tools/api generator/
         "purpose": "2-5 sentences (required)",
         "details": "Full markdown technical reference (optional, null for simple classes)",
         "obtainedVia": "Engine.createBroadcaster(defaultValues) (required)",
-        "codeExample": "// basic usage (required)",
+        "minimalObjectToken": "bc",
+        "codeExample": "// basic usage (required, must create a variable named minimalObjectToken)",
         "alternatives": "Related classes (optional, null if N/A)",
         "relatedPreprocessors": ["DEFINE_NAME"],
         "userGuidePage": null,
-        "userDocs": "User-facing prose (from Phase 4, null if not yet authored)",
-        "userDocOverride": false
+        "userDocs": "User-facing prose (from Phase 3/4, null if not yet authored)",
+        "userDocOverride": false,
+        "diagram": {
+          "type": "topology",
+          "description": "Plain text description of the diagram for LLM consumption"
+        }
       },
       "category": "namespace|object|component|scriptnode",
       "constants": {
@@ -140,7 +145,9 @@ tools/api generator/
               "constraints": "Optional constraints (e.g., range, valid values)"
             }
           ],
-          "realtimeSafe": true,
+          "callScope": "safe",
+          "callScopeNote": null,
+          "minimalExample": "bc.addListener(obj, \"prop\", sync, fn);",
           "crossReferences": ["OtherClass.method"],
           "pitfalls": [
             { "description": "Something non-obvious", "source": "auto|project|manual" }
@@ -153,8 +160,12 @@ tools/api generator/
               "source": "auto|project|manual"
             }
           ],
-          "userDocs": "User-facing method prose (from Phase 4, null if not yet authored)",
-          "userDocOverride": false
+          "userDocs": "User-facing method prose (from Phase 3/4, null if not yet authored)",
+          "userDocOverride": false,
+          "diagram": {
+            "type": "timing",
+            "description": "Plain text description of what the diagram shows"
+          }
         }
       }
     }
@@ -174,12 +185,14 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | 2 | `purpose` | **Required** | Phase 1 | **Working context** -- return for the target class | 2-5 sentences. Concise technical summary -- what the class does, its role, key capabilities. |
 | 3 | `details` | Optional | Phase 1 | **Deep reference** -- return for deep dives | Full structured technical reference. Architecture, internal patterns, modes, inheritance-derived capabilities. Markdown with tables and headings. `null` for simple classes where `purpose` says everything. |
 | 4 | `obtainedVia` | **Required** | Phase 1 | **Working context** | How to get an instance in HiseScript (e.g., `Engine.createBroadcaster()`, global variable, `Content.addX()`). |
-| 5 | `codeExample` | **Required** | Phase 1 (overridable Phase 3) | **Working context** | Basic usage example showing the class in action. |
-| 6 | `alternatives` | Optional | Phase 1 | **Working context** | Related classes for similar tasks. `null` if N/A. |
-| 7 | `relatedPreprocessors` | Optional | Phase 1 | **Deep reference** | C++ `#define` macros that gate this class's availability (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`). Array of strings. |
-| 8 | `userGuidePage` | Deferred | -- | -- | Link to a user guide page. Not in MVP -- placeholder for later. |
-| 9 | `userDocs` | Optional | Phase 4 | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. |
-| 10 | `userDocOverride` | Auto | Phase 4 | -- | `true` if `userDocs` came from `phase4/manual/`, `false` if from `phase4/auto/` or absent. |
+| 5 | `minimalObjectToken` | **Required** | Phase 1 | **Working context** | Short variable name used in method `minimalExample` one-liners (e.g., `Button1`, `bc`). Empty string for namespace classes. The class `codeExample` MUST create a variable with this name. |
+| 6 | `codeExample` | **Required** | Phase 1 (overridable Phase 3) | **Working context** | Basic usage example showing the class in action. MUST create a variable named `minimalObjectToken` (for non-namespace classes). |
+| 7 | `alternatives` | Optional | Phase 1 | **Working context** | Related classes for similar tasks. `null` if N/A. |
+| 8 | `relatedPreprocessors` | Optional | Phase 1 | **Deep reference** | C++ `#define` macros that gate this class's availability (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`). Array of strings. |
+| 9 | `userGuidePage` | Deferred | -- | -- | Link to a user guide page. Not in MVP -- placeholder for later. |
+| 10 | `userDocs` | Optional | Phase 3/4 | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. Priority: Phase 4 manual > Phase 3 raw docs > Phase 4 auto. |
+| 11 | `userDocOverride` | Auto | Phase 3/4 | -- | `true` if `userDocs` came from `phase4/manual/` or Phase 3 raw docs, `false` if from `phase4/auto/` or absent. |
+| 12 | `diagram` | Optional | Phase 1 (overridable Phase 3) | **Deep reference** + **Web display** | Diagram specification for visual rendering. Contains `type` (timing\|topology\|sequence\|state) and `description` (plain text for LLM consumption). `null` if no diagram needed. SVGs rendered in Phase 4. |
 
 ---
 
@@ -191,12 +204,15 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `returnType` | String | **Required** | Return type using the VarTypes vocabulary. `undefined` for methods that return nothing. |
 | `description` | String | **Required** | What this method does. |
 | `parameters` | Array | **Required** | Array of parameter objects (see below). |
-| `realtimeSafe` | boolean\|null | **Required** | Can this method be called from the audio thread without risking allocations, locks, or unbounded work? `null` means unknown -- consumers should treat as "assume not safe." |
+| `callScope` | String\|null | **Required** | Where this method can be called. One of: `"safe"` (anywhere, including audio thread), `"caution"` (audio thread OK with caveats -- see `callScopeNote`), `"unsafe"` (runtime only, not audio thread), `"init"` (onInit only -- runtime call throws script error), `null` (unknown -- treat as unsafe). |
+| `callScopeNote` | String\|null | Optional | Explanation for `"caution"` tier or other non-obvious classification. Most important for `"caution"` methods where it provides concrete guidance. `null` when the classification is self-evident. |
+| `minimalExample` | String | **Required** | One-liner method call with realistic arguments (e.g., `Button1.setValue(0.5);`). Written with `{obj}` placeholder in source; merge script substitutes the class's `minimalObjectToken`. |
 | `crossReferences` | Array of Strings | Optional | Related methods in the format `ClassName.methodName`. |
 | `pitfalls` | Array | Optional | Non-obvious behaviors or gotchas. Each entry: `{ description, source }`. |
 | `examples` | Array | Optional | Code examples. Each entry: `{ title, code, context, source }`. |
-| `userDocs` | String\|null | Optional | User-facing method prose from Phase 4. `null` if not yet authored. |
-| `userDocOverride` | boolean | Auto | `true` if `userDocs` came from `phase4/manual/`, `false` otherwise. |
+| `userDocs` | String\|null | Optional | User-facing method prose from Phase 3/4. `null` if not yet authored. Priority: Phase 4 manual > Phase 3 raw docs > Phase 4 auto. |
+| `userDocOverride` | boolean | Auto | `true` if `userDocs` came from `phase4/manual/` or Phase 3 raw docs, `false` otherwise. |
+| `diagram` | Object\|null | Optional | Diagram specification: `{ type, description }`. `type` is one of `timing`, `topology`, `sequence`, `state`. `description` is plain text for LLM consumption. SVGs rendered in Phase 4. `null` if no diagram needed. |
 
 ### Parameter Object
 
@@ -208,16 +224,34 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `description` | String | **Required** | What this parameter does. |
 | `constraints` | String | Optional | Valid ranges, accepted values, format requirements. |
 
-### realtimeSafe Determination
+### callScope Determination
 
-The `realtimeSafe` flag is determined per-method by examining the C++ implementation for:
-- Memory allocations (heap allocations, `String` operations, `Array::add`)
-- Lock acquisitions (mutex, critical section, `ScopedLock`)
-- Unbounded iteration
-- I/O operations
-- Any operation that could block
+The `callScope` field classifies where a method can be called, from most restricted to most free:
 
-If the agent cannot determine this confidently from the source, set to `null`. Consumers should treat `null` as "assume not safe" -- conservative by default.
+**`"init"`** -- Can only be called during `onInit`. The runtime enforces this -- calling at runtime throws a script error via `interfaceCreationAllowed()` or equivalent guard. Thread safety is irrelevant. Examples: `setTableMode()`, `setTableColumns()`, `setTableCallback()`.
+
+**`"unsafe"`** -- Can be called at runtime but NOT from the audio thread. The method allocates on the heap, acquires locks, mutates ValueTree properties with change notifications, blocks, or does I/O. Call from timer callbacks, UI handlers, or other non-audio contexts. Examples: `sendData()`, component property setters via `set()`, `setLocalLookAndFeel()`.
+
+**`"caution"`** -- Can be called from the audio thread, but with caveats described in `callScopeNote`. Sub-categories:
+- **Performance-sensitive:** Lock-free but iterates over user-sized data. Fine for small collections; may need caching in tight loops. Example: `Array.indexOf()`.
+- **Backend-only allocation:** Allocates in HISE IDE builds (`USE_BACKEND=1`) but compiled out or becomes a no-op in exported plugins. Fine for debugging on the audio thread since the allocation won't exist in production. Example: `Console.print()`.
+- **Context-dependent:** Safe in some modes but not others. Example: `ScriptedViewport.setValue()` is safe in list mode but allocates in table MultiColumnMode.
+
+**`"safe"`** -- No allocations, no locks, no unbounded work, no context restrictions. Call anywhere: `onInit`, runtime callbacks, audio thread, MIDI callbacks. Examples: `Math.max()`, simple cached getters, `GlobalCable.getValue()`.
+
+**`null` (unknown)** -- Cannot be determined from the source code. Consumers should treat as `"unsafe"`.
+
+#### Classification Rules
+
+1. **Init-only enforcement:** If the C++ implementation checks `interfaceCreationAllowed()` or equivalent and throws a script error at runtime, classify as `"init"` regardless of what the method does internally.
+
+2. **ValueTree property mutation:** Methods that call ValueTree set/change with notifications are `"unsafe"` -- even without explicit heap allocation, the notification chain involves string lookups, var comparisons, and potential undo-manager operations.
+
+3. **Dispatch pattern:** When a method's own code path is lock-free and allocation-free but it dispatches/broadcasts to external targets, listeners, or callbacks, classify based on the method's own behavior. Target/listener behavior is the target's responsibility.
+
+4. **USE_BACKEND exception:** Methods that allocate only in backend builds (`USE_BACKEND=1`) but are compiled out in exported plugins are `"caution"`, not `"unsafe"`. The allocation won't exist in production code.
+
+5. **Subclass override:** If a subclass overrides a base method with different callScope characteristics, the subclass Phase 1 specifies the overridden value. The merge picks up the subclass value (last-writer-wins).
 
 ### Example Synthesis Heuristics
 
@@ -293,7 +327,11 @@ When multiple phases provide data for the same field, these rules determine the 
 - `description.codeExample`
 - `description.alternatives`
 - `description.relatedPreprocessors`
+- `description.minimalObjectToken`
+- `description.diagram` (entire object replaced)
 - `methods.*.description`
+- `methods.*.minimalExample`
+- `methods.*.diagram` (entire object replaced)
 - `methods.*.examples` (entire array replaced)
 - `constants.*` (per constant, entire entry replaced)
 - `dynamicConstants.*` (per constant, entire entry replaced)
@@ -347,7 +385,7 @@ All enrichment data is tagged with its origin:
 
 - Constants -- requires reading constructor code (Phase 1)
 - Forced parameter types -- requires reading `ADD_TYPED_API_METHOD_N` macros (Phase 1)
-- `realtimeSafe` -- requires analyzing method implementations (Phase 1)
+- `callScope` -- requires analyzing method implementations (Phase 1)
 - Examples -- requires synthesis (Phase 1)
 - `details` -- requires deep C++ source analysis (Phase 1)
 
@@ -495,7 +533,8 @@ After the sub-agent returns, the main agent processes methods one at a time.
    - `returnType` -- inferred from the implementation
    - `description` -- what the method does
    - `parameters` -- name, type (forced or inferred), forcedType flag, description, constraints
-   - `realtimeSafe` -- boolean or null, from implementation analysis
+   - `callScope` -- string tier or null, from implementation analysis
+   - `callScopeNote` -- explanation string for non-obvious classifications (especially `"caution"`)
    - `pitfalls` -- non-obvious behaviors (if any)
    - `examples` -- synthesized code examples (apply the heuristics above)
    - `crossReferences` -- related methods (if obvious at this point; more added in post-process)
@@ -516,7 +555,8 @@ Each method entry in `methods.md` uses this markdown format:
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `Integer`
-**Realtime Safe:** true | false | null
+**Call Scope:** safe | caution | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
 
 **Description:**
 What this method does.
@@ -611,20 +651,28 @@ The folder structure mirrors Phase 1. Using `Readme.md` for class-level override
 
 ### Content
 
-Manually authored or edited markdown. Common workflows:
+Manually authored or edited markdown. Supports two formats:
+
+1. **Structured format** (same as Phase 1): uses `**Signature:**`, `**Description:**`, etc. Overrides specific fields.
+2. **Raw docs format** (from existing docs.hise.dev): loose prose + code blocks. Automatically split into `userDocs` (prose) and `examples` (code blocks). Doc-site links converted to cross-references. Images stripped.
+
+Common workflows:
 
 - Copy `phase1/ClassName/Readme.md`, edit for clarity, place in `phase3/ClassName/Readme.md`
 - Pull existing docs.hise.dev markdown for a class, place as `phase3/ClassName/Readme.md`
+- Pull existing docs.hise.dev method page, drop as `phase3/ClassName/methodName.md` -- prose becomes `userDocs`, code blocks become `examples`
 - Write a targeted method override for a specific method
 
 ### Merge Rules
 
-- `description` sub-fields (`brief`, `purpose`, `details`, `obtainedVia`, `codeExample`): last-writer-wins (Phase 3 overrides all prior phases)
+- `description` sub-fields (`brief`, `purpose`, `details`, `obtainedVia`, `codeExample`, `diagram`): last-writer-wins (Phase 3 overrides all prior phases)
 - `examples`: last-writer-wins (Phase 3 replaces entirely)
+- `userDocs`: Phase 3 raw docs format extracts `userDocs` from prose. Priority: Phase 4 manual > Phase 3 > Phase 4 auto.
 - `pitfalls`: merged union, each entry tagged `"source": "manual"`
 - `commonMistakes`: merged union, each entry tagged `"source": "manual"`
-- `crossReferences`: merged union, deduplicated
+- `crossReferences`: merged union, deduplicated (raw docs link conversion adds entries)
 - `constants` / `dynamicConstants`: last-writer-wins per constant
+- `diagram`: last-writer-wins (entire object replaced)
 
 Detailed format spec: `scripting-api-enrichment/phase3.md`
 
@@ -632,7 +680,7 @@ Detailed format spec: `scripting-api-enrichment/phase3.md`
 
 ## Phase 4: User-Facing Documentation Authoring
 
-Phase 4 transforms the raw C++ analysis (Phases 1-3) into scripter-friendly documentation. It runs after merge, one class at a time, because the authoring agent benefits from seeing the complete merged API surface before writing user-facing prose.
+Phase 4 transforms the raw C++ analysis (Phases 1-3) into scripter-friendly documentation. It runs after merge, one class at a time, because the authoring agent benefits from seeing the complete merged API surface before writing user-facing prose. Phase 4 also renders SVG diagrams for methods/classes that have a `diagram` specification.
 
 Detailed authoring guidelines: `scripting-api-enrichment/phase4.md`
 
@@ -641,7 +689,7 @@ Detailed authoring guidelines: `scripting-api-enrichment/phase4.md`
 Two-tier directory structure with manual overrides winning:
 
 ```
-enrichment/phase4/auto/ClassName/     # LLM-generated userDocs
+enrichment/phase4/auto/ClassName/     # LLM-generated userDocs + auto SVGs
 enrichment/phase4/manual/ClassName/   # Human-edited overrides (wins over auto)
 ```
 
@@ -649,18 +697,20 @@ enrichment/phase4/manual/ClassName/   # Human-edited overrides (wins over auto)
 
 - **Class-level:** `Readme.md` -- starts with `# ClassName` heading, followed by prose paragraphs.
 - **Method-level:** `methodName.md` -- bare prose, no heading. File stem must match the method name (case-insensitive matching is applied during merge).
+- **Diagrams:** `methodName.svg` or `Readme.svg` -- SVG diagram rendered from the `diagram` field. Manual SVGs in `phase4/manual/` override auto-generated ones.
 
-### New JSON Fields
+### JSON Fields
 
 | Field | Level | Type | Description |
 |-------|-------|------|-------------|
 | `userDocs` | Class + Method | String\|null | Flat prose string for end-user display. `null` if not yet authored. |
-| `userDocOverride` | Class + Method | boolean | `true` if sourced from `phase4/manual/`, `false` if from `phase4/auto/` or absent. |
+| `userDocOverride` | Class + Method | boolean | `true` if sourced from `phase4/manual/` or Phase 3 raw docs, `false` if from `phase4/auto/` or absent. |
 
 ### Merge Rules
 
+- For `userDocs`: Phase 4 manual > Phase 3 raw docs > Phase 4 auto
 - `phase4/manual/` wins over `phase4/auto/` (per file, case-insensitive filename matching)
-- Phase 4 does NOT override any Phase 1-3 fields -- it adds the new `userDocs` / `userDocOverride` fields only
+- Phase 4 does NOT override any Phase 1-3 fields -- it adds `userDocs` / `userDocOverride` and renders SVG diagrams
 
 ### Preview Output
 

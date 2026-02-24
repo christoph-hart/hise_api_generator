@@ -23,7 +23,8 @@ Each method override file uses the same format as a single method entry in Phase
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `String`
-**Realtime Safe:** true | false | null
+**Call Scope:** safe | caution | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
 
 **Description:**
 What this method does (if overriding Phase 1's description).
@@ -63,7 +64,8 @@ When Phase 2 data exists for a method:
 | `signature` | Last-writer-wins | -- |
 | `returnType` | Last-writer-wins | -- |
 | `parameters` | Last-writer-wins | -- |
-| `realtimeSafe` | Last-writer-wins | -- |
+| `callScope` | Last-writer-wins | -- |
+| `callScopeNote` | Last-writer-wins | -- |
 | `examples` | **Last-writer-wins** (entire array replaced) | `"project"` |
 | `pitfalls` | **Merged union** (added to Phase 1 pitfalls) | `"project"` |
 | `crossReferences` | **Merged union** (deduplicated) | -- |
