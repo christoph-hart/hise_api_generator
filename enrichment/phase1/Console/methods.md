@@ -4,7 +4,8 @@
 
 **Signature:** `undefined print(NotUndefined x)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Prints a value to the HISE console. The value is converted to a string representation using `.toString()`. In the HISE IDE (backend builds), the value is also shown as an inline debug value in the code editor at the calling line. In exported plugins (frontend builds), this falls back to a debug-only `DBG()` macro, which is stripped in release builds -- effectively a no-op.
@@ -33,7 +34,7 @@ Console.print({"key": "value"});
 
 **Signature:** `undefined startBenchmark()`
 **Return Type:** `undefined`
-**Realtime Safe:** true
+**Call Scope:** safe
 
 **Description:**
 Starts a high-resolution benchmark timer by recording the current timestamp. Call `Console.stopBenchmark()` to end the measurement and print the elapsed time in milliseconds to the console. Only one benchmark can be active at a time per Console instance; calling `startBenchmark()` again before stopping overwrites the previous start time.
@@ -49,7 +50,8 @@ None.
 
 **Signature:** `undefined stopBenchmark()`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Stops the benchmark timer started by `Console.startBenchmark()` and prints the elapsed time in milliseconds (to 3 decimal places) to the console. Reports a script error if `startBenchmark()` was not called first. Only produces output in the HISE IDE (backend builds).
@@ -79,7 +81,8 @@ Console.stopBenchmark(); // Prints e.g. "Benchmark Result: 1.234 ms"
 
 **Signature:** `undefined stop(Integer condition)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Suspends execution in HISE IDE; no-op in exported plugins
 
 **Description:**
 A cooperative breakpoint that halts script execution when `condition` is true. On the scripting thread, sample-loading thread, or audio thread, it suspends execution using the `JavascriptThreadPool::ScopedSleeper` mechanism, rebuilds debug information, and waits until the user resumes from the HISE IDE. On the message (UI) thread, it reports a script error instead of suspending because blocking the UI thread would freeze the application. The timeout is automatically extended by the duration of the suspension so the script does not time out while paused.
@@ -111,7 +114,8 @@ Console.stop(true);
 
 **Signature:** `undefined blink()`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Sends a visual blink (flash) message to the HISE code editor at the line where this call is located. Useful as a lightweight visual indicator that a particular code path has been reached, without halting execution. Only works in the HISE IDE when the new code editor is enabled (`HISE_USE_NEW_CODE_EDITOR`). The blink is dispatched asynchronously to the message thread.
@@ -127,7 +131,8 @@ None.
 
 **Signature:** `undefined clear()`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Clears all output in the HISE console.
@@ -140,7 +145,8 @@ None.
 
 **Signature:** `undefined assertTrue(NotUndefined condition)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error if `condition` evaluates to `false`. The value is cast to `bool`, so any falsy value (0, `false`, empty string, undefined) will trigger the assertion. The error message is a generic "Assertion failure: condition is false".
@@ -159,7 +165,8 @@ Throws a script error if `condition` evaluates to `false`. The value is cast to 
 
 **Signature:** `undefined assertEqual(NotUndefined v1, NotUndefined v2)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error if `v1` and `v2` are not equal. Uses the generic `!=` operator for comparison, so the values are compared by value for primitives and by reference for objects. The error message includes the string representation of both values.
@@ -185,7 +192,8 @@ Console.assertEqual(42, result); // Error if result != 42
 
 **Signature:** `undefined assertIsDefined(NotUndefined value)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error if `value` is `undefined` or void. This is useful for validating that a variable has been properly initialised or that a function returned a meaningful result.
@@ -203,7 +211,8 @@ Throws a script error if `value` is `undefined` or void. This is useful for vali
 
 **Signature:** `undefined assertIsObjectOrArray(NotUndefined value)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error if `value` is not a JSON object or an array. The error message includes the actual type of the value. Useful for validating function parameters that expect structured data.
@@ -222,7 +231,8 @@ Throws a script error if `value` is not a JSON object or an array. The error mes
 
 **Signature:** `undefined assertNoString(NotUndefined value)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error if `value` is a string. The error message includes the string value itself. This is typically used to catch accidental string-to-number coercion bugs, e.g. when a parameter that should be numeric has been inadvertently passed as a string.
@@ -244,7 +254,8 @@ Throws a script error if `value` is a string. The error message includes the str
 
 **Signature:** `undefined assertWithMessage(Integer condition, String errorMessage)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error with the provided `errorMessage` if `condition` is false. This is the most flexible assertion method, allowing you to specify exactly what went wrong.
@@ -268,7 +279,8 @@ Console.assertWithMessage(index >= 0, "Index must not be negative, got: " + inde
 
 **Signature:** `undefined assertLegalNumber(NotUndefined value)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Throws a script error if `value` is not a finite, legal number. This performs two checks: first it verifies the value is numeric (not a string, object, array, etc.), then it checks that the numeric value is not `NaN` or infinity using HISE's `FloatSanitizers`. The error message includes the type and/or value on failure.
@@ -293,7 +305,8 @@ Console.assertLegalNumber(gain); // Catches NaN, infinity, or non-numeric types
 
 **Signature:** `undefined breakInDebugger()`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Triggers jassertfalse in HISE IDE; stripped in release builds
 
 **Description:**
 Triggers a native C++ assertion (`jassertfalse`) which will break into the attached C++ debugger (e.g. Visual Studio or Xcode). This is only useful for HISE developers who are running HISE from a C++ IDE with a debugger attached. For normal HISEScript debugging, use `Console.stop()` instead.
@@ -312,7 +325,8 @@ None.
 
 **Signature:** `undefined startSampling(String sessionId)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Starts a data sampling session with the given identifier. Once a session is active, subsequent calls to `Console.sample()` will record data snapshots into the session. The session is managed by the profiling toolkit's `DebugSession` system. If successful, an inline debug value is shown in the code editor at the calling line. Requires `HISE_INCLUDE_PROFILING_TOOLKIT` to be enabled; otherwise this is a no-op.
@@ -339,7 +353,8 @@ Console.sample("state", myStateObject);
 
 **Signature:** `undefined testCallback(ScriptObject obj, String callbackId, NotUndefined argList)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Synchronously invokes a named callback on a UI component for automated testing. The `obj` parameter must be a reference to a ScriptComponent (e.g. a button, slider, or panel). The `callbackId` identifies which callback to trigger (e.g. the paint routine or a custom callback). The `argList` can be a single value or an array of arguments to pass to the callback. Diagnostic messages (`BEGIN_CALLBACK_TEST`, `END_CALLBACK_TEST`, `CALLBACK_ARGS`) are printed to the console. Reports a script error if the callback execution fails.
@@ -369,7 +384,8 @@ Console.testCallback(myButton, "action", 1);
 
 **Signature:** `undefined sample(String label, NotUndefined dataToSample)`
 **Return Type:** `undefined`
-**Realtime Safe:** false
+**Call Scope:** caution
+**Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
 Records a labelled data snapshot into the currently active sampling session. The data is cloned at the point of capture, so subsequent mutations do not affect the recorded value. If no session has been started via `Console.startSampling()`, a one-time warning is printed to the console and the call is skipped. An inline debug value is shown in the code editor at the calling line when a session is active. Requires `HISE_INCLUDE_PROFILING_TOOLKIT` to be enabled; otherwise this is a no-op.

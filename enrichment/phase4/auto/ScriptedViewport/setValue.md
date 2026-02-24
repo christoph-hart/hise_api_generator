@@ -1,0 +1,1 @@
+Sets the component's value. In list mode, pass a row index to select that row. In table mode with `MultiColumnMode`, pass a `[column, row]` array to select a specific cell. In plain viewport mode, the value is stored and can be retrieved with `getValue()`.

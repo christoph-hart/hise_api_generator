@@ -1,0 +1,1 @@
+Sets CSS class selectors on this component for use with a stylesheet-based look-and-feel. The component's own type class is automatically prepended, so you only need to add your custom classes (e.g. `".active .highlighted"`).

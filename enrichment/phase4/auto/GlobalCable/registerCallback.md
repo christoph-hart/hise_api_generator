@@ -1,0 +1,3 @@
+Registers a function that fires whenever a value is sent through the cable. The callback receives a single argument: the value converted through this reference's local input range. Pass `SyncNotification` for synchronous execution (fires immediately on the calling thread, which may be the audio thread -- the function must be an `inline function`) or `AsyncNotification` for asynchronous execution on the UI thread. Each call adds a new callback without replacing existing ones; use `deregisterCallback()` to remove one. [See: Sync vs Async Callback Threading](#diagram-callback-threading)
+
+> When using synchronous mode, if the function is not realtime-safe, the registration silently succeeds but the callback never fires.

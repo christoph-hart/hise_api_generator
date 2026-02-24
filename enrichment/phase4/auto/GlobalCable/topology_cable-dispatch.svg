@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="520" viewBox="0 0 940 520">
+  <defs>
+    <marker id="arrow-in" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#7E60B1"/>
+    </marker>
+    <marker id="arrow-out" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#3F6E6E"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="940" height="520" fill="#333333"/>
+
+  <!-- Title -->
+  <text x="470" y="30" text-anchor="middle" font-family="Lato, sans-serif" font-size="16" font-weight="bold" fill="#CCCCCC">Cable Value Dispatch Flow</text>
+
+  <!-- Source column zone -->
+  <rect x="12" y="48" width="260" height="370" rx="6" fill="#7E60B1" fill-opacity="0.04" stroke="#7E60B1" stroke-opacity="0.2" stroke-width="1"/>
+  <text x="142" y="68" text-anchor="middle" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#7E60B1" opacity="0.8">Sources</text>
+
+  <!-- Source boxes -->
+  <rect x="28" y="82" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="142" y="104" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#CCCCCC">setValue / setValueNormalised</text>
+
+  <rect x="28" y="128" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="142" y="150" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#CCCCCC">scriptnode global_cable</text>
+
+  <rect x="28" y="174" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="142" y="196" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">ScriptComponent (GlobalCable)</text>
+
+  <rect x="28" y="220" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="142" y="242" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">Global Modulator</text>
+
+  <!-- Hub zone -->
+  <rect x="310" y="100" width="320" height="260" rx="6" fill="#90FFB1" fill-opacity="0.03" stroke="#90FFB1" stroke-opacity="0.15" stroke-width="1"/>
+
+  <!-- Hub box -->
+  <rect x="340" y="170" width="260" height="60" rx="6" fill="#282828" stroke="#90FFB1" stroke-width="2"/>
+  <text x="470" y="196" text-anchor="middle" font-family="Lato, sans-serif" font-size="15" font-weight="bold" fill="#90FFB1">GlobalCable</text>
+  <text x="470" y="218" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#808080">lastValue (0..1, clamped)</text>
+
+  <!-- Data channel annotation -->
+  <rect x="358" y="252" width="224" height="28" rx="4" fill="#222222" stroke="#444444" stroke-width="1"/>
+  <text x="470" y="271" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#808080">lastData (serialised, via sendData)</text>
+
+  <!-- Skip-self annotation -->
+  <rect x="358" y="300" width="224" height="24" rx="4" fill="#BB3434" fill-opacity="0.08" stroke="#BB3434" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="470" y="316" text-anchor="middle" font-family="Lato, sans-serif" font-size="10" fill="#BB3434">Source skipped during fan-out</text>
+
+  <!-- Target column zone -->
+  <rect x="668" y="48" width="260" height="420" rx="6" fill="#3F6E6E" fill-opacity="0.04" stroke="#3F6E6E" stroke-opacity="0.2" stroke-width="1"/>
+  <text x="798" y="68" text-anchor="middle" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#3F6E6E" opacity="0.8">Targets</text>
+
+  <!-- Target boxes -->
+  <rect x="684" y="82" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="100" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">Sync Callback</text>
+  <text x="798" y="112" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">inputRange-converted value</text>
+
+  <rect x="684" y="128" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="146" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">Async Callback</text>
+  <text x="798" y="158" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">coalesced, UI thread</text>
+
+  <rect x="684" y="174" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="196" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">Data Callback</text>
+  <text x="798" y="208" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">data channel only</text>
+
+  <rect x="684" y="220" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="238" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">Macro Control</text>
+  <text x="798" y="250" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">0..1 -> 0..127</text>
+
+  <rect x="684" y="266" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="284" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">Module Parameter</text>
+  <text x="798" y="296" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">target range + smoothing</text>
+
+  <rect x="684" y="312" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="330" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">scriptnode global_cable</text>
+  <text x="798" y="342" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">raw normalised</text>
+
+  <rect x="684" y="358" width="228" height="34" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <text x="798" y="376" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">ScriptComponent (GlobalCable)</text>
+  <text x="798" y="388" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="9" fill="#808080">raw normalised</text>
+
+  <!-- Source -> Hub connections -->
+  <line x1="256" y1="99" x2="340" y2="185" stroke="#7E60B1" stroke-width="1.5" marker-end="url(#arrow-in)"/>
+  <line x1="256" y1="145" x2="340" y2="190" stroke="#7E60B1" stroke-width="1.5" marker-end="url(#arrow-in)"/>
+  <line x1="256" y1="191" x2="340" y2="196" stroke="#7E60B1" stroke-width="1.5" marker-end="url(#arrow-in)"/>
+  <line x1="256" y1="237" x2="340" y2="205" stroke="#7E60B1" stroke-width="1.5" marker-end="url(#arrow-in)"/>
+
+  <!-- Hub -> Target connections -->
+  <line x1="600" y1="185" x2="684" y2="99" stroke="#3F6E6E" stroke-width="1.5" marker-end="url(#arrow-out)"/>
+  <line x1="600" y1="188" x2="684" y2="145" stroke="#3F6E6E" stroke-width="1.5" marker-end="url(#arrow-out)"/>
+  <line x1="600" y1="191" x2="684" y2="191" stroke="#3F6E6E" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow-out)"/>
+  <line x1="600" y1="196" x2="684" y2="237" stroke="#3F6E6E" stroke-width="1.5" marker-end="url(#arrow-out)"/>
+  <line x1="600" y1="200" x2="684" y2="283" stroke="#3F6E6E" stroke-width="1.5" marker-end="url(#arrow-out)"/>
+  <line x1="600" y1="205" x2="684" y2="329" stroke="#3F6E6E" stroke-width="1.5" marker-end="url(#arrow-out)"/>
+  <line x1="600" y1="210" x2="684" y2="375" stroke="#3F6E6E" stroke-width="1.5" marker-end="url(#arrow-out)"/>
+
+  <!-- Legend -->
+  <rect x="12" y="480" width="916" height="30" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <!-- Source swatch -->
+  <rect x="28" y="489" width="12" height="12" rx="2" fill="#7E60B1" fill-opacity="0.4" stroke="#7E60B1" stroke-opacity="0.6" stroke-width="0.5"/>
+  <text x="48" y="499" font-family="Lato, sans-serif" font-size="11" fill="#808080">Source (sends value)</text>
+  <!-- Target swatch -->
+  <rect x="200" y="489" width="12" height="12" rx="2" fill="#3F6E6E" fill-opacity="0.4" stroke="#3F6E6E" stroke-opacity="0.6" stroke-width="0.5"/>
+  <text x="220" y="499" font-family="Lato, sans-serif" font-size="11" fill="#808080">Target (receives value)</text>
+  <!-- Dashed line -->
+  <line x1="400" y1="495" x2="432" y2="495" stroke="#3F6E6E" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="442" y="499" font-family="Lato, sans-serif" font-size="11" fill="#808080">Data channel (separate from value)</text>
+  <!-- Skip-self swatch -->
+  <rect x="680" y="489" width="12" height="12" rx="2" fill="#BB3434" fill-opacity="0.2" stroke="#BB3434" stroke-opacity="0.4" stroke-width="0.5"/>
+  <text x="700" y="499" font-family="Lato, sans-serif" font-size="11" fill="#808080">Feedback prevention</text>
+</svg>

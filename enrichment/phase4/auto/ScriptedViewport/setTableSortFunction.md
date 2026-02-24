@@ -1,0 +1,1 @@
+Sets a custom comparator for column sorting (requires `"Sortable": true` in the table metadata). The function receives two cell values from the sort column and should return a negative number, zero, or a positive number to indicate ordering. Pass a non-function to revert to the default alphabetic/numeric sort.

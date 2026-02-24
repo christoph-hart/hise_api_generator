@@ -1,0 +1,1 @@
+Configures an input range with a skew derived from a mid-point value. The `midPoint` specifies which value in your range maps to 0.5 in normalised space, creating a logarithmic curve. This is particularly useful for frequency or gain controls where perceptual linearity matters -- for example, setting a range of 20--20000 Hz with a mid-point of 1000 Hz.

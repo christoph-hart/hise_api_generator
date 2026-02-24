@@ -1,0 +1,1 @@
+Connects the cable to a modulator inside a GlobalModulatorContainer so that the modulator's output drives the cable value. The modulator must be a child of a GlobalModulatorContainer -- modulators placed elsewhere are silently ignored. Pass `false` as the second argument to disconnect.

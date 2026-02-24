@@ -1,0 +1,1 @@
+Registers a callback that fires when a consumed key is pressed while this component has focus. The callback receives an event object with key information (`keyCode`, `description`, `shift`, `cmd`, `alt`) for key events, or focus change information (`hasFocus`) when focus changes. Call `setConsumedKeyPresses()` first to define which keys to intercept.

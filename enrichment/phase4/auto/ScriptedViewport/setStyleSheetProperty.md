@@ -1,0 +1,1 @@
+Sets a CSS variable on this component that can be referenced from a stylesheet. The `type` parameter controls how the value is converted: `"color"` for colour integers, `"%"` for percentages (0.5 becomes `"50%"`), `"px"` for pixels, or `""` for no conversion.

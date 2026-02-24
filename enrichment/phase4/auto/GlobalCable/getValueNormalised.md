@@ -1,0 +1,1 @@
+Returns the raw internal cable value in the 0.0--1.0 range, bypassing the local input range entirely. Useful when you need the normalised position regardless of what range this particular cable reference has configured.

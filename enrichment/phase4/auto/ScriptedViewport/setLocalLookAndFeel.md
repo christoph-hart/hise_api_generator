@@ -1,0 +1,1 @@
+Attaches a scripted look-and-feel object to customize the visual appearance of this component. In table mode, the relevant LAF functions are `drawTableRowBackground`, `drawTableCell`, `drawTableHeaderBackground`, and `drawTableHeaderColumn`. The `drawScrollbar` function applies in all modes. Pass `false` to clear the look-and-feel.

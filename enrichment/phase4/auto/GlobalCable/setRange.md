@@ -1,0 +1,1 @@
+Configures a linear input range (min to max) for this cable reference. Once set, `setValue()` and `getValue()` convert between your user-facing range and the internal 0..1 space, and value callbacks receive range-converted values. This does not affect the "Normalised" method variants.

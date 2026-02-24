@@ -1,0 +1,1 @@
+Registers a function that fires when data is sent through the cable via `sendData()`. The callback receives one argument: the deserialised data (JSON, string, array, etc.). Data callbacks operate on the data channel, which is independent of the value channel. A cable reference's own data callback does not fire when that same reference calls `sendData()`, preventing echo loops.

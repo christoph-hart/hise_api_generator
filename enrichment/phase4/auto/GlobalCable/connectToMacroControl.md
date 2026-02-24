@@ -1,0 +1,1 @@
+Connects the cable to a macro control slot (0--7) so that cable value changes are forwarded to the macro. The cable's normalised 0..1 value is scaled to the macro's 0--127 range automatically. Set `filterRepetitions` to `true` to suppress consecutive identical values. Pass a `macroIndex` of -1 to remove all macro connections from this cable.

@@ -1,0 +1,1 @@
+Registers an inline function that receives all user interactions with the table. The callback gets a single JSON argument with `Type` (e.g. `"Click"`, `"DoubleClick"`, `"Selection"`, `"Slider"`, `"Button"`, `"ComboBox"`), `rowIndex`, `columnID`, and `value` properties. Must be called during `onInit` after `setTableMode()`. [See: Table Mode Setup Sequence](#diagram-table-setup)

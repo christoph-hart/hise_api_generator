@@ -1,0 +1,1 @@
+Sends a raw 0.0--1.0 value directly to all cable targets, skipping the local input range conversion. Values outside 0..1 are clamped. Use this when you already have a normalised value and want to avoid double-conversion.

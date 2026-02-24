@@ -1,0 +1,1 @@
+Assigns a custom inline function as the control callback for this component, replacing the default `onControl` handler. The function receives two arguments: the component reference and the current value. Pass `false` to revert to the default callback.

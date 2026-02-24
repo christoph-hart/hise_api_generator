@@ -1,0 +1,1 @@
+Controls which table event types trigger the component's value callback (and thus undo support). By default, `"SingleClick"`, `"DoubleClick"`, `"ReturnKey"`, and `"SpaceKey"` trigger it. Pass an array containing any combination of `"Selection"`, `"SingleClick"`, `"DoubleClick"`, and `"ReturnKey"` to override the default set.

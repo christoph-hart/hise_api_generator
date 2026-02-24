@@ -1,0 +1,1 @@
+Manually fires the control callback for this component, just as if the user had changed the value. This triggers either the custom callback set via `setControlCallback()` or the default `onControl` handler. Cannot be called during `onInit`.

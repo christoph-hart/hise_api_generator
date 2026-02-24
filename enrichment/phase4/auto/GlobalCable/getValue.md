@@ -1,0 +1,1 @@
+Returns the current cable value converted back through the local input range. If you set a range of 20--20000 with `setRange()` and the internal normalised value is 0.5, this returns 10010. Without a range configured, this behaves identically to `getValueNormalised()`.

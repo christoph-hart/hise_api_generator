@@ -1,0 +1,1 @@
+When a table is sorted, display row indices no longer match the original data order. This method maps a sorted display index back to the corresponding index in the original array passed to `setTableRowData()`.
