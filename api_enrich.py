@@ -986,6 +986,14 @@ def parse_single_method(body: str) -> dict:
         )
         if detail_match:
             result["disabledDetail"] = detail_match.group(1).strip()
+        # Deprecated methods have extra fields for LSP diagnostics
+        if result["disabledReason"] == "deprecated":
+            repl_match = re.search(r"\*\*Replacement:\*\*\s*(.*?)(?=\n|$)", body)
+            if repl_match:
+                result["replacement"] = repl_match.group(1).strip()
+            sev_match = re.search(r"\*\*Severity:\*\*\s*(Error|Warning|Information|Hint)", body)
+            if sev_match:
+                result["severity"] = sev_match.group(1).strip()
         return result
 
     # Extract bold-prefixed fields
@@ -997,7 +1005,7 @@ def parse_single_method(body: str) -> dict:
     if rt_match:
         result["returnType"] = rt_match.group(1).strip()
 
-    # callScope (new five-tier system: safe, caution, unsafe, init, unknown)
+    # callScope (new five-tier system: safe, warning, unsafe, init, unknown)
     # Also supports legacy **Realtime Safe:** for backward compatibility during migration
     cs_match = re.search(r"\*\*Call Scope:\*\*\s*(\S+)", body)
     if not cs_match:
@@ -1013,7 +1021,7 @@ def parse_single_method(body: str) -> dict:
                 result["callScope"] = None
     else:
         val = cs_match.group(1).strip().lower()
-        if val in ("safe", "caution", "unsafe", "init"):
+        if val in ("safe", "warning", "unsafe", "init"):
             result["callScope"] = val
         elif val == "unknown":
             result["callScope"] = None
@@ -1358,7 +1366,7 @@ def build_method_entry(base_method: dict, enriched: dict, source_tag: str) -> di
     """Build a full method entry by merging base data with enrichment."""
     # If the method is disabled, return a minimal entry
     if enriched.get("disabled"):
-        return {
+        entry = {
             "signature": base_method.get("signature", ""),
             "returnType": base_method.get("returnType", ""),
             "description": base_method.get("description", ""),
@@ -1367,6 +1375,13 @@ def build_method_entry(base_method: dict, enriched: dict, source_tag: str) -> di
             "disabledReason": enriched.get("disabledReason", ""),
             "disabledDetail": enriched.get("disabledDetail", ""),
         }
+        # Deprecated methods carry extra fields for LSP diagnostics
+        if enriched.get("disabledReason") == "deprecated":
+            if enriched.get("replacement"):
+                entry["replacement"] = enriched["replacement"]
+            if enriched.get("severity"):
+                entry["severity"] = enriched["severity"]
+        return entry
 
     entry = {
         "signature": enriched.get("signature", base_method.get("signature", "")),
@@ -1440,6 +1455,12 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
         existing["disabled"] = True
         existing["disabledReason"] = override.get("disabledReason", "")
         existing["disabledDetail"] = override.get("disabledDetail", "")
+        # Deprecated methods carry extra fields for LSP diagnostics
+        if override.get("disabledReason") == "deprecated":
+            if override.get("replacement"):
+                existing["replacement"] = override["replacement"]
+            if override.get("severity"):
+                existing["severity"] = override["severity"]
         return existing
 
     # Last-writer-wins fields
@@ -2077,7 +2098,7 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             call_scope = m.get("callScope")
             scope_class = {
                 "safe": "scope-safe",
-                "caution": "scope-caution",
+                "warning": "scope-warning",
                 "unsafe": "scope-unsafe",
                 "init": "scope-init",
             }.get(call_scope, "scope-unknown")
@@ -2221,7 +2242,7 @@ a:hover {{ text-decoration: underline; }}
 /* Call scope LED */
 .callscope-led {{ display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; vertical-align: middle; position: relative; top: -1px; }}
 .callscope-led.scope-safe {{ background: #4E8E35; box-shadow: 0 0 4px #4E8E35; }}
-.callscope-led.scope-caution {{ background: #FFBA00; box-shadow: 0 0 4px #FFBA00; }}
+.callscope-led.scope-warning {{ background: #FFBA00; box-shadow: 0 0 4px #FFBA00; }}
 .callscope-led.scope-unsafe {{ background: #BB3434; box-shadow: 0 0 4px #BB3434; }}
 .callscope-led.scope-init {{ background: #e6edf3; box-shadow: 0 0 4px #e6edf3; }}
 .callscope-led.scope-unknown {{ background: #8b949e; }}
@@ -2378,6 +2399,109 @@ def generate_class_markdown(class_name: str, c: dict) -> str:
     return "\n".join(lines)
 
 
+def run_filter_binary(output_path=None):
+    """Filter merged JSON -> minimal JSON for C++ binary embedding."""
+    input_path = OUTPUT_DIR / "api_reference.json"
+    if not input_path.is_file():
+        print("ERROR: No merged JSON found. Run 'merge' first.")
+        sys.exit(1)
+
+    if output_path is None:
+        output_path = OUTPUT_DIR / "filtered_api.json"
+    else:
+        output_path = Path(output_path)
+
+    with open(input_path, "r", encoding="utf-8") as f:
+        full_api = json.load(f)
+
+    filtered = {"classes": {}}
+
+    for class_name, class_data in full_api.get("classes", {}).items():
+        methods_out = {}
+
+        for method_name, method_data in class_data.get("methods", {}).items():
+            # Skip disabled methods (but include deprecated ones for LSP warnings)
+            if method_data.get("disabled"):
+                if method_data.get("disabledReason") != "deprecated":
+                    continue
+
+            # Reconstruct arguments string
+            params = method_data.get("parameters", [])
+            if params:
+                param_strs = [f"{p.get('type', 'var')} {p['name']}" for p in params]
+                arguments = "(" + ", ".join(param_strs) + ")"
+            else:
+                arguments = "()"
+
+            # Extract brief description (first sentence, max ~200 chars)
+            desc = method_data.get("description", "")
+            brief = _extract_brief(desc)
+
+            entry = {
+                "name": method_name,
+                "arguments": arguments,
+                "returnType": method_data.get("returnType", ""),
+                "description": brief,
+            }
+
+            # Only include callScope if present and valid
+            call_scope = method_data.get("callScope")
+            if call_scope in ("safe", "warning", "unsafe", "init"):
+                entry["callScope"] = call_scope
+
+            call_scope_note = method_data.get("callScopeNote")
+            if call_scope_note:
+                entry["callScopeNote"] = call_scope_note
+
+            # Deprecated methods: add LSP diagnostic fields
+            if method_data.get("disabledReason") == "deprecated":
+                entry["deprecated"] = True
+                if method_data.get("replacement"):
+                    entry["replacement"] = method_data["replacement"]
+                if method_data.get("severity"):
+                    entry["severity"] = method_data["severity"]
+                if method_data.get("disabledDetail"):
+                    entry["deprecationNote"] = method_data["disabledDetail"]
+
+            methods_out[method_name] = entry
+
+        if methods_out:
+            filtered["classes"][class_name] = {"methods": methods_out}
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(filtered, f, indent=2, ensure_ascii=False)
+
+    class_count = len(filtered["classes"])
+    method_count = sum(len(c["methods"]) for c in filtered["classes"].values())
+    print(f"Filter-binary complete:")
+    print(f"  Classes: {class_count}")
+    print(f"  Methods: {method_count}")
+    print(f"  Output: {output_path}")
+
+
+def _extract_brief(description: str, max_len: int = 200) -> str:
+    """Extract first sentence from a description, capped at max_len."""
+    if not description:
+        return ""
+    # Find first sentence boundary
+    for sep in (". ", ".\n"):
+        idx = description.find(sep)
+        if idx != -1:
+            brief = description[:idx + 1]
+            if len(brief) <= max_len:
+                return brief
+            break
+    # No sentence boundary or first sentence too long: truncate
+    if len(description) <= max_len:
+        return description
+    # Truncate at last space before max_len
+    trunc = description[:max_len]
+    last_space = trunc.rfind(" ")
+    if last_space > max_len // 2:
+        return trunc[:last_space]
+    return trunc
+
+
 def run_preview(class_filter: str = None):
     """Generate HTML preview pages from api_reference.json."""
     json_path = OUTPUT_DIR / "api_reference.json"
@@ -2495,6 +2619,15 @@ def main():
         help="Class name to preview (default: all enriched classes)",
     )
 
+    filter_binary_parser = subparsers.add_parser(
+        "filter-binary",
+        help="Filter merged JSON -> minimal JSON for C++ binary embedding",
+    )
+    filter_binary_parser.add_argument(
+        "output", nargs="?", default=None,
+        help="Output path (default: enrichment/output/filtered_api.json)",
+    )
+
     args = parser.parse_args()
 
     if args.command == "phase0":
@@ -2505,6 +2638,8 @@ def main():
         run_merge()
     elif args.command == "preview":
         run_preview(args.classname)
+    elif args.command == "filter-binary":
+        run_filter_binary(args.output)
     else:
         parser.print_help()
         sys.exit(1)

@@ -31,19 +31,12 @@ ValueTree buildApiValueTree(const var& jsonData)
 			if (methodData == nullptr) continue;
 
 			ValueTree methodNode("method");
-			methodNode.setProperty("name",        methodData->getProperty("name"),        nullptr);
-			methodNode.setProperty("arguments",   methodData->getProperty("arguments"),   nullptr);
-			methodNode.setProperty("returnType",  methodData->getProperty("returnType"),  nullptr);
-			methodNode.setProperty("description", methodData->getProperty("description"), nullptr);
 
-			// Optional callScope properties — only add if present
-			auto callScope = methodData->getProperty("callScope");
-			if (!callScope.isVoid() && callScope.toString().isNotEmpty())
-				methodNode.setProperty("callScope", callScope, nullptr);
-
-			auto callScopeNote = methodData->getProperty("callScopeNote");
-			if (!callScopeNote.isVoid() && callScopeNote.toString().isNotEmpty())
-				methodNode.setProperty("callScopeNote", callScopeNote, nullptr);
+			// Copy all properties from the JSON method object into the ValueTree.
+			// The Python filter-binary stage already curates exactly which fields
+			// belong in the blob, so no filtering is needed here.
+			for (auto& prop : methodData->getProperties())
+				methodNode.setProperty(prop.name, prop.value, nullptr);
 
 			classNode.addChild(methodNode, -1, nullptr);
 		}
@@ -144,6 +137,7 @@ int main(int argc, char* argv[])
 	int classCount = tree.getNumChildren();
 	int methodCount = 0;
 	int callScopeCount = 0;
+	int deprecatedCount = 0;
 
 	for (int i = 0; i < classCount; i++)
 	{
@@ -153,6 +147,8 @@ int main(int argc, char* argv[])
 			methodCount++;
 			if (classNode.getChild(j).hasProperty("callScope"))
 				callScopeCount++;
+			if (classNode.getChild(j).hasProperty("deprecated"))
+				deprecatedCount++;
 		}
 	}
 
@@ -175,6 +171,7 @@ int main(int argc, char* argv[])
 	std::cout << "  Classes: " << classCount << std::endl;
 	std::cout << "  Methods: " << methodCount << std::endl;
 	std::cout << "  With callScope: " << callScopeCount << std::endl;
+	std::cout << "  Deprecated: " << deprecatedCount << std::endl;
 	std::cout << "  Binary size: " << dataSize << " bytes" << std::endl;
 	std::cout << "  Header: " << headerFile.getFullPathName() << std::endl;
 	std::cout << "  Source: " << sourceFile.getFullPathName() << std::endl;

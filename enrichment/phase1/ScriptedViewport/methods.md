@@ -152,7 +152,7 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 
 **Signature:** `Integer getOriginalRowIndex(Integer rowIndex)`
 **Return Type:** `Integer`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** O(n) indexOf over row data; consider caching for large tables
 **Minimal Example:** `var orig = {obj}.getOriginalRowIndex(0);`
 
@@ -265,7 +265,9 @@ Sets a component property to the given value. Reports a script error if the prop
 ## setColour
 
 **Disabled:** deprecated
-**Disabled Reason:** This method is super old and is superseded by the set(colourId, value) method that takes in a named colour ID instead of a weird magic number.
+**Disabled Reason:** Uses magic number indices instead of named colour IDs.
+**Replacement:** set("colourId", colourValue)
+**Severity:** Warning
 
 ## setConsumedKeyPresses
 
@@ -951,7 +953,7 @@ Sets the depth level for this component among its siblings. Reports a script err
 
 **Signature:** `undefined setValue(NotUndefined newValue)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Safe in list/viewport mode; allocates UndoableTableSelection in table MultiColumnMode
 **Minimal Example:** `{obj}.setValue(0);`
 

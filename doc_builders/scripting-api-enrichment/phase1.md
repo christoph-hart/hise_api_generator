@@ -228,7 +228,20 @@ A method gets disabled when it exists on the class but should not appear in user
 
 Minimal entry -- no signature, parameters, etc. needed. Just the flag and reason.
 
-**Deprecated methods:** Check `resources/deprecated_methods.md` for any method matching `*.methodName()` (all classes) or `ClassName.methodName()` (specific class). If a match is found, use reason `deprecated` and copy the rationale from the deprecated file as the disabled reason.
+**Deprecated entry format in methods.md (extended):**
+
+```markdown
+## setColour
+
+**Disabled:** deprecated
+**Disabled Reason:** Uses magic number indices instead of named colour IDs.
+**Replacement:** set("colourId", colourValue)
+**Severity:** Warning
+```
+
+The `Replacement` and `Severity` fields are required for deprecated methods. Copy them from `resources/deprecated_methods.md`.
+
+**Deprecated methods:** Check `resources/deprecated_methods.md` for any method matching `*.methodName()` (all classes) or `ClassName.methodName()` (specific class). If a match is found, use reason `deprecated` and copy the rationale, replacement, and severity from the deprecated file. If you discover a deprecated method during C++ analysis that is NOT yet in `deprecated_methods.md`, add it there before writing the disabled entry.
 
 ### Per-Method Workflow
 
@@ -308,7 +321,7 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 - ValueTree property set/change with notifications (notification chain involves string lookups, var comparisons, potential undo-manager)
 - I/O operations or blocking
 
-**`"caution"`** -- Can be called from the audio thread, but with caveats. Always provide a `callScopeNote`. Three sub-categories:
+**`"warning"`** -- Can be called from the audio thread, but with caveats. Always provide a `callScopeNote`. Three sub-categories:
 - **Performance-sensitive:** Lock-free but iterates over user-sized data (e.g., `indexOf` on an array). Note the O(n) characteristic.
 - **Backend-only allocation:** Method allocates in HISE IDE builds (`USE_BACKEND=1`) but is compiled out or becomes a no-op in exported plugins. All `Console` methods (except `startBenchmark`) fall in this category.
 - **Context-dependent:** Safe in some modes/configurations but not others (e.g., a method that is lock-free in one mode but allocates in another).
@@ -438,8 +451,8 @@ Each method entry uses this format:
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `Integer`
-**Call Scope:** safe | caution | unsafe | init | unknown
-**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
+**Call Scope:** safe | warning | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for warning tier or non-obvious classification)
 **Minimal Example:** `{obj}.methodName(42, onMyCallback);`
 
 **Description:**
@@ -497,6 +510,17 @@ Disabled method entry format (no `**Minimal Example:**` line needed):
 
 **Disabled:** no-op | redundant | deprecated | property-deactivated
 **Disabled Reason:** Brief explanation of why this method is disabled on this class.
+```
+
+Deprecated methods add two extra fields:
+
+```markdown
+## methodName
+
+**Disabled:** deprecated
+**Disabled Reason:** One-sentence rationale from deprecated_methods.md.
+**Replacement:** ClassName.replacementMethod()
+**Severity:** Error | Warning | Information | Hint
 ```
 
 ---
