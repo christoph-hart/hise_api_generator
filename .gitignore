@@ -8,3 +8,5 @@ enrichment/output/
 
 # Python
 __pycache__/
+ApiValueTreeBuilder/Builds/
+ApiValueTreeBuilder/JuceLibraryCode/

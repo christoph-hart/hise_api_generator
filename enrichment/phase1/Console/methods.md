@@ -4,7 +4,7 @@
 
 **Signature:** `undefined print(NotUndefined x)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -50,7 +50,7 @@ None.
 
 **Signature:** `undefined stopBenchmark()`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -81,7 +81,7 @@ Console.stopBenchmark(); // Prints e.g. "Benchmark Result: 1.234 ms"
 
 **Signature:** `undefined stop(Integer condition)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Suspends execution in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -114,7 +114,7 @@ Console.stop(true);
 
 **Signature:** `undefined blink()`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -131,7 +131,7 @@ None.
 
 **Signature:** `undefined clear()`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -145,7 +145,7 @@ None.
 
 **Signature:** `undefined assertTrue(NotUndefined condition)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -165,7 +165,7 @@ Throws a script error if `condition` evaluates to `false`. The value is cast to 
 
 **Signature:** `undefined assertEqual(NotUndefined v1, NotUndefined v2)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -192,7 +192,7 @@ Console.assertEqual(42, result); // Error if result != 42
 
 **Signature:** `undefined assertIsDefined(NotUndefined value)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -211,7 +211,7 @@ Throws a script error if `value` is `undefined` or void. This is useful for vali
 
 **Signature:** `undefined assertIsObjectOrArray(NotUndefined value)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -231,7 +231,7 @@ Throws a script error if `value` is not a JSON object or an array. The error mes
 
 **Signature:** `undefined assertNoString(NotUndefined value)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -254,7 +254,7 @@ Throws a script error if `value` is a string. The error message includes the str
 
 **Signature:** `undefined assertWithMessage(Integer condition, String errorMessage)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -279,7 +279,7 @@ Console.assertWithMessage(index >= 0, "Index must not be negative, got: " + inde
 
 **Signature:** `undefined assertLegalNumber(NotUndefined value)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -305,7 +305,7 @@ Console.assertLegalNumber(gain); // Catches NaN, infinity, or non-numeric types
 
 **Signature:** `undefined breakInDebugger()`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Triggers jassertfalse in HISE IDE; stripped in release builds
 
 **Description:**
@@ -325,7 +325,7 @@ None.
 
 **Signature:** `undefined startSampling(String sessionId)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -353,7 +353,7 @@ Console.sample("state", myStateObject);
 
 **Signature:** `undefined testCallback(ScriptObject obj, String callbackId, NotUndefined argList)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**
@@ -384,7 +384,7 @@ Console.testCallback(myButton, "action", 1);
 
 **Signature:** `undefined sample(String label, NotUndefined dataToSample)`
 **Return Type:** `undefined`
-**Call Scope:** caution
+**Call Scope:** warning
 **Call Scope Note:** Allocates in HISE IDE; no-op in exported plugins
 
 **Description:**

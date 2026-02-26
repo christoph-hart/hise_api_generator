@@ -23,8 +23,8 @@ Each method override file uses the same format as a single method entry in Phase
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `String`
-**Call Scope:** safe | caution | unsafe | init | unknown
-**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
+**Call Scope:** safe | warning | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for warning tier or non-obvious classification)
 
 **Description:**
 What this method does (if overriding Phase 1's description).

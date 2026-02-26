@@ -75,8 +75,8 @@ All sections are optional -- only include sections you want to override.
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `String`
-**Call Scope:** safe | caution | unsafe | init | unknown
-**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
+**Call Scope:** safe | warning | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for warning tier or non-obvious classification)
 
 **Description:**
 Manually written description overriding Phase 1.

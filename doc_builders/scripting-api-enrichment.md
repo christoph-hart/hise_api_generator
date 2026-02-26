@@ -204,8 +204,8 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `returnType` | String | **Required** | Return type using the VarTypes vocabulary. `undefined` for methods that return nothing. |
 | `description` | String | **Required** | What this method does. |
 | `parameters` | Array | **Required** | Array of parameter objects (see below). |
-| `callScope` | String\|null | **Required** | Where this method can be called. One of: `"safe"` (anywhere, including audio thread), `"caution"` (audio thread OK with caveats -- see `callScopeNote`), `"unsafe"` (runtime only, not audio thread), `"init"` (onInit only -- runtime call throws script error), `null` (unknown -- treat as unsafe). |
-| `callScopeNote` | String\|null | Optional | Explanation for `"caution"` tier or other non-obvious classification. Most important for `"caution"` methods where it provides concrete guidance. `null` when the classification is self-evident. |
+| `callScope` | String\|null | **Required** | Where this method can be called. One of: `"safe"` (anywhere, including audio thread), `"warning"` (audio thread OK with caveats -- see `callScopeNote`), `"unsafe"` (runtime only, not audio thread), `"init"` (onInit only -- runtime call throws script error), `null` (unknown -- treat as unsafe). |
+| `callScopeNote` | String\|null | Optional | Explanation for `"warning"` tier or other non-obvious classification. Most important for `"warning"` methods where it provides concrete guidance. `null` when the classification is self-evident. |
 | `minimalExample` | String | **Required** | One-liner method call with realistic arguments (e.g., `Button1.setValue(0.5);`). Written with `{obj}` placeholder in source; merge script substitutes the class's `minimalObjectToken`. |
 | `crossReferences` | Array of Strings | Optional | Related methods in the format `ClassName.methodName`. |
 | `pitfalls` | Array | Optional | Non-obvious behaviors or gotchas. Each entry: `{ description, source }`. |
@@ -232,7 +232,7 @@ The `callScope` field classifies where a method can be called, from most restric
 
 **`"unsafe"`** -- Can be called at runtime but NOT from the audio thread. The method allocates on the heap, acquires locks, mutates ValueTree properties with change notifications, blocks, or does I/O. Call from timer callbacks, UI handlers, or other non-audio contexts. Examples: `sendData()`, component property setters via `set()`, `setLocalLookAndFeel()`.
 
-**`"caution"`** -- Can be called from the audio thread, but with caveats described in `callScopeNote`. Sub-categories:
+**`"warning"`** -- Can be called from the audio thread, but with caveats described in `callScopeNote`. Sub-categories:
 - **Performance-sensitive:** Lock-free but iterates over user-sized data. Fine for small collections; may need caching in tight loops. Example: `Array.indexOf()`.
 - **Backend-only allocation:** Allocates in HISE IDE builds (`USE_BACKEND=1`) but compiled out or becomes a no-op in exported plugins. Fine for debugging on the audio thread since the allocation won't exist in production. Example: `Console.print()`.
 - **Context-dependent:** Safe in some modes but not others. Example: `ScriptedViewport.setValue()` is safe in list mode but allocates in table MultiColumnMode.
@@ -249,7 +249,7 @@ The `callScope` field classifies where a method can be called, from most restric
 
 3. **Dispatch pattern:** When a method's own code path is lock-free and allocation-free but it dispatches/broadcasts to external targets, listeners, or callbacks, classify based on the method's own behavior. Target/listener behavior is the target's responsibility.
 
-4. **USE_BACKEND exception:** Methods that allocate only in backend builds (`USE_BACKEND=1`) but are compiled out in exported plugins are `"caution"`, not `"unsafe"`. The allocation won't exist in production code.
+4. **USE_BACKEND exception:** Methods that allocate only in backend builds (`USE_BACKEND=1`) but are compiled out in exported plugins are `"warning"`, not `"unsafe"`. The allocation won't exist in production code.
 
 5. **Subclass override:** If a subclass overrides a base method with different callScope characteristics, the subclass Phase 1 specifies the overridden value. The merge picks up the subclass value (last-writer-wins).
 
@@ -534,7 +534,7 @@ After the sub-agent returns, the main agent processes methods one at a time.
    - `description` -- what the method does
    - `parameters` -- name, type (forced or inferred), forcedType flag, description, constraints
    - `callScope` -- string tier or null, from implementation analysis
-   - `callScopeNote` -- explanation string for non-obvious classifications (especially `"caution"`)
+   - `callScopeNote` -- explanation string for non-obvious classifications (especially `"warning"`)
    - `pitfalls` -- non-obvious behaviors (if any)
    - `examples` -- synthesized code examples (apply the heuristics above)
    - `crossReferences` -- related methods (if obvious at this point; more added in post-process)
@@ -555,8 +555,8 @@ Each method entry in `methods.md` uses this markdown format:
 
 **Signature:** `returnType methodName(Type1 param1, Type2 param2)`
 **Return Type:** `Integer`
-**Call Scope:** safe | caution | unsafe | init | unknown
-**Call Scope Note:** (optional -- explanation for caution tier or non-obvious classification)
+**Call Scope:** safe | warning | unsafe | init | unknown
+**Call Scope Note:** (optional -- explanation for warning tier or non-obvious classification)
 
 **Description:**
 What this method does.
