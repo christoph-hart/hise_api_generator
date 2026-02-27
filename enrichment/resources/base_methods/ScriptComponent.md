@@ -11,7 +11,7 @@ inherited methods. Re-analyze only when the child class overrides a method
 Consult `resources/deprecated_methods.md` for methods that should be marked
 as disabled with reason "deprecated".
 
-Source: `resources/scriptcomponent_exploration_raw.md`
+Source: `resources/explorations/ScriptComponent_base.md`
 
 ---
 

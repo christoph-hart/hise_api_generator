@@ -15,12 +15,14 @@ consult during Phase 1. These files are shared across all class enrichments.
 
 | File | Purpose | Used by |
 |------|---------|---------|
+| `resources/survey/class_survey.md` | Class survey: prerequisite table, enrichment groups, factory relationships | Step A1 (prerequisites) |
+| `resources/survey/class_survey_data.json` | Machine-readable survey data: features, cross-references, seeAlso pairs | Step A1 (prerequisites) |
 | `resources/guidelines/hisescript_example_rules.md` | HISEScript syntax, callback, and LAF rules for code examples | Step B |
 | `resources/laf_style_guide.json` | LAF callback property definitions | Step B |
 | `resources/deprecated_methods.md` | Deprecated method registry with C++ macro status | Step B |
 | `resources/base_methods/*.md` | Pre-distilled method entries for base classes (e.g. ScriptComponent) | Step B |
-| `resources/*_exploration_raw.md` | Raw exploration output for base classes | Step A1, Step B |
-| `resources/ClassName_exploration.md` | Raw exploration output for individual classes | Step B |
+| `resources/explorations/*_base.md` | Raw exploration output for base classes | Step A1, Step B |
+| `resources/explorations/ClassName.md` | Raw exploration output for individual classes | Step B |
 | `resources/guidelines/*.md` | Style guidelines for userDocs, code examples, diagrams | Step B, Phase 4 |
 
 ---
@@ -29,7 +31,7 @@ consult during Phase 1. These files are shared across all class enrichments.
 
 **Execution model:** One sub-agent per class. Reads C++ source broadly and deeply, dumps everything a method-analysis agent might need.
 
-**Output:** `enrichment/resources/ClassName_exploration.md`
+**Output:** `enrichment/resources/explorations/ClassName.md`
 
 This is a RAW output -- no distillation, no summarization. The goal is to gather every piece of context that Step B method agents might need. Be too thorough rather than not thorough enough.
 
@@ -50,15 +52,29 @@ This is a RAW output -- no distillation, no summarization. The goal is to gather
 
 Do NOT deep-dive individual method implementations line-by-line. That is Step B's job. Focus on the infrastructure and context that surrounds the methods.
 
+### Prerequisite Context: Class Survey
+
+Before exploring, consult `resources/survey/class_survey.md` for the target class. The **Enrichment Prerequisites** table (15 entries) lists conceptual dependencies where understanding class A materially improves the documentation of class B. These are NOT mere factory relationships -- they are cases where A introduces concepts, conventions, or patterns that B needs to reference.
+
+Also consult `resources/survey/class_survey_data.json` for the target class entry to get:
+- **creates**: What this class produces (helps you understand its role)
+- **seeAlso**: Related classes with distinction text (helps write cross-references)
+- **createdBy**: Which factory class creates this one
+
+**Prerequisite loading rule:** Check the prerequisite table in `resources/survey/class_survey.md`. If the target class appears in the "Before" column, its prerequisite class (the "Prerequisite" column) should already be enriched. Load that prerequisite's `phase1/ClassName/Readme.md` into context before starting exploration. This ensures cross-cutting knowledge flows downstream. For example:
+- When enriching `GlobalCable`, load `GlobalRoutingManager`'s Readme to pick up OSC conventions and C++ interop patterns
+- When enriching `Expansion`, load `ExpansionHandler`'s Readme for pack lifecycle and credential model
+- When enriching `Node`, load `DspNetwork`'s Readme for graph model and node creation patterns
+
 ### Existing Resources to Consult
 
-Before exploring, check `enrichment/resources/` for existing base class explorations that provide context for this class:
+Also check `enrichment/resources/explorations/` for existing base class explorations:
 
-- **Component classes** (category `"component"`): Consult `resources/scriptcomponent_exploration_raw.md` for the ScriptComponent base class context. Do not re-explore ScriptComponent -- focus on child-class-specific infrastructure.
+- **Component classes** (category `"component"`): Consult `resources/explorations/ScriptComponent_base.md` for the ScriptComponent base class context. Do not re-explore ScriptComponent -- focus on child-class-specific infrastructure.
 - **Complex data classes** (ScriptTable, ScriptSliderPack, ScriptAudioWaveform): Consult the ComplexDataScriptComponent exploration if it exists.
-- **Any other base class**: Check for a matching `*_exploration_raw.md` file.
+- **Any other base class**: Check for a matching `*_base.md` file in `resources/explorations/`.
 
-List all resource files consulted at the top of the output.
+List all resource files consulted (including prerequisite Readmes) at the top of the output.
 
 ### Output Format
 
@@ -70,7 +86,7 @@ Free-form markdown. Use headings to organize by topic. Include code snippets, ta
 
 **Execution model:** Same agent or a separate sub-agent. Reads the raw exploration from A1 and produces two lightweight files.
 
-**Input:** `enrichment/resources/ClassName_exploration.md`
+**Input:** `enrichment/resources/explorations/ClassName.md`
 
 **Output:** Two files in `enrichment/phase1/ClassName/`:
 
@@ -178,11 +194,11 @@ After Step A completes, the main agent processes methods one at a time.
 
 At the start of Step B, load these files (in priority order):
 
-1. `enrichment/resources/ClassName_exploration.md` -- primary context (CRITICAL)
+1. `enrichment/resources/explorations/ClassName.md` -- primary context (CRITICAL)
 2. `enrichment/phase1/ClassName/methods_todo.md` -- checklist + type map
 3. `enrichment/resources/deprecated_methods.md` -- deprecated method list
 4. Relevant base class resources:
-   - For `"component"` classes: `resources/scriptcomponent_exploration_raw.md` and `resources/base_methods/ScriptComponent.md`
+   - For `"component"` classes: `resources/explorations/ScriptComponent_base.md` and `resources/base_methods/ScriptComponent.md`
    - For complex data classes: the relevant base class exploration and base_methods file
 5. `enrichment/resources/guidelines/hisescript_example_rules.md` -- for code examples
 6. `enrichment/resources/laf_style_guide.json` -- for LAF code examples (component classes)
@@ -560,13 +576,13 @@ Deprecated methods use the same minimal format:
 The main agent's context window may be compacted automatically during long sessions. The pipeline is designed to survive this.
 
 **After compaction, the agent MUST:**
-1. Re-read `enrichment/resources/ClassName_exploration.md` -- the primary context
+1. Re-read `enrichment/resources/explorations/ClassName.md` -- the primary context
 2. Re-read `enrichment/phase1/ClassName/methods_todo.md` -- to find the first unchecked method
 3. Re-read `enrichment/resources/deprecated_methods.md` -- for deprecated method checking
 4. Re-read relevant `resources/base_methods/*.md` -- for inherited method adoption (component classes)
 5. Do NOT re-read `enrichment/phase1/ClassName/methods.md` -- completed methods are on disk, no need to burn context
 
-**The compaction summary should convey:** "Processing methods for ClassName. Primary context is in `resources/ClassName_exploration.md`. Progress is in `methods_todo.md`. Reload both and continue from the first unchecked method."
+**The compaction summary should convey:** "Processing methods for ClassName. Primary context is in `resources/explorations/ClassName.md`. Progress is in `methods_todo.md`. Reload both and continue from the first unchecked method."
 
 ---
 
@@ -574,7 +590,7 @@ The main agent's context window may be compacted automatically during long sessi
 
 The `methods_todo.md` file makes any session fully resumable from disk. A fresh session can:
 
-1. Read `resources/ClassName_exploration.md` -- get the full class context
+1. Read `resources/explorations/ClassName.md` -- get the full class context
 2. Read `methods_todo.md` -- see the checklist and type map
 3. Find the first `- [ ]` entry -- resume from there
 

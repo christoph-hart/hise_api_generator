@@ -1,7 +1,7 @@
 # ScriptedViewport -- Raw Exploration
 
 ## Resources Consulted
-- `resources/scriptcomponent_exploration_raw.md` (ScriptComponent base class)
+- `resources/explorations/ScriptComponent_base.md` (ScriptComponent base class)
 
 ## Source Files
 - **Header:** `hi_scripting/scripting/api/ScriptingApiContent.h` (lines 2070-2160)
