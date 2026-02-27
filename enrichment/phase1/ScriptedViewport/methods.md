@@ -262,13 +262,6 @@ Sets a component property to the given value. Reports a script error if the prop
 - `ScriptedViewport.get`
 - `ScriptedViewport.getAllProperties`
 
-## setColour
-
-**Disabled:** deprecated
-**Disabled Reason:** Uses magic number indices instead of named colour IDs.
-**Replacement:** set("colourId", colourValue)
-**Severity:** Warning
-
 ## setConsumedKeyPresses
 
 **Signature:** `undefined setConsumedKeyPresses(NotUndefined listOfKeys)`
@@ -336,6 +329,8 @@ Assigns a custom inline function as the control callback, replacing the default 
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | controlFunction | Function | no | An inline function with 2 parameters (component, value), or false to clear | Must be an inline function with exactly 2 parameters |
+
+**Callback Signature:** controlFunction(component: ScriptComponent, value: var)
 
 **Pitfalls:**
 - The function MUST be declared with `inline function`. Regular function references are rejected with a script error.
@@ -411,6 +406,8 @@ The callback receives an event object with two possible shapes depending on whet
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | keyboardFunction | Function | no | An inline function with 1 parameter (event object) | Must be an inline function |
+
+**Callback Signature:** keyboardFunction(event: Object)
 
 **Callback Properties:**
 
@@ -630,6 +627,8 @@ Registers a callback function that is notified for all user interactions with th
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | callbackFunction | Function | no | An inline function with 1 parameter (event object) | Must be a JavaScript function |
+
+**Callback Signature:** callbackFunction(event: Object)
 
 **Callback Properties:**
 
@@ -855,6 +854,8 @@ Sets a custom comparator function used when the user clicks a column header to s
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | sortFunction | Function | no | An inline function with 2 parameters (value1, value2) returning an integer | Must return negative, 0, or positive integer |
+
+**Callback Signature:** sortFunction(a: var, b: var)
 
 **Pitfalls:**
 - Requires `setTableMode()` to have been called first. Reports a script error if no table model exists.

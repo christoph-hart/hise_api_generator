@@ -238,6 +238,8 @@ When `synchronous` is `AsyncNotification`, the callback executes asynchronously 
 | callbackFunction | Function | no | The function to call when a value is received. Receives one argument: the converted value. | Must be a valid JavaScript function. For synchronous mode, must be an `inline function`. |
 | synchronous | Integer | no | Whether the callback runs synchronously on the calling thread (`SyncNotification`) or asynchronously on the UI thread (`AsyncNotification`). | `SyncNotification` or `AsyncNotification`. |
 
+**Callback Signature:** callbackFunction(value: double)
+
 **Pitfalls:**
 - Synchronous callbacks with non-realtime-safe functions are silently ignored -- the callback never fires, with no error message.
 - Asynchronous callbacks coalesce values. If multiple `setValue()` calls happen between UI timer ticks, only the last value is delivered.
@@ -296,6 +298,8 @@ The callback is always asynchronous (high-priority via `WeakCallbackHolder`). A 
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | dataCallbackFunction | Function | no | The function to call when data is received. Receives one argument: the deserialised data. | Must be a valid JavaScript function. |
+
+**Callback Signature:** dataCallbackFunction(data: var)
 
 **Cross References:**
 - `GlobalCable.sendData`

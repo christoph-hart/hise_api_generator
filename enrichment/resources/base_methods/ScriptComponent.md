@@ -192,13 +192,6 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 
 ---
 
-## setColour
-
-**Disabled:** deprecated
-**Disabled Reason:** This method is super old and is superseded by the set(colourId, value) method that takes in a named colour ID instead of a weird magic number.
-
----
-
 ## setPosition
 
 **Signature:** `undefined setPosition(Integer x, Integer y, Integer w, Integer h)`

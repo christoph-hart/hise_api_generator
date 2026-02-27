@@ -986,14 +986,6 @@ def parse_single_method(body: str) -> dict:
         )
         if detail_match:
             result["disabledDetail"] = detail_match.group(1).strip()
-        # Deprecated methods have extra fields for LSP diagnostics
-        if result["disabledReason"] == "deprecated":
-            repl_match = re.search(r"\*\*Replacement:\*\*\s*(.*?)(?=\n|$)", body)
-            if repl_match:
-                result["replacement"] = repl_match.group(1).strip()
-            sev_match = re.search(r"\*\*Severity:\*\*\s*(Error|Warning|Information|Hint)", body)
-            if sev_match:
-                result["severity"] = sev_match.group(1).strip()
         return result
 
     # Extract bold-prefixed fields
@@ -1085,6 +1077,31 @@ def parse_single_method(body: str) -> dict:
                  "description": r.get("Description", "")}
                 for r in cp_rows
             ]
+
+    # Callback Signature: paramName(arg1: type1, arg2: type2)
+    cb_sig_match = re.search(
+        r"\*\*Callback Signature:\*\*\s*(\w+)\(([^)]*)\)",
+        body
+    )
+    if cb_sig_match:
+        param_name = cb_sig_match.group(1)
+        args_str = cb_sig_match.group(2).strip()
+        cb_params = []
+        if args_str:
+            for arg in args_str.split(","):
+                arg = arg.strip()
+                if ":" in arg:
+                    aname, atype = arg.split(":", 1)
+                    cb_params.append({
+                        "name": aname.strip(),
+                        "type": atype.strip()
+                    })
+                else:
+                    cb_params.append({"name": arg, "type": "var"})
+        result["callbackSignature"] = {
+            "parameterName": param_name,
+            "parameters": cb_params,
+        }
 
     # Pitfalls
     pitfalls_match = re.search(
@@ -1375,12 +1392,6 @@ def build_method_entry(base_method: dict, enriched: dict, source_tag: str) -> di
             "disabledReason": enriched.get("disabledReason", ""),
             "disabledDetail": enriched.get("disabledDetail", ""),
         }
-        # Deprecated methods carry extra fields for LSP diagnostics
-        if enriched.get("disabledReason") == "deprecated":
-            if enriched.get("replacement"):
-                entry["replacement"] = enriched["replacement"]
-            if enriched.get("severity"):
-                entry["severity"] = enriched["severity"]
         return entry
 
     entry = {
@@ -1401,6 +1412,8 @@ def build_method_entry(base_method: dict, enriched: dict, source_tag: str) -> di
         entry["valueDescriptions"] = enriched["valueDescriptions"]
     if enriched.get("callbackProperties"):
         entry["callbackProperties"] = enriched["callbackProperties"]
+    if enriched.get("callbackSignature"):
+        entry["callbackSignature"] = enriched["callbackSignature"]
     if enriched.get("diagram"):
         entry["diagram"] = enriched["diagram"]
     elif enriched.get("diagramRef"):
@@ -1455,12 +1468,6 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
         existing["disabled"] = True
         existing["disabledReason"] = override.get("disabledReason", "")
         existing["disabledDetail"] = override.get("disabledDetail", "")
-        # Deprecated methods carry extra fields for LSP diagnostics
-        if override.get("disabledReason") == "deprecated":
-            if override.get("replacement"):
-                existing["replacement"] = override["replacement"]
-            if override.get("severity"):
-                existing["severity"] = override["severity"]
         return existing
 
     # Last-writer-wins fields
@@ -1478,6 +1485,8 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
         existing["callScopeNote"] = override["callScopeNote"]
     if override.get("minimalExample"):
         existing["minimalExample"] = override["minimalExample"]
+    if override.get("callbackSignature"):
+        existing["callbackSignature"] = override["callbackSignature"]
 
     # Examples: last-writer-wins (entire array replaced)
     if override.get("examples"):
@@ -2420,10 +2429,9 @@ def run_filter_binary(output_path=None):
         methods_out = {}
 
         for method_name, method_data in class_data.get("methods", {}).items():
-            # Skip disabled methods (but include deprecated ones for LSP warnings)
+            # Skip disabled methods
             if method_data.get("disabled"):
-                if method_data.get("disabledReason") != "deprecated":
-                    continue
+                continue
 
             # Reconstruct arguments string
             params = method_data.get("parameters", [])
@@ -2452,16 +2460,6 @@ def run_filter_binary(output_path=None):
             call_scope_note = method_data.get("callScopeNote")
             if call_scope_note:
                 entry["callScopeNote"] = call_scope_note
-
-            # Deprecated methods: add LSP diagnostic fields
-            if method_data.get("disabledReason") == "deprecated":
-                entry["deprecated"] = True
-                if method_data.get("replacement"):
-                    entry["replacement"] = method_data["replacement"]
-                if method_data.get("severity"):
-                    entry["severity"] = method_data["severity"]
-                if method_data.get("disabledDetail"):
-                    entry["deprecationNote"] = method_data["disabledDetail"]
 
             methods_out[method_name] = entry
 

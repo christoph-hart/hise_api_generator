@@ -1,36 +1,29 @@
 # Deprecated Methods
 
-Methods listed here are considered deprecated. Phase 1 agents must mark
-these as disabled with reason "deprecated" in the class methods.md file.
+Methods discovered during Phase 1 analysis that should use the
+ADD_API_METHOD_N_DEPRECATED macro in their C++ constructor.
 
 Format:
 
 ```
-### ClassName.methodName()
-Replacement: ClassName.replacementMethod()
-Severity: Error | Warning | Information | Hint
+### ClassName.methodName(N)
+Status: pending | applied
+Reason: "suggestion text for the macro"
 
-One-sentence rationale. Brief enough for an LSP diagnostic message.
+One-sentence rationale.
 ```
 
-Rules:
-- Use * as ClassName for methods deprecated across all inheriting classes.
-- Replacement is required. Use `None` if the call should simply be removed.
-- Severity uses LSP DiagnosticSeverity enum names:
-  - Error: method throws reportScriptError at runtime
-  - Warning: method logs a console warning or has a clearly better replacement
-  - Information / Hint: method still works but there is a preferred alternative
-- Rationale must be one sentence max. Explain *why* it is deprecated, not
-  how to use the replacement.
-
-New entries are added here as they are discovered during Phase 1 class
-enrichment. Do not run separate sweeps -- discovery is a side effect of
-the per-class C++ analysis.
+- N = argument count (maps to ADD_API_METHOD_N_DEPRECATED).
+- Reason = exact string that goes in the macro's text parameter.
+- Status: applied = macro already in C++. pending = waiting to be added.
+- New entries are added here as they are discovered during Phase 1 class
+  enrichment. Do not run separate sweeps -- discovery is a side effect of
+  the per-class C++ analysis.
 
 ---
 
-### *.setColour()
-Replacement: set("colourId", colourValue)
-Severity: Warning
+### Graphics.drawText(2)
+Status: applied
+Reason: "use drawAlignedText for better placement"
 
-Uses magic number indices instead of named colour IDs.
+Superseded by drawAlignedText which supports alignment options.

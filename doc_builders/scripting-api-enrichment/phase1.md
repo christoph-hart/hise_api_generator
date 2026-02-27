@@ -17,7 +17,7 @@ consult during Phase 1. These files are shared across all class enrichments.
 |------|---------|---------|
 | `resources/guidelines/hisescript_example_rules.md` | HISEScript syntax, callback, and LAF rules for code examples | Step B |
 | `resources/laf_style_guide.json` | LAF callback property definitions | Step B |
-| `resources/deprecated_methods.md` | Methods that should be marked disabled with reason "deprecated" | Step B |
+| `resources/deprecated_methods.md` | Deprecated method registry with C++ macro status | Step B |
 | `resources/base_methods/*.md` | Pre-distilled method entries for base classes (e.g. ScriptComponent) | Step B |
 | `resources/*_exploration_raw.md` | Raw exploration output for base classes | Step A1, Step B |
 | `resources/ClassName_exploration.md` | Raw exploration output for individual classes | Step B |
@@ -228,20 +228,20 @@ A method gets disabled when it exists on the class but should not appear in user
 
 Minimal entry -- no signature, parameters, etc. needed. Just the flag and reason.
 
-**Deprecated entry format in methods.md (extended):**
+**Deprecated entry format in methods.md:**
 
 ```markdown
-## setColour
+## drawText
 
 **Disabled:** deprecated
-**Disabled Reason:** Uses magic number indices instead of named colour IDs.
-**Replacement:** set("colourId", colourValue)
-**Severity:** Warning
+**Disabled Reason:** Superseded by drawAlignedText which supports alignment options.
 ```
 
-The `Replacement` and `Severity` fields are required for deprecated methods. Copy them from `resources/deprecated_methods.md`.
+Same minimal format as other disabled methods -- just the flag and reason.
 
-**Deprecated methods:** Check `resources/deprecated_methods.md` for any method matching `*.methodName()` (all classes) or `ClassName.methodName()` (specific class). If a match is found, use reason `deprecated` and copy the rationale, replacement, and severity from the deprecated file. If you discover a deprecated method during C++ analysis that is NOT yet in `deprecated_methods.md`, add it there before writing the disabled entry.
+**Deprecated methods:** Check `resources/deprecated_methods.md` for any method matching `ClassName.methodName(N)`. If a match is found, use reason `deprecated` and copy the rationale from the deprecated file.
+
+If you discover a deprecated method during C++ analysis that is NOT yet in `deprecated_methods.md`, add it there with `Status: pending`, the argument count `(N)`, and the `Reason:` suggestion string (the exact text for the C++ `ADD_API_METHOD_N_DEPRECATED` macro). Also check the constructor for existing `ADD_API_METHOD_N_DEPRECATED` macro usage -- if present, mark as `Status: applied`.
 
 ### Per-Method Workflow
 
@@ -409,6 +409,36 @@ These optional sections capture machine-readable metadata that downstream consum
 
 Both sections are optional -- only add them when the method actually has string enums or structured objects.
 
+### Callback Signature
+
+When a method accepts a `Function` parameter (a callback), add a `**Callback Signature:**` field documenting the expected parameter count, names, and types. This enables the LSP to validate callback argument counts at parse time.
+
+**Format:**
+
+```
+**Callback Signature:** parameterName(argName1: type1, argName2: type2)
+```
+
+Where `parameterName` matches the Function parameter name from the `**Parameters:**` table. Use C++/HISEScript-idiomatic type names (`double`, `int`, `bool`, `var`, `String`, `Object`).
+
+**How to extract from C++ source:**
+
+1. Find the `WeakCallbackHolder` constructor for this callback. The last argument is the expected parameter count: `WeakCallbackHolder(scriptProcessor, thisObject, callbackVar, expectedNumArgs)`
+2. Find the `callback.call1(value)`, `callback.call(args, N)`, or `callback.callSync(args, N)` invocation. The arguments passed reveal the parameter names and types.
+3. For `call(args, N)` patterns, look at the `args[0] = ...`, `args[1] = ...` assignments just above the call to get names and types.
+4. Some callbacks (e.g. `setControlCallback`) use `executeInlineFunction` instead of `WeakCallbackHolder`. In these cases, check the argument array construction at the call site.
+
+**Example entries:**
+
+```
+**Callback Signature:** callbackFunction(value: double)
+**Callback Signature:** controlFunction(component: ScriptComponent, value: var)
+**Callback Signature:** sortFunction(a: var, b: var)
+**Callback Signature:** keyboardFunction(event: Object)
+```
+
+This field is required for every method that has a `Function` parameter. If the callback takes a structured object as its argument (e.g., an event object with named properties), also add a `**Callback Properties:**` table documenting the object's properties.
+
 ### Pitfall Quality Rules
 
 A pitfall documents behavior that the user cannot self-diagnose from HISE's runtime feedback alone. Apply these filters before writing a `**Pitfalls:**` entry:
@@ -472,6 +502,8 @@ What this method does.
 | "Selection" | A row is selected |
 | "DoubleClick" | A cell receives a double click |
 
+**Callback Signature:** param2(component: ScriptComponent, value: var)
+
 **Callback Properties:**
 
 | Property | Type | Description |
@@ -512,15 +544,13 @@ Disabled method entry format (no `**Minimal Example:**` line needed):
 **Disabled Reason:** Brief explanation of why this method is disabled on this class.
 ```
 
-Deprecated methods add two extra fields:
+Deprecated methods use the same minimal format:
 
 ```markdown
 ## methodName
 
 **Disabled:** deprecated
 **Disabled Reason:** One-sentence rationale from deprecated_methods.md.
-**Replacement:** ClassName.replacementMethod()
-**Severity:** Error | Warning | Information | Hint
 ```
 
 ---
