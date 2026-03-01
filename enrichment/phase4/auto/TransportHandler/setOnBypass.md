@@ -1,0 +1,1 @@
+Registers a callback that fires when the plugin's bypass state changes. This callback is always asynchronous -- there is no sync parameter. The callback receives a boolean indicating whether the plugin is bypassed. It fires immediately upon registration with the current bypass state.

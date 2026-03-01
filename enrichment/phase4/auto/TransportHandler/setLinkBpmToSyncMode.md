@@ -1,0 +1,1 @@
+When enabled, the BPM source (internal or external) is automatically linked to the active sync mode, so the reported tempo always matches whichever clock source is currently driving the transport.

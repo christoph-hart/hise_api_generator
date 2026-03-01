@@ -1,0 +1,1 @@
+Slows down the grid callbacks for this specific TransportHandler instance by only passing through every Nth grid tick. The factor must be 1 (no change) or a power of two up to 64. This lets multiple TransportHandler instances operate at different subdivisions of the same master grid.

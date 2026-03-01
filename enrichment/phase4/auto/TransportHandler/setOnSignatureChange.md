@@ -1,0 +1,1 @@
+Registers a callback that fires when the time signature changes. The callback receives the numerator and denominator of the new time signature. It fires once immediately upon registration with the current time signature.

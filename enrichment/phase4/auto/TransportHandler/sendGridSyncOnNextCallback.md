@@ -1,0 +1,1 @@
+Forces the next grid callback to report itself as the first grid event in playback. Use this to manually resync sequencer state to the beginning of a pattern.

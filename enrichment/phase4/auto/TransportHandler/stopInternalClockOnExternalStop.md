@@ -1,0 +1,1 @@
+When enabled, the internal clock automatically stops when the DAW transport stops. This is useful with `SyncInternal` mode to keep the internal clock in sync with the DAW lifecycle.

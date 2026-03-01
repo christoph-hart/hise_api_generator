@@ -1,0 +1,1 @@
+Returns whether the transport is currently playing, accounting for the active sync mode (internal clock, external DAW clock, or both).

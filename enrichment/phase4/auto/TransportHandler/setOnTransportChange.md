@@ -1,0 +1,1 @@
+Registers a callback that fires when the transport starts or stops playing. The callback receives a boolean indicating whether the transport is now playing. It fires once immediately upon registration with the current play state.

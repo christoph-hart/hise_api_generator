@@ -1,0 +1,1 @@
+Starts the internal master clock. The timestamp parameter is a sample offset within the current audio block for sub-block accuracy. When called during audio rendering, transport and grid callbacks fire immediately for the current block.
