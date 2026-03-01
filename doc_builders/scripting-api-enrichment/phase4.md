@@ -1,6 +1,8 @@
-# Phase 4: User-Facing Documentation Authoring -- Agent Instructions
+# Phase 4a: User-Facing Documentation Authoring -- Agent Instructions
 
-Phase 4 transforms the raw C++ analysis from Phases 1-3 into user-facing documentation for HISEScript developers. The agent reads the complete merged `api_reference.json` for a single class and produces `userDocs` content for the class overview and each method. Phase 4 also renders SVG diagrams for methods/classes that have a `diagram` specification.
+Phase 4a transforms the raw C++ analysis from Phases 1-3 into user-facing documentation for HISEScript developers. The agent reads the complete merged `api_reference.json` for a single class and produces `userDocs` content for the class overview and each method. Phase 4a also renders SVG diagrams for methods/classes that have a `diagram` specification.
+
+> **Note:** This file covers Phase 4a (human-facing docs). For Phase 4b (LLM C++ reference), see `phase4b.md`.
 
 **Audience:** HISEScript developers who have no knowledge of C++ internals. They want to know what a method does, how to use it, and what to watch out for.
 

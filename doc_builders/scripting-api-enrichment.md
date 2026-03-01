@@ -1,34 +1,85 @@
 # Scripting API Reference Enrichment Pipeline
 
-**Purpose:** Produce a comprehensive `api_reference.json` that an MCP server uses to improve LLM-generated HiseScript code and that serves as a complete technical developer reference.
+**Purpose:** Produce a comprehensive `api_reference.json` that an MCP server uses to improve LLM-generated HiseScript code, serves as a complete technical developer reference, and provides concise C++ reference material for LLMs writing `HardcodedScriptProcessor` code.
 
 **Output Location:** `tools/api generator/enrichment/output/api_reference.json`
 
-**Sub-phase details:** See `scripting-api-enrichment/phase0.md` through `phase4.md` for detailed per-phase instructions.
+**Sub-phase details:** See `scripting-api-enrichment/phase0.md` through `phase4.md` (Phase 4a) and `phase4b.md` for detailed per-phase instructions.
+
+---
+
+## Strategic Context: Shared API Surface
+
+The HISE scripting API (`Synth`, `Message`, `Engine`, `TransportHandler`, `FixObjectFactory`, etc.) is not exclusive to HISEScript. The same API is available from C++ via `HardcodedScriptProcessor`, which inherits all the scripting callbacks (`onNoteOn`, `onNoteOff`, `onTimer`, etc.) and objects (`Synth.addNoteOn()`, `Message.ignoreEvent()`, `Engine.getHostBpm()`, etc.) with identical signatures and semantics. The existing `hise::Arpeggiator` class (`hi_scripting/scripting/hardcoded_modules/Arpeggiator.h/.cpp`) is a concrete example -- it's a C++ class that calls the same `Synth.addNoteOn()`, `Synth.noteOffDelayedByEventId()`, `Message.ignoreEvent()` methods that a HISEScript developer would use.
+
+This means the Phase 1 C++ analysis -- which extracts method signatures, threading constraints, parameter semantics, edge cases, and the full call chain from source code -- serves **both** documentation paths:
+
+- **Phase 4a** (human HISEScript docs): Prose descriptions, HISEScript examples, scripter-friendly language
+- **Phase 4b** (LLM C++ reference): Structured, concise entries with source code references for LLMs writing either HISEScript or C++ `HardcodedScriptProcessor` code
+
+Phase 4b requires **no new exploration**. It is a projection of existing Phase 1 data (the exploration `.md` files and `methods.md` output).
+
+### The HISEScript / C++ Staircase
+
+For LLM-driven workflows, HISEScript and C++ serve complementary roles:
+
+| Complexity | Approach | Why |
+|------------|----------|-----|
+| **Snippet adaptation** | HISEScript | Task maps to 1-2 existing snippets. Fast compile cycle for iteration. LLM adapts proven patterns. |
+| **Snippet combination** | HISEScript (with care) | Task requires combining patterns from multiple snippets. Higher risk, but still tractable. |
+| **Beyond snippet coverage** | C++ via `HardcodedScriptProcessor` or `raw` namespace | The required primitives don't exist in HISEScript, or the algorithmic complexity exceeds what snippets can template. LLM uses the same scripting API from C++, plus full access to JUCE and the HISE source code. |
+
+The threshold for escalation is not about task complexity -- it's about **whether the right scripting primitives exist**. When HISE added `TransportHandler` (grid callbacks, tempo sync), the HISEScript arpeggiator rewrite became cleaner than the original C++ `HardcodedScriptProcessor` version. The primitives define the ceiling, not the language.
+
+### Snippets as Primitive Coverage Map
+
+The snippet library (99 browsable snippets in the MCP server) serves a dual role:
+
+1. **Implementation templates:** LLMs adapt snippets for tasks within the HISEScript sweet spot.
+2. **Complexity threshold markers:** The snippet library defines the boundary of what HISEScript handles idiomatically. Tasks that map to existing snippets stay in HISEScript. Tasks that require inventing beyond the snippet library signal escalation to C++.
+
+Gaps in snippet coverage for a given API domain (e.g., no snippet demonstrates `UnorderedStack.setIsEventStack()` or free-running `onTimer` for MIDI generation) are informative -- they indicate either candidates for new snippets or natural C++ territory.
+
+### The `raw` Namespace
+
+The `raw` namespace (`docs.hise.dev/cpp_api/raw/`) is the curated C++ entry point for the HISE codebase:
+
+- `raw::Builder` -- constructs module architecture
+- `raw::Reference` -- wraps a processor with parameter change callbacks
+- `raw::UIConnection` -- bidirectional UI-processor binding
+- `raw::Pool` -- loads embedded resources
+- `raw::TaskAfterSuspension` -- safe async execution with audio thread suspension
+
+For agentic C++ workflows, the `raw` namespace provides module architecture and UI wiring, while the scripting API (`Synth`, `Message`, `Engine`) handles callback logic. Both are documented by the enrichment pipeline.
 
 ---
 
 ## Pipeline Overview
 
 ```
-Phase 0: batchCreate.bat → xml/selection/*.xml → enrichment/base/*.json
-       │   (batch script + Python, 100% mechanical)
-       │
+Phase 0: batchCreate.bat -> xml/selection/*.xml -> enrichment/base/*.json
+       |   (batch script + Python, 100% mechanical)
+       |
 Phase 1: C++ source analysis + example synthesis
-       │   Sub-agent  → ClassName/Readme.md (class-level artifact, durable)
-       │              → ClassName/methods_todo.md (workbench: checklist + type map)
-       │   Main agent → ClassName/methods.md (per-method output, fire-and-forget)
-       │   Post-process → deduplicate, cross-ref, markdown → JSON
-       │
+       |   Sub-agent  -> ClassName/Readme.md (class-level artifact, durable)
+       |              -> ClassName/methods_todo.md (workbench: checklist + type map)
+       |   Main agent -> ClassName/methods.md (per-method output, fire-and-forget)
+       |   Exploration -> resources/explorations/ClassName.md (raw C++ source extracts)
+       |   Post-process -> deduplicate, cross-ref, markdown -> JSON
+       |
 Phase 2: Merge project analysis examples (mechanical merge)
-       │
+       |
 Phase 3: Merge manual markdown overrides (highest priority, mechanical merge)
-       │
-Phase 4: User-facing documentation authoring
-       │   Agent-driven → phase4/auto/ClassName/*.md (LLM-generated userDocs)
-       │   Human-edited → phase4/manual/ClassName/*.md (overrides auto)
-       │
-python api_enrich.py merge → output/api_reference.json
+       |
+Phase 4a: User-facing documentation authoring (human HISEScript developers)
+       |   Agent-driven -> phase4/auto/ClassName/*.md (LLM-generated userDocs)
+       |   Human-edited -> phase4/manual/ClassName/*.md (overrides auto)
+       |
+Phase 4b: LLM C++ reference authoring (LLMs writing HISEScript or C++)
+       |   Source: Phase 1 methods.md + explorations/*.md (no new exploration)
+       |   Output -> phase4b/ClassName/methodName.md (structured LLM reference)
+       |
+python api_enrich.py merge -> output/api_reference.json
 ```
 
 ---
@@ -74,6 +125,10 @@ tools/api generator/
 │   │   └── manual/                           # Human-edited overrides (wins over auto)
 │   │       └── Console/
 │   │           └── print.md                  # Hand-tuned method doc
+│   ├── phase4b/                              # LLM C++ reference (structured, concise)
+│   │   └── Console/
+│   │       ├── print.md                      # Per-method LLM reference entry
+│   │       └── ...
 │   └── output/
 │       └── api_reference.json                # Final merged output
 ```
@@ -190,9 +245,9 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | 7 | `alternatives` | Optional | Phase 1 | **Working context** | Related classes for similar tasks. `null` if N/A. |
 | 8 | `relatedPreprocessors` | Optional | Phase 1 | **Deep reference** | C++ `#define` macros that gate this class's availability (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`). Array of strings. |
 | 9 | `userGuidePage` | Deferred | -- | -- | Link to a user guide page. Not in MVP -- placeholder for later. |
-| 10 | `userDocs` | Optional | Phase 3/4 | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. Priority: Phase 4 manual > Phase 3 raw docs > Phase 4 auto. |
+| 10 | `userDocs` | Optional | Phase 3/4a | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. Priority: Phase 4a manual > Phase 3 raw docs > Phase 4a auto. |
 | 11 | `userDocOverride` | Auto | Phase 3/4 | -- | `true` if `userDocs` came from `phase4/manual/` or Phase 3 raw docs, `false` if from `phase4/auto/` or absent. |
-| 12 | `diagram` | Optional | Phase 1 (overridable Phase 3) | **Deep reference** + **Web display** | Diagram specification for visual rendering. Contains `type` (timing\|topology\|sequence\|state) and `description` (plain text for LLM consumption). `null` if no diagram needed. SVGs rendered in Phase 4. |
+| 12 | `diagram` | Optional | Phase 1 (overridable Phase 3) | **Deep reference** + **Web display** | Diagram specification for visual rendering. Contains `type` (timing\|topology\|sequence\|state) and `description` (plain text for LLM consumption). `null` if no diagram needed. SVGs rendered in Phase 4a. |
 
 ---
 
@@ -210,9 +265,9 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `crossReferences` | Array of Strings | Optional | Related methods in the format `ClassName.methodName`. |
 | `pitfalls` | Array | Optional | Non-obvious behaviors or gotchas. Each entry: `{ description, source }`. |
 | `examples` | Array | Optional | Code examples. Each entry: `{ title, code, context, source }`. |
-| `userDocs` | String\|null | Optional | User-facing method prose from Phase 3/4. `null` if not yet authored. Priority: Phase 4 manual > Phase 3 raw docs > Phase 4 auto. |
+| `userDocs` | String\|null | Optional | User-facing method prose from Phase 3/4a. `null` if not yet authored. Priority: Phase 4a manual > Phase 3 raw docs > Phase 4a auto. |
 | `userDocOverride` | boolean | Auto | `true` if `userDocs` came from `phase4/manual/` or Phase 3 raw docs, `false` otherwise. |
-| `diagram` | Object\|null | Optional | Diagram specification: `{ type, description }`. `type` is one of `timing`, `topology`, `sequence`, `state`. `description` is plain text for LLM consumption. SVGs rendered in Phase 4. `null` if no diagram needed. |
+| `diagram` | Object\|null | Optional | Diagram specification: `{ type, description }`. `type` is one of `timing`, `topology`, `sequence`, `state`. `description` is plain text for LLM consumption. SVGs rendered in Phase 4a. `null` if no diagram needed. |
 
 ### Parameter Object
 
@@ -667,7 +722,7 @@ Common workflows:
 
 - `description` sub-fields (`brief`, `purpose`, `details`, `obtainedVia`, `codeExample`, `diagram`): last-writer-wins (Phase 3 overrides all prior phases)
 - `examples`: last-writer-wins (Phase 3 replaces entirely)
-- `userDocs`: Phase 3 raw docs format extracts `userDocs` from prose. Priority: Phase 4 manual > Phase 3 > Phase 4 auto.
+- `userDocs`: Phase 3 raw docs format extracts `userDocs` from prose. Priority: Phase 4a manual > Phase 3 > Phase 4a auto.
 - `pitfalls`: merged union, each entry tagged `"source": "manual"`
 - `commonMistakes`: merged union, each entry tagged `"source": "manual"`
 - `crossReferences`: merged union, deduplicated (raw docs link conversion adds entries)
@@ -678,9 +733,9 @@ Detailed format spec: `scripting-api-enrichment/phase3.md`
 
 ---
 
-## Phase 4: User-Facing Documentation Authoring
+## Phase 4a: User-Facing Documentation Authoring
 
-Phase 4 transforms the raw C++ analysis (Phases 1-3) into scripter-friendly documentation. It runs after merge, one class at a time, because the authoring agent benefits from seeing the complete merged API surface before writing user-facing prose. Phase 4 also renders SVG diagrams for methods/classes that have a `diagram` specification.
+Phase 4a transforms the raw C++ analysis (Phases 1-3) into scripter-friendly documentation. It runs after merge, one class at a time, because the authoring agent benefits from seeing the complete merged API surface before writing user-facing prose. Phase 4a also renders SVG diagrams for methods/classes that have a `diagram` specification.
 
 Detailed authoring guidelines: `scripting-api-enrichment/phase4.md`
 
@@ -708,9 +763,9 @@ enrichment/phase4/manual/ClassName/   # Human-edited overrides (wins over auto)
 
 ### Merge Rules
 
-- For `userDocs`: Phase 4 manual > Phase 3 raw docs > Phase 4 auto
+- For `userDocs`: Phase 4a manual > Phase 3 raw docs > Phase 4a auto
 - `phase4/manual/` wins over `phase4/auto/` (per file, case-insensitive filename matching)
-- Phase 4 does NOT override any Phase 1-3 fields -- it adds `userDocs` / `userDocOverride` and renders SVG diagrams
+- Phase 4a does NOT override any Phase 1-3 fields -- it adds `userDocs` / `userDocOverride` and renders SVG diagrams
 
 ### Preview Output
 
@@ -721,7 +776,77 @@ enrichment/phase4/manual/ClassName/   # Human-edited overrides (wins over auto)
 
 ### Progress Tracking
 
-`python api_enrich.py prepare` reports Phase 4 status by comparing files in `phase4/auto/` and `phase4/manual/` against the class's method list. No separate tracking file is needed.
+`python api_enrich.py prepare` reports Phase 4a status by comparing files in `phase4/auto/` and `phase4/manual/` against the class's method list. No separate tracking file is needed.
+
+---
+
+## Phase 4b: LLM C++ Reference Authoring
+
+Phase 4b produces structured, concise reference entries for LLMs writing HISEScript or C++ `HardcodedScriptProcessor` code. Unlike Phase 4a (which targets human scripters), Phase 4b entries are optimized for machine consumption: dense, structured, with source code call chains and explicit anti-patterns.
+
+**Key principle:** Phase 4b requires **no new exploration**. It is a formatting pass over existing Phase 1 data -- the exploration `.md` files provide source code extracts, and `methods.md` provides structured fields. The agent reads and reformats; it does not explore.
+
+Detailed authoring guidelines: `scripting-api-enrichment/phase4b.md`
+
+### Source Material
+
+| Source | What it provides |
+|--------|-----------------|
+| `enrichment/phase1/ClassName/methods.md` | Signature, description, callScope, parameters, pitfalls, cross-references |
+| `enrichment/resources/explorations/ClassName.md` | Raw C++ source code extracts, call chains, file paths, line numbers |
+| `enrichment/phase1/ClassName/Readme.md` | Class-level context (obtainedVia, constants, common mistakes) |
+
+### Output
+
+```
+enrichment/phase4b/ClassName/methodName.md    # One file per method
+```
+
+### Entry Template
+
+Each Phase 4b entry follows this structure:
+
+```
+ClassName::methodName(params) -> returnType
+
+Thread safety: SAFE|WARNING|UNSAFE + explanation
+[1-2 line description]
+Required setup: [minimal code to call this method]
+Dispatch/mechanics: [what happens internally -- 1-3 lines]
+Pair with: [companion methods and why]
+Anti-patterns: [what NOT to do and why]
+Source:
+  file.cpp:line  functionName() -> innerCall() -> deeperCall()
+  [key code snippet if illuminating]
+```
+
+### Field Descriptions
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| Header line | Yes | `ClassName::methodName(params) -> returnType` -- C++ style, matches the scripting API signature |
+| Thread safety | Yes | Maps from `callScope`: safe/warning/unsafe/init. Include the `callScopeNote` if present. |
+| Description | Yes | 1-2 lines. What the method does. Terse. |
+| Required setup | If needed | Minimal code showing how to obtain the object and call the method. Skip for namespace methods or trivial calls. |
+| Dispatch/mechanics | If non-trivial | What happens inside -- the call chain from the scripting API wrapper through to the engine. Skip for simple getters/setters. |
+| Pair with | If applicable | Companion methods. E.g., `addNoteOn` pairs with `noteOffByEventId`. |
+| Anti-patterns | If applicable | What NOT to do. From pitfalls, common mistakes, and the arpeggiator exercise insights. |
+| Source | Yes | File path and line number, call chain summary. From the exploration `.md`. |
+
+### What Phase 4b Does NOT Do
+
+- Does NOT explore C++ source code (already done in Phase 1)
+- Does NOT produce prose for human readers (that's Phase 4a)
+- Does NOT override any fields in `api_reference.json` -- Phase 4b entries are standalone files, not merged into the JSON
+- Does NOT render diagrams (that's Phase 4a)
+
+### Merge Rules
+
+Phase 4b files are **not merged into `api_reference.json`**. They are standalone reference files consumed directly by LLM agents (via MCP server or file read). This keeps Phase 4b decoupled from the main merge pipeline and allows rapid iteration on the reference format without touching the JSON schema.
+
+### Progress Tracking
+
+Progress is tracked by file existence: if `enrichment/phase4b/ClassName/methodName.md` exists, that method has a Phase 4b entry. The `prepare` CLI can optionally report Phase 4b coverage by comparing against the class's method list.
 
 ---
 
@@ -758,7 +883,7 @@ Regenerates Doxygen XML via `batchCreate.bat`, then parses all XML files in `xml
 python api_enrich.py prepare
 ```
 
-Reads `enrichment/base/*.json` and `enrichment/phase1_scanned.txt`. Prints the worklist of classes and methods that still need Phase 1 processing. Also reports Phase 4 (userDocs) status for all enriched classes.
+Reads `enrichment/base/*.json` and `enrichment/phase1_scanned.txt`. Prints the worklist of classes and methods that still need Phase 1 processing. Also reports Phase 4a (userDocs) status for all enriched classes.
 
 #### `merge`
 
@@ -766,7 +891,7 @@ Reads `enrichment/base/*.json` and `enrichment/phase1_scanned.txt`. Prints the w
 python api_enrich.py merge
 ```
 
-Reads all phases (base → phase1 → phase2 → phase3 → phase4) and produces `enrichment/output/api_reference.json`. Applies merge rules as specified above.
+Reads all phases (base -> phase1 -> phase2 -> phase3 -> phase4/phase4b) and produces `enrichment/output/api_reference.json`. Applies merge rules as specified above.
 
 #### `preview`
 
@@ -778,7 +903,7 @@ Generates HTML preview pages from `api_reference.json`. If a class name is given
 
 For each class, produces:
 - `ClassName_review.html` -- raw C++ analysis (always generated for enriched classes)
-- `ClassName.html` -- user-facing userDocs view (generated only if any Phase 4 userDocs exist for the class)
+- `ClassName.html` -- user-facing userDocs view (generated only if any Phase 4a userDocs exist for the class)
 
 Output: `enrichment/output/preview/`
 

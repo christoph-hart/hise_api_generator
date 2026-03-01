@@ -23,7 +23,7 @@ consult during Phase 1. These files are shared across all class enrichments.
 | `resources/base_methods/*.md` | Pre-distilled method entries for base classes (e.g. ScriptComponent) | Step B |
 | `resources/explorations/*_base.md` | Raw exploration output for base classes | Step A1, Step B |
 | `resources/explorations/ClassName.md` | Raw exploration output for individual classes | Step B |
-| `resources/guidelines/*.md` | Style guidelines for userDocs, code examples, diagrams | Step B, Phase 4 |
+| `resources/guidelines/*.md` | Style guidelines for userDocs, code examples, diagrams | Step B, Phase 4a |
 
 ---
 
@@ -156,7 +156,7 @@ Related classes for similar tasks, or "None."
 - **Brief:** Short Human-Readable Label
 - **Type:** topology
 - **Description:** Plain text description of what the diagram shows. This serves
-  as the LLM-facing representation. Phase 4 renders it as an SVG for humans.
+  as the LLM-facing representation. Phase 4a renders it as an SVG for humans.
 
 (Omit this section entirely if no class-level diagrams are needed.
  Add multiple h3 sub-sections for multiple diagrams.)
@@ -368,7 +368,7 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 
 ### Diagram Heuristic
 
-Writing a diagram description is cheap -- it is just a 2-3 sentence plain-text description plus a type tag. Phase 4 decides which diagrams actually get rendered as SVGs and which get cut in favor of prose or tables. **When in doubt, write the diagram description. Do not self-censor.**
+Writing a diagram description is cheap -- it is just a 2-3 sentence plain-text description plus a type tag. Phase 4a decides which diagrams actually get rendered as SVGs and which get cut in favor of prose or tables. **When in doubt, write the diagram description. Do not self-censor.**
 
 The `type` selects the visual pattern; the `description` is plain text that also serves LLMs directly. Consider these diagram types when you see these patterns:
 

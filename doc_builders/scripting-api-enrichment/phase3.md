@@ -145,12 +145,12 @@ Link-to-class/method name resolution uses a case-insensitive lookup against the 
 
 When Phase 3 raw docs provide a `userDocs` value, it follows this priority in the merge:
 
-**Phase 4 manual > Phase 3 raw docs > Phase 4 auto**
+**Phase 4a manual > Phase 3 raw docs > Phase 4a auto**
 
 This means:
-- Phase 3 raw docs `userDocs` overrides Phase 4 auto-generated prose
-- Phase 4 manual overrides everything (for human corrections)
-- Phase 4 auto is the fallback for methods without Phase 3 coverage
+- Phase 3 raw docs `userDocs` overrides Phase 4a auto-generated prose
+- Phase 4a manual overrides everything (for human corrections)
+- Phase 4a auto is the fallback for methods without Phase 3 coverage
 
 ### Example
 
