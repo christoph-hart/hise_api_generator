@@ -242,6 +242,20 @@ Phase 4b can run on all enriched classes in a single session since it's a pure f
 - Does NOT render diagrams (that's Phase 4a)
 - Does NOT generate examples -- the entry is a reference card, not a tutorial
 - Does NOT infer new information -- everything comes from Phase 1 artifacts
+- Does NOT produce C++ syntax examples (deferred -- see below)
+
+### Future: Dual-Syntax Documentation (cppExample field)
+
+The HISE scripting API is shared between HISEScript and C++ via
+`HardcodedScriptProcessor` (and in the future, the DLL-hotswappable MIDI
+processor pipeline). Post-MVP, Phase 4b entries will be extended with a
+`cppExample` field showing the C++ syntax for the same API call. This is
+tracked in [hise_api_generator#13](https://github.com/christoph-hart/hise_api_generator/issues/13)
+and depends on the proxy class design (issue #7) being finalized.
+
+**Do NOT invent a `cppExample` format until then.** The current entries use
+HISEScript syntax only, which is correct for now. The C++ syntax pass will be
+an additive update to existing entries, not a rewrite.
 
 ---
 

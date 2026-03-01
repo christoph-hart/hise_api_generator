@@ -559,11 +559,12 @@ The sub-agent must perform all of the following during class-level analysis:
    - Messaging or processing modes
    - State management patterns
    - Metadata systems
+   - Upstream data providers -- for classes that consume external state (host transport, event sources, configuration), what provides that data? Trace the provider → dependency → API class chain, especially across build targets (backend vs frontend vs standalone). See Phase 1 Step A1 item 11 in `phase1.md`.
 4. **`obtainedVia`** -- How do you get an instance? Search for factory methods, constructor registration, global variables.
 5. **`codeExample`** -- Basic usage example synthesized from the class's API surface.
 6. **`alternatives`** -- Related classes for similar tasks? Check sibling classes, related inheritance trees.
 7. **`relatedPreprocessors`** -- Is the class gated by `#if` guards? (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`)
-8. **`constants`** -- Extract all `addConstant(name, value)` calls from the constructor. Record name, value, and infer type from the value.
+8. **`constants`** -- Extract all `addConstant(name, value)` calls from the constructor. Record name, value, and infer type from the value. For constants that serve as mode selectors (passed to configuration methods like `setSyncMode`, `setDisplayMode`, etc.), also document the behavioral impact of each value based on tracing the consuming logic through the class's dependency chain (see Phase 1 Step A1 item 12 in `phase1.md`).
 9. **`dynamicConstants`** -- Document runtime-dependent constants (structure only, value=null).
 10. **Trace class inheritance** -- Identify interface compatibility patterns. For example, if the class derives from `WeakCallbackHolder::CallableObject`, it can be passed wherever a callback function is expected. Document these derived capabilities in `details`.
 11. **Forced parameter types** -- Extract all `ADD_TYPED_API_METHOD_N` macro invocations from the constructor. Record the method name and the `VarTypes` per parameter. Write these into `methods_todo.md`.
@@ -839,6 +840,7 @@ Source:
 - Does NOT produce prose for human readers (that's Phase 4a)
 - Does NOT override any fields in `api_reference.json` -- Phase 4b entries are standalone files, not merged into the JSON
 - Does NOT render diagrams (that's Phase 4a)
+- Does NOT produce C++ syntax examples -- a `cppExample` field will be added post-MVP once the DLL proxy classes (issue #7) are finalized. Tracked in [hise_api_generator#13](https://github.com/christoph-hart/hise_api_generator/issues/13). Current entries use HISEScript syntax only.
 
 ### Merge Rules
 

@@ -42,6 +42,7 @@ PHASE2_DIR = ENRICHMENT_DIR / "phase2"
 PHASE3_DIR = ENRICHMENT_DIR / "phase3"
 PHASE4_AUTO_DIR = ENRICHMENT_DIR / "phase4" / "auto"
 PHASE4_MANUAL_DIR = ENRICHMENT_DIR / "phase4" / "manual"
+PHASE4B_DIR = ENRICHMENT_DIR / "phase4b"
 OUTPUT_DIR = ENRICHMENT_DIR / "output"
 SCANNED_FILE = ENRICHMENT_DIR / "phase1_scanned.txt"
 
@@ -1740,6 +1741,14 @@ def run_merge():
                     entry["userDocs"] = None
                     entry["userDocOverride"] = False
 
+            # Phase 4b: LLM C++ reference (plain-text file per method)
+            p4b_file = PHASE4B_DIR / class_name / f"{method_name}.md"
+            if p4b_file.is_file():
+                with open(p4b_file, "r", encoding="utf-8") as fh:
+                    entry["llmRef"] = fh.read().strip()
+            else:
+                entry["llmRef"] = None
+
             methods_output[method_name] = entry
 
         # --- Resolve minimalObjectToken and substitute {obj} ---
@@ -1977,19 +1986,88 @@ def format_signature(class_name: str, method_name: str, m: dict) -> str:
     return sig
 
 
+def render_llm_ref(text: str) -> str:
+    """Render Phase 4b LLM C++ reference text as styled HTML.
+
+    The input is semi-structured plain text with known section labels.
+    Returns HTML with coloured labels and thread-safety indicators.
+    """
+    lines = text.split("\n")
+    out = []
+
+    # Known section label prefixes (rendered as amber bold)
+    _SECTION_LABELS = (
+        "Thread safety:",
+        "Dispatch/mechanics:",
+        "Pair with:",
+        "Anti-patterns:",
+        "Source:",
+        "Required setup:",
+    )
+
+    for line in lines:
+        esc = html_escape(line)
+
+        # Skip the first line (signature) — it's rendered separately as h3
+        # Detect: "ClassName::methodName(...)" pattern on the very first line
+        if not out and "::" in line and "(" in line:
+            continue
+
+        # Thread safety line
+        if esc.startswith("Thread safety:"):
+            label = "Thread safety:"
+            rest = esc[len(label):]
+            if "UNSAFE" in rest:
+                rest = rest.replace("UNSAFE",
+                    '<span class="llm-unsafe">UNSAFE</span>', 1)
+            elif "SAFE" in rest:
+                rest = rest.replace("SAFE",
+                    '<span class="llm-safe">SAFE</span>', 1)
+            out.append(f'<span class="llm-label">{label}</span>{rest}')
+            continue
+
+        # Source lines (muted)
+        if esc.lstrip().startswith("ScriptingApi.cpp:") or \
+           esc.lstrip().startswith("ScriptingObjects.cpp:"):
+            out.append(f'<span class="llm-source">{esc}</span>')
+            continue
+
+        # Section labels
+        matched = False
+        for label in _SECTION_LABELS:
+            elabel = html_escape(label)
+            if esc.startswith(elabel) or esc.lstrip().startswith(elabel):
+                indent = esc[:len(esc) - len(esc.lstrip())]
+                rest = esc.lstrip()[len(elabel):]
+                out.append(f'{indent}<span class="llm-label">{elabel}</span>{rest}')
+                matched = True
+                break
+            # Also match when label appears after indentation
+        if not matched:
+            out.append(esc)
+
+    return "\n".join(out)
+
+
 def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
     """Generate a full HTML preview page for one class.
 
     mode="review" -- shows raw C++ analysis (brief/purpose/details + description)
     mode="web"    -- shows userDocs content with auto/manual badges
+    mode="llm"    -- shows Phase 4b LLM C++ reference entries
     """
     is_web = mode == "web"
+    is_llm = mode == "llm"
     desc = c.get("description", {})
     methods = c.get("methods", {})
 
     # --- Collect sidebar section IDs ---
     sidebar_sections = []
-    if is_web:
+    if is_llm:
+        # LLM mode: minimal sidebar — just overview (if purpose) + methods
+        if desc.get("purpose"):
+            sidebar_sections.append(("overview", "Overview"))
+    elif is_web:
         if desc.get("userDocs"):
             sidebar_sections.append(("overview", "Overview"))
     else:
@@ -1997,17 +2075,19 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             sidebar_sections.append(("overview", "Overview"))
         if desc.get("details"):
             sidebar_sections.append(("details", "Details"))
-    if desc.get("codeExample"):
+    if not is_llm and desc.get("codeExample"):
         sidebar_sections.append(("usage-example", "Usage Example"))
-    if c.get("commonMistakes"):
+    if not is_llm and c.get("commonMistakes"):
         sidebar_sections.append(("common-mistakes", "Common Mistakes"))
-    if not is_web and desc.get("relatedPreprocessors"):
+    if not is_web and not is_llm and desc.get("relatedPreprocessors"):
         sidebar_sections.append(("preprocessors", "Preprocessors"))
 
     # --- Sidebar HTML ---
     sidebar = f'<div class="sidebar">\n'
     sidebar += f'<div class="sidebar-title">{class_name}</div>\n'
-    if is_web:
+    if is_llm:
+        sidebar += '<div class="sidebar-mode mode-llm">LLM C++ ref</div>\n'
+    elif is_web:
         sidebar += '<div class="sidebar-mode mode-web">userDocs</div>\n'
     else:
         sidebar += '<div class="sidebar-mode mode-review">review</div>\n'
@@ -2019,11 +2099,18 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             # Skip disabled methods in web mode sidebar
             if is_web and m.get("disabled"):
                 continue
+            # Skip methods without llmRef in LLM mode
+            if is_llm and not m.get("llmRef"):
+                continue
             sidebar += f'<a class="sidebar-link sidebar-method" href="#{name}">{name}</a>\n'
     sidebar += '</div>\n'
 
     # --- Build all section IDs for IntersectionObserver ---
-    active_methods = [n for n, m in methods.items() if not (is_web and m.get("disabled"))]
+    active_methods = [
+        n for n, m in methods.items()
+        if not (is_web and m.get("disabled"))
+        and not (is_llm and not m.get("llmRef"))
+    ]
     all_ids = [sid for sid, _ in sidebar_sections] + active_methods
     ids_js = ", ".join(f'"{i}"' for i in all_ids)
 
@@ -2031,7 +2118,7 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
     main = '<div class="main">\n'
 
     # Header
-    mode_label = "userDocs" if is_web else "review"
+    mode_label = {"web": "userDocs", "llm": "LLM C++ ref"}.get(mode, "review")
     main += f'<h1>{class_name} <span class="category">{md_inline(c.get("category", ""))}</span></h1>\n'
     if desc.get("brief"):
         main += f'<p class="brief">{md_inline(desc["brief"])}</p>\n'
@@ -2039,7 +2126,12 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
         main += f'<p><strong>Obtained via:</strong> {md_inline(desc["obtainedVia"])}</p>\n'
 
     # Class-level prose
-    if is_web:
+    if is_llm:
+        # LLM mode: brief overview from purpose, no details/userDocs
+        if desc.get("purpose"):
+            main += '<h2 id="overview">Overview</h2>\n'
+            main += f'<p>{md_inline(desc["purpose"])}</p>\n'
+    elif is_web:
         if desc.get("userDocs"):
             main += '<h2 id="overview">Overview</h2>\n'
             for para in desc["userDocs"].split("\n\n"):
@@ -2058,13 +2150,13 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
                 if para:
                     main += md_block(para)
 
-    # Code example (both modes)
-    if desc.get("codeExample"):
+    # Code example (review and web modes only)
+    if not is_llm and desc.get("codeExample"):
         main += '<h2 id="usage-example">Usage Example</h2>\n'
         main += f'<pre><code class="language-javascript">{html_escape(desc["codeExample"])}</code></pre>\n'
 
-    # Common mistakes (both modes)
-    if c.get("commonMistakes"):
+    # Common mistakes (review and web modes only)
+    if not is_llm and c.get("commonMistakes"):
         main += '<h2 id="common-mistakes">Common Mistakes</h2>\n'
         for m in c["commonMistakes"]:
             main += (
@@ -2075,7 +2167,7 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             )
 
     # Related preprocessors (review mode only)
-    if not is_web and desc.get("relatedPreprocessors"):
+    if not is_web and not is_llm and desc.get("relatedPreprocessors"):
         main += '<h2 id="preprocessors">Related Preprocessors</h2>\n'
         main += "<p>" + ", ".join(
             f"<code>{p}</code>" for p in desc["relatedPreprocessors"]
@@ -2086,9 +2178,9 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
         main += '<h2 id="methods-heading">Methods</h2>\n'
 
         for name, m in methods.items():
-            # Disabled methods: skip in web mode, annotate in review mode
+            # Disabled methods: skip in web/llm mode, annotate in review mode
             if m.get("disabled"):
-                if is_web:
+                if is_web or is_llm:
                     continue
                 # Review mode: show a dimmed annotation
                 main += f'<div class="method-card method-disabled" id="{name}">\n'
@@ -2099,6 +2191,10 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
                 if detail:
                     main += f'<p class="disabled-detail">{md_inline(detail)}</p>\n'
                 main += "</div>\n"
+                continue
+
+            # LLM mode: skip methods without llmRef data
+            if is_llm and not m.get("llmRef"):
                 continue
 
             sig = format_signature(class_name, name, m)
@@ -2119,69 +2215,73 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             main += f'<div class="method-card" id="{name}">\n'
             main += f'<h3 class="signature">{html_escape(sig)}{scope_led}</h3>\n'
 
-            # Minimal example (right after signature, both modes)
-            if m.get("minimalExample"):
-                main += f'<p class="minimal-example"><code>{html_escape(m["minimalExample"])}</code></p>\n'
-
-            # Params (right after signature, both modes)
-            if m.get("parameters"):
-                main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
-                for p in m["parameters"]:
-                    pt = display_type(p.get("type", "var")) or "var"
-                    main += (
-                        f'<tr><td><code>{html_escape(p.get("name", ""))}</code></td>'
-                        f'<td><code>{html_escape(pt)}</code></td>'
-                        f'<td>{md_inline(p.get("description", ""))}</td></tr>\n'
-                    )
-                main += "</table>\n"
-
-            # Method description: web mode uses userDocs, review uses description
-            if is_web and m.get("userDocs"):
-                ud_text = m["userDocs"]
-                # Render multi-block userDocs (may contain tables)
-                for para in ud_text.split("\n\n"):
-                    para = para.strip()
-                    if para:
-                        main += md_block(para)
+            if is_llm:
+                # LLM mode: render Phase 4b content as styled pre block
+                main += f'<div class="llm-ref">{render_llm_ref(m["llmRef"])}</div>\n'
             else:
-                main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
+                # Minimal example (right after signature, review+web modes)
+                if m.get("minimalExample"):
+                    main += f'<p class="minimal-example"><code>{html_escape(m["minimalExample"])}</code></p>\n'
 
-            # Value Descriptions (review mode only -- userDocs covers this in web mode)
-            if not is_web and m.get("valueDescriptions"):
-                main += "<table><tr><th>Value</th><th>Description</th></tr>\n"
-                for vd in m["valueDescriptions"]:
-                    main += (
-                        f'<tr><td><code>{html_escape(vd.get("value", ""))}</code></td>'
-                        f'<td>{md_inline(vd.get("description", ""))}</td></tr>\n'
+                # Params (right after signature, review+web modes)
+                if m.get("parameters"):
+                    main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
+                    for p in m["parameters"]:
+                        pt = display_type(p.get("type", "var")) or "var"
+                        main += (
+                            f'<tr><td><code>{html_escape(p.get("name", ""))}</code></td>'
+                            f'<td><code>{html_escape(pt)}</code></td>'
+                            f'<td>{md_inline(p.get("description", ""))}</td></tr>\n'
+                        )
+                    main += "</table>\n"
+
+                # Method description: web mode uses userDocs, review uses description
+                if is_web and m.get("userDocs"):
+                    ud_text = m["userDocs"]
+                    # Render multi-block userDocs (may contain tables)
+                    for para in ud_text.split("\n\n"):
+                        para = para.strip()
+                        if para:
+                            main += md_block(para)
+                else:
+                    main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
+
+                # Value Descriptions (review mode only -- userDocs covers this in web mode)
+                if not is_web and m.get("valueDescriptions"):
+                    main += "<table><tr><th>Value</th><th>Description</th></tr>\n"
+                    for vd in m["valueDescriptions"]:
+                        main += (
+                            f'<tr><td><code>{html_escape(vd.get("value", ""))}</code></td>'
+                            f'<td>{md_inline(vd.get("description", ""))}</td></tr>\n'
+                        )
+                    main += "</table>\n"
+
+                # Callback Properties (review mode only -- userDocs covers this in web mode)
+                if not is_web and m.get("callbackProperties"):
+                    main += "<table><tr><th>Property</th><th>Type</th><th>Description</th></tr>\n"
+                    for cp in m["callbackProperties"]:
+                        main += (
+                            f'<tr><td><code>{html_escape(cp.get("property", ""))}</code></td>'
+                            f'<td><code>{html_escape(cp.get("type", ""))}</code></td>'
+                            f'<td>{md_inline(cp.get("description", ""))}</td></tr>\n'
+                        )
+                    main += "</table>\n"
+
+                # Pitfalls (review+web modes)
+                for p in m.get("pitfalls", []):
+                    main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
+
+                # Examples (review+web modes)
+                for ex in m.get("examples", []):
+                    main += f'<pre><code class="language-javascript">{html_escape(ex.get("code", ""))}</code></pre>\n'
+
+                # Cross refs (review+web modes)
+                if m.get("crossReferences"):
+                    refs = ", ".join(
+                        f'<a href="#{r.split(".")[-1]}">{r}</a>'
+                        for r in m["crossReferences"]
                     )
-                main += "</table>\n"
-
-            # Callback Properties (review mode only -- userDocs covers this in web mode)
-            if not is_web and m.get("callbackProperties"):
-                main += "<table><tr><th>Property</th><th>Type</th><th>Description</th></tr>\n"
-                for cp in m["callbackProperties"]:
-                    main += (
-                        f'<tr><td><code>{html_escape(cp.get("property", ""))}</code></td>'
-                        f'<td><code>{html_escape(cp.get("type", ""))}</code></td>'
-                        f'<td>{md_inline(cp.get("description", ""))}</td></tr>\n'
-                    )
-                main += "</table>\n"
-
-            # Pitfalls (both modes)
-            for p in m.get("pitfalls", []):
-                main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
-
-            # Examples (both modes)
-            for ex in m.get("examples", []):
-                main += f'<pre><code class="language-javascript">{html_escape(ex.get("code", ""))}</code></pre>\n'
-
-            # Cross refs (both modes)
-            if m.get("crossReferences"):
-                refs = ", ".join(
-                    f'<a href="#{r.split(".")[-1]}">{r}</a>'
-                    for r in m["crossReferences"]
-                )
-                main += f"<p><strong>See also:</strong> {refs}</p>\n"
+                    main += f"<p><strong>See also:</strong> {refs}</p>\n"
 
             main += "</div>\n"
 
@@ -2233,6 +2333,7 @@ tr:nth-child(even) {{ background: rgba(110,118,129,0.1); }}
 .sidebar-mode {{ font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 16px 8px; border-bottom: 1px solid #21262d; margin-bottom: 4px; }}
 .mode-review {{ color: #8b949e; }}
 .mode-web {{ color: #58a6ff; }}
+.mode-llm {{ color: #d29922; }}
 
 /* Callout boxes */
 .pitfall {{ background: #272115; border-left: 3px solid #d29922; padding: 8px 16px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; color: #e6edf3; }}
@@ -2261,6 +2362,13 @@ a:hover {{ text-decoration: underline; }}
 h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 .disabled-label {{ font-size: 0.85em; color: #d29922; margin: 4px 0; }}
 .disabled-detail {{ font-size: 0.85em; color: #8b949e; margin: 4px 0; }}
+
+/* LLM C++ reference blocks (Phase 4b) */
+.llm-ref {{ background: #0d1117; border: 1px solid #30363d; padding: 16px; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 0.85em; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: #c9d1d9; }}
+.llm-ref .llm-label {{ color: #d29922; font-weight: 600; }}
+.llm-ref .llm-safe {{ color: #4E8E35; font-weight: 600; }}
+.llm-ref .llm-unsafe {{ color: #f85149; font-weight: 600; }}
+.llm-ref .llm-source {{ color: #8b949e; font-style: italic; }}
 </style>
 </head>
 <body>
@@ -2580,6 +2688,19 @@ def run_preview(class_filter: str = None):
                         svg_count += 1
         if svg_count:
             print(f"  Copied {svg_count} SVG(s) to preview/images/")
+
+        # Generate LLM C++ ref page if any Phase 4b data exists
+        has_llmref = any(
+            m.get("llmRef") is not None
+            for m in c.get("methods", {}).values()
+        )
+        if has_llmref:
+            html_llm = generate_class_html(name, c, mode="llm")
+            out_llm = PREVIEW_DIR / f"{name}_llm.html"
+            with open(out_llm, "w", encoding="utf-8") as f:
+                f.write(html_llm)
+            print(f"  {out_llm}")
+            page_count += 1
 
     print(f"Preview: {page_count} page(s) generated.")
 
