@@ -1,1 +1,3 @@
-Registers a callback that fires whenever the host tempo changes. Pass `SyncNotification` for audio-thread execution (requires `inline function`) or `AsyncNotification` for UI-thread delivery. The callback receives the new BPM value as its argument. It fires once immediately upon registration with the current tempo.
+Registers a callback that fires whenever the host tempo changes. The callback receives the new BPM value. It fires immediately upon registration with the current tempo, so you can initialize tempo-dependent state without a separate setup step.
+
+> **Warning:** The initial fire upon registration is always synchronous regardless of the dispatch mode.

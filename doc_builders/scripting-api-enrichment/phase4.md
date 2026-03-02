@@ -1,4 +1,4 @@
-# Phase 4a: User-Facing Documentation Authoring -- Agent Instructions
+# Phase 4a: User-Facing Documentation Authoring - Agent Instructions
 
 Phase 4a transforms the raw C++ analysis from Phases 1-3 into user-facing documentation for HISEScript developers. The agent reads the complete merged `api_reference.json` for a single class and produces `userDocs` content for the class overview and each method. Phase 4a also renders SVG diagrams for methods/classes that have a `diagram` specification.
 
@@ -6,9 +6,11 @@ Phase 4a transforms the raw C++ analysis from Phases 1-3 into user-facing docume
 
 **Audience:** HISEScript developers who have no knowledge of C++ internals. They want to know what a method does, how to use it, and what to watch out for.
 
-**ASCII-only rule:** All output files must use ASCII characters only. Use `--` instead of em-dashes, straight quotes instead of curly quotes.
+**ASCII-only rule:** All output files must use ASCII characters only. No em-dashes (use a regular dash or rewrite the sentence), no curly quotes.
 
 **Phase 3 priority:** When Phase 3 raw docs already provide `userDocs` for a method, Phase 4 auto does NOT overwrite it. Phase 4 only generates `userDocs` for methods without Phase 3 coverage. Phase 4 manual overrides everything.
+
+**Pitfalls and common mistakes are authored here.** Phase 1 and Phase 2 produce structured pitfall and common mistake data in the JSON. Phase 4a is responsible for curating and integrating this content directly into the `.md` files (as blockquote warnings and a Common Mistakes section). The merge/preview pipeline does not inject them mechanically - what you write is what appears on the page.
 
 ---
 
@@ -20,18 +22,19 @@ The agent reads from `enrichment/output/api_reference.json`, specifically the en
 - `description.brief` -- one-line summary
 - `description.purpose` -- technical summary (2-5 sentences)
 - `description.details` -- full technical reference (may reference C++ internals)
+- `description.projectContext` -- real-world usage context from analyzed HISE projects (Phase 2). Contains structured sub-sections: Real-World Use Cases (concrete examples from specific projects), Complexity Tiers (progressive method groups from beginner to advanced), Practical Defaults (most common configuration choices with evidence), and Integration Patterns (method-to-method connections with other HISE systems). Use this to ground the user-facing overview in practical reality -- it provides the "how it's actually used" perspective that C++ analysis cannot. When present, prefer project-derived use cases over generic descriptions.
 - `description.codeExample` -- usage example
-- `description.obtainedVia` -- how the object is obtained in HISEScript
-- `commonMistakes` -- common mistakes table
+- `description.obtainedVia` - how the object is obtained in HISEScript
+- `commonMistakes` - common mistakes table (Phase 1 auto + Phase 2 project-tagged entries; curate into a `## Common Mistakes` section in the Readme.md)
 
 ### Method level
-- `description` -- technical description (may reference C++ internals)
-- `signature` -- method signature with types
-- `parameters` -- parameter table with types and descriptions
-- `pitfalls` -- non-obvious behaviors
-- `examples` -- code examples
-- `crossReferences` -- related methods
-- `diagram` -- diagram specification (if present): `type` + `description`
+- `description` - technical description (may reference C++ internals)
+- `signature` - method signature with types
+- `parameters` - parameter table with types and descriptions
+- `pitfalls` - non-obvious behaviors (Phase 1/2 structured data; curate into userDocs as `> **Warning:**` blockquotes)
+- `examples` - code examples
+- `crossReferences` - related methods
+- `diagram` - diagram specification (if present): `type` + `description`
 
 ---
 
@@ -56,18 +59,30 @@ The agent ONLY writes to `phase4/auto/`. Never read or modify files in `phase4/m
 [4-8 sentences providing a user-facing overview of what this class does,
 how you typically use it, the main method groups, and any important
 behavioral notes. One or two paragraphs.]
+
+## Common Mistakes
+
+- **Wrong:** [code or description of the mistake]
+  **Right:** [code or description of the correct approach]
+  *[1-2 sentence explanation of why the wrong version fails.]*
+
+[Repeat for each curated common mistake.]
 ```
 
-The `# ClassName` heading is required. The content below it should be concise and scannable -- no subheadings, but markdown tables and bullet lists are allowed when they improve readability (e.g. a table showing distinct modes or a short list of method groups). Target a length between the Phase 1 `purpose` and `details` -- substantial enough to orient a scripter, but with all C++ internals stripped.
+The `# ClassName` heading is required. The overview content below it should be concise and scannable - no subheadings in the overview prose, but markdown tables and bullet lists are allowed when they improve readability (e.g. a table showing distinct modes or a short list of method groups). Target a length between the Phase 1 `purpose` and `details` - substantial enough to orient a scripter, but with all C++ internals stripped.
+
+The `## Common Mistakes` section is optional but recommended for classes with non-trivial usage patterns. Curate from the `commonMistakes` array in the JSON - you have editorial discretion to omit entries that are too obvious, too niche, or redundant with the overview prose. The format must be exactly as shown above (the preview pipeline renders it from the markdown).
 
 ### Method-level: `phase4/auto/ClassName/methodName.md`
 
 ```
 [1-3 sentences describing what this method does and how to use it.
-No heading required -- the method name is inferred from the filename.]
+No heading required - the method name is inferred from the filename.]
+
+> **Warning:** [non-obvious behavioral gotcha curated from the pitfalls array]
 ```
 
-Bare prose, no heading, no structured fields. Just the user-facing description.
+Bare prose, no heading, no structured fields. Optionally followed by `> **Warning:**` blockquotes for important pitfalls. See "Pitfall Integration" below for curation guidance.
 
 ---
 
@@ -77,11 +92,72 @@ See `enrichment/resources/guidelines/userdocs_style.md` for the complete prose w
 
 ---
 
+## Pitfall Integration
+
+Phase 1 and Phase 2 produce structured `pitfalls` data for methods. These remain in the JSON for LLM/MCP consumers. Phase 4a's job is to curate which pitfalls appear on the docs page and how they are phrased.
+
+### Curation rules
+
+1. **Check each method's `pitfalls` array** before writing its `.md` file.
+2. **Integrate important pitfalls** as `> **Warning:** ...` blockquotes at the end of the method's prose.
+3. **Omit pitfalls that are:**
+   - Too obvious from the signature (e.g., "throws an error if index is out of bounds")
+   - Already caught by the API with an error message (the API handles it; no need to warn the reader)
+   - Redundant with the prose you just wrote (do not restate the same fact in both prose and a warning)
+   - Too niche or edge-case for the docs page (they stay in the JSON for power users via MCP)
+4. **One warning per method is typical; two is the practical maximum.** More than two warnings makes the method feel like a minefield. If you have three important pitfalls, weave one into the prose naturally and use blockquotes for the other two.
+5. **Do not duplicate between prose and warning.** Pick one location for each fact. If the prose already covers it, skip the blockquote.
+
+### Format
+
+```markdown
+Registers a callback that fires on each musical beat. The callback receives
+the beat index and a boolean for whether this is the first beat of a new bar.
+
+> **Warning:** Does not fire immediately upon registration (unlike `setOnTempoChange`
+> and `setOnTransportChange`). The first callback arrives at the next beat boundary.
+```
+
+The `> **Warning:**` format renders as a styled callout on the docs page. Use `**Warning:**` consistently (not "Note:", "Caution:", etc.).
+
+---
+
+## Common Mistakes Integration
+
+The `commonMistakes` array in the JSON contains wrong/right/explanation entries from Phase 1 (auto-detected) and Phase 2 (project-derived). Phase 4a curates these into a `## Common Mistakes` section in the class-level `Readme.md`.
+
+### Curation rules
+
+1. **Review the full `commonMistakes` array** including project-tagged entries.
+2. **Keep entries that represent genuine, non-obvious traps.** A good common mistake is one where the code looks reasonable but silently does the wrong thing.
+3. **Omit entries that are:**
+   - Redundant with the overview prose (if the overview already explains the correct approach clearly, a "don't do the opposite" entry adds little)
+   - Caught by the API with a clear error message (the scripter will see the error; no need to pre-warn)
+   - Too specific to a single edge case
+4. **Reword entries freely.** The Phase 1/2 text is raw analysis; your version should read naturally as user-facing guidance.
+5. **Typical count: 2-5 entries.** Fewer for simple classes, more for classes with complex setup requirements.
+
+---
+
+## Editorial Self-Review
+
+After writing all `.md` files (Readme + methods), re-read them together as a single page. Apply these edits directly to the source files:
+
+1. **Consolidate repeated cross-method facts.** If 3+ methods state the same fact (e.g., "this is a global operation"), move it to the Readme and remove from individual methods. Keep it on a specific method only if it is genuinely surprising there.
+2. **Resolve prose/warning overlap.** If a method's prose restates what its warning blockquote says, cut the weaker version.
+3. **Remove filler.** "currently", "as its argument", "this specific", unnecessary "will".
+4. **No em-dashes.** Use a regular dash or rewrite the sentence.
+5. **Merge redundant sentences** within a single method's prose.
+
+This step catches redundancy patterns that are only visible when all methods are read together. It is the final step before running the mechanical merge + preview.
+
+---
+
 ## Workflow
 
 ### Per-class execution
 
-The agent runs once per class. **Diagrams are rendered first**, then userDocs are written -- this allows the `.md` files to embed or link to diagram SVGs.
+The agent runs once per class. **Diagrams are rendered first**, then userDocs are written (this allows the `.md` files to embed or link to diagram SVGs), then the editorial self-review pass runs.
 
 1. Read the merged `api_reference.json`
 2. Extract the target class entry
@@ -94,19 +170,25 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
    - For each method diagram that survived triage, render an SVG
    - Skip if a manual or auto SVG already exists
 5. Write class-level `Readme.md`:
-   - Check `phase4/manual/ClassName/Readme.md` -- if present, skip
-   - Check if class already has `userDocs` from Phase 3 -- if so, skip
-   - Check `phase4/auto/ClassName/Readme.md` -- if present, skip
-   - Write `Readme.md` with user-facing prose; **embed class-level diagram SVGs** as `![brief](filename.svg)` (see Embedding Diagrams below)
-   - If a diagram was cut during triage because a table or prose covers the same information better, use that table/prose instead -- do not reference the cut diagram
+   - Check `phase4/manual/ClassName/Readme.md` - if present, skip
+   - Check if class already has `userDocs` from Phase 3 - if so, skip
+   - Check `phase4/auto/ClassName/Readme.md` - if present, skip
+   - Write `Readme.md` with user-facing prose and a `## Common Mistakes` section (curated from `commonMistakes` array)
+   - Embed class-level diagram SVGs as `![brief](filename.svg)` (see Embedding Diagrams below)
+   - If a diagram was cut during triage because a table or prose covers the same information better, use that table/prose instead
 6. Write method-level `.md` files:
-   - Check `phase4/manual/ClassName/methodName.md` -- if present, skip
-   - Check if the method already has `userDocs` from Phase 3 -- if so, skip
-   - Check `phase4/auto/ClassName/methodName.md` -- if present, skip
+   - Check `phase4/manual/ClassName/methodName.md` - if present, skip
+   - Check if the method already has `userDocs` from Phase 3 - if so, skip
+   - Check `phase4/auto/ClassName/methodName.md` - if present, skip
    - Write `methodName.md` with user-facing prose
+   - Integrate important pitfalls from the method's `pitfalls` array as `> **Warning:**` blockquotes (see Pitfall Integration above)
    - If the method has a `diagram` field that survived triage, embed the SVG as `![brief](filename.svg)`
    - If the method has a `diagramRef` field pointing to a rendered class-level diagram, link to the anchor: `[See: brief](#diagram-id)`
    - If the method's diagram or diagramRef was cut during triage, do not reference it
+7. **Editorial self-review** (see Editorial Self-Review above):
+   - Re-read all `.md` files together as a single page
+   - Consolidate repeated facts, resolve prose/warning overlap, remove filler
+   - Edit the source `.md` files directly
 
 ### Session prompt
 

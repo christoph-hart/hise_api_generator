@@ -26,7 +26,9 @@ Do not duplicate content between them. If `description` already says something, 
 - **Behavioral notes** that affect the scripter (e.g. "only works in the HISE IDE", "the value is cloned at capture time")
 - **Practical limitations** (e.g. "only one benchmark can be active at a time")
 - **Cross-references** to related methods when it helps understanding (e.g. "Call `Console.startBenchmark()` first, then `Console.stopBenchmark()` to see the result")
-- **String enum tables:** When a method accepts a fixed set of string values and the Phase 1 data includes a `valueDescriptions` field, present them in a table in the userDocs prose rather than listing them inline. This gives the reader real information beyond the method signature. For trivial self-explanatory values, an inline list is acceptable -- use judgment on whether a table adds value. When in doubt, prefer the table: it prevents the userDocs from becoming a stub that just restates the method name. **Quality gate:** If the Phase 1 value descriptions appear to be verbatim C++ enum comments without behavioral context (e.g., "No syncing going on" instead of "Disables all clock processing; no transport, beat, or grid callbacks fire"), expand them with behavioral information drawn from the class-level Details section or the method's description field. Do not publish shallow enum descriptions when richer behavioral information is available in the Phase 1 data.
+- **Curated pitfalls** as `> **Warning:**` blockquotes. Check each method's `pitfalls` array in the merged JSON and surface the important ones. Omit pitfalls that are obvious from the signature, already caught by the API with an error message, or redundant with your prose. Do not duplicate between prose and a warning blockquote - pick one location for each fact.
+- **Curated common mistakes** as a `## Common Mistakes` section in the class Readme.md. Review the `commonMistakes` array and keep entries that represent genuine non-obvious traps. Reword freely for readability.
+- **String enum tables:** When a method accepts a fixed set of string values and the Phase 1 data includes a `valueDescriptions` field, present them in a table in the userDocs prose rather than listing them inline. This gives the reader real information beyond the method signature. For trivial self-explanatory values, an inline list is acceptable - use judgment on whether a table adds value. When in doubt, prefer the table: it prevents the userDocs from becoming a stub that just restates the method name. **Quality gate:** If the Phase 1 value descriptions appear to be verbatim C++ enum comments without behavioral context (e.g., "No syncing going on" instead of "Disables all clock processing; no transport, beat, or grid callbacks fire"), expand them with behavioral information drawn from the class-level Details section or the method's description field. Do not publish shallow enum descriptions when richer behavioral information is available in the Phase 1 data.
 
 ---
 
@@ -40,7 +42,8 @@ These elements must NEVER appear in userDocs. They are implementation details th
 - **Thread safety internals** -- e.g. "dispatched asynchronously to the message thread via `MessageManager::callAsync`". Instead say "runs asynchronously on the UI thread" if the threading behavior matters to the scripter.
 - **C++ type system references** -- e.g. "`var`", "`const String&`", "`dynamic_cast`", "`static_cast`". Use HISEScript types instead: "String", "Number", "Array", "Object", "Function".
 - **Source code references** -- e.g. "defined in `ScriptingApi.cpp` line 6693", "see `MainController::UserPresetHandler`"
-- **Negative guidance that duplicates pitfalls** -- don't tell the user what values are *not* allowed when the API already reports a script error for invalid input. State what to do, not what to avoid. Mention restrictions only when they are non-obvious and the API won't catch them with an error message.
+- **Negative guidance that duplicates pitfalls** - don't tell the user what values are *not* allowed when the API already reports a script error for invalid input. State what to do, not what to avoid. Mention restrictions only when they are non-obvious and the API won't catch them with an error message.
+- **Prose that restates a warning blockquote** - if you write a `> **Warning:**` blockquote for a pitfall, do not also state the same fact in the prose paragraph above it. The warning carries the detail; the prose should cover different ground.
 
 **Translation examples:**
 
@@ -142,10 +145,10 @@ Weave cross-references into natural sentences. Do not use bulleted "Related Meth
 
 The following formatting elements are preserved in `userDocs` output and should be used where they improve readability:
 
-- **Blockquotes** (`> ...`) -- use for non-obvious caveats, threading warnings, and edge-case behavior. These stand out visually on the docs site.
-- **Tables** (`| Column | ... |`) -- use for enumerated options, mode lists, or value descriptions. Prefer tables over long comma-separated lists.
-- **Bold/italic** -- use sparingly for emphasis.
-- **Inline code** (`` `backticks` ``) -- use for method names, property names, string values, and HISEScript keywords.
+- **Warning blockquotes** (`> **Warning:** ...`) - the standard format for surfaced pitfalls. Use for non-obvious behavioral gotchas that a reader would not expect from the method signature. These render as styled callout boxes on the docs page. One warning per method is typical; two is the practical maximum. Always use `**Warning:**` (not "Note:", "Caution:", etc.) for consistency.
+- **Tables** (`| Column | ... |`) - use for enumerated options, mode lists, or value descriptions. Prefer tables over long comma-separated lists.
+- **Bold/italic** - use sparingly for emphasis.
+- **Inline code** (`` `backticks` ``) - use for method names, property names, string values, and HISEScript keywords.
 
 The following are **stripped** by the parser and should not be relied upon:
 
@@ -245,8 +248,12 @@ Before finalizing `userDocs` for a class, verify:
 - [ ] Class-level `Readme.md` provides useful context and groups methods logically
 - [ ] Cross-references use backtick-wrapped method names
 - [ ] All content is ASCII-only (no em-dashes, curly quotes, etc.)
-- [ ] Prose reads naturally -- no robotic "this method does X" repetition across every entry
+- [ ] Prose reads naturally - no robotic "this method does X" repetition across every entry
 - [ ] Class-wide facts are stated once in the Readme, not repeated on each method
-- [ ] No "Related Methods:" bullet lists -- cross-references are woven into sentences
-- [ ] No code examples in the prose -- those belong in the `examples` field
+- [ ] No "Related Methods:" bullet lists - cross-references are woven into sentences
+- [ ] No code examples in the prose - those belong in the `examples` field
 - [ ] SVG diagrams rendered for all methods/classes with a `diagram` field (unless manual SVG exists)
+- [ ] All method pitfalls reviewed; important ones surfaced as `> **Warning:**` blockquotes
+- [ ] No prose/warning duplication - each fact appears in one location only
+- [ ] Common mistakes curated into `## Common Mistakes` section in Readme.md
+- [ ] Editorial self-review completed: cross-method redundancy consolidated, filler removed

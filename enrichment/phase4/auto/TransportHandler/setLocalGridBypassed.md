@@ -1,1 +1,1 @@
-Temporarily disables grid callbacks for this TransportHandler instance without deregistering the callback. When unbypassed, the next grid callback will report itself as the first grid event in playback.
+Temporarily disables grid callbacks for this TransportHandler instance without deregistering the callback. When unbypassed, the next grid callback reports itself as the first grid event in playback, so sequencer state can resync cleanly.

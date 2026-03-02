@@ -709,6 +709,9 @@ def parse_readme_md(filepath: Path) -> dict:
             if preprocessors:
                 result["relatedPreprocessors"] = preprocessors
 
+    if "Project Context" in sections:
+        result["projectContext"] = sections["Project Context"].strip()
+
     if "Constants" in sections:
         result["constants"] = parse_markdown_table(sections["Constants"])
 
@@ -1306,6 +1309,7 @@ def build_class_description(base_desc: str, readme_data: dict, source_tag: str) 
         "brief": readme_data.get("brief"),
         "purpose": readme_data.get("purpose"),
         "details": readme_data.get("details"),
+        "projectContext": None,
         "obtainedVia": readme_data.get("obtainedVia"),
         "minimalObjectToken": readme_data.get("minimalObjectToken"),
         "codeExample": readme_data.get("codeExample"),
@@ -1608,10 +1612,16 @@ def run_merge():
             method_name_map.setdefault(m.lower(), m)
 
         # --- Phase 2 data ---
+        p2_readme = {}
         p2_methods = {}
         p2_class_dir = PHASE2_DIR / class_name
         if p2_class_dir.is_dir():
+            p2_readme_path = p2_class_dir / "Readme.md"
+            if p2_readme_path.is_file():
+                p2_readme = parse_readme_md(p2_readme_path)
             for md_file in p2_class_dir.glob("*.md"):
+                if md_file.name.lower() == "readme.md":
+                    continue
                 raw_name = md_file.stem
                 method_name = method_name_map.get(raw_name.lower(), raw_name)
                 p2_methods[method_name] = parse_method_override_md(md_file)
@@ -1664,8 +1674,12 @@ def run_merge():
                     p4_method_userdocs[canonical] = (prose, is_override)
 
         # --- Build class description ---
-        # Start with Phase 1, override with Phase 3 (last-writer-wins)
+        # Start with Phase 1, override with Phase 2/3 (last-writer-wins)
         desc = build_class_description(base.get("description", ""), p1_readme, "auto")
+
+        # Phase 2: project context (additive, not override)
+        if p2_readme.get("projectContext"):
+            desc["projectContext"] = p2_readme["projectContext"]
 
         # Phase 3 overrides (last-writer-wins)
         for field in ("brief", "purpose", "details", "obtainedVia",
@@ -1697,6 +1711,7 @@ def run_merge():
 
         # --- Common Mistakes (union merge) ---
         common_mistakes = build_common_mistakes(p1_readme, "auto")
+        common_mistakes.extend(build_common_mistakes(p2_readme, "project"))
         common_mistakes.extend(build_common_mistakes(p3_readme, "manual"))
 
         # --- Methods ---
@@ -1896,16 +1911,32 @@ def md_block(block: str) -> str:
                 html += md_block(rest)
             return html
 
+    # Blockquote (lines starting with "> ")
+    if all(l.startswith("> ") or l.startswith(">") or l == "" for l in lines) and any(l.startswith(">") for l in lines):
+        inner_lines = []
+        for l in lines:
+            if l.startswith("> "):
+                inner_lines.append(l[2:])
+            elif l.startswith(">"):
+                inner_lines.append(l[1:])
+            else:
+                inner_lines.append(l)
+        inner_html = md_inline(" ".join(ln for ln in inner_lines if ln.strip()))
+        return f'<blockquote class="warning">{inner_html}</blockquote>\n'
+
     # Bullet list (lines starting with "- ")
     if all(l.startswith("- ") or l.startswith("  ") or l == "" for l in lines) and any(l.startswith("- ") for l in lines):
-        html = "<ul>\n"
+        items: list[str] = []
         for line in lines:
-            line = line.strip()
-            if line.startswith("- "):
-                html += f"<li>{md_inline(line[2:])}</li>\n"
-            elif line and not line.startswith("- "):
-                # Continuation line -- append to previous li (simplified)
-                html += f"  {md_inline(line)}\n"
+            stripped = line.strip()
+            if stripped.startswith("- "):
+                items.append(md_inline(stripped[2:]))
+            elif stripped and items:
+                # Continuation line: append to current item with <br>
+                items[-1] += f"<br>{md_inline(stripped)}"
+        html = "<ul>\n"
+        for item in items:
+            html += f"<li>{item}</li>\n"
         html += "</ul>\n"
         return html
 
@@ -2075,9 +2106,11 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             sidebar_sections.append(("overview", "Overview"))
         if desc.get("details"):
             sidebar_sections.append(("details", "Details"))
+        if desc.get("projectContext"):
+            sidebar_sections.append(("project-context", "Project Context"))
     if not is_llm and desc.get("codeExample"):
         sidebar_sections.append(("usage-example", "Usage Example"))
-    if not is_llm and c.get("commonMistakes"):
+    if not is_web and not is_llm and c.get("commonMistakes"):
         sidebar_sections.append(("common-mistakes", "Common Mistakes"))
     if not is_web and not is_llm and desc.get("relatedPreprocessors"):
         sidebar_sections.append(("preprocessors", "Preprocessors"))
@@ -2150,13 +2183,21 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
                 if para:
                     main += md_block(para)
 
+    # Project context (review mode only -- Phase 2 project-derived insights)
+    if not is_web and not is_llm and desc.get("projectContext"):
+        main += '<h2 id="project-context">Project Context</h2>\n'
+        for para in desc["projectContext"].split("\n\n"):
+            para = para.strip()
+            if para:
+                main += md_block(para)
+
     # Code example (review and web modes only)
     if not is_llm and desc.get("codeExample"):
         main += '<h2 id="usage-example">Usage Example</h2>\n'
         main += f'<pre><code class="language-javascript">{html_escape(desc["codeExample"])}</code></pre>\n'
 
-    # Common mistakes (review and web modes only)
-    if not is_llm and c.get("commonMistakes"):
+    # Common mistakes (review mode only -- web mode gets them from class userDocs)
+    if not is_web and not is_llm and c.get("commonMistakes"):
         main += '<h2 id="common-mistakes">Common Mistakes</h2>\n'
         for m in c["commonMistakes"]:
             main += (
@@ -2267,9 +2308,10 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
                         )
                     main += "</table>\n"
 
-                # Pitfalls (review+web modes)
-                for p in m.get("pitfalls", []):
-                    main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
+                # Pitfalls (review mode only -- web mode gets them from userDocs blockquotes)
+                if not is_web:
+                    for p in m.get("pitfalls", []):
+                        main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
 
                 # Examples (review+web modes)
                 for ex in m.get("examples", []):
@@ -2337,6 +2379,7 @@ tr:nth-child(even) {{ background: rgba(110,118,129,0.1); }}
 
 /* Callout boxes */
 .pitfall {{ background: #272115; border-left: 3px solid #d29922; padding: 8px 16px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; color: #e6edf3; }}
+blockquote.warning {{ background: #272115; border-left: 3px solid #d29922; padding: 8px 16px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; color: #e6edf3; }}
 .mistake {{ background: #2d1117; border-left: 3px solid #f85149; padding: 8px 16px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; color: #e6edf3; }}
 
 /* Method cards */
@@ -2442,15 +2485,9 @@ def generate_class_markdown(class_name: str, c: dict) -> str:
         lines.append("```")
         lines.append("")
 
-    # Common mistakes
-    if c.get("commonMistakes"):
-        lines.append("## Common Mistakes")
-        lines.append("")
-        for m in c["commonMistakes"]:
-            lines.append(f"- **Wrong:** {m['wrong']}")
-            lines.append(f"  **Right:** {m['right']}")
-            lines.append(f"  *{m['explanation']}*")
-            lines.append("")
+    # Common mistakes: now part of class userDocs (authored in Phase 4a Readme.md)
+    # The userDocs text above already contains the ## Common Mistakes section if present.
+    # Structured commonMistakes data remains in the JSON for review mode and MCP consumers.
 
     # Methods
     if methods:
@@ -2492,10 +2529,9 @@ def generate_class_markdown(class_name: str, c: dict) -> str:
                 lines.append(m["description"])
                 lines.append("")
 
-            # Pitfalls
-            for p in m.get("pitfalls", []):
-                lines.append(f"> **Warning:** {p.get('description', '')}")
-                lines.append("")
+            # Pitfalls: now part of method userDocs (authored in Phase 4a .md files)
+            # The userDocs text above already contains > **Warning:** blockquotes if present.
+            # Structured pitfall data remains in the JSON for review mode and MCP consumers.
 
             # Examples
             for ex in m.get("examples", []):
