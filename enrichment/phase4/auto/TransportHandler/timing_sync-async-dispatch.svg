@@ -1,87 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="780" height="420" viewBox="0 0 780 420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380">
   <defs>
-    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6" fill="#4E8E35"/>
+    <!-- Arrow markers -->
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4E8E35"/>
     </marker>
-    <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6" fill="#3F6E6E"/>
-    </marker>
-    <marker id="arrow-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6" fill="#7E60B1"/>
+    <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3F6E6E"/>
     </marker>
   </defs>
-
+  
   <!-- Background -->
-  <rect width="780" height="420" fill="#333333" rx="6"/>
-
-  <!-- Title -->
-  <text x="390" y="30" text-anchor="middle" font-family="Lato, sans-serif" font-size="16" font-weight="bold" fill="#CCCCCC">Sync vs Async Callback Dispatch</text>
-
-  <!-- Event source zone -->
-  <rect x="12" y="50" width="150" height="310" rx="6" fill="#7E60B1" fill-opacity="0.05" stroke="#7E60B1" stroke-opacity="0.2"/>
-  <text x="87" y="72" text-anchor="middle" font-family="Lato, sans-serif" font-size="12" font-weight="bold" fill="#7E60B1">Transport Event</text>
-
+  <rect width="900" height="380" fill="#333333"/>
+  
+  <!-- Swim lanes -->
   <!-- Audio thread lane -->
-  <rect x="172" y="50" width="594" height="130" rx="6" fill="#4E8E35" fill-opacity="0.04" stroke="#4E8E35" stroke-opacity="0.2"/>
-  <text x="184" y="72" font-family="Lato, sans-serif" font-size="12" font-weight="bold" fill="#4E8E35">Audio Thread</text>
-
+  <rect x="12" y="60" width="876" height="100" fill="#282828" stroke="rgba(0,0,0,0.5)" rx="6"/>
+  <text x="24" y="88" font-family="Lato, sans-serif" font-size="14" font-weight="bold" fill="#4E8E35">Audio Thread</text>
+  
   <!-- UI thread lane -->
-  <rect x="172" y="200" width="594" height="160" rx="6" fill="#3F6E6E" fill-opacity="0.04" stroke="#3F6E6E" stroke-opacity="0.2"/>
-  <text x="184" y="222" font-family="Lato, sans-serif" font-size="12" font-weight="bold" fill="#3F6E6E">UI Thread</text>
-
-  <!-- Event trigger circle -->
-  <circle cx="87" cy="155" r="20" fill="#282828" stroke="#7E60B1" stroke-width="2"/>
-  <text x="87" y="160" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#CCCCCC">event</text>
-  <text x="87" y="200" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#808080">e.g. tempo</text>
-  <text x="87" y="214" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#808080">change</text>
-
-  <!-- SYNC PATH (top lane) -->
-  <!-- Arrow from event to sync callback -->
-  <line x1="107" y1="145" x2="230" y2="115" stroke="#4E8E35" stroke-width="2" marker-end="url(#arrow-green)"/>
-
-  <!-- Sync callback box -->
-  <rect x="240" y="92" width="220" height="56" rx="6" fill="#282828" stroke="#4E8E35" stroke-width="1.5"/>
-  <text x="350" y="115" text-anchor="middle" font-family="Consolas, monospace" font-size="13" fill="#90FFB1">callSync()</text>
-  <text x="350" y="135" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#808080">inline function executes</text>
-
-  <!-- Label: SyncNotification -->
-  <rect x="122" y="100" width="115" height="20" rx="4" fill="#4E8E35" fill-opacity="0.15"/>
-  <text x="179" y="114" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#4E8E35">SyncNotification</text>
-
-  <!-- Immediate badge -->
-  <rect x="480" y="102" width="100" height="22" rx="4" fill="#4E8E35" fill-opacity="0.12"/>
-  <text x="530" y="117" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" font-weight="bold" fill="#4E8E35">Immediate</text>
-
-  <!-- ASYNC PATH (bottom lane) -->
-  <!-- Arrow from event to queue -->
-  <line x1="107" y1="165" x2="230" y2="260" stroke="#3F6E6E" stroke-width="2" marker-end="url(#arrow-teal)"/>
-
-  <!-- Label: AsyncNotification -->
-  <rect x="112" y="218" width="120" height="20" rx="4" fill="#3F6E6E" fill-opacity="0.15"/>
-  <text x="172" y="232" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#3F6E6E">AsyncNotification</text>
-
-  <!-- Queue box -->
-  <rect x="240" y="240" width="180" height="56" rx="6" fill="#282828" stroke="#FFBA00" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="330" y="263" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#FFBA00">sendPooledChange</text>
-  <text x="330" y="280" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#FFBA00">Message()</text>
-
-  <!-- Timer tick arrow -->
-  <text x="460" y="250" font-family="Lato, sans-serif" font-size="10" fill="#808080">next PooledUIUpdater tick</text>
-  <line x1="420" y1="268" x2="508" y2="268" stroke="#3F6E6E" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-teal)"/>
-
-  <!-- Async callback box -->
-  <rect x="518" y="240" width="220" height="56" rx="6" fill="#282828" stroke="#3F6E6E" stroke-width="1.5"/>
-  <text x="628" y="263" text-anchor="middle" font-family="Consolas, monospace" font-size="13" fill="#90FFB1">callAsync()</text>
-  <text x="628" y="283" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#808080">any function executes</text>
-
-  <!-- Delayed badge -->
-  <rect x="518" y="300" width="100" height="22" rx="4" fill="#FFBA00" fill-opacity="0.12"/>
-  <text x="568" y="315" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" font-weight="bold" fill="#FFBA00">Deferred</text>
-
-  <!-- Hi-priority note -->
-  <text x="640" y="315" font-family="Lato, sans-serif" font-size="10" fill="#808080">(high priority path)</text>
-
-  <!-- Bottom notes -->
-  <rect x="12" y="375" width="756" height="34" rx="6" fill="#282828" fill-opacity="0.5"/>
-  <text x="24" y="395" font-family="Lato, sans-serif" font-size="11" fill="#808080">Both paths can coexist for the same event type if different function references are registered in each slot.</text>
+  <rect x="12" y="180" width="876" height="100" fill="#282828" stroke="rgba(0,0,0,0.5)" rx="6"/>
+  <text x="24" y="208" font-family="Lato, sans-serif" font-size="14" font-weight="bold" fill="#3F6E6E">UI Thread (PooledUIUpdater)</text>
+  
+  <!-- Timeline title -->
+  <text x="12" y="35" font-family="Lato, sans-serif" font-size="16" font-weight="bold" fill="#CCCCCC">Sync vs Async Callback Dispatch</text>
+  
+  <!-- Event: Tempo change -->
+  <circle cx="150" cy="110" r="6" fill="#90FFB1"/>
+  <text x="150" y="138" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC" text-anchor="middle">Tempo change</text>
+  <text x="150" y="152" font-family="Consolas, monospace" font-size="11" fill="#808080" text-anchor="middle">event</text>
+  
+  <!-- Sync path: immediate execution on audio thread -->
+  <line x1="200" y1="110" x2="350" y2="110" stroke="#4E8E35" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="275" y="102" font-family="Lato, sans-serif" font-size="12" fill="#4E8E35" text-anchor="middle">callSync()</text>
+  
+  <rect x="360" y="85" width="140" height="50" fill="#222222" stroke="#4E8E35" stroke-width="2" rx="6"/>
+  <text x="430" y="108" font-family="Consolas, monospace" font-size="12" fill="#CCCCCC" text-anchor="middle">inline function</text>
+  <text x="430" y="124" font-family="Lato, sans-serif" font-size="11" fill="#808080" text-anchor="middle">executes immediately</text>
+  
+  <!-- Async path: queue to UI thread -->
+  <line x1="200" y1="110" x2="280" y2="180" stroke="#3F6E6E" stroke-width="1"/>
+  <circle cx="285" cy="186" r="3" fill="#3F6E6E"/>
+  <text x="240" y="148" font-family="Lato, sans-serif" font-size="11" fill="#3F6E6E">sendPooled...</text>
+  
+  <!-- Queued message -->
+  <rect x="300" y="205" width="120" height="40" fill="#222222" stroke="#3F6E6E" rx="4"/>
+  <text x="360" y="226" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">queued message</text>
+  
+  <!-- Timer tick -->
+  <circle cx="500" cy="230" r="6" fill="#3F6E6E"/>
+  <text x="500" y="260" font-family="Lato, sans-serif" font-size="11" fill="#808080" text-anchor="middle">Timer tick</text>
+  
+  <!-- Dispatch to callback -->
+  <line x1="550" y1="230" x2="680" y2="230" stroke="#3F6E6E" stroke-width="2" marker-end="url(#arrow-teal)"/>
+  <text x="615" y="222" font-family="Lato, sans-serif" font-size="12" fill="#3F6E6E" text-anchor="middle">callAsync()</text>
+  
+  <rect x="690" y="205" width="140" height="50" fill="#222222" stroke="#3F6E6E" stroke-width="2" rx="6"/>
+  <text x="760" y="228" font-family="Consolas, monospace" font-size="12" fill="#CCCCCC" text-anchor="middle">any function</text>
+  <text x="760" y="244" font-family="Lato, sans-serif" font-size="11" fill="#808080" text-anchor="middle">high-priority path</text>
+  
+  <!-- Notes -->
+  <text x="12" y="310" font-family="Lato, sans-serif" font-size="12" font-weight="bold" fill="#CCCCCC">Key Points:</text>
+  <text x="12" y="330" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">• Sync callbacks execute directly on the audio thread during the TempoListener virtual call</text>
+  <text x="12" y="348" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">• Async callbacks queue via sendPooledChangeMessage() and deliver on the UI thread at next timer tick</text>
+  <text x="12" y="366" font-family="Lato, sans-serif" font-size="12" fill="#CCCCCC">• Both paths can coexist if they use different function references</text>
 </svg>

@@ -1,12 +1,10 @@
-Controls which clock source - external (DAW) or internal (script-driven) - drives transport callbacks, grid timing, and BPM. Pass one of the sync mode constants available on any TransportHandler instance:
+Sets the sync mode for the global master clock, controlling how the internal clock (started/stopped by `startInternalClock`/`stopInternalClock`) interacts with the external DAW clock. Use the TransportHandler constants as the argument. This is a global setting - it affects all TransportHandler instances.
 
-| Constant | Effect |
-|----------|--------|
-| `Inactive` | Disables all clock processing. No transport, beat, or grid callbacks fire. |
-| `ExternalOnly` | Only the DAW drives transport. Internal clock calls are ignored. |
-| `InternalOnly` | Only the internal clock (started with `startInternalClock()`) drives transport. DAW play/stop is ignored. |
-| `PreferInternal` | Internal clock takes priority when playing. DAW events are accepted as fallback when the internal clock is idle. Use this as the default for plugins with their own transport controls. |
-| `PreferExternal` | DAW takes priority when playing. When the DAW starts, it takes over from the internal clock and fires a grid resync. When the DAW stops, the internal clock resumes. Use this when a plugin should follow the DAW but maintain its own transport standalone. |
-| `SyncInternal` | Internal clock controls start/stop, but its musical position syncs to the DAW's timeline while the DAW is playing. DAW stop commands are ignored - the internal clock keeps running. |
-
-A common pattern is to default to `PreferInternal` and switch to `PreferExternal` via a host-sync toggle button, so the plugin works standalone but follows the DAW when requested.
+| Mode | Behavior |
+|------|----------|
+| Inactive (0) | All clock processing disabled. No transport, beat, or grid callbacks fire. `getPPQPos()` returns 0. |
+| ExternalOnly (1) | Only DAW transport drives callbacks. Internal clock calls are accepted but ignored (no internal playhead created). Grid timing follows DAW PPQ position. |
+| InternalOnly (2) | Only script-driven clock drives callbacks. DAW transport is completely ignored. Grid and PPQ use internal uptime counter. |
+| PreferInternal (3) | Internal clock takes priority. When internal is playing, external events are dropped. When internal is idle, external events drive transport normally. |
+| PreferExternal (4) | DAW clock takes priority. When DAW is playing, internal start/stop events are dropped. When DAW starts, handoff from internal to external fires a grid resync. |
+| SyncInternal (5) | Internal clock drives start/stop, but PPQ position continuously syncs to DAW position while DAW is playing. External stop commands are ignored - internal clock keeps running. |

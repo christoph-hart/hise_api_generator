@@ -1,1 +1,1 @@
-Returns the local bounds as an `[x, y, w, h]` array, inset by the given pixel amount from each edge. Pass 0 for the full bounds.
+Returns an array `[x, y, w, h]` representing the local bounds reduced by the given amount.

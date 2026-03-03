@@ -1289,16 +1289,68 @@ def parse_examples(text: str) -> list:
                 "title": title or "Example",
                 "code": code.strip(),
             })
-    else:
-        # Single code block without fence
-        code = text.strip()
-        if code:
-            examples.append({
-                "title": "Example",
-                "code": code,
-            })
-
+    
+    # If no fenced code blocks found, return empty list
+    # Phase 3 diary prose is not a code example
     return examples
+
+
+def parse_phase3_diary(filepath: Path, class_lookup: dict, max_lines: int = 500) -> dict:
+    """Extract examples and cross-references from Phase 3 diary files.
+    
+    Phase 3 prose is NOT extracted as userDocs - it's read by Phase 4a agents
+    as source material. Only code examples and cross-references are extracted.
+    
+    Args:
+        filepath: Path to Phase 3 .md file
+        class_lookup: Output of build_class_lookup() for link conversion
+        max_lines: Soft limit for file length (default 500)
+    
+    Returns:
+        {
+            "examples": [...],           # Hand-written code blocks
+            "crossReferences": [...],    # From markdown links
+            "truncated": bool,           # True if file exceeded max_lines
+            "lineCount": int             # Actual line count
+        }
+    """
+    if not filepath.is_file():
+        return {}
+    
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
+    
+    line_count = len(content.splitlines())
+    truncated = False
+    
+    # Soft limit: note if file is long (Phase 4a agent should read full file,
+    # but we log this for decision tracking)
+    if line_count > max_lines:
+        truncated = True
+    
+    result = {"lineCount": line_count, "truncated": truncated}
+    
+    # Extract cross-references from markdown links
+    cross_refs = []
+    def _extract_link(m):
+        link_text = m.group(1)
+        url = m.group(2)
+        replacement, xref = convert_doc_link(url, link_text, class_lookup)
+        if xref and xref not in cross_refs:
+            cross_refs.append(xref)
+        return replacement  # We don't modify content, just extract refs
+    
+    re.sub(r"\[([^\]]+)\]\(([^)]+)\)", _extract_link, content)
+    
+    if cross_refs:
+        result["crossReferences"] = cross_refs
+    
+    # Extract code examples (hand-written, high quality)
+    examples = parse_examples(content)
+    if examples:
+        result["examples"] = examples
+    
+    return result
 
 
 # --- Merge logic ---
@@ -1569,6 +1621,48 @@ def _load_phase4_prose(filepath: Path, strip_heading: bool = False) -> str:
     return text
 
 
+def write_phase4a_decision_placeholder(class_name: str, p3_readme: dict, p3_methods: dict):
+    """Write a placeholder decision file noting Phase 3 input for Phase 4a agent.
+    
+    This file is replaced when Phase 4a runs, but we create it during merge
+    to note Phase 3 content that should inform Phase 4a authoring.
+    """
+    decisions_dir = OUTPUT_DIR / "decisions"
+    decisions_dir.mkdir(parents=True, exist_ok=True)
+    
+    decision_file = decisions_dir / f"{class_name}_phase4a.md"
+    
+    content = f"# Phase 4a Authoring Decisions - {class_name}\n\n"
+    content += "Generated: (placeholder - will be updated by Phase 4a agent)\n\n"
+    content += "## Class-Level Decisions\n\n"
+    content += "(To be filled by Phase 4a agent)\n\n"
+    content += "## Method Decisions\n\n"
+    content += "(To be filled by Phase 4a agent)\n\n"
+    content += "---\n\n"
+    content += "## Phase 3 Input Available\n\n"
+    
+    # Note Phase 3 input availability
+    if p3_readme or p3_methods:
+        if p3_readme:
+            content += f"- **Class-level diary:** `enrichment/phase3/{class_name}/Readme.md`"
+            if p3_readme.get("truncated"):
+                content += f" ({p3_readme['lineCount']} lines - **exceeds 500 line soft limit**)"
+            content += "\n"
+        
+        if p3_methods:
+            content += f"- **Method-level diaries:** {len(p3_methods)} files\n"
+            for method_name, data in sorted(p3_methods.items()):
+                content += f"  - `{method_name}.md`"
+                if data.get("truncated"):
+                    content += f" ({data['lineCount']} lines - **exceeds 500 line soft limit**)"
+                content += "\n"
+    else:
+        content += "No Phase 3 diary files available for this class.\n"
+    
+    with open(decision_file, "w", encoding="utf-8") as f:
+        f.write(content)
+
+
 def run_merge():
     """Merge all phases into output/api_reference.json."""
     if not BASE_DIR.is_dir():
@@ -1626,19 +1720,19 @@ def run_merge():
                 method_name = method_name_map.get(raw_name.lower(), raw_name)
                 p2_methods[method_name] = parse_method_override_md(md_file)
 
-        # --- Phase 3 data ---
+        # --- Phase 3 data (diary format - read by Phase 4a, extract examples/xrefs only) ---
         p3_readme = {}
         p3_methods = {}
         p3_class_dir = PHASE3_DIR / class_name
         if p3_class_dir.is_dir():
             readme_path = p3_class_dir / "Readme.md"
             if readme_path.is_file():
-                p3_readme = parse_readme_md(readme_path)
+                p3_readme = parse_phase3_diary(readme_path, class_lookup)
             for md_file in p3_class_dir.glob("*.md"):
                 if md_file.name.lower() != "readme.md":
                     raw_name = md_file.stem
                     method_name = method_name_map.get(raw_name.lower(), raw_name)
-                    p3_methods[method_name] = parse_method_override_md(md_file, class_lookup)
+                    p3_methods[method_name] = parse_phase3_diary(md_file, class_lookup)
 
         # --- Phase 4 data (userDocs) ---
         # manual/ wins over auto/. Files are flat prose (parsed by
@@ -1734,27 +1828,30 @@ def run_merge():
             if p2_method:
                 entry = merge_method_entries(entry, p2_method, "project")
 
-            # Apply Phase 3 overrides
+            # Apply Phase 3 diary data (examples + cross-references only, NOT userDocs)
             if p3_method:
-                entry = merge_method_entries(entry, p3_method, "manual")
+                # Phase 3 examples replace Phase 1/2 (hand-written > auto-extracted)
+                if p3_method.get("examples"):
+                    entry["examples"] = p3_method["examples"]
+                
+                # Phase 3 cross-references merge with existing
+                if p3_method.get("crossReferences"):
+                    existing_xrefs = entry.get("crossReferences", [])
+                    for xref in p3_method["crossReferences"]:
+                        if xref not in existing_xrefs:
+                            existing_xrefs.append(xref)
+                    entry["crossReferences"] = existing_xrefs
 
             # Phase 4: userDocs for method level
-            # Priority: Phase 4 manual > Phase 3 raw docs > Phase 4 auto
+            # Priority: Phase 4 manual > Phase 4 auto (Phase 3 is input, not userDocs)
             if method_name in p4_method_userdocs:
                 prose, is_override = p4_method_userdocs[method_name]
-                if is_override:
-                    # Phase 4 manual wins over everything
-                    entry["userDocs"] = prose
-                    entry["userDocOverride"] = True
-                elif not entry.get("userDocs"):
-                    # Phase 4 auto only if no Phase 3 raw docs userDocs
-                    entry["userDocs"] = prose
-                    entry["userDocOverride"] = False
+                entry["userDocs"] = prose
+                entry["userDocOverride"] = is_override
             else:
-                # No Phase 4 data -- keep Phase 3 userDocs if present
-                if not entry.get("userDocs"):
-                    entry["userDocs"] = None
-                    entry["userDocOverride"] = False
+                # No Phase 4 data - userDocs remains null (Phase 3 doesn't set it)
+                entry["userDocs"] = None
+                entry["userDocOverride"] = False
 
             # Phase 4b: LLM C++ reference (plain-text file per method)
             p4b_file = PHASE4B_DIR / class_name / f"{method_name}.md"
@@ -1787,6 +1884,9 @@ def run_merge():
             "commonMistakes": common_mistakes if common_mistakes else [],
             "methods": methods_output,
         }
+        
+        # --- Write decision file placeholder (notes Phase 3 input for Phase 4a agent) ---
+        write_phase4a_decision_placeholder(class_name, p3_readme, p3_methods)
 
     # Write output
     output_path = OUTPUT_DIR / "api_reference.json"
@@ -2080,6 +2180,153 @@ def render_llm_ref(text: str) -> str:
     return "\n".join(out)
 
 
+def parse_decision_log(class_name: str) -> dict:
+    """Parse decision log markdown into structured data.
+    
+    Returns:
+        {
+            "class_decisions": ["decision 1", "decision 2", ...],
+            "method_decisions": {
+                "methodName": ["decision 1", "decision 2", ...],
+                ...
+            }
+        }
+    """
+    decisions_file = OUTPUT_DIR / "decisions" / f"{class_name}_phase4a.md"
+    
+    if not decisions_file.is_file():
+        return {"class_decisions": [], "method_decisions": {}}
+    
+    with open(decisions_file, "r", encoding="utf-8") as f:
+        content = f.read()
+    
+    result = {"class_decisions": [], "method_decisions": {}}
+    
+    # Split into sections by ## headings
+    sections = re.split(r'^## (.+)$', content, flags=re.MULTILINE)
+    
+    current_section = None
+    for i, part in enumerate(sections):
+        if i % 2 == 1:  # Heading
+            current_section = part.strip()
+        elif i % 2 == 0 and current_section:  # Content
+            if "class-level" in current_section.lower():
+                # Extract bullet points
+                for line in part.strip().split('\n'):
+                    line = line.strip()
+                    if line.startswith('- '):
+                        result["class_decisions"].append(line[2:])
+            elif "method" in current_section.lower():
+                # Split by ### method headings
+                method_parts = re.split(r'^### (.+)$', part, flags=re.MULTILINE)
+                current_method = None
+                for j, mpart in enumerate(method_parts):
+                    if j % 2 == 1:  # Method name
+                        current_method = mpart.strip()
+                        result["method_decisions"][current_method] = []
+                    elif j % 2 == 0 and current_method:  # Method decisions
+                        for line in mpart.strip().split('\n'):
+                            line = line.strip()
+                            if line.startswith('- '):
+                                result["method_decisions"][current_method].append(line[2:])
+    
+    return result
+
+
+def render_decisions_section(class_name: str) -> str:
+    """Render Phase 4a decision log class-level summary as collapsible HTML."""
+    parsed = parse_decision_log(class_name)
+    
+    # If no decisions at all, don't render
+    if not parsed["class_decisions"] and not parsed["method_decisions"]:
+        return ""
+    
+    # Generate auto-summary from method decisions
+    method_count = len(parsed["method_decisions"])
+    
+    # Count decision types
+    phase3_examples = sum(1 for m in parsed["method_decisions"].values() 
+                         for d in m if "phase 3 example" in d.lower() and "used" in d.lower())
+    phase2_examples = sum(1 for m in parsed["method_decisions"].values() 
+                         for d in m if "phase 2 example" in d.lower() and "used" in d.lower())
+    diagrams_rendered = sum(1 for d in parsed["class_decisions"] 
+                           if "rendered" in d.lower() and "diagram" in d.lower())
+    diagrams_cut = sum(1 for d in parsed["class_decisions"] 
+                      if "cut" in d.lower() and "diagram" in d.lower())
+    pitfalls = sum(1 for m in parsed["method_decisions"].values() 
+                  for d in m if "pitfall" in d.lower() or "warning" in d.lower())
+    
+    # Build summary HTML
+    summary_html = ""
+    if method_count > 0:
+        summary_html += f"<p>Decisions made for {method_count} methods:</p><ul>"
+        if phase3_examples > 0:
+            summary_html += f"<li>{phase3_examples} methods: used Phase 3 examples</li>"
+        if phase2_examples > 0:
+            summary_html += f"<li>{phase2_examples} methods: used Phase 2 examples</li>"
+        if diagrams_rendered > 0 or diagrams_cut > 0:
+            summary_html += f"<li>{diagrams_rendered} diagrams rendered"
+            if diagrams_cut > 0:
+                summary_html += f", {diagrams_cut} cut"
+            summary_html += "</li>"
+        if pitfalls > 0:
+            summary_html += f"<li>{pitfalls} pitfalls integrated as warnings</li>"
+        summary_html += "</ul>"
+        summary_html += "<p><em>See individual methods below for details.</em></p>"
+    
+    # Render class-level decisions
+    class_html = ""
+    if parsed["class_decisions"]:
+        class_html = "<h3>Class-Level Decisions</h3><ul>"
+        for decision in parsed["class_decisions"]:
+            class_html += f"<li>{decision}</li>"
+        class_html += "</ul>"
+    
+    return f"""
+    <details class="decision-log decision-summary">
+        <summary>
+            <span class="decision-icon">🔀</span>
+            <strong>Phase 4a Authoring Summary</strong> (click to expand)
+        </summary>
+        <div class="decision-content">
+            {summary_html}
+            {class_html}
+        </div>
+    </details>
+    """
+
+
+def render_method_decision(class_name: str, method_name: str) -> str:
+    """Render per-method decision note if non-obvious decisions exist."""
+    parsed = parse_decision_log(class_name)
+    
+    # Check if this method has decisions
+    if method_name not in parsed["method_decisions"]:
+        return ""
+    
+    decisions = parsed["method_decisions"][method_name]
+    if not decisions:
+        return ""
+    
+    # Render as collapsible note
+    decision_html = "<ul>"
+    for decision in decisions:
+        decision_html += f"<li>{decision}</li>"
+    decision_html += "</ul>"
+    
+    return f"""
+    <details class="decision-log decision-method">
+        <summary>
+            <span class="decision-icon">🔀</span>
+            <strong>Authoring decisions</strong>
+        </summary>
+        <div class="decision-content">
+            {decision_html}
+        </div>
+    </details>
+    """
+
+
 def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
     """Generate a full HTML preview page for one class.
 
@@ -2214,6 +2461,10 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             f"<code>{p}</code>" for p in desc["relatedPreprocessors"]
         ) + "</p>\n"
 
+    # Decision log (web mode only - shows Phase 4a authoring decisions)
+    if is_web:
+        main += render_decisions_section(class_name)
+
     # Methods
     if methods:
         main += '<h2 id="methods-heading">Methods</h2>\n'
@@ -2255,6 +2506,10 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
 
             main += f'<div class="method-card" id="{name}">\n'
             main += f'<h3 class="signature">{html_escape(sig)}{scope_led}</h3>\n'
+
+            # Inject per-method decision note (web mode only, after signature)
+            if is_web:
+                main += render_method_decision(class_name, name)
 
             if is_llm:
                 # LLM mode: render Phase 4b content as styled pre block
@@ -2412,6 +2667,29 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 .llm-ref .llm-safe {{ color: #4E8E35; font-weight: 600; }}
 .llm-ref .llm-unsafe {{ color: #f85149; font-weight: 600; }}
 .llm-ref .llm-source {{ color: #8b949e; font-style: italic; }}
+
+/* Decision log (Phase 4a authoring decisions) */
+.decision-log {{ margin: 20px 0; padding: 15px; background: #1c2128; border-left: 4px solid #58a6ff; border-radius: 6px; }}
+.decision-log summary {{ cursor: pointer; font-size: 1.05em; margin-bottom: 10px; color: #58a6ff; list-style: none; }}
+.decision-log summary::-webkit-details-marker {{ display: none; }}
+.decision-log summary::before {{ content: "▶ "; display: inline-block; transition: transform 0.2s; }}
+.decision-log[open] summary::before {{ transform: rotate(90deg); }}
+.decision-content {{ margin-top: 10px; padding-left: 20px; color: #c9d1d9; }}
+.decision-content h2 {{ font-size: 1.1em; color: #79c0ff; border-bottom: none; margin-top: 16px; }}
+.decision-content h3 {{ font-size: 1em; color: #8b949e; margin-top: 12px; }}
+.decision-content ul {{ margin: 8px 0; padding-left: 20px; }}
+.decision-content li {{ margin: 4px 0; }}
+.decision-icon {{ margin-right: 8px; font-size: 0.9em; }}
+
+/* Per-method decision notes (more compact) */
+.decision-method {{ margin: 12px 0 16px; padding: 10px 12px; }}
+.decision-method summary {{ font-size: 0.9em; margin-bottom: 8px; }}
+.decision-method .decision-content {{ padding-left: 10px; font-size: 0.9em; }}
+.decision-method ul {{ margin: 4px 0; }}
+.decision-method li {{ margin: 2px 0; }}
+
+/* Class-level summary (standard size) */
+.decision-summary {{ }}
 </style>
 </head>
 <body>

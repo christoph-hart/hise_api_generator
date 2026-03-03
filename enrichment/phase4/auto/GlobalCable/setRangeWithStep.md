@@ -1,1 +1,1 @@
-Configures an input range with a step size for quantised values. The output of `getValue()` and values delivered to callbacks will snap to multiples of the step size within the range. Useful for integer parameters like MIDI note numbers or semitone offsets.
+Sets the local input range with a step size for quantised values. The output of `getValue()` will snap to multiples of the step size within the range.

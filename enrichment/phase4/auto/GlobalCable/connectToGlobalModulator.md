@@ -1,1 +1,3 @@
-Connects the cable to a modulator inside a GlobalModulatorContainer so that the modulator's output drives the cable value. The modulator must be a child of a GlobalModulatorContainer -- modulators placed elsewhere are silently ignored. Pass `false` as the second argument to disconnect.
+Connects the cable to a global modulator (LFO, envelope, or voice start modulator) inside a `GlobalModulatorContainer` as a source. When connected, the modulator's output value is sent to the cable each processing block. Pass `addToMod=false` to disconnect.
+
+> **Warning:** The modulator must be inside a `GlobalModulatorContainer`. If the modulator exists but its parent is not a `GlobalModulatorContainer`, the call silently does nothing.

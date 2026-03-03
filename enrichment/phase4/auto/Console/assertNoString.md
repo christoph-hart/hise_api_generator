@@ -1,1 +1,3 @@
-Throws a script error if `value` is a string. Catches accidental string-to-number coercion bugs, for example when a parameter that should be numeric has been passed as a string instead.
+Throws a script error if `value` is a string. Used to catch accidental string-to-number coercion bugs when a parameter should be numeric.
+
+> **Warning:** The error message is the string value itself (e.g., `"Assertion failure: hello"`). This can be confusing if the string content resembles a different error. Use `assertWithMessage` if you need a clearer failure message.

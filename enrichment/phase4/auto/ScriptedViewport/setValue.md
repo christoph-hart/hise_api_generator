@@ -1,1 +1,3 @@
-Sets the component's value. In list mode, pass a row index to select that row. In table mode with `MultiColumnMode`, pass a `[column, row]` array to select a specific cell. In plain viewport mode, the value is stored and can be retrieved with `getValue()`.
+Sets the component's value. In table mode with `MultiColumnMode` enabled, passing a 2-element array `[column, row]` triggers the table's selection callback. In list mode, pass an integer row index to select a row.
+
+> **Warning:** In `MultiColumnMode`, pass a `[column, row]` array. The column index refers to the column's position in the `setTableColumns()` array (0-based). Passing a plain integer selects a row without column tracking.

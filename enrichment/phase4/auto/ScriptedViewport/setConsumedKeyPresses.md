@@ -1,1 +1,1 @@
-Registers which key presses this component should consume when focused. Pass `"all"` to catch every key exclusively, `"all_nonexclusive"` to catch keys while still forwarding them to the parent, or an array of specific key description objects. Must be called before `setKeyPressCallback()`.
+Defines which key presses this component consumes. Accepts a string ("all", "all_nonexclusive"), object (with keyCode, shift, cmd, alt, character properties), or array of either. Must be called before `setKeyPressCallback()`.

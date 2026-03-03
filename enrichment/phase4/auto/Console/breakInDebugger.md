@@ -1,1 +1,3 @@
-Triggers a breakpoint in the native C++ debugger (e.g. Visual Studio or Xcode). This is only useful for HISE developers running HISE from a C++ IDE with a debugger attached -- it has no effect otherwise. For normal HISEScript debugging, use `Console.stop()` instead.
+Triggers a native C++ assertion that breaks into an attached C++ debugger (Visual Studio, Xcode). Only useful for HISE developers debugging HISE itself. For HISEScript debugging, use `Console.stop()` instead.
+
+> **Warning:** This breaks into the C++ debugger, not the HISEScript debugger. It has no effect if no native debugger is attached.

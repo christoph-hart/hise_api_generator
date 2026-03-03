@@ -1,1 +1,1 @@
-Removes a previously registered value or data callback. Pass the same function reference that was used during registration. Returns `true` if the callback was found and removed, `false` otherwise.
+Removes a previously registered callback (either value or data callback) from this cable reference. Searches both callback lists. Returns `true` if the callback was found and removed, `false` if not found.

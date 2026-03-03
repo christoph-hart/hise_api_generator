@@ -1,1 +1,1 @@
-Returns whether the transport is playing, accounting for the active sync mode (internal, external, or both).
+Returns 1 if the transport is currently playing (internal or external clock, depending on sync mode), 0 if stopped.

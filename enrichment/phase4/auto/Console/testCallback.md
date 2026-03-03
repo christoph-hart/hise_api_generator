@@ -1,1 +1,3 @@
-Manually triggers a callback on a UI component or scripting object for automated testing. Pass the target object, the callback identifier, and an array of arguments. This allows synchronous execution of callbacks without user interaction, intended for use by automated test tools and AI agents.
+Synchronously invokes a named callback on a UI component for automated testing. The callback executes immediately with the provided arguments. Diagnostic messages are printed to the console, and the method throws a script error if callback execution fails. Intended for use with AI agents and automated testing tools, not for production code.
+
+> **Warning:** Intended only for automated testing. A warning is logged if called outside a testing configuration. The component must support the specified callback or an error is thrown.

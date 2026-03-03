@@ -1,3 +1,3 @@
-Stops the internal master clock. Stop the clock before loading presets or resetting sequencer state to prevent timing discontinuities - call `sendGridSyncOnNextCallback()` before restarting to ensure a clean resync.
+Stops the internal master clock at the given sample timestamp offset within the current audio block. If called from within audio rendering, it immediately processes the grid and triggers transport callbacks for the current block. This is a global operation - it affects the shared MasterClock.
 
-> **Warning:** The clock is global - any TransportHandler instance can stop it. In a complex plugin, the clock may be stopped from transport UI, preset browser, mixer controls, and preset preview systems independently. Coordinate stop/restart sequences carefully.
+Multiple script files can call `stopInternalClock` on different TransportHandler instances - the clock is global, so any instance can stop it. In a complex plugin, the clock may be stopped from transport UI, preset browser, mixer controls, and preset preview systems independently. Coordinate stop/restart sequences carefully when multiple subsystems interact.

@@ -1,1 +1,3 @@
-Sends a value through the cable after converting it from the local input range to normalised 0..1. All connected targets -- callbacks, macro controls, module parameters, scriptnode nodes -- receive the update. The conversion only applies if you have configured a range with `setRange()`, `setRangeWithSkew()`, or `setRangeWithStep()`; without one, this behaves the same as `setValueNormalised()`. [See: Cable Value Dispatch Flow](#diagram-cable-dispatch)
+Converts the input value from the local input range to normalised 0..1, then sends it to all cable targets. Without a configured range (default 0..1 identity), this behaves identically to `setValueNormalised()`.
+
+> **Warning:** The value is only meaningful if a range has been configured with `setRange()`, `setRangeWithSkew()`, or `setRangeWithStep()`. Without a range, this is equivalent to `setValueNormalised()`.

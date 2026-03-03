@@ -1,1 +1,1 @@
-Sets the component's value through the undo manager, allowing the user to undo/redo the change. Do not call this from inside a control callback.
+Sets the value through the undo manager, creating an undoable control event.

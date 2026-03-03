@@ -696,41 +696,78 @@ Detailed format spec: `scripting-api-enrichment/phase2.md`
 
 ---
 
-## Phase 3: Manual Markdown Overrides
+## Phase 3: Author's Diary (Input for Phase 4a)
+
+### Purpose
+
+Phase 3 is the author's "no-filters diary" - a place to capture high-level ideas, integration patterns, domain insights, and real-world conventions without worrying about prose style or technical completeness. Phase 4a authoring agents read these files (injected into their prompt) and incorporate unique insights into the final prose, applying the standard style guide.
 
 ### Source
 
-- `enrichment/phase3/ClassName/Readme.md` -- overrides class-level fields
-- `enrichment/phase3/ClassName/methodName.md` -- overrides a specific method
+- `enrichment/phase3/ClassName/Readme.md` -- class-level diary notes
+- `enrichment/phase3/ClassName/methodName.md` -- method-level diary notes
 
-The folder structure mirrors Phase 1. Using `Readme.md` for class-level overrides allows directly pulling in existing documentation from docs.hise.dev, which uses the same filename convention in its markdown source.
+Files are pure prose (conversational, bullet points, incomplete thoughts) and optional code examples. No structured format (no `## Brief`, `## Purpose` headings) - just write freely.
 
 ### Content
 
-Manually authored or edited markdown. Supports two formats:
+Free-form diary entries written by the author. Can be:
+- Conversational prose ("this is useful when...", "just create a reference", "in order to use it...")
+- Bullet points or incomplete thoughts
+- Integration patterns and conventions ("prepend `/` for OSC addresses")
+- Design rationale and historical context
+- Workflow sequences ("stop clock before preset load")
+- Code examples (hand-written, preferred over auto-extracted)
 
-1. **Structured format** (same as Phase 1): uses `**Signature:**`, `**Description:**`, etc. Overrides specific fields.
-2. **Raw docs format** (from existing docs.hise.dev): loose prose + code blocks. Automatically split into `userDocs` (prose) and `examples` (code blocks). Doc-site links converted to cross-references. Images stripped.
+**Not parsed into structured fields** - Phase 4a agents read the raw markdown, extract substance, strip filler.
 
-Common workflows:
+### Common Workflows
 
-- Copy `phase1/ClassName/Readme.md`, edit for clarity, place in `phase3/ClassName/Readme.md`
-- Pull existing docs.hise.dev markdown for a class, place as `phase3/ClassName/Readme.md`
-- Pull existing docs.hise.dev method page, drop as `phase3/ClassName/methodName.md` -- prose becomes `userDocs`, code blocks become `examples`
-- Write a targeted method override for a specific method
+- Jot down high-level ideas for a class ("OSC addresses use `/` prefix")
+- Explain integration patterns ("preferred way to talk to C++ nodes")
+- Add workflow notes ("stop clock before preset load, restart after")
+- Write example code showing intended usage
+- Import existing docs.hise.dev content for classes with valuable explanations
 
-### Merge Rules
+### How Phase 3 Content Is Used
 
-- `description` sub-fields (`brief`, `purpose`, `details`, `obtainedVia`, `codeExample`, `diagram`): last-writer-wins (Phase 3 overrides all prior phases)
-- `examples`: last-writer-wins (Phase 3 replaces entirely)
-- `userDocs`: Phase 3 raw docs format extracts `userDocs` from prose. Priority: Phase 4a manual > Phase 3 > Phase 4a auto.
-- `pitfalls`: merged union, each entry tagged `"source": "manual"`
-- `commonMistakes`: merged union, each entry tagged `"source": "manual"`
-- `crossReferences`: merged union, deduplicated (raw docs link conversion adds entries)
-- `constants` / `dynamicConstants`: last-writer-wins per constant
-- `diagram`: last-writer-wins (entire object replaced)
+Phase 3 files are **injected into Phase 4a agent prompts** (when present) as source material:
 
-Detailed format spec: `scripting-api-enrichment/phase3.md`
+**Code examples:**
+- Extracted from Phase 3 files
+- **Replace** Phase 1/2 auto-extracted examples (hand-written = higher quality)
+- Agent may supplement with Phase 2 if it shows complementary complexity
+
+**Cross-references:**
+- Extracted from markdown links `[method](/scripting/scripting-api/class#method)`
+- Merged with Phase 1/2 cross-references (deduplicated)
+
+**Prose:**
+- NOT extracted as `userDocs` (Phase 3 is input, not output)
+- Agent reads, extracts unique insights (OSC patterns, C++ interop, workflows)
+- Agent rewrites in tight technical style, strips conversational filler
+- Result becomes Phase 4a `userDocs`
+
+**Length limit:**
+- Soft limit: 500 lines
+- Files exceeding limit are noted in agent prompt
+- Agent documents in decision log: "Phase 3 Readme is 650 lines - skimmed for patterns"
+
+### Decision Tracking
+
+Phase 4a agents document their authoring decisions in `enrichment/output/decisions/{ClassName}_phase4a.md`:
+- Example selection rationale (Phase 3 vs Phase 2 triage)
+- Phase 3 content incorporation (what insights were extracted, what was omitted)
+- Diagram render/cut decisions
+- Pitfall/common mistake integration choices
+
+Decision files are ephemeral (regenerated on each Phase 4a run) and excluded from git (live in `output/` directory).
+
+### Legacy Note
+
+The 201 current Phase 3 files were imported from the legacy HISE docs repository (docs.hise.dev). They use conversational prose and are treated exactly like diary entries - read by Phase 4a agents, substance extracted, style normalized.
+
+If you need to override Phase 1 technical fields (`brief`, `purpose`, `signature`, etc.), edit the Phase 1 file directly. Phase 3 no longer supports structured format overrides.
 
 ---
 

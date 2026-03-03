@@ -1,1 +1,3 @@
-Records a labelled data snapshot into the currently active sampling session. The data is cloned at capture time, so later changes to the value do not affect what was recorded. A sampling session must be started first with `Console.startSampling()` -- without one, a warning is printed once and subsequent calls are silently skipped.
+Records a labeled snapshot of data into the active sampling session. The data is cloned at capture time, so subsequent mutations do not affect the recorded value. Requires `startSampling()` to be called first.
+
+> **Warning:** Without an active session, `sample()` logs a warning and skips recording. The warning is only shown once per Console instance - subsequent calls without a session are silently skipped.

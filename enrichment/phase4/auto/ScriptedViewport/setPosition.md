@@ -1,1 +1,1 @@
-Sets the position and size of this component in a single call.
+Sets the component's position and size in one call. Directly sets the `x`, `y`, `width`, `height` properties.

@@ -1,122 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="440" viewBox="0 0 820 440">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" style="background:#333333">
   <defs>
-    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#CCCCCC"/>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4E8E35"/>
     </marker>
-    <marker id="arrow-sync" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#4E8E35"/>
-    </marker>
-    <marker id="arrow-async" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#3F6E6E"/>
-    </marker>
-    <marker id="arrow-drop" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#BB3434"/>
+    <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3F6E6E"/>
     </marker>
   </defs>
-
-  <!-- Background -->
-  <rect width="820" height="440" fill="#333333"/>
-
+  
   <!-- Title -->
-  <text x="410" y="28" text-anchor="middle" font-family="Lato, sans-serif" font-size="16" font-weight="bold" fill="#CCCCCC">Sync vs Async Callback Threading</text>
-
-  <!-- === SYNC SECTION (top) === -->
-  <rect x="12" y="44" width="796" height="160" rx="6" fill="#4E8E35" fill-opacity="0.04" stroke="#4E8E35" stroke-opacity="0.2" stroke-width="1"/>
-  <text x="28" y="64" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#4E8E35" opacity="0.8">Synchronous (true)</text>
-  <text x="28" y="80" font-family="Lato, sans-serif" font-size="11" fill="#808080">Callback fires on the calling thread (may be audio thread)</text>
-
-  <!-- Sync swim lane: Calling Thread -->
-  <text x="28" y="112" font-family="Lato, sans-serif" font-size="12" fill="#808080">Calling Thread</text>
-  <line x1="140" y1="108" x2="790" y2="108" stroke="#808080" stroke-width="0.5" stroke-dasharray="2,3"/>
-
-  <!-- Sync events: setValue fires callback immediately -->
-  <!-- Event 1 -->
-  <circle cx="210" cy="108" r="6" fill="#4E8E35"/>
-  <text x="210" y="98" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#CCCCCC">setValue()</text>
-  <!-- Immediate inline callback -->
-  <rect x="230" y="96" width="100" height="24" rx="4" fill="#222222" stroke="#4E8E35" stroke-width="1"/>
-  <text x="280" y="112" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#4E8E35">callback(v1)</text>
-
-  <!-- Event 2 -->
-  <circle cx="400" cy="108" r="6" fill="#4E8E35"/>
-  <text x="400" y="98" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#CCCCCC">setValue()</text>
-  <rect x="420" y="96" width="100" height="24" rx="4" fill="#222222" stroke="#4E8E35" stroke-width="1"/>
-  <text x="470" y="112" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#4E8E35">callback(v2)</text>
-
-  <!-- Event 3 -->
-  <circle cx="590" cy="108" r="6" fill="#4E8E35"/>
-  <text x="590" y="98" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#CCCCCC">setValue()</text>
-  <rect x="610" y="96" width="100" height="24" rx="4" fill="#222222" stroke="#4E8E35" stroke-width="1"/>
-  <text x="660" y="112" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#4E8E35">callback(v3)</text>
-
-  <!-- Sync note -->
-  <text x="410" y="156" text-anchor="middle" font-family="Lato, sans-serif" font-size="11" fill="#808080">Every value is delivered. Requires</text>
-  <text x="410" y="170" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#90FFB1">inline function</text>
-  <text x="530" y="170" font-family="Lato, sans-serif" font-size="11" fill="#808080">for audio-thread safety.</text>
-
-  <!-- Time arrow (sync) -->
-  <line x1="160" y1="136" x2="770" y2="136" stroke="#808080" stroke-width="0.5" marker-end="url(#arrow)"/>
-  <text x="772" y="140" font-family="Lato, sans-serif" font-size="10" fill="#808080">time</text>
-
-  <!-- === ASYNC SECTION (bottom) === -->
-  <rect x="12" y="218" width="796" height="186" rx="6" fill="#3F6E6E" fill-opacity="0.04" stroke="#3F6E6E" stroke-opacity="0.2" stroke-width="1"/>
-  <text x="28" y="238" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#3F6E6E" opacity="0.8">Asynchronous (false)</text>
-  <text x="28" y="254" font-family="Lato, sans-serif" font-size="11" fill="#808080">Callback fires on the UI thread at the next timer tick</text>
-
-  <!-- Async swim lane: Calling Thread -->
-  <text x="28" y="284" font-family="Lato, sans-serif" font-size="12" fill="#808080">Calling Thread</text>
-  <line x1="140" y1="280" x2="790" y2="280" stroke="#808080" stroke-width="0.5" stroke-dasharray="2,3"/>
-
-  <!-- Async swim lane: UI Thread -->
-  <text x="28" y="340" font-family="Lato, sans-serif" font-size="12" fill="#808080">UI Thread</text>
-  <line x1="140" y1="336" x2="790" y2="336" stroke="#808080" stroke-width="0.5" stroke-dasharray="2,3"/>
-
-  <!-- Async events: multiple setValue, only last delivered -->
-  <!-- Event 1 -->
-  <circle cx="210" cy="280" r="6" fill="#7E60B1"/>
-  <text x="210" y="270" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#CCCCCC">setValue(v1)</text>
-
-  <!-- Event 2 (overwrites v1) -->
-  <circle cx="300" cy="280" r="6" fill="#7E60B1"/>
-  <text x="300" y="270" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#CCCCCC">setValue(v2)</text>
-
-  <!-- Event 3 (overwrites v2) -->
-  <circle cx="390" cy="280" r="6" fill="#7E60B1"/>
-  <text x="390" y="270" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#CCCCCC">setValue(v3)</text>
-
-  <!-- Coalescing bracket -->
-  <path d="M210,290 L210,300 L390,300 L390,290" fill="none" stroke="#FFBA00" stroke-width="1.5"/>
-  <text x="300" y="314" text-anchor="middle" font-family="Lato, sans-serif" font-size="10" fill="#FFBA00">coalesced -- only v3 stored</text>
-
-  <!-- Timer tick on UI thread -->
-  <line x1="500" y1="280" x2="500" y2="336" stroke="#808080" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="504" y="310" font-family="Lato, sans-serif" font-size="9" fill="#808080">timer tick</text>
-
-  <!-- Arrow from stored value to UI callback -->
-  <line x1="390" y1="302" x2="500" y2="324" stroke="#3F6E6E" stroke-width="2" marker-end="url(#arrow-async)"/>
-
-  <!-- Callback on UI thread -->
-  <rect x="510" y="324" width="100" height="24" rx="4" fill="#222222" stroke="#3F6E6E" stroke-width="1"/>
-  <text x="560" y="340" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="10" fill="#3F6E6E">callback(v3)</text>
-
-  <!-- Dropped value marks -->
-  <text x="210" y="360" text-anchor="middle" font-family="Lato, sans-serif" font-size="10" fill="#BB3434">X</text>
-  <text x="247" y="360" font-family="Lato, sans-serif" font-size="9" fill="#808080">v1 dropped</text>
-  <text x="300" y="376" text-anchor="middle" font-family="Lato, sans-serif" font-size="10" fill="#BB3434">X</text>
-  <text x="337" y="376" font-family="Lato, sans-serif" font-size="9" fill="#808080">v2 dropped</text>
-
-  <!-- Time arrow (async) -->
-  <line x1="160" y1="394" x2="770" y2="394" stroke="#808080" stroke-width="0.5" marker-end="url(#arrow)"/>
-  <text x="772" y="398" font-family="Lato, sans-serif" font-size="10" fill="#808080">time</text>
-
-  <!-- Legend -->
-  <rect x="12" y="412" width="796" height="22" rx="6" fill="#282828" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
-  <circle cx="28" cy="423" r="4" fill="#4E8E35"/>
-  <text x="40" y="427" font-family="Lato, sans-serif" font-size="10" fill="#808080">Sync delivery</text>
-  <circle cx="148" cy="423" r="4" fill="#7E60B1"/>
-  <text x="160" y="427" font-family="Lato, sans-serif" font-size="10" fill="#808080">Value stored</text>
-  <line x1="268" y1="423" x2="292" y2="423" stroke="#FFBA00" stroke-width="1.5"/>
-  <text x="300" y="427" font-family="Lato, sans-serif" font-size="10" fill="#808080">Coalescing</text>
-  <text x="388" y="427" font-family="Lato, sans-serif" font-size="10" fill="#BB3434">X</text>
-  <text x="400" y="427" font-family="Lato, sans-serif" font-size="10" fill="#808080">Dropped value</text>
+  <text x="450" y="30" font-family="Lato, sans-serif" font-size="16" font-weight="bold" fill="#CCCCCC" text-anchor="middle">Sync vs Async Callback Threading</text>
+  
+  <!-- Thread lanes -->
+  <!-- Audio thread lane -->
+  <rect x="120" y="80" width="760" height="80" fill="#4E8E35" fill-opacity="0.05" stroke="#4E8E35" stroke-opacity="0.2" rx="6"/>
+  <text x="50" y="125" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#4E8E35">Audio Thread</text>
+  
+  <!-- UI thread lane -->
+  <rect x="120" y="180" width="760" height="80" fill="#3F6E6E" fill-opacity="0.05" stroke="#3F6E6E" stroke-opacity="0.2" rx="6"/>
+  <text x="50" y="225" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#3F6E6E">UI Thread</text>
+  
+  <!-- Timeline markers -->
+  <text x="140" y="70" font-family="Lato, sans-serif" font-size="10" fill="#808080">Time →</text>
+  
+  <!-- Sync path (top) -->
+  <circle cx="200" cy="120" r="6" fill="#90FFB1"/>
+  <text x="200" y="105" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
+  
+  <line x1="206" y1="120" x2="340" y2="120" stroke="#4E8E35" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="270" y="110" font-family="Lato, sans-serif" font-size="9" fill="#4E8E35">immediate</text>
+  
+  <rect x="350" y="100" width="140" height="40" fill="#282828" stroke="#4E8E35" stroke-width="2" rx="6"/>
+  <text x="420" y="118" font-family="Consolas, monospace" font-size="11" fill="#90FFB1" text-anchor="middle">inline function</text>
+  <text x="420" y="132" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC" text-anchor="middle">callback(value)</text>
+  
+  <text x="520" y="125" font-family="Lato, sans-serif" font-size="10" font-weight="bold" fill="#4E8E35">SyncNotification</text>
+  
+  <!-- Async path (bottom) -->
+  <circle cx="200" cy="220" r="6" fill="#90FFB1"/>
+  <text x="200" y="205" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
+  
+  <!-- Store in ModValue -->
+  <line x1="206" y1="220" x2="280" y2="220" stroke="#3F6E6E" stroke-width="2"/>
+  <rect x="290" y="200" width="100" height="40" fill="#282828" stroke="#3F6E6E" rx="6"/>
+  <text x="340" y="215" font-family="Consolas, monospace" font-size="10" fill="#90FFB1" text-anchor="middle">ModValue</text>
+  <text x="340" y="230" font-family="Lato, sans-serif" font-size="9" fill="#808080" text-anchor="middle">atomic store</text>
+  
+  <!-- setValue() calls coalescing -->
+  <circle cx="440" cy="220" r="6" fill="#90FFB1"/>
+  <text x="440" y="205" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
+  <line x1="446" y1="220" x2="520" y2="220" stroke="#3F6E6E" stroke-width="2"/>
+  
+  <circle cx="560" cy="220" r="6" fill="#90FFB1"/>
+  <text x="560" y="205" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
+  <line x1="566" y1="220" x2="640" y2="220" stroke="#3F6E6E" stroke-width="2"/>
+  
+  <!-- Timer tick and callback -->
+  <line x1="700" y1="220" x2="700" y2="180" stroke="#3F6E6E" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="710" y="205" font-family="Lato, sans-serif" font-size="9" fill="#3F6E6E">timer tick</text>
+  
+  <rect x="720" y="200" width="140" height="40" fill="#282828" stroke="#3F6E6E" stroke-width="2" rx="6"/>
+  <text x="790" y="218" font-family="Lato, sans-serif" font-size="11" fill="#CCCCCC" text-anchor="middle">callback(latest)</text>
+  <text x="790" y="232" font-family="Lato, sans-serif" font-size="9" fill="#808080" text-anchor="middle">coalesced</text>
+  
+  <text x="760" y="175" font-family="Lato, sans-serif" font-size="10" font-weight="bold" fill="#3F6E6E">AsyncNotification</text>
+  
+  <!-- Annotation -->
+  <rect x="120" y="290" width="760" height="70" fill="#222222" stroke="#444444" rx="4"/>
+  <text x="130" y="310" font-family="Lato, sans-serif" font-size="11" font-weight="bold" fill="#FFBA00">Key Differences:</text>
+  <text x="140" y="330" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC">• Sync: immediate execution, must use realtime-safe inline function, delivers every value</text>
+  <text x="140" y="348" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC">• Async: UI thread polling at display refresh rate, coalesces values, intermediate values dropped</text>
 </svg>

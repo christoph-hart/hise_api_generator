@@ -8,7 +8,7 @@ Phase 4a transforms the raw C++ analysis from Phases 1-3 into user-facing docume
 
 **ASCII-only rule:** All output files must use ASCII characters only. No em-dashes (use a regular dash or rewrite the sentence), no curly quotes.
 
-**Phase 3 priority:** When Phase 3 raw docs already provide `userDocs` for a method, Phase 4 auto does NOT overwrite it. Phase 4 only generates `userDocs` for methods without Phase 3 coverage. Phase 4 manual overrides everything.
+**Phase 3 as input:** Phase 3 files are the author's "no-filters diary" - conversational notes with high-level ideas, integration patterns, and domain insights. These files will be **injected into your prompt** when they exist. Extract unique insights, transform conversational prose to technical style, and incorporate into your userDocs. Phase 3 does NOT mechanically set userDocs - you read it as source material and decide what to include.
 
 **Pitfalls and common mistakes are authored here.** Phase 1 and Phase 2 produce structured pitfall and common mistake data in the JSON. Phase 4a is responsible for curating and integrating this content directly into the `.md` files (as blockquote warnings and a Common Mistakes section). The merge/preview pipeline does not inject them mechanically - what you write is what appears on the page.
 
@@ -35,6 +35,41 @@ The agent reads from `enrichment/output/api_reference.json`, specifically the en
 - `examples` - code examples
 - `crossReferences` - related methods
 - `diagram` - diagram specification (if present): `type` + `description`
+
+### Phase 3: Author's Diary (Injected into Prompt When Present)
+
+Phase 3 files are conversational notes written by the author - high-level ideas, integration patterns, domain insights, and real-world conventions. When they exist, they will be **injected directly into your prompt** (not available in the JSON).
+
+**Location:**
+- `enrichment/phase3/{ClassName}/Readme.md` - class-level diary
+- `enrichment/phase3/{ClassName}/{methodName}.md` - method-level diary
+
+**Your Task: Extract Substance, Strip Filler**
+
+Read Phase 3 content and extract:
+- **Integration patterns** - "GlobalCable: prepend `/` to cable ID to make it an OSC address"
+- **Cross-system interop** - "GlobalCable is the preferred way to communicate from C++ scriptnode nodes"
+- **Workflow patterns** - "TransportHandler: stop internal clock before loading preset, restart after"
+- **Domain conventions** - "Broadcaster metadata: use `/**` comment to auto-populate comment field"
+- **Design rationale** - Why the API works this way
+- **Use case narratives** - High-level "how you'd use this" stories
+
+**Ignore conversational filler:**
+- "in order to", "just", "also", "super helpful", "will come in handy"
+- Redundant restatements of Phase 1 technical facts
+- Vague introductions without concrete detail
+
+**Transformation Example:**
+
+Phase 3 prose:
+> "If you want to use a cable as OSC address that can send and receive values from external applications, you just need to prepend `/` before the id, so any cable that has an ID like `/some_osc_id` will automatically be used as OSC address as soon as you start using the global routing system as OSC server."
+
+Your extraction:
+> "Cable IDs with `/` prefix become OSC addresses when the global routing system runs as OSC server."
+
+**Length Warning:**
+
+If Phase 3 files exceed 500 lines, they will be noted in your prompt. Document this in your decision log: "Phase 3 {file} is {N} lines. Skimmed for unique patterns, found {X} insights incorporated."
 
 ---
 
@@ -153,6 +188,105 @@ This step catches redundancy patterns that are only visible when all methods are
 
 ---
 
+## Example Selection (Phase 3 vs Phase 2 Triage)
+
+When both Phase 3 (hand-written) and Phase 2 (project-extracted) examples exist for the same method, choose based on quality:
+
+**Prefer Phase 3 when:**
+- Minimal, focused demonstration of a specific feature
+- Clear comments explaining the pattern
+- Self-contained (minimal setup boilerplate)
+- Shows conventions or patterns not in Phase 2
+
+**Prefer Phase 2 when:**
+- Real-world integration with multiple classes/methods
+- Demonstrates practical complexity Phase 3 doesn't cover
+- Includes error handling or edge cases
+- Shows architectural patterns from actual projects
+
+**Include both when:**
+- Both are high quality and show complementary aspects
+- Label as "Basic Example" (Phase 3) and "Real-World Usage" (Phase 2)
+
+**Close calls:**
+- If quality is similar, prefer Phase 3 (author intent)
+- Document close calls in decision log: "Close call between Phase 2 and Phase 3 examples. Used Phase 3 for clarity, but Phase 2 shows more realistic ID naming (`masterVolume` vs `volume`)"
+
+---
+
+## Decision Logging
+
+Create a decision log in `enrichment/output/decisions/{ClassName}_phase4a.md` documenting **non-obvious decisions** made during authoring.
+
+**What to Document (Non-Obvious Only):**
+
+Skip obvious cases like "used Phase 3 example because no Phase 2 exists". Document judgment calls:
+
+**Example Selection:**
+- When you chose one example over another (Phase 3 vs Phase 2 triage)
+- When you included both examples (rationale for complementary value)
+- When you omitted an example (too long, duplicates concepts, poor quality)
+
+**Phase 3 Content:**
+- What insights you incorporated from Phase 3 (OSC patterns, C++ interop, workflows)
+- What you omitted from Phase 3 (redundant with Phase 1, too conversational, not valuable)
+- Length warnings (if Phase 3 file exceeded 500 lines)
+
+**Diagram Decisions:**
+- Why you rendered a diagram (complex topology, timing critical)
+- Why you cut a diagram (redundant with prose/table, simple concept)
+
+**Pitfall Integration:**
+- When you merged multiple pitfalls into one warning (deduplication)
+- When you omitted a pitfall (redundant, not actionable)
+
+**Style Consolidations:**
+- When you moved repeated facts from methods to class overview
+- When you resolved prose/warning duplication
+
+**Format:**
+
+Structure the decision log with **two sections**:
+
+1. **Class-Level Decisions** - big-picture decisions affecting the entire class
+2. **Method Decisions** - per-method decisions, grouped under `### {MethodName}` headings
+
+**Only include methods with non-obvious decisions.** Skip methods where all choices were obvious (e.g., "used Phase 3 example because no Phase 2 exists").
+
+```markdown
+# Phase 4a Authoring Decisions - {ClassName}
+
+Generated: {timestamp}
+
+## Class-Level Decisions
+
+- Incorporated OSC address pattern from Phase 3 class diary (/ prefix for OSC addresses)
+- Rendered 2 diagrams (cable-dispatch, callback-threading), cut 1 (registerCallback - redundant with class-level)
+- Consolidated "global operation" statement (repeated on 3 methods) into class overview
+
+## Method Decisions
+
+### setSyncMode
+
+- Used Phase 2 example over Phase 3. Rationale: Phase 2 shows preset-switching integration, Phase 3 is minimal demo.
+- Merged Phase 1 pitfall #2 and Phase 2 common mistake into single warning.
+
+### startInternalClock
+
+- Used Phase 3 example (minimal, clear). Phase 2 example too complex for basic usage.
+- Phase 3 method diary is 650 lines - skimmed for patterns, incorporated timestamp workflow.
+
+### setOnGridChange
+
+- Close call between Phase 2 and Phase 3 examples. Used Phase 3 for clarity.
+
+(Methods with no non-obvious decisions are not listed)
+```
+
+**Keep it concise:** Only document judgment calls, not obvious choices.
+
+---
+
 ## Workflow
 
 ### Per-class execution
@@ -161,31 +295,37 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
 
 1. Read the merged `api_reference.json`
 2. Extract the target class entry
-3. **Triage diagrams** (see Diagram Triage below):
+3. **Review Phase 3 diary** (if present):
+   - Check for Phase 3 files: `enrichment/phase3/{ClassName}/Readme.md` (class-level), `enrichment/phase3/{ClassName}/{methodName}.md` (method-level)
+   - If found, Phase 3 content will be **injected into your prompt** by the orchestration system
+   - Read and extract unique insights not in Phase 1/2 (integration patterns, cross-system interop, workflow sequences, domain conventions)
+   - Note for decision log: what you incorporated, what you omitted, any length warnings (if file >500 lines)
+4. **Triage diagrams** (see Diagram Triage below):
    - Review all diagram descriptions from Phase 1 (class-level `diagrams[]` and method-level `diagram` fields)
    - For each diagram, decide: render as SVG, or cut in favor of prose/tables
    - Diagrams that survive triage proceed to rendering; cut diagrams are simply not rendered (the text description remains in the JSON for LLM consumers)
-4. **Render surviving SVG diagrams** (see Diagram SVG Rendering below):
+5. **Render surviving SVG diagrams** (see Diagram SVG Rendering below):
    - For each class-level diagram that survived triage, render an SVG
    - For each method diagram that survived triage, render an SVG
    - Skip if a manual or auto SVG already exists
-5. Write class-level `Readme.md`:
+6. Write class-level `Readme.md`:
    - Check `phase4/manual/ClassName/Readme.md` - if present, skip
-   - Check if class already has `userDocs` from Phase 3 - if so, skip
-   - Check `phase4/auto/ClassName/Readme.md` - if present, skip
-   - Write `Readme.md` with user-facing prose and a `## Common Mistakes` section (curated from `commonMistakes` array)
+   - Check `phase4/auto/ClassName/Readme.md` - if present, skip (Phase 3 no longer sets userDocs)
+   - Write `Readme.md` with user-facing prose incorporating Phase 3 insights in technical style
+   - Add a `## Common Mistakes` section (curated from `commonMistakes` array)
    - Embed class-level diagram SVGs as `![brief](filename.svg)` (see Embedding Diagrams below)
    - If a diagram was cut during triage because a table or prose covers the same information better, use that table/prose instead
-6. Write method-level `.md` files:
+7. Write method-level `.md` files:
    - Check `phase4/manual/ClassName/methodName.md` - if present, skip
-   - Check if the method already has `userDocs` from Phase 3 - if so, skip
-   - Check `phase4/auto/ClassName/methodName.md` - if present, skip
-   - Write `methodName.md` with user-facing prose
+   - Check `phase4/auto/ClassName/methodName.md` - if present, skip (Phase 3 no longer sets userDocs)
+   - Write `methodName.md` with user-facing prose incorporating Phase 3 insights
    - Integrate important pitfalls from the method's `pitfalls` array as `> **Warning:**` blockquotes (see Pitfall Integration above)
    - If the method has a `diagram` field that survived triage, embed the SVG as `![brief](filename.svg)`
    - If the method has a `diagramRef` field pointing to a rendered class-level diagram, link to the anchor: `[See: brief](#diagram-id)`
    - If the method's diagram or diagramRef was cut during triage, do not reference it
-7. **Editorial self-review** (see Editorial Self-Review above):
+8. **Document authoring decisions** (see Decision Logging below):
+   - Create `enrichment/output/decisions/{ClassName}_phase4a.md` with non-obvious decisions made during authoring
+9. **Editorial self-review** (see Editorial Self-Review above):
    - Re-read all `.md` files together as a single page
    - Consolidate repeated facts, resolve prose/warning overlap, remove filler
    - Edit the source `.md` files directly

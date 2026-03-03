@@ -1,1 +1,1 @@
-Forces an asynchronous repaint of this component. Call this after changing visual properties programmatically to ensure the UI updates.
+Sends an asynchronous repaint message. Useful when you've changed visual properties programmatically and need to force a UI redraw.

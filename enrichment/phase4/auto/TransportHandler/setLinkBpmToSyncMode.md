@@ -1,1 +1,1 @@
-When enabled, the BPM source (internal or external) automatically follows the active sync mode, so the reported tempo always matches whichever clock source is driving the transport.
+Links the BPM source (internal vs external) to the current sync mode. When enabled, the BPM reported by the transport will match the active clock source determined by `setSyncMode()`. Global setting on the MasterClock.

@@ -1,1 +1,1 @@
-Controls the rendering depth of this component relative to its siblings. Valid values are `"Back"`, `"Default"`, `"Front"`, and `"AlwaysOnTop"`.
+Sets the depth level for this component among its siblings. Valid values: "Back", "Default", "Front", "AlwaysOnTop".

@@ -1,1 +1,3 @@
-Registers a callback that fires when the transport starts or stops playing. The callback receives a boolean indicating whether playback is active. It fires immediately upon registration with the current play state. You can pass a Broadcaster object as the callback function - every transport state change is then dispatched through the Broadcaster's listener network, which is the standard pattern for propagating play state across multiple script files.
+Registers a callback that fires when the transport state changes (play/stop). The callback receives a boolean indicating whether the transport is playing. Fires immediately upon registration with the current play state.
+
+A common pattern is to pass a Broadcaster as the callback function instead of a plain function. The TransportHandler calls the Broadcaster with the isPlaying argument, which propagates to all listeners. This enables loose coupling when multiple script files need to react to transport changes.

@@ -1,1 +1,1 @@
-Throws a script error with your custom `errorMessage` if `condition` is false. Unlike `Console.assertTrue()`, this lets you describe exactly what went wrong, making it easier to diagnose failures in complex scripts.
+Throws a script error with the provided error message if `condition` is false. This is the most flexible assertion method, allowing you to specify exactly what went wrong.

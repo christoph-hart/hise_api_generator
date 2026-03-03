@@ -1,1 +1,1 @@
-Sets the tooltip text displayed when hovering over this component.
+Sets the tooltip text to display on mouse hover.

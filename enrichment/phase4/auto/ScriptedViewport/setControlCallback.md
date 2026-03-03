@@ -1,1 +1,1 @@
-Assigns a custom inline function as the control callback for this component, replacing the default `onControl` handler. The function receives two arguments: the component reference and the current value. Pass `false` to revert to the default callback.
+Assigns a custom inline function as the control callback, replacing the default `onControl` handler for this component. In List mode, the callback value is the selected row index. In Table mode with MultiColumnMode, the callback value is a `[column, row]` array.

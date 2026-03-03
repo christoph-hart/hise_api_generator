@@ -1,1 +1,1 @@
-Sets a component property to the given value. Viewport-specific properties include `scrollBarThickness`, `autoHide`, `useList`, `viewPositionX`, `viewPositionY`, `items`, `fontName`, `fontSize`, `fontStyle`, and `alignment`. Setting `viewPositionX` or `viewPositionY` scrolls the viewport to the corresponding normalized position (0.0--1.0).
+Sets a component property to the given value. Setting `viewPositionX` or `viewPositionY` broadcasts the new scroll position to the underlying viewport.

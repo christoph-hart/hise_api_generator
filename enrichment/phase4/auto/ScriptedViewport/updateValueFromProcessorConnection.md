@@ -1,1 +1,1 @@
-Reads the current value from the connected processor (configured via the `processorId` and `parameterId` properties) and updates the component's value to match. Does nothing if no processor connection is set up.
+Reads the current attribute value from the connected processor (set via the `processorId` and `parameterId` properties) and calls `setValue()` with that value.

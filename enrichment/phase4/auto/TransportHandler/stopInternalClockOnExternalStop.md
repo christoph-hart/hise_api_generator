@@ -1,1 +1,1 @@
-When enabled, the internal clock automatically stops when the DAW transport stops. Always enable this when using `PreferInternal` mode with a host-sync option - without it, stopping the DAW while host-synced leaves the internal clock in an ambiguous state.
+Configures whether the internal clock should automatically stop when the external (DAW) clock stops. Global setting on the MasterClock. Useful when using `SyncInternal` mode to prevent the internal clock from continuing after the DAW stops.

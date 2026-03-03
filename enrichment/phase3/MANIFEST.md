@@ -10,29 +10,47 @@
 
 ## Purpose
 
-This directory contains high-quality existing documentation from the HISE docs repository to serve as **manual overrides** in the enrichment pipeline. According to the Phase 3 merge rules, these files take priority over Phase 1 (AI-generated) and Phase 2 (project examples) content.
+This directory is the author's "no-filters diary" for capturing high-level ideas, integration patterns, and domain insights about API classes. Phase 4a authoring agents read these files (injected into their prompt) and incorporate unique insights into the final prose, applying the standard style guide.
 
-### Quality Tiers Included
+The current 201 files were imported from the legacy HISE docs repository (docs.hise.dev) to preserve valuable explanations, integration patterns, and hand-written examples. Future additions can be conversational notes, bullet points, or incomplete thoughts - the Phase 4a agent extracts substance.
 
-- **TIER 1** (81 files ≥1,500 bytes): Excellent tutorial-quality content with multiple examples, comprehensive tables, and detailed explanations
-- **TIER 2** (120 files 600-1,499 bytes): Good reference documentation with useful tables, examples, or detailed descriptions
+### Imported Content (from legacy docs.hise.dev)
 
-### Merge Behavior
+- **81 files ≥1,500 bytes**: Tutorial-quality content with multiple examples and detailed explanations
+- **120 files 600-1,499 bytes**: Reference documentation with useful tables and examples
 
-When these files are merged:
-- **Prose outside code blocks** → becomes `userDocs` field (human-facing documentation for docs.hise.dev)
-- **Code blocks** → becomes `examples` array entries (tagged `"source": "manual"`)
-- **Doc-site links** (e.g., `[Array.push](/scripting/scripting-api/array#push)`) → converted to backtick references and extracted as `crossReferences`
-- **YAML frontmatter** → stripped automatically by parser
-- **Tables, blockquotes, bold/italic** → preserved in `userDocs`
-- **Image references** → stripped
+All files are conversational prose. Phase 4a agents read these files and extract:
+- Integration patterns (OSC addressing, C++ interop)
+- Domain conventions (naming patterns, lifecycle workflows)
+- Use case narratives
+- Hand-written code examples (replace auto-extracted ones)
 
-### Priority Rules
+**Soft limit:** Files exceeding 500 lines are noted in the Phase 4a agent prompt. The agent documents length handling in the decision log.
 
-- Phase 3 `userDocs` **overrides** Phase 4 auto-generated prose
-- Phase 3 `examples` are **merged with** Phase 1/2 examples (all preserved, tagged by source)
-- Phase 3 `pitfalls` are **merged with** Phase 1/2 pitfalls (union merge)
-- Phase 3 technical fields (description, signature, parameters) **override** Phase 1 if present
+### How Phase 3 Files Are Used
+
+Phase 3 files are **injected into Phase 4a agent prompts** as source material, not mechanically merged into the JSON:
+
+**Code examples:**
+- Extracted from fenced code blocks
+- **Replace** Phase 1/2 auto-extracted examples (hand-written = higher quality)
+- Tagged `"source": "manual"` in the JSON
+
+**Cross-references:**
+- Extracted from markdown links `[method](/scripting/scripting-api/class#method)`
+- Converted to canonical names (e.g., `Array.push`)
+- Merged with Phase 1/2 cross-references (deduplicated)
+
+**Prose:**
+- NOT extracted as `userDocs` (Phase 3 is input, not output)
+- Agent reads conversational prose, extracts unique insights
+- Agent rewrites in tight technical style (strips "in order to", "just", etc.)
+- Result becomes Phase 4a `userDocs` in the JSON
+
+**Images, YAML frontmatter:**
+- Ignored (not used by agents)
+
+Phase 4a agents document their decisions (what they incorporated, what they omitted, example triage) in `enrichment/output/decisions/{ClassName}_phase4a.md`.
 
 ---
 
