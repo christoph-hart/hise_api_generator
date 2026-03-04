@@ -52,9 +52,13 @@ Console.print(trace(numbers)); // [1, [10, 20], 2, 3]
 
 ---
 
-## 3. Obtain Your Objects
+## 3. Make Examples Complete and Executable
 
-Every example must show how the object being demonstrated is created or obtained. Never write "Assume 'x' is a valid object" -- show the acquisition chain.
+Every example must be a complete, executable piece of code that demonstrates the method's behavior. This means:
+
+### Show how objects are obtained
+
+Never write "Assume 'x' is a valid object" -- show the full acquisition chain.
 
 **Good** -- shows the full chain from routing manager to cable:
 ```javascript
@@ -70,6 +74,72 @@ var sr = audioFile.getSampleRate();
 ```
 
 The exception is when the method belongs to a class whose `obtainedVia` is already demonstrated in the class-level `codeExample`. In that case, a brief `const var obj = ...` line using the same pattern is sufficient -- but it must be present.
+
+### Define all variables referenced in the code
+
+If your example references variables, define them before use:
+
+**Good** -- complete and executable:
+```javascript
+const DATA_LIST = [{Key: "A", Name: "Alpha"}, {Key: "B", Name: "Beta"}];
+
+inline function findNameByKey(key)
+{
+    for (entry in DATA_LIST)
+        if (entry.Key == key)
+            return entry.Name;
+    return "";
+}
+
+const result = findNameByKey("A");
+Console.print(result); // Alpha
+```
+
+**Bad** -- references undefined DATA_LIST:
+```javascript
+inline function findNameByKey(key)
+{
+    for (entry in DATA_LIST)  // Where does DATA_LIST come from?
+        if (entry.Key == key)
+            return entry.Name;
+    return "";
+}
+```
+
+### Invoke functions to demonstrate behavior
+
+If your example defines a function, invoke it to show what it does:
+
+**Good** -- shows the function in action:
+```javascript
+inline function doubleValue(x)
+{
+    return x * 2;
+}
+
+Console.print(doubleValue(5)); // 10
+```
+
+**Bad** -- defines but never demonstrates:
+```javascript
+inline function doubleValue(x)
+{
+    return x * 2;
+}
+// Reader never sees it actually work
+```
+
+**Exception:** If the function is a callback that will be invoked by the system (e.g., `setControlCallback`, `setPaintRoutine`), showing the registration is sufficient -- you don't need to simulate the callback firing.
+
+```javascript
+// GOOD - callback will be invoked by HISE when knob changes
+inline function onKnobChanged(component, value)
+{
+    Console.print("New value: " + value);
+}
+
+knob.setControlCallback(onKnobChanged);
+```
 
 ---
 
@@ -196,3 +266,17 @@ c1.sendData("hello");
 // Output:
 // Interface: C2 executed: "hello"
 ```
+
+---
+
+## Note on Testability
+
+Examples in this documentation are automatically validated to ensure correctness. When writing examples:
+
+- **Prefer deterministic output** - avoid `Math.random()`, file I/O, system state
+- **Show expected output in comments** - this documents behavior AND aids validation
+- **Use `trace()` for compound types** - produces parseable log output
+
+Examples that require external resources (files, MIDI, timers) or have non-deterministic output should be marked `testable: false` in their metadata. See `test_metadata.md` for testing guidelines.
+
+Most examples following the quality guidelines above will be naturally testable.

@@ -1273,22 +1273,109 @@ def parse_bullet_list(text: str) -> list:
 
 
 def parse_examples(text: str) -> list:
-    """Parse example sections from method markdown."""
+    """Parse example sections from method markdown.
+    
+    Supports two formats:
+    1. New format with slugs and optional testMetadata:
+       ```javascript:slug
+       // Title: Human-readable title
+       // --- setup ---
+       setup code here
+       // --- end setup ---
+       actual example code
+       ```
+       
+       ```json:testMetadata:slug
+       {"testable": true, "verifyScript": {...}}
+       ```
+    
+    2. Legacy format (backward compatible):
+       // Title comment or ### heading
+       ```javascript
+       code
+       ```
+    """
     examples = []
-
-    # Find all code blocks, optionally preceded by a title comment
-    blocks = re.findall(
-        r"(?:(?://\s*(.+)\n)|(?:###\s*(.+)\n))?```\w*\n(.*?)```",
+    
+    # First, try to find new-format blocks with slugs
+    # Pattern: ```javascript:slug\n...code...```
+    slug_blocks = re.findall(
+        r"```javascript:(\S+)\s*\n(.*?)```",
         text, re.DOTALL
     )
-
-    if blocks:
-        for title_comment, title_heading, code in blocks:
-            title = (title_heading or title_comment or "").strip()
-            examples.append({
+    
+    if slug_blocks:
+        # New format detected - parse with slug support
+        for slug, code_raw in slug_blocks:
+            code_raw = code_raw.strip()
+            
+            # Extract // Title: comment if present (first line only)
+            title = ""
+            title_match = re.match(r"//\s*Title:\s*(.+)", code_raw)
+            if title_match:
+                title = title_match.group(1).strip()
+                # Remove title line from code
+                code_raw = re.sub(r"^//\s*Title:.*\n", "", code_raw, count=1)
+            
+            # Extract setup block if present
+            setup_script = ""
+            setup_match = re.search(
+                r"//\s*---\s*setup\s*---\s*\n(.*?)//\s*---\s*end setup\s*---\s*\n",
+                code_raw, re.DOTALL | re.IGNORECASE
+            )
+            if setup_match:
+                setup_script = setup_match.group(1).strip()
+                # Remove setup block from code
+                code_raw = re.sub(
+                    r"//\s*---\s*setup\s*---\s*\n.*?//\s*---\s*end setup\s*---\s*\n",
+                    "", code_raw, flags=re.DOTALL | re.IGNORECASE
+                )
+            
+            code = code_raw.strip()
+            
+            # Look for matching testMetadata block
+            # Pattern: ```json:testMetadata:slug\n{...}```
+            metadata_pattern = r"```json:testMetadata:" + re.escape(slug) + r"\s*\n(.*?)```"
+            metadata_match = re.search(metadata_pattern, text, re.DOTALL)
+            
+            example = {
+                "slug": slug,
                 "title": title or "Example",
-                "code": code.strip(),
-            })
+                "code": code,
+            }
+            
+            if metadata_match:
+                try:
+                    metadata = json.loads(metadata_match.group(1))
+                    # If setupScript was extracted from code, add it to metadata
+                    if setup_script:
+                        metadata["setupScript"] = setup_script
+                    example["testMetadata"] = metadata
+                except json.JSONDecodeError:
+                    # Invalid JSON - skip metadata
+                    pass
+            elif setup_script:
+                # Setup script but no testMetadata block - create minimal metadata
+                example["testMetadata"] = {
+                    "setupScript": setup_script
+                }
+            
+            examples.append(example)
+    
+    else:
+        # Legacy format - find all code blocks, optionally preceded by title
+        blocks = re.findall(
+            r"(?:(?://\s*(.+)\n)|(?:###\s*(.+)\n))?```\w*\n(.*?)```",
+            text, re.DOTALL
+        )
+        
+        if blocks:
+            for title_comment, title_heading, code in blocks:
+                title = (title_heading or title_comment or "").strip()
+                examples.append({
+                    "title": title or "Example",
+                    "code": code.strip(),
+                })
     
     # If no fenced code blocks found, return empty list
     # Phase 3 diary prose is not a code example
@@ -1621,11 +1708,88 @@ def _load_phase4_prose(filepath: Path, strip_heading: bool = False) -> str:
     return text
 
 
-def write_phase4a_decision_placeholder(class_name: str, p3_readme: dict, p3_methods: dict):
+def load_test_results() -> dict:
+    """Load sidecar test results from enrichment/output/test_results.json.
+    
+    Returns a flat dict: {"Class.method.source.slug": {result}, ...}
+    Returns empty dict if file doesn't exist or is invalid.
+    """
+    sidecar_path = OUTPUT_DIR / "test_results.json"
+    if not sidecar_path.is_file():
+        return {}
+    try:
+        with open(sidecar_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data.get("results", {})
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def filter_examples_by_validation(
+    examples: list,
+    class_name: str,
+    method_name: str,
+    source_tag: str,
+    test_results: dict,
+) -> tuple:
+    """Filter out examples that have confirmed test failures.
+    
+    Args:
+        examples: List of example dicts (must have "slug" field)
+        class_name: Class name
+        method_name: Method name
+        source_tag: "auto", "project", or "manual"
+        test_results: Flat sidecar results dict
+    
+    Returns:
+        (passing_examples, discarded_log_entries)
+        
+        passing_examples: Examples that passed, are untested, or were skipped.
+        discarded_log_entries: List of human-readable strings describing discards.
+    """
+    passing = []
+    discarded = []
+    
+    for ex in examples:
+        slug = ex.get("slug", "")
+        if not slug:
+            # No slug means no sidecar entry possible - keep it
+            passing.append(ex)
+            continue
+        
+        key = f"{class_name}.{method_name}.{source_tag}.{slug}"
+        result = test_results.get(key)
+        
+        if result and result.get("tested") and not result.get("passed"):
+            # Confirmed failure - discard
+            stage = result.get("stage", "unknown")
+            error = result.get("error", "")
+            # Truncate long error messages for the decision log
+            if isinstance(error, list):
+                error = "; ".join(str(e) for e in error[:2])
+            error_str = str(error)[:200]
+            discarded.append(
+                f"  - Discarded `{source_tag}:{slug}`: "
+                f"failed at {stage} - {error_str}"
+            )
+        else:
+            # Passing, untested, or skipped - keep
+            passing.append(ex)
+    
+    return passing, discarded
+
+
+def write_phase4a_decision_placeholder(class_name: str, p3_readme: dict,
+                                       p3_methods: dict,
+                                       validation_decisions=None):
     """Write a placeholder decision file noting Phase 3 input for Phase 4a agent.
     
     This file is replaced when Phase 4a runs, but we create it during merge
     to note Phase 3 content that should inform Phase 4a authoring.
+    
+    Args:
+        validation_decisions: List of (method_name, decision_lines) tuples
+            from validation-based example filtering. None if sidecar not present.
     """
     decisions_dir = OUTPUT_DIR / "decisions"
     decisions_dir.mkdir(parents=True, exist_ok=True)
@@ -1638,6 +1802,20 @@ def write_phase4a_decision_placeholder(class_name: str, p3_readme: dict, p3_meth
     content += "(To be filled by Phase 4a agent)\n\n"
     content += "## Method Decisions\n\n"
     content += "(To be filled by Phase 4a agent)\n\n"
+    
+    # Validation-based example selection (from sidecar test results)
+    if validation_decisions:
+        content += "---\n\n"
+        content += "## Validation-Based Example Selection\n\n"
+        content += ("Examples with confirmed test failures were discarded. "
+                     "When all examples from a higher phase failed, the merge "
+                     "fell back to a lower phase's examples.\n\n")
+        for method_name, lines in sorted(validation_decisions, key=lambda x: x[0]):
+            content += f"### {method_name}\n\n"
+            for line in lines:
+                content += f"{line}\n"
+            content += "\n"
+    
     content += "---\n\n"
     content += "## Phase 3 Input Available\n\n"
     
@@ -1684,6 +1862,15 @@ def run_merge():
 
     # Build class lookup for raw docs link conversion (Phase 3)
     class_lookup = build_class_lookup(BASE_DIR)
+
+    # Load sidecar test results for validation-based example filtering
+    test_results = load_test_results()
+    if test_results:
+        print(f"  Loaded {len(test_results)} test results from sidecar")
+    else:
+        print("  No sidecar test results found (all examples accepted as-is)")
+    total_validation_discards = 0
+    total_validation_fallbacks = 0
 
     for json_path in base_files:
         with open(json_path, "r", encoding="utf-8") as f:
@@ -1810,6 +1997,7 @@ def run_merge():
 
         # --- Methods ---
         methods_output = {}
+        validation_decisions = []  # (method_name, [decision_lines])
         all_method_names = set(base.get("methods", {}).keys())
         all_method_names.update(p1_methods.keys())
         all_method_names.update(p2_methods.keys())
@@ -1832,6 +2020,10 @@ def run_merge():
             if p3_method:
                 # Phase 3 examples replace Phase 1/2 (hand-written > auto-extracted)
                 if p3_method.get("examples"):
+                    # Tag Phase 3 examples with source: "manual"
+                    for example in p3_method["examples"]:
+                        if isinstance(example, dict) and "source" not in example:
+                            example["source"] = "manual"
                     entry["examples"] = p3_method["examples"]
                 
                 # Phase 3 cross-references merge with existing
@@ -1841,6 +2033,98 @@ def run_merge():
                         if xref not in existing_xrefs:
                             existing_xrefs.append(xref)
                     entry["crossReferences"] = existing_xrefs
+
+            # --- Validation-based example filtering ---
+            # Discard examples with confirmed test failures, fall back to
+            # lower phase if all examples from the winning phase fail.
+            if test_results and entry.get("examples"):
+                # Determine which source tag the current examples came from
+                # (last phase to set examples wins)
+                current_source = "auto"
+                if p3_method and p3_method.get("examples"):
+                    current_source = "manual"
+                elif p2_method and p2_method.get("examples"):
+                    current_source = "project"
+
+                passing, discarded = filter_examples_by_validation(
+                    entry["examples"], class_name, method_name,
+                    current_source, test_results
+                )
+
+                if discarded:
+                    total_validation_discards += len(discarded)
+                    method_decisions = list(discarded)  # copy
+
+                    if passing:
+                        # Some examples survived - use them
+                        entry["examples"] = passing
+                        method_decisions.insert(
+                            0,
+                            f"- **Winner:** {current_source} "
+                            f"({len(passing)}/{len(passing) + len(discarded)} "
+                            f"examples passing)"
+                        )
+                    else:
+                        # All examples from winning phase failed - fall back
+                        total_validation_fallbacks += 1
+                        fallback_source = None
+                        fallback_examples = []
+
+                        if current_source == "manual":
+                            # Try phase2, then phase1
+                            if p2_method and p2_method.get("examples"):
+                                fb, fb_disc = filter_examples_by_validation(
+                                    p2_method["examples"], class_name,
+                                    method_name, "project", test_results
+                                )
+                                if fb:
+                                    fallback_source = "project"
+                                    fallback_examples = fb
+                                    method_decisions.extend(fb_disc)
+                            if not fallback_examples and p1_method.get("examples"):
+                                p1_entry = build_method_entry(
+                                    base_method, p1_method, "auto"
+                                )
+                                fb, fb_disc = filter_examples_by_validation(
+                                    p1_entry.get("examples", []), class_name,
+                                    method_name, "auto", test_results
+                                )
+                                if fb:
+                                    fallback_source = "auto"
+                                    fallback_examples = fb
+                                    method_decisions.extend(fb_disc)
+                        elif current_source == "project":
+                            # Try phase1
+                            if p1_method.get("examples"):
+                                p1_entry = build_method_entry(
+                                    base_method, p1_method, "auto"
+                                )
+                                fb, fb_disc = filter_examples_by_validation(
+                                    p1_entry.get("examples", []), class_name,
+                                    method_name, "auto", test_results
+                                )
+                                if fb:
+                                    fallback_source = "auto"
+                                    fallback_examples = fb
+                                    method_decisions.extend(fb_disc)
+
+                        if fallback_examples:
+                            entry["examples"] = fallback_examples
+                            method_decisions.insert(
+                                0,
+                                f"- **Fallback:** {fallback_source} "
+                                f"(all {current_source} examples failed)"
+                            )
+                        else:
+                            # No fallback available - keep empty or original
+                            entry["examples"] = []
+                            method_decisions.insert(
+                                0,
+                                f"- **No valid examples:** all {current_source} "
+                                f"examples failed, no fallback available"
+                            )
+
+                    validation_decisions.append((method_name, method_decisions))
 
             # Phase 4: userDocs for method level
             # Priority: Phase 4 manual > Phase 4 auto (Phase 3 is input, not userDocs)
@@ -1886,7 +2170,10 @@ def run_merge():
         }
         
         # --- Write decision file placeholder (notes Phase 3 input for Phase 4a agent) ---
-        write_phase4a_decision_placeholder(class_name, p3_readme, p3_methods)
+        write_phase4a_decision_placeholder(
+            class_name, p3_readme, p3_methods,
+            validation_decisions if validation_decisions else None
+        )
 
     # Write output
     output_path = OUTPUT_DIR / "api_reference.json"
@@ -1900,6 +2187,9 @@ def run_merge():
     print(f"Merge complete:")
     print(f"  Classes: {class_count}")
     print(f"  Total methods: {method_count}")
+    if total_validation_discards > 0:
+        print(f"  Validation: {total_validation_discards} examples discarded, "
+              f"{total_validation_fallbacks} methods fell back to lower phase")
     print(f"  Output: {output_path}")
 
 

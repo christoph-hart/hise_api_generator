@@ -295,27 +295,32 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
 
 1. Read the merged `api_reference.json`
 2. Extract the target class entry
-3. **Review Phase 3 diary** (if present):
+3. **Validate examples** (pre-authoring quality gate):
+   ```bash
+   python snippet_validator.py --validate --source all --class ClassName
+   ```
+   Fix any failing examples before proceeding. Do not write user-facing prose about examples that fail validation.
+4. **Review Phase 3 diary** (if present):
    - Check for Phase 3 files: `enrichment/phase3/{ClassName}/Readme.md` (class-level), `enrichment/phase3/{ClassName}/{methodName}.md` (method-level)
    - If found, Phase 3 content will be **injected into your prompt** by the orchestration system
    - Read and extract unique insights not in Phase 1/2 (integration patterns, cross-system interop, workflow sequences, domain conventions)
    - Note for decision log: what you incorporated, what you omitted, any length warnings (if file >500 lines)
-4. **Triage diagrams** (see Diagram Triage below):
+5. **Triage diagrams** (see Diagram Triage below):
    - Review all diagram descriptions from Phase 1 (class-level `diagrams[]` and method-level `diagram` fields)
    - For each diagram, decide: render as SVG, or cut in favor of prose/tables
    - Diagrams that survive triage proceed to rendering; cut diagrams are simply not rendered (the text description remains in the JSON for LLM consumers)
-5. **Render surviving SVG diagrams** (see Diagram SVG Rendering below):
+6. **Render surviving SVG diagrams** (see Diagram SVG Rendering below):
    - For each class-level diagram that survived triage, render an SVG
    - For each method diagram that survived triage, render an SVG
    - Skip if a manual or auto SVG already exists
-6. Write class-level `Readme.md`:
+7. Write class-level `Readme.md`:
    - Check `phase4/manual/ClassName/Readme.md` - if present, skip
    - Check `phase4/auto/ClassName/Readme.md` - if present, skip (Phase 3 no longer sets userDocs)
    - Write `Readme.md` with user-facing prose incorporating Phase 3 insights in technical style
    - Add a `## Common Mistakes` section (curated from `commonMistakes` array)
    - Embed class-level diagram SVGs as `![brief](filename.svg)` (see Embedding Diagrams below)
    - If a diagram was cut during triage because a table or prose covers the same information better, use that table/prose instead
-7. Write method-level `.md` files:
+8. Write method-level `.md` files:
    - Check `phase4/manual/ClassName/methodName.md` - if present, skip
    - Check `phase4/auto/ClassName/methodName.md` - if present, skip (Phase 3 no longer sets userDocs)
    - Write `methodName.md` with user-facing prose incorporating Phase 3 insights
@@ -323,9 +328,9 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
    - If the method has a `diagram` field that survived triage, embed the SVG as `![brief](filename.svg)`
    - If the method has a `diagramRef` field pointing to a rendered class-level diagram, link to the anchor: `[See: brief](#diagram-id)`
    - If the method's diagram or diagramRef was cut during triage, do not reference it
-8. **Document authoring decisions** (see Decision Logging below):
+9. **Document authoring decisions** (see Decision Logging below):
    - Create `enrichment/output/decisions/{ClassName}_phase4a.md` with non-obvious decisions made during authoring
-9. **Editorial self-review** (see Editorial Self-Review above):
+10. **Editorial self-review** (see Editorial Self-Review above):
    - Re-read all `.md` files together as a single page
    - Consolidate repeated facts, resolve prose/warning overlap, remove filler
    - Edit the source `.md` files directly

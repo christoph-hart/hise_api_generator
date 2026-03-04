@@ -368,6 +368,18 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 - Boolean query (e.g., `isBypassed()`)
 - Self-explanatory signature where the description suffices
 
+### Test Metadata for Examples
+
+When synthesizing an example, also produce `testMetadata` following `resources/guidelines/test_metadata.md`. The agent determines:
+
+1. **Testability:** Is the example complete, deterministic, and free of external dependencies (file I/O, MIDI input, timers)? If yes, mark `testable: true`.
+2. **Verification type:** Does the example use `Console.print()`? Use `log-output` verification. Does it create variables? Use `REPL` verification. Both? Use mixed verification (array with both types).
+3. **Setup script:** Does the example reference UI components or modules not created in the example itself? Add a `setupScript` that creates them.
+
+Most agent-synthesized examples are self-contained and deterministic, making them naturally testable. Mark `testable: false` only when the example genuinely cannot be validated (shows intentional errors, requires MIDI input, uses `Math.random()`, etc.).
+
+The `testMetadata` field is part of the example object and is carried through the merge into `api_reference.json`.
+
 ### Diagram Heuristic
 
 Writing a diagram description is cheap -- it is just a 2-3 sentence plain-text description plus a type tag. Phase 4a decides which diagrams actually get rendered as SVGs and which get cut in favor of prose or tables. **When in doubt, write the diagram description. Do not self-censor.**

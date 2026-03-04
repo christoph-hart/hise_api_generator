@@ -97,6 +97,16 @@ All Phase 2 contributions are tagged with `"source": "project"` in the output JS
 
 ---
 
+## Test Metadata
+
+Project-extracted examples should include `testMetadata` when possible. Many project examples depend on external resources (audio samples, specific module configurations, project-specific presets) and should be marked `testable: false`.
+
+Self-contained examples that work without project context should include appropriate verification (`log-output` or `REPL`). Use `setupScript` to create any UI components or modules the example references.
+
+See `enrichment/resources/guidelines/test_metadata.md` for the full schema and verification type reference.
+
+---
+
 ## When to Use Phase 2
 
 Phase 2 is populated by:
