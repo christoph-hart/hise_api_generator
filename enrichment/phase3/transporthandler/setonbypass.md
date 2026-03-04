@@ -6,7 +6,7 @@ So the solution I went for is a simple watchdog: at every audio buffer that is r
 
 The function will simply expect a single parameter that should be a function with a single argument that will indicate whether the plugin is bypassed or not. The function will not be called on the audio thread but on the UI thread so you don't need to be cautious about realtime safety here.
 
-```javascript
+```javascript:bypass-watchdog-pattern
 const var th = Engine.createTransportHandler();
 
 th.setOnBypass(function(isBypassed)
@@ -22,6 +22,11 @@ th.setOnBypass(function(isBypassed)
 		someTimer.startTimer(30);
 	}
 });
+```
+```json:testMetadata:bypass-watchdog-pattern
+{
+  "testable": false
+}
 ```
 
 > If you want to simulate the behaviour of bypassing the plugin during development, you can use the new bypass button at the top left of the HISE controller popup (next to the master clock controls).

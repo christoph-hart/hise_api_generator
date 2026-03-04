@@ -40,7 +40,7 @@ const arr1 = [0, 1];
 
 const arr2 = arr1.map(function(element)
 {
-	return element + 10;
+	return elemen + 10;
 });
 
 Console.print(trace(arr2)); // [10, 11]

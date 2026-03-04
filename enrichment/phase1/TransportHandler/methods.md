@@ -30,16 +30,35 @@ Registers a callback that fires whenever the host tempo (BPM) changes. The `sync
 **DiagramRef:** sync-async-dispatch
 
 **Example:**
-```javascript
+```javascript:basic
+// --- setup ---
+Engine.setHostBpm(-1);
+// --- end setup ---
 const var th = Engine.createTransportHandler();
+
+var tempoLog = [];
 
 inline function onTempoChanged(newTempo)
 {
-    Console.print("Tempo: " + newTempo);
+    tempoLog.push(newTempo);
 }
 
 th.setOnTempoChange(SyncNotification, onTempoChanged);
+
+// Programmatically change BPM to trigger the callback
+Engine.setHostBpm(140);
 ```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "expression": "tempoLog.length", "value": 2},
+    {"type": "REPL", "expression": "tempoLog[0]", "value": 120},
+    {"type": "REPL", "expression": "tempoLog[1]", "value": 140}
+  ]
+}
+```
+
 
 ## setOnTransportChange
 
@@ -68,18 +87,35 @@ Registers a callback that fires when the transport state changes (play/stop). Th
 **DiagramRef:** sync-async-dispatch
 
 **Example:**
-```javascript
+```javascript:basic
+// --- setup ---
+const var th0 = Engine.createTransportHandler();
+th0.setSyncMode(th0.InternalOnly);
+th0.stopInternalClock(0);
+// --- end setup ---
 const var th = Engine.createTransportHandler();
+
+var transportLog = [];
 
 inline function onTransportChanged(isPlaying)
 {
-    if (isPlaying)
-        Console.print("Playback started");
-    else
-        Console.print("Playback stopped");
+    transportLog.push(isPlaying);
 }
 
-th.setOnTransportChange(AsyncNotification, onTransportChanged);
+th.setOnTransportChange(SyncNotification, onTransportChanged);
+
+// Trigger a transport change programmatically
+th.startInternalClock(0);
+```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "expression": "transportLog.length", "value": 2},
+    {"type": "REPL", "expression": "transportLog[0]", "value": false},
+    {"type": "REPL", "expression": "transportLog[1]", "value": true}
+  ]
+}
 ```
 
 ## setOnBeatChange
@@ -110,7 +146,7 @@ Registers a callback that fires on each musical beat. The callback receives two 
 - `TransportHandler.setOnSignatureChange`
 
 **Example:**
-```javascript
+```javascript:basic
 const var th = Engine.createTransportHandler();
 
 inline function onBeatChanged(beatIndex, isNewBar)
@@ -121,6 +157,12 @@ inline function onBeatChanged(beatIndex, isNewBar)
 
 th.setOnBeatChange(SyncNotification, onBeatChanged);
 ```
+```json:testMetadata:basic
+{
+  "testable": false
+}
+```
+
 
 ## setOnGridChange
 
@@ -156,7 +198,7 @@ Registers a callback that fires on each grid tick. The grid must be enabled firs
 **DiagramRef:** sync-async-dispatch
 
 **Example:**
-```javascript
+```javascript:basic
 const var th = Engine.createTransportHandler();
 
 // Enable 1/16 note grid (index 11)
@@ -170,6 +212,12 @@ inline function onGridChanged(gridIndex, timestamp, firstGrid)
 
 th.setOnGridChange(SyncNotification, onGridChanged);
 ```
+```json:testMetadata:basic
+{
+  "testable": false
+}
+```
+
 
 ## setOnSignatureChange
 
@@ -195,7 +243,7 @@ Registers a callback that fires when the time signature changes. The callback re
 - `TransportHandler.setOnBeatChange`
 
 **Example:**
-```javascript
+```javascript:basic
 const var th = Engine.createTransportHandler();
 
 inline function onSignatureChanged(nom, denom)
@@ -205,6 +253,12 @@ inline function onSignatureChanged(nom, denom)
 
 th.setOnSignatureChange(AsyncNotification, onSignatureChanged);
 ```
+```json:testMetadata:basic
+{
+  "testable": false
+}
+```
+
 
 ## setOnBypass
 
@@ -226,7 +280,7 @@ Registers a callback that fires when the plugin's bypass state changes. This cal
 **Callback Signature:** f(isBypassed: bool)
 
 **Example:**
-```javascript
+```javascript:basic
 const var th = Engine.createTransportHandler();
 
 inline function onBypassChanged(isBypassed)
@@ -235,6 +289,11 @@ inline function onBypassChanged(isBypassed)
 }
 
 th.setOnBypass(onBypassChanged);
+```
+```json:testMetadata:basic
+{
+  "testable": false
+}
 ```
 
 ## setSyncMode
@@ -404,14 +463,23 @@ Enables or disables the high-precision grid timer at a specific musical tempo di
 - `TransportHandler.getGridLengthInSamples`
 
 **Example:**
-```javascript
+```javascript:basic
+// --- setup ---
+Engine.setHostBpm(-1);
+// --- end setup ---
 const var th = Engine.createTransportHandler();
 
 // Enable a 1/16 note grid
 th.setEnableGrid(true, 11);
 
-// Enable a 1/8 note grid
+// Enable a 1/8 note grid (overwrites the previous)
 th.setEnableGrid(true, 8);
+```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": {"type": "REPL", "expression": "th.getGridLengthInSamples()", "value": 11025}
+}
 ```
 
 ## setLocalGridMultiplier

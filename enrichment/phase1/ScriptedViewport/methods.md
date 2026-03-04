@@ -304,7 +304,7 @@ JSON object format for individual key descriptions:
 - `ScriptedViewport.setKeyPressCallback`
 
 **Example:**
-```javascript
+```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 
 // Consume all keys exclusively
@@ -312,6 +312,12 @@ Viewport1.setConsumedKeyPresses("all");
 
 // Or consume specific keys
 Viewport1.setConsumedKeyPresses(["ctrl + S", "F5", "escape"]);
+```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": {"type": "REPL", "expression": "Viewport1.getId()", "value": "Viewport1"}
+}
 ```
 
 ## setControlCallback
@@ -341,17 +347,29 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `ScriptedViewport.changed`
 
 **Example:**
-```javascript
+```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 Viewport1.set("useList", true);
 Viewport1.set("items", "Item A\nItem B\nItem C");
+Viewport1.set("saveInPreset", false);
+
+reg controlLog = [];
 
 inline function onViewportChanged(component, value)
 {
-    Console.print("Selected row: " + value);
+    controlLog.push(value);
 };
 
 Viewport1.setControlCallback(onViewportChanged);
+```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "expression": "Viewport1.setValue(1) || Viewport1.changed()", "value": false},
+    {"type": "REPL", "expression": "controlLog[0]", "value": 1}
+  ]
+}
 ```
 
 ## setEventTypesForValueCallback
@@ -441,14 +459,42 @@ Focus change event object:
 - `ScriptedViewport.setConsumedKeyPresses`
 
 **Example:**
-```javascript
+```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 Viewport1.setConsumedKeyPresses("all");
-Viewport1.setKeyPressCallback(inline function(event)
+
+reg keyLog = [];
+
+inline function onKeyPress(event)
 {
     if (!event.isFocusChange)
-        Console.print("Key: " + event.description);
+        keyLog.push(event.description);
+};
+
+Viewport1.setKeyPressCallback(onKeyPress);
+
+Console.testCallback(Viewport1, "setKeyPressCallback", {
+    "isFocusChange": false,
+    "character": "A",
+    "specialKey": false,
+    "isWhitespace": false,
+    "isLetter": true,
+    "isDigit": false,
+    "keyCode": 65,
+    "description": "A",
+    "shift": false,
+    "cmd": false,
+    "alt": false
 });
+```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "expression": "keyLog.length", "value": 1},
+    {"type": "REPL", "expression": "keyLog[0]", "value": "A"}
+  ]
+}
 ```
 
 ## setLocalLookAndFeel
@@ -477,7 +523,7 @@ Attaches a scripted look and feel object to this component and all its children.
 - `ScriptedViewport.setStyleSheetPseudoState`
 
 **Example:**
-```javascript
+```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 const var laf = Content.createLocalLookAndFeel();
 
@@ -494,6 +540,11 @@ laf.registerFunction("drawTableCell", function(g, obj)
 });
 
 Viewport1.setLocalLookAndFeel(laf);
+```
+```json:testMetadata:basic
+{
+  "testable": false
+}
 ```
 
 ## setPosition
@@ -653,7 +704,7 @@ Registers a callback function that is notified for all user interactions with th
 **DiagramRef:** table-setup
 
 **Example:**
-```javascript
+```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 
 Viewport1.setTableMode({ "RowHeight": 24 });
@@ -672,6 +723,11 @@ inline function onTableEvent(event)
 };
 
 Viewport1.setTableCallback(onTableEvent);
+```
+```json:testMetadata:basic
+{
+  "testable": false
+}
 ```
 
 ## setTableColumns
@@ -726,13 +782,18 @@ Column definition object properties:
 **DiagramRef:** table-setup
 
 **Example:**
-```javascript
+```javascript:basic
 Viewport1.setTableColumns([
     { "ID": "Name", "Label": "Name", "Width": 200 },
     { "ID": "Volume", "Type": "Slider", "Width": 120, "style": "Horizontal" },
     { "ID": "Mute", "Type": "Button", "Width": 60, "Toggle": true, "Text": "M" },
     { "ID": "Output", "Type": "ComboBox", "Width": 100, "ValueMode": "ID" }
 ]);
+```
+```json:testMetadata:basic
+{
+  "testable": false
+}
 ```
 
 ## setTableMode
@@ -781,7 +842,7 @@ Table metadata properties:
 **DiagramRef:** table-setup
 
 **Example:**
-```javascript
+```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 Viewport1.set("width", 400);
 Viewport1.set("height", 300);
@@ -793,6 +854,15 @@ Viewport1.setTableMode({
     "MultiColumnMode": true,
     "MultiSelection": false
 });
+```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "expression": "Viewport1.getWidth()", "value": 400},
+    {"type": "REPL", "expression": "Viewport1.getHeight()", "value": 300}
+  ]
+}
 ```
 
 ## setTableRowData
@@ -824,7 +894,7 @@ Updates the row data for the table. Each element in the array must be a JSON obj
 **DiagramRef:** table-setup
 
 **Example:**
-```javascript
+```javascript:basic
 // Update table data at runtime
 var data = [];
 for (i = 0; i < 10; i++)
@@ -837,6 +907,11 @@ for (i = 0; i < 10; i++)
 }
 
 Viewport1.setTableRowData(data);
+```
+```json:testMetadata:basic
+{
+  "testable": false
+}
 ```
 
 ## setTableSortFunction
@@ -867,7 +942,7 @@ Sets a custom comparator function used when the user clicks a column header to s
 - `ScriptedViewport.getOriginalRowIndex`
 
 **Example:**
-```javascript
+```javascript:basic
 // Case-insensitive string sort
 inline function caseInsensitiveSort(a, b)
 {
@@ -880,6 +955,11 @@ inline function caseInsensitiveSort(a, b)
 };
 
 Viewport1.setTableSortFunction(caseInsensitiveSort);
+```
+```json:testMetadata:basic
+{
+  "testable": false
+}
 ```
 
 ## setTooltip

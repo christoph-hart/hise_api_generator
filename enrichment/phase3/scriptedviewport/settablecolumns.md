@@ -54,7 +54,7 @@ The `ValueMode` property defines how the value is supposed to be interpreted. Th
 
 The properties `Value` and `items` are dynamic, which means that you can pass in a JSON object into setTableRowData() to define different item lists for different rows:
 
-```javascript
+```javascript:dynamic-combobox-items
 const var ModTable = Content.getComponent("Viewport1");
 
 ModTable.setTableMode({
@@ -97,6 +97,11 @@ ModTable.setTableColumns([
 	"ValueMode": "Text"
 }
 ]);
+```
+```json:testMetadata:dynamic-combobox-items
+{
+  "testable": false
+}
 ```
 
 

@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:preset-browser-columns
 // Title: Preset browser with play button, sortable text columns, and hidden data
 // Context: A preset browser table with a momentary play button, text columns
 //          for name and category, and a Hidden column storing the file path.
@@ -21,8 +21,13 @@ presetTable.setTableColumns([
     { "ID": "FullPath",  "Type": "Hidden",    "MinWidth": 1 }
 ]);
 ```
+```json:testMetadata:preset-browser-columns
+{
+  "testable": false
+}
+```
 
-```javascript
+```javascript:modulation-matrix-columns
 // Title: Modulation matrix with mixed interactive cell types
 // Context: A modulation connection list where each row represents one
 //          source-target pair. Slider cells control intensity, ComboBox
@@ -47,6 +52,11 @@ modTable.setTableColumns([
     { "ID": "Delete",     "Type": "Button",   "Label": "", "MinWidth": 32,
       "Toggle": false,    "Text": "Delete" }
 ]);
+```
+```json:testMetadata:modulation-matrix-columns
+{
+  "testable": false
+}
 ```
 
 **Pitfalls:**

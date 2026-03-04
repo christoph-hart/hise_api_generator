@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:multi-column-browser-table-with
 // Title: Multi-column browser table with sorting and selection
 // Context: A sortable data browser that supports programmatic cell selection
 //          and touch-friendly scrolling. HeaderHeight: 0 hides the column
@@ -20,9 +20,36 @@ browser.setTableMode({
     "MultiSelection": true,
     "ScrollOnDrag": true
 });
+
+browser.setTableColumns([
+    {"ID": "Name", "Label": "Name", "MinWidth": 150},
+    {"ID": "Value", "Label": "Value", "MinWidth": 100}
+]);
+
+browser.setTableRowData([
+    {"Name": "Row 0", "Value": "A"},
+    {"Name": "Row 1", "Value": "B"}
+]);
+
+browser.set("saveInPreset", false);
+browser.setValue([0, 1]);
+```
+```json:testMetadata:multi-column-browser-table-with
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "REPL",
+    "expression": "browser.getValue()",
+    "value": [
+      0,
+      1
+    ]
+  }
+}
 ```
 
-```javascript
+
+```javascript:sortable-preset-table-with
 // Title: Sortable preset table with visible column headers
 // Context: A preset browser where users click column headers to sort by
 //          name, category, or BPM. The header row needs a visible height
@@ -39,6 +66,16 @@ presetTable.setTableMode({
     "MultiSelection": false,
     "ScrollOnDrag": true
 });
+
+```
+```json:testMetadata:sortable-preset-table-with
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "expression": "presetTable.getWidth()", "value": 500},
+    {"type": "REPL", "expression": "presetTable.getHeight()", "value": 350}
+  ]
+}
 ```
 
 **Pitfalls:**

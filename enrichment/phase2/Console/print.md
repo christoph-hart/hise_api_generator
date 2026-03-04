@@ -2,11 +2,13 @@
 
 **Examples:**
 
-```javascript
+```javascript:tracing-a-state-machine
 // Title: Tracing a state machine during development
 // Context: Console.print calls left in production code serve as
 // built-in documentation of control flow. They are no-ops in
 // exported plugins, so there is no reason to remove them.
+
+reg progress = 0.65;
 
 inline function onExportStateChanged(newState)
 {
@@ -19,21 +21,41 @@ inline function onExportStateChanged(newState)
     if (newState == 4)
         Console.print("Export complete");
 }
+
+onExportStateChanged(2);
+```
+```json:testMetadata:tracing-a-state-machine
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "New export state: Bouncing",
+      "Bouncing... 65%"
+    ]
+  }
+}
 ```
 
-```javascript
+
+```javascript:logging-structured-data-with
 // Title: Logging structured data with trace()
-// Context: For arrays and objects, Console.print shows "[object Array]"
-// unless you wrap the value in trace() first.
+// Context: For arrays and objects, Console.print shows a memory address
+// unless you wrap the value in trace() to get readable JSON output.
 
-const var filters = [
-    { "name": "Bass", "active": true },
-    { "name": "Mid", "active": false }
-];
+const var filter = { "name": "Bass", "active": true };
 
-Console.print(trace(filters));
-// [{name: "Bass", active: 1}, {name: "Mid", active: 0}]
-
-Console.print(filters);
-// [object Array] -- not useful
+Console.print(trace(filter));
 ```
+```json:testMetadata:logging-structured-data-with
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "{\"name\": \"Bass\", \"active\": 1}"
+    ]
+  }
+}
+```
+

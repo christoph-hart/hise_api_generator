@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:measuring-an-init-time-operation
 // Title: Measuring an init-time operation
 // Context: Wrap a potentially slow initialization step (file I/O,
 // waveform processing, module tree construction) to identify
@@ -17,4 +17,5 @@ for (i = 0; i < NUM_SAMPLES; i++)
 }
 
 Console.stopBenchmark(); // Prints e.g. "Benchmark Result: 45.123 ms"
+
 ```

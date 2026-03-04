@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:complete-table-laf-with
 // Title: Complete table LAF with row backgrounds, cell rendering, header sort indicator, and scrollbar
 // Context: A sortable data browser requires all four table LAF functions plus the
 //          scrollbar. The drawTableHeaderColumn function renders a sort indicator
@@ -81,6 +81,12 @@ laf.registerFunction("drawScrollbar", function(g, obj)
 });
 
 table.setLocalLookAndFeel(laf);
+
+```
+```json:testMetadata:complete-table-laf-with
+{
+  "testable": false
+}
 ```
 
 **Pitfalls:**

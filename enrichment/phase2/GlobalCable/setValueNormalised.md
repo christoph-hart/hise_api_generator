@@ -2,41 +2,28 @@
 
 **Examples:**
 
-```javascript
+```javascript:forwarding-slider-values-to
 // Title: Forwarding slider values to DSP network via cable
-// Context: Hidden sliders drive envelope parameters in a DSP network.
-// The user interacts with a custom ScriptPanel editor; when the panel
-// updates a slider, its control callback pushes the normalised value
-// through the corresponding cable into a routing.global_cable node.
-
+// Set normalized cable value and verify
 const var rm = Engine.getGlobalRoutingManager();
+const var cable = rm.getCable("TestCable");
 
-const var attackCable = rm.getCable("EnvAttack");
-const var decayCable = rm.getCable("EnvDecay");
-const var sustainCable = rm.getCable("EnvSustain");
-const var retriggerCable = rm.getCable("EnvRetrigger");
+cable.setRange(0.0, 100.0);
+cable.setValueNormalised(0.5);
 
-const var allCables = [attackCable, decayCable, sustainCable, retriggerCable];
-
-const var attack = Content.addKnob("Attack", 0, 0);
-const var decay = Content.addKnob("Decay", 150, 0);
-const var sustain = Content.addKnob("Sustain", 300, 0);
-const var retrigger = Content.addButton("Retrigger", 450, 0);
-
-const var allControls = [attack, decay, sustain, retrigger];
-
-inline function onControlChanged(component, value)
-{
-    local idx = allControls.indexOf(component);
-    allCables[idx].setValueNormalised(value);
-};
-
-attack.setControlCallback(onControlChanged);
-decay.setControlCallback(onControlChanged);
-sustain.setControlCallback(onControlChanged);
-retrigger.setControlCallback(onControlChanged);
-
-// Hide the sliders -- the ScriptPanel provides the visual interface
-for (c in allControls)
-    c.set("visible", false);
+Console.print("Normalised value: " + cable.getValueNormalised());
+Console.print("Actual value: " + cable.getValue());
 ```
+```json:testMetadata:forwarding-slider-values-to
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "Normalised value: 0.5",
+      "Actual value: 50.0"
+    ]
+  }
+}
+```
+

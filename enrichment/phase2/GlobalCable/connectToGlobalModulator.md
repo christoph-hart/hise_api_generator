@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:wiring-global-modulators-to
 // Title: Wiring global modulators to cables during module tree setup
 // Context: After building a GlobalModulatorContainer with the Builder API,
 // each modulator is connected to a named cable. This makes every
@@ -28,7 +28,14 @@ for (m in MODS)
 // Now any script can read the modulator output:
 // const var lfo = rm.getCable("LFO1");
 // var currentValue = lfo.getValueNormalised();
+
 ```
+```json:testMetadata:wiring-global-modulators-to
+{
+  "testable": false
+}
+```
+
 
 **Cross References:**
 - `Builder.create` -- used to construct the `GlobalModulatorContainer` and its child modulators before connecting them to cables.

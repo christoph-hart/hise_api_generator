@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:programmatic-cell-selection-in
 // Title: Programmatic cell selection in a multi-column sorted table
 // Context: After loading content, find the matching row in a sorted table
 //          and select it. Use getOriginalRowIndex() to map between the
@@ -36,6 +36,12 @@ inline function selectByOriginalIndex(targetOriginalIndex)
     table.setValue([-1, -1]);
     table.sendRepaintMessage();
 };
+
+```
+```json:testMetadata:programmatic-cell-selection-in
+{
+  "testable": false
+}
 ```
 
 **Pitfalls:**

@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:using-setcontrolcallback-to-restore
 // Title: Using setControlCallback to restore serialized state in a modulation table
 // Context: A modulation matrix table stores its connection data as a
 //          base64 string in the component's value. When a preset loads,
@@ -24,4 +24,10 @@ inline function onModTableRestore(component, value)
 };
 
 modTable.setControlCallback(onModTableRestore);
+
+```
+```json:testMetadata:using-setcontrolcallback-to-restore
+{
+  "testable": false
+}
 ```

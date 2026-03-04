@@ -66,14 +66,28 @@ Converts the input value from the local input range to normalised 0..1 using `co
 **DiagramRef:** cable-dispatch
 
 **Example:**
-```javascript
+```javascript:basic
 // Send a frequency value through a cable with a custom range
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("FreqCable");
 
 cable.setRange(20.0, 20000.0);
 cable.setValue(440.0);
+
+Console.print("Value set: " + cable.getValue());
 ```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "Value set: 440.0"
+    ]
+  }
+}
+```
+
 
 ---
 
@@ -181,15 +195,29 @@ Sets the local input range with a skew factor derived from a mid point. The `mid
 - `GlobalCable.setRangeWithStep`
 
 **Example:**
-```javascript
+```javascript:basic
 // Set a frequency range with perceptual skew
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("FreqCable");
 
 // 1000 Hz maps to the midpoint (0.5) of the normalised range
 cable.setRangeWithSkew(20.0, 20000.0, 1000.0);
-cable.setValue(1000.0); // sends 0.5 normalised
+cable.setValue(1000.0);
+
+Console.print("Normalized: " + cable.getValueNormalised());
 ```
+```json:testMetadata:basic
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "Normalized: 0.5"
+    ]
+  }
+}
+```
+
 
 ---
 
@@ -373,7 +401,7 @@ Currently only `macroIsTarget=true` (cable drives macro) is implemented. The rev
 - `GlobalCable.connectToGlobalModulator`
 
 **Example:**
-```javascript
+```javascript:basic
 // Connect a cable to Macro 1, filtering repeated values
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("MacroCable");
@@ -381,6 +409,12 @@ const var cable = rm.getCable("MacroCable");
 cable.connectToMacroControl(0, true, true);
 cable.setValueNormalised(0.5); // sets Macro 1 to 63.5 (0.5 * 127)
 ```
+```json:testMetadata:basic
+{
+  "testable": false
+}
+```
+
 
 ---
 

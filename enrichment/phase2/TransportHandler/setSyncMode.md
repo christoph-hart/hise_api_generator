@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:host-sync-toggle-button-that
 // Title: Host-sync toggle button that switches between internal and external clock
 // Context: A drum machine needs its own play/stop controls (internal clock) but should
 // follow the DAW when the user enables host sync. A toggle button switches between
@@ -25,9 +25,16 @@ inline function onHostSync(component, value)
 }
 
 HostSyncButton.setControlCallback(onHostSync);
+
+```
+```json:testMetadata:host-sync-toggle-button-that
+{
+  "testable": false
+}
 ```
 
-```javascript
+
+```javascript:connected-midi-processor-with
 // Title: Connected MIDI processor with external-only vs internal-only modes
 // Context: A simpler alternative for plugins that do not need fallback behavior.
 // ExternalOnly ignores internal clock entirely; InternalOnly ignores the DAW.
@@ -44,4 +51,11 @@ inline function onExternalToggle(component, value)
 }
 
 ExternalButton.setControlCallback(onExternalToggle);
+
 ```
+```json:testMetadata:connected-midi-processor-with
+{
+  "testable": false
+}
+```
+

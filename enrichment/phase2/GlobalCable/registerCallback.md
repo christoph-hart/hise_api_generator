@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:async-cable-callback-driving
 // Title: Async cable callback driving a UI repaint
 // Context: A DSP network writes its output level to a global cable.
 // The script registers an async callback to trigger a panel repaint
@@ -20,9 +20,16 @@ inline function onLevelChanged(value)
 };
 
 levelCable.registerCallback(onLevelChanged, AsyncNotification);
+
+```
+```json:testMetadata:async-cable-callback-driving
+{
+  "testable": false
+}
 ```
 
-```javascript
+
+```javascript:multiple-cables-with-a
 // Title: Multiple cables with a shared callback pattern
 // Context: An envelope editor uses one cable per parameter stage.
 // A shared control callback forwards each slider's value through
@@ -52,7 +59,14 @@ inline function onEnvKnobChanged(component, value)
 attackKnob.setControlCallback(onEnvKnobChanged);
 decayKnob.setControlCallback(onEnvKnobChanged);
 sustainKnob.setControlCallback(onEnvKnobChanged);
+
 ```
+```json:testMetadata:multiple-cables-with-a
+{
+  "testable": false
+}
+```
+
 
 **Pitfalls:**
 - When using `AsyncNotification`, the callback fires on the UI thread at the display refresh rate. If the cable value changes faster than the refresh rate (e.g., from an audio-rate DSP source), intermediate values are silently dropped. This is by design -- you only get the most recent value.

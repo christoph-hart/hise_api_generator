@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:routing-table-events-through
 // Title: Routing table events through a Broadcaster for multi-listener dispatch
 // Context: Instead of a single inline function, pass a Broadcaster as the
 //          table callback. This lets multiple listeners react to table events
@@ -43,9 +43,15 @@ tableBroadcaster.addListener(table, "toggle favorite", function(event)
 
 // Pass the Broadcaster directly as the callback
 table.setTableCallback(tableBroadcaster);
+
+```
+```json:testMetadata:routing-table-events-through
+{
+  "testable": false
+}
 ```
 
-```javascript
+```javascript:modulation-matrix-callback-dispatching
 // Title: Modulation matrix callback dispatching multiple event types
 // Context: A table displaying modulation connections with Slider, ComboBox,
 //          and Button cells. The callback switches on event.Type to route
@@ -97,6 +103,12 @@ inline function onModTableEvent(event)
 };
 
 modTable.setTableCallback(onModTableEvent);
+
+```
+```json:testMetadata:modulation-matrix-callback-dispatching
+{
+  "testable": false
+}
 ```
 
 **Pitfalls:**

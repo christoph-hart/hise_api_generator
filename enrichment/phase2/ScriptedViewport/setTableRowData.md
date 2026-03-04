@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:dynamic-row-data-with
 // Title: Dynamic row data with runtime refresh for a preset browser
 // Context: The row data array is rebuilt whenever the user changes a
 //          filter or toggles a favorite. Each row object's keys match
@@ -38,9 +38,15 @@ inline function refreshTable(fileList)
     local rows = buildRowData(fileList);
     presetTable.setTableRowData(rows);
 };
+
+```
+```json:testMetadata:dynamic-row-data-with
+{
+  "testable": false
+}
 ```
 
-```javascript
+```javascript:building-modulation-matrix-rows
 // Title: Building modulation matrix rows from a data model
 // Context: Each row represents a modulation connection. Slider cells
 //          receive a data object with Value, min, max, and style
@@ -71,6 +77,12 @@ inline function rebuildModRows()
 
     modTable.setTableRowData(rows);
 };
+
+```
+```json:testMetadata:building-modulation-matrix-rows
+{
+  "testable": false
+}
 ```
 
 **Pitfalls:**

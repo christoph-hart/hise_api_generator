@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:timer-polled-cable-reading-for
 // Title: Timer-polled cable reading for visual feedback
 // Context: A ScriptPanel displays a modulation ring that shows the
 // current cable value as an arc. The panel polls the cable on a
@@ -37,9 +37,16 @@ ModDisplay.setTimerCallback(function()
 });
 
 ModDisplay.startTimer(30);
+
+```
+```json:testMetadata:timer-polled-cable-reading-for
+{
+  "testable": false
+}
 ```
 
-```javascript
+
+```javascript:peak-meter-with-smoothed
 // Title: Peak meter with smoothed cable value
 // Context: A DSP network writes peak levels to a cable. The script
 // smooths the value for visually stable meter decay.
@@ -64,4 +71,11 @@ MeterPanel.setTimerCallback(function()
 });
 
 MeterPanel.startTimer(60);
+
 ```
+```json:testMetadata:peak-meter-with-smoothed
+{
+  "testable": false
+}
+```
+

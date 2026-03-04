@@ -2,7 +2,7 @@
 
 **Examples:**
 
-```javascript
+```javascript:mapping-sorted-display-index
 // Title: Mapping sorted display index back to data for favorite toggle
 // Context: When the table is sorted by a column header, the display row
 //          indices no longer match the original data array. Use
@@ -18,7 +18,13 @@ table.setTableColumns([
     { "ID": "Name",     "Label": "Name", "MinWidth": 200 }
 ]);
 
-var originalData = [];
+var originalData = [
+    {"Favorite": 0, "Name": "Item A", "isFavorite": false},
+    {"Favorite": 1, "Name": "Item B", "isFavorite": true},
+    {"Favorite": 0, "Name": "Item C", "isFavorite": false}
+];
+
+table.setTableRowData(originalData);
 
 inline function onTableEvent(event)
 {
@@ -33,8 +39,19 @@ inline function onTableEvent(event)
 
 table.setTableCallback(onTableEvent);
 ```
+```json:testMetadata:mapping-sorted-display-index
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "REPL",
+    "expression": "originalData.length",
+    "value": 3
+  }
+}
+```
 
-```javascript
+
+```javascript:selecting-the-current-item
 // Title: Selecting the current item in a sorted table after a load event
 // Context: After loading a preset, walk the display rows and compare
 //          getOriginalRowIndex() to find which display row corresponds
@@ -54,6 +71,12 @@ inline function selectItemByDataIndex(dataIndex)
     // No match found -- deselect
     table.setValue(-1);
 };
+
+```
+```json:testMetadata:selecting-the-current-item
+{
+  "testable": false
+}
 ```
 
 **Pitfalls:**

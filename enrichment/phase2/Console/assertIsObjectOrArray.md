@@ -2,39 +2,64 @@
 
 **Examples:**
 
-```javascript
+```javascript:validating-module-references-before
 // Title: Validating module references before method calls
-// Context: When looking up modules by ID, the result may be undefined
-// if the ID is wrong. assertIsObjectOrArray catches this before
-// methods like setAttribute or getId are called on a non-object.
+// Context: When working with data that should be objects or arrays,
+// assertIsObjectOrArray catches primitive values that would cause
+// errors in subsequent property access or method calls.
 
-inline function connectModulator(sourceIndex, destinationIndex)
+const var moduleList = [
+    {"id": "Osc1", "type": "Oscillator"},
+    {"id": "Filter1", "type": "Filter"}
+];
+
+inline function processModule(module)
 {
-    local sourceMod = getSourceModulator(sourceIndex);
-    local targetModule = getDestinationModule(destinationIndex);
+    Console.assertIsObjectOrArray(module);
+    Console.print("Processing: " + module.id);
+}
 
-    Console.assertIsObjectOrArray(sourceMod);
-    Console.assertIsObjectOrArray(targetModule);
-
-    local newMod = targetModule.addGlobalModulator(0, sourceMod, "Mod_" + sourceIndex);
-    Console.assertIsObjectOrArray(newMod);
+for (m in moduleList)
+    processModule(m);
+```
+```json:testMetadata:validating-module-references-before
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "Processing: Osc1",
+      "Processing: Filter1"
+    ]
+  }
 }
 ```
 
-```javascript
+
+```javascript:function-parameter-validation
 // Title: Function parameter validation
 // Context: Utility functions that expect a module reference or
 // structured data object use assertIsObjectOrArray as a type guard.
 
-inline function initVuMeter(panel, module)
+const var testModule = {"name": "TestModule", "level": 0.75};
+
+inline function checkModuleType(module)
 {
     Console.assertIsObjectOrArray(module);
+    Console.print("Module validated: " + module.name);
+}
 
-    panel.setTimerAndPaintRoutine(40, function(g)
-    {
-        // module is guaranteed to be a valid object here
-        local level = module.getCurrentLevel(0);
-        // ... draw meter
-    });
+checkModuleType(testModule);
+```
+```json:testMetadata:function-parameter-validation
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": [
+      "Module validated: TestModule"
+    ]
+  }
 }
 ```
+
