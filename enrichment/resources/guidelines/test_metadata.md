@@ -18,6 +18,8 @@ Authoritative reference for writing `testMetadata` to validate API documentation
 - Partial snippets that cannot be completed with trivial additions
 - Non-deterministic output (e.g., `Math.random()`)
 
+When marking `testable: false`, always include a `skipReason` with a single sentence explaining the decision. This helps reviewers assess whether the limitation is genuine or whether the example could be made testable with better setup or updated guidelines.
+
 ### Completing Partial Examples
 
 If an example is missing only trivial additions, complete it before adding metadata. Use `--edit` to update example code (see CLI Reference below).
@@ -44,7 +46,9 @@ If an example is missing only trivial additions, complete it before adding metad
 
 The real question: **Can I trigger this callback from script?** If yes, the example is testable. Sync vs. async dispatch is irrelevant for REPL verification - by the time REPL runs, all async callbacks have completed.
 
-**Prefer natural API triggers** over `Console.testCallback`. If a callback can be invoked through normal API calls, use those - they test the real code path.
+**All programmatic triggers are test-only code.** Whether you use a natural API call or `Console.testCallback`, the trigger exists to make the example testable - the user doesn't need to see it. Wrap all triggers in `// --- test-only ---` markers.
+
+**Prefer natural API triggers** over `Console.testCallback` when both options exist - natural triggers test the real dispatch path. Use `Console.testCallback` only when no natural trigger exists (key press, mouse events).
 
 | Callback / state | Programmatic trigger | Verify with |
 |-----------------|---------------------|-------------|
@@ -57,8 +61,6 @@ The real question: **Can I trigger this callback from script?** If yes, the exam
 | Panel mouse callbacks | `Console.testCallback(panel, "setMouseCallback", eventObj)` | REPL: `panel.data` or callback side-effects |
 
 `Console.testCallback` synchronously invokes a registered callback with a predetermined argument object. It supports a limited set of callback types per component - check the component's `testCallback` override in `ScriptingApiContent.h` for what's available. Where supported, it validates the argument against the component's configuration (e.g., checks `allowCallbacks` level for mouse events, rejects invalid JSON properties).
-
-For `setControlCallback`, prefer the natural trigger (`setValue() + changed()`) since it tests the real dispatch path. Use `Console.testCallback` only when no natural trigger exists (key press, mouse events).
 
 > If you discover a new programmatic trigger for a callback type not listed here, add it to this table.
 
@@ -108,6 +110,27 @@ knob.setValue(0.5);
 ```
 ````
 
+**Inline test-only code** -- `// --- test-only ---` / `// --- end test-only ---` markers (hidden from user-facing display, compiled as part of the example):
+````markdown
+```javascript:key-press-test
+const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
+Viewport1.setConsumedKeyPresses("all");
+Viewport1.setKeyPressCallback(onKeyPress);
+
+// --- test-only ---
+Console.testCallback(Viewport1, "setKeyPressCallback", {
+    "isFocusChange": false,
+    "character": "A",
+    "specialKey": false,
+    "keyCode": 65,
+    "description": "A"
+});
+// --- end test-only ---
+```
+````
+
+Code above the markers is shown to users; code between the markers is compiled with the example but hidden from user-facing output. Use for any code added solely to make the example pass as a standalone test: programmatic triggers, state manipulation, or extra assertions.
+
 **testMetadata blocks** -- JSON fence with `json:testMetadata:<slug>` matching the example's slug:
 ````markdown
 ```json:testMetadata:cable-to-gain
@@ -129,7 +152,9 @@ knob.setValue(0.5);
 ### Required Fields
 
 - **`testable`**: boolean (required)
+- **`skipReason`**: string (optional, recommended when `testable: false`) -- free-form sentence explaining why the example is not testable. Displayed in the preview HTML validation popup so reviewers can evaluate whether the limitation is real or the example could be made testable.
 - **`setupScript`**: string (optional) -- code to run before the example. Omit when using inline setup instead.
+- **`testOnly`**: string (optional) -- code compiled with the example but hidden from user-facing display. Omit when using inline test-only markers instead (preferred).
 - **`verifyScript`**: object or array of objects (required if `testable: true`)
 
 ### Non-Testable Example
@@ -137,7 +162,8 @@ knob.setValue(0.5);
 ````markdown
 ```json:testMetadata:clearing-connections
 {
-  "testable": false
+  "testable": false,
+  "skipReason": "Requires GlobalModulatorContainer module not available in test project"
 }
 ```
 ````
@@ -499,9 +525,10 @@ python snippet_validator.py --edit --source project --class Console --method ass
 ### Add Metadata
 
 ```bash
-# Non-testable
+# Non-testable (always include --skip-reason)
 python snippet_validator.py --add-metadata --source project --class Array --method reserve \
-  --slug pre-allocating-capacity --testable false
+  --slug pre-allocating-capacity --testable false \
+  --skip-reason "Pseudo-code showing allocation pattern, not a complete runnable script"
 
 # log-output
 python snippet_validator.py --add-metadata --source project --class Array --method concat \

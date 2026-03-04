@@ -473,6 +473,7 @@ inline function onKeyPress(event)
 
 Viewport1.setKeyPressCallback(onKeyPress);
 
+// --- test-only ---
 Console.testCallback(Viewport1, "setKeyPressCallback", {
     "isFocusChange": false,
     "character": "A",
@@ -486,6 +487,7 @@ Console.testCallback(Viewport1, "setKeyPressCallback", {
     "cmd": false,
     "alt": false
 });
+// --- end test-only ---
 ```
 ```json:testMetadata:basic
 {

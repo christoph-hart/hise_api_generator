@@ -333,6 +333,19 @@ class MarkdownExampleReader:
 						"", code_raw, flags=re.DOTALL | re.IGNORECASE
 					)
 				
+				# Extract test-only block
+				test_only_code = ""
+				test_only_match = re.search(
+					r"//\s*---\s*test-only\s*---\s*\n(.*?)//\s*---\s*end test-only\s*---\s*\n?",
+					code_raw, re.DOTALL | re.IGNORECASE
+				)
+				if test_only_match:
+					test_only_code = test_only_match.group(1).strip()
+					code_raw = re.sub(
+						r"//\s*---\s*test-only\s*---\s*\n.*?//\s*---\s*end test-only\s*---\s*\n?",
+						"", code_raw, flags=re.DOTALL | re.IGNORECASE
+					)
+				
 				code = code_raw.strip()
 				
 				# Look for matching testMetadata block
@@ -352,11 +365,18 @@ class MarkdownExampleReader:
 						metadata = json.loads(metadata_match.group(1))
 						if setup_script:
 							metadata["setupScript"] = setup_script
+						if test_only_code:
+							metadata["testOnly"] = test_only_code
 						example["testMetadata"] = metadata
 					except json.JSONDecodeError:
 						pass
-				elif setup_script:
-					example["testMetadata"] = {"setupScript": setup_script}
+				elif setup_script or test_only_code:
+					metadata = {}
+					if setup_script:
+						metadata["setupScript"] = setup_script
+					if test_only_code:
+						metadata["testOnly"] = test_only_code
+					example["testMetadata"] = metadata
 				
 				examples.append(example)
 		else:
@@ -585,7 +605,7 @@ class SnippetValidator:
 			return {
 				"tested": False,
 				"skipped": True,
-				"reason": "Not marked as testable",
+				"reason": metadata.get("skipReason", "Not marked as testable"),
 				"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 			}
 		
@@ -599,6 +619,7 @@ class SnippetValidator:
 			}
 		
 		setup_script = metadata.get("setupScript", "")
+		test_only_code = metadata.get("testOnly", "")
 		verify_scripts = metadata.get("verifyScript")
 		
 		# Step 1: Setup (always runs to ensure clean state)
@@ -616,8 +637,9 @@ class SnippetValidator:
 		else:
 			self.clear_script()
 		
-		# Step 2: Execute the actual example code
-		result = self.api.set_script(self.module_id, {"onInit": code})
+		# Step 2: Execute the actual example code (with test-only code appended)
+		full_code = code + "\n" + test_only_code if test_only_code else code
+		result = self.api.set_script(self.module_id, {"onInit": full_code})
 		
 		# Check if we're expecting an error
 		expecting_error = False
@@ -642,6 +664,8 @@ class SnippetValidator:
 		time.sleep(0.2)
 		
 		# Step 3: Verify (if provided)
+		verifications = []
+		
 		if verify_scripts:
 			if isinstance(verify_scripts, dict):
 				verify_scripts = [verify_scripts]
@@ -655,6 +679,12 @@ class SnippetValidator:
 					expected = verify_script.get("values", [])
 					actual = self._filter_test_noise(result.get("logs", []))
 					
+					verifications.append({
+						"type": "log-output",
+						"expected": expected,
+						"actual": list(actual),
+					})
+					
 					if not self._logs_match(expected, actual):
 						diff = self._log_diff(expected, actual)
 						return {
@@ -662,6 +692,7 @@ class SnippetValidator:
 							"passed": False,
 							"stage": "verify",
 							"error": f"Log output mismatch:\n{diff}",
+							"verifications": verifications,
 							"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 						}
 				
@@ -680,15 +711,30 @@ class SnippetValidator:
 					verify_result = self.api.repl(self.module_id, expression)
 					
 					if not verify_result.get("success") or verify_result.get("errors"):
+						verifications.append({
+							"type": "REPL",
+							"expression": expression,
+							"expected": expected_value,
+							"actual": None,
+							"error": verify_result.get("errors", []),
+						})
 						return {
 							"tested": True,
 							"passed": False,
 							"stage": "verify",
 							"error": verify_result.get("errors", []),
+							"verifications": verifications,
 							"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 						}
 					
 					actual_value = verify_result.get("value")
+					verifications.append({
+						"type": "REPL",
+						"expression": expression,
+						"expected": expected_value,
+						"actual": actual_value,
+					})
+					
 					if not self._values_match(expected_value, actual_value):
 						exp_str = self._format_value(expected_value)
 						act_str = self._format_value(actual_value)
@@ -697,6 +743,7 @@ class SnippetValidator:
 							"passed": False,
 							"stage": "verify",
 							"error": f"Expected {Colors.cyan(expression)} -> {Colors.green(exp_str)}, got {Colors.red(act_str)}",
+							"verifications": verifications,
 							"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 						}
 				
@@ -705,37 +752,59 @@ class SnippetValidator:
 					execution_failed = not result.get("success") or bool(result.get("errors"))
 					
 					if not execution_failed:
+						verifications.append({
+							"type": "expect-error",
+							"expectedPattern": expected_pattern,
+							"actualError": None,
+							"error": "Expected error but execution succeeded",
+						})
 						return {
 							"tested": True,
 							"passed": False,
 							"stage": "verify",
 							"error": "Expected error but execution succeeded",
+							"verifications": verifications,
 							"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 						}
 					
 					errors = result.get("errors", [])
 					if not errors:
+						verifications.append({
+							"type": "expect-error",
+							"expectedPattern": expected_pattern,
+							"actualError": None,
+							"error": "Expected error but no error message in response",
+						})
 						return {
 							"tested": True,
 							"passed": False,
 							"stage": "verify",
 							"error": "Expected error but no error message in response",
+							"verifications": verifications,
 							"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 						}
 					
 					actual_msg = self._normalize_error_message(errors[0])
+					verifications.append({
+						"type": "expect-error",
+						"expectedPattern": expected_pattern,
+						"actualError": actual_msg,
+					})
+					
 					if expected_pattern.lower() not in actual_msg.lower():
 						return {
 							"tested": True,
 							"passed": False,
 							"stage": "verify",
 							"error": f"Error message mismatch:\n  Expected pattern: {expected_pattern}\n  Actual error: {actual_msg}",
+							"verifications": verifications,
 							"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 						}
 		
 		return {
 			"tested": True,
 			"passed": True,
+			"verifications": verifications,
 			"timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 		}
 
@@ -1146,6 +1215,9 @@ def cmd_add_metadata(args, reader: MarkdownExampleReader) -> int:
 	testable = args.testable == "true"
 	test_metadata = {"testable": testable}
 	
+	if not testable and args.skip_reason:
+		test_metadata["skipReason"] = args.skip_reason
+	
 	if testable:
 		# Parse verification arguments
 		if args.verify_type == "log-output":
@@ -1396,6 +1468,8 @@ def main():
 	                    help="JSON array of REPL checks [{expression, value}]")
 	parser.add_argument("--verify-error-message",
 	                    help="Expected error message pattern (expect-error)")
+	parser.add_argument("--skip-reason",
+	                    help="Free-form reason why example is not testable (used with --testable false)")
 	parser.add_argument("--setup", default="",
 	                    help="Setup script code (default: empty)")
 	

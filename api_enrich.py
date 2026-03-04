@@ -1331,6 +1331,20 @@ def parse_examples(text: str) -> list:
                     "", code_raw, flags=re.DOTALL | re.IGNORECASE
                 )
             
+            # Extract test-only block if present
+            test_only_code = ""
+            test_only_match = re.search(
+                r"//\s*---\s*test-only\s*---\s*\n(.*?)//\s*---\s*end test-only\s*---\s*\n?",
+                code_raw, re.DOTALL | re.IGNORECASE
+            )
+            if test_only_match:
+                test_only_code = test_only_match.group(1).strip()
+                # Remove test-only block from code
+                code_raw = re.sub(
+                    r"//\s*---\s*test-only\s*---\s*\n.*?//\s*---\s*end test-only\s*---\s*\n?",
+                    "", code_raw, flags=re.DOTALL | re.IGNORECASE
+                )
+            
             code = code_raw.strip()
             
             # Look for matching testMetadata block
@@ -1350,15 +1364,20 @@ def parse_examples(text: str) -> list:
                     # If setupScript was extracted from code, add it to metadata
                     if setup_script:
                         metadata["setupScript"] = setup_script
+                    if test_only_code:
+                        metadata["testOnly"] = test_only_code
                     example["testMetadata"] = metadata
                 except json.JSONDecodeError:
                     # Invalid JSON - skip metadata
                     pass
-            elif setup_script:
-                # Setup script but no testMetadata block - create minimal metadata
-                example["testMetadata"] = {
-                    "setupScript": setup_script
-                }
+            elif setup_script or test_only_code:
+                # Extracted blocks but no testMetadata block - create minimal metadata
+                metadata = {}
+                if setup_script:
+                    metadata["setupScript"] = setup_script
+                if test_only_code:
+                    metadata["testOnly"] = test_only_code
+                example["testMetadata"] = metadata
             
             examples.append(example)
     
@@ -2200,6 +2219,16 @@ def run_merge():
 PREVIEW_DIR = OUTPUT_DIR / "preview"
 
 
+def desluggify(slug: str) -> str:
+    """Convert a URL slug to a human-readable title.
+
+    'validating-preprocessor-definitions-at' -> 'Validating Preprocessor Definitions At'
+    'methods-1' -> 'Methods 1'
+    'basic' -> 'Basic'
+    """
+    return slug.replace("-", " ").title()
+
+
 def md_inline(text: str) -> str:
     """HTML-escape text, then convert inline markdown to HTML tags.
 
@@ -2617,13 +2646,18 @@ def render_method_decision(class_name: str, method_name: str) -> str:
     """
 
 
-def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
+def generate_class_html(class_name: str, c: dict, mode: str = "review",
+                        test_results: dict = None) -> str:
     """Generate a full HTML preview page for one class.
 
     mode="review" -- shows raw C++ analysis (brief/purpose/details + description)
     mode="web"    -- shows userDocs content with auto/manual badges
     mode="llm"    -- shows Phase 4b LLM C++ reference entries
+    test_results  -- sidecar dict from load_test_results(), for validation badges
     """
+    if test_results is None:
+        test_results = {}
+    page_validation_data = {}  # keys referenced on this page -> sidecar entries
     is_web = mode == "web"
     is_llm = mode == "llm"
     desc = c.get("description", {})
@@ -2858,9 +2892,42 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
                     for p in m.get("pitfalls", []):
                         main += f'<div class="pitfall">{md_inline(p.get("description", ""))}</div>\n'
 
-                # Examples (review+web modes)
+                # Examples (review+web modes) - collapsible with validation badge
                 for ex in m.get("examples", []):
+                    slug = ex.get("slug", "")
+                    source = ex.get("source", "auto")
+                    title = ex.get("title", "")
+                    # Desluggify the slug for the header; fall back to title
+                    header = desluggify(slug) if slug else (title or "Example")
+
+                    # Validation badge from sidecar (clickable for details popup)
+                    badge = ""
+                    if slug and test_results:
+                        key = f"{class_name}.{name}.{source}.{slug}"
+                        result = test_results.get(key)
+                        if result:
+                            esc_key = html_escape(key)
+                            # Enrich with setupScript, testOnly, and code from example
+                            entry = dict(result)
+                            setup = ex.get("testMetadata", {}).get("setupScript", "")
+                            if setup:
+                                entry["setupScript"] = setup
+                            test_only = ex.get("testMetadata", {}).get("testOnly", "")
+                            if test_only:
+                                entry["testOnly"] = test_only
+                            code = ex.get("code", "")
+                            if code:
+                                entry["code"] = code
+                            page_validation_data[key] = entry
+                            if result.get("tested") and result.get("passed"):
+                                badge = f' <span class="badge badge-pass" data-key="{esc_key}" onclick="showValidation(this,event)">validated</span>'
+                            elif result.get("skipped"):
+                                badge = f' <span class="badge badge-skip" data-key="{esc_key}" onclick="showValidation(this,event)">skipped</span>'
+
+                    main += f'<details class="example-details" open>\n'
+                    main += f'<summary>{html_escape(header)}{badge}</summary>\n'
                     main += f'<pre><code class="language-javascript">{html_escape(ex.get("code", ""))}</code></pre>\n'
+                    main += f'</details>\n'
 
                 # Cross refs (review+web modes)
                 if m.get("crossReferences"):
@@ -2873,6 +2940,11 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review") -> str:
             main += "</div>\n"
 
     main += "</div>\n"
+
+    # --- Build validation data JSON for this page ---
+    validation_json = json.dumps(page_validation_data, ensure_ascii=False)
+    # Escape braces for f-string (JSON uses { } which conflicts with Python f-strings)
+    # We'll inject it via a separate variable instead.
 
     # --- Assemble full HTML ---
     html = f"""<!DOCTYPE html>
@@ -2980,11 +3052,92 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 
 /* Class-level summary (standard size) */
 .decision-summary {{ }}
+
+/* Collapsible examples */
+.example-details {{ margin: 8px 0 12px; }}
+.example-details summary {{ cursor: pointer; font-size: 0.9em; color: #8b949e; padding: 4px 0; list-style: none; }}
+.example-details summary::-webkit-details-marker {{ display: none; }}
+.example-details summary::before {{ content: "\\25B6  "; display: inline-block; transition: transform 0.2s; font-size: 0.7em; vertical-align: middle; }}
+.example-details[open] summary::before {{ transform: rotate(90deg); }}
+.example-details pre {{ margin-top: 8px; }}
+
+/* Validation badges */
+.badge {{ display: inline-block; font-size: 0.75em; padding: 1px 8px; border-radius: 10px; font-weight: 500; vertical-align: middle; margin-left: 8px; letter-spacing: 0.02em; cursor: pointer; }}
+.badge:hover {{ filter: brightness(1.3); }}
+.badge-pass {{ background: rgba(78,142,53,0.2); color: #7ee787; border: 1px solid rgba(78,142,53,0.4); }}
+.badge-skip {{ background: rgba(139,148,158,0.15); color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }}
+
+/* Validation modal */
+.vmodal-backdrop {{ position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 1000; display: none; align-items: center; justify-content: center; }}
+.vmodal-backdrop.visible {{ display: flex; }}
+.vmodal {{ background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 24px; max-width: 832px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.4); }}
+.vmodal-header {{ display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }}
+.vmodal-title {{ font-size: 1.1em; font-weight: 600; color: #e6edf3; word-break: break-word; }}
+.vmodal-close {{ background: none; border: none; color: #8b949e; font-size: 1.5em; cursor: pointer; padding: 0 0 0 16px; line-height: 1; }}
+.vmodal-close:hover {{ color: #e6edf3; }}
+.vmodal-copybar {{ display: flex; gap: 8px; margin-bottom: 12px; }}
+.vmodal-copybtn {{ background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 12px; border-radius: 4px; font-size: 0.8em; cursor: pointer; }}
+.vmodal-copybtn:hover {{ background: #30363d; color: #e6edf3; }}
+.vmodal-copybtn.disabled {{ opacity: 0.35; cursor: default; }}
+.vmodal-copybtn.copied {{ background: rgba(78,142,53,0.2); border-color: rgba(78,142,53,0.4); color: #7ee787; }}
+.vmodal-repl-expr {{ display: flex; align-items: center; gap: 6px; }}
+.vmodal-repl-copy {{ background: none; border: none; color: #484f58; cursor: pointer; font-size: 0.95em; padding: 0; line-height: 1; flex-shrink: 0; }}
+.vmodal-repl-copy:hover {{ color: #c9d1d9; }}
+.vmodal-repl-copy.copied {{ color: #7ee787; }}
+.vmodal-status {{ display: inline-block; font-size: 0.8em; padding: 2px 10px; border-radius: 10px; margin-bottom: 12px; }}
+.vmodal-status.pass {{ background: rgba(78,142,53,0.2); color: #7ee787; border: 1px solid rgba(78,142,53,0.4); }}
+.vmodal-status.skip {{ background: rgba(139,148,158,0.15); color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }}
+.vmodal-reason {{ color: #8b949e; font-size: 0.9em; margin: 8px 0; }}
+.vmodal-table {{ width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.85em; }}
+.vmodal-table th {{ background: #0d1117; color: #8b949e; font-weight: 500; text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.05em; padding: 6px 10px; border: 1px solid #21262d; text-align: left; }}
+.vmodal-table td {{ padding: 8px 10px; border: 1px solid #21262d; color: #c9d1d9; vertical-align: top; }}
+.vmodal-table td.mono {{ font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 0.95em; }}
+.vmodal-table tr:nth-child(even) {{ background: rgba(110,118,129,0.05); }}
+.vmodal-match {{ color: #7ee787; }}
+.vmodal-label {{ color: #8b949e; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; }}
+.vmodal-empty {{ color: #484f58; font-style: italic; padding: 12px 0; }}
+.vmodal-setup {{ margin: 12px 0; }}
+.vmodal-setup pre {{ background: #0d1117; border: 1px solid #21262d; padding: 12px; border-radius: 6px; font-size: 0.85em; line-height: 1.45; overflow-x: auto; margin: 0; }}
+.vmodal-setup code {{ background: none; padding: 0; color: #c9d1d9; font-size: inherit; }}
+.vmodal-fb-section {{ border-top: 1px solid #21262d; margin-top: 16px; padding-top: 12px; }}
+.vmodal-fb-title {{ color: #8b949e; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }}
+.vmodal-fb-form {{ display: flex; gap: 8px; align-items: flex-start; }}
+.vmodal-fb-form select {{ background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; flex-shrink: 0; }}
+.vmodal-fb-form textarea {{ background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 8px; border-radius: 4px; font-size: 0.85em; font-family: inherit; resize: vertical; flex: 1; min-height: 3em; }}
+.vmodal-fb-form textarea:focus {{ border-color: #58a6ff; outline: none; }}
+.vmodal-fb-submit {{ background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 14px; border-radius: 4px; font-size: 0.8em; cursor: pointer; flex-shrink: 0; align-self: flex-end; }}
+.vmodal-fb-submit:hover {{ background: #30363d; color: #e6edf3; }}
+.vmodal-fb-prev-title {{ color: #484f58; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }}
+.vmodal-fb-entry {{ display: flex; align-items: baseline; gap: 8px; padding: 4px 0; font-size: 0.85em; border-bottom: 1px solid #161b22; }}
+.vmodal-fb-entry.resolved {{ opacity: 0.4; }}
+.vmodal-fb-cat {{ font-size: 0.75em; padding: 1px 6px; border-radius: 8px; flex-shrink: 0; background: rgba(139,148,158,0.15); color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }}
+.cat-wrong-triage {{ background: rgba(210,153,34,0.15); color: #e3b341; border-color: rgba(210,153,34,0.3); }}
+.cat-wrong-test {{ background: rgba(248,81,73,0.15); color: #f85149; border-color: rgba(248,81,73,0.3); }}
+.cat-weak-test {{ background: rgba(210,153,34,0.15); color: #e3b341; border-color: rgba(210,153,34,0.3); }}
+.cat-code-quality {{ background: rgba(56,139,253,0.15); color: #58a6ff; border-color: rgba(56,139,253,0.3); }}
+.vmodal-fb-comment {{ color: #c9d1d9; flex: 1; }}
+.vmodal-fb-date {{ color: #484f58; font-size: 0.8em; flex-shrink: 0; }}
+.vmodal-fb-del {{ background: none; border: none; color: #484f58; cursor: pointer; font-size: 1.1em; padding: 0 2px; line-height: 1; flex-shrink: 0; }}
+.vmodal-fb-del:hover {{ color: #f85149; }}
+.fb-toolbar {{ position: fixed; bottom: 16px; right: 16px; display: flex; gap: 8px; z-index: 999; }}
+.fb-toolbar-btn {{ background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 14px; border-radius: 6px; font-size: 0.85em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }}
+.fb-toolbar-btn:hover {{ background: #30363d; color: #e6edf3; }}
+.vmodal-fb-group {{ margin-bottom: 16px; }}
+.vmodal-fb-group-title {{ color: #58a6ff; font-size: 0.9em; font-weight: 600; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #21262d; }}
 </style>
 </head>
 <body>
 {sidebar}
 {main}
+<div class="vmodal-backdrop" id="vmodal-backdrop" onclick="if(event.target===this)closeValidation()">
+<div class="vmodal">
+<div class="vmodal-header">
+<div class="vmodal-title" id="vmodal-title"></div>
+<button class="vmodal-close" onclick="closeValidation()">&times;</button>
+</div>
+<div id="vmodal-body"></div>
+</div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
 <script>
@@ -3010,12 +3163,328 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
     }});
 }})();
 </script>
+<script>
+var VALIDATION_DATA = {validation_json};
+var FEEDBACK_CLASS = "{class_name}";
+</script>"""
+
+    # Append the showValidation JS as a raw string (no f-string escaping needed)
+    html += """
+<script>
+function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = String(s);
+    return d.innerHTML;
+}
+function fmtVal(v) {
+    if (v === null || v === undefined) return '<span class="vmodal-empty">N/A</span>';
+    if (typeof v === 'string') return '<code>' + esc(v) + '</code>';
+    if (typeof v === 'object') return '<code>' + esc(JSON.stringify(v, null, 2)) + '</code>';
+    return '<code>' + esc(String(v)) + '</code>';
+}
+function fmtLogList(arr) {
+    if (!arr || !arr.length) return '<span class="vmodal-empty">(empty)</span>';
+    return arr.map(function(l) { return esc(l); }).join('<br>');
+}
+// --- Feedback data store (must be before showValidation) ---
+var _fbStore = {};
+var _fbLsKey = 'feedback_' + FEEDBACK_CLASS;
+try { var _raw = localStorage.getItem(_fbLsKey); if (_raw) _fbStore = JSON.parse(_raw); } catch(e) {}
+function saveFeedback() {
+    try { localStorage.setItem(_fbLsKey, JSON.stringify(_fbStore)); } catch(e) {}
+    updateExportCount();
+}
+function updateExportCount() {
+    var n = 0;
+    for (var k in _fbStore) { if (_fbStore.hasOwnProperty(k)) n += _fbStore[k].length; }
+    var btn = document.getElementById('fb-export-btn');
+    if (btn) btn.textContent = 'Export (' + n + ')';
+}
+function renderFeedbackList(key) {
+    var items = _fbStore[key];
+    if (!items || items.length === 0) return '';
+    var h = '<div class="vmodal-fb-prev-title">Previous feedback</div>';
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var date = item.timestamp ? item.timestamp.substring(0, 10) : '';
+        h += '<div class="vmodal-fb-entry' + (item.resolved ? ' resolved' : '') + '">';
+        h += '<span class="vmodal-fb-cat cat-' + esc(item.category) + '">' + esc(item.category) + '</span> ';
+        h += '<span class="vmodal-fb-comment">' + esc(item.comment) + '</span>';
+        h += '<span class="vmodal-fb-date">' + date + '</span>';
+        h += '<button class="vmodal-fb-del" data-fbdel="' + i + '">&times;</button>';
+        h += '</div>';
+    }
+    return h;
+}
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-fbdel]');
+    if (!btn || !window._vmodalCurrentKey) return;
+    deleteFeedback(window._vmodalCurrentKey, parseInt(btn.getAttribute('data-fbdel')));
+});
+function showValidation(el, ev) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    var key = el.getAttribute('data-key');
+    var entry = VALIDATION_DATA[key];
+    if (!entry) return;
+
+    var parts = key.split('.');
+    var title = parts.slice(0, 2).join('.') + ' - ' + parts.slice(3).join('.');
+
+    document.getElementById('vmodal-title').textContent = title;
+
+    // Copy buttons
+    var setupText = entry.setupScript || '';
+    var fullText = (entry.code || '') + (entry.testOnly ? '\\n' + entry.testOnly : '');
+    var btns = '<div class="vmodal-copybar">';
+    btns += '<button class="vmodal-copybtn' + (setupText ? '' : ' disabled') + '" ' +
+            (setupText ? 'onclick="copyText(this, 0)"' : 'disabled') +
+            '>Copy Setup</button>';
+    btns += '<button class="vmodal-copybtn" onclick="copyText(this, 1)">Copy Code</button>';
+    btns += '</div>';
+    window._vmodalCopyTexts = [setupText, fullText];
+
+    var body = btns;
+
+    // Status badge
+    if (entry.tested && entry.passed) {
+        body += '<span class="vmodal-status pass">PASSED</span>';
+    } else if (entry.skipped) {
+        body += '<span class="vmodal-status skip">SKIPPED</span>';
+    }
+
+    // Timestamp
+    if (entry.timestamp) {
+        body += '<p class="vmodal-reason">' + esc(entry.timestamp) + '</p>';
+    }
+
+    // Skipped reason
+    if (entry.skipped && entry.reason) {
+        body += '<p class="vmodal-reason">Reason: ' + esc(entry.reason) + '</p>';
+    }
+
+    // Setup script (if present)
+    if (entry.setupScript) {
+        body += '<div class="vmodal-setup">';
+        body += '<div class="vmodal-label" style="margin-bottom:6px;">Setup Script</div>';
+        body += '<pre><code class="language-javascript">' + esc(entry.setupScript) + '</code></pre>';
+        body += '</div>';
+    }
+
+    // Example code
+    if (entry.code) {
+        body += '<div class="vmodal-setup">';
+        body += '<div class="vmodal-label" style="margin-bottom:6px;">Example Code</div>';
+        body += '<pre><code class="language-javascript">' + esc(entry.code) + '</code></pre>';
+        body += '</div>';
+    }
+
+    // Test-only code (if present)
+    if (entry.testOnly) {
+        body += '<div class="vmodal-setup">';
+        body += '<div class="vmodal-label" style="margin-bottom:6px;">Test-Only Code</div>';
+        body += '<pre><code class="language-javascript">' + esc(entry.testOnly) + '</code></pre>';
+        body += '</div>';
+    }
+
+    // Verifications table
+    var v = entry.verifications;
+    if (v && v.length > 0) {
+        body += '<table class="vmodal-table">';
+        body += '<tr><th>Check</th><th>Expected</th><th>Actual</th></tr>';
+        for (var i = 0; i < v.length; i++) {
+            var item = v[i];
+            if (item.type === 'REPL') {
+                body += '<tr>';
+                body += '<td class="mono"><span class="vmodal-repl-expr">' + esc(item.expression) + '<button class="vmodal-repl-copy" data-expr="' + esc(item.expression) + '" onclick="copyRepl(this)" title="Copy to clipboard">\u2398</button></span></td>';
+                body += '<td class="mono">' + fmtVal(item.expected) + '</td>';
+                body += '<td class="mono vmodal-match">' + fmtVal(item.actual) + '</td>';
+                body += '</tr>';
+            } else if (item.type === 'log-output') {
+                body += '<tr>';
+                body += '<td><span class="vmodal-label">Log output</span></td>';
+                body += '<td>' + fmtLogList(item.expected) + '</td>';
+                body += '<td class="vmodal-match">' + fmtLogList(item.actual) + '</td>';
+                body += '</tr>';
+            } else if (item.type === 'expect-error') {
+                body += '<tr>';
+                body += '<td><span class="vmodal-label">Error message</span></td>';
+                body += '<td class="mono">' + esc(item.expectedPattern || '') + '</td>';
+                body += '<td class="mono vmodal-match">' + esc(item.actualError || '') + '</td>';
+                body += '</tr>';
+            }
+        }
+        body += '</table>';
+    } else if (entry.tested && entry.passed) {
+        body += '<p class="vmodal-empty">Compilation-only test (no assertions)</p>';
+    }
+
+    // Feedback section
+    window._vmodalCurrentKey = key;
+    body += '<div class="vmodal-fb-section">';
+    body += '<div class="vmodal-fb-title">Feedback</div>';
+    body += '<div id="vmodal-feedback">' + renderFeedbackList(key) + '</div>';
+    body += '<div class="vmodal-fb-form">';
+    body += '<select id="vmodal-fb-cat"><option value="code-quality">code-quality</option><option value="wrong-triage">wrong-triage</option><option value="weak-test">weak-test</option><option value="wrong-test">wrong-test</option><option value="other">other</option></select>';
+    body += '<textarea id="vmodal-fb-comment" rows="3" placeholder="Enter feedback..."></textarea>';
+    body += '<button class="vmodal-fb-submit" onclick="submitFeedback()">Submit</button>';
+    body += '</div></div>';
+
+    document.getElementById('vmodal-body').innerHTML = body;
+    Prism.highlightAllUnder(document.getElementById('vmodal-body'));
+    document.getElementById('vmodal-backdrop').classList.add('visible');
+}
+function closeValidation() {
+    document.getElementById('vmodal-backdrop').classList.remove('visible');
+}
+function copyText(btn, idx) {
+    var text = window._vmodalCopyTexts[idx];
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(function() {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = orig; btn.classList.remove('copied'); }, 1200);
+    });
+}
+function copyRepl(btn) {
+    var text = btn.getAttribute('data-expr');
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(function() {
+        btn.classList.add('copied');
+        setTimeout(function() { btn.classList.remove('copied'); }, 1200);
+    });
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeValidation();
+});
+</script>
+<input type="file" id="fb-file-input" accept=".json" style="display:none" onchange="handleFeedbackImport(this)">
+<div class="fb-toolbar">
+<button class="fb-toolbar-btn" onclick="document.getElementById('fb-file-input').click()">Import</button>
+<button class="fb-toolbar-btn" id="fb-export-btn" onclick="exportFeedback()">Export (0)</button>
+<button class="fb-toolbar-btn" onclick="showAllFeedback()">Review</button>
+</div>
+<script>
+// --- Feedback actions (store + rendering already loaded above) ---
+function mergeFeedback(entries) {
+    for (var key in entries) {
+        if (!entries.hasOwnProperty(key)) continue;
+        if (!_fbStore[key]) _fbStore[key] = [];
+        var existing = _fbStore[key];
+        var timestamps = {};
+        for (var i = 0; i < existing.length; i++) timestamps[existing[i].timestamp] = true;
+        var arr = entries[key];
+        for (var j = 0; j < arr.length; j++) {
+            if (!timestamps[arr[j].timestamp]) existing.push(arr[j]);
+        }
+    }
+    saveFeedback();
+}
+function handleFeedbackImport(input) {
+    if (!input.files || !input.files[0]) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            var entries = data.entries || data;
+            mergeFeedback(entries);
+            if (window._vmodalCurrentKey) {
+                var el = document.getElementById('vmodal-feedback');
+                if (el) el.innerHTML = renderFeedbackList(window._vmodalCurrentKey);
+            }
+        } catch(err) { alert('Invalid feedback JSON: ' + err.message); }
+    };
+    reader.readAsText(input.files[0]);
+    input.value = '';
+}
+async function exportFeedback() {
+    var data = { "class": FEEDBACK_CLASS, "entries": _fbStore };
+    var json = JSON.stringify(data, null, 2);
+    if (window.showSaveFilePicker) {
+        try {
+            var handle = await showSaveFilePicker({
+                suggestedName: FEEDBACK_CLASS + '_feedback.json',
+                types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+            });
+            var writable = await handle.createWritable();
+            await writable.write(json);
+            await writable.close();
+            return;
+        } catch(e) { if (e.name === 'AbortError') return; }
+    }
+    var blob = new Blob([json], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = FEEDBACK_CLASS + '_feedback.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+function submitFeedback() {
+    var key = window._vmodalCurrentKey;
+    if (!key) return;
+    var cat = document.getElementById('vmodal-fb-cat').value;
+    var comment = document.getElementById('vmodal-fb-comment').value.trim();
+    if (!comment) return;
+    if (!_fbStore[key]) _fbStore[key] = [];
+    _fbStore[key].push({
+        timestamp: new Date().toISOString(),
+        category: cat,
+        comment: comment,
+        resolved: false
+    });
+    saveFeedback();
+    document.getElementById('vmodal-fb-comment').value = '';
+    document.getElementById('vmodal-feedback').innerHTML = renderFeedbackList(key);
+}
+function deleteFeedback(key, idx) {
+    if (!_fbStore[key]) return;
+    _fbStore[key].splice(idx, 1);
+    if (_fbStore[key].length === 0) delete _fbStore[key];
+    saveFeedback();
+    document.getElementById('vmodal-feedback').innerHTML = renderFeedbackList(key);
+}
+function showAllFeedback() {
+    var keys = Object.keys(_fbStore).sort();
+    if (keys.length === 0) {
+        document.getElementById('vmodal-title').textContent = FEEDBACK_CLASS + ' - Review';
+        document.getElementById('vmodal-body').innerHTML = '<p class="vmodal-empty">No feedback entries yet.</p>';
+        document.getElementById('vmodal-backdrop').classList.add('visible');
+        return;
+    }
+    document.getElementById('vmodal-title').textContent = FEEDBACK_CLASS + ' - Review (' + keys.reduce(function(n, k) { return n + _fbStore[k].length; }, 0) + ' items)';
+    var body = '';
+    for (var ki = 0; ki < keys.length; ki++) {
+        var key = keys[ki];
+        var items = _fbStore[key];
+        if (!items || items.length === 0) continue;
+        var parts = key.split('.');
+        var label = parts.slice(0, 2).join('.') + ' - ' + parts.slice(3).join('.');
+        body += '<div class="vmodal-fb-group">';
+        body += '<div class="vmodal-fb-group-title">' + esc(label) + '</div>';
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var date = item.timestamp ? item.timestamp.substring(0, 10) : '';
+            body += '<div class="vmodal-fb-entry' + (item.resolved ? ' resolved' : '') + '">';
+            body += '<span class="vmodal-fb-cat cat-' + esc(item.category) + '">' + esc(item.category) + '</span> ';
+            body += '<span class="vmodal-fb-comment">' + esc(item.comment) + '</span>';
+            body += '<span class="vmodal-fb-date">' + date + '</span>';
+            body += '</div>';
+        }
+        body += '</div>';
+    }
+    document.getElementById('vmodal-body').innerHTML = body;
+    document.getElementById('vmodal-backdrop').classList.add('visible');
+}
+updateExportCount();
+</script>
 </body></html>"""
 
     return html
 
 
-def generate_class_markdown(class_name: str, c: dict) -> str:
+def generate_class_markdown(class_name: str, c: dict,
+                            test_results: dict = None) -> str:
     """Generate a clean markdown page for one class (web/userDocs mode only).
 
     This produces the same content and ordering as the HTML web preview
@@ -3023,6 +3492,8 @@ def generate_class_markdown(class_name: str, c: dict) -> str:
     Structured fields (valueDescriptions, callbackProperties) are omitted --
     they exist for machine consumption only.
     """
+    if test_results is None:
+        test_results = {}
     desc = c.get("description", {})
     methods = c.get("methods", {})
     lines = []
@@ -3103,6 +3574,23 @@ def generate_class_markdown(class_name: str, c: dict) -> str:
 
             # Examples
             for ex in m.get("examples", []):
+                slug = ex.get("slug", "")
+                source = ex.get("source", "auto")
+                header = desluggify(slug) if slug else (ex.get("title", "") or "Example")
+
+                # Validation status from sidecar
+                badge = ""
+                if slug and test_results:
+                    key = f"{class_name}.{name}.{source}.{slug}"
+                    result = test_results.get(key)
+                    if result:
+                        if result.get("tested") and result.get("passed"):
+                            badge = " (validated)"
+                        elif result.get("skipped"):
+                            badge = " (skipped)"
+
+                lines.append(f"#### {header}{badge}")
+                lines.append("")
                 lines.append("```javascript")
                 lines.append(ex.get("code", "").strip())
                 lines.append("```")
@@ -3246,10 +3734,16 @@ def run_preview(class_filter: str = None):
             print("No enriched classes found. Run Phase 1 for at least one class.")
             sys.exit(1)
 
+    # Load sidecar test results for validation badges
+    test_results = load_test_results()
+    if test_results:
+        print(f"  Loaded {len(test_results)} test results for validation badges")
+
     page_count = 0
     for name, c in targets.items():
         # Always generate the review page (raw analysis)
-        html_review = generate_class_html(name, c, mode="review")
+        html_review = generate_class_html(name, c, mode="review",
+                                          test_results=test_results)
         out_review = PREVIEW_DIR / f"{name}_review.html"
         with open(out_review, "w", encoding="utf-8") as f:
             f.write(html_review)
@@ -3265,7 +3759,8 @@ def run_preview(class_filter: str = None):
             )
         )
         if has_userdocs:
-            html_web = generate_class_html(name, c, mode="web")
+            html_web = generate_class_html(name, c, mode="web",
+                                         test_results=test_results)
             out_web = PREVIEW_DIR / f"{name}.html"
             with open(out_web, "w", encoding="utf-8") as f:
                 f.write(html_web)
@@ -3273,7 +3768,8 @@ def run_preview(class_filter: str = None):
             page_count += 1
 
             # Generate clean markdown (same content as web HTML)
-            md_text = generate_class_markdown(name, c)
+            md_text = generate_class_markdown(name, c,
+                                              test_results=test_results)
             out_md = PREVIEW_DIR / f"{name}.md"
             with open(out_md, "w", encoding="utf-8") as f:
                 f.write(md_text)
@@ -3299,7 +3795,8 @@ def run_preview(class_filter: str = None):
             for m in c.get("methods", {}).values()
         )
         if has_llmref:
-            html_llm = generate_class_html(name, c, mode="llm")
+            html_llm = generate_class_html(name, c, mode="llm",
+                                         test_results=test_results)
             out_llm = PREVIEW_DIR / f"{name}_llm.html"
             with open(out_llm, "w", encoding="utf-8") as f:
                 f.write(html_llm)
