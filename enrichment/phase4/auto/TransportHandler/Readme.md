@@ -1,14 +1,29 @@
 # TransportHandler
 
-TransportHandler registers callbacks that fire when the DAW transport state changes: tempo, playback, beats, time signature, high-precision grid events, and plugin bypass. Each callback (except bypass) supports synchronous (audio-thread) or asynchronous (UI-thread) dispatch, allowing you to react to transport events in real-time audio logic or UI updates. The class also provides an internal clock system with configurable sync modes - you can follow the DAW exclusively, run your own independent clock, or blend the two with fallback behavior.
+TransportHandler registers callbacks that fire when the DAW transport state changes:
 
-The grid system provides sample-accurate timing events at a configurable musical rate (whole note down to 64th triplet). Enable the global grid with `setEnableGrid()`, then register a grid callback that receives a sample timestamp offset for sub-block scheduling precision. The grid supports per-instance rate division (`setLocalGridMultiplier()`) and bypass (`setLocalGridBypassed()`), allowing multiple TransportHandler instances to operate at different subdivisions of the same master grid.
+- Tempo changes
+- Playback (transport start / stop)
+- Beats and time signature
+- High-precision grid events
+- Plugin bypass
 
-Most operations are global - they affect the shared MasterClock. When you call `startInternalClock()`, `stopInternalClock()`, or `setSyncMode()` on any TransportHandler instance, all instances see the change. Callbacks and local grid settings are per-instance.
+Each callback (except bypass) supports synchronous (audio-thread) or asynchronous (UI-thread) dispatch, allowing you to react to transport events in real-time audio logic or deferred UI updates.
 
-![Sync vs Async Callback Dispatch](timing_sync-async-dispatch.svg)
+The grid system provides sample-accurate timing events at a configurable musical rate (whole note down to 64th triplet). You can set per-instance rate divisions so that multiple TransportHandler instances operate at different subdivisions of the same master grid.
 
-![Clock Sync Mode State Machine](state_clock-sync-modes.svg)
+The class also provides an internal clock with configurable sync modes - you can follow the DAW exclusively, run your own independent clock, or blend the two with fallback behaviour.
+
+> Most operations are global and affect the shared master clock across all TransportHandler instances. Callbacks and local grid settings are per-instance.
+
+| Mode | Index | External (DAW) | Internal (script) | Behaviour |
+|------|-------|----------------|-------------------|----------|
+| Inactive | 0 | ignored | ignored | No clock processing, `getPPQPos()` returns 0 |
+| ExternalOnly | 1 | active | ignored | DAW transport only; no internal playhead |
+| InternalOnly | 2 | ignored | active | Script-driven clock; `allowExternalSync()` returns false |
+| PreferInternal | 3 | fallback | wins | Internal clock wins conflicts; external used when idle |
+| PreferExternal | 4 | wins | fallback | DAW wins conflicts; internal used when DAW idle |
+| SyncInternal | 5 | PPQ sync | start/stop | Internal controls playback; PPQ syncs to DAW position |
 
 ## Common Mistakes
 

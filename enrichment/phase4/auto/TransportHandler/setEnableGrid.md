@@ -10,4 +10,4 @@ Enables or disables the high-precision grid timer at a specific musical tempo di
 | 17 | 1/64 (64th note) |
 | ... | (includes dotted and triplet variants 1-18) |
 
-When MidiPlayers are synced to the master clock via `setSyncToMasterClock(true)`, they follow the grid enabled by `setEnableGrid`. This is how a multi-channel sequencer synchronizes independent channels to a single clock source.
+When MidiPlayers are synced to the master clock via `setSyncToMasterClock(true)`, they follow the grid enabled by `setEnableGrid`. This is how a multi-channel sequencer synchronises independent channels to a single clock source.

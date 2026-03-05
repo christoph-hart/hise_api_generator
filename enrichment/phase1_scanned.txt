@@ -90,3 +90,15 @@ TransportHandler.isPlaying
 TransportHandler.isNonRealtime
 TransportHandler.getGridLengthInSamples
 TransportHandler.getGridPosition
+
+MidiList.clear
+MidiList.fill
+MidiList.getValue
+MidiList.getValueAmount
+MidiList.getIndex
+MidiList.isEmpty
+MidiList.getNumSetValues
+MidiList.setValue
+MidiList.setRange
+MidiList.getBase64String
+MidiList.restoreFromBase64String

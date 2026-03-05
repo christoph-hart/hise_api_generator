@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" style="background:#333333">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420">
   <defs>
     <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
       <polygon points="0 0, 8 3, 0 6" fill="#4E8E35"/>
@@ -13,61 +13,78 @@
   
   <!-- Thread lanes -->
   <!-- Audio thread lane -->
-  <rect x="120" y="80" width="760" height="80" fill="#4E8E35" fill-opacity="0.05" stroke="#4E8E35" stroke-opacity="0.2" rx="6"/>
-  <text x="50" y="125" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#4E8E35">Audio Thread</text>
+  <rect x="120" y="55" width="760" height="80" fill="#4E8E35" fill-opacity="0.05" stroke="#4E8E35" stroke-opacity="0.2" rx="6"/>
+  <text x="50" y="100" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#4E8E35">Audio Thread</text>
   
   <!-- UI thread lane -->
-  <rect x="120" y="180" width="760" height="80" fill="#3F6E6E" fill-opacity="0.05" stroke="#3F6E6E" stroke-opacity="0.2" rx="6"/>
-  <text x="50" y="225" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#3F6E6E">UI Thread</text>
+  <rect x="120" y="155" width="760" height="140" fill="#3F6E6E" fill-opacity="0.05" stroke="#3F6E6E" stroke-opacity="0.2" rx="6"/>
+  <text x="50" y="230" font-family="Lato, sans-serif" font-size="13" font-weight="bold" fill="#3F6E6E">UI Thread</text>
   
   <!-- Timeline markers -->
-  <text x="140" y="70" font-family="Lato, sans-serif" font-size="10" fill="#808080">Time →</text>
+  <text x="140" y="50" font-family="Lato, sans-serif" font-size="10" fill="#808080">Time -></text>
   
-  <!-- Sync path (top) -->
-  <circle cx="200" cy="120" r="6" fill="#90FFB1"/>
-  <text x="200" y="105" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
+  <!-- === SYNC PATH (top lane) === -->
+  <circle cx="200" cy="95" r="6" fill="#90FFB1"/>
+  <text x="200" y="80" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue(0.5)</text>
   
-  <line x1="206" y1="120" x2="340" y2="120" stroke="#4E8E35" stroke-width="2" marker-end="url(#arrow-green)"/>
-  <text x="270" y="110" font-family="Lato, sans-serif" font-size="9" fill="#4E8E35">immediate</text>
+  <line x1="206" y1="95" x2="340" y2="95" stroke="#4E8E35" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="270" y="85" font-family="Lato, sans-serif" font-size="9" fill="#4E8E35">immediate</text>
   
-  <rect x="350" y="100" width="140" height="40" fill="#282828" stroke="#4E8E35" stroke-width="2" rx="6"/>
-  <text x="420" y="118" font-family="Consolas, monospace" font-size="11" fill="#90FFB1" text-anchor="middle">inline function</text>
-  <text x="420" y="132" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC" text-anchor="middle">callback(value)</text>
+  <rect x="350" y="75" width="160" height="40" fill="#161b22" stroke="#4E8E35" stroke-width="2" rx="6"/>
+  <text x="430" y="93" font-family="Consolas, monospace" font-size="11" fill="#90FFB1" text-anchor="middle">inline function</text>
+  <text x="430" y="107" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC" text-anchor="middle">callback(0.5)</text>
   
-  <text x="520" y="125" font-family="Lato, sans-serif" font-size="10" font-weight="bold" fill="#4E8E35">SyncNotification</text>
+  <text x="540" y="100" font-family="Lato, sans-serif" font-size="10" font-weight="bold" fill="#4E8E35">SyncNotification</text>
   
-  <!-- Async path (bottom) -->
-  <circle cx="200" cy="220" r="6" fill="#90FFB1"/>
-  <text x="200" y="205" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
+  <!-- === ASYNC PATH (bottom lane) === -->
   
-  <!-- Store in ModValue -->
-  <line x1="206" y1="220" x2="280" y2="220" stroke="#3F6E6E" stroke-width="2"/>
-  <rect x="290" y="200" width="100" height="40" fill="#282828" stroke="#3F6E6E" rx="6"/>
-  <text x="340" y="215" font-family="Consolas, monospace" font-size="10" fill="#90FFB1" text-anchor="middle">ModValue</text>
-  <text x="340" y="230" font-family="Lato, sans-serif" font-size="9" fill="#808080" text-anchor="middle">atomic store</text>
+  <!-- setValue(0.3) - will be dropped -->
+  <circle cx="200" cy="195" r="6" fill="#90FFB1" opacity="0.4"/>
+  <text x="200" y="180" font-family="Consolas, monospace" font-size="10" fill="#808080" text-anchor="middle">setValue(0.3)</text>
+  <line x1="200" y1="182" x2="200" y2="170" stroke="#f85149" stroke-width="1" opacity="0.6"/>
+  <text x="200" y="167" font-family="Lato, sans-serif" font-size="8" fill="#f85149" text-anchor="middle">dropped</text>
   
-  <!-- setValue() calls coalescing -->
-  <circle cx="440" cy="220" r="6" fill="#90FFB1"/>
-  <text x="440" y="205" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
-  <line x1="446" y1="220" x2="520" y2="220" stroke="#3F6E6E" stroke-width="2"/>
+  <!-- Arrow into ModValue -->
+  <line x1="206" y1="195" x2="280" y2="220" stroke="#3F6E6E" stroke-width="1" stroke-dasharray="3,2"/>
   
-  <circle cx="560" cy="220" r="6" fill="#90FFB1"/>
-  <text x="560" y="205" font-family="Consolas, monospace" font-size="10" fill="#CCCCCC" text-anchor="middle">setValue()</text>
-  <line x1="566" y1="220" x2="640" y2="220" stroke="#3F6E6E" stroke-width="2"/>
+  <!-- ModValue atomic store -->
+  <rect x="280" y="205" width="100" height="35" fill="#161b22" stroke="#3F6E6E" rx="6"/>
+  <text x="330" y="220" font-family="Consolas, monospace" font-size="10" fill="#90FFB1" text-anchor="middle">ModValue</text>
+  <text x="330" y="233" font-family="Lato, sans-serif" font-size="9" fill="#808080" text-anchor="middle">atomic store</text>
   
-  <!-- Timer tick and callback -->
-  <line x1="700" y1="220" x2="700" y2="180" stroke="#3F6E6E" stroke-width="2" stroke-dasharray="4,3"/>
-  <text x="710" y="205" font-family="Lato, sans-serif" font-size="9" fill="#3F6E6E">timer tick</text>
+  <!-- setValue(0.7) - will be dropped -->
+  <circle cx="400" cy="195" r="6" fill="#90FFB1" opacity="0.4"/>
+  <text x="400" y="180" font-family="Consolas, monospace" font-size="10" fill="#808080" text-anchor="middle">setValue(0.7)</text>
+  <line x1="400" y1="182" x2="400" y2="170" stroke="#f85149" stroke-width="1" opacity="0.6"/>
+  <text x="400" y="167" font-family="Lato, sans-serif" font-size="8" fill="#f85149" text-anchor="middle">dropped</text>
+
+  <!-- Arrow into ModValue (overwrite) -->
+  <line x1="406" y1="195" x2="370" y2="220" stroke="#3F6E6E" stroke-width="1" stroke-dasharray="3,2"/>
   
-  <rect x="720" y="200" width="140" height="40" fill="#282828" stroke="#3F6E6E" stroke-width="2" rx="6"/>
-  <text x="790" y="218" font-family="Lato, sans-serif" font-size="11" fill="#CCCCCC" text-anchor="middle">callback(latest)</text>
-  <text x="790" y="232" font-family="Lato, sans-serif" font-size="9" fill="#808080" text-anchor="middle">coalesced</text>
+  <!-- setValue(0.9) - THIS ONE WINS -->
+  <circle cx="500" cy="195" r="8" fill="#90FFB1"/>
+  <text x="500" y="180" font-family="Consolas, monospace" font-size="11" fill="#CCCCCC" text-anchor="middle" font-weight="bold">setValue(0.9)</text>
   
-  <text x="760" y="175" font-family="Lato, sans-serif" font-size="10" font-weight="bold" fill="#3F6E6E">AsyncNotification</text>
+  <!-- Arrow into ModValue (final overwrite) -->
+  <line x1="500" y1="203" x2="380" y2="222" stroke="#3F6E6E" stroke-width="2" marker-end="url(#arrow-teal)"/>
+  <text x="440" y="218" font-family="Lato, sans-serif" font-size="9" fill="#3F6E6E">overwrites</text>
+  
+  <!-- Timer tick boundary -->
+  <line x1="600" y1="160" x2="600" y2="290" stroke="#3F6E6E" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="608" y="172" font-family="Lato, sans-serif" font-size="10" fill="#3F6E6E">timer tick</text>
+  
+  <!-- Callback receives only 0.9 -->
+  <line x1="600" y1="240" x2="650" y2="240" stroke="#3F6E6E" stroke-width="2" marker-end="url(#arrow-teal)"/>
+  
+  <rect x="660" y="218" width="200" height="48" fill="#161b22" stroke="#3F6E6E" stroke-width="2" rx="6"/>
+  <text x="760" y="238" font-family="Consolas, monospace" font-size="12" fill="#90FFB1" text-anchor="middle" font-weight="bold">callback(0.9)</text>
+  <text x="760" y="256" font-family="Lato, sans-serif" font-size="10" fill="#e3b341" text-anchor="middle">only latest value delivered</text>
+  
+  <text x="660" y="210" font-family="Lato, sans-serif" font-size="10" font-weight="bold" fill="#3F6E6E">AsyncNotification</text>
   
   <!-- Annotation -->
-  <rect x="120" y="290" width="760" height="70" fill="#222222" stroke="#444444" rx="4"/>
-  <text x="130" y="310" font-family="Lato, sans-serif" font-size="11" font-weight="bold" fill="#FFBA00">Key Differences:</text>
-  <text x="140" y="330" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC">• Sync: immediate execution, must use realtime-safe inline function, delivers every value</text>
-  <text x="140" y="348" font-family="Lato, sans-serif" font-size="10" fill="#CCCCCC">• Async: UI thread polling at display refresh rate, coalesces values, intermediate values dropped</text>
+  <text x="140" y="330" font-family="Lato, sans-serif" font-size="11" fill="#CCCCCC">Async callbacks poll at UI refresh rate. Multiple setValue() calls between ticks are coalesced -</text>
+  <text x="140" y="348" font-family="Lato, sans-serif" font-size="11" fill="#e3b341">only the last value reaches the callback. Intermediate values are silently discarded.</text>
+  <text x="140" y="374" font-family="Lato, sans-serif" font-size="11" fill="#CCCCCC">Sync callbacks execute inline on the calling thread (audio thread) and deliver every value.</text>
+  <text x="140" y="392" font-family="Lato, sans-serif" font-size="11" fill="#CCCCCC">Must use <tspan font-family="Consolas, monospace" fill="#90FFB1">inline function</tspan> - regular functions are silently rejected.</text>
 </svg>

@@ -11,7 +11,7 @@
 
 const var rm = Engine.getGlobalRoutingManager();
 
-const var ModDisplay = Content.getComponent("ModRing");
+const var ModDisplay = Content.addPanel("ModRing", 0, 0);
 
 // Store the cable reference in the panel's data object so the
 // timer callback can access it without a namespace lookup
@@ -38,10 +38,14 @@ ModDisplay.setTimerCallback(function()
 
 ModDisplay.startTimer(30);
 
+// --- test-only ---
+ModDisplay.data.cable.setValue(0.5);
+// --- end test-only ---
 ```
 ```json:testMetadata:timer-polled-cable-reading-for
 {
-  "testable": false
+  "testable": true,
+  "verifyScript": {"type": "REPL", "expression": "ModDisplay.data.cable.getValue()", "value": 0.5}
 }
 ```
 
@@ -54,7 +58,8 @@ ModDisplay.startTimer(30);
 const var rm = Engine.getGlobalRoutingManager();
 const var peakCable = rm.getCable("PeakLevel");
 
-const var MeterPanel = Content.getComponent("PeakMeter");
+const var MeterPanel = Content.addPanel("PeakMeter", 0, 0);
+MeterPanel.data.value = 0.0;
 
 MeterPanel.setTimerCallback(function()
 {
@@ -72,10 +77,14 @@ MeterPanel.setTimerCallback(function()
 
 MeterPanel.startTimer(60);
 
+// --- test-only ---
+peakCable.setValue(0.75);
+// --- end test-only ---
 ```
 ```json:testMetadata:peak-meter-with-smoothed
 {
-  "testable": false
+  "testable": true,
+  "verifyScript": {"type": "REPL", "expression": "peakCable.getValue()", "value": 0.75}
 }
 ```
 

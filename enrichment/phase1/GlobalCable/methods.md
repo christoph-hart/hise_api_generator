@@ -283,7 +283,7 @@ When `synchronous` is `AsyncNotification`, the callback executes asynchronously 
 - **Description:** When synchronous=true, the callback function executes immediately inline on whatever thread called setValue/setValueNormalised (may be audio thread). When synchronous=false, the value is stored atomically via ModValue, and a PooledUIUpdater SimpleTimer polls on the UI thread at the display refresh rate, delivering only the latest value. Intermediate values between timer ticks are dropped.
 
 **Example:**
-```javascript
+```javascript:sync-and-async-callbacks
 // Register both sync and async callbacks
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("MyCable");
@@ -305,6 +305,24 @@ inline function onCableSync(value)
 };
 
 cable.registerCallback(onCableSync, SyncNotification);
+
+// --- test-only ---
+reg syncResult = -1.0;
+inline function testSyncCapture(v) { syncResult = v; };
+cable.registerCallback(testSyncCapture, SyncNotification);
+cable.setValue(0.5);
+// --- end test-only ---
+```
+```json:testMetadata:sync-and-async-callbacks
+{
+  "testable": true,
+  "verifyScript": [
+    {
+      "expression": "syncResult",
+      "value": 0.5
+    }
+  ]
+}
 ```
 
 ---
@@ -335,7 +353,7 @@ The callback is always asynchronous (high-priority via `WeakCallbackHolder`). A 
 - `GlobalCable.registerCallback`
 
 **Example:**
-```javascript
+```javascript:data-callback-json
 // Register a data callback to receive JSON chunks
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("DataCable");
@@ -346,6 +364,21 @@ inline function onDataReceived(data)
 };
 
 cable.registerDataCallback(onDataReceived);
+
+// --- test-only ---
+// Use a second reference to bypass the recursion guard
+const var triggerCable = rm.getCable("DataCable");
+triggerCable.sendData({"noteNumber": 42});
+// --- end test-only ---
+```
+```json:testMetadata:data-callback-json
+{
+  "testable": true,
+  "verifyScript": {
+    "type": "log-output",
+    "values": ["Received note: 42"]
+  }
+}
 ```
 
 ---

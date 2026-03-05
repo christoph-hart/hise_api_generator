@@ -26,13 +26,14 @@ browser.setTableColumns([
     {"ID": "Value", "Label": "Value", "MinWidth": 100}
 ]);
 
-browser.setTableRowData([
-    {"Name": "Row 0", "Value": "A"},
-    {"Name": "Row 1", "Value": "B"}
-]);
+var rowData = [];
+for (i = 0; i < 5; i++)
+    rowData.push({"Name": "Row " + i, "Value": String.fromCharCode(65 + i)});
+
+browser.setTableRowData(rowData);
 
 browser.set("saveInPreset", false);
-browser.setValue([0, 1]);
+browser.setValue([0, 2]);
 ```
 ```json:testMetadata:multi-column-browser-table-with
 {
@@ -42,7 +43,7 @@ browser.setValue([0, 1]);
     "expression": "browser.getValue()",
     "value": [
       0,
-      1
+      2
     ]
   }
 }

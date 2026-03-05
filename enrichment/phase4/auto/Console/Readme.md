@@ -1,8 +1,14 @@
 # Console
 
-Console provides debugging and diagnostic tools for HISEScript development in the HISE IDE. The class offers three main capabilities: output methods for logging values and clearing the console, assertion methods for validating conditions and data types during development, and profiling tools for benchmarking code and sampling data. All Console methods become no-ops in exported plugins, so you can leave debugging calls in production code without performance cost. Console methods are safe to call from any thread, including the audio thread.
+Console provides debugging and diagnostic tools for HISEScript development in the HISE IDE. The class offers three main capabilities:
 
-The assertion methods (`assertTrue`, `assertEqual`, `assertIsDefined`, `assertIsObjectOrArray`, `assertNoString`, `assertLegalNumber`) are commonly used as guard clauses in utility functions and module construction pipelines. They surface programming errors immediately during development while being stripped from exported builds. The `stop()` method provides conditional breakpoints that halt execution in the IDE, and `blink()` flashes a visual indicator at the calling line without pausing. Benchmarking with `startBenchmark()` and `stopBenchmark()` measures elapsed time for performance analysis. The data sampling system (`startSampling()` and `sample()`) records labeled snapshots for inspection in the code editor, useful when debugging iterative algorithms or state machines.
+1. Output methods for logging values and clearing the console.
+2. Assertion methods for validating conditions and data types during development.
+3. Profiling tools for benchmarking code and sampling data.
+
+Use assertions as guard clauses to surface programming errors immediately rather than letting bad state propagate silently. The profiling tools help you measure execution time and capture data snapshots for inspection in the code editor.
+
+> All Console methods become no-ops in exported plugins, so you can leave debugging calls in production code without performance cost. Console methods are safe to call from any thread, including the audio thread.
 
 ## Common Mistakes
 

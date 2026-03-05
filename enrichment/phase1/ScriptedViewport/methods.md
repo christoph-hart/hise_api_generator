@@ -46,7 +46,8 @@ Toggles visibility with a fade animation over the specified duration in millisec
 
 **Signature:** `var get(String propertyName)`
 **Return Type:** `var`
-**Call Scope:** safe
+**Call Scope:** warning
+**Call Scope Note:** String involvement, atomic ref-count operations
 **Minimal Example:** `var v = {obj}.get("text");`
 
 **Description:**
@@ -126,7 +127,8 @@ Returns the `height` property as an integer.
 
 **Signature:** `String getId()`
 **Return Type:** `String`
-**Call Scope:** safe
+**Call Scope:** warning
+**Call Scope Note:** String involvement, atomic ref-count operations
 **Minimal Example:** `var id = {obj}.getId();`
 
 **Description:**
@@ -307,16 +309,34 @@ JSON object format for individual key descriptions:
 ```javascript:basic
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 
-// Consume all keys exclusively
+var keyLog = [];
+
+// Consume all key presses exclusively
 Viewport1.setConsumedKeyPresses("all");
 
-// Or consume specific keys
-Viewport1.setConsumedKeyPresses(["ctrl + S", "F5", "escape"]);
+Viewport1.setKeyPressCallback(function(event)
+{
+    if (!event.isFocusChange)
+        keyLog.push(event.description);
+});
+
+// --- test-only ---
+Console.testCallback(Viewport1, "setKeyPressCallback", {
+    "isFocusChange": false,
+    "character": "A",
+    "specialKey": false,
+    "keyCode": 65,
+    "description": "A"
+});
+// --- end test-only ---
 ```
 ```json:testMetadata:basic
 {
   "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "Viewport1.getId()", "value": "Viewport1"}
+  "verifyScript": [
+    {"type": "REPL", "expression": "keyLog.length", "value": 1},
+    {"type": "REPL", "expression": "keyLog[0]", "value": "A"}
+  ]
 }
 ```
 
@@ -756,7 +776,7 @@ Column definition object properties:
 |----------|------|-------------|
 | ID | String | Column identifier, used to look up values in row data objects (required) |
 | Label | String | Display name in the header (defaults to ID if omitted) |
-| Type | String | Cell type: "Text" (default), "Button", "Image", "Slider", "ComboBox", "Hidden" |
+| Type | String | Cell type: "Text" (default), "Button", "Slider", "ComboBox", "Hidden" |
 | Width | int | Column width in pixels |
 | MinWidth | int | Minimum column width (default 1) |
 | MaxWidth | int | Maximum column width (-1 for unlimited) |
@@ -766,6 +786,11 @@ Column definition object properties:
 | Text | String | Button label text (default "Button") or ComboBox placeholder (default "No selection") |
 | Toggle | bool | Button: false = momentary, true = toggle (default false) |
 | ValueMode | String | ComboBox value mode: "ID" (default), "Index", or "Text" |
+| items | Array | ComboBox dropdown items (can also be set per-row in row data) |
+| MinValue | double | Slider range minimum (default 0.0). Property name depends on SliderRangeIdSet. |
+| MaxValue | double | Slider range maximum (default 1.0). Property name depends on SliderRangeIdSet. |
+| StepSize | double | Slider step size, 0 = continuous (default 0.0). Property name depends on SliderRangeIdSet. |
+| SkewFactor | double | Slider range skew, 1.0 = linear (default 1.0). Property name depends on SliderRangeIdSet. |
 | suffix | String | Slider suffix text (default "") |
 | defaultValue | double | Slider double-click return value |
 | showTextBox | bool | Slider: enables shift-click text input (default true) |

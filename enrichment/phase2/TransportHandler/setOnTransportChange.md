@@ -35,8 +35,9 @@ transportBroadcaster.addListener(PlayButton, "sync play button to transport",
         this.setValue(isPlaying);
     });
 
-// Trigger a transport change to verify the full chain
+// --- test-only ---
 th.startInternalClock(0);
+// --- end test-only ---
 ```
 ```json:testMetadata:bridge-transport-state-to
 {

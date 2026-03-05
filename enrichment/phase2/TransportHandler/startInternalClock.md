@@ -35,7 +35,7 @@ th.setEnableGrid(true, 8); // 1/8 note grid
 const var th0 = Engine.createTransportHandler();
 th0.setSyncMode(th0.InternalOnly);
 th0.stopInternalClock(0);
-Engine.setHostBpm(-1);
+Engine.setHostBpm(120);
 // --- end setup ---
 const var th = Engine.createTransportHandler();
 th.setEnableGrid(true, 8);

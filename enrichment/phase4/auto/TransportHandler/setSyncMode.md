@@ -1,6 +1,6 @@
 Sets the sync mode for the global master clock, controlling how the internal clock (started/stopped by `startInternalClock`/`stopInternalClock`) interacts with the external DAW clock. Use the TransportHandler constants as the argument. This is a global setting - it affects all TransportHandler instances.
 
-| Mode | Behavior |
+| Mode | Behaviour |
 |------|----------|
 | Inactive (0) | All clock processing disabled. No transport, beat, or grid callbacks fire. `getPPQPos()` returns 0. |
 | ExternalOnly (1) | Only DAW transport drives callbacks. Internal clock calls are accepted but ignored (no internal playhead created). Grid timing follows DAW PPQ position. |

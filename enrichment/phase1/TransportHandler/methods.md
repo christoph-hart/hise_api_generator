@@ -32,7 +32,7 @@ Registers a callback that fires whenever the host tempo (BPM) changes. The `sync
 **Example:**
 ```javascript:basic
 // --- setup ---
-Engine.setHostBpm(-1);
+Engine.setHostBpm(120);
 // --- end setup ---
 const var th = Engine.createTransportHandler();
 
@@ -45,8 +45,9 @@ inline function onTempoChanged(newTempo)
 
 th.setOnTempoChange(SyncNotification, onTempoChanged);
 
-// Programmatically change BPM to trigger the callback
+// --- test-only ---
 Engine.setHostBpm(140);
+// --- end test-only ---
 ```
 ```json:testMetadata:basic
 {
@@ -416,8 +417,7 @@ When enabled, the BPM source (internal vs external) is automatically linked to t
 
 **Signature:** `undefined setEnableGrid(Integer shouldBeEnabled, Integer tempoFactor)`
 **Return Type:** `undefined`
-**Call Scope:** unsafe
-**Call Scope Note:** Calls `reportScriptError()` if tempoFactor is out of range.
+**Call Scope:** safe
 **Minimal Example:** `{obj}.setEnableGrid(true, 7);`
 
 **Description:**
@@ -465,7 +465,7 @@ Enables or disables the high-precision grid timer at a specific musical tempo di
 **Example:**
 ```javascript:basic
 // --- setup ---
-Engine.setHostBpm(-1);
+Engine.setHostBpm(120);
 // --- end setup ---
 const var th = Engine.createTransportHandler();
 

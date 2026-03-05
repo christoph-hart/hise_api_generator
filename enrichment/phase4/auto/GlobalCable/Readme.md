@@ -1,14 +1,28 @@
 # GlobalCable
 
-GlobalCable is a named, project-wide data bus that routes normalised values (0..1) and arbitrary structured data between script processors, DSP networks, UI components, macros, and module parameters. You obtain a cable reference from the global routing manager with `Engine.getGlobalRoutingManager().getCable(cableId)`. Each cable has two independent channels: a value channel for normalised doubles, and a data channel for JSON/strings/buffers.
+GlobalCable is a named, project-wide data bus for routing values and structured data between different parts of a HISE project:
 
-Each cable reference maintains a local input range that maps user-facing values to/from the internal 0..1 transport. For example, a cable with `setRange(20.0, 20000.0)` converts `setValue(440.0)` to 0.021 before sending, and converts 0.021 back to 440.0 when reading with `getValue()`. Value callbacks run either synchronously (inline on the calling thread) or asynchronously (polled on the UI thread, with coalescing). Data callbacks are always asynchronous.
+- Script processors
+- DSP networks
+- UI components
+- Macros and module parameters
 
-A cable reference can register callbacks, or it can wire the cable directly into the HISE module tree with `connectToMacroControl()`, `connectToModuleParameter()`, or `connectToGlobalModulator()`. This eliminates script middlemen for DSP parameter routing.
+You obtain a cable reference from the global routing manager:
 
-Cable IDs with a `/` prefix (e.g. `/some_osc_id`) automatically become OSC addresses when the global routing system runs as an OSC server.
+```js
+const var rm = Engine.getGlobalRoutingManager();
+const var cable = rm.getCable("cableId");
+```
+
+Each cable has two independent channels: a value channel that carries a normalised 0..1 double, and a data channel for JSON objects, strings, or buffers.
+
+Each cable reference maintains a local input range that maps user-facing values to and from the internal 0..1 transport. For example, a cable with `setRange(20.0, 20000.0)` converts `setValue(440.0)` to roughly 0.02 before sending, and converts it back to 440.0 when reading with `getValue()`.
+
+Cables can deliver values through callbacks (synchronous or asynchronous) or be wired directly into the HISE module tree for parameter routing without a script middleman.
 
 ![Cable Value Dispatch Flow](topology_cable-dispatch.svg)
+
+> Cable IDs with a `/` prefix (e.g. `/some_osc_id`) automatically become OSC addresses when the global routing system runs as an OSC server.
 
 ## Common Mistakes
 
@@ -18,7 +32,7 @@ Cable IDs with a `/` prefix (e.g. `/some_osc_id`) automatically become OSC addre
 
 - **Wrong:** Calling `sendData()` from the audio thread
   **Right:** Move data sending to a timer or async context
-  *`sendData()` allocates a MemoryOutputStream on the heap, which is not audio-thread safe.*
+  *`sendData()` performs a heap allocation internally, which is not audio-thread safe.*
 
 - **Wrong:** Polling `getValue()` in `onTimer` at 30ms for visual feedback without smoothing
   **Right:** Apply exponential smoothing (`smoothed = smoothed * 0.6 + newValue * 0.4`) before rendering

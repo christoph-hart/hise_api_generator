@@ -2,37 +2,53 @@
 
 **Examples:**
 
-```javascript:wiring-global-modulators-to
-// Title: Wiring global modulators to cables during module tree setup
-// Context: After building a GlobalModulatorContainer with the Builder API,
-// each modulator is connected to a named cable. This makes every
-// modulation source (LFOs, envelopes, velocity, etc.) available as
-// a cable value throughout the project.
+```javascript:connecting-lfo-to-cable
+// Title: Connecting a global LFO modulator to a cable
+// --- setup ---
+const var builder = Synth.createBuilder();
+builder.clear();
+var gmcIndex = builder.create(builder.SoundGenerators.GlobalModulatorContainer,
+                              "GMC1", 0, builder.ChainIndexes.Direct);
+// Chain index 1 is the "Global Modulators" slot in a GlobalModulatorContainer
+builder.create(builder.Modulators.LFO, "TestLFO", gmcIndex, 1);
+builder.flush();
+// --- end setup ---
+
+// Context: A GlobalModulatorContainer hosts shared modulators
+// (LFOs, envelopes, velocity, etc.) whose output can be
+// distributed to any part of the project via cables.
 
 const var rm = Engine.getGlobalRoutingManager();
+const var cable = rm.getCable("LfoMod");
 
-// Modulator definitions: [type, name]
-const var MODS = [
-    ["FlexAHDSR", "AHDSR1"],
-    ["FlexAHDSR", "AHDSR2"],
-    ["LFO", "LFO1"],
-    ["Velocity", "Velocity"],
-    ["PitchWheel", "PitchWheel"]
-];
+// Connect the LFO to this cable. The modulator must be
+// a child of a GlobalModulatorContainer.
+cable.connectToGlobalModulator("TestLFO", true);
 
-// Connect each modulator to a cable with the same name.
-// The modulator must be a child of a GlobalModulatorContainer.
-for (m in MODS)
-    rm.getCable(m[1]).connectToGlobalModulator(m[1], true);
-
-// Now any script can read the modulator output:
-// const var lfo = rm.getCable("LFO1");
-// var currentValue = lfo.getValueNormalised();
-
+// --- test-only ---
+reg v1 = 0.0;
+reg v2 = 0.0;
+// --- end test-only ---
 ```
-```json:testMetadata:wiring-global-modulators-to
+```json:testMetadata:connecting-lfo-to-cable
 {
-  "testable": false
+  "testable": true,
+  "verifyScript": [
+    {
+      "delay": 200,
+      "expression": "v1 = cable.getValueNormalised() || true",
+      "value": true
+    },
+    {
+      "delay": 300,
+      "expression": "v2 = cable.getValueNormalised() || true",
+      "value": true
+    },
+    {
+      "expression": "Math.abs(v1 - v2) > 0.01",
+      "value": true
+    }
+  ]
 }
 ```
 

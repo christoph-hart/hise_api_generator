@@ -21,17 +21,17 @@ inline function processModule(module)
 
 for (m in moduleList)
     processModule(m);
+
+// Passing a string instead of an object triggers the assertion
+processModule("not_an_object");
 ```
 ```json:testMetadata:validating-module-references-before
 {
   "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": [
-      "Processing: Osc1",
-      "Processing: Filter1"
-    ]
-  }
+  "verifyScript": [
+    {"type": "log-output", "values": ["Processing: Osc1", "Processing: Filter1"]},
+    {"type": "expect-error", "errorMessage": "Assertion failure"}
+  ]
 }
 ```
 

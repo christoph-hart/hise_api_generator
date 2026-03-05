@@ -4,6 +4,10 @@
 
 ```javascript:async-cable-callback-driving
 // Title: Async cable callback driving a UI repaint
+// --- setup ---
+const var MeterPanel = Content.addPanel("MeterPanel", 0, 0);
+// --- end setup ---
+
 // Context: A DSP network writes its output level to a global cable.
 // The script registers an async callback to trigger a panel repaint
 // whenever the value changes, keeping the visual in sync.
@@ -21,10 +25,20 @@ inline function onLevelChanged(value)
 
 levelCable.registerCallback(onLevelChanged, AsyncNotification);
 
+// --- test-only ---
+levelCable.setValue(0.75);
+// --- end test-only ---
 ```
 ```json:testMetadata:async-cable-callback-driving
 {
-  "testable": false
+  "testable": true,
+  "verifyScript": [
+    {
+      "delay": 300,
+      "expression": "currentLevel",
+      "value": 0.75
+    }
+  ]
 }
 ```
 
@@ -49,6 +63,12 @@ const var sustainKnob = Content.addKnob("Sustain", 300, 0);
 
 const var allKnobs = [attackKnob, decayKnob, sustainKnob];
 
+// --- test-only ---
+attackKnob.set("saveInPreset", false);
+decayKnob.set("saveInPreset", false);
+sustainKnob.set("saveInPreset", false);
+// --- end test-only ---
+
 // One callback handles all knobs by index lookup
 inline function onEnvKnobChanged(component, value)
 {
@@ -63,7 +83,25 @@ sustainKnob.setControlCallback(onEnvKnobChanged);
 ```
 ```json:testMetadata:multiple-cables-with-a
 {
-  "testable": false
+  "testable": true,
+  "verifyScript": [
+    {
+      "expression": "attackKnob.setValue(0.5) || attackKnob.changed() || true",
+      "value": true
+    },
+    {
+      "expression": "attackCable.getValueNormalised()",
+      "value": 0.5
+    },
+    {
+      "expression": "sustainKnob.setValue(0.8) || sustainKnob.changed() || true",
+      "value": true
+    },
+    {
+      "expression": "sustainCable.getValueNormalised()",
+      "value": 0.8
+    }
+  ]
 }
 ```
 

@@ -13,11 +13,19 @@ ScriptedViewport is a UI component created with `Content.addViewport(name, x, y)
 | List | Set `useList` property to `true` | Selected index |
 | Table | Call `setTableMode()` in onInit | `[column, row]` array |
 
-In table mode, you define columns with `setTableColumns()`, populate rows with `setTableRowData()`, and receive interactions through `setTableCallback()`. The table supports six cell types: Text, Button, Slider, ComboBox, Image, and Hidden. Interactive cells fire specialized callbacks with event type strings (Click, DoubleClick, Selection, ReturnKey, SpaceKey, DeleteRow, Slider, Button, ComboBox).
+In table mode, you define columns, populate rows, and register a callback to handle interactions. The table supports five cell types:
+
+- Text
+- Button
+- Slider
+- ComboBox
+- Hidden
+
+Interactive cells fire specialised callbacks with an event object describing the interaction type and value.
 
 ![Table Mode Setup Sequence](sequence_table-setup.svg)
 
-All table setup methods must be called during `onInit`. Only `setTableRowData()` can update content after init completes. The remaining methods are common to all UI components.
+> All table setup must happen during `onInit`. Only row data can be updated after init completes. The remaining methods are common to all UI components.
 
 ## Common Mistakes
 
@@ -31,8 +39,8 @@ All table setup methods must be called during `onInit`. Only `setTableRowData()`
 
 - **Wrong:** Using `obj.rowIndex` directly to index into the data array when sorting is enabled
   **Right:** Using `viewport.getOriginalRowIndex(obj.rowIndex)` to map back to the original data index
-  *When the table is sorted, display indices no longer match the original array positions. Mutations (favorites, deletion) applied to the wrong index corrupt data silently.*
+  *When the table is sorted, display indices no longer match the original array positions. Mutations (favourites, deletion) applied to the wrong index corrupt data silently.*
 
 - **Wrong:** Setting `viewPositionY` to a pixel value
-  **Right:** Setting `viewPositionY` to a normalized 0.0-1.0 value
-  *The scroll position properties are normalized, not pixel-based. Use `(targetRow + 1) / totalRows` to scroll to a specific row.*
+  **Right:** Setting `viewPositionY` to a normalised 0.0-1.0 value
+  *The scroll position properties are normalised, not pixel-based. Use `(targetRow + 1) / totalRows` to scroll to a specific row.*

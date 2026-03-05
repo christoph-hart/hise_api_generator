@@ -2,34 +2,6 @@
 
 **Examples:**
 
-```javascript:validating-preprocessor-definitions-at
-// Title: Validating preprocessor definitions at init time
-// Context: Before an activation system runs, verify that the project's
-// preprocessor settings are correctly configured. assertEqual gives a
-// clear error message showing expected vs actual values.
-
-inline function checkPreprocessorSettings()
-{
-    if (Engine.isHISE())
-    {
-        local def = Engine.getExtraDefinitionsInBackend();
-
-        Console.assertEqual(def.USE_COPY_PROTECTION, 1);
-        Console.assertEqual(def.USE_SCRIPT_COPY_PROTECTION, 1);
-        Console.assertEqual(def.HISE_DEACTIVATE_OVERLAY, 1);
-    }
-}
-
-checkPreprocessorSettings();
-
-```
-```json:testMetadata:validating-preprocessor-definitions-at
-{
-  "testable": false
-}
-```
-
-
 ```javascript:verifying-data-array-dimensions
 // Title: Verifying data array dimensions
 // Context: When a multi-dimensional data structure must have consistent
@@ -64,7 +36,7 @@ Console.assertEqual(NUM_BANKS * NUM_CHANNELS * NUM_MODES, dataPackList.length);
 
 inline function transformName(name, oldMode, newMode)
 {
-    local modeNames = ["A", "B", "C", "All"];
+    local modeNames = ["Low", "Mid", "High", "Full"];
     local oldName = modeNames[oldMode];
     local newName = modeNames[newMode];
     
@@ -75,9 +47,9 @@ inline function transformName(name, oldMode, newMode)
     return name;
 }
 
-Console.assertEqual(transformName("Drive A1", 0, 3), "Drive All1");
-Console.assertEqual(transformName("Drive All9", 3, 0), "Drive A9");
-Console.assertEqual(transformName("Mixer 2 PanB", 1, 3), "Mixer 2 PanAll");
+Console.assertEqual(transformName("Drive Low1", 0, 3), "Drive Full1");
+Console.assertEqual(transformName("Drive Full9", 3, 0), "Drive Low9");
+Console.assertEqual(transformName("Mixer 2 PanMid", 1, 3), "Mixer 2 PanFull");
 ```
 ```json:testMetadata:unit-testing-a-string-transformation
 {

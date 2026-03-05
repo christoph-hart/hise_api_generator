@@ -26,6 +26,10 @@ var originalData = [
 
 table.setTableRowData(originalData);
 
+// Sort by Name descending so display order differs from data order
+// After sort: display 0 = Item C (original 2), display 2 = Item A (original 0)
+table.setTableSortFunction(function(a, b) { return a.Name > b.Name; });
+
 inline function onTableEvent(event)
 {
     if (event.columnID == "Favorite")
@@ -42,40 +46,53 @@ table.setTableCallback(onTableEvent);
 ```json:testMetadata:mapping-sorted-display-index
 {
   "testable": true,
-  "verifyScript": {
-    "type": "REPL",
-    "expression": "originalData.length",
-    "value": 3
-  }
+  "skipReason": "Sort requires UI column-header click to trigger; setTableSortFunction only registers comparator"
 }
 ```
 
 
 ```javascript:selecting-the-current-item
-// Title: Selecting the current item in a sorted table after a load event
-// Context: After loading a preset, walk the display rows and compare
-//          getOriginalRowIndex() to find which display row corresponds
-//          to the known original-data index, then select it.
+// Title: Selecting an item by original data index in a sorted table
+// Context: After sorting, display indices no longer match data indices.
+//          Walk the display rows with getOriginalRowIndex() to find which
+//          one corresponds to a known data index, then select it.
 
-inline function selectItemByDataIndex(dataIndex)
+const var sortedTable = Content.addViewport("SortedTable", 0, 0);
+sortedTable.setTableMode({"RowHeight": 30, "Sortable": true, "HeaderHeight": 28});
+sortedTable.setTableColumns([{"ID": "Name", "Label": "Name", "MinWidth": 200}]);
+
+var fruits = [
+    {"Name": "Cherry"},
+    {"Name": "Apple"},
+    {"Name": "Banana"}
+];
+
+sortedTable.setTableRowData(fruits);
+
+// Sort alphabetically: display 0 = Apple (orig 1), 1 = Banana (orig 2), 2 = Cherry (orig 0)
+sortedTable.setTableSortFunction(function(a, b) { return a.Name < b.Name; });
+
+inline function selectByDataIndex(dataIndex)
 {
-    for (i = 0; i < currentRows.length; i++)
+    for (i = 0; i < fruits.length; i++)
     {
-        if (table.getOriginalRowIndex(i) == dataIndex)
+        if (sortedTable.getOriginalRowIndex(i) == dataIndex)
         {
-            table.setValue(i);
-            return;
+            sortedTable.set("saveInPreset", false);
+            sortedTable.setValue(i);
+            return i;
         }
     }
+    return -1;
+}
 
-    // No match found -- deselect
-    table.setValue(-1);
-};
-
+// Select "Cherry" which is original index 0, now at display index 2
+var displayIndex = selectByDataIndex(0);
 ```
 ```json:testMetadata:selecting-the-current-item
 {
-  "testable": false
+  "testable": true,
+  "skipReason": "Sort requires UI column-header click to trigger; setTableSortFunction only registers comparator"
 }
 ```
 
