@@ -235,27 +235,7 @@ A method gets disabled when it exists on the class but should not appear in user
 | `deprecated` | Superseded by a better API (listed in `resources/deprecated_methods.md`) | `setColour` |
 | `property-deactivated` | Depends on a property deactivated for this component | `addToMacroControl` when macroControl is deactivated |
 
-**Disabled entry format in methods.md:**
-
-```markdown
-## setValueNormalized
-
-**Disabled:** redundant
-**Disabled Reason:** Base implementation just calls setValue(). Only meaningful on ScriptSlider which maps 0..1 to the configured range.
-```
-
-Minimal entry -- no signature, parameters, etc. needed. Just the flag and reason.
-
-**Deprecated entry format in methods.md:**
-
-```markdown
-## drawText
-
-**Disabled:** deprecated
-**Disabled Reason:** Superseded by drawAlignedText which supports alignment options.
-```
-
-Same minimal format as other disabled methods -- just the flag and reason.
+Disabled entries are minimal -- just the flag and reason, no signature or parameters. See the disabled entry template in the methods.md Output Format section below.
 
 **Deprecated methods:** Check `resources/deprecated_methods.md` for any method matching `ClassName.methodName(N)`. If a match is found, use reason `deprecated` and copy the rationale from the deprecated file.
 
@@ -270,22 +250,14 @@ For each unchecked method in `methods_todo.md`:
 3. **Check the forced type map.** If the method has forced types, use them as authoritative -- no inference needed for those parameters.
 4. **Read the method implementation** in the `.cpp` file. Use the raw exploration for surrounding context.
 5. **Produce the method entry** (see methods.md Output Format below).
-6. **Append** the method entry to `enrichment/phase1/ClassName/methods.md`
-7. **Mark the method `[x]`** in `methods_todo.md`
-8. **Write both files to disk immediately**
-
-### Context Management
-
-The per-method analysis context is **expendable**. After writing to disk, the agent does not need to retain any per-method details in its context window. Only the raw exploration file and the workbench (`methods_todo.md`) are essential.
+6. **Log bugs.** If any pitfall describes a bug or design issue (not just intended-but-surprising behavior), append an entry to `enrichment/issues.md`. See Bug & Issue Tracking below.
+7. **Append** the method entry to `enrichment/phase1/ClassName/methods.md`
+8. **Mark the method `[x]`** in `methods_todo.md`
+9. **Write both files to disk immediately**
 
 ### HISEScript Syntax & Example Rules
 
-All synthesized code examples MUST follow `enrichment/resources/guidelines/hisescript_example_rules.md`. This is the authoritative reference for HISEScript syntax in examples. Key requirements summarized here -- see the resource file for full details and examples:
-
-1. **Inline functions for callbacks** -- all callback parameters (`setControlCallback`, `setTableCallback`, `setKeyPressCallback`, `setTableSortFunction`, etc.) must use `inline function`, never plain `function`. Exception: LAF callbacks registered via `laf.registerFunction()` use plain `function(g, obj)`.
-2. **JSON structure verification** -- any JSON object structure shown in a code example (callback parameter objects, return values, configuration schemas) MUST be verified from the C++ source code that constructs it. Find the `setProperty()` or `DynamicObject` construction calls and extract the exact property names. Do not guess.
-3. **UI component LAF lookup** -- for any class with category `"component"`, consult `enrichment/resources/guidelines/hisescript_example_rules.md` for the definitive component-to-LAF-function mapping when writing `setLocalLookAndFeel` examples. Use `enrichment/resources/laf_style_guide.json` for the exact callback property names. Do not invent LAF function names.
-4. **Variable declarations** -- use `const var` for component references, `local` inside inline functions, never `var` inside inline functions.
+All code examples MUST follow `resources/guidelines/hisescript_example_rules.md` (loaded in Step B context). That file is authoritative -- do not write examples without consulting it.
 
 ### VarTypes Vocabulary
 
@@ -341,7 +313,7 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 
 **`"warning"`** -- Can be called from the audio thread, but with caveats. Always provide a `callScopeNote`. Three sub-categories:
 - **Performance-sensitive:** Lock-free but iterates over user-sized data (e.g., `indexOf` on an array). Note the O(n) characteristic.
-- **Backend-only allocation:** Method allocates in HISE IDE builds (`USE_BACKEND=1`) but is compiled out or becomes a no-op in exported plugins. All `Console` methods (except `startBenchmark`) fall in this category.
+- **String involvement:** Method accepts or returns a `String`, which involves atomic ref-count operations on the `StringHolder`. No heap allocation occurs for copies/moves, but atomics cause cache-line contention under concurrent access. Classify as `warning` with note "String involvement, atomic ref-count operations."
 - **Context-dependent:** Safe in some modes/configurations but not others (e.g., a method that is lock-free in one mode but allocates in another).
 
 **`"safe"`** -- No allocations, no locks, no unbounded work. Call anywhere: `onInit`, runtime, audio thread, MIDI callbacks.
@@ -352,6 +324,8 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 
 - **Dispatch pattern:** When a method dispatches to external targets/callbacks but its own path is lock-free, classify based on the method's own code. Target behavior is the target's responsibility.
 - **Subclass override:** If a subclass overrides a base method with different characteristics, write the subclass-specific callScope. The merge picks it up (last-writer-wins).
+- **Error path exclusion:** `reportScriptError()` on the error path does not affect classification. Classify based on the non-error execution path only. Error reporting is an exceptional condition that the scripter should not be hitting in production code.
+- **Compiled-out methods:** Methods that are no-ops in exported plugins (e.g., all `Console` methods) are classified as `safe`. The classification reflects the shipped plugin behaviour, not the HISE IDE debug build. If the method does real work only in backend builds, that is irrelevant to the audio-thread safety of the exported product.
 
 ### Example Synthesis Heuristics
 
@@ -370,35 +344,11 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 
 ### Test Metadata for Examples
 
-When synthesizing an example, also produce `testMetadata` following `resources/guidelines/test_metadata.md`. The agent determines:
-
-1. **Testability:** Is the example complete, deterministic, and free of external dependencies (file I/O, MIDI input, timers)? If yes, mark `testable: true`.
-2. **Verification type:** Does the example use `Console.print()`? Use `log-output` verification. Does it create variables? Use `REPL` verification. Both? Use mixed verification (array with both types).
-3. **Setup script:** Does the example reference UI components or modules not created in the example itself? Add a `setupScript` that creates them.
-
-Most agent-synthesized examples are self-contained and deterministic, making them naturally testable. Mark `testable: false` only when the example genuinely cannot be validated (shows intentional errors, requires MIDI input, uses `Math.random()`, etc.).
-
-The `testMetadata` field is part of the example object and is carried through the merge into `api_reference.json`.
+When synthesizing an example, also produce `testMetadata` following `resources/guidelines/test_metadata.md`. That file defines the full schema, verification types, and setup patterns.
 
 ### Diagram Heuristic
 
-Writing a diagram description is cheap -- it is just a 2-3 sentence plain-text description plus a type tag. Phase 4a decides which diagrams actually get rendered as SVGs and which get cut in favor of prose or tables. **When in doubt, write the diagram description. Do not self-censor.**
-
-The `type` selects the visual pattern; the `description` is plain text that also serves LLMs directly. Consider these diagram types when you see these patterns:
-
-- `timing` -- sync vs async dispatch, callback coalescing, threading differences, deferred delivery
-- `sequence` -- mandatory call ordering, init-time restrictions, setup-then-use patterns, multi-step workflows
-- `topology` -- multi-object data flow, fan-in/fan-out, routing, hub-and-spoke patterns
-- `state` -- distinct behavioral modes, lifecycle transitions, mode switches with different API surfaces
-
-A class or method can have multiple diagram descriptions if multiple patterns apply. There is no budget or limit -- write as many as the content warrants.
-
-**Class-level vs method-level:**
-- Class-level diagrams (in `Readme.md` under `## Diagrams`) are appropriate for multi-method interactions: topology/architecture overviews, setup sequences involving multiple methods, or state transitions triggered by different methods.
-- Method-level diagrams (in `methods.md` under `**Diagram:**`) are appropriate for behavior specific to a single method: timing/threading, internal state machine, or dispatch mode.
-- When a method participates in a class-level diagram, use `**DiagramRef:** diagram-id` instead of writing a separate diagram. This avoids duplicating the same diagram across multiple methods.
-
-See `resources/guidelines/diagram_creation.md` for diagram type definitions, JSON schema, and description writing conventions.
+Writing a diagram description is cheap (2-3 sentences + type tag). Phase 4a decides which get rendered. **When in doubt, write the description. Do not self-censor.** See `resources/guidelines/diagram_creation.md` for type definitions, JSON schema, and conventions.
 
 ### Minimal Example Conventions
 
@@ -417,17 +367,6 @@ Every non-disabled method gets a `**Minimal Example:**` field -- a single one-li
 6. **Literal values** for simple arguments, **assumed preexisting objects** for complex ones (`laf`, `myCallback`, `myData`).
 7. **Colours:** Use `Colours.xxx` constants where a simple colour suffices (e.g., `Colours.red`). Use `0xAARRGGBB` format when a specific colour is needed.
 8. **Disabled methods:** Skip -- no `**Minimal Example:**` field.
-
-**Examples:**
-
-```
-**Minimal Example:** `{obj}.setValue(0.5);`
-**Minimal Example:** `var id = {obj}.getId();`
-**Minimal Example:** `{obj}.setLocalLookAndFeel(laf);`
-**Minimal Example:** `{obj}.setControlCallback(onMyControl);`
-**Minimal Example:** `Console.print("hello");`
-**Minimal Example:** `var sr = Engine.getSampleRate();`
-```
 
 ### Structured Value Documentation
 
@@ -479,28 +418,7 @@ A pitfall documents behavior that the user cannot self-diagnose from HISE's runt
 - **Clear error message = NOT a pitfall.** If HISE throws a script error with a descriptive message (e.g., "SineGenerator1 wasn't found"), the user can self-diagnose. Do not document expected error handling as a pitfall.
 - **Implementation details = NOT a pitfall.** Internal code paths, property read ordering, or default values that behave as expected are not pitfalls. A pitfall must describe a user-facing consequence.
 - **Coalesce related pitfalls.** If multiple pitfalls describe the same failure mechanism with different triggers, combine them into one entry. One pitfall per failure *mechanism*, not per trigger.
-
-If a behavior seems like a bug or design issue rather than intended behavior to document, log it in `enrichment/issues.md` (see Issues Side-Channel below) in addition to or instead of writing a pitfall.
-
-### Issues Side-Channel
-
-During C++ analysis you may notice behavior that is a bug, design issue, or silent failure rather than intended behavior to document. Log these in `enrichment/issues.md` -- a single accumulator file sorted by severity (critical first).
-
-This is separate from pitfalls: pitfalls document current behavior for users; issues track things that should be fixed in HISE itself. Do not assume issues will be fixed -- document current behavior accurately in the method entry regardless.
-
-**Entry format:**
-
-```
-### ClassName.methodName -- short description
-
-- **Type:** silent-fail | missing-validation | inconsistency | code-smell | ux-issue
-- **Severity:** critical | high | medium | low
-- **Location:** SourceFile.cpp:~line
-- **Observed:** What happens now.
-- **Expected:** What should happen instead.
-```
-
-Append new issues under the correct severity heading. If an issue also warrants a pitfall (because the behavior affects users today), write both.
+- **Bug or design issue?** If a behavior looks like a bug rather than intended behavior, also log it in `enrichment/issues.md` (see Bug & Issue Tracking section below). Write both the pitfall (documenting current behavior for users) and the issue entry (tracking the fix).
 
 ### methods.md Output Format
 
@@ -574,41 +492,27 @@ Disabled method entry format (no `**Minimal Example:**` line needed):
 **Disabled Reason:** Brief explanation of why this method is disabled on this class.
 ```
 
-Deprecated methods use the same minimal format:
+---
 
-```markdown
-## methodName
+## Bug & Issue Tracking
 
-**Disabled:** deprecated
-**Disabled Reason:** One-sentence rationale from deprecated_methods.md.
+During C++ analysis you will encounter behavior that is a bug, design issue, or silent failure -- not intended behavior to document. **Log every such finding in `enrichment/issues.md`** immediately when discovered (Per-Method Workflow step 6).
+
+This is separate from pitfalls: pitfalls document current behavior for users; issues track things that should be fixed in HISE itself. Do not assume issues will be fixed -- document current behavior accurately in the method entry regardless. If an issue also affects users today, write both a pitfall and an issue entry.
+
+**Entry format:**
+
+```
+### ClassName.methodName -- short description
+
+- **Type:** silent-fail | missing-validation | inconsistency | code-smell | ux-issue
+- **Severity:** critical | high | medium | low
+- **Location:** SourceFile.cpp:~line
+- **Observed:** What happens now.
+- **Expected:** What should happen instead.
 ```
 
----
-
-## Compaction Recovery
-
-The main agent's context window may be compacted automatically during long sessions. The pipeline is designed to survive this.
-
-**After compaction, the agent MUST:**
-1. Re-read `enrichment/resources/explorations/ClassName.md` -- the primary context
-2. Re-read `enrichment/phase1/ClassName/methods_todo.md` -- to find the first unchecked method
-3. Re-read `enrichment/resources/deprecated_methods.md` -- for deprecated method checking
-4. Re-read relevant `resources/base_methods/*.md` -- for inherited method adoption (component classes)
-5. Do NOT re-read `enrichment/phase1/ClassName/methods.md` -- completed methods are on disk, no need to burn context
-
-**The compaction summary should convey:** "Processing methods for ClassName. Primary context is in `resources/explorations/ClassName.md`. Progress is in `methods_todo.md`. Reload both and continue from the first unchecked method."
-
----
-
-## Resumability
-
-The `methods_todo.md` file makes any session fully resumable from disk. A fresh session can:
-
-1. Read `resources/explorations/ClassName.md` -- get the full class context
-2. Read `methods_todo.md` -- see the checklist and type map
-3. Find the first `- [ ]` entry -- resume from there
-
-No conversation history, task IDs, or special recovery instructions needed. The state is entirely on disk.
+Append new issues under the correct severity heading in `enrichment/issues.md`.
 
 ---
 

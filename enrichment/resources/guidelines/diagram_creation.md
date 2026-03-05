@@ -215,8 +215,8 @@ All colors, fonts, and spacing are derived from the HISE IDE style guide (`guide
 
 ### Canvas
 
-- **Background:** `#333333` (matches `Colour(0xFF333333)` -- HISE standard background)
-- **Panel fills:** `#282828` (slightly darker than background -- for swim lanes, state boxes, etc.)
+- **Background:** Transparent (no background rect or fill on the SVG element). Diagrams are rendered on the dark page background (`#0d1117`) in the preview HTML and on docs.hise.dev.
+- **Panel fills:** `#161b22` (the page's secondary dark colour - for swim lanes, state boxes, step boxes, etc.)
 - **Borders:** `rgba(0,0,0,0.5)` (matches `Colours::black.withAlpha(0.5f)`)
 - **Corner radius:** `rx="6"` for all rounded rectangles
 - **Dimensions:** 700-1000px wide, 400-660px tall. Choose dimensions that fit the content without excessive whitespace.
@@ -281,7 +281,7 @@ Faint colored rectangles behind logical regions of the diagram (e.g. onInit phas
 
 Show the actual shape of structured parameters, object literals, enum value sets, or callback signatures directly inside the diagram. This communicates "what the data looks like" more effectively than a prose description.
 
-- Render as a smaller sub-rect (`fill="#222222"`, `stroke="#444444"`) positioned below or inside the parent step/state box
+- Render as a smaller sub-rect (`fill="#0d1117"`, `stroke="#444444"`) positioned below or inside the parent step/state box
 - Use the code font at 9-10px for compact inline code
 - Keep to 1-2 lines; if longer, this belongs in the API docs, not the diagram
 
@@ -356,7 +356,7 @@ Error annotations should only appear when they convey constraints **not already 
 **Core layout:**
 
 - **Timeline spine:** A continuous 2px vertical line running from the first step to the last, creating a visual "flow" that connects the sequence. Without the spine, steps appear as disconnected boxes stacked vertically.
-- **Numbered circles on spine:** Each step gets a circle (`r="14"`, `fill="#333333"`, 2px accent-colored stroke) centered on the spine, with the step number in bold inside. Step description boxes extend to the right of the spine (left edge at ~spine + 30px).
+- **Numbered circles on spine:** Each step gets a circle (`r="14"`, `fill="#0d1117"`, 2px accent-coloured stroke) centred on the spine, with the step number in bold inside. Step description boxes extend to the right of the spine (left edge at ~spine + 30px).
 - Step boxes: ~40-50px tall, extending from the spine area to the right canvas edge minus padding
 - Phase boundary: horizontal dashed line spanning full width, labeled (e.g. "onInit" / "runtime")
 - **Spine termination:** The timeline spine should end at the last step circle or the phase boundary -- do not extend it into non-timeline regions (legends, annotations). A clean endpoint reinforces that the sequence is complete.

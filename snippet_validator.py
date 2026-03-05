@@ -20,6 +20,8 @@ import re
 import argparse
 import os
 import time
+import subprocess
+import platform
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -130,6 +132,106 @@ class HISEAPIClient:
 			"moduleId": module_id,
 			"expression": expression
 		})
+
+
+# ---------------------------------------------------------------------------
+# HISE Launcher
+# ---------------------------------------------------------------------------
+
+class HISELauncher:
+	"""Manages HISE process lifecycle for automated validation."""
+	
+	def __init__(self, debug=True, port=1900):
+		self.port = port
+		self.api_url = f"http://127.0.0.1:{port}"
+		self.process = None
+		self.we_launched = False
+		
+		# Resolve executable name per platform
+		name = "HISE Debug" if debug else "HISE"
+		if platform.system() == "Windows":
+			self.exe_name = f"{name}.exe"
+		else:
+			self.exe_name = name
+	
+	def is_running(self) -> bool:
+		"""Check if HISE REST API is reachable."""
+		try:
+			r = requests.get(f"{self.api_url}/api/status", timeout=2)
+			return r.status_code == 200
+		except requests.exceptions.RequestException:
+			return False
+	
+	def launch(self, timeout=30) -> bool:
+		"""Launch HISE with start_server, poll until ready."""
+		if self.is_running():
+			print(f"[OK] HISE already running on port {self.port}")
+			self.we_launched = False
+			return True
+		
+		cmd = [self.exe_name, "start_server", f"-port:{self.port}"]
+		print(f"Launching {self.exe_name} on port {self.port}...")
+		
+		try:
+			self.process = subprocess.Popen(
+				cmd,
+				stdout=subprocess.DEVNULL,
+				stderr=subprocess.DEVNULL
+			)
+		except FileNotFoundError:
+			print(Colors.red(f"[ERROR] '{self.exe_name}' not found on PATH"))
+			return False
+		
+		self.we_launched = True
+		
+		# Poll for readiness
+		start = time.perf_counter()
+		while time.perf_counter() - start < timeout:
+			time.sleep(1)
+			if self.is_running():
+				elapsed = time.perf_counter() - start
+				print(f"[OK] HISE ready ({elapsed:.1f}s)")
+				return True
+			# Check if process died
+			if self.process.poll() is not None:
+				print(Colors.red(f"[ERROR] HISE exited with code {self.process.returncode}"))
+				return False
+		
+		print(Colors.red(f"[ERROR] HISE failed to start within {timeout}s"))
+		self.process.terminate()
+		return False
+	
+	def shutdown(self) -> bool:
+		"""Send POST /api/shutdown, wait for process to exit."""
+		try:
+			r = requests.post(f"{self.api_url}/api/shutdown", timeout=5)
+			if r.status_code == 200:
+				print("Shutdown request sent")
+		except requests.exceptions.RequestException:
+			print(Colors.red("[WARNING] Could not send shutdown request"))
+			return False
+		
+		if self.process:
+			try:
+				self.process.wait(timeout=10)
+				print("[OK] HISE shut down")
+			except subprocess.TimeoutExpired:
+				print(Colors.yellow("[WARNING] HISE didn't exit, terminating"))
+				self.process.terminate()
+		else:
+			# No process handle - wait for port to become unavailable
+			for _ in range(10):
+				time.sleep(1)
+				if not self.is_running():
+					print("[OK] HISE shut down")
+					return True
+		
+		return True
+	
+	def cleanup(self, keep_alive=False):
+		"""Called after validation. Shuts down only if we launched."""
+		if self.we_launched and not keep_alive:
+			self.shutdown()
 
 
 # ---------------------------------------------------------------------------
@@ -671,8 +773,10 @@ class SnippetValidator:
 				verify_scripts = [verify_scripts]
 			
 			for i, verify_script in enumerate(verify_scripts):
-				if i > 0:
-					time.sleep(0.1)
+				delay_ms = verify_script.get("delay", 100 if i > 0 else 0)
+				delay_ms = min(delay_ms, 1000)
+				if delay_ms > 0:
+					time.sleep(delay_ms / 1000.0)
 				verify_type = verify_script.get("type")
 				
 				if verify_type == "log-output":
@@ -681,6 +785,7 @@ class SnippetValidator:
 					
 					verifications.append({
 						"type": "log-output",
+						"delay": delay_ms,
 						"expected": expected,
 						"actual": list(actual),
 					})
@@ -713,6 +818,7 @@ class SnippetValidator:
 					if not verify_result.get("success") or verify_result.get("errors"):
 						verifications.append({
 							"type": "REPL",
+							"delay": delay_ms,
 							"expression": expression,
 							"expected": expected_value,
 							"actual": None,
@@ -730,6 +836,7 @@ class SnippetValidator:
 					actual_value = verify_result.get("value")
 					verifications.append({
 						"type": "REPL",
+						"delay": delay_ms,
 						"expression": expression,
 						"expected": expected_value,
 						"actual": actual_value,
@@ -754,6 +861,7 @@ class SnippetValidator:
 					if not execution_failed:
 						verifications.append({
 							"type": "expect-error",
+							"delay": delay_ms,
 							"expectedPattern": expected_pattern,
 							"actualError": None,
 							"error": "Expected error but execution succeeded",
@@ -771,6 +879,7 @@ class SnippetValidator:
 					if not errors:
 						verifications.append({
 							"type": "expect-error",
+							"delay": delay_ms,
 							"expectedPattern": expected_pattern,
 							"actualError": None,
 							"error": "Expected error but no error message in response",
@@ -787,6 +896,7 @@ class SnippetValidator:
 					actual_msg = self._normalize_error_message(errors[0])
 					verifications.append({
 						"type": "expect-error",
+						"delay": delay_ms,
 						"expectedPattern": expected_pattern,
 						"actualError": actual_msg,
 					})
@@ -1346,6 +1456,10 @@ def cmd_validate(args, reader: MarkdownExampleReader,
 			
 			for ex in examples:
 				slug = ex["slug"]
+				
+				if args.slug and slug != args.slug:
+					continue
+				
 				key = sidecar.make_key(args.class_name, method_name, source, slug)
 				
 				label = f"{args.class_name}.{method_name}.{source}:{slug}"
@@ -1439,9 +1553,11 @@ def main():
 	                  help="Update code for an example")
 	mode.add_argument("--validate", action="store_true",
 	                  help="Run tests via HISE REST API")
+	mode.add_argument("--shutdown", action="store_true",
+	                  help="Shut down a running HISE instance and exit")
 	
 	# Common filters
-	parser.add_argument("--source", required=True,
+	parser.add_argument("--source",
 	                    choices=["auto", "project", "manual", "all"],
 	                    help="Source phase: auto (phase1), project (phase2), manual (phase3), or all")
 	parser.add_argument("--class", dest="class_name",
@@ -1483,9 +1599,38 @@ def main():
 	parser.add_argument("--timing", action="store_true",
 	                    help="Print HTTP round-trip times for each API call")
 	
+	# Launch options
+	parser.add_argument("--launch", action="store_true",
+	                    help="Launch HISE before validation, shut down after (--validate only)")
+	parser.add_argument("--keep-alive", action="store_true",
+	                    help="Keep HISE running after validation (requires --launch)")
+	parser.add_argument("--no-debug", action="store_true",
+	                    help="Use HISE release build instead of Debug (default: Debug)")
+	parser.add_argument("--port", type=int, default=1900,
+	                    help="HISE REST API port (default: 1900)")
+	
 	args = parser.parse_args()
 	
 	# --- Argument validation ---
+	
+	# Standalone --shutdown needs no other args
+	if args.shutdown:
+		launcher = HISELauncher(debug=not args.no_debug, port=args.port)
+		exit(0 if launcher.shutdown() else 1)
+	
+	# --source is required for all modes
+	if not args.source:
+		parser.error("--source is required")
+	
+	# --launch and --keep-alive only with --validate
+	if args.launch and not args.validate:
+		parser.error("--launch can only be used with --validate")
+	if args.keep_alive and not args.launch:
+		parser.error("--keep-alive requires --launch")
+	
+	# Derive api_url from --port if --api-url wasn't explicitly set
+	if args.api_url == "http://127.0.0.1:1900" and args.port != 1900:
+		args.api_url = f"http://127.0.0.1:{args.port}"
 	
 	if args.coverage:
 		if not (args.class_name or args.all_classes):
@@ -1532,7 +1677,20 @@ def main():
 	elif args.edit:
 		return cmd_edit(args, reader)
 	elif args.validate:
-		return cmd_validate(args, reader, sidecar)
+		launcher = None
+		if args.launch:
+			launcher = HISELauncher(debug=not args.no_debug, port=args.port)
+			if not launcher.launch():
+				return 3
+			# Override api_url when launched
+			if args.api_url == f"http://127.0.0.1:{args.port}":
+				args.api_url = launcher.api_url
+		
+		try:
+			return cmd_validate(args, reader, sidecar)
+		finally:
+			if launcher:
+				launcher.cleanup(keep_alive=args.keep_alive)
 
 
 if __name__ == "__main__":

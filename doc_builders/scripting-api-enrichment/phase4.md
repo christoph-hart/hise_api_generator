@@ -8,7 +8,7 @@ Phase 4a transforms the raw C++ analysis from Phases 1-3 into user-facing docume
 
 **ASCII-only rule:** All output files must use ASCII characters only. No em-dashes (use a regular dash or rewrite the sentence), no curly quotes.
 
-**Phase 3 as input:** Phase 3 files are the author's "no-filters diary" - conversational notes with high-level ideas, integration patterns, and domain insights. These files will be **injected into your prompt** when they exist. Extract unique insights, transform conversational prose to technical style, and incorporate into your userDocs. Phase 3 does NOT mechanically set userDocs - you read it as source material and decide what to include.
+**British English:** Use British spelling throughout all output files (behaviour, normalised, serialised, specialised, colour, etc.). See `userdocs_style.md` for the full word list.
 
 **Pitfalls and common mistakes are authored here.** Phase 1 and Phase 2 produce structured pitfall and common mistake data in the JSON. Phase 4a is responsible for curating and integrating this content directly into the `.md` files (as blockquote warnings and a Common Mistakes section). The merge/preview pipeline does not inject them mechanically - what you write is what appears on the page.
 
@@ -36,40 +36,9 @@ The agent reads from `enrichment/output/api_reference.json`, specifically the en
 - `crossReferences` - related methods
 - `diagram` - diagram specification (if present): `type` + `description`
 
-### Phase 3: Author's Diary (Injected into Prompt When Present)
+### Injected Diary Notes
 
-Phase 3 files are conversational notes written by the author - high-level ideas, integration patterns, domain insights, and real-world conventions. When they exist, they will be **injected directly into your prompt** (not available in the JSON).
-
-**Location:**
-- `enrichment/phase3/{ClassName}/Readme.md` - class-level diary
-- `enrichment/phase3/{ClassName}/{methodName}.md` - method-level diary
-
-**Your Task: Extract Substance, Strip Filler**
-
-Read Phase 3 content and extract:
-- **Integration patterns** - "GlobalCable: prepend `/` to cable ID to make it an OSC address"
-- **Cross-system interop** - "GlobalCable is the preferred way to communicate from C++ scriptnode nodes"
-- **Workflow patterns** - "TransportHandler: stop internal clock before loading preset, restart after"
-- **Domain conventions** - "Broadcaster metadata: use `/**` comment to auto-populate comment field"
-- **Design rationale** - Why the API works this way
-- **Use case narratives** - High-level "how you'd use this" stories
-
-**Ignore conversational filler:**
-- "in order to", "just", "also", "super helpful", "will come in handy"
-- Redundant restatements of Phase 1 technical facts
-- Vague introductions without concrete detail
-
-**Transformation Example:**
-
-Phase 3 prose:
-> "If you want to use a cable as OSC address that can send and receive values from external applications, you just need to prepend `/` before the id, so any cable that has an ID like `/some_osc_id` will automatically be used as OSC address as soon as you start using the global routing system as OSC server."
-
-Your extraction:
-> "Cable IDs with `/` prefix become OSC addresses when the global routing system runs as OSC server."
-
-**Length Warning:**
-
-If Phase 3 files exceed 500 lines, they will be noted in your prompt. Document this in your decision log: "Phase 3 {file} is {N} lines. Skimmed for unique patterns, found {X} insights incorporated."
+When diary notes exist for the class or method, they are injected into your prompt as additional context. These are conversational notes with integration patterns, design rationale, and domain insights. They describe purpose and use cases from a user perspective - prefer their framing over the C++ analysis in the JSON when they cover the same topic. Extract unique insights (patterns, conventions, workflows), strip conversational filler ("in order to", "just", "also"), and incorporate into your userDocs in tight technical style. If a diary note exceeds 500 lines, note this in your decision log.
 
 ---
 
@@ -91,9 +60,24 @@ The agent ONLY writes to `phase4/auto/`. Never read or modify files in `phase4/m
 ```markdown
 # ClassName
 
-[4-8 sentences providing a user-facing overview of what this class does,
-how you typically use it, the main method groups, and any important
-behavioral notes. One or two paragraphs.]
+[Opening sentence: what the class is and what it's for.]
+
+[If the class has 3+ capabilities, modes, or target types, break them
+into a numbered or bulleted list rather than inlining them in prose.]
+
+[1-2 sentences of purpose-driven prose: when you'd use this class,
+what problems it solves. Describe capabilities by purpose, not by
+listing method names.]
+
+[Optional: fenced code block showing how to create/obtain the object,
+if the expression is non-trivial.]
+
+[Optional: table for modes, sync options, or value descriptions.]
+
+[Optional: ![diagram](filename.svg) embedding.]
+
+> [Class-wide behavioural notes in a blockquote: build restrictions,
+> thread safety, global-vs-local scope.]
 
 ## Common Mistakes
 
@@ -104,9 +88,18 @@ behavioral notes. One or two paragraphs.]
 [Repeat for each curated common mistake.]
 ```
 
-The `# ClassName` heading is required. The overview content below it should be concise and scannable - no subheadings in the overview prose, but markdown tables and bullet lists are allowed when they improve readability (e.g. a table showing distinct modes or a short list of method groups). Target a length between the Phase 1 `purpose` and `details` - substantial enough to orient a scripter, but with all C++ internals stripped.
+The `# ClassName` heading is required. The overview content below it should be concise and scannable - no subheadings in the overview prose, but markdown tables, bulleted/numbered lists, fenced code blocks, and blockquotes are all encouraged where they improve readability (see `userdocs_style.md` for the full rules on each).
 
-The `## Common Mistakes` section is optional but recommended for classes with non-trivial usage patterns. Curate from the `commonMistakes` array in the JSON - you have editorial discretion to omit entries that are too obvious, too niche, or redundant with the overview prose. The format must be exactly as shown above (the preview pipeline renders it from the markdown).
+**Key structural rules:**
+- **Break inline enumerations** of 3+ items into bulleted or numbered lists.
+- **Pull class-wide behavioural notes** (build restrictions, thread safety, global/instance scope) into `>` blockquotes at the end of the overview, before Common Mistakes.
+- **No method catalogues.** Describe what the class does by purpose, not by listing method names. Referencing 1-2 methods to illustrate a workflow is fine; listing 3+ as a catalogue is not.
+- **Fenced code blocks** for non-trivial construction patterns (1-3 lines).
+- **British English** throughout (behaviour, normalised, serialised, specialised, etc.).
+
+Target a length between the Phase 1 `purpose` and `details` - substantial enough to orient a scripter, but with all C++ internals stripped. Scale the tone to the class complexity: simple utility classes should be approachable and purpose-driven; complex integration classes can use more technical language.
+
+The `## Common Mistakes` section is optional but recommended for classes with non-trivial usage patterns. Curate from the `commonMistakes` array in the JSON - you have editorial discretion to omit entries that are too obvious, too niche, or redundant with the overview prose. The format must be exactly as shown above (the preview pipeline renders it from the markdown). Note: the preview pipeline strips the Common Mistakes section at render time - it is retained in the JSON for LLM consumers but does not appear on the HTML page.
 
 ### Method-level: `phase4/auto/ClassName/methodName.md`
 
@@ -188,49 +181,17 @@ This step catches redundancy patterns that are only visible when all methods are
 
 ---
 
-## Example Selection (Phase 3 vs Phase 2 Triage)
-
-When both Phase 3 (hand-written) and Phase 2 (project-extracted) examples exist for the same method, choose based on quality:
-
-**Prefer Phase 3 when:**
-- Minimal, focused demonstration of a specific feature
-- Clear comments explaining the pattern
-- Self-contained (minimal setup boilerplate)
-- Shows conventions or patterns not in Phase 2
-
-**Prefer Phase 2 when:**
-- Real-world integration with multiple classes/methods
-- Demonstrates practical complexity Phase 3 doesn't cover
-- Includes error handling or edge cases
-- Shows architectural patterns from actual projects
-
-**Include both when:**
-- Both are high quality and show complementary aspects
-- Label as "Basic Example" (Phase 3) and "Real-World Usage" (Phase 2)
-
-**Close calls:**
-- If quality is similar, prefer Phase 3 (author intent)
-- Document close calls in decision log: "Close call between Phase 2 and Phase 3 examples. Used Phase 3 for clarity, but Phase 2 shows more realistic ID naming (`masterVolume` vs `volume`)"
-
----
-
 ## Decision Logging
 
 Create a decision log in `enrichment/output/decisions/{ClassName}_phase4a.md` documenting **non-obvious decisions** made during authoring.
 
 **What to Document (Non-Obvious Only):**
 
-Skip obvious cases like "used Phase 3 example because no Phase 2 exists". Document judgment calls:
+Skip obvious cases. Document judgment calls:
 
-**Example Selection:**
-- When you chose one example over another (Phase 3 vs Phase 2 triage)
-- When you included both examples (rationale for complementary value)
-- When you omitted an example (too long, duplicates concepts, poor quality)
-
-**Phase 3 Content:**
-- What insights you incorporated from Phase 3 (OSC patterns, C++ interop, workflows)
-- What you omitted from Phase 3 (redundant with Phase 1, too conversational, not valuable)
-- Length warnings (if Phase 3 file exceeded 500 lines)
+**Diary Notes:**
+- What insights you incorporated from injected diary notes
+- What you omitted (redundant, too conversational, not valuable)
 
 **Diagram Decisions:**
 - Why you rendered a diagram (complex topology, timing critical)
@@ -251,7 +212,7 @@ Structure the decision log with **two sections**:
 1. **Class-Level Decisions** - big-picture decisions affecting the entire class
 2. **Method Decisions** - per-method decisions, grouped under `### {MethodName}` headings
 
-**Only include methods with non-obvious decisions.** Skip methods where all choices were obvious (e.g., "used Phase 3 example because no Phase 2 exists").
+**Only include methods with non-obvious decisions.** Skip methods where all choices were obvious.
 
 ```markdown
 # Phase 4a Authoring Decisions - {ClassName}
@@ -260,7 +221,7 @@ Generated: {timestamp}
 
 ## Class-Level Decisions
 
-- Incorporated OSC address pattern from Phase 3 class diary (/ prefix for OSC addresses)
+- Incorporated OSC address pattern from diary notes (/ prefix for OSC addresses)
 - Rendered 2 diagrams (cable-dispatch, callback-threading), cut 1 (registerCallback - redundant with class-level)
 - Consolidated "global operation" statement (repeated on 3 methods) into class overview
 
@@ -268,17 +229,11 @@ Generated: {timestamp}
 
 ### setSyncMode
 
-- Used Phase 2 example over Phase 3. Rationale: Phase 2 shows preset-switching integration, Phase 3 is minimal demo.
 - Merged Phase 1 pitfall #2 and Phase 2 common mistake into single warning.
 
 ### startInternalClock
 
-- Used Phase 3 example (minimal, clear). Phase 2 example too complex for basic usage.
-- Phase 3 method diary is 650 lines - skimmed for patterns, incorporated timestamp workflow.
-
-### setOnGridChange
-
-- Close call between Phase 2 and Phase 3 examples. Used Phase 3 for clarity.
+- Diary note is 650 lines - skimmed for patterns, incorporated timestamp workflow.
 
 (Methods with no non-obvious decisions are not listed)
 ```
@@ -300,11 +255,10 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
    python snippet_validator.py --validate --source all --class ClassName
    ```
    Fix any failing examples before proceeding. Do not write user-facing prose about examples that fail validation.
-4. **Review Phase 3 diary** (if present):
-   - Check for Phase 3 files: `enrichment/phase3/{ClassName}/Readme.md` (class-level), `enrichment/phase3/{ClassName}/{methodName}.md` (method-level)
-   - If found, Phase 3 content will be **injected into your prompt** by the orchestration system
-   - Read and extract unique insights not in Phase 1/2 (integration patterns, cross-system interop, workflow sequences, domain conventions)
-   - Note for decision log: what you incorporated, what you omitted, any length warnings (if file >500 lines)
+4. **Review injected diary notes** (if present):
+   - Read and extract unique insights not in the JSON (integration patterns, use cases, workflow sequences, domain conventions)
+   - Prefer diary framing for purpose and use cases over the C++ analysis
+   - Note for decision log: what you incorporated, what you omitted
 5. **Triage diagrams** (see Diagram Triage below):
    - Review all diagram descriptions from Phase 1 (class-level `diagrams[]` and method-level `diagram` fields)
    - For each diagram, decide: render as SVG, or cut in favor of prose/tables
@@ -315,15 +269,15 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
    - Skip if a manual or auto SVG already exists
 7. Write class-level `Readme.md`:
    - Check `phase4/manual/ClassName/Readme.md` - if present, skip
-   - Check `phase4/auto/ClassName/Readme.md` - if present, skip (Phase 3 no longer sets userDocs)
-   - Write `Readme.md` with user-facing prose incorporating Phase 3 insights in technical style
+   - Check `phase4/auto/ClassName/Readme.md` - if present, skip
+   - Write `Readme.md` with user-facing prose incorporating diary insights in technical style
    - Add a `## Common Mistakes` section (curated from `commonMistakes` array)
    - Embed class-level diagram SVGs as `![brief](filename.svg)` (see Embedding Diagrams below)
    - If a diagram was cut during triage because a table or prose covers the same information better, use that table/prose instead
 8. Write method-level `.md` files:
    - Check `phase4/manual/ClassName/methodName.md` - if present, skip
-   - Check `phase4/auto/ClassName/methodName.md` - if present, skip (Phase 3 no longer sets userDocs)
-   - Write `methodName.md` with user-facing prose incorporating Phase 3 insights
+   - Check `phase4/auto/ClassName/methodName.md` - if present, skip
+   - Write `methodName.md` with user-facing prose incorporating diary insights
    - Integrate important pitfalls from the method's `pitfalls` array as `> **Warning:**` blockquotes (see Pitfall Integration above)
    - If the method has a `diagram` field that survived triage, embed the SVG as `![brief](filename.svg)`
    - If the method has a `diagramRef` field pointing to a rendered class-level diagram, link to the anchor: `[See: brief](#diagram-id)`

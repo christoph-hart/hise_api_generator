@@ -29,7 +29,7 @@ These require C++ source analysis (Phase 1) or manual input (Phase 2/3):
 - Constants (`addConstant()` calls in constructor)
 - Forced parameter types (`ADD_TYPED_API_METHOD_N` macros)
 - VarTypes mapping (C++ types remain as `var`, `int`, `String`, etc.)
-- `realtimeSafe` flag
+- `callScope` (thread safety tier)
 - Code examples
 - `obtainedVia` (how to get an instance)
 - `details` (full architecture analysis)

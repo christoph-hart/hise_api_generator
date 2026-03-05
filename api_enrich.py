@@ -1926,7 +1926,7 @@ def run_merge():
                 method_name = method_name_map.get(raw_name.lower(), raw_name)
                 p2_methods[method_name] = parse_method_override_md(md_file)
 
-        # --- Phase 3 data (diary format - read by Phase 4a, extract examples/xrefs only) ---
+        # --- Phase 3 data (diary format - examples + cross-references only) ---
         p3_readme = {}
         p3_methods = {}
         p3_class_dir = PHASE3_DIR / class_name
@@ -1974,26 +1974,15 @@ def run_merge():
                     p4_method_userdocs[canonical] = (prose, is_override)
 
         # --- Build class description ---
-        # Start with Phase 1, override with Phase 2/3 (last-writer-wins)
+        # Start with Phase 1, override with Phase 2 (last-writer-wins)
         desc = build_class_description(base.get("description", ""), p1_readme, "auto")
 
         # Phase 2: project context (additive, not override)
         if p2_readme.get("projectContext"):
             desc["projectContext"] = p2_readme["projectContext"]
 
-        # Phase 3 overrides (last-writer-wins)
-        for field in ("brief", "purpose", "details", "obtainedVia",
-                       "minimalObjectToken", "codeExample", "alternatives",
-                       "relatedPreprocessors"):
-            if field in p3_readme:
-                desc[field] = p3_readme[field]
-
-        # Phase 3 diagrams override (merge by id, last-writer-wins per id)
-        if p3_readme.get("diagrams"):
-            existing_by_id = {d["id"]: d for d in desc.get("diagrams", [])}
-            for diag in p3_readme["diagrams"]:
-                existing_by_id[diag["id"]] = diag
-            desc["diagrams"] = list(existing_by_id.values())
+        # Phase 3 is diary format: only examples + cross-references are
+        # extracted (see parse_phase3_diary). Prose is read by Phase 4a agents.
 
         # Phase 4: userDocs for class level
         desc["userDocs"] = p4_class_userdocs
@@ -2001,18 +1990,13 @@ def run_merge():
 
         # --- Constants ---
         constants = build_constants(p1_readme, "auto")
-        p3_constants = build_constants(p3_readme, "manual")
-        constants.update(p3_constants)  # Last-writer-wins per constant
 
         # --- Dynamic Constants ---
         dyn_constants = build_dynamic_constants(p1_readme, "auto")
-        p3_dyn = build_dynamic_constants(p3_readme, "manual")
-        dyn_constants.update(p3_dyn)
 
         # --- Common Mistakes (union merge) ---
         common_mistakes = build_common_mistakes(p1_readme, "auto")
         common_mistakes.extend(build_common_mistakes(p2_readme, "project"))
-        common_mistakes.extend(build_common_mistakes(p3_readme, "manual"))
 
         # --- Methods ---
         methods_output = {}
@@ -2219,6 +2203,22 @@ def run_merge():
 PREVIEW_DIR = OUTPUT_DIR / "preview"
 
 
+def strip_heading_section(text: str, heading: str) -> str:
+    """Remove a ## heading and its content from markdown text.
+
+    Strips from '## <heading>' (case-insensitive) up to the next '## ' heading
+    or end of string. Returns the text with that section removed.
+    """
+    import re
+    pattern = re.compile(
+        r'(?m)^## ' + re.escape(heading) + r'\s*\n'  # the heading line
+        r'(.*?)'                                       # content (non-greedy)
+        r'(?=^## |\Z)',                                # next heading or end
+        re.DOTALL | re.IGNORECASE
+    )
+    return pattern.sub('', text).strip()
+
+
 def desluggify(slug: str) -> str:
     """Convert a URL slug to a human-readable title.
 
@@ -2357,6 +2357,22 @@ def md_block(block: str) -> str:
         for item in items:
             html += f"<li>{item}</li>\n"
         html += "</ul>\n"
+        return html
+
+    # Ordered list (lines starting with "1. ", "2. ", etc.)
+    if re.match(r"^\d+\.\s", lines[0]) and all(re.match(r"^\d+\.\s", l) or l.startswith("  ") or l == "" for l in lines):
+        items_ol: list[str] = []
+        for line in lines:
+            stripped = line.strip()
+            ol_match = re.match(r"^\d+\.\s+(.*)", stripped)
+            if ol_match:
+                items_ol.append(md_inline(ol_match.group(1)))
+            elif stripped and items_ol:
+                items_ol[-1] += f"<br>{md_inline(stripped)}"
+        html = "<ol>\n"
+        for item in items_ol:
+            html += f"<li>{item}</li>\n"
+        html += "</ol>\n"
         return html
 
     # Default: paragraph
@@ -2673,16 +2689,16 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
         if desc.get("userDocs"):
             sidebar_sections.append(("overview", "Overview"))
     else:
+        if desc.get("codeExample"):
+            sidebar_sections.append(("usage-example", "Usage Example"))
         if desc.get("purpose"):
             sidebar_sections.append(("overview", "Overview"))
         if desc.get("details"):
             sidebar_sections.append(("details", "Details"))
         if desc.get("projectContext"):
             sidebar_sections.append(("project-context", "Project Context"))
-    if not is_llm and desc.get("codeExample"):
+    if is_web and not is_llm and desc.get("codeExample"):
         sidebar_sections.append(("usage-example", "Usage Example"))
-    if not is_web and not is_llm and c.get("commonMistakes"):
-        sidebar_sections.append(("common-mistakes", "Common Mistakes"))
     if not is_web and not is_llm and desc.get("relatedPreprocessors"):
         sidebar_sections.append(("preprocessors", "Preprocessors"))
 
@@ -2729,6 +2745,11 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
     if not is_web and desc.get("obtainedVia"):
         main += f'<p><strong>Obtained via:</strong> {md_inline(desc["obtainedVia"])}</p>\n'
 
+    # Code example first (review and web modes only)
+    if not is_llm and desc.get("codeExample"):
+        main += '<h2 id="usage-example">Usage Example</h2>\n'
+        main += f'<pre><code class="language-javascript">{html_escape(desc["codeExample"])}</code></pre>\n'
+
     # Class-level prose
     if is_llm:
         # LLM mode: brief overview from purpose, no details/userDocs
@@ -2738,7 +2759,8 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
     elif is_web:
         if desc.get("userDocs"):
             main += '<h2 id="overview">Overview</h2>\n'
-            for para in desc["userDocs"].split("\n\n"):
+            ud_class_text = strip_heading_section(desc["userDocs"], "Common Mistakes")
+            for para in ud_class_text.split("\n\n"):
                 para = para.strip()
                 if para:
                     main += md_block(para)
@@ -2761,22 +2783,6 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
             para = para.strip()
             if para:
                 main += md_block(para)
-
-    # Code example (review and web modes only)
-    if not is_llm and desc.get("codeExample"):
-        main += '<h2 id="usage-example">Usage Example</h2>\n'
-        main += f'<pre><code class="language-javascript">{html_escape(desc["codeExample"])}</code></pre>\n'
-
-    # Common mistakes (review mode only -- web mode gets them from class userDocs)
-    if not is_web and not is_llm and c.get("commonMistakes"):
-        main += '<h2 id="common-mistakes">Common Mistakes</h2>\n'
-        for m in c["commonMistakes"]:
-            main += (
-                '<div class="mistake">'
-                f'<strong>Wrong:</strong> {md_inline(m["wrong"])}<br>'
-                f'<strong>Right:</strong> {md_inline(m["right"])}<br>'
-                f'<em>{md_inline(m["explanation"])}</em></div>\n'
-            )
 
     # Related preprocessors (review mode only)
     if not is_web and not is_llm and desc.get("relatedPreprocessors"):
@@ -2839,23 +2845,7 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
                 # LLM mode: render Phase 4b content as styled pre block
                 main += f'<div class="llm-ref">{render_llm_ref(m["llmRef"])}</div>\n'
             else:
-                # Minimal example (right after signature, review+web modes)
-                if m.get("minimalExample"):
-                    main += f'<p class="minimal-example"><code>{html_escape(m["minimalExample"])}</code></p>\n'
-
-                # Params (right after signature, review+web modes)
-                if m.get("parameters"):
-                    main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
-                    for p in m["parameters"]:
-                        pt = display_type(p.get("type", "var")) or "var"
-                        main += (
-                            f'<tr><td><code>{html_escape(p.get("name", ""))}</code></td>'
-                            f'<td><code>{html_escape(pt)}</code></td>'
-                            f'<td>{md_inline(p.get("description", ""))}</td></tr>\n'
-                        )
-                    main += "</table>\n"
-
-                # Method description: web mode uses userDocs, review uses description
+                # Method description (always visible, right after signature)
                 if is_web and m.get("userDocs"):
                     ud_text = m["userDocs"]
                     # Render multi-block userDocs (may contain tables)
@@ -2866,26 +2856,48 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
                 else:
                     main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
 
-                # Value Descriptions (review mode only -- userDocs covers this in web mode)
-                if not is_web and m.get("valueDescriptions"):
-                    main += "<table><tr><th>Value</th><th>Description</th></tr>\n"
-                    for vd in m["valueDescriptions"]:
-                        main += (
-                            f'<tr><td><code>{html_escape(vd.get("value", ""))}</code></td>'
-                            f'<td>{md_inline(vd.get("description", ""))}</td></tr>\n'
-                        )
-                    main += "</table>\n"
+                # Collapsible "Detailed" section (minimal example, params, value descriptions, callback properties)
+                has_detailed = m.get("minimalExample") or m.get("parameters") or (not is_web and m.get("valueDescriptions")) or (not is_web and m.get("callbackProperties"))
+                if has_detailed:
+                    main += '<details class="method-detailed">\n'
+                    main += '<summary>Detailed</summary>\n'
 
-                # Callback Properties (review mode only -- userDocs covers this in web mode)
-                if not is_web and m.get("callbackProperties"):
-                    main += "<table><tr><th>Property</th><th>Type</th><th>Description</th></tr>\n"
-                    for cp in m["callbackProperties"]:
-                        main += (
-                            f'<tr><td><code>{html_escape(cp.get("property", ""))}</code></td>'
-                            f'<td><code>{html_escape(cp.get("type", ""))}</code></td>'
-                            f'<td>{md_inline(cp.get("description", ""))}</td></tr>\n'
-                        )
-                    main += "</table>\n"
+                    if m.get("minimalExample"):
+                        main += f'<p class="minimal-example"><code>{html_escape(m["minimalExample"])}</code></p>\n'
+
+                    if m.get("parameters"):
+                        main += "<table><tr><th>Parameter</th><th>Type</th><th>Description</th></tr>\n"
+                        for p in m["parameters"]:
+                            pt = display_type(p.get("type", "var")) or "var"
+                            main += (
+                                f'<tr><td><code>{html_escape(p.get("name", ""))}</code></td>'
+                                f'<td><code>{html_escape(pt)}</code></td>'
+                                f'<td>{md_inline(p.get("description", ""))}</td></tr>\n'
+                            )
+                        main += "</table>\n"
+
+                    # Value Descriptions (review mode only)
+                    if not is_web and m.get("valueDescriptions"):
+                        main += "<table><tr><th>Value</th><th>Description</th></tr>\n"
+                        for vd in m["valueDescriptions"]:
+                            main += (
+                                f'<tr><td><code>{html_escape(vd.get("value", ""))}</code></td>'
+                                f'<td>{md_inline(vd.get("description", ""))}</td></tr>\n'
+                            )
+                        main += "</table>\n"
+
+                    # Callback Properties (review mode only)
+                    if not is_web and m.get("callbackProperties"):
+                        main += "<table><tr><th>Property</th><th>Type</th><th>Description</th></tr>\n"
+                        for cp in m["callbackProperties"]:
+                            main += (
+                                f'<tr><td><code>{html_escape(cp.get("property", ""))}</code></td>'
+                                f'<td><code>{html_escape(cp.get("type", ""))}</code></td>'
+                                f'<td>{md_inline(cp.get("description", ""))}</td></tr>\n'
+                            )
+                        main += "</table>\n"
+
+                    main += '</details>\n'
 
                 # Pitfalls (review mode only -- web mode gets them from userDocs blockquotes)
                 if not is_web:
@@ -2924,8 +2936,8 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
                             elif result.get("skipped"):
                                 badge = f' <span class="badge badge-skip" data-key="{esc_key}" onclick="showValidation(this,event)">skipped</span>'
 
-                    main += f'<details class="example-details" open>\n'
-                    main += f'<summary>{html_escape(header)}{badge}</summary>\n'
+                    main += f'<details class="example-details">\n'
+                    main += f'<summary>Code Example: {html_escape(header)}{badge}</summary>\n'
                     main += f'<pre><code class="language-javascript">{html_escape(ex.get("code", ""))}</code></pre>\n'
                     main += f'</details>\n'
 
@@ -2940,6 +2952,27 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
             main += "</div>\n"
 
     main += "</div>\n"
+
+    # --- Post-process: wrap diagram divs with feedback overlay buttons ---
+    def _add_diagram_fb(m):
+        diagram_id = m.group(1)
+        img_tag = m.group(2)
+        fb_key = f"{class_name}.diagram.{diagram_id}"
+        src_match = re.search(r'src="([^"]*)"', img_tag)
+        img_src = src_match.group(1) if src_match else ""
+        return (
+            f'<div class="diagram-wrap">'
+            f'<div id="diagram-{diagram_id}" style="margin:16px 0;">{img_tag}</div>'
+            f'<button class="diagram-fb-btn" data-diagram-key="{html_escape(fb_key)}" '
+            f'data-diagram-src="{html_escape(img_src)}" '
+            f'onclick="showDiagramFeedback(this)">Feedback</button>'
+            f'</div>'
+        )
+    main = re.sub(
+        r'<div id="diagram-([^"]+)" style="margin:16px 0;">(.*?)</div>',
+        _add_diagram_fb,
+        main
+    )
 
     # --- Build validation data JSON for this page ---
     validation_json = json.dumps(page_validation_data, ensure_ascii=False)
@@ -3053,6 +3086,13 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 /* Class-level summary (standard size) */
 .decision-summary {{ }}
 
+/* Collapsible method details (params, minimal example, value/callback tables) */
+.method-detailed {{ margin: 8px 0 12px; }}
+.method-detailed summary {{ cursor: pointer; font-size: 0.9em; color: #8b949e; padding: 4px 0; list-style: none; }}
+.method-detailed summary::-webkit-details-marker {{ display: none; }}
+.method-detailed summary::before {{ content: "\\25B6  "; display: inline-block; transition: transform 0.2s; font-size: 0.7em; vertical-align: middle; }}
+.method-detailed[open] summary::before {{ transform: rotate(90deg); }}
+
 /* Collapsible examples */
 .example-details {{ margin: 8px 0 12px; }}
 .example-details summary {{ cursor: pointer; font-size: 0.9em; color: #8b949e; padding: 4px 0; list-style: none; }}
@@ -3084,6 +3124,7 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 .vmodal-repl-copy {{ background: none; border: none; color: #484f58; cursor: pointer; font-size: 0.95em; padding: 0; line-height: 1; flex-shrink: 0; }}
 .vmodal-repl-copy:hover {{ color: #c9d1d9; }}
 .vmodal-repl-copy.copied {{ color: #7ee787; }}
+.vmodal-delay {{ color: #8b949e; font-size: 0.85em; margin-left: 6px; }}
 .vmodal-status {{ display: inline-block; font-size: 0.8em; padding: 2px 10px; border-radius: 10px; margin-bottom: 12px; }}
 .vmodal-status.pass {{ background: rgba(78,142,53,0.2); color: #7ee787; border: 1px solid rgba(78,142,53,0.4); }}
 .vmodal-status.skip {{ background: rgba(139,148,158,0.15); color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }}
@@ -3124,6 +3165,17 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 .fb-toolbar-btn:hover {{ background: #30363d; color: #e6edf3; }}
 .vmodal-fb-group {{ margin-bottom: 16px; }}
 .vmodal-fb-group-title {{ color: #58a6ff; font-size: 0.9em; font-weight: 600; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #21262d; }}
+.cat-replace-with-prose {{ background: rgba(248,81,73,0.15); color: #f85149; border-color: rgba(248,81,73,0.3); }}
+.cat-modify {{ background: rgba(210,153,34,0.15); color: #e3b341; border-color: rgba(210,153,34,0.3); }}
+.cat-move-to-method {{ background: rgba(56,139,253,0.15); color: #58a6ff; border-color: rgba(56,139,253,0.3); }}
+.diagram-wrap {{ position: relative; margin: 16px 0; }}
+.diagram-wrap .diagram-fb-btn {{ position: absolute; top: 8px; right: 8px; background: rgba(33,38,45,0.85); border: 1px solid #30363d; color: #8b949e; cursor: pointer; font-size: 0.85em; padding: 4px 8px; border-radius: 6px; opacity: 0; transition: opacity 0.15s; }}
+.diagram-wrap:hover .diagram-fb-btn {{ opacity: 1; }}
+.diagram-wrap .diagram-fb-btn:hover {{ color: #58a6ff; border-color: #58a6ff; }}
+.diagram-wrap .diagram-fb-btn.has-fb {{ opacity: 0.6; color: #e3b341; border-color: #e3b341; }}
+.diagram-wrap:hover .diagram-fb-btn.has-fb {{ opacity: 1; }}
+.vmodal-diagram-preview {{ margin-bottom: 16px; padding: 12px; background: #0d1117; border: 1px solid #21262d; border-radius: 6px; text-align: center; }}
+.vmodal-diagram-preview img {{ max-width: 100%; }}
 </style>
 </head>
 <body>
@@ -3193,6 +3245,7 @@ try { var _raw = localStorage.getItem(_fbLsKey); if (_raw) _fbStore = JSON.parse
 function saveFeedback() {
     try { localStorage.setItem(_fbLsKey, JSON.stringify(_fbStore)); } catch(e) {}
     updateExportCount();
+    if (typeof updateDiagramBadges === 'function') updateDiagramBadges();
 }
 function updateExportCount() {
     var n = 0;
@@ -3218,8 +3271,10 @@ function renderFeedbackList(key) {
 }
 document.addEventListener('click', function(e) {
     var btn = e.target.closest('[data-fbdel]');
-    if (!btn || !window._vmodalCurrentKey) return;
-    deleteFeedback(window._vmodalCurrentKey, parseInt(btn.getAttribute('data-fbdel')));
+    if (!btn) return;
+    var key = btn.getAttribute('data-fbkey') || window._vmodalCurrentKey;
+    if (!key) return;
+    deleteFeedback(key, parseInt(btn.getAttribute('data-fbdel')));
 });
 function showValidation(el, ev) {
     if (ev) { ev.stopPropagation(); ev.preventDefault(); }
@@ -3293,21 +3348,22 @@ function showValidation(el, ev) {
         body += '<tr><th>Check</th><th>Expected</th><th>Actual</th></tr>';
         for (var i = 0; i < v.length; i++) {
             var item = v[i];
+            var delayTag = (item.delay > 0) ? ' <span class="vmodal-delay">(' + item.delay + 'ms delay)</span>' : '';
             if (item.type === 'REPL') {
                 body += '<tr>';
-                body += '<td class="mono"><span class="vmodal-repl-expr">' + esc(item.expression) + '<button class="vmodal-repl-copy" data-expr="' + esc(item.expression) + '" onclick="copyRepl(this)" title="Copy to clipboard">\u2398</button></span></td>';
+                body += '<td class="mono"><span class="vmodal-repl-expr">' + esc(item.expression) + '<button class="vmodal-repl-copy" data-expr="' + esc(item.expression) + '" onclick="copyRepl(this)" title="Copy to clipboard">\u2398</button></span>' + delayTag + '</td>';
                 body += '<td class="mono">' + fmtVal(item.expected) + '</td>';
                 body += '<td class="mono vmodal-match">' + fmtVal(item.actual) + '</td>';
                 body += '</tr>';
             } else if (item.type === 'log-output') {
                 body += '<tr>';
-                body += '<td><span class="vmodal-label">Log output</span></td>';
+                body += '<td><span class="vmodal-label">Log output</span>' + delayTag + '</td>';
                 body += '<td>' + fmtLogList(item.expected) + '</td>';
                 body += '<td class="vmodal-match">' + fmtLogList(item.actual) + '</td>';
                 body += '</tr>';
             } else if (item.type === 'expect-error') {
                 body += '<tr>';
-                body += '<td><span class="vmodal-label">Error message</span></td>';
+                body += '<td><span class="vmodal-label">Error message</span>' + delayTag + '</td>';
                 body += '<td class="mono">' + esc(item.expectedPattern || '') + '</td>';
                 body += '<td class="mono vmodal-match">' + esc(item.actualError || '') + '</td>';
                 body += '</tr>';
@@ -3442,7 +3498,14 @@ function deleteFeedback(key, idx) {
     _fbStore[key].splice(idx, 1);
     if (_fbStore[key].length === 0) delete _fbStore[key];
     saveFeedback();
-    document.getElementById('vmodal-feedback').innerHTML = renderFeedbackList(key);
+    var fbEl = document.getElementById('vmodal-feedback');
+    if (fbEl && window._vmodalCurrentKey === key) {
+        fbEl.innerHTML = renderFeedbackList(key);
+    }
+    var title = document.getElementById('vmodal-title');
+    if (title && title.textContent.indexOf('Review') !== -1) {
+        showAllFeedback();
+    }
 }
 function showAllFeedback() {
     var keys = Object.keys(_fbStore).sort();
@@ -3469,6 +3532,7 @@ function showAllFeedback() {
             body += '<span class="vmodal-fb-cat cat-' + esc(item.category) + '">' + esc(item.category) + '</span> ';
             body += '<span class="vmodal-fb-comment">' + esc(item.comment) + '</span>';
             body += '<span class="vmodal-fb-date">' + date + '</span>';
+            body += '<button class="vmodal-fb-del" data-fbdel="' + i + '" data-fbkey="' + esc(key) + '">&times;</button>';
             body += '</div>';
         }
         body += '</div>';
@@ -3476,7 +3540,41 @@ function showAllFeedback() {
     document.getElementById('vmodal-body').innerHTML = body;
     document.getElementById('vmodal-backdrop').classList.add('visible');
 }
+function showDiagramFeedback(btn) {
+    var key = btn.getAttribute('data-diagram-key');
+    if (!key) return;
+    var imgSrc = btn.getAttribute('data-diagram-src') || '';
+    var parts = key.split('.');
+    var diagramId = parts.slice(2).join('.');
+    document.getElementById('vmodal-title').textContent = 'Diagram: ' + diagramId;
+    window._vmodalCurrentKey = key;
+    var body = '';
+    if (imgSrc) {
+        body += '<div class="vmodal-diagram-preview"><img src="' + esc(imgSrc) + '" alt="' + esc(diagramId) + '"></div>';
+    }
+    body += '<div class="vmodal-fb-section" style="border-top:none; margin-top:0;">';
+    body += '<div id="vmodal-feedback">' + renderFeedbackList(key) + '</div>';
+    body += '<div class="vmodal-fb-form">';
+    body += '<select id="vmodal-fb-cat"><option value="replace-with-prose">replace with table/prose</option><option value="modify">modify SVG</option><option value="move-to-method">move to method</option></select>';
+    body += '<textarea id="vmodal-fb-comment" rows="3" placeholder="Enter diagram feedback (for move-to-method: type the target method name)..."></textarea>';
+    body += '<button class="vmodal-fb-submit" onclick="submitFeedback()">Submit</button>';
+    body += '</div></div>';
+    document.getElementById('vmodal-body').innerHTML = body;
+    document.getElementById('vmodal-backdrop').classList.add('visible');
+}
+function updateDiagramBadges() {
+    var btns = document.querySelectorAll('.diagram-fb-btn');
+    for (var i = 0; i < btns.length; i++) {
+        var key = btns[i].getAttribute('data-diagram-key');
+        if (_fbStore[key] && _fbStore[key].length > 0) {
+            btns[i].classList.add('has-fb');
+        } else {
+            btns[i].classList.remove('has-fb');
+        }
+    }
+}
 updateExportCount();
+updateDiagramBadges();
 </script>
 </body></html>"""
 
@@ -3778,14 +3876,18 @@ def run_preview(class_filter: str = None):
 
         # Copy SVG diagrams to preview/images/ (manual overrides auto)
         svg_count = 0
+        manual_copied = set()
         for phase4_dir in (PHASE4_MANUAL_DIR, PHASE4_AUTO_DIR):
             svg_dir = phase4_dir / name
             if svg_dir.is_dir():
                 for svg_file in svg_dir.glob("*.svg"):
                     dest = images_dir / svg_file.name
-                    if not dest.exists() or phase4_dir == PHASE4_MANUAL_DIR:
-                        shutil.copy2(svg_file, dest)
-                        svg_count += 1
+                    if svg_file.name in manual_copied:
+                        continue  # manual already copied, don't overwrite
+                    shutil.copy2(svg_file, dest)
+                    svg_count += 1
+                    if phase4_dir == PHASE4_MANUAL_DIR:
+                        manual_copied.add(svg_file.name)
         if svg_count:
             print(f"  Copied {svg_count} SVG(s) to preview/images/")
 

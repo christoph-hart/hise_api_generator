@@ -61,15 +61,14 @@ Phase 0: batchCreate.bat -> xml/selection/*.xml -> enrichment/base/*.json
        |   (batch script + Python, 100% mechanical)
        |
 Phase 1: C++ source analysis + example synthesis
-       |   Sub-agent  -> ClassName/Readme.md (class-level artifact, durable)
-       |              -> ClassName/methods_todo.md (workbench: checklist + type map)
-       |   Main agent -> ClassName/methods.md (per-method output, fire-and-forget)
-       |   Exploration -> resources/explorations/ClassName.md (raw C++ source extracts)
-       |   Post-process -> deduplicate, cross-ref, markdown -> JSON
+       |   Step A1 (sub-agent) -> resources/explorations/ClassName.md (raw C++ extracts)
+       |   Step A2 (sub-agent) -> ClassName/Readme.md + methods_todo.md (distilled)
+       |   Step B  (main agent) -> ClassName/methods.md (per-method, fire-and-forget)
+       |   Step C  (post-process) -> deduplicate, cross-ref, markdown -> JSON
        |
-Phase 2: Merge project analysis examples (mechanical merge)
+Phase 2: Pipeline gate (external project extraction) + test metadata enrichment
        |
-Phase 3: Merge manual markdown overrides (highest priority, mechanical merge)
+Phase 3: Author's diary (code examples + cross-refs extracted mechanically)
        |
 Phase 4a: User-facing documentation authoring (human HISEScript developers)
        |   Agent-driven -> phase4/auto/ClassName/*.md (LLM-generated userDocs)
@@ -107,14 +106,32 @@ tools/api generator/
 │   │   │   └── methods.md
 │   │   └── ...
 │   ├── phase1_scanned.txt                    # Diff manifest (ClassName.methodName per line)
+│   ├── resources/
+│   │   ├── explorations/                     # Raw C++ source explorations (Phase 1 Step A1)
+│   │   │   ├── Broadcaster.md
+│   │   │   └── ...
+│   │   ├── guidelines/                       # Style guides for agents
+│   │   │   ├── test_metadata.md
+│   │   │   ├── userdocs_style.md
+│   │   │   ├── diagram_creation.md
+│   │   │   ├── hisescript_example_rules.md
+│   │   │   ├── code_example_quality.md
+│   │   │   └── builder_reference.md
+│   │   ├── survey/                           # Class survey data
+│   │   │   ├── class_survey.md
+│   │   │   └── class_survey_data.json
+│   │   ├── base_methods/                     # Pre-distilled base class methods
+│   │   │   └── ScriptComponent.md
+│   │   ├── laf_style_guide.json              # LAF conventions reference
+│   │   └── deprecated_methods.md             # Deprecated method registry
 │   ├── phase2/                               # Project example overrides
 │   │   ├── Broadcaster/
 │   │   │   └── addListener.md
 │   │   └── ...
-│   ├── phase3/                               # Manual markdown overrides
+│   ├── phase3/                               # Author's diary (input for Phase 4a)
 │   │   ├── Broadcaster/
-│   │   │   ├── Readme.md                     # Override class-level fields
-│   │   │   └── addListener.md                # Override specific method
+│   │   │   ├── Readme.md                     # Class-level diary notes
+│   │   │   └── addListener.md                # Method-level diary notes
 │   │   └── ...
 │   ├── phase4/                               # User-facing documentation (userDocs)
 │   │   ├── auto/                             # LLM-generated userDocs
@@ -153,12 +170,17 @@ tools/api generator/
         "alternatives": "Related classes (optional, null if N/A)",
         "relatedPreprocessors": ["DEFINE_NAME"],
         "userGuidePage": null,
-        "userDocs": "User-facing prose (from Phase 3/4, null if not yet authored)",
+        "userDocs": "User-facing prose (from Phase 4a, null if not yet authored)",
         "userDocOverride": false,
-        "diagram": {
-          "type": "topology",
-          "description": "Plain text description of the diagram for LLM consumption"
-        }
+        "diagrams": [
+          {
+            "id": "diagram-id",
+            "brief": "Short Human-Readable Label",
+            "type": "topology",
+            "description": "Plain text description of the diagram for LLM consumption",
+            "svg": "diagrams/ClassName/topology_diagram-id.svg"
+          }
+        ]
       },
       "category": "namespace|object|component|scriptnode",
       "constants": {
@@ -215,11 +237,13 @@ tools/api generator/
               "source": "auto|project|manual"
             }
           ],
-          "userDocs": "User-facing method prose (from Phase 3/4, null if not yet authored)",
+          "userDocs": "User-facing method prose (from Phase 4a, null if not yet authored)",
           "userDocOverride": false,
           "diagram": {
+            "brief": "Short Label",
             "type": "timing",
-            "description": "Plain text description of what the diagram shows"
+            "description": "Plain text description of what the diagram shows",
+            "svg": "diagrams/ClassName/timing_methodName.svg"
           }
         }
       }
@@ -227,6 +251,12 @@ tools/api generator/
   }
 }
 ```
+
+**Diagram field notes:**
+- Class-level `diagrams` is an **array** (a class can have multiple diagrams, each with a unique `id`).
+- Method-level `diagram` is a **single object** (one diagram per method, no `id` needed).
+- A method can alternatively use `"diagramRef": "class-level-diagram-id"` instead of its own `diagram` when it participates in a class-level diagram. A method has `diagram`, `diagramRef`, or neither -- never both.
+- See `resources/guidelines/diagram_creation.md` for the full diagram authoring guide.
 
 ---
 
@@ -241,13 +271,13 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | 3 | `details` | Optional | Phase 1 | **Deep reference** -- return for deep dives | Full structured technical reference. Architecture, internal patterns, modes, inheritance-derived capabilities. Markdown with tables and headings. `null` for simple classes where `purpose` says everything. |
 | 4 | `obtainedVia` | **Required** | Phase 1 | **Working context** | How to get an instance in HiseScript (e.g., `Engine.createBroadcaster()`, global variable, `Content.addX()`). |
 | 5 | `minimalObjectToken` | **Required** | Phase 1 | **Working context** | Short variable name used in method `minimalExample` one-liners (e.g., `Button1`, `bc`). Empty string for namespace classes. The class `codeExample` MUST create a variable with this name. |
-| 6 | `codeExample` | **Required** | Phase 1 (overridable Phase 3) | **Working context** | Basic usage example showing the class in action. MUST create a variable named `minimalObjectToken` (for non-namespace classes). |
+| 6 | `codeExample` | **Required** | Phase 1 | **Working context** | Basic usage example showing the class in action. MUST create a variable named `minimalObjectToken` (for non-namespace classes). |
 | 7 | `alternatives` | Optional | Phase 1 | **Working context** | Related classes for similar tasks. `null` if N/A. |
 | 8 | `relatedPreprocessors` | Optional | Phase 1 | **Deep reference** | C++ `#define` macros that gate this class's availability (e.g., `USE_BACKEND`, `HISE_INCLUDE_LORIS`). Array of strings. |
 | 9 | `userGuidePage` | Deferred | -- | -- | Link to a user guide page. Not in MVP -- placeholder for later. |
-| 10 | `userDocs` | Optional | Phase 3/4a | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. Priority: Phase 4a manual > Phase 3 raw docs > Phase 4a auto. |
-| 11 | `userDocOverride` | Auto | Phase 3/4 | -- | `true` if `userDocs` came from `phase4/manual/` or Phase 3 raw docs, `false` if from `phase4/auto/` or absent. |
-| 12 | `diagram` | Optional | Phase 1 (overridable Phase 3) | **Deep reference** + **Web display** | Diagram specification for visual rendering. Contains `type` (timing\|topology\|sequence\|state) and `description` (plain text for LLM consumption). `null` if no diagram needed. SVGs rendered in Phase 4a. |
+| 10 | `userDocs` | Optional | Phase 4a | **Web display** | User-facing prose for the class overview. Flat string, scripter-friendly language. `null` if not yet authored. Priority: Phase 4a manual > Phase 4a auto. |
+| 11 | `userDocOverride` | Auto | Phase 4a | -- | `true` if `userDocs` came from `phase4/manual/`, `false` if from `phase4/auto/` or absent. |
+| 12 | `diagram` | Optional | Phase 1 | **Deep reference** + **Web display** | Diagram specification for visual rendering. Contains `type` (timing\|topology\|sequence\|state) and `description` (plain text for LLM consumption). `null` if no diagram needed. SVGs rendered in Phase 4a. |
 
 ---
 
@@ -265,8 +295,8 @@ The class `description` object provides three tiers of detail, allowing the MCP 
 | `crossReferences` | Array of Strings | Optional | Related methods in the format `ClassName.methodName`. |
 | `pitfalls` | Array | Optional | Non-obvious behaviors or gotchas. Each entry: `{ description, source }`. |
 | `examples` | Array | Optional | Code examples. Each entry: `{ title, code, context, source }`. |
-| `userDocs` | String\|null | Optional | User-facing method prose from Phase 3/4a. `null` if not yet authored. Priority: Phase 4a manual > Phase 3 raw docs > Phase 4a auto. |
-| `userDocOverride` | boolean | Auto | `true` if `userDocs` came from `phase4/manual/` or Phase 3 raw docs, `false` otherwise. |
+| `userDocs` | String\|null | Optional | User-facing method prose from Phase 4a. `null` if not yet authored. Priority: Phase 4a manual > Phase 4a auto. |
+| `userDocOverride` | boolean | Auto | `true` if `userDocs` came from `phase4/manual/`, `false` otherwise. |
 | `diagram` | Object\|null | Optional | Diagram specification: `{ type, description }`. `type` is one of `timing`, `topology`, `sequence`, `state`. `description` is plain text for LLM consumption. SVGs rendered in Phase 4a. `null` if no diagram needed. |
 
 ### Parameter Object
@@ -373,7 +403,9 @@ Type enforcement is active in the HISE IDE (`USE_BACKEND`) and stripped from exp
 
 When multiple phases provide data for the same field, these rules determine the final value:
 
-### Last-Writer-Wins Fields (Phase 3 > Phase 2 > Phase 1 > Phase 0)
+### Last-Writer-Wins Fields (Phase 1 > Phase 0)
+
+These fields are set by Phase 1 (C++ analysis) and not overridden by later phases:
 
 - `description.brief`
 - `description.purpose`
@@ -387,9 +419,12 @@ When multiple phases provide data for the same field, these rules determine the 
 - `methods.*.description`
 - `methods.*.minimalExample`
 - `methods.*.diagram` (entire object replaced)
-- `methods.*.examples` (entire array replaced)
 - `constants.*` (per constant, entire entry replaced)
 - `dynamicConstants.*` (per constant, entire entry replaced)
+
+### Examples (Phase 3 > Phase 2 > Phase 1)
+
+- `methods.*.examples` (entire array replaced by the last phase that provides them)
 
 ### Merged Union Fields (all sources combined, tagged)
 
@@ -402,7 +437,7 @@ When multiple phases provide data for the same field, these rules determine the 
 All enrichment data is tagged with its origin:
 - `"auto"` -- Phase 1 (AI-synthesized from C++ source analysis)
 - `"project"` -- Phase 2 (extracted from project analysis datasets)
-- `"manual"` -- Phase 3 (manually authored overrides)
+- `"manual"` -- Phase 3 (hand-written code examples from author's diary)
 
 ---
 
@@ -461,24 +496,31 @@ The exact class-to-category mapping table is maintained in `scripting-api-enrich
 
 ## Phase 1: C++ Source Analysis
 
-Phase 1 is the core enrichment step. It reads C++ source code and produces structured documentation. It runs in two stages with distinct execution models.
+Phase 1 is the core enrichment step. It reads C++ source code and produces structured documentation. It runs in four steps: A1 (raw exploration), A2 (distillation), B (per-method analysis), and C (post-process).
 
 Detailed agent instructions: `scripting-api-enrichment/phase1.md`
 
-### Step A -- Sub-agent (explore): Class-Level Analysis
+### Steps A1 + A2 -- Sub-agent: Exploration + Distillation
+
+Phase 1 exploration runs in two stages. See `phase1.md` for full details.
+
+#### Step A1 -- Raw Context Gathering
 
 **Spawned by:** The main agent, one sub-agent per class.
 
-**Reads:**
-- The class header file (`.h`) -- class declaration, inheritance chain, inner types, API method list
-- The constructor in the `.cpp` file -- `addConstant()` calls, `ADD_TYPED_API_METHOD_N` registrations
-- Key implementation methods -- for architectural understanding
+**Reads:** C++ source broadly -- class header, constructor, key implementations, base classes, helper classes, enum definitions, threading constraints. See the full "What to Explore" list in `phase1.md` Step A1.
 
-**Produces two files:**
+**Produces:** `enrichment/resources/explorations/ClassName.md` -- raw, unfiltered context dump. This is the primary input for Step B's method analysis. Free-form markdown, prioritizes completeness over readability.
 
-#### `enrichment/phase1/ClassName/Readme.md`
+#### Step A2 -- Distillation
 
-The durable class-level artifact. Human-editable, reusable as Phase 3 input. Contains:
+**Input:** The exploration file from Step A1.
+
+**Produces two files** that feed the merge script (these are NOT context for Step B):
+
+##### `enrichment/phase1/ClassName/Readme.md`
+
+The durable class-level artifact. Human-editable. Contains:
 
 ```markdown
 # ClassName -- Class Analysis
@@ -524,7 +566,7 @@ Related classes for similar tasks, or "None."
 `USE_BACKEND`, `HISE_INCLUDE_LORIS`, etc. -- or "None."
 ```
 
-#### `enrichment/phase1/ClassName/methods_todo.md`
+##### `enrichment/phase1/ClassName/methods_todo.md`
 
 The workbench file. Contains the progress checklist and forced parameter type map:
 
@@ -548,9 +590,9 @@ The workbench file. Contains the progress checklist and forced parameter type ma
 (Methods not listed here use plain ADD_API_METHOD_N -- types must be inferred.)
 ```
 
-### Sub-agent Exploration Checklist
+### Sub-agent Distillation Checklist (Step A2)
 
-The sub-agent must perform all of the following during class-level analysis:
+Step A2 distills the raw exploration into `Readme.md` fields. The sub-agent reads `resources/explorations/ClassName.md` and extracts:
 
 1. **`brief`** -- What does this class do? (~10-15 words)
 2. **`purpose`** -- Concise technical summary (2-5 sentences)
@@ -570,15 +612,17 @@ The sub-agent must perform all of the following during class-level analysis:
 11. **Forced parameter types** -- Extract all `ADD_TYPED_API_METHOD_N` macro invocations from the constructor. Record the method name and the `VarTypes` per parameter. Write these into `methods_todo.md`.
 12. **Method checklist** -- List all API methods (from the `// API Methods` section of the header) in `methods_todo.md` as unchecked items.
 
-**Source isolation rule:** The sub-agent must derive ALL information from C++ source code only. Do NOT reference external documentation, MCP resources, or existing API reference files.
+**Source isolation rule:** Step A1 must derive ALL information from C++ source code only. Step A2 distills from the exploration file. Neither step may reference external documentation, MCP resources, or existing API reference files.
 
 ### Step B -- Main Agent: Sequential Method Analysis
 
 After the sub-agent returns, the main agent processes methods one at a time.
 
 **Loads at the start of Step B:**
-- `enrichment/phase1/ClassName/Readme.md` -- class context (CRITICAL)
+- `enrichment/resources/explorations/ClassName.md` -- primary context (CRITICAL)
 - `enrichment/phase1/ClassName/methods_todo.md` -- checklist + type map
+
+Do NOT load `Readme.md` for Step B -- it is a downstream artifact for the merge script, not a context source.
 
 **For each unchecked method:**
 
@@ -598,7 +642,7 @@ After the sub-agent returns, the main agent processes methods one at a time.
 5. Mark the method `[x]` in `methods_todo.md`
 6. Write both files to disk immediately
 
-**The method analysis context is expendable.** After writing to disk, the agent does not need to retain any per-method details in its context window. Only the class-level context (`Readme.md`) and the workbench (`methods_todo.md`) are essential.
+**The method analysis context is expendable.** After writing to disk, the agent does not need to retain any per-method details in its context window. Only the class-level context (the exploration file) and the workbench (`methods_todo.md`) are essential.
 
 **HiseScript syntax reference:** The agent may consult the MCP `hisescript-style` resource to ensure synthesized code examples use correct HiseScript syntax. This is the ONLY external reference permitted during method analysis, and it must be used for syntax correctness only -- not for API behavior.
 
@@ -642,17 +686,17 @@ What this method does.
 The main agent's context window may be compacted automatically during long sessions. The pipeline is designed to survive this:
 
 **After compaction, the agent MUST:**
-1. Re-read `enrichment/phase1/ClassName/Readme.md` -- the class-level context
+1. Re-read `enrichment/resources/explorations/ClassName.md` -- the primary class context
 2. Re-read `enrichment/phase1/ClassName/methods_todo.md` -- to find the first unchecked method
 3. Do NOT re-read `enrichment/phase1/ClassName/methods.md` -- completed methods are on disk, no need to burn context
 
-**The compaction summary should convey:** "Processing methods for ClassName. Class context is in `Readme.md`. Progress is in `methods_todo.md`. Reload both and continue from the first unchecked method."
+**The compaction summary should convey:** "Processing methods for ClassName. Class context is in the exploration file. Progress is in `methods_todo.md`. Reload both and continue from the first unchecked method."
 
 ### Resumability
 
 The `methods_todo.md` file makes any session fully resumable from disk. A fresh session can:
 
-1. Read `Readme.md` -- get the full class context
+1. Read `resources/explorations/ClassName.md` -- get the full class context
 2. Read `methods_todo.md` -- see the checklist and type map
 3. Find the first `- [ ]` entry -- resume from there
 
@@ -675,15 +719,22 @@ After all methods for a class are complete, run the post-process step:
 
 ---
 
-## Phase 2: Project Example Merge
+## Phase 2: Project Example Extraction
+
+Phase 2 has two stages: an external extraction pipeline produces real-world examples from actual HISE projects, then the pipeline agent enriches those examples with test metadata.
+
+### Pipeline Gate
+
+After Phase 1 completes, check whether `enrichment/phase2/ClassName/` exists for every class in the current batch. If any directory is missing, **stop and wait** - the user will launch the extraction agent separately. Do not proceed with any class until all directories exist. Directory existence (even empty) is the completion signal.
+
+### Test Metadata Enrichment
+
+Once Phase 2 files exist, add slugs, test metadata blocks, setup scripts, and test-only markers to the extracted examples, then validate with `snippet_validator.py`. Do not rewrite examples beyond what's needed for testability, and do not add new examples.
 
 ### Source
 
-`enrichment/phase2/ClassName/methodName.md` -- one file per method override.
-
-### Content
-
-Real-world usage examples extracted from project analysis datasets. These are examples from actual HISE projects that demonstrate how methods are used in practice.
+- `enrichment/phase2/ClassName/Readme.md` -- class-level project context (no test metadata needed)
+- `enrichment/phase2/ClassName/methodName.md` -- method examples + pitfalls
 
 ### Merge Rules
 
@@ -691,83 +742,33 @@ Real-world usage examples extracted from project analysis datasets. These are ex
 - `pitfalls`: merged union, each entry tagged `"source": "project"`
 - `commonMistakes`: merged union, each entry tagged `"source": "project"`
 - `crossReferences`: merged union, deduplicated
+- `projectContext`: additive (Phase 2-exclusive field)
 
-Detailed format spec: `scripting-api-enrichment/phase2.md`
+Detailed guide: `scripting-api-enrichment/phase2.md`
 
 ---
 
 ## Phase 3: Author's Diary (Input for Phase 4a)
 
-### Purpose
+Phase 3 is the author's diary - free-form notes capturing high-level ideas, integration patterns, domain insights, and real-world conventions. Content is written from a purpose-driven perspective ("what is this for, how do you use it"), making it especially valuable as source material for user-facing docs.
 
-Phase 3 is the author's "no-filters diary" - a place to capture high-level ideas, integration patterns, domain insights, and real-world conventions without worrying about prose style or technical completeness. Phase 4a authoring agents read these files (injected into their prompt) and incorporate unique insights into the final prose, applying the standard style guide.
+Detailed format and parsing rules: `scripting-api-enrichment/phase3.md`
 
 ### Source
 
 - `enrichment/phase3/ClassName/Readme.md` -- class-level diary notes
 - `enrichment/phase3/ClassName/methodName.md` -- method-level diary notes
 
-Files are pure prose (conversational, bullet points, incomplete thoughts) and optional code examples. No structured format (no `## Brief`, `## Purpose` headings) - just write freely.
+Files are free-form prose (conversational, bullet points, incomplete thoughts) and optional code examples. No structured format required. The current 201 files were imported from the legacy HISE docs repository (docs.hise.dev).
 
-### Content
+### What the Merge Script Extracts
 
-Free-form diary entries written by the author. Can be:
-- Conversational prose ("this is useful when...", "just create a reference", "in order to use it...")
-- Bullet points or incomplete thoughts
-- Integration patterns and conventions ("prepend `/` for OSC addresses")
-- Design rationale and historical context
-- Workflow sequences ("stop clock before preset load")
-- Code examples (hand-written, preferred over auto-extracted)
+The merge script extracts two things mechanically from Phase 3 files:
 
-**Not parsed into structured fields** - Phase 4a agents read the raw markdown, extract substance, strip filler.
+- **Code examples** -- fenced code blocks, tagged `"source": "manual"`. Replace Phase 1/2 examples for the same method.
+- **Cross-references** -- from markdown links `[method](/scripting/scripting-api/class#method)`. Merged with Phase 1/2 cross-references, deduplicated.
 
-### Common Workflows
-
-- Jot down high-level ideas for a class ("OSC addresses use `/` prefix")
-- Explain integration patterns ("preferred way to talk to C++ nodes")
-- Add workflow notes ("stop clock before preset load, restart after")
-- Write example code showing intended usage
-- Import existing docs.hise.dev content for classes with valuable explanations
-
-### How Phase 3 Content Is Used
-
-Phase 3 files are **injected into Phase 4a agent prompts** (when present) as source material:
-
-**Code examples:**
-- Extracted from Phase 3 files
-- **Replace** Phase 1/2 auto-extracted examples (hand-written = higher quality)
-- Agent may supplement with Phase 2 if it shows complementary complexity
-
-**Cross-references:**
-- Extracted from markdown links `[method](/scripting/scripting-api/class#method)`
-- Merged with Phase 1/2 cross-references (deduplicated)
-
-**Prose:**
-- NOT extracted as `userDocs` (Phase 3 is input, not output)
-- Agent reads, extracts unique insights (OSC patterns, C++ interop, workflows)
-- Agent rewrites in tight technical style, strips conversational filler
-- Result becomes Phase 4a `userDocs`
-
-**Length limit:**
-- Soft limit: 500 lines
-- Files exceeding limit are noted in agent prompt
-- Agent documents in decision log: "Phase 3 Readme is 650 lines - skimmed for patterns"
-
-### Decision Tracking
-
-Phase 4a agents document their authoring decisions in `enrichment/output/decisions/{ClassName}_phase4a.md`:
-- Example selection rationale (Phase 3 vs Phase 2 triage)
-- Phase 3 content incorporation (what insights were extracted, what was omitted)
-- Diagram render/cut decisions
-- Pitfall/common mistake integration choices
-
-Decision files are ephemeral (regenerated on each Phase 4a run) and excluded from git (live in `output/` directory).
-
-### Legacy Note
-
-The 201 current Phase 3 files were imported from the legacy HISE docs repository (docs.hise.dev). They use conversational prose and are treated exactly like diary entries - read by Phase 4a agents, substance extracted, style normalized.
-
-If you need to override Phase 1 technical fields (`brief`, `purpose`, `signature`, etc.), edit the Phase 1 file directly. Phase 3 no longer supports structured format overrides.
+**Prose is NOT extracted.** Phase 4a agents read the raw files (injected into their prompt), extract unique insights, and rewrite in tight technical style. Phase 3 does not set `userDocs` or override any structured fields (brief, purpose, description, parameters, etc.).
 
 ---
 
@@ -797,11 +798,11 @@ enrichment/phase4/manual/ClassName/   # Human-edited overrides (wins over auto)
 | Field | Level | Type | Description |
 |-------|-------|------|-------------|
 | `userDocs` | Class + Method | String\|null | Flat prose string for end-user display. `null` if not yet authored. |
-| `userDocOverride` | Class + Method | boolean | `true` if sourced from `phase4/manual/` or Phase 3 raw docs, `false` if from `phase4/auto/` or absent. |
+| `userDocOverride` | Class + Method | boolean | `true` if sourced from `phase4/manual/`, `false` if from `phase4/auto/` or absent. |
 
 ### Merge Rules
 
-- For `userDocs`: Phase 4a manual > Phase 3 raw docs > Phase 4a auto
+- For `userDocs`: Phase 4a manual > Phase 4a auto
 - `phase4/manual/` wins over `phase4/auto/` (per file, case-insensitive filename matching)
 - Phase 4a does NOT override any Phase 1-3 fields -- it adds `userDocs` / `userDocOverride` and renders SVG diagrams
 
@@ -945,4 +946,12 @@ For each class, produces:
 - `ClassName.html` -- user-facing userDocs view (generated only if any Phase 4a userDocs exist for the class)
 
 Output: `enrichment/output/preview/`
+
+### snippet_validator.py
+
+```
+python snippet_validator.py --validate --source auto --class ClassName --launch
+```
+
+Validates code examples by executing them in HISE. Filters by `--source` (auto/project/manual/all) and `--class`. The `--launch` flag auto-starts HISE Debug if not already running. Results are written to `enrichment/output/test_results.json` and incorporated into the merged JSON via `api_enrich.py merge`.
 

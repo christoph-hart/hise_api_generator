@@ -6,49 +6,21 @@ Authoritative reference for writing `testMetadata` to validate API documentation
 
 ## When to Mark Examples as Testable
 
-### Mark `testable: true` when:
-- Example is complete, executable HISEScript code
-- Example has deterministic output (no randomness, no external dependencies)
-- Configuration methods can be completed with minimal setup chains
-- Example does NOT require file I/O, user interaction (MIDI, mouse), timers/async callbacks, or external audio samples
-
-### Mark `testable: false` when:
-- Pseudo-code or signature templates
-- Examples requiring file I/O, MIDI input, or timers
-- Partial snippets that cannot be completed with trivial additions
-- Non-deterministic output (e.g., `Math.random()`)
-
-When marking `testable: false`, always include a `skipReason` with a single sentence explaining the decision. This helps reviewers assess whether the limitation is genuine or whether the example could be made testable with better setup or updated guidelines.
-
-### Completing Partial Examples
-
-If an example is missing only trivial additions, complete it before adding metadata. Use `--edit` to update example code (see CLI Reference below).
-
-**Complete if missing:** simple variable definitions, function invocation calls, trivial constants.
-
-**Mark `testable: false` if missing:** external resources (audio files, MIDI controllers, file system), complex setup that changes the example's purpose, business logic that's intentionally abstracted, dependencies that CANNOT be created via API.
+Mark `testable: true` when the example is complete, deterministic HISEScript. Mark `testable: false` with a `skipReason` when it requires external resources that cannot be created via API (audio files, MIDI controllers, DAW interaction, hardware). Complete trivially incomplete examples before marking them non-testable.
 
 ### Module/UI References vs. External Dependencies
-
-**Common mistake:** Seeing a module or UI component reference and marking `testable: false`.
 
 | Resource type | Where to create | Why |
 |--------------|----------------|-----|
 | **UI components** (`Content.add*()`) | Inline setup block | Environment setup |
-| **Modules** (Builder API) | Inline setup block | Environment setup |
+| **Modules** (Builder API) | Inline setup block | Environment setup, see `builder_reference.md` |
 | **Broadcasters** | Example code | Subject of the example, not setup |
 | **Cables** | Example code | Should show full acquisition pattern |
 | **External files, MIDI, hardware** | Cannot create | Mark `testable: false` |
 
 ### Callback Testability: Programmatic Triggers
 
-**Common mistake:** Seeing a callback registration and marking `testable: false` because the callback "needs" external input.
-
-The real question: **Can I trigger this callback from script?** If yes, the example is testable. Sync vs. async dispatch is irrelevant for REPL verification - by the time REPL runs, all async callbacks have completed.
-
-**All programmatic triggers are test-only code.** Whether you use a natural API call or `Console.testCallback`, the trigger exists to make the example testable - the user doesn't need to see it. Wrap all triggers in `// --- test-only ---` markers.
-
-**Prefer natural API triggers** over `Console.testCallback` when both options exist - natural triggers test the real dispatch path. Use `Console.testCallback` only when no natural trigger exists (key press, mouse events).
+The real question: **Can I trigger this callback from script?** If yes, the example is testable. Wrap all triggers in `// --- test-only ---` markers. Prefer natural API triggers over `Console.testCallback` when both options exist.
 
 | Callback / state | Programmatic trigger | Verify with |
 |-----------------|---------------------|-------------|
@@ -59,18 +31,21 @@ The real question: **Can I trigger this callback from script?** If yes, the exam
 | Control callbacks | `component.setValue(x); component.changed()` | REPL: callback log or component state |
 | Key press callbacks | `Console.testCallback(component, "setKeyPressCallback", eventObj)` | REPL: callback side-effects |
 | Panel mouse callbacks | `Console.testCallback(panel, "setMouseCallback", eventObj)` | REPL: `panel.data` or callback side-effects |
+| Cable value callbacks (sync) | `cable.setValue(x)` in test-only (fires immediately during onInit) | REPL: `reg` variable set by extra sync callback registered in test-only |
+| Cable value callbacks (async) | `cable.setValue(x)` in test-only (fires on next UI tick) | REPL with `delay`: `reg` variable set by callback |
+| Cable data callbacks | `secondRef.sendData(obj)` in test-only (second reference bypasses recursion guard) | log-output or REPL: callback side-effects |
 
-`Console.testCallback` synchronously invokes a registered callback with a predetermined argument object. It supports a limited set of callback types per component - check the component's `testCallback` override in `ScriptingApiContent.h` for what's available. Where supported, it validates the argument against the component's configuration (e.g., checks `allowCallbacks` level for mouse events, rejects invalid JSON properties).
+`Console.testCallback` synchronously invokes a registered callback with a predetermined argument object. It supports a limited set of callback types per component - check the component's `testCallback` override in `ScriptingApiContent.h` for what's available.
 
 > If you discover a new programmatic trigger for a callback type not listed here, add it to this table.
 
-Mark `testable: false` only when there is truly no scriptable trigger: bypass detection (watchdog-based), audio playback tick callbacks (`setOnBeatChange`, `setOnGridChange`), DAW time signature changes, table interaction callbacks (click, selection, slider/button/combobox cell events), or hardware interaction.
+Mark `testable: false` only when there is truly no scriptable trigger: bypass detection (watchdog-based), DAW time signature changes, table interaction callbacks (click, selection, slider/button/combobox cell events), or hardware interaction. Audio playback tick callbacks (`setOnBeatChange`, `setOnGridChange`) may be testable with `startInternalClock` + `delay` verification but this is unproven - mark them `testable: false` for now.
 
 ---
 
 ## Markdown Source Format
 
-Test metadata lives in phase `.md` source files. The validator reads these directly -- no intermediate JSON step.
+Test metadata lives in phase `.md` source files. The validator reads these directly - no intermediate JSON step.
 
 ### File Locations
 
@@ -84,14 +59,14 @@ Directory lookups are case-insensitive.
 
 ### Format Elements
 
-**Slugs** -- kebab-case identifier on the code fence, unique per method per phase:
+**Slugs** - kebab-case identifier on the code fence, unique per method per phase:
 ````markdown
 ```javascript:my-example-slug
 // code here
 ```
 ````
 
-**Inline titles** -- `// Title:` as first line (stripped before execution, preserved in file):
+**Inline titles** - `// Title:` as first line (stripped before execution, preserved in file):
 ````markdown
 ```javascript:guard-clause-pattern
 // Title: Guard clauses in a data-binding utility
@@ -99,7 +74,7 @@ Console.assertTrue(isDefined(panel));
 ```
 ````
 
-**Inline setup scripts** -- `// --- setup ---` / `// --- end setup ---` markers (extracted and run separately before the example):
+**Inline setup scripts** - `// --- setup ---` / `// --- end setup ---` markers (extracted and run separately before the example):
 ````markdown
 ```javascript:knob-set-value
 // --- setup ---
@@ -110,7 +85,7 @@ knob.setValue(0.5);
 ```
 ````
 
-**Inline test-only code** -- `// --- test-only ---` / `// --- end test-only ---` markers (hidden from user-facing display, compiled as part of the example):
+**Inline test-only code** - `// --- test-only ---` / `// --- end test-only ---` markers (hidden from user-facing display, compiled as part of the example):
 ````markdown
 ```javascript:key-press-test
 const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
@@ -129,9 +104,7 @@ Console.testCallback(Viewport1, "setKeyPressCallback", {
 ```
 ````
 
-Code above the markers is shown to users; code between the markers is compiled with the example but hidden from user-facing output. Use for any code added solely to make the example pass as a standalone test: programmatic triggers, state manipulation, or extra assertions.
-
-**testMetadata blocks** -- JSON fence with `json:testMetadata:<slug>` matching the example's slug:
+**testMetadata blocks** - JSON fence with `json:testMetadata:<slug>` matching the example's slug:
 ````markdown
 ```json:testMetadata:cable-to-gain
 {
@@ -152,29 +125,16 @@ Code above the markers is shown to users; code between the markers is compiled w
 ### Required Fields
 
 - **`testable`**: boolean (required)
-- **`skipReason`**: string (optional, recommended when `testable: false`) -- free-form sentence explaining why the example is not testable. Displayed in the preview HTML validation popup so reviewers can evaluate whether the limitation is real or the example could be made testable.
-- **`setupScript`**: string (optional) -- code to run before the example. Omit when using inline setup instead.
-- **`testOnly`**: string (optional) -- code compiled with the example but hidden from user-facing display. Omit when using inline test-only markers instead (preferred).
-- **`verifyScript`**: object or array of objects (required if `testable: true`)
-
-### Non-Testable Example
-
-````markdown
-```json:testMetadata:clearing-connections
-{
-  "testable": false,
-  "skipReason": "Requires GlobalModulatorContainer module not available in test project"
-}
-```
-````
+- **`skipReason`**: string (recommended when `testable: false`)
+- **`setupScript`**: string (optional) - code to run before the example. Omit when using inline setup instead.
+- **`testOnly`**: string (optional) - code compiled with the example but hidden from display. Omit when using inline test-only markers instead (preferred).
+- **`verifyScript`**: object or array of objects (required if `testable: true`). Each entry supports an optional **`delay`** field (integer, milliseconds) - see Per-Step Delay below.
 
 ---
 
 ## Verification Types
 
 ### 1. Log Output (`type: "log-output"`)
-
-Use when the example produces `Console.print()` output.
 
 ```json
 {"type": "log-output", "values": ["expected", "log", "entries"]}
@@ -184,36 +144,19 @@ Use when the example produces `Console.print()` output.
 
 ### 2. REPL (`type: "REPL"`)
 
-Use when the example creates variables or modifiable state.
-
-**Single check:**
 ```json
 {"type": "REPL", "expression": "myVar", "value": 42}
 ```
 
-**Multiple checks (recommended -- better error messages):**
-```json
-[
-  {"type": "REPL", "expression": "doubled.length", "value": 3},
-  {"type": "REPL", "expression": "doubled[0]", "value": 2}
-]
-```
-
-**Rules:** `value` field is REQUIRED. Type normalization same as log-output. `"undefined"` string handled specially. Stops at first failure.
+`value` field is REQUIRED. Type normalization same as log-output. `"undefined"` string handled specially. Stops at first failure.
 
 ### 3. Error (`type: "expect-error"`)
-
-Use when the example intentionally triggers an error (assertions, runtime errors).
 
 ```json
 {"type": "expect-error", "errorMessage": "Assertion failure: condition is false"}
 ```
 
 **Matching rules:** Execution must fail. Line/column prefix auto-stripped. Case-insensitive substring match.
-
-**CRITICAL: Verify error patterns before adding metadata.** Predict the error based on code intent, then run. If prediction doesn't match actual, fix the code -- don't lock in broken error patterns.
-
-**Red flags (broken code, not intentional errors):** "is not a function" (typo), "unexpected token" (syntax error), error unrelated to example's stated purpose.
 
 **Common assertion patterns:**
 
@@ -225,74 +168,35 @@ Use when the example intentionally triggers an error (assertions, runtime errors
 
 ### 4. Mixed Verification
 
-Combine types in an array. Each object needs an explicit `"type"` field.
+Combine types in an array. Each object needs an explicit `"type"` field. `expect-error` MUST be last (execution stops on error).
 
-```json
-[
-  {"type": "log-output", "values": ["Processing..."]},
-  {"type": "REPL", "expression": "result.status", "value": "complete"}
-]
-```
+### Per-Step Delay
 
-**Rule:** `expect-error` MUST be last (execution stops on error, subsequent checks never run).
+Each verifyScript entry supports an optional `delay` field (integer, milliseconds) that pauses before executing that step. Default is 0 for the first step and 100ms between subsequent steps. Maximum 1000ms.
+
+Use when async operations need time to settle: async callbacks, transport clock ticks, MidiPlayer playback position updates.
 
 ---
 
-## Setup Scripts
-
-Use setup when the example needs UI components, modules, or pre-existing variables. Prefer inline setup blocks (inside the code fence) over the `setupScript` field in testMetadata.
-
-### Creating UI Components
-
-````markdown
-```javascript:button-value-test
-// Title: Setting a button value
-// --- setup ---
-const Button1 = Content.addButton("Button1", 0, 0);
-Button1.set("saveInPreset", false);
-// --- end setup ---
-
-Button1.setValue(1);
-```
-```json:testMetadata:button-value-test
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "Button1.getValue()", "value": 1}
-}
-```
-````
+## HISE-Specific Setup Patterns
 
 ### Creating Modules with Builder API
 
-See Integration Test pattern in Common Patterns below for a full builder setup example.
+See `builder_reference.md` for the full Builder API reference including module types, chain indexes, and `InterfaceTypes`. Always `builder.clear()` first, always `builder.flush()` last.
 
-**Common module types:** `builder.Effects.SimpleGain`, `builder.Effects.PolyphonicFilter`, `builder.Modulators.AHDSR`, `builder.Modulators.LFO`, `builder.SoundGenerators.StreamingSampler`
-
-**Chain indexes:** `builder.ChainIndexes.FX` (effects), `.Gain` (gain mod), `.Pitch` (pitch mod), `.Direct` (sound generators)
-
-**Rules:** Always `builder.clear()` first, always `builder.flush()` last. `parent: 0` for master container.
-
-### What NOT to Put in Setup
-
-- **Broadcasters** -- script-owned, wiped on recompile. Must be in example code.
-- **Cables** -- should show full acquisition pattern (`getCable()`) in example code.
-- **Example-specific logic** -- setup is only for environment (UI, modules).
-
-### saveInPreset Pattern (CRITICAL for UI Tests)
+### saveInPreset Pattern
 
 **Problem:** `setValue()` during `onInit` gets overwritten by HISE's user preset model restore.
 
-**Solution:** Set `saveInPreset: false` immediately after creating the component. (See Creating UI Components example above.)
+**Solution:** Set `saveInPreset: false` immediately after creating the component.
 
-**Applies to:** All `Content.add*()` components. Required whenever a test calls `setValue()` and verifies with REPL.
-
-**NOT needed for:** `setControlCallback()` tests, creation-only tests, non-testable examples.
+**Applies to:** All `Content.add*()` components when a test calls `setValue()` and verifies with REPL.
 
 ### Triggering Callbacks via REPL
 
 **Problem:** `changed()` is a no-op during `onInit`, so control callbacks cannot be triggered from example code. The validator runs all example code as a single `onInit` compilation.
 
-**Solution:** Use REPL verification checks to trigger callbacks after init completes. Chain `setValue()` and `changed()` with `||` in a single REPL expression, then verify the callback's side-effects in a subsequent check:
+**Solution:** Chain `setValue()` and `changed()` with `||` in a single REPL expression, then verify the callback's side-effects in a subsequent check:
 
 ````json
 "verifyScript": [
@@ -301,15 +205,13 @@ See Integration Test pattern in Common Patterns below for a full builder setup e
 ]
 ````
 
-The `||` operator evaluates both sides (both return undefined/falsy) and returns `false`. The subsequent REPL check verifies the callback executed. REPL checks run sequentially, so order is guaranteed.
-
-**Applies to:** Any callback that requires post-init triggering via `setValue() + changed()`.
+The `||` operator evaluates both sides (both return undefined/falsy) and returns `false`. REPL checks run sequentially, so order is guaranteed.
 
 ### Global State: Transport and BPM
 
 Transport state (playing/stopped) and host BPM persist across recompiles. Examples that depend on or modify these must reset them in an inline setup block:
 
-- **BPM:** `Engine.setHostBpm(-1)` resets to host default (120 in standalone)
+- **BPM:** `Engine.setHostBpm(120)` explicitly resets to 120. Note: `setHostBpm(-1)` only clears the override flag but does NOT reset the BPM value - always use an explicit value.
 - **Transport stopped:** `th.stopInternalClock(0)` (requires `setSyncMode(th.InternalOnly)` first)
 - **Transport playing:** `th.startInternalClock(0)` (requires `setSyncMode(th.InternalOnly)` first)
 
@@ -317,29 +219,9 @@ Transport state (playing/stopped) and host BPM persist across recompiles. Exampl
 
 ## Verification Strategy
 
-Decision tree for choosing verification type.
+### Integration/Connection Examples
 
-### Strong vs. Weak Verification
-
-Ask "What capability does this method enable?" and test THAT.
-
-- **Weak (avoid):** `{"expression": "browser.get('width')", "value": 600}` -- only proves existence
-- **Strong (prefer):** `{"expression": "browser.getValue()", "value": [0, 1]}` -- proves functionality
-
-Weak is acceptable when: method only sets properties, strong requires non-testable operations, or multiple weak checks collectively prove functionality.
-
-### Decision Tree
-
-- **Console.print() output?** Use `log-output`. **Creates variables/state?** Use `REPL`. **Both?** Use mixed array.
-
-**Configuration method?** (setTableMode, createBroadcaster, etc.) - Complete the minimal setup chain to create verifiable state:
-- Tables: setTableMode -> setTableColumns -> setTableRowData -> setValue -> verify getValue
-- Broadcasters: createBroadcaster -> addListener -> send value -> verify listener effect (see Common Patterns)
-- Mark non-testable if chain requires non-deterministic behavior.
-
-These are just two common chain shapes. Any method that configures state without producing direct output follows the same principle: complete the minimal chain needed to create verifiable state, then verify with REPL.
-
-**Integration/connection example?** - **MUST verify BOTH sides.** Single-sided checks only prove the API call, not the integration. The table below lists common types, but apply the same dual-verification principle to any connection pattern.
+Integration examples MUST verify BOTH sides. Single-sided checks only prove the API call, not the integration.
 
 | Integration Type | Verify API Call Side | Verify Effect Side |
 |-----------------|---------------------|-------------------|
@@ -349,67 +231,15 @@ These are just two common chain shapes. Any method that configures state without
 
 **Recognition keywords:** "connect", "link", "drive", "sync", "route", "bind" in titles means verify both endpoints.
 
-**Intentional error?** - Use `expect-error`. Predict the error first, verify prediction matches actual, then add metadata.
+### Configuration Chains
 
-**Pure side effects, no observable output?** - Use REPL to check component state, or add `Console.print()`, or mark `testable: false`.
+Methods that configure state without producing direct output need a minimal chain to create verifiable state:
+- Tables: setTableMode -> setTableColumns -> setTableRowData -> setValue -> verify getValue
+- Broadcasters: createBroadcaster -> addListener -> send value -> verify listener effect
 
 ---
 
 ## Common Patterns
-
-### Array Methods (REPL)
-
-````markdown
-```javascript:mapping-array-values
-// Title: Doubling array values with map
-const arr = [1, 2, 3];
-const result = arr.map(function(x) { return x * 2; });
-```
-```json:testMetadata:mapping-array-values
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "result.length", "value": 3},
-    {"type": "REPL", "expression": "result[0]", "value": 2}
-  ]
-}
-```
-````
-
-### Console Output (log-output)
-
-````markdown
-```javascript:printing-loop-values
-// Title: Printing loop iteration values
-for (i = 0; i < 3; i++)
-    Console.print("Loop " + i);
-```
-```json:testMetadata:printing-loop-values
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Loop 0", "Loop 1", "Loop 2"]}
-}
-```
-````
-
-### Mixed Verification
-
-````markdown
-```javascript:object-with-print-and-repl
-// Title: Creating object and printing a property
-const obj = {"name": "test", "value": 42};
-Console.print(obj.name);
-```
-```json:testMetadata:object-with-print-and-repl
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["test"]},
-    {"type": "REPL", "expression": "obj.value", "value": 42}
-  ]
-}
-```
-````
 
 ### Integration Test (Dual Verification)
 
@@ -460,7 +290,7 @@ table.setValue([0, 1]);
 ```
 ````
 
-### Broadcaster Integration & Configuration Chain
+### Broadcaster Integration
 
 ````markdown
 ```javascript:broadcaster-chain
@@ -492,6 +322,131 @@ bc.sendSyncMessage(["done", 2]);
 }
 ```
 ````
+
+### Cable Callback Testing
+
+Cable callbacks have three distinct dispatch modes. The key challenge is the **recursion guard**: a cable reference skips its own callbacks when it sends a value/data.
+
+**A. Sync value callback - extra registration in test-only**
+
+When the user's callback does not produce observable output, register a second sync callback in test-only to capture the value. The extra callback must be an `inline function` - non-inline functions are silently ignored for `SyncNotification`.
+
+````markdown
+```javascript:sync-capture-pattern
+const var rm = Engine.getGlobalRoutingManager();
+const var cable = rm.getCable("MyCable");
+
+inline function onCableSync(value)
+{
+    // Realtime-safe work only
+};
+
+cable.registerCallback(onCableSync, SyncNotification);
+
+// --- test-only ---
+reg syncResult = -1.0;
+inline function testSyncCapture(v) { syncResult = v; };
+cable.registerCallback(testSyncCapture, SyncNotification);
+cable.setValue(0.5);
+// --- end test-only ---
+```
+```json:testMetadata:sync-capture-pattern
+{
+  "testable": true,
+  "verifyScript": {"expression": "syncResult", "value": 0.5}
+}
+```
+````
+
+**B. Async value callback - test-only setValue + delay**
+
+Async callbacks fire on the UI thread after onInit completes. 300ms delay is sufficient for the UI timer to tick.
+
+````markdown
+```javascript:async-delay-pattern
+reg currentLevel = 0.0;
+
+inline function onLevelChanged(value)
+{
+    currentLevel = value;
+};
+
+cable.registerCallback(onLevelChanged, AsyncNotification);
+
+// --- test-only ---
+cable.setValue(0.75);
+// --- end test-only ---
+```
+```json:testMetadata:async-delay-pattern
+{
+  "testable": true,
+  "verifyScript": [{"delay": 300, "expression": "currentLevel", "value": 0.75}]
+}
+```
+````
+
+**C. Data callback - second cable reference bypasses recursion guard**
+
+`sendData()` skips the sender's own data callbacks. Data callbacks dispatch synchronously during onInit (despite being documented as "asynchronous high-priority"), so `Console.print` output appears in the compilation logs.
+
+````markdown
+```javascript:data-callback-bypass
+const var rm = Engine.getGlobalRoutingManager();
+const var cable = rm.getCable("DataCable");
+
+inline function onDataReceived(data)
+{
+    Console.print("Received: " + data.noteNumber);
+};
+
+cable.registerDataCallback(onDataReceived);
+
+// --- test-only ---
+const var triggerCable = rm.getCable("DataCable");
+triggerCable.sendData({"noteNumber": 42});
+// --- end test-only ---
+```
+```json:testMetadata:data-callback-bypass
+{
+  "testable": true,
+  "verifyScript": {"type": "log-output", "values": ["Received: 42"]}
+}
+```
+````
+
+### REPL Side-Effect Assignment
+
+When verifyScript steps need to capture a runtime value for later comparison, use `reg` variables and the `|| true` assignment pattern.
+
+HISEScript assignments return `undefined`, which is falsy, so `|| true` always evaluates and returns `true`. The assignment still executes as a side effect.
+
+````markdown
+```javascript:lfo-value-changes
+// (setup creates a GlobalModulatorContainer + LFO, connects to cable)
+const var cable = rm.getCable("LfoMod");
+cable.connectToGlobalModulator("TestLFO", true);
+
+// --- test-only ---
+reg v1 = 0.0;
+reg v2 = 0.0;
+// --- end test-only ---
+```
+```json:testMetadata:lfo-value-changes
+{
+  "testable": true,
+  "verifyScript": [
+    {"delay": 200, "expression": "v1 = cable.getValueNormalised() || true", "value": true},
+    {"delay": 300, "expression": "v2 = cable.getValueNormalised() || true", "value": true},
+    {"expression": "Math.abs(v1 - v2) > 0.01", "value": true}
+  ]
+}
+```
+````
+
+**Rules:**
+- Declare `reg` variables in the test-only block (not `var` or `const var` - `reg` survives across REPL calls)
+- Use `Math.abs(a - b) > threshold` for float-safe difference checks, never `!=` on floats
+- Each assignment step returns `true`, verified against `"value": true`
 
 ---
 
@@ -549,27 +504,35 @@ python snippet_validator.py --add-metadata --source project --class Console --me
 ### Validate
 
 ```bash
-python snippet_validator.py --validate --source all --class Console
-python snippet_validator.py --validate --source project --class Console --method assertEqual
+# Full class validation (auto-launches HISE)
+python snippet_validator.py --validate --source all --class Console --launch
+
+# Keep HISE running between iterative runs
+python snippet_validator.py --validate --source all --class Console --launch --keep-alive
+
+# Single example by slug
+python snippet_validator.py --validate --source project --class Console --method assertEqual --slug verifying-data-array-dimensions
+
+# Use release build on custom port
+python snippet_validator.py --validate --source all --class Console --launch --no-debug --port 1901
 ```
 
-**Exit codes:** 0 = all passed, 1 = failures, 2 = connection lost mid-run (partial results saved).
+**Launch flags** (only with `--validate`):
 
----
+| Flag | Description |
+|------|-------------|
+| `--launch` | Auto-launch HISE before validation, shut down after |
+| `--keep-alive` | Keep HISE running after validation (requires `--launch`) |
+| `--no-debug` | Use release build (`HISE.exe`) instead of debug (`HISE Debug.exe`) |
+| `--port PORT` | REST API port (default: 1900) |
 
-## Workflow
+### Shutdown
 
-1. **Check coverage:** `--coverage --source all --class ClassName`
-2. **Read examples:** `--extract --source project --class ClassName --method methodName`
-3. **Assess testability:** Complete? Deterministic? External deps? (See decision rules above.)
-4. **Complete if needed:** `--edit` to fix trivial missing pieces.
-5. **Add metadata:** `--add-metadata` with appropriate verification type.
-6. **Validate:** `--validate --source project --class ClassName`
-7. **Fix failures:** Wrong code? Use `--edit`. Wrong metadata? Use `--add-metadata` (overwrites).
-8. **Repeat** for next method.
-9. **Final coverage check:** `--coverage --source all --class ClassName`
+```bash
+python snippet_validator.py --shutdown
+```
 
-**Batch tip:** Add metadata for 3-5 methods, then validate the whole class at once. Use `--method` for targeted validation when debugging.
+**Exit codes:** 0 = all passed, 1 = failures, 2 = connection lost mid-run (partial results saved), 3 = launch failed.
 
 ---
 
@@ -577,19 +540,10 @@ python snippet_validator.py --validate --source project --class Console --method
 
 Test metadata lives in phase `.md` source files and follows examples through the merge into `api_reference.json`.
 
-**Phase 1:** Agents synthesize examples with slugs and testMetadata blocks during Step B.
-
-**Phase 2:** Project examples get testMetadata blocks. Mark `testable: false` for examples needing external resources.
-
-**Phase 3:** Manual examples may include testMetadata. When Phase 3 replaces examples, it must carry its own metadata.
-
-**Pre-Phase 4a gate:** Validate all examples before writing user-facing docs (`--validate --source all --class ClassName` - see CLI Reference above).
-
 **Merge behavior:** `api_enrich.py merge` reads the sidecar (`enrichment/output/test_results.json`) during example selection:
 - Failed examples (`tested: true, passed: false`) are discarded
 - If all winning-phase examples fail, merge falls back to a lower phase
 - Untested examples are kept (absence from sidecar = "unknown, might work")
-- Decisions logged to `output/decisions/{ClassName}_phase4a.md`
 
 **Sidecar keying:** `Class.method.source.slug` (e.g., `Console.assertEqual.project.verifying-data-array-dimensions`). Results accumulate across runs.
 
@@ -597,7 +551,6 @@ Test metadata lives in phase `.md` source files and follows examples through the
 
 ## Related Guidelines
 
-- `hisescript_example_rules.md` -- HISEScript syntax rules (inline function, const var, etc.)
-- `code_example_quality.md` -- Editorial quality (lead with non-obvious behavior, show edge cases, obtain your objects)
-
-Examples following those guidelines are naturally testable: complete, deterministic, with documented output.
+- `builder_reference.md` - Builder API reference (module types, chain indexes, InterfaceTypes)
+- `hisescript_example_rules.md` - HISEScript syntax rules (inline function, const var, etc.)
+- `code_example_quality.md` - Editorial quality (lead with non-obvious behavior, show edge cases, obtain your objects)
