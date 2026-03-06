@@ -1,0 +1,1 @@
+Returns the time signature of the current sequence as a JSON object with properties `Nominator`, `Denominator`, `NumBars`, `LoopStart`, `LoopEnd`, and `Tempo`. Shorthand for `getTimeSignatureFromSequence()` with the current sequence.
