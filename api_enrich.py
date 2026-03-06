@@ -3739,9 +3739,13 @@ def run_filter_binary(output_path=None):
             else:
                 arguments = "()"
 
-            # Extract brief description (first sentence, max ~200 chars)
-            desc = method_data.get("description", "")
-            brief = _extract_brief(desc)
+            # Prefer userDocs (Phase 4a enriched prose), fall back to brief description
+            user_docs = method_data.get("userDocs")
+            if user_docs:
+                brief = user_docs
+            else:
+                desc = method_data.get("description", "")
+                brief = _extract_brief(desc)
 
             entry = {
                 "name": method_name,

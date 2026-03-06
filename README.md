@@ -6,6 +6,11 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 - **Documentation website** -- docs.hise.dev API reference pages
 - **HISE internal autocomplete** -- In-editor code completion and parameter hints
 
+> **To regenerate `XmlApi.h`/`XmlApi.cpp`, run `batchCreateMeta.bat`.**
+> This supersedes the old `batchCreate.bat` by running the full enriched pipeline in one step:
+> Doxygen XML generation, Phase 0 parsing, merge, filter, and C++ binary blob generation.
+> Prerequisites: Python 3.x and Doxygen on PATH.
+
 ## Extraction Processes
 
 | Process | Output | Status | Guide |
@@ -18,8 +23,12 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 ## Directory Structure
 
 ```
-├── api_enrich.py              # CLI tool: phase0, prepare, merge, preview
-├── batchCreate.bat            # Runs Doxygen to produce XML
+├── batchCreateMeta.bat        # Full pipeline: Doxygen + enrich + binary blob
+├── batchCreate.bat            # Step 1 only: Doxygen XML generation
+├── api_enrich.py              # CLI tool: phase0, prepare, merge, preview, filter-binary
+├── snippet_validator.py       # Validates HISEScript examples against HISE REST API
+├── ApiValueTreeBuilder.exe    # Converts filtered JSON into C++ binary blob
+├── ApiValueTreeBuilder/       # JUCE console app source for the above
 ├── xml.doxyfile               # Doxygen configuration
 ├── xml/                       # Doxygen XML output (gitignored, regenerated)
 ├── enrichment/
@@ -28,8 +37,11 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   ├── phase2/                # Phase 2 project overrides (tracked)
 │   ├── phase3/                # Phase 3 manual overrides (tracked)
 │   ├── phase4/
-│   │   ├── auto/              # Phase 4 LLM-generated userDocs (tracked)
-│   │   └── manual/            # Phase 4 human-edited overrides (tracked, wins over auto)
+│   │   ├── auto/              # Phase 4a LLM-generated userDocs (tracked)
+│   │   └── manual/            # Phase 4a human-edited overrides (tracked, wins over auto)
+│   ├── phase4b/               # Phase 4b LLM C++ reference entries (tracked)
+│   ├── resources/             # Supporting data: explorations, guidelines, survey
+│   ├── issues.md              # Bugs discovered during C++ source analysis
 │   ├── phase1_scanned.txt     # Diff manifest
 │   └── output/                # Final merged JSON (gitignored, regenerated)
 ├── doc_builders/
@@ -39,17 +51,24 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   │   ├── phase1.md
 │   │   ├── phase2.md
 │   │   ├── phase3.md
-│   │   └── phase4.md
+│   │   ├── phase4.md
+│   │   └── phase4b.md
 │   ├── laf-extraction.md
 │   ├── component-properties.md
 │   └── module-list.md
-├── ApiExtractor.exe           # Pre-built Doxygen XML extractor
-└── BinaryBuilder.exe          # Pre-built binary builder
 ```
 
 ## Quick Start (Scripting API Enrichment)
 
 Prerequisites: Python 3.x, Doxygen on PATH, HISE source tree at `../../` relative to this directory.
+
+### Regenerate XmlApi.h / XmlApi.cpp (full pipeline)
+
+```bash
+batchCreateMeta.bat
+```
+
+### Individual steps (for partial runs or debugging)
 
 ```bash
 # 1. Regenerate Doxygen XML + parse into base JSON
@@ -66,6 +85,10 @@ python api_enrich.py merge
 
 # 5. Preview HTML pages (review + web if userDocs exist)
 python api_enrich.py preview Console
+
+# 6. Generate binary blob
+python api_enrich.py filter-binary
+ApiValueTreeBuilder.exe enrichment\output\filtered_api.json "..\..\hi_scripting\scripting\api" XmlApi
 ```
 
 ## Adding New API Classes
