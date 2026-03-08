@@ -3778,17 +3778,29 @@ def run_filter_binary(output_path=None):
 
             methods_out[method_name] = entry
 
+        # Extract constants (name -> value only, minimal for binary)
+        constants_out = {}
+        for const_name, const_data in class_data.get("constants", {}).items():
+            constants_out[const_name] = const_data.get("value")
+
+        class_entry = {}
         if methods_out:
-            filtered["classes"][class_name] = {"methods": methods_out}
+            class_entry["methods"] = methods_out
+        if constants_out:
+            class_entry["constants"] = constants_out
+        if class_entry:
+            filtered["classes"][class_name] = class_entry
 
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(filtered, f, indent=2, ensure_ascii=False)
 
     class_count = len(filtered["classes"])
-    method_count = sum(len(c["methods"]) for c in filtered["classes"].values())
+    method_count = sum(len(c.get("methods", {})) for c in filtered["classes"].values())
+    constant_count = sum(len(c.get("constants", {})) for c in filtered["classes"].values())
     print(f"Filter-binary complete:")
     print(f"  Classes: {class_count}")
     print(f"  Methods: {method_count}")
+    print(f"  Constants: {constant_count}")
     print(f"  Output: {output_path}")
 
 

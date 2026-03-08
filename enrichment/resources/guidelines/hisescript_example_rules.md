@@ -231,3 +231,181 @@ Colours.transparentBlack
 // ACCEPTABLE - when an exact colour is needed
 0xFFE54D2E
 ```
+
+---
+
+## Arrow Functions Are Not Realtime-Safe
+
+Arrow functions (`=>`) expand to regular anonymous functions internally. They allocate a scope object on each call -- **not safe for the audio thread**. Use `for...in` loops instead of `.map()`, `.filter()`, etc. in audio-thread callbacks.
+
+```javascript
+// WRONG in audio-thread context - allocates
+local result = myArray.map(x => x * 2);
+
+// CORRECT in audio-thread context - no allocation
+for (v in myArray)
+{
+    // process v directly
+}
+```
+
+Arrow functions are fine in non-realtime contexts (onInit, paint routines, timer callbacks).
+
+---
+
+## Prefer for...in Loops
+
+`for...in` is significantly faster than index-based `for` loops in HISEScript. Use it as default when the index is not needed.
+
+- On **arrays** and **Buffers**: iterates elements directly
+- On **objects**: iterates keys
+
+```javascript
+// PREFERRED - gives elements directly
+for (name in ["Alice", "Bob", "Charlie"])
+    Console.print(name);
+
+// Index-based - only when index is needed
+for (i = 0; i < panels.length; i++)
+    panels[i].set("visible", i == selectedIndex);
+```
+
+Note: loop counter variables (`i` in index-based for) do not need a keyword declaration.
+
+---
+
+## Variable Capturing in Closures
+
+Inner anonymous functions cannot access outer function parameters. Use C++-style capture lists:
+
+```javascript
+inline function showDialog(presetName)
+{
+    // WRONG - presetName not accessible inside callback
+    Engine.showYesNoWindow("Delete?", "Sure?", function(ok)
+    {
+        Console.print(presetName); // ERROR
+    });
+
+    // RIGHT - capture presetName explicitly
+    Engine.showYesNoWindow("Delete?", "Sure?", function [presetName](ok)
+    {
+        Console.print(presetName); // Works
+    });
+}
+```
+
+Multiple captures: `function [a, b, c](param) { ... }`
+
+---
+
+## ComboBox Values Are Floats
+
+ComboBox `onControl` values arrive as floats (e.g. `1.0` not `1`). Use `parseInt(value)` before string concatenation or array indexing:
+
+```javascript
+inline function onComboBoxControl(component, value)
+{
+    // WRONG - produces "Mode1.0" or fractional index
+    local name = "Mode" + value;
+
+    // RIGHT
+    local name = "Mode" + parseInt(value);
+}
+```
+
+---
+
+## String Concatenation with Numbers
+
+When concatenating strings and numbers, addition is ambiguous. Use parentheses to force arithmetic before concatenation:
+
+```javascript
+// WRONG - without parentheses, string concatenation takes over
+Content.getComponent("Button" + i + 1);  // "Button01" not "Button1"
+
+// CORRECT - parentheses force arithmetic first
+Content.getComponent("Button" + (i + 1));
+
+// SAFEST - parseInt guards against float values
+Content.getComponent("Button" + parseInt(i + 1));
+```
+
+---
+
+## Pass-by-Reference
+
+Arrays and objects are passed by reference. Assignment does NOT copy:
+
+```javascript
+var a = [1, 2, 3];
+var b = a;          // b points to the SAME array
+b[0] = 99;
+Console.print(a[0]); // 99 - a was modified!
+
+var c = a.clone();  // Independent deep copy
+c[0] = 0;
+Console.print(a[0]); // 99 - a is unaffected
+```
+
+Use `.clone()` when you need an independent copy.
+
+---
+
+## Behavioral Differences from JavaScript
+
+These features work but behave differently than in standard JavaScript:
+
+| Feature | JavaScript | HISEScript |
+|---------|-----------|------------|
+| `str.replace("a", "b")` | Replaces **first** occurrence | Replaces **all** occurrences |
+| `arr.concat([4, 5])` | Returns a **new** array | **Mutates** the original array in-place |
+| `typeof true` | `"boolean"` | `"number"` |
+| `typeof null` | `"object"` | `"void"` |
+| `1/0` | `Infinity` | Non-finite value (propagates through arithmetic) |
+| `0/0` | `NaN` | Non-finite value (propagates through arithmetic) |
+
+Division by zero returns a non-finite value -- not `Infinity` or `NaN`. Use `isFinite(x)` to guard.
+
+---
+
+## Inline Functions Cannot Be Nested
+
+`inline function` cannot be defined inside another `inline function`. Define all inline functions at file or namespace scope:
+
+```javascript
+// WRONG - nested inline function
+inline function outer()
+{
+    inline function inner() { } // Error
+}
+
+// RIGHT - both at top-level scope
+inline function inner() { }
+
+inline function outer()
+{
+    inner(); // Call by reference
+}
+```
+
+---
+
+## Common Mistakes (Quick Reference)
+
+| LLM Writes | Correct HISEScript |
+|------------|-------------------|
+| `const x = 5` | `const var x = 5` |
+| `let x = 5` | `var x = 5` (or `reg`, `local`) |
+| `x = 5` (undeclared) | Must use `var`, `reg`, `local`, `const var`, or `global` |
+| `console.log()` | `Console.print()` |
+| `setTimeout()` / `setInterval()` | `Engine.createTimerObject()` |
+| `arr.splice(i, n)` | `arr.removeElement(i)` |
+| `===` / `!==` | `==` / `!=` |
+| `this.property` | `this.get("property")` / `this.set("property", value)` |
+| `obj.hasOwnProperty("key")` | `isDefined(obj.key)` |
+| `"key" in obj` (boolean check) | `isDefined(obj.key)` -- `in` only works in `for...in` |
+| `Object.assign({}, obj)` | `obj.clone()` |
+| `[...arr]` / `{...obj}` | `arr.clone()` / manual copy |
+| `class Foo {}` / `new Foo()` | Factory function returning `{}` |
+| `switch` without `break` | Every case **must** end with `break` |

@@ -162,6 +162,12 @@ Related classes for similar tasks, or "None."
 
 (Omit this section entirely if no class-level diagrams are needed.
  Add multiple h3 sub-sections for multiple diagrams.)
+
+## Diagnostic Ideas
+Reviewed: Yes
+Count: 0
+Rationale: One sentence explaining why no methods in this class warrant parse-time
+diagnostics (e.g., no timeline dependencies, no silent-failure preconditions, etc.)
 ```
 
 ### methods_todo.md Template
@@ -251,9 +257,10 @@ For each unchecked method in `methods_todo.md`:
 4. **Read the method implementation** in the `.cpp` file. Use the raw exploration for surrounding context.
 5. **Produce the method entry** (see methods.md Output Format below).
 6. **Log bugs.** If any pitfall describes a bug or design issue (not just intended-but-surprising behavior), append an entry to `enrichment/issues.md`. See Bug & Issue Tracking below.
-7. **Append** the method entry to `enrichment/phase1/ClassName/methods.md`
-8. **Mark the method `[x]`** in `methods_todo.md`
-9. **Write both files to disk immediately**
+7. **Check for diagnostic opportunities.** Does this method silently fail without prior setup? Does it require another method to have been called first? Could a parse-time check catch a common user mistake? If yes, append an entry to `enrichment/diagnostic-ideas.md`. See Diagnostic Ideas Side-Channel below.
+8. **Append** the method entry to `enrichment/phase1/ClassName/methods.md`
+9. **Mark the method `[x]`** in `methods_todo.md`
+10. **Write both files to disk immediately**
 
 ### HISEScript Syntax & Example Rules
 
@@ -522,6 +529,32 @@ Append new issues under the correct severity heading in `enrichment/issues.md`.
 
 ---
 
+## Diagnostic Ideas Side-Channel
+
+During C++ analysis you may notice patterns where a method silently fails, behaves unexpectedly, or produces confusing results when called without proper setup -- but the behavior is *by design*, not a bug. These are opportunities for LSP diagnostics that catch user mistakes at parse time via `addDiagnostic()` query lambdas. Log these in `enrichment/diagnostic-ideas.md`.
+
+Look for:
+
+- **Timeline dependencies:** Method B requires Method A to have been called first (e.g., `setBaseURL` before `callWithGET`, `setTableMode` before `setTableCallback`)
+- **State preconditions:** Methods that need a specific mode/flag enabled to do useful work
+- **Value validation:** String/identifier parameters that could be checked against known sets at parse time
+- **Combination checks:** Mutually exclusive settings, redundant calls that overwrite each other
+
+This is separate from both pitfalls and issues: pitfalls document behavior for users; issues track bugs; diagnostic ideas track opportunities for automated parse-time warnings where the underlying HISE behavior is correct.
+
+When you find a diagnostic opportunity during method analysis (Per-Method Workflow step 7), append an entry to `enrichment/diagnostic-ideas.md` under the correct priority heading using the entry template in that file.
+
+### Diagnostic Ideas Attestation
+
+After all methods are analyzed, the `## Diagnostic Ideas` section in `Readme.md` must be filled in:
+
+- **If ideas were found:** Set `Count:` to the number logged and list each as a bullet with method name and category (e.g., `- ScriptedViewport.setTableCallback -- timeline dependency (logged)`).
+- **If no ideas were found:** Set `Count: 0` and write a `Rationale:` line -- one sentence explaining why none of the methods in this class warrant parse-time diagnostics. The rationale must be specific to this class (e.g., "All methods operate on immediate values with no inter-method state dependencies" or "All failure modes already produce descriptive runtime error messages"). Generic dismissals like "No diagnostics needed" are not acceptable.
+
+This attestation is a gate condition in Step C (see Diagnostic Ideas Attestation Check below).
+
+---
+
 ## Step C -- Post-Process
 
 After all methods for a class are complete:
@@ -553,6 +586,16 @@ Scan all pitfalls in `methods.md`:
 - Every `[BUG]` pitfall that does NOT have a matching issues.md entry: create the entry now
 
 This check is a gate -- the class is not considered complete until bug/issue pairs are consistent.
+
+### 6. Diagnostic Ideas Attestation Check
+
+Verify the `## Diagnostic Ideas` section in `Readme.md`:
+
+- The section must exist with `Reviewed: Yes`
+- If `Count: 0`: a `Rationale:` line must be present and non-empty. Generic dismissals (e.g., "No diagnostics needed", "None found") are not acceptable -- the rationale must be specific to this class.
+- If `Count: N` (N > 0): there must be N bullet items listing each idea with method name and category, and each must have a corresponding entry in `enrichment/diagnostic-ideas.md`
+
+This check is a gate -- the class is not considered complete until the diagnostic attestation is present and valid.
 
 ---
 
