@@ -269,7 +269,6 @@ When `synchronous` is `AsyncNotification`, the callback executes asynchronously 
 **Callback Signature:** callbackFunction(value: double)
 
 **Pitfalls:**
-- Synchronous callbacks with non-realtime-safe functions are silently ignored -- the callback never fires, with no error message.
 - Asynchronous callbacks coalesce values. If multiple `setValue()` calls happen between UI timer ticks, only the last value is delivered.
 - Each call to `registerCallback` adds a new callback. There is no automatic replacement -- call `deregisterCallback` first to remove an existing one.
 
@@ -471,7 +470,7 @@ Different modulator types are handled automatically: time-variant modulators sen
 | addToMod | Integer | no | `true` to connect the modulator to the cable, `false` to disconnect. | `true` or `false`. |
 
 **Pitfalls:**
-- The modulator must be inside a `GlobalModulatorContainer`. If the modulator exists but its parent is not a `GlobalModulatorContainer`, the call silently does nothing.
+- [BUG] The modulator must be inside a `GlobalModulatorContainer`. If the modulator exists but its parent is not a `GlobalModulatorContainer`, the call silently does nothing.
 
 **Cross References:**
 - `GlobalCable.connectToMacroControl`

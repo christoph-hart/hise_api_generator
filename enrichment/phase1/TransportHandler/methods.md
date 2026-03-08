@@ -455,7 +455,7 @@ Enables or disables the high-precision grid timer at a specific musical tempo di
 | 18 | 1/64T (64th note triplet) |
 
 **Pitfalls:**
-- The error message says "Use 1-18" but valid indices actually start at 0 (Whole note). Index 0 is valid.
+- [BUG] The error message says "Use 1-18" but valid indices actually start at 0 (Whole note). Index 0 is valid.
 
 **Cross References:**
 - `TransportHandler.setOnGridChange`

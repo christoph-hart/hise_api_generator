@@ -42,6 +42,22 @@ Sorted by severity (critical first).
 - **Observed:** After `restoreFromBase64String()` overwrites the raw `int[128]` array via `MemoryBlock::fromBase64Encoding` + `memcpy`, the internal `numValues` counter is not recalculated. `isEmpty()` and `getNumSetValues()` return stale values from before the restore until the next `setValue()` call forces a recount.
 - **Expected:** Recalculate `numValues` by scanning the array after restoring, or call the existing recount logic that `setValue()` triggers.
 
+### TransportHandler.setEnableGrid -- error message says wrong range
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~8644
+- **Observed:** The error message `"Illegal tempo value. Use 1-18"` implies index 0 is invalid, but the code accepts index 0 (Whole note) as a valid tempo factor. The `TempoSyncer::getTempoName(tempoFactor)` call succeeds for index 0.
+- **Expected:** Change the error message to `"Illegal tempo value. Use 0-18"` to include the valid Whole note index.
+
+### GlobalCable.connectToGlobalModulator -- silent failure when parent is not GlobalModulatorContainer
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~9613
+- **Observed:** If the modulator is found by name but its parent is not a `GlobalModulatorContainer`, the method silently does nothing. The `dynamic_cast<GlobalModulatorContainer*>` fails and execution falls through without reporting an error or returning an indication of failure.
+- **Expected:** Report a script error when the modulator exists but its parent is not a `GlobalModulatorContainer` (e.g., "Modulator 'X' must be inside a GlobalModulatorContainer").
+
 ## Low
 
 ### MidiList.setValue -- Doxygen comment claims value range -127 to 128

@@ -264,7 +264,7 @@ Sets the value at the given index. If the index is out of range (negative or >= 
 | value | int | no | The value to store. `-1` marks the slot as empty. | -- |
 
 **Pitfalls:**
-- Despite the Doxygen comment ("between -127 and 128"), values are stored as plain integers with no clamping. Any `int` value can be stored.
+- [BUG] Despite the Doxygen comment ("between -127 and 128"), values are stored as plain integers with no clamping. Any `int` value can be stored.
 - Out-of-range index access is silent - no error is reported.
 
 **Cross References:**
@@ -305,7 +305,7 @@ Sets a contiguous range of slots to the same value. The start index is clamped t
 | value | int | no | The value to write. | -- |
 
 **Pitfalls:**
-- The `numToFill` parameter is used as an absolute end index in the loop, not as a count relative to `startIndex`. Calling `setRange(10, 5, 99)` fills zero slots because the loop condition `10 < 5` is immediately false.
+- [BUG] The `numToFill` parameter is used as an absolute end index in the loop, not as a count relative to `startIndex`. Calling `setRange(10, 5, 99)` fills zero slots because the loop condition `10 < 5` is immediately false.
 
 **Cross References:**
 - `MidiList.fill`
@@ -380,7 +380,7 @@ Restores all 128 values from a Base64-encoded string previously created by `getB
 | base64encodedValues | String | String | A Base64-encoded string produced by `getBase64String()`. | -- |
 
 **Pitfalls:**
-- The `numValues` counter is not recalculated after `restoreFromBase64String()`. This means `isEmpty()` and `getNumSetValues()` may return incorrect values until you manually set or clear a value (which triggers a counter update).
+- [BUG] The `numValues` counter is not recalculated after `restoreFromBase64String()`. This means `isEmpty()` and `getNumSetValues()` may return incorrect values until you manually set or clear a value (which triggers a counter update).
 
 **Cross References:**
 - `MidiList.getBase64String`
