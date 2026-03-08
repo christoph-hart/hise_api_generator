@@ -1,10 +1,7 @@
 TransportHandler::sendGridSyncOnNextCallback() -> undefined
 
 Thread safety: SAFE
-Forces next grid callback to have firstGridInPlayback=true. Global operation.
-Dispatch/mechanics:
-  getMasterClock().setNextGridIsFirst() -- direct delegation
-Pair with:
-  setOnGridChange -- the callback that receives the firstGridInPlayback flag
+Forces the next grid callback to have its `firstGridInPlayback` argument set to true. Provides a manual resync point for the grid, useful for resetting sequencer state. This is a global operation on the MasterClock -- affects all TransportHandler instances.
+Pair with: setOnGridChange -- the callback whose `firstGridInPlayback` flag is affected.
 Source:
   ScriptingApi.cpp:8704  sendGridSyncOnNextCallback() -> MasterClock::setNextGridIsFirst()

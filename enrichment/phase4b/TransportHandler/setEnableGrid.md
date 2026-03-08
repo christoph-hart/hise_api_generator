@@ -1,15 +1,13 @@
 TransportHandler::setEnableGrid(Integer shouldBeEnabled, Integer tempoFactor) -> undefined
 
-Thread safety: UNSAFE -- calls reportScriptError on invalid input
-Enables/disables the global high-precision grid timer at a musical subdivision.
-tempoFactor is a TempoSyncer::Tempo index: 0=1/1, 5=1/4, 8=1/8, 11=1/16, 14=1/32, 17=1/64.
-Dispatch/mechanics:
-  if isPositiveAndBelow(tempoFactor, numTempos) -> getMasterClock().setClockGrid(shouldBeEnabled, t)
-  else -> reportScriptError("Illegal tempo value. Use 1-18") -- note: error msg is wrong, 0 is valid
-Pair with:
-  setOnGridChange -- must enable grid before grid callbacks fire
-  setLocalGridMultiplier -- per-instance rate division
+Thread safety: SAFE
+Enables or disables the high-precision grid timer at a specific musical tempo division. The `tempoFactor` is an index into the TempoSyncer note value table (0=1/1 through 18=1/64T). This is a global setting -- enabling the grid affects all TransportHandler instances. The grid must be enabled before `setOnGridChange` callbacks will fire.
+Required setup:
+  const var th = Engine.createTransportHandler();
+  th.setEnableGrid(true, 11); // 1/16 note grid
+Dispatch/mechanics: Validates `tempoFactor` with `isPositiveAndBelow(tempoFactor, numTempos)`, then delegates to `MasterClock::setClockGrid()`.
+Pair with: setOnGridChange -- register a callback to receive grid events. setLocalGridMultiplier -- per-instance rate division. getGridLengthInSamples -- query resulting grid duration.
 Anti-patterns:
-  - Error message says "Use 1-18" but index 0 (Whole note) is valid
+  - The error message says "Use 1-18" but valid indices actually start at 0 (Whole note). Index 0 is valid.
 Source:
   ScriptingApi.cpp:8626  setEnableGrid() -> MasterClock::setClockGrid()

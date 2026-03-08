@@ -1,8 +1,6 @@
 TransportHandler::isNonRealtime() -> Integer
 
 Thread safety: SAFE
-Returns 1 if DAW is bouncing/exporting audio offline, 0 for realtime playback.
-Dispatch/mechanics:
-  getMainController_()->getSampleManager().isNonRealtime() -- lock-free read
+Returns whether the DAW is currently bouncing/exporting audio (non-realtime rendering). Returns 1 if bouncing, 0 if in realtime playback. Useful in transport callbacks to adjust processing for offline rendering.
 Source:
   ScriptingApi.cpp:8714  isNonRealtime() -> SampleManager::isNonRealtime()
