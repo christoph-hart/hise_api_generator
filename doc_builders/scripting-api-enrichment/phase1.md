@@ -418,7 +418,7 @@ A pitfall documents behavior that the user cannot self-diagnose from HISE's runt
 - **Clear error message = NOT a pitfall.** If HISE throws a script error with a descriptive message (e.g., "SineGenerator1 wasn't found"), the user can self-diagnose. Do not document expected error handling as a pitfall.
 - **Implementation details = NOT a pitfall.** Internal code paths, property read ordering, or default values that behave as expected are not pitfalls. A pitfall must describe a user-facing consequence.
 - **Coalesce related pitfalls.** If multiple pitfalls describe the same failure mechanism with different triggers, combine them into one entry. One pitfall per failure *mechanism*, not per trigger.
-- **Bug or design issue?** If a behavior looks like a bug rather than intended behavior, also log it in `enrichment/issues.md` (see Bug & Issue Tracking section below). Write both the pitfall (documenting current behavior for users) and the issue entry (tracking the fix).
+- **Bug or design issue?** If a behavior looks like a bug rather than intended behavior, also log it in `enrichment/issues.md` (see Bug & Issue Tracking section below). Write both the pitfall (documenting current behavior for users) and the issue entry (tracking the fix). **Prefix bug-pattern pitfalls with `[BUG]`** in the methods.md bullet item (e.g., `- [BUG] restoreFromBase64String does not recalculate numValues.`). The `[BUG]` prefix signals the merge script to exclude this pitfall from the user-facing `api_reference.json` -- it will be removed once the underlying bug is fixed in HISE. Non-bug pitfalls (surprising-but-intended behavior) must NOT have the `[BUG]` prefix.
 
 ### methods.md Output Format
 
@@ -500,6 +500,12 @@ During C++ analysis you will encounter behavior that is a bug, design issue, or 
 
 This is separate from pitfalls: pitfalls document current behavior for users; issues track things that should be fixed in HISE itself. Do not assume issues will be fixed -- document current behavior accurately in the method entry regardless. If an issue also affects users today, write both a pitfall and an issue entry.
 
+**Pitfall/issue pairing rule:** Every bug-pattern pitfall in `methods.md` must have:
+1. A `[BUG]` prefix on the pitfall bullet item in `methods.md`
+2. A corresponding entry in `enrichment/issues.md` under the correct severity heading
+
+The `[BUG]` prefix causes the merge script to exclude the pitfall from `api_reference.json`. Once the bug is fixed in HISE, delete both the `[BUG]` pitfall and the issues.md entry.
+
 **Entry format:**
 
 ```
@@ -538,6 +544,15 @@ Parse `Readme.md` and `methods.md` into the output JSON schema. This is done by 
 ### 4. Update Diff Manifest
 
 Add `ClassName.methodName` entries to `enrichment/phase1_scanned.txt` for all processed methods.
+
+### 5. Bug/Issue Consistency Check
+
+Scan all pitfalls in `methods.md`:
+- Every pitfall with a `[BUG]` prefix must have a corresponding entry in `enrichment/issues.md`
+- Every pitfall describing a bug, silent failure, or wrong behavior that is NOT tagged `[BUG]` should be reviewed: if it's genuinely a bug, add the `[BUG]` prefix and create the issues.md entry
+- Every `[BUG]` pitfall that does NOT have a matching issues.md entry: create the entry now
+
+This check is a gate -- the class is not considered complete until bug/issue pairs are consistent.
 
 ---
 

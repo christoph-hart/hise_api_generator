@@ -1108,14 +1108,16 @@ def parse_single_method(body: str) -> dict:
             "parameters": cb_params,
         }
 
-    # Pitfalls
+    # Pitfalls (filter out [BUG]-prefixed entries -- these are tracked in issues.md
+    # and excluded from the user-facing JSON)
     pitfalls_match = re.search(
         r"\*\*Pitfalls:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
         body, re.DOTALL
     )
     if pitfalls_match:
         pitfalls_text = pitfalls_match.group(1)
-        pitfalls = parse_bullet_list(pitfalls_text)
+        pitfalls = [p for p in parse_bullet_list(pitfalls_text)
+                    if not p.startswith("[BUG]")]
         if pitfalls:
             result["pitfalls"] = pitfalls
 
@@ -3968,13 +3970,16 @@ def run_filter_mcp(output_path=None, fallback_path=None):
                 if xrefs:
                     method_out["crossReferences"] = xrefs
 
-                # Pitfalls (strip source tag, flatten to strings)
+                # Pitfalls (strip source tag, flatten to strings, exclude [BUG] entries)
                 pitfalls = method_data.get("pitfalls", [])
                 if pitfalls:
-                    method_out["pitfalls"] = [
-                        p["description"] if isinstance(p, dict) else p
-                        for p in pitfalls
-                    ]
+                    filtered = []
+                    for p in pitfalls:
+                        desc = p["description"] if isinstance(p, dict) else p
+                        if not desc.startswith("[BUG]"):
+                            filtered.append(desc)
+                    if filtered:
+                        method_out["pitfalls"] = filtered
 
                 # llmRef from Phase 4b file
                 p4b_file = PHASE4B_DIR / class_name / f"{method_name}.md"

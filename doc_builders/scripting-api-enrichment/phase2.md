@@ -22,7 +22,7 @@ Directory existence is the signal. If the directory exists (even empty), extract
 
 ## Test Metadata Enrichment
 
-Once Phase 2 files exist, the pipeline agent enriches the extracted examples with test metadata so they can be validated. This is the same process Phase 1 uses for its synthesized examples, applied retroactively to externally-produced examples.
+Once Phase 2 files exist, the pipeline agent enriches examples with test metadata so they can be validated. This is a **combined pass covering both Phase 1 and Phase 2 examples** for the target class -- not just Phase 2 files. Phase 1 examples in `phase1/ClassName/methods.md` and Phase 2 examples in `phase2/ClassName/*.md` all receive slugs, testMetadata blocks, and setup/test-only markers in one go, then are validated together.
 
 Follow `resources/guidelines/test_metadata.md` for the full schema, verification types, setup patterns, and CLI reference.
 
@@ -50,11 +50,11 @@ For each method file in `enrichment/phase2/ClassName/`:
    - `skipReason`: string (when not testable)
    - `verifyScript`: verification steps (log-output, REPL, or expect-error)
 
-7. **Run validation:**
-   ```bash
-   python snippet_validator.py --validate --source project --class ClassName --launch
-   ```
-   Fix failing examples and re-validate until all testable examples pass.
+7. **Run validation** (covers both Phase 1 and Phase 2 examples):
+    ```bash
+    python snippet_validator.py --validate --source all --class ClassName --launch
+    ```
+    Fix failing examples and re-validate until all testable examples pass.
 
 ### What NOT to change
 

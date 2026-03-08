@@ -429,8 +429,14 @@ These fields are set by Phase 1 (C++ analysis) and not overridden by later phase
 ### Merged Union Fields (all sources combined, tagged)
 
 - `commonMistakes` -- entries from all phases, each tagged with `source`
-- `methods.*.pitfalls` -- entries from all phases, each tagged with `source`
+- `methods.*.pitfalls` -- entries from all phases, each tagged with `source`; **`[BUG]`-prefixed pitfalls are excluded** (see below)
 - `methods.*.crossReferences` -- all references combined, deduplicated
+
+### Bug-Pattern Pitfall Filtering
+
+Pitfalls that describe bugs or design issues (not intended-but-surprising behavior) are prefixed with `[BUG]` in the markdown source (e.g., `- [BUG] restoreFromBase64String does not recalculate numValues.`). These pitfalls are **excluded from `api_reference.json`** during merge. They remain in the Phase 1 `methods.md` source files as a development record and have corresponding entries in `enrichment/issues.md` for tracking the fix.
+
+Once the bug is fixed in HISE, delete both the `[BUG]` pitfall in `methods.md` and the `issues.md` entry. The pitfall will naturally disappear from the JSON since it was already excluded.
 
 ### Source Tagging
 
