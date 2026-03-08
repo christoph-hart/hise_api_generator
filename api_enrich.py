@@ -43,6 +43,7 @@ PHASE3_DIR = ENRICHMENT_DIR / "phase3"
 PHASE4_AUTO_DIR = ENRICHMENT_DIR / "phase4" / "auto"
 PHASE4_MANUAL_DIR = ENRICHMENT_DIR / "phase4" / "manual"
 PHASE4B_DIR = ENRICHMENT_DIR / "phase4b"
+RESOURCES_DIR = ENRICHMENT_DIR / "resources"
 OUTPUT_DIR = ENRICHMENT_DIR / "output"
 SCANNED_FILE = ENRICHMENT_DIR / "phase1_scanned.txt"
 
@@ -2162,8 +2163,15 @@ def run_merge():
             if me and token:
                 m["minimalExample"] = me.replace("{obj}", token)
 
+        # Phase 4b: LLM class-level reference (Readme.md per class)
+        p4b_class_file = PHASE4B_DIR / class_name / "Readme.md"
+        class_llm_ref = None
+        if p4b_class_file.is_file():
+            with open(p4b_class_file, "r", encoding="utf-8") as fh:
+                class_llm_ref = fh.read().strip()
+
         # --- Assemble class output ---
-        output["classes"][class_name] = {
+        class_entry = {
             "description": desc,
             "category": category,
             "constants": constants if constants else {},
@@ -2171,6 +2179,9 @@ def run_merge():
             "commonMistakes": common_mistakes if common_mistakes else [],
             "methods": methods_output,
         }
+        if class_llm_ref:
+            class_entry["llmRef"] = class_llm_ref
+        output["classes"][class_name] = class_entry
         
         # --- Write decision file placeholder (notes Phase 3 input for Phase 4a agent) ---
         write_phase4a_decision_placeholder(
@@ -3802,6 +3813,241 @@ def _extract_brief(description: str, max_len: int = 200) -> str:
     return trunc
 
 
+def run_filter_mcp(output_path=None, fallback_path=None):
+    """Filter merged JSON -> MCP server JSON with tiered enrichment."""
+    input_path = OUTPUT_DIR / "api_reference.json"
+    if not input_path.is_file():
+        print("ERROR: No merged JSON found. Run 'merge' first.")
+        sys.exit(1)
+
+    if output_path is None:
+        output_path = OUTPUT_DIR / "scripting_api_mcp.json"
+    else:
+        output_path = Path(output_path)
+
+    # Load fallback RAG dump for unenriched method examples
+    fallback_examples = {}  # {ClassName: {methodName: exampleCode}}
+    if fallback_path is None:
+        fallback_path = RESOURCES_DIR / "rag_dump.json"
+    else:
+        fallback_path = Path(fallback_path)
+
+    if fallback_path.is_file():
+        with open(fallback_path, "r", encoding="utf-8") as f:
+            rag_data = json.load(f)
+        for class_name, methods in rag_data.items():
+            if not isinstance(methods, list):
+                continue
+            fallback_examples[class_name] = {}
+            for m in methods:
+                if not isinstance(m, dict):
+                    continue
+                ex = m.get("example", "").strip()
+                if ex:
+                    fallback_examples[class_name][m.get("name", "")] = ex
+        print(f"  Loaded fallback examples from {fallback_path}")
+    else:
+        print(f"  WARNING: No fallback file at {fallback_path}")
+
+    with open(input_path, "r", encoding="utf-8") as f:
+        full_api = json.load(f)
+
+    # Determine which classes are enriched (have Phase 4b entries)
+    enriched_classes = set()
+    if PHASE4B_DIR.is_dir():
+        for d in PHASE4B_DIR.iterdir():
+            if d.is_dir() and any(d.glob("*.md")):
+                enriched_classes.add(d.name)
+
+    result = {
+        "version": "1.0",
+        "generated": datetime.now(timezone.utc).isoformat(),
+        "enrichedClasses": sorted(enriched_classes),
+        "classes": {},
+    }
+
+    for class_name, class_data in full_api.get("classes", {}).items():
+        is_enriched = class_name in enriched_classes
+        class_out = {}
+
+        # Class-level fields (enriched classes only)
+        if is_enriched:
+            desc = class_data.get("description", {})
+            if isinstance(desc, dict):
+                class_out["description"] = desc.get("brief", "")
+                obtained = desc.get("obtainedVia")
+                if obtained:
+                    class_out["obtainedVia"] = obtained
+            elif isinstance(desc, str):
+                class_out["description"] = desc
+            else:
+                class_out["description"] = ""
+
+            category = class_data.get("category")
+            if category:
+                class_out["category"] = category
+
+            # Constants (strip source tag)
+            constants = class_data.get("constants", {})
+            if constants:
+                clean_constants = {}
+                for cname, cdata in constants.items():
+                    clean_constants[cname] = {
+                        k: v for k, v in cdata.items() if k != "source"
+                    }
+                class_out["constants"] = clean_constants
+
+            # Common mistakes (strip source tag)
+            mistakes = class_data.get("commonMistakes", [])
+            if mistakes:
+                class_out["commonMistakes"] = [
+                    {k: v for k, v in m.items() if k != "source"}
+                    for m in mistakes
+                ]
+
+            # Class-level llmRef from Phase 4b Readme.md (read from disk)
+            p4b_class_file = PHASE4B_DIR / class_name / "Readme.md"
+            if p4b_class_file.is_file():
+                with open(p4b_class_file, "r", encoding="utf-8") as fh:
+                    class_out["llmRef"] = fh.read().strip()
+        else:
+            # Unenriched: minimal class-level data
+            desc = class_data.get("description", {})
+            if isinstance(desc, dict):
+                class_out["description"] = desc.get("brief", "")
+            elif isinstance(desc, str):
+                class_out["description"] = desc
+            else:
+                class_out["description"] = ""
+
+            category = class_data.get("category")
+            if category:
+                class_out["category"] = category
+
+        # Methods
+        methods_out = []
+        for method_name, method_data in class_data.get("methods", {}).items():
+            # Skip disabled methods
+            if method_data.get("disabled"):
+                continue
+
+            method_out = {"name": method_name}
+
+            # Return type
+            rt = method_data.get("returnType", "")
+            method_out["returnType"] = rt
+
+            # Description
+            method_out["description"] = method_data.get("description", "")
+
+            # Parameters (structured)
+            params = method_data.get("parameters", [])
+            params_out = []
+            for p in params:
+                param_entry = {
+                    "name": p.get("name", ""),
+                    "type": p.get("type", "var"),
+                }
+                pdesc = p.get("description", "")
+                if pdesc:
+                    param_entry["description"] = pdesc
+                params_out.append(param_entry)
+            method_out["parameters"] = params_out
+
+            if is_enriched:
+                # callScope
+                cs = method_data.get("callScope")
+                if cs in ("safe", "warning", "unsafe", "init"):
+                    method_out["callScope"] = cs
+                csn = method_data.get("callScopeNote")
+                if csn:
+                    method_out["callScopeNote"] = csn
+
+                # Cross references
+                xrefs = method_data.get("crossReferences", [])
+                if xrefs:
+                    method_out["crossReferences"] = xrefs
+
+                # Pitfalls (strip source tag, flatten to strings)
+                pitfalls = method_data.get("pitfalls", [])
+                if pitfalls:
+                    method_out["pitfalls"] = [
+                        p["description"] if isinstance(p, dict) else p
+                        for p in pitfalls
+                    ]
+
+                # llmRef from Phase 4b file
+                p4b_file = PHASE4B_DIR / class_name / f"{method_name}.md"
+                if p4b_file.is_file():
+                    with open(p4b_file, "r", encoding="utf-8") as fh:
+                        method_out["llmRef"] = fh.read().strip()
+
+            # Examples: enriched methods use pipeline examples,
+            # unenriched fall back to RAG dump
+            examples = method_data.get("examples", [])
+            if examples:
+                examples_out = []
+                for ex in examples:
+                    entry = {}
+                    title = ex.get("title", "")
+                    if title:
+                        entry["title"] = title
+                    code = ex.get("code", "")
+                    if code:
+                        entry["code"] = code
+                    if entry.get("code"):
+                        examples_out.append(entry)
+                if examples_out:
+                    method_out["examples"] = examples_out
+            elif not is_enriched:
+                # Fallback to RAG dump example
+                fb = fallback_examples.get(class_name, {}).get(method_name, "")
+                if fb:
+                    method_out["examples"] = [{"title": "Example", "code": fb}]
+
+            methods_out.append(method_out)
+
+        if methods_out:
+            class_out["methods"] = methods_out
+            result["classes"][class_name] = class_out
+
+    # Stats
+    enriched_count = sum(
+        1 for cn in result["classes"] if cn in enriched_classes
+    )
+    unenriched_count = len(result["classes"]) - enriched_count
+    total_methods = sum(
+        len(c.get("methods", [])) for c in result["classes"].values()
+    )
+    llmref_count = sum(
+        1
+        for c in result["classes"].values()
+        for m in c.get("methods", [])
+        if m.get("llmRef")
+    )
+    class_llmref_count = sum(
+        1 for c in result["classes"].values() if c.get("llmRef")
+    )
+    example_count = sum(
+        1
+        for c in result["classes"].values()
+        for m in c.get("methods", [])
+        if m.get("examples")
+    )
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
+
+    print(f"Filter-MCP complete:")
+    print(f"  Enriched classes: {enriched_count}")
+    print(f"  Unenriched classes: {unenriched_count}")
+    print(f"  Total methods: {total_methods}")
+    print(f"  Methods with llmRef: {llmref_count}")
+    print(f"  Classes with llmRef: {class_llmref_count}")
+    print(f"  Methods with examples: {example_count}")
+    print(f"  Output: {output_path}")
+
+
 def run_preview(class_filter: str = None):
     """Generate HTML preview pages from api_reference.json."""
     json_path = OUTPUT_DIR / "api_reference.json"
@@ -3954,6 +4200,19 @@ def main():
         help="Output path (default: enrichment/output/filtered_api.json)",
     )
 
+    filter_mcp_parser = subparsers.add_parser(
+        "filter-mcp",
+        help="Filter merged JSON -> MCP server JSON with tiered enrichment",
+    )
+    filter_mcp_parser.add_argument(
+        "--output", default=None,
+        help="Output path (default: enrichment/output/scripting_api_mcp.json)",
+    )
+    filter_mcp_parser.add_argument(
+        "--fallback", default=None,
+        help="Fallback RAG dump path (default: enrichment/resources/rag_dump.json)",
+    )
+
     args = parser.parse_args()
 
     if args.command == "phase0":
@@ -3966,6 +4225,8 @@ def main():
         run_preview(args.classname)
     elif args.command == "filter-binary":
         run_filter_binary(args.output)
+    elif args.command == "filter-mcp":
+        run_filter_mcp(args.output, args.fallback)
     else:
         parser.print_help()
         sys.exit(1)
