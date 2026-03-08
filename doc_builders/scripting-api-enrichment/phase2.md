@@ -118,7 +118,7 @@ All sections are optional except `**Examples:**`.
 ## Project Context
 
 ### Real-World Use Cases
-- **Use case name (ProjectName)**: What the project builds with this class,
+- **Use case name**: What kind of plugin builds with this class,
   how it fits into the architecture, and why this class was chosen.
 
 ### Complexity Tiers
@@ -139,9 +139,9 @@ All sections are optional except `**Examples:**`.
 
 All four sub-sections within `## Project Context` are optional.
 
-- **Real-World Use Cases**: Every bullet must name a specific analyzed project. No generic examples.
+- **Real-World Use Cases**: Describe use case archetypes without identifying specific projects.
 - **Complexity Tiers**: Numbered 1-N, simplest to most complex. Names specific methods per tier.
-- **Practical Defaults**: Every claim cites project evidence.
+- **Practical Defaults**: State as direct expert recommendations.
 - **Integration Patterns**: Method-to-method connections across classes, observed in project code.
 
 ---
