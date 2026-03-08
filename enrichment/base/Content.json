@@ -1,0 +1,325 @@
+{
+  "className": "Content",
+  "category": "namespace",
+  "description": "This is the interface area that can be filled with buttons, knobs, etc.",
+  "methods": {
+    "addVisualGuide": {
+      "signature": "void addVisualGuide(var guideData, var colour)",
+      "returnType": "void",
+      "description": "Creates either a line or rectangle with the given colour.",
+      "parameters": [
+        {
+          "name": "guideData",
+          "type": "var"
+        },
+        {
+          "name": "colour",
+          "type": "var"
+        }
+      ]
+    },
+    "callAfterDelay": {
+      "signature": "void callAfterDelay(int milliSeconds, var function, var thisObject)",
+      "returnType": "void",
+      "description": "Calls a function after a delay. This is not accurate and only useful for UI purposes!.",
+      "parameters": [
+        {
+          "name": "milliSeconds",
+          "type": "int"
+        },
+        {
+          "name": "function",
+          "type": "var"
+        },
+        {
+          "name": "thisObject",
+          "type": "var"
+        }
+      ]
+    },
+    "createLocalLookAndFeel": {
+      "signature": "var createLocalLookAndFeel()",
+      "returnType": "var",
+      "description": "Creates a look and feel that you can attach manually to certain components.",
+      "parameters": []
+    },
+    "createMarkdownRenderer": {
+      "signature": "var createMarkdownRenderer()",
+      "returnType": "var",
+      "description": "Creates a MarkdownRenderer.",
+      "parameters": []
+    },
+    "createPath": {
+      "signature": "var createPath()",
+      "returnType": "var",
+      "description": "Creates a Path that can be drawn to a ScriptPanel.",
+      "parameters": []
+    },
+    "createScreenshot": {
+      "signature": "void createScreenshot(var area, var directory, String name)",
+      "returnType": "void",
+      "description": "Creates a screenshot of the area relative to the content's origin.",
+      "parameters": [
+        {
+          "name": "area",
+          "type": "var"
+        },
+        {
+          "name": "directory",
+          "type": "var"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        }
+      ]
+    },
+    "createShader": {
+      "signature": "var createShader(String fileName)",
+      "returnType": "var",
+      "description": "Creates an OpenGL framgent shader.",
+      "parameters": [
+        {
+          "name": "fileName",
+          "type": "String"
+        }
+      ]
+    },
+    "createSVG": {
+      "signature": "var createSVG(String base64String)",
+      "returnType": "var",
+      "description": "Creates an SVG object from the converted Base64 String.",
+      "parameters": [
+        {
+          "name": "base64String",
+          "type": "String"
+        }
+      ]
+    },
+    "getAllComponents": {
+      "signature": "var getAllComponents(String regex)",
+      "returnType": "var",
+      "description": "Returns an array of all components that match the given regex.",
+      "parameters": [
+        {
+          "name": "regex",
+          "type": "String"
+        }
+      ]
+    },
+    "getComponent": {
+      "signature": "var getComponent(var name)",
+      "returnType": "var",
+      "description": "Returns the reference to the given component.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "var"
+        }
+      ]
+    },
+    "getComponentUnderDrag": {
+      "signature": "String getComponentUnderDrag()",
+      "returnType": "String",
+      "description": "Returns the ID of the component under the mouse.",
+      "parameters": []
+    },
+    "getComponentUnderMouse": {
+      "signature": "String getComponentUnderMouse()",
+      "returnType": "String",
+      "description": "Returns the name of the component that is currently hovered.",
+      "parameters": []
+    },
+    "getCurrentTooltip": {
+      "signature": "String getCurrentTooltip()",
+      "returnType": "String",
+      "description": "Returns the current tooltip.",
+      "parameters": []
+    },
+    "getInterfaceSize": {
+      "signature": "var getInterfaceSize()",
+      "returnType": "var",
+      "description": "Returns an array containing the width and height of the interface.",
+      "parameters": []
+    },
+    "getScreenBounds": {
+      "signature": "var getScreenBounds(bool getTotalArea)",
+      "returnType": "var",
+      "description": "Returns the total bounds of the main display.",
+      "parameters": [
+        {
+          "name": "getTotalArea",
+          "type": "bool"
+        }
+      ]
+    },
+    "isCtrlDown": {
+      "signature": "bool isCtrlDown()",
+      "returnType": "bool",
+      "description": "Checks whether the CTRL key's flag is set.",
+      "parameters": []
+    },
+    "isMouseDown": {
+      "signature": "int isMouseDown()",
+      "returnType": "int",
+      "description": "Returns 1 if the left mouse button is clicked somewhere on the interface and 2 if the right button is clicked.",
+      "parameters": []
+    },
+    "makeFrontInterface": {
+      "signature": "void makeFrontInterface(int width, int height)",
+      "returnType": "void",
+      "description": "Sets this script as main interface with the given size.",
+      "parameters": [
+        {
+          "name": "width",
+          "type": "int"
+        },
+        {
+          "name": "height",
+          "type": "int"
+        }
+      ]
+    },
+    "makeFullScreenInterface": {
+      "signature": "void makeFullScreenInterface()",
+      "returnType": "void",
+      "description": "Sets this script as main interface with the given device resolution (only works with mobile devices).",
+      "parameters": []
+    },
+    "refreshDragImage": {
+      "signature": "bool refreshDragImage()",
+      "returnType": "bool",
+      "description": "Calls the paint function of the drag operation again to refresh the image.",
+      "parameters": []
+    },
+    "restoreAllControlsFromPreset": {
+      "signature": "void restoreAllControlsFromPreset(String fileName)",
+      "returnType": "void",
+      "description": "Restores all controls from a previously saved XML data file.",
+      "parameters": [
+        {
+          "name": "fileName",
+          "type": "String"
+        }
+      ]
+    },
+    "setContentTooltip": {
+      "signature": "void setContentTooltip(String tooltipToShow)",
+      "returnType": "void",
+      "description": "sets the Tooltip that will be shown if the mouse hovers over the script's tab button.",
+      "parameters": [
+        {
+          "name": "tooltipToShow",
+          "type": "String"
+        }
+      ]
+    },
+    "setHeight": {
+      "signature": "void setHeight(int newHeight)",
+      "returnType": "void",
+      "description": "Sets the height of the content.",
+      "parameters": [
+        {
+          "name": "newHeight",
+          "type": "int"
+        }
+      ]
+    },
+    "setKeyPressCallback": {
+      "signature": "void setKeyPressCallback(var keyPress, var keyPressCallback)",
+      "returnType": "void",
+      "description": "Adds a callback that will be performed asynchronously when the key is pressed.",
+      "parameters": [
+        {
+          "name": "keyPress",
+          "type": "var"
+        },
+        {
+          "name": "keyPressCallback",
+          "type": "var"
+        }
+      ]
+    },
+    "setName": {
+      "signature": "void setName(String newName)",
+      "returnType": "void",
+      "description": "Sets the name that will be displayed in big fat Impact.",
+      "parameters": [
+        {
+          "name": "newName",
+          "type": "String"
+        }
+      ]
+    },
+    "setSuspendTimerCallback": {
+      "signature": "void setSuspendTimerCallback(var suspendFunction)",
+      "returnType": "void",
+      "description": "Sets a callback that will be notified whenever the UI timers are suspended.",
+      "parameters": [
+        {
+          "name": "suspendFunction",
+          "type": "var"
+        }
+      ]
+    },
+    "setToolbarProperties": {
+      "signature": "void setToolbarProperties(var toolbarProperties)",
+      "returnType": "void",
+      "description": "Sets the main toolbar properties from a JSON object.",
+      "parameters": [
+        {
+          "name": "toolbarProperties",
+          "type": "var"
+        }
+      ]
+    },
+    "setUseHighResolutionForPanels": {
+      "signature": "void setUseHighResolutionForPanels(bool shouldUseDoubleResolution)",
+      "returnType": "void",
+      "description": "Set this to true to render all script panels with double resolution for retina or rescaling.",
+      "parameters": [
+        {
+          "name": "shouldUseDoubleResolution",
+          "type": "bool"
+        }
+      ]
+    },
+    "setValuePopupData": {
+      "signature": "void setValuePopupData(var jsonData)",
+      "returnType": "void",
+      "description": "sets the data for the value popups.",
+      "parameters": [
+        {
+          "name": "jsonData",
+          "type": "var"
+        }
+      ]
+    },
+    "setWidth": {
+      "signature": "void setWidth(int newWidth)",
+      "returnType": "void",
+      "description": "Sets the height of the content.",
+      "parameters": [
+        {
+          "name": "newWidth",
+          "type": "int"
+        }
+      ]
+    },
+    "showModalTextInput": {
+      "signature": "void showModalTextInput(var properties, var callback)",
+      "returnType": "void",
+      "description": "Opens a text input box with the given properties and executes the callback when finished.",
+      "parameters": [
+        {
+          "name": "properties",
+          "type": "var"
+        },
+        {
+          "name": "callback",
+          "type": "var"
+        }
+      ]
+    }
+  }
+}
