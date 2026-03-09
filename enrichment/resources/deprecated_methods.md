@@ -27,3 +27,9 @@ Status: applied
 Reason: "use drawAlignedText for better placement"
 
 Superseded by drawAlignedText which supports alignment options.
+
+### Broadcaster.sendMessage(2)
+Status: pending
+Reason: "use sendSyncMessage or sendAsyncMessage instead"
+
+The second parameter (`isSync` bool) is ambiguous and hard to guess. The C++ implementation already emits a `debugError` at runtime but does not use the `ADD_API_METHOD_N_DEPRECATED` macro.
