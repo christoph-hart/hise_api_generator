@@ -215,3 +215,8 @@ UserPresetHandler.setUseUndoForPresetLoading
 UserPresetHandler.updateAutomationValues
 UserPresetHandler.updateConnectedComponentsFromModuleState
 UserPresetHandler.updateSaveInPresetComponents
+
+MacroHandler.getMacroDataObject
+MacroHandler.setExclusiveMode
+MacroHandler.setMacroDataFromObject
+MacroHandler.setUpdateCallback

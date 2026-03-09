@@ -90,6 +90,38 @@ Sorted by severity (critical first).
 - **Observed:** If the modulator is found by name but its parent is not a `GlobalModulatorContainer`, the method silently does nothing. The `dynamic_cast<GlobalModulatorContainer*>` fails and execution falls through without reporting an error or returning an indication of failure.
 - **Expected:** Report a script error when the modulator exists but its parent is not a `GlobalModulatorContainer` (e.g., "Modulator 'X' must be inside a GlobalModulatorContainer").
 
+### MacroHandler.setMacroDataFromObject -- silently ignores non-Array input
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~9841
+- **Observed:** If `jsonData` is not an Array, the method silently returns without modifying any macro connections or firing the update callback. No error is reported.
+- **Expected:** Report a script error when `jsonData` is not an Array, e.g., "jsonData must be an Array".
+
+### MacroHandler.setUpdateCallback -- silently ignores non-function argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~9862
+- **Observed:** If the argument is not a valid JavaScript function, the method silently returns without modifying or clearing the callback. No error is reported.
+- **Expected:** Report a script error when the callback argument is not a function, e.g., "callback must be a function".
+
+### MacroHandler.setUpdateCallback -- no way to clear the callback
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~9860-9871
+- **Observed:** There is no mechanism to unregister the update callback. Passing a non-function value is silently ignored (see above), so the previous callback remains active. The callback persists until the MacroHandler object is garbage collected.
+- **Expected:** Either accept `false`/`undefined` to clear the callback, or provide a separate `clearUpdateCallback()` method.
+
+### MacroHandler.getMacroDataObject -- getCallbackArg iterates all parameters, overwrites range on single object
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~10032-10055
+- **Observed:** `getCallbackArg(macroIndex, p, parameterIndex, wasAdded)` receives a specific `parameterIndex` but then loops over ALL parameters in the macro slot (`md->getNumParameters()`). Each loop iteration overwrites the range properties (`FullStart`, `FullEnd`, `Start`, `End`, `Interval`, `Skew`, `Inverted`) and potentially the `Attribute` and `CustomAutomation` properties on the same DynamicObject. When a macro slot has multiple connected parameters, each returned object contains the range data of the LAST parameter in the slot rather than the specific parameter it represents. The `parameterIndex` argument is only used to set the initial `Attribute` at line 10026 but gets overwritten if any parameter is a custom automation.
+- **Expected:** The loop should either be removed (just look up the specific parameter by `parameterIndex`) or the function should build range data from only the parameter matching `parameterIndex`.
+
 ## Low
 
 ### UserPresetHandler.setPostSaveCallback -- addAsSource debug label says "postCallback" instead of "postSaveCallback"

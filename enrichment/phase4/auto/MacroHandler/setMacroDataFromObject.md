@@ -1,0 +1,3 @@
+Replaces all macro connections with the contents of the provided array. Each element must be an object with at least `MacroIndex`, `Processor`, and `Attribute` properties. Pass an empty array to clear all connections - useful at startup to ensure a clean state before the preset model restores them.
+
+> **Warning:** This method is destructive - it clears all existing connections before applying the new array. Passing a partial list removes any connections not included. Use the read-modify-write pattern (`getMacroDataObject()` -> modify -> `setMacroDataFromObject()`) to change individual connections without losing others.
