@@ -18,6 +18,38 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### UserPresetHandler.setUseCustomUserPresetModel -- silently ignores non-function callbacks
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~250
+- **Observed:** If either `loadCallback` or `saveCallback` is not a valid JavaScript function, the method silently returns without enabling the custom data model or reporting any error. The user has no indication that the call had no effect. Subsequent calls to `setCustomAutomation` then fail with the confusing error "you need to enable setUseCustomDataModel() before calling this method", which does not hint at the actual cause (invalid callback arguments).
+- **Expected:** Report a script error when either callback is not a function, e.g., "loadCallback must be a function" or "saveCallback must be a function".
+
+### UserPresetHandler.updateAutomationValues -- IndexSorter uses first["id"] for both comparands
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~591
+- **Observed:** In the `IndexSorter::compareElements` method, both `i1` and `i2` are constructed from `first["id"].toString()` instead of `i2` using `second["id"].toString()`. This causes the comparator to always return 0 (equal), effectively disabling the index-based sort. Values are applied in the order they appear in the input array rather than sorted by automation index.
+- **Expected:** Line 591 should read `Identifier i2(second["id"].toString());` instead of `Identifier i2(first["id"].toString());`.
+
+### UserPresetHandler.updateAutomationValues -- undo path does not capture old values for array input
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~472-523
+- **Observed:** The `AutomationValueUndoAction` constructor captures old values via `newData.getDynamicObject()`, which returns null when `newData` is an Array (the only valid non-integer input format). The `oldData` member remains uninitialized (`undefined`). When `undo()` calls `updateAutomationValues(oldData, ...)`, the undefined value is neither an int, DynamicObject, nor Array, so the method silently does nothing. `Engine.undo()` after an undoable `updateAutomationValues` call with array data has no effect.
+- **Expected:** The undo action constructor should iterate the array of `{"id", "value"}` objects and capture old values in the same array format, or the method should convert array input to DynamicObject format before creating the undo action.
+
+### UserPresetHandler.setParameterGestureCallback -- numExpectedArgs mismatch (2 vs 3)
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~74 (constructor), ScriptExpansion.cpp:~435 (setter), ScriptExpansion.cpp:~165 (invocation)
+- **Observed:** The `parameterGestureCallback` WeakCallbackHolder is initialized with `numExpectedArgs=2` in the constructor (line 74) and re-created with 2 in `setParameterGestureCallback` (line 435). The parse-time diagnostic (`ADD_CALLBACK_DIAGNOSTIC` at line 105) also checks for 2 arguments. However, `onParameterGesture` (line 154) passes 3 arguments (type, slotIndex, startGesture) via `callSync(NativeFunctionArgs)`. Users following the diagnostic guidance write 2-parameter callbacks and silently miss the `startGesture` boolean.
+- **Expected:** Change `numExpectedArgs` to 3 in both the constructor initializer and `setParameterGestureCallback`, so the diagnostic correctly reports that the callback expects 3 arguments.
+
 ### TransportHandler.setOnTransportChange -- clearIf targets wrong callback slot
 
 - **Type:** inconsistency
@@ -59,6 +91,14 @@ Sorted by severity (critical first).
 - **Expected:** Report a script error when the modulator exists but its parent is not a `GlobalModulatorContainer` (e.g., "Modulator 'X' must be inside a GlobalModulatorContainer").
 
 ## Low
+
+### UserPresetHandler.setPostSaveCallback -- addAsSource debug label says "postCallback" instead of "postSaveCallback"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptExpansion.cpp:~223
+- **Observed:** `setPostSaveCallback` calls `postSaveCallback.addAsSource(this, "postCallback")` using the string `"postCallback"` as the debug source name. This is a copy-paste from the `setPostCallback` implementation above it. Both the post-load callback and the post-save callback share the same debug label.
+- **Expected:** Should use `postSaveCallback.addAsSource(this, "postSaveCallback")` so the debug information system distinguishes the two callbacks in the HISE IDE.
 
 ### MidiList.setValue -- Doxygen comment claims value range -127 to 128
 
