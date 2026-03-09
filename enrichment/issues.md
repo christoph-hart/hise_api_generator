@@ -210,6 +210,14 @@ Sorted by severity (critical first).
 - **Observed:** The MessageHolder wrapper casts the `deltaSamples` parameter to `int16` before passing to `HiseEvent::addToTimeStamp(int)`. Values outside -32768..32767 silently overflow. For example, passing 50000 wraps to -15536, shifting the timestamp backward instead of forward. No error or warning is produced.
 - **Expected:** Either accept the full `int` range (matching the underlying `HiseEvent::addToTimeStamp(int)` signature which takes an `int`), or validate the range and report a script error when the delta exceeds the int16 range.
 
+### Date.ISO8601ToMilliseconds -- silently returns 0 for invalid ISO-8601 strings
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~3770
+- **Observed:** If an invalid or unparseable string is passed, `juce::Time::fromISO8601` returns a default-constructed Time (epoch = 0). The method returns 0, which is indistinguishable from a genuinely parsed Unix epoch timestamp. No error or warning is reported.
+- **Expected:** Validate the input string before parsing, or check if the result is the default Time when the input is not an empty string, and report a script error for unparseable input.
+
 ## Low
 
 ### MessageHolder.addToTimestamp -- method not registered in constructor

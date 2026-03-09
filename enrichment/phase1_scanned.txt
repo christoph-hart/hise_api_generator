@@ -305,3 +305,8 @@ MessageHolder.setTimestamp
 MessageHolder.setTransposeAmount
 MessageHolder.setType
 MessageHolder.setVelocity
+
+Date.getSystemTimeISO8601
+Date.getSystemTimeMs
+Date.ISO8601ToMilliseconds
+Date.millisecondsToISO8601
