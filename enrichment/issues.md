@@ -90,6 +90,14 @@ Sorted by severity (critical first).
 - **Observed:** If the modulator is found by name but its parent is not a `GlobalModulatorContainer`, the method silently does nothing. The `dynamic_cast<GlobalModulatorContainer*>` fails and execution falls through without reporting an error or returning an indication of failure.
 - **Expected:** Report a script error when the modulator exists but its parent is not a `GlobalModulatorContainer` (e.g., "Modulator 'X' must be inside a GlobalModulatorContainer").
 
+### MidiAutomationHandler.setAutomationDataFromObject -- silently clears all automation on non-Array input
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~10093
+- **Observed:** If `automationData` is not an Array (e.g., a single object, number, or string), `ValueTreeConverters::convertVarArrayToFlatValueTree` produces an empty ValueTree. `restoreFromValueTree` then clears all existing automation entries and adds nothing. The user's automation data is silently wiped with no error.
+- **Expected:** Validate that `automationData` is an Array before proceeding, and report a script error if not, e.g., "automationData must be an Array".
+
 ### MacroHandler.setMacroDataFromObject -- silently ignores non-Array input
 
 - **Type:** missing-validation
@@ -97,6 +105,22 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiObjects.cpp:~9841
 - **Observed:** If `jsonData` is not an Array, the method silently returns without modifying any macro connections or firing the update callback. No error is reported.
 - **Expected:** Report a script error when `jsonData` is not an Array, e.g., "jsonData must be an Array".
+
+### MidiAutomationHandler.setUpdateCallback -- silently ignores non-function argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~10098
+- **Observed:** If the argument is not a valid JavaScript function, the method silently returns without modifying or clearing the callback. No error is reported.
+- **Expected:** Report a script error when the callback argument is not a function, e.g., "callback must be a function".
+
+### MidiAutomationHandler.setUpdateCallback -- no way to clear the callback
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~10096-10111
+- **Observed:** There is no mechanism to unregister the update callback. Passing a non-function value is silently ignored (see above), so the previous callback remains active. The callback persists until the MidiAutomationHandler object is garbage collected.
+- **Expected:** Either accept `false` to clear the callback, or provide a separate `clearUpdateCallback()` method.
 
 ### MacroHandler.setUpdateCallback -- silently ignores non-function argument
 
