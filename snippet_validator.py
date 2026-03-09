@@ -11,7 +11,7 @@ Reads examples directly from Phase 1/2/3 markdown source files and:
 Source tags map to enrichment phases:
   auto    -> phase1/{Class}/methods.md
   project -> phase2/{Class}/{method}.md
-  manual  -> phase3/{class_lower}/{method_lower}.md
+  manual  -> phase3/{Class}/{method}.md
 """
 
 import requests
@@ -244,7 +244,7 @@ class MarkdownExampleReader:
 	Each phase has its own directory layout:
 	  phase1/{Class}/methods.md        - all methods in one file, ## headings
 	  phase2/{Class}/{method}.md       - one file per method
-	  phase3/{class_lower}/{method}.md - one file per method, lowercase dirs
+	  phase3/{Class}/{method}.md       - one file per method, PascalCase dirs
 	
 	Directory lookups are case-insensitive for all phases.
 	"""

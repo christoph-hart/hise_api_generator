@@ -176,6 +176,7 @@ After writing all `.md` files (Readme + methods), re-read them together as a sin
 3. **Remove filler.** "currently", "as its argument", "this specific", unnecessary "will".
 4. **No em-dashes.** Use a regular dash or rewrite the sentence.
 5. **Merge redundant sentences** within a single method's prose.
+6. **Do not trim diagram-supporting prose.** Bullet lists, numbered enumerations, and short paragraphs that introduce or follow a diagram are *complementary*, not redundant. The diagram shows the visual shape (connections, topology, timeline); the prose explains details, names all items, and provides context the diagram intentionally omits for visual clarity. Never remove prose because "the diagram already shows this" -- they serve different modalities.
 
 This step catches redundancy patterns that are only visible when all methods are read together. It is the final step before running the mechanical merge + preview.
 
@@ -222,7 +223,7 @@ Generated: {timestamp}
 ## Class-Level Decisions
 
 - Incorporated OSC address pattern from diary notes (/ prefix for OSC addresses)
-- Rendered 2 diagrams (cable-dispatch, callback-threading), cut 1 (registerCallback - redundant with class-level)
+- Rendered 3 diagrams (cable-dispatch, callback-threading, registerCallback)
 - Consolidated "global operation" statement (repeated on 3 methods) into class overview
 
 ## Method Decisions
@@ -259,10 +260,10 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
    - Read and extract unique insights not in the JSON (integration patterns, use cases, workflow sequences, domain conventions)
    - Prefer diary framing for purpose and use cases over the C++ analysis
    - Note for decision log: what you incorporated, what you omitted
-5. **Triage diagrams** (see Diagram Triage below):
-   - Review all diagram descriptions from Phase 1 (class-level `diagrams[]` and method-level `diagram` fields)
-   - For each diagram, decide: render as SVG, or cut in favor of prose/tables
-   - Diagrams that survive triage proceed to rendering; cut diagrams are simply not rendered (the text description remains in the JSON for LLM consumers)
+ 5. **Triage diagrams** (see Diagram Triage below):
+    - Review all diagram descriptions from Phase 1 (class-level `diagrams[]` and method-level `diagram` fields)
+    - Default is to render all diagrams; cut only when a diagram is truly trivial, duplicates another diagram, or maps perfectly to a compact table
+    - Cut diagrams are simply not rendered (the text description remains in the JSON for LLM consumers)
 6. **Render surviving SVG diagrams** (see Diagram SVG Rendering below):
    - For each class-level diagram that survived triage, render an SVG
    - For each method diagram that survived triage, render an SVG
@@ -273,7 +274,7 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
    - Write `Readme.md` with user-facing prose incorporating diary insights in technical style
    - Add a `## Common Mistakes` section (curated from `commonMistakes` array)
    - Embed class-level diagram SVGs as `![brief](filename.svg)` (see Embedding Diagrams below)
-   - If a diagram was cut during triage because a table or prose covers the same information better, use that table/prose instead
+   - Write complementary prose around each diagram: a short introductory sentence before the embed, and a bullet list or numbered enumeration after it that connects the visual elements to the details. The diagram shows the shape; the prose explains what the reader is looking at. This is not redundancy -- they serve different modalities.
 8. Write method-level `.md` files:
    - Check `phase4/manual/ClassName/methodName.md` - if present, skip
    - Check `phase4/auto/ClassName/methodName.md` - if present, skip
@@ -319,19 +320,23 @@ See `enrichment/resources/guidelines/userdocs_style.md` for two completed refere
 
 ## Diagram Triage
 
-Phase 1 generates diagram descriptions generously -- every pattern that could benefit from visualization gets a description. Phase 4's job is to decide which of those descriptions actually deserve an SVG rendering.
+Phase 1 generates diagram descriptions generously -- every pattern that could benefit from visualization gets a description. Phase 4 triages these descriptions before rendering.
+
+### Default: render
+
+**Render all diagrams by default.** It is far cheaper for the reviewer to delete a diagram from the output than to request one be added after the fact (which requires re-running Phase 4a with specific instructions). The bias should be strongly toward rendering.
 
 ### Triage criteria
 
-For each diagram description, evaluate:
+Cut a diagram only when one of these conditions is clearly met:
 
-1. **Does the diagram add comprehension beyond what prose or tables already provide?** If the same information is already clear in a compact table (e.g. 3 rows showing 3 modes) or a short paragraph, the diagram may not earn its space. Cut it.
+1. **The diagram is truly trivial.** A simple linear flow (A -> B -> C) with no branching, no fan-in/fan-out, and no threading distinction adds nothing over a sentence of prose. Cut it.
 
-2. **Can the diagram replace prose?** If a diagram communicates a concept more effectively than a paragraph of text, render the diagram and trim the redundant prose from the userDocs. This is the best outcome -- a diagram that displaces text rather than duplicating it.
+2. **The diagram duplicates another diagram in the same class.** If a method-level diagram shows the same topology as a class-level diagram with no additional detail, cut the method-level one and use a `diagramRef` instead.
 
-3. **Slightly favor diagrams.** When it is a close call -- the information could work as either prose or a diagram -- lean toward rendering the diagram. Diagrams are more engaging, more scannable, and provide a different modality of understanding.
+3. **The information is already a compact table.** If the concept maps perfectly to 3-4 rows in a table (e.g. "three modes with different properties"), a table may serve better than a diagram. But if the concept involves connections, flow, or sequencing, the diagram wins even if a table could technically list the same facts.
 
-4. **Each diagram must earn its place independently.** Multiple diagrams per class are fine, but each one must pass the triage on its own merits. Do not render a diagram just because other diagrams exist.
+When in doubt, render. The reviewer will cut what does not work.
 
 ### What happens to cut diagrams
 

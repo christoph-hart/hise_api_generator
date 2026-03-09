@@ -1386,8 +1386,11 @@ def parse_examples(text: str) -> list:
     
     else:
         # Legacy format - find all code blocks, optionally preceded by title
+        # Use [^\n]+ (not .+) for title captures to avoid matching across
+        # newlines in DOTALL mode (Phase 3 files have prose between heading
+        # and code fence that was being captured as part of the title).
         blocks = re.findall(
-            r"(?:(?://\s*(.+)\n)|(?:###\s*(.+)\n))?```\w*\n(.*?)```",
+            r"(?:(?://\s*([^\n]+)\n)|(?:###\s*([^\n]+)\n))?```\w*\n(.*?)```",
             text, re.DOTALL
         )
         
@@ -1455,9 +1458,45 @@ def parse_phase3_diary(filepath: Path, class_lookup: dict, max_lines: int = 500)
         result["crossReferences"] = cross_refs
     
     # Extract code examples (hand-written, high quality)
-    examples = parse_examples(content)
-    if examples:
-        result["examples"] = examples
+    # Phase 3 diary files embed inline code snippets (formulas, callback
+    # signatures, broadcaster creation boilerplate) alongside proper examples.
+    # Filter out inline snippets: keep a code block only if it was preceded
+    # by a ### heading OR has >= MIN_EXAMPLE_LINES lines of code.
+    MIN_EXAMPLE_LINES = 8
+    
+    all_examples = parse_examples(content)
+    if all_examples:
+        # Build a map of which code blocks have a ### heading before them
+        # by walking the file line by line
+        headed_codes = set()  # set of code-block start indices (0-based)
+        file_lines = content.split("\n")
+        current_heading = None
+        block_idx = 0
+        i = 0
+        while i < len(file_lines):
+            line = file_lines[i]
+            if re.match(r"^###\s+", line):
+                current_heading = True
+            if line.strip().startswith("```") and line.strip() != "```":
+                if current_heading:
+                    headed_codes.add(block_idx)
+                # Skip to closing fence
+                i += 1
+                while i < len(file_lines) and file_lines[i].strip() != "```":
+                    i += 1
+                current_heading = None
+                block_idx += 1
+            i += 1
+        
+        examples = []
+        for idx, ex in enumerate(all_examples):
+            code_lines = len(ex.get("code", "").splitlines())
+            has_heading = idx in headed_codes
+            if has_heading or code_lines >= MIN_EXAMPLE_LINES:
+                examples.append(ex)
+        
+        if examples:
+            result["examples"] = examples
     
     return result
 
@@ -2303,6 +2342,40 @@ def _md_table_to_html(block: str) -> str:
     return html
 
 
+def md_split_blocks(text: str) -> list:
+    """Split markdown text into blocks at blank lines, respecting code fences.
+    
+    Unlike a naive split("\\n\\n"), this keeps code blocks with internal blank
+    lines as a single block.
+    """
+    blocks = []
+    current = []
+    in_fence = False
+    
+    for line in text.split("\n"):
+        if line.strip().startswith("```"):
+            if not in_fence:
+                in_fence = True
+            else:
+                in_fence = False
+            current.append(line)
+        elif not in_fence and line.strip() == "" and current:
+            # Blank line outside a code fence - flush the current block
+            block_text = "\n".join(current).strip()
+            if block_text:
+                blocks.append(block_text)
+            current = []
+        else:
+            current.append(line)
+    
+    # Flush remaining
+    block_text = "\n".join(current).strip()
+    if block_text:
+        blocks.append(block_text)
+    
+    return blocks
+
+
 def md_block(block: str) -> str:
     """Render a markdown block as HTML -- table, heading, list, code fence, or paragraph."""
     block = block.strip()
@@ -2773,10 +2846,8 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
         if desc.get("userDocs"):
             main += '<h2 id="overview">Overview</h2>\n'
             ud_class_text = strip_heading_section(desc["userDocs"], "Common Mistakes")
-            for para in ud_class_text.split("\n\n"):
-                para = para.strip()
-                if para:
-                    main += md_block(para)
+            for para in md_split_blocks(ud_class_text):
+                main += md_block(para)
     else:
         # Review mode: show purpose + details
         if desc.get("purpose"):
@@ -2784,7 +2855,7 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
             main += f'<p>{md_inline(desc["purpose"])}</p>\n'
         if desc.get("details"):
             main += '<h2 id="details">Details</h2>\n'
-            for para in desc["details"].split("\n\n"):
+            for para in md_split_blocks(desc["details"]):
                 para = para.strip()
                 if para:
                     main += md_block(para)
@@ -2792,10 +2863,8 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
     # Project context (review mode only -- Phase 2 project-derived insights)
     if not is_web and not is_llm and desc.get("projectContext"):
         main += '<h2 id="project-context">Project Context</h2>\n'
-        for para in desc["projectContext"].split("\n\n"):
-            para = para.strip()
-            if para:
-                main += md_block(para)
+        for para in md_split_blocks(desc["projectContext"]):
+            main += md_block(para)
 
     # Related preprocessors (review mode only)
     if not is_web and not is_llm and desc.get("relatedPreprocessors"):
@@ -2861,11 +2930,9 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
                 # Method description (always visible, right after signature)
                 if is_web and m.get("userDocs"):
                     ud_text = m["userDocs"]
-                    # Render multi-block userDocs (may contain tables)
-                    for para in ud_text.split("\n\n"):
-                        para = para.strip()
-                        if para:
-                            main += md_block(para)
+                    # Render multi-block userDocs (may contain tables, code fences)
+                    for para in md_split_blocks(ud_text):
+                        main += md_block(para)
                 else:
                     main += f'<p>{md_inline(m.get("description", ""))}</p>\n'
 

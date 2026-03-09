@@ -213,6 +213,14 @@ These conventions apply to Phase 4 auto-generated SVGs. Hand-crafted SVGs in `ph
 
 All colors, fonts, and spacing are derived from the HISE IDE style guide (`guidelines/style/cpp-ui.md`) to ensure diagrams feel native to the HISE environment.
 
+### Rendering Philosophy
+
+Diagrams and prose are complementary - they serve different modalities. The diagram shows the *shape* of the concept (connections, topology, flow, timeline). The surrounding prose explains the details. This means:
+
+- **Visual clarity over textual completeness.** Do not try to embed all context into the diagram. A diagram that tries to be a standalone explanation becomes cluttered and defeats the purpose. Use a representative subset of items rather than exhaustive lists. For example, a topology diagram with 14 source types should show 4-6 representative sources and a "+ N more" indicator, not all 14.
+- **No standalone explanatory text in diagrams.** Avoid bottom annotations like "All connections are visible in the XYZ panel" or internal labels like "change detection + priority sorting" that describe behaviour rather than structure. These belong in the prose that follows the diagram.
+- **The diagram description field is input, not a rendering spec.** The Phase 1 `description` field provides rich context for LLM consumers and for the rendering agent to understand the concept. The SVG should distil this to the visual essence - do not replicate the description text verbatim in the diagram.
+
 ### Canvas
 
 - **Background:** Transparent (no background rect or fill on the SVG element). Diagrams are rendered on the dark page background (`#0d1117`) in the preview HTML and on docs.hise.dev.
@@ -257,7 +265,8 @@ Colors are derived from HISE's semantic color macros where possible. Two additio
 - **Stroke width:** 1px for standard connectors, 2px for emphasis (e.g. the primary data flow path)
 - **Arrow markers:** Define in `<defs>` using `<marker>` elements. Arrowhead size ~8x6px.
 - **Dashed lines:** Use `stroke-dasharray="4,4"` for optional/conditional paths or unreachable transitions.
-- **Connection style:** Straight lines or single-bend orthogonal routing. Avoid bezier curves unless the diagram requires crossing paths.
+- **Orthogonal routing:** All connection paths must use right-angle bends (horizontal then vertical, or vertical then horizontal). Do not use diagonal lines between boxes at different vertical positions. Use SVG `<path>` elements with `L` commands for the bends, e.g. `d="M 222 85 L 260 85 L 260 200 L 310 200"`. This gives diagrams a clean, structured appearance. Bezier curves are acceptable only when paths must cross.
+- **Stagger bend points** when multiple parallel connections share a corridor. Offset each path's bend x-coordinate by ~10px to prevent overlap (e.g. 256, 266, 276 for three parallel paths).
 
 ---
 
@@ -346,10 +355,9 @@ Error annotations should only appear when they convey constraints **not already 
 
 **Visual techniques:**
 
-- **Argument signature labels:** Small code-font text on or near connection lines showing what data flows through each connection. Position above or below the line to avoid overlap.
+- **Connection labels:** A single label per connection bundle (e.g. `attachTo*()` for all source connections) is preferable to individual labels on each line. Place labels with a background rect (see Text Readability below) at the corridor between the source/target column and the hub. Use at least 11px font size.
+- **Representative subsets:** When a class has many source or target types, show 4-6 representative items and a dimmed "+ N more" indicator below the last box. List the full set in the surrounding prose. This keeps the diagram scannable.
 - **Category grouping:** If sources or targets fall into natural subgroups, add subtle horizontal separators (1px, dimmed color) between groups and label each group.
-
-> *Note: Topology visual techniques are initial guidance. To be refined after testing with real topology diagrams (e.g. Broadcaster class overview).*
 
 #### Sequence diagrams
 
@@ -385,6 +393,38 @@ Error annotations should only appear when they convey constraints **not already 
 - **Unreachable/invalid transitions:** Dashed red arrows with explanation text. Use the error color and dimmed text for the reason.
 
 > *Note: State visual techniques are initial guidance. To be refined after testing with real state diagrams.*
+
+---
+
+## Text Readability and Overlap Check
+
+After rendering a diagram, perform a final review pass for text readability issues. These are common and easy to miss when writing SVG by hand.
+
+### Labels near connectors
+
+Any text label positioned near connector lines or arrows must have a **background rect** behind it for readability. Without this, the text blends into the arrows and becomes hard to read against the dark transparent canvas.
+
+**Implementation:**
+
+```xml
+<!-- Background rect: slightly larger than the text, semi-transparent -->
+<rect x="{textX - padding}" y="{textY - fontSize}" width="{textWidth + 2*padding}" height="{fontSize + 6}" fill="#161b22" fill-opacity="0.85" rx="3"/>
+<text x="{textX}" y="{textY}" ...>label</text>
+```
+
+- Use `fill="#161b22"` with `fill-opacity="0.85"` for the background
+- The rect must be placed *before* the text element in SVG draw order
+- Minimum font size for labels near connectors: 11px (9px is too small)
+
+### Checklist
+
+After completing the SVG, verify:
+
+- [ ] No text overlaps with connector lines without a background rect
+- [ ] All labels are at least 11px font size
+- [ ] All connection paths use orthogonal routing (no diagonal lines)
+- [ ] Zone labels ("SOURCES", "TARGETS", thread names) are outside or at the top edge of their zones, not overlapping content
+- [ ] The diagram is visually scannable at a glance before reading any text
 
 ---
 

@@ -6,6 +6,8 @@ Phase 1 is the core enrichment step. It reads C++ source code and produces struc
 
 **ASCII-only rule:** All Phase 1 output files (`Readme.md`, `methods_todo.md`, `methods.md`) and all resource files must use ASCII characters only. Use `--` instead of em-dashes, straight quotes instead of curly quotes, etc. The Write tool on Windows may produce CP1252 instead of UTF-8 for non-ASCII characters, which breaks the merge script's UTF-8 parser.
 
+**Write tool only rule:** NEVER use bash commands (`echo`, `cat`, heredocs), Python scripts, or any other shell-based method to write or append to output files. Always use the Write tool for new files and the Edit tool for modifications. Bash-based writes corrupt markdown (backtick escaping, quote mangling) and produce encoding issues. If a Write call fails, retry it -- do not fall back to bash.
+
 ---
 
 ## Resource Files
@@ -81,6 +83,18 @@ List all resource files consulted (including prerequisite Readmes) at the top of
 ### Output Format
 
 Free-form markdown. Use headings to organize by topic. Include code snippets, tables, enum listings -- whatever captures the information faithfully. This file is consumed by agents, not humans, so prioritize completeness over readability.
+
+### Large Exploration Files
+
+Complex classes (Broadcaster, TransportHandler, Engine, Synth, etc.) routinely produce explorations of 800-1200 lines. This is expected and should not be truncated -- later phases depend on thorough context.
+
+To avoid Write tool failures on large files, use incremental writes:
+
+1. Write the first ~500 lines using the Write tool (class declaration, constructor, enums, infrastructure)
+2. Use the Edit tool to append subsequent sections of ~300-500 lines each (helper classes, upstream providers, constant tracing)
+3. Never attempt to write more than ~800 lines in a single Write tool call
+
+If a Write call fails or produces a truncated file, do NOT fall back to bash. Retry using a smaller chunk via Edit-append.
 
 ---
 

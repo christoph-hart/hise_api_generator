@@ -53,7 +53,7 @@ Test metadata lives in phase `.md` source files. The validator reads these direc
 |------------|-------|-------------|
 | `auto` | Phase 1 | `enrichment/phase1/{Class}/methods.md` (PascalCase dir, `## method` headings) |
 | `project` | Phase 2 | `enrichment/phase2/{Class}/{method}.md` (PascalCase dir, camelCase file) |
-| `manual` | Phase 3 | `enrichment/phase3/{class}/{method}.md` (all lowercase) |
+| `manual` | Phase 3 | `enrichment/phase3/{Class}/{method}.md` (PascalCase dir, lowercase file) |
 
 Directory lookups are case-insensitive.
 
@@ -179,6 +179,34 @@ Use when async operations need time to settle: async callbacks, transport clock 
 ---
 
 ## HISE-Specific Setup Patterns
+
+### Setup-Block Scope Isolation
+
+**Problem:** The validator compiles the setup block and the example code as separate `onInit` calls (see `snippet_validator.py` lines 728-744). Variables declared in the setup block do NOT carry over to the example code or to REPL `verifyScript` expressions.
+
+**Rule:** Setup blocks must only contain side-effect-producing code that creates persistent HISE state:
+- Builder API calls (`builder.create()`, `builder.flush()`)
+- Engine configuration (`Engine.setHostBpm()`)
+- Transport control (`th.startInternalClock()`)
+
+The example body must re-obtain any references it needs from the persistent state:
+
+````markdown
+```javascript:correct-scope
+// --- setup ---
+const var builder = Synth.createBuilder();
+builder.clear();
+builder.create(builder.Effects.SimpleGain, "TestGain", 0, builder.ChainIndexes.FX);
+builder.flush();
+// --- end setup ---
+
+// Re-obtain the reference in example scope -- do NOT reuse `builder`
+const var gain = Synth.getEffect("TestGain");
+gain.setAttribute(gain.Gain, -6.0);
+```
+````
+
+**Common violation:** Declaring a variable in setup (e.g., `const var cable = ...`) and referencing it in the example body or in a REPL expression. This compiles fine when read as a single script but fails validation because setup and example are separate compilations.
 
 ### Creating Modules with Builder API
 
