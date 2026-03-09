@@ -11,8 +11,8 @@ relationships (Engine.get*() is not a prerequisite) -- they are cases
 where A introduces concepts, conventions, or patterns that B's
 documentation needs to reference.
 
-| # | Prerequisite | Before | Rationale |
-|---|-------------|--------|-----------|
+| # | Enrich First | Then Enrich | Rationale |
+|---|-------------|-------------|-----------|
 | 1 | **GlobalRoutingManager** | GlobalCable | OSC address conventions, C++ interop, cable topology |
 | 2 | **Content** | All ScriptComponent subclasses | Property system (set/get), component lifecycle, event model |
 | 3 | **Synth** | Effect, Modulator, MidiProcessor, ChildSynth, SlotFX, AudioSampleProcessor, TableProcessor, RoutingMatrix | Module tree model, voice system, setAttribute/getAttribute pattern |

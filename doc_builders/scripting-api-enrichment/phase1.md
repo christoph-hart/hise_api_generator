@@ -65,10 +65,13 @@ Also consult `resources/survey/class_survey_data.json` for the target class entr
 - **seeAlso**: Related classes with distinction text (helps write cross-references)
 - **createdBy**: Which factory class creates this one
 
-**Prerequisite loading rule:** Check the prerequisite table in `resources/survey/class_survey.md`. If the target class appears in the "Before" column, its prerequisite class (the "Prerequisite" column) should already be enriched. Load that prerequisite's `phase1/ClassName/Readme.md` into context before starting exploration. This ensures cross-cutting knowledge flows downstream. For example:
-- When enriching `GlobalCable`, load `GlobalRoutingManager`'s Readme to pick up OSC conventions and C++ interop patterns
-- When enriching `Expansion`, load `ExpansionHandler`'s Readme for pack lifecycle and credential model
-- When enriching `Node`, load `DspNetwork`'s Readme for graph model and node creation patterns
+**Prerequisite loading rule:** Check the prerequisite table in `resources/survey/class_survey.md`. If the target class appears in the "Then Enrich" column, the "Enrich First" class provides essential architectural context. Load that prerequisite's `phase1/ClassName/Readme.md` into context before starting exploration.
+
+The prerequisite describes the broader system this class operates within. Your exploration should reference the prerequisite's architectural model rather than re-discovering it, focus on what THIS class adds or specializes, and note where this class's behavior depends on the prerequisite's mechanisms. For example:
+- When enriching `MacroHandler`, load `UserPresetHandler`'s Readme -- it describes the preset save/load lifecycle that macros participate in
+- When enriching `GlobalCable`, load `GlobalRoutingManager`'s Readme -- it describes OSC conventions and cable topology that GlobalCable inherits
+- When enriching `Expansion`, load `ExpansionHandler`'s Readme -- it describes pack lifecycle and credential model that Expansion instances operate within
+- When enriching `Node`, load `DspNetwork`'s Readme -- it describes the graph model and node creation patterns that Node instances live in
 
 ### Existing Resources to Consult
 
