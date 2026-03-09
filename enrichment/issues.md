@@ -146,7 +146,79 @@ Sorted by severity (critical first).
 - **Observed:** `getCallbackArg(macroIndex, p, parameterIndex, wasAdded)` receives a specific `parameterIndex` but then loops over ALL parameters in the macro slot (`md->getNumParameters()`). Each loop iteration overwrites the range properties (`FullStart`, `FullEnd`, `Start`, `End`, `Interval`, `Skew`, `Inverted`) and potentially the `Attribute` and `CustomAutomation` properties on the same DynamicObject. When a macro slot has multiple connected parameters, each returned object contains the range data of the LAST parameter in the slot rather than the specific parameter it represents. The `parameterIndex` argument is only used to set the initial `Attribute` at line 10026 but gets overwritten if any parameter is a custom automation.
 - **Expected:** The loop should either be removed (just look up the specific parameter by `parameterIndex`) or the function should build range data from only the parameter matching `parameterIndex`.
 
+### Message.getPolyAfterTouchNoteNumber -- accesses mutable pointer in const getter
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~768
+- **Observed:** `getPolyAfterTouchNoteNumber()` is a const getter but accesses `messageHolder->getAfterTouchNumber()` (the mutable pointer) instead of `constMessageHolder->getAfterTouchNumber()`. In read-only contexts (e.g., voice start modulators), `constMessageHolder` is set but `messageHolder` is null. The null check on `constMessageHolder` passes, then the method dereferences the null `messageHolder`, causing undefined behavior.
+- **Expected:** Should access `constMessageHolder->getAfterTouchNumber()` instead of `messageHolder->getAfterTouchNumber()`.
+
+### Message.getPolyAfterTouchPressureValue -- accesses mutable pointer in const getter
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~781
+- **Observed:** Same root cause as `getPolyAfterTouchNoteNumber`. `getPolyAfterTouchPressureValue()` is a const getter but accesses `messageHolder->getAfterTouchValue()` instead of `constMessageHolder->getAfterTouchValue()`. Dereferences null pointer in read-only contexts.
+- **Expected:** Should access `constMessageHolder->getAfterTouchValue()` instead of `messageHolder->getAfterTouchValue()`.
+
+### Message.getProgramChangeNumber -- wrong pointer check and wrong error message
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~648
+- **Observed:** The null-pointer guard checks `messageHolder` (mutable pointer) instead of `constMessageHolder`, and the error message says `"setVelocity()"` instead of `"getProgramChangeNumber()"`. This means the method incorrectly fails in read-only contexts where `constMessageHolder` is set but `messageHolder` is null, and produces a misleading error message.
+- **Expected:** Should check `constMessageHolder == nullptr` and report `"getProgramChangeNumber()"` in the error message.
+
+### Message.setStartOffset -- null check on wrong pointer
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~985
+- **Observed:** The `ENABLE_SCRIPTING_SAFE_CHECKS` guard checks `constMessageHolder == nullptr` for the null check, but the actual write on line 996 uses `messageHolder->setStartOffset(...)`. In read-only contexts (voice start modulators), `constMessageHolder` is non-null but `messageHolder` is null. The null check passes, then the write dereferences null `messageHolder`.
+- **Expected:** Should check `messageHolder == nullptr` (the mutable pointer) to match the write target, consistent with all other setter methods (setNoteNumber, setVelocity, setChannel, etc.).
+
+### Message.sendToMidiOut -- missing null-pointer guard on messageHolder
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~1105-1121
+- **Observed:** `sendToMidiOut()` has no `ENABLE_SCRIPTING_SAFE_CHECKS` guard around `messageHolder`. When called outside a mutable callback context, `makeArtificial()` silently returns 0 (since `makeArtificialInternal` checks `if (messageHolder != nullptr)`), but the next line `getScriptProcessor()->getMainController_()->sendToMidiOut(*messageHolder)` dereferences the null `messageHolder` pointer, causing undefined behavior (crash).
+- **Expected:** Add a null-pointer check on `messageHolder` at the top of `sendToMidiOut()` with `reportIllegalCall("sendToMidiOut()", "midi event")`, matching the pattern used by other mutable-context methods like `ignoreEvent()`.
+
+### Message.setStartOffset -- error message off by one
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~985
+- **Observed:** The error message says "Max start offset is 65536 (2^16)" but the check `newStartOffset > UINT16_MAX` correctly accepts 65535 and rejects 65536. The actual maximum accepted value is 65535 (UINT16_MAX), not 65536 as the message states.
+- **Expected:** Change the error message to "Max start offset is 65535 (UINT16_MAX)" or "Max start offset is 65535 (2^16 - 1)".
+
+### Message.store -- silently ignores invalid MessageHolder argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~1062
+- **Observed:** If the argument is not a valid MessageHolder object, `dynamic_cast<ScriptingObjects::ScriptingMessageHolder*>` returns null and the method silently does nothing. No error is reported. The user has no indication that the store operation failed.
+- **Expected:** Report a script error when the argument is not a MessageHolder, e.g., "store() expects a MessageHolder object created by Engine.createMessageHolder()".
+
+### MessageHolder.addToTimestamp -- int16 truncation silently corrupts delta values
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5654
+- **Observed:** The MessageHolder wrapper casts the `deltaSamples` parameter to `int16` before passing to `HiseEvent::addToTimeStamp(int)`. Values outside -32768..32767 silently overflow. For example, passing 50000 wraps to -15536, shifting the timestamp backward instead of forward. No error or warning is produced.
+- **Expected:** Either accept the full `int` range (matching the underlying `HiseEvent::addToTimeStamp(int)` signature which takes an `int`), or validate the range and report a script error when the delta exceeds the int16 range.
+
 ## Low
+
+### MessageHolder.addToTimestamp -- method not registered in constructor
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~5522-5580
+- **Observed:** `addToTimestamp` is declared in the header (line 1592), implemented in the .cpp (line 5654), and listed in the Doxygen-generated base JSON, but is NOT registered via `ADD_API_METHOD_1` or `ADD_TYPED_API_METHOD_1` in the constructor, and is NOT in the Wrapper struct. The method is inaccessible from HISEScript despite appearing in the API documentation.
+- **Expected:** Add `API_VOID_METHOD_WRAPPER_1(ScriptingMessageHolder, addToTimestamp);` to the Wrapper struct and `ADD_TYPED_API_METHOD_1(addToTimestamp, VarTypeChecker::Number);` (or `ADD_API_METHOD_1(addToTimestamp);`) to the constructor, consistent with the other timestamp methods.
 
 ### UserPresetHandler.setPostSaveCallback -- addAsSource debug label says "postCallback" instead of "postSaveCallback"
 
@@ -195,6 +267,14 @@ Sorted by severity (critical first).
 - **Location:** ScriptBroadcaster.cpp:~4458, ScriptBroadcaster.h:~319
 - **Observed:** `setReplaceThisReference` stores the boolean in the `replaceThisReference` member, but no code reads this member. `ScriptTarget::callSync` at line 898 unconditionally uses `var::NativeFunctionArgs(obj, args.getRawDataPointer(), args.size())`, always replacing `this` with the `obj` parameter from `addListener`. Calling `setReplaceThisReference(false)` is a no-op.
 - **Expected:** Either read `replaceThisReference` in `ScriptTarget::callSync` (passing `var()` or the broadcaster as the thisObject when `false`), or remove the method and member if the feature is intentionally abandoned.
+
+### MessageHolder.setStartOffset -- no corresponding getStartOffset() method
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~5649
+- **Observed:** `setStartOffset()` writes the start offset to the HiseEvent, but there is no `getStartOffset()` method on MessageHolder. The value is write-only from the scripting API. Users cannot read back the start offset they set, nor inspect start offsets on events returned by `MidiPlayer.getEventList()` or captured via `Message.store()`.
+- **Expected:** Add a `getStartOffset()` method that returns `(int)e.getStartOffset()`, consistent with the getter/setter pattern used by all other HiseEvent fields exposed on MessageHolder.
 
 ### Broadcaster.setBypassed -- async parameter name is inverted relative to behavior
 
