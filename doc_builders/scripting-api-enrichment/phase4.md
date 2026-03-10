@@ -26,6 +26,7 @@ The agent reads from `enrichment/output/api_reference.json`, specifically the en
 - `description.codeExample` -- usage example
 - `description.obtainedVia` - how the object is obtained in HISEScript
 - `commonMistakes` - common mistakes table (Phase 1 auto + Phase 2 project-tagged entries; curate into a `## Common Mistakes` section in the Readme.md)
+- `constants` -- named constants defined on the class (status codes, mode enums, location types). See "Constants Integration" below for how to present these.
 
 ### Method level
 - `description` - technical description (may reference C++ internals)
@@ -164,6 +165,30 @@ The `commonMistakes` array in the JSON contains wrong/right/explanation entries 
    - Too specific to a single edge case
 4. **Reword entries freely.** The Phase 1/2 text is raw analysis; your version should read naturally as user-facing guidance.
 5. **Typical count: 2-5 entries.** Fewer for simple classes, more for classes with complex setup requirements.
+
+---
+
+## Constants Integration
+
+Check the `constants` field in the JSON. When constants exist, integrate them into the overview prose where they are contextually relevant. Do not create a standalone "Constants Reference" section - weave them into the narrative.
+
+### Presentation rules
+
+- **Constants required to use a core method** (e.g. FileSystem's SpecialLocations for `getFolder()`, TransportHandler's SyncModes for `setSyncMode()`) - present in a table with behavioural descriptions in the class overview, at the point where the reader needs them.
+- **Constants used in callback responses** (e.g. Server status codes) - present in a table near the prose that explains how to handle those responses.
+- **Large constant sets** (100+ entries, e.g. Colours) - summarise the set and call out notable entries or gotchas. Do not reproduce the full list.
+
+### Table format
+
+Use a markdown table with at minimum Name and Value columns, plus a Description column when the meaning is not self-evident from the name. Prefix constant names with the class name (e.g. `Server.StatusOK`, not just `StatusOK`).
+
+### Typical counts
+
+| Constant count | Approach |
+|----------------|----------|
+| 1-8 | Table in the overview prose |
+| 8-20 | Table, possibly grouped by category |
+| 100+ | Summarise the set, call out notable entries |
 
 ---
 

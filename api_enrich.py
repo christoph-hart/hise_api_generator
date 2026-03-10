@@ -3272,6 +3272,7 @@ h3.signature.disabled {{ color: #484f58; text-decoration: line-through; }}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
 <script>
 // Highlight active sidebar link on scroll
 (function() {{

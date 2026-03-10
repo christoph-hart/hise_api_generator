@@ -50,10 +50,15 @@
       "parameters": []
     },
     "createPath": {
-      "signature": "var createPath()",
+      "signature": "var createPath(var data)",
       "returnType": "var",
-      "description": "Creates a Path that can be drawn to a ScriptPanel.",
-      "parameters": []
+      "description": "Creates a Path that can be drawn to a ScriptPanel. If data (base64 string or Array) is provided it will load it.",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "var"
+        }
+      ]
     },
     "createScreenshot": {
       "signature": "void createScreenshot(var area, var directory, String name)",
@@ -270,6 +275,17 @@
         {
           "name": "toolbarProperties",
           "type": "var"
+        }
+      ]
+    },
+    "setUpdateExistingPosition": {
+      "signature": "void setUpdateExistingPosition(bool shouldUpdateExistingComponents)",
+      "returnType": "void",
+      "description": "Whether to update the component position at addXXX() calls with existing components.",
+      "parameters": [
+        {
+          "name": "shouldUpdateExistingComponents",
+          "type": "bool"
         }
       ]
     },
