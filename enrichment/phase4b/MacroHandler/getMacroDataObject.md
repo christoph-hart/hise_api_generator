@@ -1,7 +1,13 @@
 MacroHandler::getMacroDataObject() -> Array
 
 Thread safety: UNSAFE -- allocates Array and DynamicObject per connection; constructs Strings for processor IDs and parameter names.
-Returns an array of JSON objects representing all active macro-to-parameter connections across all macro slots. Each object contains MacroIndex, Processor, Attribute, range properties (Start/End/FullStart/FullEnd/Interval/Skew/Inverted), and optionally CustomAutomation.
+Returns an array of JSON objects representing all active macro-to-parameter
+connections across all macro slots. Each element has this shape:
+
+  { "MacroIndex": 0, "Processor": "Simple Gain1", "Attribute": "Gain",
+    "CustomAutomation": false,
+    "FullStart": 0.0, "FullEnd": 1.0, "Start": 0.0, "End": 1.0,
+    "Interval": 0.01, "Skew": 1.0, "Inverted": false }
 
 Required setup:
   const var mh = Engine.createMacroHandler();

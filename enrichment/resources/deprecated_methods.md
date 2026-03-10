@@ -33,3 +33,15 @@ Status: pending
 Reason: "use sendSyncMessage or sendAsyncMessage instead"
 
 The second parameter (`isSync` bool) is ambiguous and hard to guess. The C++ implementation already emits a `debugError` at runtime but does not use the `ADD_API_METHOD_N_DEPRECATED` macro.
+
+### Synth.noteOff(1)
+Status: pending
+Reason: "use noteOffByEventId instead"
+
+Note-off by note number is unreliable with overlapping voices on the same pitch. The implementation calls `addNoteOff` then `reportScriptError` under `ENABLE_SCRIPTING_SAFE_CHECKS`, but does not use the `ADD_API_METHOD_N_DEPRECATED` macro. Also, the error message has a typo: "noteOfByEventId" instead of "noteOffByEventId".
+
+### Synth.setUseUniformVoiceHandler(2)
+Status: pending
+Reason: "global envelopes are now automatic, remove this call"
+
+Fully deprecated. The implementation immediately calls `reportScriptError("This function is deprecated. Just remove that call and enjoy global envelopes...")` and performs no work. Does not use the `ADD_API_METHOD_N_DEPRECATED` macro.

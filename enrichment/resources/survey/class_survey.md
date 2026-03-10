@@ -28,6 +28,7 @@ documentation needs to reference.
 | 13 | **Table** | TableProcessor | Lookup table data model that TableProcessor wraps |
 | 14 | **SliderPackData** | ScriptSliderPack | Slider array data model that the UI component displays |
 | 15 | **ScriptLookAndFeel** | ScriptComponent subclasses (soft) | LAF paint functions reference component properties |
+| 16 | **Rectangle** | Graphics | Layout slicing primitives (removeFromTop, reduced, etc.) that Graphics area parameters consume |
 
 ## Enrichment Groups
 

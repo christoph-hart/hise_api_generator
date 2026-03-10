@@ -2,8 +2,12 @@ UserPresetHandler::setEnableUserPresetPreprocessing(Integer processBeforeLoading
 
 Thread safety: INIT -- runtime calls throw a script error
 Configures preprocessing mode for user preset loading. When enabled, the
-pre-callback receives a JSON object (version, Content, Modules, MidiAutomation,
-MPEData) instead of a ScriptFile. The JSON can be modified in-place before load.
+pre-callback receives a JSON object instead of a ScriptFile:
+
+  { "version": "1.0.0", "Content": [ ... ], "Modules": { ... },
+    "MidiAutomation": { ... }, "MPEData": { ... } }
+
+The JSON can be modified in-place before load.
 When shouldUnpackComplexData=true, JSON-prefixed strings and Base64 data
 properties are decoded into native objects.
 Dispatch/mechanics:

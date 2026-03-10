@@ -8,7 +8,16 @@ Required setup:
   vp.setConsumedKeyPresses("all");
   inline function onKey(event) { /* ... */ };
   vp.setKeyPressCallback(onKey);
-Dispatch/mechanics: Stores callback as WeakCallbackHolder. On key press, builds event object with isFocusChange, character, specialKey, isWhitespace, isLetter, isDigit, keyCode, description, shift, cmd, alt. Focus changes send {isFocusChange: true, hasFocus: bool}.
+Dispatch/mechanics: Stores callback as WeakCallbackHolder.
+
+Example key event:
+  { "isFocusChange": false, "character": "a", "specialKey": false,
+    "isWhitespace": false, "isLetter": true, "isDigit": false,
+    "keyCode": 65, "description": "a",
+    "shift": false, "cmd": false, "alt": false }
+
+Example focus event:
+  { "isFocusChange": true, "hasFocus": true }
 Pair with: setConsumedKeyPresses (must be called first to define which keys are consumed)
 Anti-patterns: Reports a script error if setConsumedKeyPresses has not been called first.
 Source:

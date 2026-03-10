@@ -1,7 +1,11 @@
 MacroHandler::setMacroDataFromObject(Array jsonData) -> undefined
 
 Thread safety: UNSAFE -- clears and rebuilds all macro connections. Allocates Strings, modifies processor state, sends connection change notifications.
-Clears all existing macro connections and rebuilds them from the provided JSON array. Each element must have MacroIndex, Processor, and Attribute properties. Individual connection notifications are suppressed during rebuild -- the update callback fires once after all connections are restored.
+Clears all existing macro connections and rebuilds them from the provided JSON
+array. Each element must follow the format returned by getMacroDataObject(),
+with an additional optional `converter` property (String) for display formatting.
+Individual connection notifications are suppressed during rebuild -- the update
+callback fires once after all connections are restored.
 
 Required setup:
   const var mh = Engine.createMacroHandler();

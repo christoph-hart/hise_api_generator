@@ -11,7 +11,7 @@ Server.setServerCallback(function(isWaiting)
 
 function printName(status, obj)
 {
-    if(status == 200)
+    if(status == Server.StatusOK)
         Console.print(" " + obj.username);
 };
 

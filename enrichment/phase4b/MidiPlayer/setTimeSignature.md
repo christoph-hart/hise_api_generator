@@ -1,7 +1,10 @@
 MidiPlayer::setTimeSignature(JSON timeSignatureObject) -> Integer
 
 Thread safety: UNSAFE -- Modifies sequence length, may use undo manager.
-Sets the time signature and length of the current sequence using a JSON object with properties: Nominator, Denominator, NumBars, LoopStart, LoopEnd. Returns true if values are valid. Internally delegates to setTimeSignatureToSequence(-1, ...).
+Sets the time signature and length of the current sequence. Accepts a JSON
+object in the same format as File.loadMidiMetadata (Nominator, Denominator,
+NumBars required; LoopStart, LoopEnd optional). Returns true if values are
+valid. Internally delegates to setTimeSignatureToSequence(-1, ...).
 Required setup:
 ```
 const var mp = Synth.getMidiPlayer("MidiPlayer1");

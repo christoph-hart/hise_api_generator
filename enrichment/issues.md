@@ -18,6 +18,14 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### MarkdownRenderer.setImageProvider -- non-array input silently clears all resolvers
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingGraphics.cpp (MarkdownAction::setImageProvider)
+- **Observed:** If the `data` parameter is not an array (e.g., a single object, number, or string), the method silently clears all existing image and link resolvers on the internal renderer and creates no new entries. The user has no indication that all image resolution capability was removed.
+- **Expected:** Report a script error when `data` is not an array, e.g., "data must be an Array of image provider entries".
+
 ### UserPresetHandler.setUseCustomUserPresetModel -- silently ignores non-function callbacks
 
 - **Type:** missing-validation
@@ -218,7 +226,303 @@ Sorted by severity (critical first).
 - **Observed:** If an invalid or unparseable string is passed, `juce::Time::fromISO8601` returns a default-constructed Time (epoch = 0). The method returns 0, which is indistinguishable from a genuinely parsed Unix epoch timestamp. No error or warning is reported.
 - **Expected:** Validate the input string before parsing, or check if the result is the default Time when the input is not an empty string, and report a script error for unparseable input.
 
+### FileSystem.browse / browseForDirectory -- startFolder does not accept string paths
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~7527-7548
+- **Observed:** `browse` and `browseForDirectory` only check `startFolder.isInt()` and `dynamic_cast<ScriptFile*>`, silently ignoring absolute path strings. The multi-select variants (`browseForMultipleDirectories`, `browseForMultipleFiles`) use `getFileFromVar` which also handles strings. Passing a string path to the single-select methods silently results in an empty start directory.
+- **Expected:** Use `getFileFromVar` (or equivalent string-path resolution) in `browse` and `browseForDirectory` for consistency with the multi-select variants.
+
+### FileSystem.encryptWithRSA -- no key validation before RSA operation
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~7706
+- **Observed:** `encryptWithRSA` constructs an `RSAKey` from the provided string and applies it unconditionally without checking `RSAKey::isValid()`. A malformed key string produces garbage hex output without any error. `decryptWithRSA` (line 7722) does validate the key.
+- **Expected:** Check `RSAKey::isValid()` before applying the key, consistent with `decryptWithRSA`. Return an empty string or report a script error if the key is invalid.
+
+### FileSystem.getFolder -- no range check on locationType integer
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~7457
+- **Observed:** The `locationType` var is cast directly to `SpecialLocations` via `(SpecialLocations)(int)locationType` with no range validation. Passing an integer outside 0-11 feeds an out-of-range value into the `getFileStatic` switch statement, resulting in undefined C++ behavior.
+- **Expected:** Validate that the integer is in range 0-11 before the cast, and report a script error for out-of-range values, e.g., "Invalid SpecialLocations value. Use FileSystem.AudioFiles (0) through FileSystem.Music (11)".
+
+### FileSystem.getBytesFreeOnVolume -- returns 0 silently for invalid folder arguments
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~7581
+- **Observed:** If the `folder` parameter is not a `SpecialLocations` constant or `File` object (e.g., a string path), the internal `juce::File` remains default-constructed and `getBytesFreeOnVolume()` returns 0. The result is indistinguishable from a genuinely full volume. No error or warning is produced.
+- **Expected:** Use `getFileFromVar` for consistent var-to-File resolution, or report a script error when the argument is neither an integer constant nor a File object.
+
+### File.copyDirectory -- reportScriptError does not prevent execution from continuing
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~810
+- **Observed:** When the target File object exists but is not a directory, `reportScriptError("target is not a directory")` is called at line 811, but execution falls through to `f.copyDirectoryTo(sf->f)` at line 813 because there is no `return` or `RETURN_IF_NO_THROW` after the error. In non-throwing builds, the copy operation proceeds with a non-directory target.
+- **Expected:** Add a `return false;` or `RETURN_IF_NO_THROW(false);` after the `reportScriptError` call at line 811 to prevent the copy from proceeding.
+
+### File.toReferenceString -- DspNetworks folder type cannot match due to trailing slash mismatch
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~375, PresetHandler.h:~SubDirectories enum
+- **Observed:** The method auto-appends `/` to the `folderType` parameter if it does not end with `/`. However, the `FileHandlerBase::getIdentifier()` for `DspNetworks` returns `"DspNetworks"` (no trailing slash) -- the only subdirectory without one. After appending, the comparison becomes `"DspNetworks/" == "DspNetworks"` which fails. Passing `"DspNetworks"` always produces the "Illegal folder type" script error.
+- **Expected:** Either add a trailing slash to the DspNetworks identifier in `FileHandlerBase::getIdentifier()` for consistency, or skip the auto-append when the input already matches without a slash.
+
+### File.createDirectory -- silent failure when directory creation fails
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~820
+- **Observed:** The return value of `juce::File::createDirectory()` is not checked. If directory creation fails (e.g., insufficient permissions, invalid characters in name, disk full), the method silently returns a File handle to the non-existent child path without reporting any error. The user has no indication that the directory was not created.
+- **Expected:** Check the `juce::Result` returned by `createDirectory()` and report a script error if it failed, or return `undefined` instead of a File handle to a non-existent path.
+
+### File.loadAsMidiFile -- silently rejects .midi and .smf file extensions
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~430
+- **Observed:** The method checks `f.getFileExtension() == ".mid"` and silently returns an empty value for any other extension. Standard MIDI file extensions `.midi` and `.smf` are silently rejected without error. The user has no indication that the file was not loaded.
+- **Expected:** Either accept `.midi` and `.smf` as valid extensions in addition to `.mid`, or report a script error when a non-`.mid` file is passed (e.g., "loadAsMidiFile only supports .mid files").
+
+### File.writeMidiFile -- silently returns false for non-Array eventList
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~490
+- **Observed:** If `eventList` is not an Array (e.g., a single MessageHolder, a number, or a string), the method silently returns `false` without reporting any error. The return value `false` is indistinguishable from a legitimate write failure (e.g., permission denied).
+- **Expected:** Report a script error when `eventList` is not an Array, e.g., "eventList must be an Array of MessageHolder objects".
+
+### File.writeMidiFile -- non-MessageHolder array elements silently skipped
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~495
+- **Observed:** When the event array contains non-MessageHolder elements (e.g., plain objects, numbers, strings), they are silently skipped. If all elements are invalid, an empty MIDI file is written to disk without any error or warning.
+- **Expected:** Either report a script error when a non-MessageHolder element is encountered, or at minimum report a warning when no valid events were found and the resulting MIDI file is empty.
+
+### File.writeAudioFile -- existing file deleted before write, lost on failure
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~540
+- **Observed:** The method calls `f.deleteFile()` before creating the `AudioFormatWriter`. If the writer creation subsequently fails (e.g., unsupported bit depth for the format, unrecognized extension), the original file has already been deleted and its data is lost. The method returns `false` but the data cannot be recovered.
+- **Expected:** Write to a temporary file first, then replace the original atomically (similar to how `writeString` uses `replaceWithText`). Alternatively, defer deletion until after the writer is successfully created.
+
+### Colours.fromHsl -- alpha element cast truncates fractional float values
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~7340
+- **Observed:** `fromHsl` casts the alpha element as `(uint8)(int)hsl[3]`. When `toHsl` outputs alpha as a 0.0-1.0 float (e.g., 0.5 for half transparency), `(int)0.5` truncates to 0, producing a fully transparent colour. The `toHsl`/`fromHsl` roundtrip is broken for any fractional alpha value between 0 and 1. Only `0.0` and values >= `1.0` survive.
+- **Expected:** Cast alpha consistently with the other float elements: `(float)hsl[3]` instead of `(uint8)(int)hsl[3]`, since JUCE's `Colour::fromHSL` takes `float alpha` in the 0.0-1.0 range.
+
+### Download.getProgress -- double-counts existingBytesBeforeResuming on resumed downloads
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~1302-1311
+- **Observed:** `getProgress()` reads `data.numDownloaded` and `data.numTotal` (which already include `existingBytesBeforeResuming`, added in the `progress()` callback at lines 1437-1438), then adds `existingBytesBeforeResuming` a second time (lines 1304-1305). For fresh downloads the offset is 0 so the result is correct. For resumed downloads the numerator and denominator are both inflated by the same extra offset, so the ratio is slightly off (shifted toward 1.0 for small files, negligible for large files). The intermediate `d` and `t` values are incorrect regardless.
+- **Expected:** Either remove the `+ existingBytesBeforeResuming` additions in `getProgress()` (since the `data` properties already include them), or read from `bytesDownloaded_` and `totalLength_` directly (like `getDownloadSize()` and `getNumBytesDownloaded()` do).
+
+### Synth.stopTimer -- null pointer dereference when parentMidiProcessor is null
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~5801
+- **Observed:** In non-deferred mode, `stopTimer()` has `if(parentMidiProcessor != nullptr) owner->stopSynthTimer(...)` on line 5799, but `parentMidiProcessor->setIndexInChain(-1)` on line 5801 is outside the null guard. If `parentMidiProcessor` is null (called from a non-MIDI processor context), `stopSynthTimer` is correctly skipped but `setIndexInChain(-1)` dereferences null, causing undefined behavior.
+- **Expected:** Move `parentMidiProcessor->setIndexInChain(-1)` inside the `if(parentMidiProcessor != nullptr)` block, or add a separate null guard before it.
+
+### Synth.getWavetableController -- error message says "routing matrix" instead of wavetable
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6300
+- **Observed:** The error message when the processor is not a `WavetableSynth` says `"[id] does not have a routing matrix"` instead of a wavetable-related message. This is a copy-paste error from `getRoutingMatrix` immediately above it.
+- **Expected:** Change the error message to `"[id] is not a WavetableSynth"` or `"[id] does not have wavetable capabilities"`.
+
+### Synth.getWavetableController -- missing null-check for processor lookup
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6295
+- **Observed:** Unlike `getMidiPlayer` and `getRoutingMatrix` which check `if (p == nullptr)` separately before the type cast, `getWavetableController` skips the null check and goes directly to `dynamic_cast<WavetableSynth*>(p)`. When the processor name does not exist, the error message is the wrong "routing matrix" message rather than "[id] was not found".
+- **Expected:** Add `if (p == nullptr) reportScriptError(processorId + " was not found");` before the `dynamic_cast` check, matching the pattern in `getMidiPlayer` and `getRoutingMatrix`.
+
+### Synth.getChildSynthByIndex -- silent failure on non-Chain owner or out-of-bounds index
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~5989
+- **Observed:** When the parent synth is not a Chain type (e.g., a single ModulatorSynth without children), or when the index is out of bounds, the method silently returns a ScriptingSynth wrapper with a null processor pointer. No script error is reported. Calling methods on the returned handle produces confusing errors unrelated to the original lookup failure.
+- **Expected:** Report a script error when the owner is not a Chain (matching `getNumChildSynths`'s "can only be called on Chains!" pattern) and when the index is out of bounds (e.g., "index X is out of range (0-N)").
+
+### Synth.getChildSynthByIndex -- reportIllegalCall error message says "getChildSynth()"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6005
+- **Observed:** The `reportIllegalCall` message when `getChildSynthByIndex` is called outside `onInit` says `"getChildSynth()"` instead of `"getChildSynthByIndex()"`. Copy-paste error from the name-based variant.
+- **Expected:** Change to `reportIllegalCall("getChildSynthByIndex()", "onInit")`.
+
+### Synth.getDisplayBufferSource -- reportIllegalCall error message says "getScriptingTableProcessor()"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6195
+- **Observed:** The `reportIllegalCall` message when `getDisplayBufferSource` is called outside `onInit` says `"getScriptingTableProcessor()"` instead of `"getDisplayBufferSource()"`. Copy-paste error from the table processor method.
+- **Expected:** Change to `reportIllegalCall("getDisplayBufferSource()", "onInit")`.
+
+### Synth.getIdList -- silently returns undefined when called outside onInit
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6030
+- **Observed:** When called outside `onInit` (i.e., `objectsCanBeCreated()` returns false), `getIdList` silently returns `var()` (undefined) instead of calling `reportIllegalCall`. Other `get*()` methods like `getModulator`, `getEffect`, `getChildSynth` report a clear "can only be called in onInit" error message.
+- **Expected:** Add `reportIllegalCall("getIdList()", "onInit")` in the else branch, consistent with other `get*()` methods.
+
+### Synth.getAllEffects -- missing reportIllegalCall when called outside onInit
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~6066
+- **Observed:** `getAllEffects` checks `objectsCanBeCreated()` but does not call `reportIllegalCall("getAllEffects()", "onInit")` when the check fails. It silently falls through to `RETURN_IF_NO_THROW({})`, returning an empty value instead of an array. Other `get*()` methods like `getModulator`, `getEffect`, `getTableProcessor` report a clear error message via `reportIllegalCall`. Users calling `getAllEffects` outside `onInit` get no feedback.
+- **Expected:** Add `reportIllegalCall("getAllEffects()", "onInit")` in the else branch, consistent with other `get*()` methods.
+
+### Synth.getAudioSampleProcessor -- missing objectsCanBeCreated() guard
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~6092
+- **Observed:** `getAudioSampleProcessor` does not check `objectsCanBeCreated()` to restrict calls to `onInit`, unlike `getTableProcessor`, `getSliderPackProcessor`, `getModulator`, `getEffect`, and most other `get*()` methods. It allocates a `ScriptAudioSampleProcessor` wrapper on the heap, which is unsafe outside `onInit`. The `WARN_IF_AUDIO_THREAD` guard only triggers in debug builds.
+- **Expected:** Add an `objectsCanBeCreated()` check with `reportIllegalCall("getAudioSampleProcessor()", "onInit")` to match the pattern used by other `get*()` methods.
+
+### Synth.getTableProcessor -- reportIllegalCall error message says "getScriptingTableProcessor()"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6138
+- **Observed:** The `reportIllegalCall` message when `getTableProcessor` is called outside `onInit` says `"getScriptingTableProcessor()"` instead of `"getTableProcessor()"`. The internal C++ method name leaks into the user-facing error message.
+- **Expected:** Change to `reportIllegalCall("getTableProcessor()", "onInit")`.
+
+### Synth.getSampler -- reportIllegalCall error message says "getScriptingAudioSampleProcessor()"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6222
+- **Observed:** The `reportIllegalCall` message when `getSampler` is called outside `onInit` says `"getScriptingAudioSampleProcessor()"` instead of `"getSampler()"`. Copy-paste error from the audio sample processor method.
+- **Expected:** Change to `reportIllegalCall("getSampler()", "onInit")`.
+
 ## Low
+
+### Synth.removeModulator -- audio-thread error message says "Effects" instead of "Modules"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~6064
+- **Observed:** The `ModuleHandler::removeModule` throw says "Effects can't be removed from the audio thread!" regardless of whether the processor being removed is an effect or a modulator. When called via `Synth.removeModulator`, the error message incorrectly mentions "Effects".
+- **Expected:** Change the error message to "Modules can't be removed from the audio thread!" or make the message generic (e.g., "Processors can't be removed from the audio thread!").
+
+### Synth.internalAddNoteOn -- start offset error message off by one
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6391
+- **Observed:** The error message says "Max start offset is 65536 (2^16)" but the check `startOffset > UINT16_MAX` correctly accepts 65535 and rejects 65536. The actual maximum accepted value is 65535 (UINT16_MAX), not 65536 as the message states. Same root cause as `Message.setStartOffset`.
+- **Expected:** Change the error message to "Max start offset is 65535 (UINT16_MAX)" or "Max start offset is 65535 (2^16 - 1)".
+
+### Synth.noteOff -- deprecation error message has typo
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~5485
+- **Observed:** The deprecation error message says `"noteOff is deprecated. Use noteOfByEventId instead"` -- "noteOfByEventId" is missing the second 'f'. The correct method name is `noteOffByEventId`.
+- **Expected:** Change the error message to `"noteOff is deprecated. Use noteOffByEventId instead"`.
+
+### Path.createStrokedPath -- invalid EndCapStyle/JointStyle string produces undefined enum cast
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~7021-7022
+- **Observed:** `ApiHelpers::createPathStrokeType` uses `StringArray::indexOf()` to map `EndCapStyle` and `JointStyle` strings to enum values. If the string does not match any valid value, `indexOf` returns -1, which is cast to the `PathStrokeType::EndCapStyle` or `PathStrokeType::JointStyle` enum. The -1 value is outside the valid enum range (0-2 for both), producing undefined rendering behavior. No error is reported.
+- **Expected:** Validate the string against the known values and either default to a safe value (e.g., `butt`/`mitered`) with a warning, or report a script error for invalid strings.
+
+### Path.cubicTo -- coordinates not sanitized against NaN/Inf
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~1108-1111
+- **Observed:** `cubicTo` passes all six coordinate values directly to JUCE's `Path::cubicTo` without the `SANITIZED()` macro applied. Other path methods like `startNewSubPath`, `lineTo`, `addArc`, and `addPieSegment` sanitize their coordinate inputs. Passing NaN/Inf values to `cubicTo` corrupts the path geometry silently.
+- **Expected:** Apply `SANITIZED()` to all coordinate values, consistent with `startNewSubPath` and `lineTo`. Note: `quadraticTo` has the same issue.
+
+### Path.quadraticTo -- coordinates not sanitized against NaN/Inf
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~1101-1104
+- **Observed:** `quadraticTo` passes all four coordinate values directly to JUCE's `Path::quadraticTo` without the `SANITIZED()` macro applied. Other path methods like `startNewSubPath`, `lineTo`, `addArc`, and `addPieSegment` sanitize their coordinate inputs. Passing NaN/Inf values to `quadraticTo` corrupts the path geometry silently. Same root cause as `cubicTo`.
+- **Expected:** Apply `SANITIZED()` to all coordinate values, consistent with `startNewSubPath` and `lineTo`.
+
+### Path.getRatio -- returns Infinity/NaN for zero-height paths without validation
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~1130
+- **Observed:** `getRatio()` computes `bounds.getWidth() / bounds.getHeight()` without checking for zero height. A purely horizontal line or empty path produces Infinity or NaN. No error or warning is reported. The result silently propagates into subsequent calculations (e.g., `scaleToFit` with `preserveProportions`).
+- **Expected:** Check for zero height before dividing. Return 1.0 as a safe default or report a script error for degenerate paths.
+
+### Path.loadFromData -- silently ignores unsupported data types
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~1090
+- **Observed:** If `data` is not a String, Array, or Path object (e.g., a number, JSON object, or boolean), the method silently does nothing -- the existing path is unchanged with no error reported. The user has no indication that the load failed.
+- **Expected:** Report a script error when the data parameter is not one of the three accepted types, e.g., "loadFromData expects a base64 String, byte Array, or Path object".
+
+### Path.createStrokedPath -- non-array dotData silently ignored
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~7035
+- **Observed:** If `dotData` is not an array (e.g., a number or string), the method silently produces a solid stroke instead of a dashed one. No error or warning is reported.
+- **Expected:** Validate that `dotData` is an array and report a script error for non-array input, or at least document that non-array values default to solid stroke.
+
+### Path.getIntersection -- start point Y silently offset by -0.001
+
+- **Type:** code-smell
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~1170
+- **Observed:** The start point Y coordinate is internally adjusted by -0.001 pixels to work around edge cases where the start point lies exactly on the path boundary. This workaround silently affects precision for all intersection tests, not just boundary cases. The 0.001 offset is hardcoded with no way to disable it.
+- **Expected:** Either document this offset as intentional behavior, or use JUCE's tolerance parameter instead of modifying the user's input coordinates.
+
+### Graphics.drawFFTSpectrum -- error message says "not a SVG object" instead of "not a FFT object"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~2186
+- **Observed:** When `drawFFTSpectrum` receives a non-FFT object, the error message says "not a SVG object" instead of "not a FFT object". This is a copy-paste error from the `drawSVG` method immediately below it in the source file.
+- **Expected:** Change the error message to "not a FFT object".
+
+### Graphics.applyVignette -- error message says "applySepia" instead of "applyVignette"
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~1890
+- **Observed:** When `applyVignette` is called without an active layer, the error message says "You need to create a layer for applySepia" instead of "You need to create a layer for applyVignette". This is a copy-paste error from the `applySepia` method just above it.
+- **Expected:** Change the error message to "You need to create a layer for applyVignette".
+
+### Rectangle.withAspectRatioLike -- division by zero on zero-width input rectangle
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** RectangleDynamicObject.cpp:~149
+- **Observed:** When `otherRect` has zero width, the aspect ratio computation `other.getHeight() / other.getWidth()` produces infinity or NaN. The resulting rectangle has non-finite coordinates. No error or warning is reported.
+- **Expected:** Check for zero width before dividing, and either report a script error or return a copy of the original rectangle unchanged (consistent with the invalid-argument fallback pattern used by other Rectangle methods).
 
 ### MessageHolder.addToTimestamp -- method not registered in constructor
 
@@ -284,6 +588,14 @@ Sorted by severity (critical first).
 - **Observed:** `setStartOffset()` writes the start offset to the HiseEvent, but there is no `getStartOffset()` method on MessageHolder. The value is write-only from the scripting API. Users cannot read back the start offset they set, nor inspect start offsets on events returned by `MidiPlayer.getEventList()` or captured via `Message.store()`.
 - **Expected:** Add a `getStartOffset()` method that returns `(int)e.getStartOffset()`, consistent with the getter/setter pattern used by all other HiseEvent fields exposed on MessageHolder.
 
+### Server.callWithGET / Server.callWithPOST -- complex JSON parameters silently mutate global HTTP header
+
+- **Type:** code-smell
+- **Severity:** medium
+- **Location:** GlobalServer.cpp:~275
+- **Observed:** When `getWithParameters()` detects a complex JSON object (containing arrays or nested objects), it sets `extraHeader = "Content-Type: application/json"` on the GlobalServer, overwriting any previously set custom header. This side effect is global and persistent -- it affects all subsequent GET, POST, and download requests until `setHttpHeader()` is called again.
+- **Expected:** The Content-Type header for complex JSON should be per-request (set on the PendingCallback's extraHeader) rather than mutating the global state. Alternatively, the global header should be restored after building the URL.
+
 ### Broadcaster.setBypassed -- async parameter name is inverted relative to behavior
 
 - **Type:** inconsistency
@@ -291,3 +603,59 @@ Sorted by severity (critical first).
 - **Location:** ScriptBroadcaster.cpp:~4466
 - **Observed:** The third parameter of `setBypassed` is named `async`, but its value is passed directly to `resendLastMessage(var sync)`. The `ApiHelpers::isSynchronous()` boolean fallback interprets `true` as synchronous and `false` as asynchronous. So passing `async = true` actually produces synchronous dispatch, and `async = false` produces asynchronous dispatch -- the opposite of what the parameter name implies.
 - **Expected:** Either rename the parameter to `sync` (matching `resendLastMessage`'s semantics), or negate the value before passing it to `resendLastMessage`. Using `SyncNotification`/`AsyncNotification` constants bypasses the boolean ambiguity but the parameter name still misleads users who pass booleans.
+
+### Graphics.beginBlendLayer -- invalid blend mode string silently fails
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~2110
+- **Observed:** When `beginBlendLayer` receives an unrecognized blend mode string, the `gin::BlendMode` lookup returns an invalid index and the method returns without creating a blend layer or reporting any error. Subsequent draw calls go to the parent canvas instead of the intended blend layer. The user has no indication that the layer was not created.
+- **Expected:** Report a script error when the blend mode string does not match any of the 25 supported values, e.g., "Invalid blend mode: [name]. Use one of: Normal, Multiply, Screen, ...".
+
+### Graphics.drawImage -- placeholder rendering overwrites current colour state
+
+- **Type:** code-smell
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~2172
+- **Observed:** When `drawImage` cannot find the specified image name, it renders a grey placeholder rectangle with "XXX" text. This placeholder rendering calls `setColour(Colours::grey)` and `setColour(Colours::black)` on the JUCE Graphics context during the render pass, overwriting whatever colour state subsequent draw actions expect. Drawing operations after a failed `drawImage` call use black as the current colour unless `setColour` is called again.
+- **Expected:** The placeholder rendering should save and restore the graphics colour state, or use a separate Graphics state scope (e.g., `Graphics::ScopedSaveState`) to avoid side effects on subsequent draw actions.
+
+### Graphics.setGradientFill -- silently ignores arrays with fewer than 6 elements
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~2202
+- **Observed:** When `gradientData` is an Array with fewer than 6 elements, neither the `size() == 6` nor `size() >= 7` branch matches. The method returns without setting a gradient and without reporting an error. The user has no indication that the call had no effect. Non-Array input correctly triggers `reportScriptError("Gradient Data is not sufficient")`.
+- **Expected:** Move the "Gradient Data is not sufficient" error to also cover the case where the array has fewer than 6 elements.
+
+### Graphics.setGradientFill -- out-of-bounds array access with odd trailing element count
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingGraphics.cpp:~2229
+- **Observed:** The multi-stop gradient loop `for (int i = 7; i < ar.size(); i += 2)` reads `ar[i]` and `ar[i + 1]` without checking that `i + 1 < ar.size()`. When the trailing element count after index 6 is odd (e.g., array sizes 8, 10, 12...), the final iteration reads one element past the array bounds. For example, an array of size 8 reads `ar[8]` which is out of bounds, producing undefined behavior.
+- **Expected:** Either validate that `(ar.size() - 7) % 2 == 0` before the loop and report a script error for malformed input, or change the loop condition to `i + 1 < ar.size()`.
+
+### Synth.setClockSpeed -- error message omits 0 as valid value
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6522
+- **Observed:** The error message says "Unknown clockspeed. Use 1,2,4,8,16 or 32" but 0 (Inactive/disable clock) is also a valid value that is handled by the switch statement. Users who read the error message will not know that 0 can be passed to disable the clock.
+- **Expected:** Change the error message to "Unknown clockspeed. Use 0,1,2,4,8,16 or 32" to include the Inactive option.
+
+### Synth.getSlotFX -- ModuleDiagnoser only checks HotswappableProcessor, not DspNetwork::Holder
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~6170
+- **Observed:** The compile-time diagnostic (`ModuleDiagnoser`) only searches `HotswappableProcessor` types, but the runtime method also falls back to searching `DspNetwork::Holder` types. If the user has a `DspNetwork::Holder` with the target name, the runtime search succeeds but the diagnostic incorrectly reports the module as "not found" during compilation, producing a false positive warning in the HISE IDE.
+- **Expected:** The `ModuleDiagnoser` should also search `DspNetwork::Holder` types to match the runtime search behavior, or at minimum note that the diagnostic may produce false positives for scriptnode-based slots.
+
+### Synth.setModulatorAttribute -- base JSON description has wrong chainId for PitchModulation
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** Doxygen-generated base JSON (Synth.json), ScriptingApi.cpp:~6568
+- **Observed:** The Doxygen description for `setModulatorAttribute` says "GainModulation = 1, PitchModulation = 0" but the C++ code uses `case ModulatorSynth::PitchModulation` which equals 2. Passing 0 triggers the default case error. The error message in the code correctly says "1= GainModulation, 2=PitchModulation".
+- **Expected:** Correct the Doxygen comment to say "GainModulation = 1, PitchModulation = 2".

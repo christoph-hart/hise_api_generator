@@ -280,3 +280,31 @@ Examples in this documentation are automatically validated to ensure correctness
 Examples that require external resources (files, MIDI, timers) or have non-deterministic output should be marked `testable: false` in their metadata. See `test_metadata.md` for testing guidelines.
 
 Most examples following the quality guidelines above will be naturally testable.
+
+---
+
+## 10. Use Named Constants Instead of Magic Numbers
+
+When a class defines named constants (status codes, mode enums, location types), examples must use the named form rather than raw numeric literals. This reinforces the API vocabulary and prevents copy-paste errors.
+
+**Good** - uses the named constant:
+```javascript
+Server.callWithGET("api/data", {}, function(status, response)
+{
+    if (status == Server.StatusOK)
+        Console.print(trace(response));
+});
+```
+
+**Bad** - uses a magic number:
+```javascript
+Server.callWithGET("api/data", {}, function(status, response)
+{
+    if (status == 200)
+        Console.print(trace(response));
+});
+```
+
+The class's constants are listed in the Phase 1 Readme under `## Constants`. If an example compares against a numeric value that matches a defined constant, rewrite it to use the constant name (e.g. `Server.StatusOK` instead of `200`, `FileSystem.Samples` instead of the raw enum value).
+
+**Exception:** ARGB colour literals (e.g. `0xFF000000`, `0xFFC9EAF1`) are not magic number violations even when a matching named colour exists in the `Colours` class. Colour literals are a standard convention in graphics code and are often intentionally chosen over named colours for precision or theme customisation.
