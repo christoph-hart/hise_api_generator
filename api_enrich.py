@@ -297,6 +297,20 @@ NON_SCRIPTABLE_TYPE_PATTERNS = [
     "Location",
 ]
 
+# Methods that use non-scriptable C++ types (Identifier, ValueTree) in their
+# signatures but ARE legitimate scripting API methods.  The wrapper layer
+# converts HiseScript strings to Identifier and handles ValueTree serialisation.
+FORCE_INCLUDE = {
+    "Content": [
+        "addButton", "addKnob", "addLabel", "addComboBox", "addTable",
+        "addImage", "addViewport", "addPanel", "addAudioWaveform",
+        "addSliderPack", "addFloatingTile", "addMultipageDialog",
+        "addWebView", "addDynamicContainer",
+        "componentExists", "setPropertiesFromJSON",
+        "storeAllControlsAsPreset",
+    ],
+}
+
 # ---------------------------------------------------------------------------
 # C++ type normalization for Phase 0 output
 # ---------------------------------------------------------------------------
@@ -310,6 +324,14 @@ TYPE_NORMALIZATIONS = {
     "const var&": "var",
     "var &": "var",
     "var&": "var",
+    # Identifier maps to String in HiseScript (auto-converted by wrapper)
+    "Identifier": "String",
+    "const Identifier &": "String",
+    "const Identifier&": "String",
+    # ValueTree maps to var in HiseScript (serialised by wrapper)
+    "const ValueTree &": "var",
+    "const ValueTree&": "var",
+    "ValueTree": "var",
 }
 
 
@@ -445,19 +467,22 @@ def run_phase0():
                     continue
 
                 # 4. Skip methods with non-scriptable types in return or params
-                if contains_non_scriptable_type(return_type_raw):
-                    skipped_infra += 1
-                    continue
+                #    (unless force-included for this class)
+                force_included = FORCE_INCLUDE.get(class_name, [])
+                if name not in force_included:
+                    if contains_non_scriptable_type(return_type_raw):
+                        skipped_infra += 1
+                        continue
 
-                param_has_non_scriptable = False
-                for param in memberdef.findall("param"):
-                    param_type_raw = get_text_content(param.find("type"))
-                    if contains_non_scriptable_type(param_type_raw):
-                        param_has_non_scriptable = True
-                        break
-                if param_has_non_scriptable:
-                    skipped_infra += 1
-                    continue
+                    param_has_non_scriptable = False
+                    for param in memberdef.findall("param"):
+                        param_type_raw = get_text_content(param.find("type"))
+                        if contains_non_scriptable_type(param_type_raw):
+                            param_has_non_scriptable = True
+                            break
+                    if param_has_non_scriptable:
+                        skipped_infra += 1
+                        continue
 
                 # --- Extract method data ---
 

@@ -3,6 +3,253 @@
   "category": "namespace",
   "description": "This is the interface area that can be filled with buttons, knobs, etc.",
   "methods": {
+    "addAudioWaveform": {
+      "signature": "ScriptAudioWaveform * addAudioWaveform(String audioWaveformName, int x, int y)",
+      "returnType": "ScriptAudioWaveform *",
+      "description": "Adds a audio waveform display.",
+      "parameters": [
+        {
+          "name": "audioWaveformName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addButton": {
+      "signature": "ScriptButton * addButton(String buttonName, int x, int y)",
+      "returnType": "ScriptButton *",
+      "description": "Adds a toggle button to the Content and returns the component index.\nknobName\nthe name for the knob. It should contain no whitespace\nx\nthe x position\ny\nthe y position",
+      "parameters": [
+        {
+          "name": "buttonName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addComboBox": {
+      "signature": "ScriptComboBox * addComboBox(String boxName, int x, int y)",
+      "returnType": "ScriptComboBox *",
+      "description": "Adds a comboBox to the Content and returns the component index.",
+      "parameters": [
+        {
+          "name": "boxName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addDynamicContainer": {
+      "signature": "ScriptDynamicContainer * addDynamicContainer(String containerId, int x, int y)",
+      "returnType": "ScriptDynamicContainer *",
+      "description": "Adds a dynamic container component.",
+      "parameters": [
+        {
+          "name": "containerId",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addFloatingTile": {
+      "signature": "ScriptFloatingTile * addFloatingTile(String floatingTileName, int x, int y)",
+      "returnType": "ScriptFloatingTile *",
+      "description": "Adds a floating layout component.",
+      "parameters": [
+        {
+          "name": "floatingTileName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addImage": {
+      "signature": "ScriptImage * addImage(String imageName, int x, int y)",
+      "returnType": "ScriptImage *",
+      "description": "Adds a image to the script interface.",
+      "parameters": [
+        {
+          "name": "imageName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addKnob": {
+      "signature": "ScriptSlider * addKnob(String knobName, int x, int y)",
+      "returnType": "ScriptSlider *",
+      "description": "Adds a knob to the Content and returns the component index.\nknobName\nthe name for the knob. It should contain no whitespace\nx\nthe x position\ny\nthe y position",
+      "parameters": [
+        {
+          "name": "knobName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addLabel": {
+      "signature": "ScriptLabel * addLabel(String label, int x, int y)",
+      "returnType": "ScriptLabel *",
+      "description": "Adds a text input label.",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addMultipageDialog": {
+      "signature": "ScriptMultipageDialog * addMultipageDialog(String dialogId, int x, int y)",
+      "returnType": "ScriptMultipageDialog *",
+      "description": "Adds a multipage dialog component.",
+      "parameters": [
+        {
+          "name": "dialogId",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addPanel": {
+      "signature": "ScriptPanel * addPanel(String panelName, int x, int y)",
+      "returnType": "ScriptPanel *",
+      "description": "Adds a panel (rectangle with border and gradient).",
+      "parameters": [
+        {
+          "name": "panelName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addSliderPack": {
+      "signature": "ScriptSliderPack * addSliderPack(String sliderPackName, int x, int y)",
+      "returnType": "ScriptSliderPack *",
+      "description": "Adds a slider pack.",
+      "parameters": [
+        {
+          "name": "sliderPackName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addTable": {
+      "signature": "ScriptTable * addTable(String tableName, int x, int y)",
+      "returnType": "ScriptTable *",
+      "description": "Adds a table editor to the Content and returns the component index.",
+      "parameters": [
+        {
+          "name": "tableName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
+    "addViewport": {
+      "signature": "ScriptedViewport * addViewport(String viewportName, int x, int y)",
+      "returnType": "ScriptedViewport *",
+      "description": "Adds a viewport.",
+      "parameters": [
+        {
+          "name": "viewportName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
+        }
+      ]
+    },
     "addVisualGuide": {
       "signature": "void addVisualGuide(var guideData, var colour)",
       "returnType": "void",
@@ -15,6 +262,25 @@
         {
           "name": "colour",
           "type": "var"
+        }
+      ]
+    },
+    "addWebView": {
+      "signature": "ScriptWebView * addWebView(String webviewName, int x, int y)",
+      "returnType": "ScriptWebView *",
+      "description": "Adds a web view.",
+      "parameters": [
+        {
+          "name": "webviewName",
+          "type": "String"
+        },
+        {
+          "name": "x",
+          "type": "int"
+        },
+        {
+          "name": "y",
+          "type": "int"
         }
       ]
     },
@@ -37,6 +303,17 @@
         }
       ]
     },
+    "componentExists": {
+      "signature": "bool componentExists(String name)",
+      "returnType": "bool",
+      "description": "Checks if the component exists.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String"
+        }
+      ]
+    },
     "createLocalLookAndFeel": {
       "signature": "var createLocalLookAndFeel()",
       "returnType": "var",
@@ -50,15 +327,10 @@
       "parameters": []
     },
     "createPath": {
-      "signature": "var createPath(var data)",
+      "signature": "var createPath()",
       "returnType": "var",
-      "description": "Creates a Path that can be drawn to a ScriptPanel. If data (base64 string or Array) is provided it will load it.",
-      "parameters": [
-        {
-          "name": "data",
-          "type": "var"
-        }
-      ]
+      "description": "Creates a Path that can be drawn to a ScriptPanel.",
+      "parameters": []
     },
     "createScreenshot": {
       "signature": "void createScreenshot(var area, var directory, String name)",
@@ -256,6 +528,21 @@
         }
       ]
     },
+    "setPropertiesFromJSON": {
+      "signature": "void setPropertiesFromJSON(String name, var jsonData)",
+      "returnType": "void",
+      "description": "Restore the Component from a JSON object.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "jsonData",
+          "type": "var"
+        }
+      ]
+    },
     "setSuspendTimerCallback": {
       "signature": "void setSuspendTimerCallback(var suspendFunction)",
       "returnType": "void",
@@ -275,17 +562,6 @@
         {
           "name": "toolbarProperties",
           "type": "var"
-        }
-      ]
-    },
-    "setUpdateExistingPosition": {
-      "signature": "void setUpdateExistingPosition(bool shouldUpdateExistingComponents)",
-      "returnType": "void",
-      "description": "Whether to update the component position at addXXX() calls with existing components.",
-      "parameters": [
-        {
-          "name": "shouldUpdateExistingComponents",
-          "type": "bool"
         }
       ]
     },
@@ -333,6 +609,21 @@
         },
         {
           "name": "callback",
+          "type": "var"
+        }
+      ]
+    },
+    "storeAllControlsAsPreset": {
+      "signature": "void storeAllControlsAsPreset(String fileName, var automationData)",
+      "returnType": "void",
+      "description": "Saves all controls that should be saved into a XML data file.",
+      "parameters": [
+        {
+          "name": "fileName",
+          "type": "String"
+        },
+        {
+          "name": "automationData",
           "type": "var"
         }
       ]

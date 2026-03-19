@@ -689,3 +689,27 @@ Sorted by severity (critical first).
 - **Location:** Doxygen-generated base JSON (Synth.json), ScriptingApi.cpp:~6568
 - **Observed:** The Doxygen description for `setModulatorAttribute` says "GainModulation = 1, PitchModulation = 0" but the C++ code uses `case ModulatorSynth::PitchModulation` which equals 2. Passing 0 triggers the default case error. The error message in the code correctly says "1= GainModulation, 2=PitchModulation".
 - **Expected:** Correct the Doxygen comment to say "GainModulation = 1, PitchModulation = 2".
+
+### Content.addVisualGuide -- 2-element array with both values non-zero adds uninitialized guide
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingApiContent.cpp:~8985-9002
+- **Observed:** When a 2-element array is passed with both values non-zero (e.g., `[50, 100]`), neither the horizontal line branch (`x == 0`) nor the vertical line branch (`y == 0`) executes, but `guides.add(std::move(g))` still runs at line 9002. The guide is added with a default-initialized `Type` and empty area, which may cause undefined rendering behavior.
+- **Expected:** Either report a script error for invalid 2-element arrays, or skip the `guides.add()` call when neither branch matches.
+
+### Content.callAfterDelay -- wrapper returns isMouseDown() instead of undefined
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiWrappers.cpp:~1158
+- **Observed:** The `callAfterDelay` wrapper function on line 1158 returns `thisObject->isMouseDown()` instead of `var()`. The underlying `callAfterDelay()` method returns `void`, so the wrapper should return `var()` (undefined). This is a copy-paste error from the `isMouseDown` wrapper. Users calling `Content.callAfterDelay()` receive a spurious integer return value (0, 1, or 2) representing the current mouse button state, rather than undefined.
+- **Expected:** Change line 1158 from `return thisObject->isMouseDown();` to `return var();` to match the void return type.
+
+### Content.setSuspendTimerCallback -- silently ignores non-function argument
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingApiContent.cpp:~setSuspendTimerCallback
+- **Observed:** If the argument is not a valid JavaScript function (checked via `HiseJavascriptEngine::isJavascriptFunction`), the method silently does nothing -- no error is reported and the previous callback (if any) remains active. The user has no indication that the callback registration failed.
+- **Expected:** Report a script error when the argument is not a function, e.g., "suspendFunction must be a function".

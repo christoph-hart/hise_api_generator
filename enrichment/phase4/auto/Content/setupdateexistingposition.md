@@ -1,0 +1,1 @@
+No-op. This method has no implementation. The behaviour it describes (updating component position at `addXXX()` calls for existing components) is handled internally by the component creation methods.

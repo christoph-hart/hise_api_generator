@@ -58,6 +58,12 @@ Reason: "use Settings.getZoomLevel() instead"
 
 Soft deprecated. The implementation calls `logSettingWarning("getZoomLevel")` which emits a console message, then proceeds to return the value from `GlobalSettingManager::getGlobalScaleFactor()`. The method still works but warns users to migrate to the Settings class.
 
+### Content.setToolbarProperties(1)
+Status: pending
+Reason: "deprecated since 2017"
+
+Hard deprecated. The implementation immediately calls `reportScriptError("2017...")` and performs no work. Does not use the `ADD_API_METHOD_N_DEPRECATED` macro (Content uses DynamicObject::setMethod registration).
+
 ### Engine.loadFont(1)
 Status: pending
 Reason: "use loadFontAs() instead to prevent cross platform issues"
