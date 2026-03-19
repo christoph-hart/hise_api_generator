@@ -47,19 +47,28 @@ Example:
   const var knob1 = Content.addKnob("Volume", 10, 10);
   const var btn1 = Content.addButton("Bypass", 150, 10);
 
-Methods (30):
-  addVisualGuide               callAfterDelay
-  createLocalLookAndFeel       createMarkdownRenderer
-  createPath                   createScreenshot
-  createShader                 createSVG
-  getAllComponents              getComponent
-  getComponentUnderDrag        getComponentUnderMouse
-  getCurrentTooltip            getInterfaceSize
-  getScreenBounds              isCtrlDown
-  isMouseDown                  makeFrontInterface
-  makeFullScreenInterface      refreshDragImage
-  restoreAllControlsFromPreset setContentTooltip
-  setHeight                    setKeyPressCallback
-  setName                      setSuspendTimerCallback
-  setUseHighResolutionForPanels setValuePopupData
-  setWidth                     showModalTextInput
+Methods (48):
+  addAudioWaveform             addButton
+  addComboBox                  addDynamicContainer
+  addFloatingTile              addImage
+  addKnob                      addLabel
+  addMultipageDialog           addPanel
+  addSliderPack                addTable
+  addViewport                  addVisualGuide
+  addWebView                   callAfterDelay
+  componentExists              createLocalLookAndFeel
+  createMarkdownRenderer       createPath
+  createScreenshot             createShader
+  createSVG                    getAllComponents
+  getComponent                 getComponentUnderDrag
+  getComponentUnderMouse       getCurrentTooltip
+  getInterfaceSize             getScreenBounds
+  isCtrlDown                   isMouseDown
+  makeFrontInterface           makeFullScreenInterface
+  refreshDragImage             restoreAllControlsFromPreset
+  setContentTooltip            setHeight
+  setKeyPressCallback          setName
+  setPropertiesFromJSON        setSuspendTimerCallback
+  setUpdateExistingPosition    setUseHighResolutionForPanels
+  setValuePopupData            setWidth
+  showModalTextInput           storeAllControlsAsPreset

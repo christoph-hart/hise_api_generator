@@ -44,6 +44,8 @@ All `addXXX()` methods are **idempotent**: if a component with the same name alr
 
 Each `addXXX()` method accepts either 1 argument (name only) or 3 arguments (name, x, y).
 
+The position update on existing components is controlled by `setUpdateExistingPosition(bool)`. When set to `false`, re-calling `addXXX()` with an existing name will return the existing component without modifying its x/y coordinates. This is useful when positions are managed dynamically by layout scripts and should not be reset on recompile. The default is `true` (positions are updated).
+
 ### Additional Utility Methods
 
 - `componentExists(name)` - checks whether a component with the given name exists

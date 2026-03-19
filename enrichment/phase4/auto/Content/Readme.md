@@ -21,6 +21,27 @@ const var btn1 = Content.addButton("Bypass", 150, 10);
 
 > Content enforces a strict two-phase lifecycle. All component creation (`addXXX()` calls) must happen during `onInit` - calling them afterwards throws a script error. Conversely, async utilities like `callAfterDelay` and `showModalTextInput` only work after `onInit` completes. The `addXXX()` methods are idempotent: if a component with the same name already exists, the existing component is returned, so re-running `onInit` on recompile never creates duplicates. `setHeight` and `setWidth` can be called after `onInit` to dynamically resize the interface; use `Broadcaster.attachToInterfaceSize()` to respond to size changes.
 
+Content provides 14 `addXXX()` methods - one per component type - for building the interface during `onInit`. Each method accepts either 1 argument (name only, position defaults to 0,0) or 3 arguments (name, x, y). All share the same idempotent semantics: if a component with that name already exists, the existing component is returned rather than creating a duplicate.
+
+| Method | Component Type | Purpose |
+|--------|---------------|---------|
+| `addKnob` | ScriptSlider | Rotary knob or linear slider |
+| `addButton` | ScriptButton | Toggle button |
+| `addLabel` | ScriptLabel | Text display and input |
+| `addComboBox` | ScriptComboBox | Dropdown selector |
+| `addTable` | ScriptTable | Curve editor for mapping tables |
+| `addImage` | ScriptImage | Static image display |
+| `addPanel` | ScriptPanel | Drawable panel with paint routines |
+| `addAudioWaveform` | ScriptAudioWaveform | Audio waveform display |
+| `addSliderPack` | ScriptSliderPack | Multi-slider array |
+| `addViewport` | ScriptedViewport | Scrollable content area |
+| `addFloatingTile` | ScriptFloatingTile | Built-in widget (preset browser, keyboard, etc.) |
+| `addWebView` | ScriptWebView | Embedded web browser |
+| `addMultipageDialog` | ScriptMultipageDialog | Multi-page dialog for installers and wizards |
+| `addDynamicContainer` | ScriptDynamicContainer | Dynamic child component container |
+
+By default, re-calling an `addXXX()` method with an existing component name updates that component's x/y position. Call `Content.setUpdateExistingPosition(false)` before the `addXXX()` calls to prevent this - useful when layout is managed dynamically at runtime and should not be reset on recompile.
+
 ## Common Mistakes
 
 - **Wrong:** `Content.addButton("Btn1", 10, 20)` in onControl

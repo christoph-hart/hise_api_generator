@@ -565,6 +565,17 @@
         }
       ]
     },
+    "setUpdateExistingPosition": {
+      "signature": "void setUpdateExistingPosition(bool shouldUpdateExistingComponents)",
+      "returnType": "void",
+      "description": "Whether to update the component position at addXXX() calls with existing components.",
+      "parameters": [
+        {
+          "name": "shouldUpdateExistingComponents",
+          "type": "bool"
+        }
+      ]
+    },
     "setUseHighResolutionForPanels": {
       "signature": "void setUseHighResolutionForPanels(bool shouldUseDoubleResolution)",
       "returnType": "void",

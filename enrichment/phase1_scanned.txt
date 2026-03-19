@@ -796,3 +796,4 @@ Content.addWebView
 Content.componentExists
 Content.setPropertiesFromJSON
 Content.storeAllControlsAsPreset
+Content.setUpdateExistingPosition

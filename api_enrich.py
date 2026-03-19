@@ -307,7 +307,7 @@ FORCE_INCLUDE = {
         "addSliderPack", "addFloatingTile", "addMultipageDialog",
         "addWebView", "addDynamicContainer",
         "componentExists", "setPropertiesFromJSON",
-        "storeAllControlsAsPreset",
+        "storeAllControlsAsPreset", "setUpdateExistingPosition",
     ],
 }
 
