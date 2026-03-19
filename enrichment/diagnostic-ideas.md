@@ -99,6 +99,14 @@ Sorted by priority (high first).
 - **Rationale:** `setClockSpeed` only accepts the values 0, 1, 2, 4, 8, 16, 32. Any other value produces a runtime error. A parse-time check could validate integer literals passed to this parameter against the known set and warn about invalid values like 3, 6, or 64.
 - **Sketch:** When `setClockSpeed` is called with an integer literal, check it against {0, 1, 2, 4, 8, 16, 32}. Emit a warning if no match.
 
+### Engine.getTextForValue / getValueForText -- invalid converter mode string
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** getTextForValue, getValueForText
+- **Rationale:** Both methods accept a `converterMode` / `convertedMode` string that must be one of 7 exact values (`"Frequency"`, `"Time"`, `"TempoSync"`, `"Pan"`, `"NormalizedPercentage"`, `"Decibel"`, `"Semitones"`). An invalid mode string silently falls back to plain numeric formatting/parsing with no error or warning, producing unexpected results (e.g., `getTextForValue(440.0, "Hz")` returns `"440"` instead of `"440 Hz"`). A parse-time check on string literals could catch typos like `"Hz"`, `"Freq"`, or `"dB"`.
+- **Sketch:** When `getTextForValue` or `getValueForText` is called with a string literal as the mode parameter, check it against the known set {"Frequency", "Time", "TempoSync", "Pan", "NormalizedPercentage", "Decibel", "Semitones"}. Emit a warning if no match.
+
 ---
 
 ## Entry Template (do not delete)

@@ -14,9 +14,31 @@ Sorted by severity (critical first).
 
 ## High
 
-(No issues yet.)
+### Engine.getPlayHead -- returned object is always empty
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** MainController.cpp:~1707-1720
+- **Observed:** The `hostInfo` DynamicObject is created as empty in the MainController constructor (line 194) and never populated. The entire block of `setProperty()` calls in `MainController::setHostBpm()` (lines 1707-1720) that would populate `bpm`, `timeSigNumerator`, `timeSigDenominator`, `timeInSamples`, `timeInSeconds`, `ppqPosition`, `ppqPositionOfLastBarStart`, `isPlaying`, `isRecording`, `ppqLoopStart`, `ppqLoopEnd`, `isLooping`, etc. is commented out. The `getPlayHead()` method returns this empty object, so all property accesses yield `undefined`.
+- **Expected:** Either re-enable the property-population code or deprecate `getPlayHead()` with a `reportScriptError` directing users to `createTransportHandler()`.
+
+### Engine.getSemitonesFromPitchRatio -- returns cents instead of semitones
+
+- **Type:** inconsistency
+- **Severity:** high
+- **Location:** ScriptingApi.h:~317
+- **Observed:** The formula `1200.0 * log2(pitchRatio)` returns cents (1/100th of a semitone), not semitones. For a pitch ratio of 2.0, the method returns 1200.0 instead of 12.0. The inverse method `getPitchRatioFromSemitones` uses `pow(2.0, semiTones / 12.0)` which correctly operates in semitones. These two methods are not true inverses: `getPitchRatioFromSemitones(getSemitonesFromPitchRatio(2.0))` does not return 2.0.
+- **Expected:** Change the formula to `12.0 * log2(pitchRatio)` to return semitones, matching the method name and the inverse method's convention.
 
 ## Medium
+
+### Engine.getComplexDataReference -- FilterCoefficients accepted but unhandled
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~2546
+- **Observed:** The `dataTypes` StringArray includes `"FilterCoefficients"` at index 3, so it passes the `indexOf` validation check. However, the switch statement that constructs the return object has no case for `ExternalData::DataType::FilterCoefficients`. In release builds this silently returns `undefined`. In debug builds it hits `jassertfalse`. The error message also omits `"FilterCoefficients"` from its list of valid types.
+- **Expected:** Either add a case for `FilterCoefficients` that returns the appropriate wrapper, or remove `"FilterCoefficients"` from the `dataTypes` array and explicitly reject it with a descriptive error message.
 
 ### MarkdownRenderer.setImageProvider -- non-array input silently clears all resolvers
 
@@ -417,6 +439,14 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApi.cpp:~6222
 - **Observed:** The `reportIllegalCall` message when `getSampler` is called outside `onInit` says `"getScriptingAudioSampleProcessor()"` instead of `"getSampler()"`. Copy-paste error from the audio sample processor method.
 - **Expected:** Change to `reportIllegalCall("getSampler()", "onInit")`.
+
+### Engine.createFixObjectFactory -- non-object layoutDescription silently produces non-functional factory
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** FixLayoutObjects.cpp:~279-301
+- **Observed:** If `layoutDescription` is not a DynamicObject (e.g., an array, string, number, or undefined), `createLayout()` produces an empty `MemoryLayoutItem::List` and sets `initResult = Result::fail("No data")`. The Factory is still created and returned to the user. All subsequent `create()`, `createArray()`, and `createStack()` calls check `initResult.wasOk()`, fail silently, and return empty `var()`. The user receives no error message explaining why the factory produces no objects.
+- **Expected:** Report a script error in the Factory constructor when `initResult` fails, e.g., `reportScriptError("Invalid layout description: " + initResult.getErrorMessage())`.
 
 ## Low
 

@@ -1,0 +1,3 @@
+Creates or retrieves a scriptnode DSP network with the given ID. If a network with the same ID already exists on this processor, it is returned without creating a duplicate. The script processor must be a scriptnode-enabled module (Script FX or Script Synth).
+
+> **Warning:** Calling this on a plain Script Processor (without scriptnode support) produces a script error. Only Script FX and Script Synth modules can create DSP networks.

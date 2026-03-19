@@ -1,0 +1,1 @@
+Loads all audio files into the audio sample buffer pool and returns a list of all pool reference strings. Call this during `onInit` to ensure audio files are available at runtime. The pool contents are used by Convolution Reverb, scriptnode filter and convolution nodes, and the Audio Loop Player.

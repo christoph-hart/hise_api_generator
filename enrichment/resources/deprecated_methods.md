@@ -45,3 +45,39 @@ Status: pending
 Reason: "global envelopes are now automatic, remove this call"
 
 Fully deprecated. The implementation immediately calls `reportScriptError("This function is deprecated. Just remove that call and enjoy global envelopes...")` and performs no work. Does not use the `ADD_API_METHOD_N_DEPRECATED` macro.
+
+### Engine.getSettingsWindowObject(0)
+Status: pending
+Reason: "use the Settings class instead"
+
+Hard deprecated. The implementation calls `reportScriptError("Deprecated")` and returns `var()`. Does not use the `ADD_API_METHOD_N_DEPRECATED` macro.
+
+### Engine.getZoomLevel(0)
+Status: pending
+Reason: "use Settings.getZoomLevel() instead"
+
+Soft deprecated. The implementation calls `logSettingWarning("getZoomLevel")` which emits a console message, then proceeds to return the value from `GlobalSettingManager::getGlobalScaleFactor()`. The method still works but warns users to migrate to the Settings class.
+
+### Engine.loadFont(1)
+Status: pending
+Reason: "use loadFontAs() instead to prevent cross platform issues"
+
+Soft deprecated. The implementation calls `debugError(getProcessor(), "loadFont is deprecated. Use loadFontAs() instead to prevent cross platform issues")` then delegates to `loadFontAs(fileName, String())`. The method still works but the OS-dependent font name resolution makes it unreliable across platforms.
+
+### Engine.setDiskMode(1)
+Status: pending
+Reason: "use Settings.setDiskMode() instead"
+
+Soft deprecated. The implementation calls `logSettingWarning("setDiskMode")` which emits a console message, then proceeds to set the disk mode. The method still works but warns users to migrate to the Settings class.
+
+### Engine.setZoomLevel(1)
+Status: pending
+Reason: "use Settings.setZoomLevel() instead"
+
+Soft deprecated. The implementation calls `logSettingWarning("setZoomLevel")` which emits a console message, then proceeds to set the zoom level. The method still works but warns users to migrate to the Settings class.
+
+### Engine.getZoomLevel(0)
+Status: pending
+Reason: "use Settings.getZoomLevel() instead"
+
+Soft deprecated. The implementation calls `logSettingWarning("getZoomLevel")` which emits a console message, then proceeds to return the value from `GlobalSettingManager::getGlobalScaleFactor()`. The method still works but warns users to migrate to the Settings class.

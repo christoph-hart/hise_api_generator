@@ -1,0 +1,1 @@
+Returns the current audio sample rate in Hz (e.g., 44100.0, 48000.0). This is the same rate used internally by all unit conversion methods.
