@@ -1,0 +1,1 @@
+Returns the current value of a component property by name. Reports a script error if the property does not exist. ScriptComboBox-specific properties include `items`, `fontName`, `fontSize`, `fontStyle`, `enableMidiLearn`, `popupAlignment`, and `useCustomPopup`.

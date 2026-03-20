@@ -1,0 +1,1 @@
+Requests keyboard focus for this component.

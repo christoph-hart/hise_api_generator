@@ -448,6 +448,14 @@ Sorted by severity (critical first).
 - **Observed:** If `layoutDescription` is not a DynamicObject (e.g., an array, string, number, or undefined), `createLayout()` produces an empty `MemoryLayoutItem::List` and sets `initResult = Result::fail("No data")`. The Factory is still created and returned to the user. All subsequent `create()`, `createArray()`, and `createStack()` calls check `initResult.wasOk()`, fail silently, and return empty `var()`. The user receives no error message explaining why the factory produces no objects.
 - **Expected:** Report a script error in the Factory constructor when `initResult` fails, e.g., `reportScriptError("Invalid layout description: " + initResult.getErrorMessage())`.
 
+### ScriptAudioWaveform.referToData -- silently ignores invalid data source argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptComponentWrappers.cpp (ComplexDataScriptComponent::referToData implementation)
+- **Observed:** If the `audioData` argument is not a ScriptAudioFile, another ComplexDataScriptComponent, nor the integer `-1`, the method silently does nothing -- no error is reported and the data source remains unchanged. The user has no indication that the call had no effect.
+- **Expected:** Report a script error when the argument is not one of the three accepted types, e.g., "referToData expects a ScriptAudioFile, another waveform component, or -1 to reset".
+
 ## Low
 
 ### Synth.removeModulator -- audio-thread error message says "Effects" instead of "Modules"

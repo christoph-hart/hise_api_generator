@@ -1,0 +1,3 @@
+Assigns a custom inline function as the control callback for this component, replacing the default `onControl` handler. The function must be declared with `inline function` and take exactly two parameters (component, value). Pass `undefined` to revert to the default `onControl` callback.
+
+> **Warning:** The function must be an `inline function` with exactly 2 parameters. Regular function references are rejected with a script error.

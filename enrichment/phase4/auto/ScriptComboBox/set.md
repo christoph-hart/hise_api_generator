@@ -1,0 +1,1 @@
+Sets a component property by name. ScriptComboBox-specific properties include `items` (newline-separated item list), `fontName`, `fontSize`, `fontStyle`, `enableMidiLearn`, `popupAlignment`, and `useCustomPopup`. Setting `items` automatically updates the internal maximum value to match the item count.

@@ -1,0 +1,3 @@
+Attaches a scripted look and feel object to this button, enabling custom drawing via the `drawToggleButton` LAF function. Pass `undefined` to clear it and revert to the default appearance. The LAF propagates automatically to all child components.
+
+> **Warning:** A custom LAF takes priority over filmstrip rendering. If you have both a `filmstripImage` property and a local look and feel, only the LAF drawing is used.

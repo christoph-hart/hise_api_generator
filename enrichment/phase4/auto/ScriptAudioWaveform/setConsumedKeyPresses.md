@@ -1,0 +1,1 @@
+Defines which key presses this component consumes when focused. Pass `"all"` to consume all key presses exclusively, `"all_nonexclusive"` to receive them without preventing parent handling, or an array of key description strings or objects to target specific keys. Must be called before `setKeyPressCallback()`.

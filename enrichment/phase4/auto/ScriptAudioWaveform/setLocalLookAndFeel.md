@@ -1,0 +1,1 @@
+Attaches a scripted look-and-feel object to this component and all its children. Pass `undefined` to clear it. For waveform-specific customisation, register the thumbnail draw functions (`drawThumbnailBackground`, `drawThumbnailPath`, `drawThumbnailRuler`, `drawThumbnailRange`, `drawThumbnailText`) and `getThumbnailRenderOptions` on the LAF object.

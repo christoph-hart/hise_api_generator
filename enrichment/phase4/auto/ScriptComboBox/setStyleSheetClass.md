@@ -1,0 +1,1 @@
+Sets one or more CSS class selectors on this component for use with stylesheet-based styling. The component's built-in type class (`.scriptcombobox`) is prepended automatically, so you only need to supply your custom classes (e.g. `".active .highlighted"`).

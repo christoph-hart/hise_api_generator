@@ -1,0 +1,1 @@
+Returns the current value of the named property. Reports a script error if the property does not exist for this component type.

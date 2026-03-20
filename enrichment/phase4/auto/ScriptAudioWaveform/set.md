@@ -1,0 +1,1 @@
+Sets a component property to the given value. Reports a script error if the property does not exist for this component type.

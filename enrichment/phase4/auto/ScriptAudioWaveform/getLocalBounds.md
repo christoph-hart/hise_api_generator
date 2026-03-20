@@ -1,0 +1,1 @@
+Returns a `[x, y, w, h]` array representing the component's local bounds, inset by the given amount from each edge.

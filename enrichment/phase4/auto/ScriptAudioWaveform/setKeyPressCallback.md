@@ -1,0 +1,1 @@
+Registers a callback that fires when a consumed key is pressed while this component has focus. The callback receives an event object with properties describing the key press or focus change. Call `setConsumedKeyPresses()` before this method to define which keys to handle.

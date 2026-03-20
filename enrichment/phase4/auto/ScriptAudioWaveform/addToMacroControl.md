@@ -1,0 +1,1 @@
+Assigns this component to a macro controller slot (0-7).

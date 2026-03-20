@@ -1,0 +1,1 @@
+Reads the current parameter value from the connected processor (set via `processorId` and `parameterId`) and updates this component's value to match. Call this after the module state has changed to refresh the displayed value.

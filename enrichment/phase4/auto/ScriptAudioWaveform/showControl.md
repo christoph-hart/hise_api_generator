@@ -1,0 +1,1 @@
+Shows or hides the component by setting the `visible` property. Pass `1` to show, `0` to hide. For animated transitions, use `fadeComponent()` instead.

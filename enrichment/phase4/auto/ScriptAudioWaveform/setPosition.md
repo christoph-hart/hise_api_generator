@@ -1,0 +1,1 @@
+Sets the component's position and size in one call by specifying x, y, width, and height in pixels.

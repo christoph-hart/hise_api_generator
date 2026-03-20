@@ -1,0 +1,1 @@
+Requests keyboard focus for this component. Useful when handling key press callbacks - call this to ensure the button receives subsequent key events.

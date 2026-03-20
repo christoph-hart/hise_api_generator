@@ -1,0 +1,1 @@
+Returns the absolute x-position relative to the interface root by recursively adding parent offsets. Useful for positioning popup overlays or tooltips relative to the interface rather than the parent component.

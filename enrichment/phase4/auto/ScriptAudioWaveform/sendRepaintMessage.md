@@ -1,0 +1,1 @@
+Forces an asynchronous repaint of the component. Use this after changing visual properties programmatically when the component does not repaint automatically.

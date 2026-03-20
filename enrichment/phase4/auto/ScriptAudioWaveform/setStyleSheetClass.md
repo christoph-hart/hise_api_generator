@@ -1,0 +1,1 @@
+Sets CSS class selectors for this component. The component's own type class is automatically prepended. Pass a space-separated string of class selectors (e.g. `".active .highlighted"`).

@@ -1,0 +1,1 @@
+Sets a component property to the given value. During `onInit`, changes are applied silently; outside `onInit`, the UI updates automatically. Reports a script error if the property does not exist for this component type.

@@ -1,0 +1,1 @@
+Returns an array of component references for all child components whose `parentComponent` is set to this component.

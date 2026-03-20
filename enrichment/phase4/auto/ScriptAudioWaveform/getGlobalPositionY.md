@@ -1,0 +1,1 @@
+Returns the absolute y-position relative to the interface root, accounting for parent component offsets.

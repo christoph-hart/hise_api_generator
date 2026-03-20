@@ -1,0 +1,1 @@
+Returns the local bounds as an `[x, y, w, h]` array, inset from each edge by the given amount. Pass `0` for the full bounds starting at `[0, 0, width, height]`.
