@@ -1,0 +1,1 @@
+Creates a modifiers object containing action IDs and modifier flags for `setModifiers()`. In practice you usually create one object from a representative slider, then reuse it to configure all sliders in a group consistently.
