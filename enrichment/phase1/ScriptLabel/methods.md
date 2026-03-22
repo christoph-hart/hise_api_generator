@@ -14,8 +14,11 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 |------|------|--------|-------------|-------------|
 | macroIndex | Integer | no | The macro controller index | 0-7 |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: set("macroControl", macroIndex), get("macroControl")
 
+---
 ## changed
 
 **Signature:** `undefined changed()`
@@ -30,6 +33,13 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - Cannot be called during `onInit` -- if called during `onInit`, it logs a console message and returns without executing.
 - If `deferControlCallback` is set, the callback is deferred to the message thread.
 - If the callback function throws an error, further script execution after the `changed()` call is aborted.
+
+**Property Links:**
+- Equivalent: none
+- Related: deferControlCallback
+
+**Interaction Notes:**
+- If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
 - `ScriptComponent.setControlCallback`
@@ -54,6 +64,10 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | shouldBeVisible | Integer | no | Target visibility state | 1 = show, 0 = hide |
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptComponent.showControl`
 
@@ -76,6 +90,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for this component type |
+
+**Property Links:**
+- Equivalent: canonical property getter API (`get("<propertyId>")`)
+- Related: ScriptComponent.set
 
 **Cross References:**
 - `ScriptComponent.set`
@@ -121,6 +139,10 @@ Returns an array of ScriptComponent references for all child components (compone
 **Description:**
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
+**Property Links:**
+- Equivalent: none
+- Related: get("x"), get("parentComponent")
+
 **Cross References:**
 - `ScriptComponent.getGlobalPositionY`
 
@@ -135,6 +157,10 @@ Returns the absolute x-position relative to the interface root, computed by recu
 
 **Description:**
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
+
+**Property Links:**
+- Equivalent: none
+- Related: get("y"), get("parentComponent")
 
 **Cross References:**
 - `ScriptComponent.getGlobalPositionX`
@@ -151,8 +177,11 @@ Returns the absolute y-position relative to the interface root, computed by recu
 **Description:**
 Returns the `height` property as an integer.
 
----
+**Property Links:**
+- Equivalent: get("height")
+- Related: set("height", value), setPosition(...)
 
+---
 ## getId
 
 **Signature:** `String getId()`
@@ -181,8 +210,11 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 |------|------|--------|-------------|-------------|
 | reduceAmount | Double | no | The amount in pixels to inset from each edge | >= 0.0 |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: get("width"), get("height")
 
+---
 ## getValue
 
 **Signature:** `String getValue()`
@@ -217,8 +249,11 @@ Returns the label text (`text` property).
 **Description:**
 Returns the `width` property as an integer.
 
----
+**Property Links:**
+- Equivalent: get("width")
+- Related: set("width", value), setPosition(...)
 
+---
 ## grabFocus
 
 **Signature:** `undefined grabFocus()`
@@ -279,6 +314,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The property identifier to set | Must be a valid property ID for this component type |
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
+
+**Property Links:**
+- Equivalent: canonical property setter API (`set("<propertyId>", value)`)
+- Related: ScriptComponent.get
 
 **Cross References:**
 - `ScriptComponent.get`
@@ -398,6 +437,13 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 - Reports an error if the script processor has a DspNetwork that is forwarding controls to parameters.
 
+**Property Links:**
+- Equivalent: none
+- Related: processorId, parameterId
+
+**Interaction Notes:**
+- If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
+
 **Cross References:**
 - `ScriptComponent.changed`
 
@@ -444,8 +490,11 @@ Enables or disables text editing for the label. This must be called during `onIn
 |------|------|--------|-------------|-------------|
 | shouldBeEditable | Integer | no | Whether the label should be editable | 1 = editable, 0 = read-only |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: editable/read-only behaviour state
 
+---
 ## setKeyPressCallback
 
 **Signature:** `undefined setKeyPressCallback(Function keyboardFunction)`
@@ -581,8 +630,11 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 | w | Integer | no | Width in pixels | 0-900 |
 | h | Integer | no | Height in pixels | 0-MAX_SCRIPT_HEIGHT |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: set("x", x), set("y", y), set("width", w), set("height", h)
 
+---
 ## setPropertiesFromJSON
 
 **Disabled:** no-op
@@ -739,8 +791,11 @@ Sets the tooltip text to display on mouse hover.
 |------|------|--------|-------------|-------------|
 | tooltip | String | no | The tooltip text to display on mouse hover | -- |
 
----
+**Property Links:**
+- Equivalent: set("tooltip", tooltip)
+- Related: get("tooltip")
 
+---
 ## setValueNormalized
 
 **Disabled:** redundant
@@ -749,6 +804,13 @@ Sets the tooltip text to display on mouse hover.
 ---
 
 ## setValueWithUndo
+
+**Property Links:**
+- Equivalent: none
+- Related: useUndoManager
+
+**Interaction Notes:**
+- Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Disabled:** redundant
 **Disabled Reason:** The undo path stores values as floats and is intended for numeric components. ScriptLabel ignores non-string values, so this method does not apply to label text.
@@ -798,12 +860,20 @@ Sets the `visible` property with change message notification.
 |------|------|--------|-------------|-------------|
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptComponent.fadeComponent`
 
 ---
 
 ## updateValueFromProcessorConnection
+
+**Property Links:**
+- Equivalent: none
+- Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Disabled:** no-op
 **Disabled Reason:** This method reads numeric processor attributes and forwards them to `setValue()`. ScriptLabel only accepts string values, so the update is ignored.

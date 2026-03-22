@@ -8,6 +8,12 @@ Phase 1 agents processing a component class should adopt these entries for
 inherited methods. Re-analyze only when the child class overrides a method
 (see Virtual Method Override Summary at the end).
 
+When using this file as a reference for child UI components, always check
+whether the derived component adds helper APIs that relate to the property
+system. Example pattern: a child helper like `addItem()` can map to a child
+property payload (`itemList` / `items`) even though the base class has no such
+method.
+
 Consult `resources/deprecated_methods.md` for methods that should be marked
 as disabled with reason "deprecated".
 
@@ -25,13 +31,17 @@ Source: `resources/explorations/ScriptComponent_base.md`
 **Description:**
 Returns the current value of the named property. If the property is set on the component's value tree, returns that value; otherwise returns the default. Reports a script error if the property does not exist.
 
-Base properties available on all components: `text`, `visible`, `enabled`, `locked`, `x`, `y`, `width`, `height`, `min`, `max`, `defaultValue`, `tooltip`, `bgColour`, `itemColour`, `itemColour2`, `textColour`, `macroControl`, `saveInPreset`, `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `deferControlCallback`, `isMetaParameter`, `linkedTo`, `automationId`, `useUndoManager`, `parentComponent`, `processorId`, `parameterId`. Child component types add additional properties.
+Base properties available on all components: `text`, `visible`, `enabled`, `locked`, `x`, `y`, `width`, `height`, `min`, `max`, `defaultValue`, `tooltip`, `bgColour`, `itemColour`, `itemColour2`, `textColour`, `macroControl`, `saveInPreset`, `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `deferControlCallback`, `isMetaParameter`, `linkedTo`, `automationID`, `useUndoManager`, `parentComponent`, `processorId`, `parameterId`. Child component types add additional properties.
 
 **Parameters:**
 
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for this component type |
+
+**Property Links:**
+- Equivalent: canonical property getter API (`get("<propertyId>")`)
+- Related: ScriptComponent.set
 
 **Cross References:**
 - `ScriptComponent.set`
@@ -49,7 +59,7 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 **Description:**
 Sets a component property to the given value. Reports a script error if the property does not exist. During `onInit`, changes are applied without UI notification; outside `onInit`, sends change notifications to update the UI. Tracks which properties have been set by script for profiling purposes.
 
-Base properties available on all components: `text`, `visible`, `enabled`, `locked`, `x`, `y`, `width`, `height`, `min`, `max`, `defaultValue`, `tooltip`, `bgColour`, `itemColour`, `itemColour2`, `textColour`, `macroControl`, `saveInPreset`, `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `deferControlCallback`, `isMetaParameter`, `linkedTo`, `automationId`, `useUndoManager`, `parentComponent`, `processorId`, `parameterId`. Child component types add additional properties.
+Base properties available on all components: `text`, `visible`, `enabled`, `locked`, `x`, `y`, `width`, `height`, `min`, `max`, `defaultValue`, `tooltip`, `bgColour`, `itemColour`, `itemColour2`, `textColour`, `macroControl`, `saveInPreset`, `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `deferControlCallback`, `isMetaParameter`, `linkedTo`, `automationID`, `useUndoManager`, `parentComponent`, `processorId`, `parameterId`. Child component types add additional properties.
 
 **Parameters:**
 
@@ -57,6 +67,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The property identifier to set | Must be a valid property ID for this component type |
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
+
+**Property Links:**
+- Equivalent: canonical property setter API (`set("<propertyId>", value)`)
+- Related: ScriptComponent.get
 
 **Cross References:**
 - `ScriptComponent.get`
@@ -116,6 +130,13 @@ Sets the component's value. Thread-safe -- can be called from any thread; the UI
 **Pitfalls:**
 - Do NOT pass a String value. Reports a script error.
 - If called during `onInit`, the value will NOT be restored after recompilation (`skipRestoring` is set to true).
+
+**Property Links:**
+- Equivalent: none
+- Related: linkedTo
+
+**Interaction Notes:**
+- Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
 - `ScriptComponent.getValue`
@@ -187,6 +208,13 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 **Pitfalls:**
 - Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes that should be undoable.
 
+**Property Links:**
+- Equivalent: none
+- Related: useUndoManager
+
+**Interaction Notes:**
+- Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
+
 **Cross References:**
 - `ScriptComponent.setValue`
 
@@ -211,6 +239,10 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 | w | Integer | no | Width in pixels | 0-900 |
 | h | Integer | no | Height in pixels | 0-MAX_SCRIPT_HEIGHT |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("x", x), set("y", y), set("width", w), set("height", h)
+
 ---
 
 ## setTooltip
@@ -229,6 +261,10 @@ Sets the tooltip text to display on mouse hover.
 |------|------|--------|-------------|-------------|
 | tooltip | String | no | The tooltip text to display on mouse hover | -- |
 
+**Property Links:**
+- Equivalent: set("tooltip", tooltip)
+- Related: get("tooltip")
+
 ---
 
 ## showControl
@@ -246,6 +282,10 @@ Sets the `visible` property with change message notification.
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
+
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
 - `ScriptComponent.fadeComponent`
@@ -268,6 +308,10 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 |------|------|--------|-------------|-------------|
 | macroIndex | Integer | no | The macro controller index | 0-7 |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("macroControl", macroIndex), get("macroControl")
+
 ---
 
 ## getWidth
@@ -280,6 +324,10 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 **Description:**
 Returns the `width` property as an integer.
 
+**Property Links:**
+- Equivalent: get("width")
+- Related: set("width", value), setPosition(...)
+
 ---
 
 ## getHeight
@@ -291,6 +339,10 @@ Returns the `width` property as an integer.
 
 **Description:**
 Returns the `height` property as an integer.
+
+**Property Links:**
+- Equivalent: get("height")
+- Related: set("height", value), setPosition(...)
 
 ---
 
@@ -309,6 +361,10 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | reduceAmount | Double | no | The amount in pixels to inset from each edge | >= 0.0 |
+
+**Property Links:**
+- Equivalent: none
+- Related: get("width"), get("height")
 
 ---
 
@@ -339,6 +395,13 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is set, the callback is deferred to the message thread.
 - If the callback function throws an error, further script execution after the `changed()` call is aborted.
 
+**Property Links:**
+- Equivalent: none
+- Related: deferControlCallback
+
+**Interaction Notes:**
+- If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
+
 **Cross References:**
 - `ScriptComponent.setControlCallback`
 - `ScriptComponent.getValue`
@@ -357,6 +420,10 @@ Triggers the control callback (either the custom one set via `setControlCallback
 **Description:**
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
+**Property Links:**
+- Equivalent: none
+- Related: get("x"), get("parentComponent")
+
 **Cross References:**
 - `ScriptComponent.getGlobalPositionY`
 
@@ -371,6 +438,10 @@ Returns the absolute x-position relative to the interface root, computed by recu
 
 **Description:**
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
+
+**Property Links:**
+- Equivalent: none
+- Related: get("y"), get("parentComponent")
 
 **Cross References:**
 - `ScriptComponent.getGlobalPositionX`
@@ -398,6 +469,13 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 - Reports an error if the script processor has a DspNetwork that is forwarding controls to parameters.
 - Passing `undefined` or empty `var()` clears the custom callback, reverting to the default `onControl` callback.
+
+**Property Links:**
+- Equivalent: none
+- Related: processorId, parameterId
+
+**Interaction Notes:**
+- If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
 - `ScriptComponent.changed`
@@ -668,6 +746,10 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | shouldBeVisible | Integer | no | Target visibility state | 1 = show, 0 = hide |
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptComponent.showControl`
 
@@ -806,6 +888,10 @@ Special parameter index values for the `parameterId` property:
 - `-4`: Reads inverted bypass state (0.0 if bypassed, 1.0 if not)
 - `>= 0`: Reads the attribute at the given parameter index
 
+**Property Links:**
+- Equivalent: none
+- Related: get("processorId"), get("parameterId"), setValue(...)
+
 **Cross References:**
 - `ScriptComponent.setValue`
 
@@ -842,6 +928,8 @@ component types.
 All ScriptComponent subclasses inherit these properties (settable via `set()`,
 retrievable via `get()`):
 
+Canonical property IDs (MCP-verified): `text`, `visible`, `enabled`, `locked`, `x`, `y`, `width`, `height`, `min`, `max`, `defaultValue`, `tooltip`, `bgColour`, `itemColour`, `itemColour2`, `textColour`, `macroControl`, `saveInPreset`, `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `deferControlCallback`, `isMetaParameter`, `linkedTo`, `automationID`, `useUndoManager`, `parentComponent`, `processorId`, `parameterId`.
+
 | Property ID | Default Value | Type |
 |---|---|---|
 | text | (component name) | String |
@@ -868,7 +956,7 @@ retrievable via `get()`):
 | deferControlCallback | false | Toggle |
 | isMetaParameter | false | Toggle |
 | linkedTo | "" | Choice |
-| automationId | "" | Choice |
+| automationID | "" | Choice |
 | useUndoManager | false | Toggle |
 | parentComponent | "" | Choice |
 | processorId | " " (space) | Choice |

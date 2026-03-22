@@ -1,5 +1,9 @@
 ## addToMacroControl
 
+**Property Links:**
+- Equivalent: none
+- Related: set("macroControl", macroIndex), get("macroControl")
+
 **Disabled:** property-deactivated
 **Disabled Reason:** The macroControl property is deactivated for ScriptedViewport. The component does not support macro controller assignments.
 
@@ -17,6 +21,13 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - Cannot be called during `onInit` -- if called during `onInit`, it logs a console message and returns without executing.
 - If `deferControlCallback` is set, the callback is deferred to the message thread.
 - If the callback function throws an error, further script execution after the `changed()` call is aborted.
+
+**Property Links:**
+- Equivalent: none
+- Related: deferControlCallback
+
+**Interaction Notes:**
+- If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
 - `ScriptedViewport.setControlCallback`
@@ -39,6 +50,10 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | shouldBeVisible | Integer | no | Target visibility state | 1 = show, 0 = hide |
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptedViewport.showControl`
 
@@ -58,6 +73,10 @@ Returns the current value of the named property. If the property is set on the c
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for this component type |
+
+**Property Links:**
+- Equivalent: canonical property getter API (`get("<propertyId>")`)
+- Related: ScriptComponent.set
 
 **Cross References:**
 - `ScriptedViewport.set`
@@ -97,6 +116,10 @@ Returns an array of ScriptComponent references for all child components (compone
 **Description:**
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
+**Property Links:**
+- Equivalent: none
+- Related: get("x"), get("parentComponent")
+
 **Cross References:**
 - `ScriptedViewport.getGlobalPositionY`
 
@@ -109,6 +132,10 @@ Returns the absolute x-position relative to the interface root, computed by recu
 
 **Description:**
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
+
+**Property Links:**
+- Equivalent: none
+- Related: get("y"), get("parentComponent")
 
 **Cross References:**
 - `ScriptedViewport.getGlobalPositionX`
@@ -123,6 +150,9 @@ Returns the absolute y-position relative to the interface root, computed by recu
 **Description:**
 Returns the `height` property as an integer.
 
+**Property Links:**
+- Equivalent: get("height")
+- Related: set("height", value), setPosition(...)
 ## getId
 
 **Signature:** `String getId()`
@@ -150,6 +180,9 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 |------|------|--------|-------------|-------------|
 | reduceAmount | Double | no | The amount in pixels to inset from each edge | >= 0.0 |
 
+**Property Links:**
+- Equivalent: none
+- Related: get("width"), get("height")
 ## getOriginalRowIndex
 
 **Signature:** `Integer getOriginalRowIndex(Integer rowIndex)`
@@ -207,6 +240,9 @@ Returns the current value of the component. The meaning depends on the active mo
 **Description:**
 Returns the `width` property as an integer.
 
+**Property Links:**
+- Equivalent: get("width")
+- Related: set("width", value), setPosition(...)
 ## grabFocus
 
 **Signature:** `undefined grabFocus()`
@@ -259,6 +295,10 @@ Sets a component property to the given value. Reports a script error if the prop
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The property identifier to set | Must be a valid property ID for this component type |
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
+
+**Property Links:**
+- Equivalent: canonical property setter API (`set("<propertyId>", value)`)
+- Related: ScriptComponent.get
 
 **Cross References:**
 - `ScriptedViewport.get`
@@ -363,6 +403,13 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 - Passing `false` clears the custom callback, reverting to the default `onControl` callback.
 
+**Property Links:**
+- Equivalent: none
+- Related: processorId, parameterId
+
+**Interaction Notes:**
+- If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
+
 **Cross References:**
 - `ScriptedViewport.changed`
 
@@ -421,6 +468,10 @@ Specifies which table event types trigger the parent component's `setValue()` ca
 - Requires `setTableMode()` to have been called first. Reports a script error otherwise.
 - Only "Selection", "SingleClick", "DoubleClick", and "ReturnKey" are legal. Passing "SliderCallback", "ButtonCallback", "SetValue", "Undo", or "DeleteRow" reports a script error.
 - The eventTypeList must be an array. Passing a non-array value reports a script error.
+
+**Property Links:**
+- Equivalent: none
+- Related: table/list configuration payload
 
 **Cross References:**
 - `ScriptedViewport.setTableMode`
@@ -588,6 +639,9 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 | w | Integer | no | Width in pixels | 0-900 |
 | h | Integer | no | Height in pixels | 0-MAX_SCRIPT_HEIGHT |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("x", x), set("y", y), set("width", w), set("height", h)
 ## setPropertiesFromJSON
 
 **Disabled:** no-op
@@ -717,6 +771,10 @@ Registers a callback function that is notified for all user interactions with th
 - Requires `setTableMode()` to have been called first. Reports a script error if no table model exists.
 - In MultiColumnMode, Selection and SingleClick events are deferred to an async update to coalesce rapid notifications.
 
+**Property Links:**
+- Equivalent: none
+- Related: table/list configuration payload
+
 **Cross References:**
 - `ScriptedViewport.setTableMode`
 - `ScriptedViewport.setTableColumns`
@@ -801,6 +859,10 @@ Column definition object properties:
 - Requires `setTableMode()` to have been called first. Reports a script error if no table model exists.
 - The column `ID` values must match the property keys in the row data objects passed to `setTableRowData()`.
 
+**Property Links:**
+- Equivalent: none
+- Related: table/list configuration payload
+
 **Cross References:**
 - `ScriptedViewport.setTableMode`
 - `ScriptedViewport.setTableRowData`
@@ -859,6 +921,10 @@ Table metadata properties:
 - Must be called in `onInit`. Reports a script error if called at runtime.
 - Once called, the viewport is permanently in table mode for this compilation. Cannot switch back to viewport or list mode without recompiling.
 
+**Property Links:**
+- Equivalent: none
+- Related: table/list configuration payload
+
 **Cross References:**
 - `ScriptedViewport.setTableColumns`
 - `ScriptedViewport.setTableRowData`
@@ -913,6 +979,10 @@ Updates the row data for the table. Each element in the array must be a JSON obj
 - The data is cloned on assignment. Modifications to the original array after calling this method are not reflected in the table.
 - Can be called at any time (not restricted to onInit), allowing dynamic row updates at runtime.
 
+**Property Links:**
+- Equivalent: none
+- Related: table/list configuration payload
+
 **Cross References:**
 - `ScriptedViewport.setTableMode`
 - `ScriptedViewport.setTableColumns`
@@ -964,6 +1034,10 @@ Sets a custom comparator function used when the user clicks a column header to s
 - The sort function is called synchronously via `callSync` -- it must not perform long-running operations.
 - The function receives individual cell values from the sort column, not full row objects.
 
+**Property Links:**
+- Equivalent: none
+- Related: table/list configuration payload
+
 **Cross References:**
 - `ScriptedViewport.setTableMode`
 - `ScriptedViewport.getOriginalRowIndex`
@@ -1005,6 +1079,9 @@ Sets the tooltip text to display on mouse hover.
 |------|------|--------|-------------|-------------|
 | tooltip | String | no | The tooltip text to display on mouse hover | -- |
 
+**Property Links:**
+- Equivalent: set("tooltip", tooltip)
+- Related: get("tooltip")
 ## setValueNormalized
 
 **Disabled:** redundant
@@ -1028,6 +1105,13 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 
 **Pitfalls:**
 - Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes that should be undoable.
+
+**Property Links:**
+- Equivalent: none
+- Related: useUndoManager
+
+**Interaction Notes:**
+- Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
 - `ScriptedViewport.setValue`
@@ -1079,6 +1163,13 @@ Sets the component's value. In table mode with `MultiColumnMode` enabled, passin
 - If called during `onInit`, the value will NOT be restored after recompilation.
 - In table MultiColumnMode, the [column, row] array triggers a SetValue callback on the table model, which may be skipped if the same cell is already selected.
 
+**Property Links:**
+- Equivalent: none
+- Related: linkedTo
+
+**Interaction Notes:**
+- Value propagation can forward to linked components through the `linkedTo` routing setup.
+
 **Cross References:**
 - `ScriptedViewport.getValue`
 - `ScriptedViewport.setValueWithUndo`
@@ -1100,6 +1191,10 @@ Sets the `visible` property with change message notification.
 |------|------|--------|-------------|-------------|
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptedViewport.fadeComponent`
 
@@ -1112,6 +1207,10 @@ Sets the `visible` property with change message notification.
 
 **Description:**
 Reads the current attribute value from the connected processor (set via the `processorId` and `parameterId` properties) and calls `setValue()` with that value. Does nothing if no processor connection is established.
+
+**Property Links:**
+- Equivalent: none
+- Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
 - `ScriptedViewport.setValue`

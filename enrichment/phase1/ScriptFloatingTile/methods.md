@@ -18,8 +18,11 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 |------|------|--------|-------------|-------------|
 | macroIndex | Integer | no | The macro controller index | 0-7 |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: set("macroControl", macroIndex), get("macroControl")
 
+---
 ## changed
 
 **Signature:** `undefined changed()`
@@ -34,6 +37,13 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - Cannot be called during `onInit` -- if called during `onInit`, it logs a console message and returns without executing.
 - If `deferControlCallback` is set, the callback is deferred to the message thread.
 - If the callback function throws an error, further script execution after the `changed()` call is aborted.
+
+**Property Links:**
+- Equivalent: none
+- Related: deferControlCallback
+
+**Interaction Notes:**
+- If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
 - `ScriptFloatingTile.setControlCallback`
@@ -58,6 +68,10 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | shouldBeVisible | Integer | no | Target visibility state | 1 = show, 0 = hide |
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptFloatingTile.showControl`
 
@@ -80,6 +94,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for this component type |
+
+**Property Links:**
+- Equivalent: canonical property getter API (`get("<propertyId>")`)
+- Related: ScriptComponent.set
 
 **Cross References:**
 - `ScriptFloatingTile.set`
@@ -125,6 +143,10 @@ Returns an array of ScriptComponent references for all child components (compone
 **Description:**
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
+**Property Links:**
+- Equivalent: none
+- Related: get("x"), get("parentComponent")
+
 **Cross References:**
 - `ScriptFloatingTile.getGlobalPositionY`
 
@@ -139,6 +161,10 @@ Returns the absolute x-position relative to the interface root, computed by recu
 
 **Description:**
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
+
+**Property Links:**
+- Equivalent: none
+- Related: get("y"), get("parentComponent")
 
 **Cross References:**
 - `ScriptFloatingTile.getGlobalPositionX`
@@ -155,8 +181,11 @@ Returns the absolute y-position relative to the interface root, computed by recu
 **Description:**
 Returns the `height` property as an integer.
 
----
+**Property Links:**
+- Equivalent: get("height")
+- Related: set("height", value), setPosition(...)
 
+---
 ## getId
 
 **Signature:** `String getId()`
@@ -185,8 +214,11 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 |------|------|--------|-------------|-------------|
 | reduceAmount | Double | no | The amount in pixels to inset from each edge | >= 0.0 |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: get("width"), get("height")
 
+---
 ## getValueNormalized
 
 **Signature:** `Double getValueNormalized()`
@@ -213,8 +245,11 @@ Returns the normalized value (0.0 to 1.0). Base implementation returns `getValue
 **Description:**
 Returns the `width` property as an integer.
 
----
+**Property Links:**
+- Equivalent: get("width")
+- Related: set("width", value), setPosition(...)
 
+---
 ## grabFocus
 
 **Signature:** `undefined grabFocus()`
@@ -275,6 +310,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The property identifier to set | Must be a valid property ID for this component type |
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
+
+**Property Links:**
+- Equivalent: canonical property setter API (`set("<propertyId>", value)`)
+- Related: ScriptComponent.get
 
 **Cross References:**
 - `ScriptFloatingTile.get`
@@ -373,6 +412,10 @@ The JSON object should follow the FloatingTileContent configuration format. Colo
 - The `"Type"` property is extracted from the JSON and used to update the ContentType. If `"Type"` is missing or invalid, the floating tile may revert to the Empty panel type without error.
 - Colour names in `ColourData` use `"itemColour1"` instead of `"itemColour"`. Using `"itemColour"` in the ColourData sub-object will not map correctly.
 
+**Property Links:**
+- Equivalent: none
+- Related: floating tile content payload (`ContentType` / `Data`)
+
 **Cross References:**
 - `ScriptFloatingTile.setValue`
 
@@ -426,6 +469,13 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 - Reports an error if the script processor has a DspNetwork that is forwarding controls to parameters.
 - Passing `undefined` or empty `var()` clears the custom callback, reverting to the default `onControl` callback.
+
+**Property Links:**
+- Equivalent: none
+- Related: processorId, parameterId
+
+**Interaction Notes:**
+- If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
 - `ScriptFloatingTile.changed`
@@ -551,8 +601,11 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 | w | Integer | no | Width in pixels | 0-900 |
 | h | Integer | no | Height in pixels | 0-MAX_SCRIPT_HEIGHT |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: set("x", x), set("y", y), set("width", w), set("height", h)
 
+---
 ## setPropertiesFromJSON
 
 **Signature:** `undefined setPropertiesFromJSON(JSON jsonData)`
@@ -708,8 +761,11 @@ Sets the tooltip text to display on mouse hover.
 |------|------|--------|-------------|-------------|
 | tooltip | String | no | The tooltip text to display on mouse hover | -- |
 
----
+**Property Links:**
+- Equivalent: set("tooltip", tooltip)
+- Related: get("tooltip")
 
+---
 ## setValueNormalized
 
 **Signature:** `undefined setValueNormalized(Double normalizedValue)`
@@ -750,6 +806,13 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 
 **Pitfalls:**
 - Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes that should be undoable.
+
+**Property Links:**
+- Equivalent: none
+- Related: useUndoManager
+
+**Interaction Notes:**
+- Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
 - `ScriptFloatingTile.setValue`
@@ -799,6 +862,10 @@ Sets the `visible` property with change message notification.
 |------|------|--------|-------------|-------------|
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptFloatingTile.fadeComponent`
 
@@ -819,6 +886,10 @@ Special parameter index values for the `parameterId` property:
 - `-3`: Reads bypass state (1.0 if bypassed, 0.0 if not)
 - `-4`: Reads inverted bypass state (0.0 if bypassed, 1.0 if not)
 - `>= 0`: Reads the attribute at the given parameter index
+
+**Property Links:**
+- Equivalent: none
+- Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
 - `ScriptFloatingTile.setValue`
@@ -861,6 +932,13 @@ When the `updateAfterInit` property is `true` (the default), the component wrapp
 
 **Pitfalls:**
 - When `updateAfterInit` is true (default), every `setValue()` call triggers a full content reload of the embedded panel. This is expensive and should not be called frequently at runtime.
+
+**Property Links:**
+- Equivalent: none
+- Related: linkedTo
+
+**Interaction Notes:**
+- Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
 - `ScriptFloatingTile.getValue`

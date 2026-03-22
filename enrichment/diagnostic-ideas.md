@@ -25,7 +25,31 @@ Sorted by priority (high first).
 - **Rationale:** Many Broadcaster attach methods require a specific number of arguments on the broadcaster (e.g., attachToComplexData requires 3, attachToComponentMouseEvents requires 2). A mismatch produces a runtime error but could be caught at parse time by checking the argument count of the `Engine.createBroadcaster()` call that created the broadcaster variable.
 - **Sketch:** When an attach method call is encountered, trace the broadcaster variable back to its `Engine.createBroadcaster()` initializer, count the args array length or property count, and compare against the required count for the specific attach method. Emit a warning if they don't match.
 
+### ScriptSlider range helpers -- style must be Range
+
+- **Category:** precondition
+- **Priority:** medium
+- **Methods involved:** setMinValue, setMaxValue, getMinValue, getMaxValue, contains
+- **Rationale:** These methods only work when slider style is `Range`. In other styles they only log an error and return fallback values, so calls often appear to succeed while doing nothing useful.
+- **Sketch:** Track `setStyle("Range")` assignments on the same slider variable. When a range-helper method is called without known Range style state, emit a warning.
+
+### ScriptSlider.setMode -- validate mode string literals
+
+- **Category:** value-check
+- **Priority:** medium
+- **Methods involved:** setMode
+- **Rationale:** `setMode` accepts a fixed mode set. Invalid strings silently force internal Linear behavior in current implementation, which is difficult to diagnose from script.
+- **Sketch:** When `setMode` is called with a string literal, validate against {"Frequency", "Decibel", "Time", "TempoSync", "Linear", "Discrete", "Pan", "NormalizedPercentage"}. Emit a warning for mismatches.
+
 ## Low
+
+### Buffer.resample -- invalid interpolationType string literal
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** resample
+- **Rationale:** `resample` accepts only five interpolation mode strings. Invalid strings throw at runtime with a long error message. A parse-time literal check would catch typos earlier.
+- **Sketch:** When `resample` is called with a string literal for `interpolationType`, validate against {"WindowedSinc", "Lagrange", "CatmullRom", "Linear", "ZeroOrderHold"} and warn on mismatch.
 
 ### File.toReferenceString -- invalid folderType string
 

@@ -20,6 +20,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for this component type |
 
+**Property Links:**
+- Equivalent: canonical property getter API (`get("<propertyId>")`)
+- Related: ScriptComponent.set
+
 **Cross References:**
 - `ScriptAudioWaveform.set`
 - `ScriptAudioWaveform.getAllProperties`
@@ -44,6 +48,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 |------|------|--------|-------------|-------------|
 | propertyName | String | no | The property identifier to set | Must be a valid property ID for this component type |
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
+
+**Property Links:**
+- Equivalent: canonical property setter API (`set("<propertyId>", value)`)
+- Related: ScriptComponent.get
 
 **Cross References:**
 - `ScriptAudioWaveform.get`
@@ -103,6 +111,13 @@ Sets the component's value. Thread-safe -- can be called from any thread; the UI
 **Pitfalls:**
 - Do NOT pass a String value. Reports a script error.
 - If called during `onInit`, the value will NOT be restored after recompilation (`skipRestoring` is set to true).
+
+**Property Links:**
+- Equivalent: none
+- Related: linkedTo
+
+**Interaction Notes:**
+- Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
 - `ScriptAudioWaveform.getValue`
@@ -174,6 +189,13 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 **Pitfalls:**
 - Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes that should be undoable.
 
+**Property Links:**
+- Equivalent: none
+- Related: useUndoManager
+
+**Interaction Notes:**
+- Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
+
 **Cross References:**
 - `ScriptAudioWaveform.setValue`
 
@@ -198,8 +220,11 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 | w | Integer | no | Width in pixels | 0-900 |
 | h | Integer | no | Height in pixels | 0-MAX_SCRIPT_HEIGHT |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: set("x", x), set("y", y), set("width", w), set("height", h)
 
+---
 ## setTooltip [inherited from ScriptComponent]
 
 **Signature:** `undefined setTooltip(String tooltip)`
@@ -216,8 +241,11 @@ Sets the tooltip text to display on mouse hover.
 |------|------|--------|-------------|-------------|
 | tooltip | String | no | The tooltip text to display on mouse hover | -- |
 
----
+**Property Links:**
+- Equivalent: set("tooltip", tooltip)
+- Related: get("tooltip")
 
+---
 ## showControl [inherited from ScriptComponent]
 
 **Signature:** `undefined showControl(Integer shouldBeVisible)`
@@ -233,6 +261,10 @@ Sets the `visible` property with change message notification.
 | Name | Type | Forced | Description | Constraints |
 |------|------|--------|-------------|-------------|
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
+
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
 - `ScriptAudioWaveform.fadeComponent`
@@ -255,8 +287,11 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 |------|------|--------|-------------|-------------|
 | macroIndex | Integer | no | The macro controller index | 0-7 |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: set("macroControl", macroIndex), get("macroControl")
 
+---
 ## getWidth [inherited from ScriptComponent]
 
 **Signature:** `Integer getWidth()`
@@ -267,8 +302,11 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 **Description:**
 Returns the `width` property as an integer.
 
----
+**Property Links:**
+- Equivalent: get("width")
+- Related: set("width", value), setPosition(...)
 
+---
 ## getHeight [inherited from ScriptComponent]
 
 **Signature:** `Integer getHeight()`
@@ -279,8 +317,11 @@ Returns the `width` property as an integer.
 **Description:**
 Returns the `height` property as an integer.
 
----
+**Property Links:**
+- Equivalent: get("height")
+- Related: set("height", value), setPosition(...)
 
+---
 ## getLocalBounds [inherited from ScriptComponent]
 
 **Signature:** `Array getLocalBounds(Double reduceAmount)`
@@ -297,8 +338,11 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 |------|------|--------|-------------|-------------|
 | reduceAmount | Double | no | The amount in pixels to inset from each edge | >= 0.0 |
 
----
+**Property Links:**
+- Equivalent: none
+- Related: get("width"), get("height")
 
+---
 ## getChildComponents [inherited from ScriptComponent]
 
 **Signature:** `Array getChildComponents()`
@@ -326,6 +370,13 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is set, the callback is deferred to the message thread.
 - If the callback function throws an error, further script execution after the `changed()` call is aborted.
 
+**Property Links:**
+- Equivalent: none
+- Related: deferControlCallback
+
+**Interaction Notes:**
+- If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
+
 **Cross References:**
 - `ScriptAudioWaveform.setControlCallback`
 - `ScriptAudioWaveform.getValue`
@@ -344,6 +395,10 @@ Triggers the control callback (either the custom one set via `setControlCallback
 **Description:**
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
+**Property Links:**
+- Equivalent: none
+- Related: get("x"), get("parentComponent")
+
 **Cross References:**
 - `ScriptAudioWaveform.getGlobalPositionY`
 
@@ -358,6 +413,10 @@ Returns the absolute x-position relative to the interface root, computed by recu
 
 **Description:**
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
+
+**Property Links:**
+- Equivalent: none
+- Related: get("y"), get("parentComponent")
 
 **Cross References:**
 - `ScriptAudioWaveform.getGlobalPositionX`
@@ -385,6 +444,13 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 - Reports an error if the script processor has a DspNetwork that is forwarding controls to parameters.
 - Passing `undefined` or empty `var()` clears the custom callback, reverting to the default `onControl` callback.
+
+**Property Links:**
+- Equivalent: none
+- Related: processorId, parameterId
+
+**Interaction Notes:**
+- If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
 - `ScriptAudioWaveform.changed`
@@ -717,6 +783,10 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | shouldBeVisible | Integer | no | Target visibility state | 1 = show, 0 = hide |
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
+**Property Links:**
+- Equivalent: none
+- Related: set("visible", shouldBeVisible), get("visible")
+
 **Cross References:**
 - `ScriptAudioWaveform.showControl`
 
@@ -879,6 +949,10 @@ Special parameter index values for the `parameterId` property:
 - `-4`: Reads inverted bypass state (0.0 if bypassed, 1.0 if not)
 - `>= 0`: Reads the attribute at the given parameter index
 
+**Property Links:**
+- Equivalent: none
+- Related: get("processorId"), get("parameterId"), setValue(...)
+
 **Cross References:**
 - `ScriptAudioWaveform.setValue`
 
@@ -901,6 +975,10 @@ Special parameter index values for the `parameterId` property:
 **Description:**
 Returns the start position (in samples) of the currently selected sample range on the waveform display. If no audio data is loaded or the cached audio file reference is invalid, returns `0`. The range is typically set by user interaction with the draggable SampleArea edges or programmatically via the underlying MultiChannelAudioBuffer.
 
+**Property Links:**
+- Equivalent: none
+- Related: enableRange
+
 **Cross References:**
 - `ScriptAudioWaveform.getRangeEnd`
 
@@ -915,6 +993,10 @@ Returns the start position (in samples) of the currently selected sample range o
 
 **Description:**
 Returns the end position (in samples) of the currently selected sample range on the waveform display. If no audio data is loaded or the cached audio file reference is invalid, returns `0`. The range is typically set by user interaction with the draggable SampleArea edges or programmatically via the underlying MultiChannelAudioBuffer.
+
+**Property Links:**
+- Equivalent: none
+- Related: enableRange
 
 **Cross References:**
 - `ScriptAudioWaveform.getRangeStart`
@@ -943,6 +1025,10 @@ Connects this waveform component to an external audio data source. After calling
 
 **Pitfalls:**
 - [BUG] Passing an object that is neither a ScriptAudioFile, a ComplexDataScriptComponent, nor `-1` silently does nothing -- no error is reported and the data source is unchanged.
+
+**Property Links:**
+- Equivalent: none
+- Related: processorId, sampleIndex source binding
 
 **Cross References:**
 - `ScriptAudioWaveform.registerAtParent`

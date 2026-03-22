@@ -14,6 +14,14 @@ Sorted by severity (critical first).
 
 ## High
 
+### Buffer.toCharString -- numChars larger than buffer length can hang execution
+
+- **Type:** missing-validation
+- **Severity:** high
+- **Location:** VariantBuffer.cpp:~214-221
+- **Observed:** `samplesPerChar` is computed with integer division `size / numChars`. When `numChars > size`, this becomes 0. The loop `for (int i = 0; i < size; i += samplesPerChar)` then never increments `i`, resulting in a non-terminating loop.
+- **Expected:** Validate `numChars <= size` (or clamp to `size`) before calculating `samplesPerChar`.
+
 ### Engine.getPlayHead -- returned object is always empty
 
 - **Type:** silent-fail
@@ -31,6 +39,102 @@ Sorted by severity (critical first).
 - **Expected:** Change the formula to `12.0 * log2(pitchRatio)` to return semitones, matching the method name and the inverse method's convention.
 
 ## Medium
+
+### Buffer.decompose -- fast threshold array gated by wrong size check
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** SiTraNoConverter.cpp:~243
+- **Observed:** `ConfigData` parsing checks `if(ft.isArray() && st.size() == 2)` before reading `FastTransientTreshold`. The second condition references `st` instead of `ft`, so valid fast-threshold data is ignored unless `SlowTransientTreshold` also has exactly two elements.
+- **Expected:** Validate fast thresholds with `if (ft.isArray() && ft.size() == 2)` so `FastTransientTreshold` is parsed independently.
+
+### Buffer.detectPitch -- negative start offset is not validated
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~281-284
+- **Observed:** `startSample` is only upper-clamped via `jmin((int)n.arguments[1], bufferSize - numSamples)`. Negative values pass through, then `PitchDetection::detectPitch` reads `buffer.getSample(..., startSample + i)` with negative indices.
+- **Expected:** Clamp `startSample` to a valid range with a lower bound of 0 (or throw a script error for negative indices).
+
+### Buffer.getNextZeroCrossing -- negative index is not validated
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~557-565
+- **Observed:** The scan index is cast from script input and used directly in `ptr[i]` and `ptr[i + 1]` without lower-bound clamping. Negative values start the loop below zero and read before the buffer start.
+- **Expected:** Clamp the start index to `0..size-2` or reject negative values with a script error.
+
+### Buffer.getPeakRange -- negative start offset is not validated
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~537-541
+- **Observed:** The start offset uses `jmin((int)n.arguments[0], bufferSize - numSamples)` with no lower-bound clamp. Negative offsets pass into `findMinMax`, which can read before the buffer.
+- **Expected:** Clamp `startSample` to a non-negative range before calling `findMinMax`.
+
+### Buffer.getRMSLevel -- negative start offset is not validated
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~488-491
+- **Observed:** `startSample` is upper-clamped with `jmin` but not lower-clamped, so negative offsets can reach `getRMSLevel` and read invalid memory.
+- **Expected:** Clamp `startSample` to `0..bufferSize-numSamples` or throw for negative offsets.
+
+### Buffer.getSlice -- negative offset can create invalid slice pointers
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~583-592
+- **Observed:** `offsetInBuffer` is clamped with `jmin(numSamples, arg)` but has no lower bound. Negative values pass through and are used in `getWritePointer(0, offset)`, creating an invalid pointer before the buffer start.
+- **Expected:** Clamp `offsetInBuffer` to `0..size` (or throw for negatives) before pointer acquisition.
+
+### Buffer.indexOfPeak -- negative start offset is not validated
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~380-384
+- **Observed:** `startSample` uses `jmin((int)n.arguments[0], bufferSize - numSamples)` without lower-bound clamping. Negative offsets reach `getReadPointer(0, offset)` and can read out of bounds.
+- **Expected:** Clamp `startSample` to a non-negative range before reading.
+
+### Buffer.normalise -- gainInDecibels parameter is ignored
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~184-186
+- **Observed:** The optional gain path calls `Decibels::decibelsToGain(gain)` where `gain` is the local variable initialized to `1.0f`, not the script argument. Because the result is then clamped to `0..1`, the computed target gain stays `1.0f`, so any passed dB value is ignored.
+- **Expected:** Convert `n.arguments[0]` from dB to linear gain and use that value for normalization.
+
+### Buffer.applyMedianFilter -- missing argument returns undefined without error
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** VariantBuffer.cpp:~228-239
+- **Observed:** When `windowSize` is omitted, the method exits through `RETURN_IF_NO_THROW(var())` and returns `undefined` instead of reporting invalid usage. This appears to succeed from script but no filtered buffer is produced.
+- **Expected:** Reject missing or non-positive `windowSize` with a descriptive script error, or provide an explicit default window size.
+
+### Buffer.decompose -- threshold key spelling mismatch causes silent config drop
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** SiTraNoConverter.cpp:~236-247
+- **Observed:** The parser only accepts `SlowTransientTreshold` / `FastTransientTreshold` (missing second `h`). Scripts using the conventional spelling `...Threshold` are silently ignored, so user-supplied threshold tuning is dropped without feedback.
+- **Expected:** Accept both spellings for backward compatibility, or report a clear error when unknown threshold keys are passed.
+
+### ScriptSlider.setMode -- invalid mode silently forces Linear without property update
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~2618-2629
+- **Observed:** When `setMode()` receives an invalid mode string, it sets the internal `m` enum to `HiSlider::Mode::Linear` and returns early. It does not report an error and does not update the `mode` property in the ValueTree. Runtime conversion behavior can therefore switch to Linear while `get("mode")` still reports the previous valid mode string.
+- **Expected:** Reject invalid mode strings with a descriptive script error (or at minimum keep internal mode unchanged), and keep runtime mode and stored `mode` property in sync.
+
+### ScriptSlider.setStyle -- invalid style string desynchronizes stored property and runtime style
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~2735-2764
+- **Observed:** `setStyle()` stores the provided style string in the property tree before validating it with `ApiHelpers::getStyleForString<Slider::SliderStyle>()`. For invalid strings, helper conversion returns `SliderStyle::IncDecButtons` as a fallback, which is explicitly treated as invalid by the subsequent `if (s != SliderStyle::IncDecButtons)` guard. The method then skips `styleId` update without reporting an error. Result: the `style` property can show an invalid value while runtime slider behavior keeps the previous style.
+- **Expected:** Validate the style string before writing the property, report a script error for invalid styles, and keep stored `style` text synchronized with the active runtime style.
 
 ### Engine.getComplexDataReference -- FilterCoefficients accepted but unhandled
 

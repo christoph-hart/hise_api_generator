@@ -1163,6 +1163,44 @@ def parse_single_method(body: str) -> dict:
         if xrefs:
             result["crossReferences"] = xrefs
 
+    # Property Links
+    prop_match = re.search(
+        r"\*\*Property Links:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
+        body, re.DOTALL
+    )
+    if prop_match:
+        prop_text = prop_match.group(1)
+        equivalent = []
+        related = []
+        for line in prop_text.strip().splitlines():
+            line = line.strip().lstrip("-").strip()
+            if not line:
+                continue
+            if line.lower().startswith("equivalent:"):
+                value = line.split(":", 1)[1].strip()
+                if value.lower() not in ("none", "n/a", "--", ""):
+                    equivalent = [value.strip().strip("`")]
+            elif line.lower().startswith("related:"):
+                value = line.split(":", 1)[1].strip()
+                if value.lower() not in ("none", "n/a", "--", ""):
+                    related = [value.strip().strip("`")]
+
+        if equivalent or related:
+            result["propertyLinks"] = {
+                "equivalent": equivalent,
+                "related": related,
+            }
+
+    # Interaction Notes
+    interaction_match = re.search(
+        r"\*\*Interaction Notes:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
+        body, re.DOTALL
+    )
+    if interaction_match:
+        notes = parse_bullet_list(interaction_match.group(1))
+        if notes:
+            result["interactionNotes"] = notes
+
     # Diagram (method-owned, single)
     diag_match = re.search(
         r"\*\*Diagram:\*\*\s*\n(.*?)(?=\n\*\*|\n##|\Z)",
@@ -1633,6 +1671,8 @@ def build_method_entry(base_method: dict, enriched: dict, source_tag: str) -> di
         "callScopeNote": enriched.get("callScopeNote"),
         "minimalExample": enriched.get("minimalExample", ""),
         "crossReferences": enriched.get("crossReferences", []),
+        "propertyLinks": enriched.get("propertyLinks", {}),
+        "interactionNotes": enriched.get("interactionNotes", []),
         "pitfalls": [],
         "examples": [],
     }
@@ -1751,6 +1791,14 @@ def merge_method_entries(existing: dict, override: dict, source_tag: str) -> dic
         for ref in override["crossReferences"]:
             existing_refs.add(ref)
         existing["crossReferences"] = sorted(existing_refs)
+
+    # Last-writer-wins: propertyLinks
+    if override.get("propertyLinks"):
+        existing["propertyLinks"] = override["propertyLinks"]
+
+    # Last-writer-wins: interactionNotes
+    if override.get("interactionNotes"):
+        existing["interactionNotes"] = override["interactionNotes"]
 
     # Last-writer-wins: structured value metadata
     if override.get("valueDescriptions"):
@@ -3054,6 +3102,30 @@ def generate_class_html(class_name: str, c: dict, mode: str = "review",
                     )
                     main += f"<p><strong>See also:</strong> {refs}</p>\n"
 
+                # Property system links (review+web modes)
+                pl = m.get("propertyLinks", {})
+                eq_links = pl.get("equivalent", []) if isinstance(pl, dict) else []
+                rel_links = pl.get("related", []) if isinstance(pl, dict) else []
+                if eq_links or rel_links:
+                    main += '<div class="small" style="margin-top:8px;">\n'
+                    main += '<strong>Property system:</strong><br>\n'
+                    if eq_links:
+                        eq_text = ", ".join(html_escape(x) for x in eq_links)
+                        main += f'Equivalent: {eq_text}<br>\n'
+                    if rel_links:
+                        rel_text = ", ".join(html_escape(x) for x in rel_links)
+                        main += f'Related: {rel_text}\n'
+                    main += '</div>\n'
+
+                # Interaction notes (review+web modes)
+                notes = m.get("interactionNotes", [])
+                if notes:
+                    main += '<div class="small" style="margin-top:8px;">\n'
+                    main += '<strong>Interaction notes:</strong>\n<ul>\n'
+                    for n in notes:
+                        main += f'<li>{md_inline(str(n))}</li>\n'
+                    main += '</ul>\n</div>\n'
+
             main += "</div>\n"
 
     main += "</div>\n"
@@ -3806,6 +3878,25 @@ def generate_class_markdown(class_name: str, c: dict,
                 lines.append(f"**See also:** {refs}")
                 lines.append("")
 
+            # Property system links
+            pl = m.get("propertyLinks", {})
+            eq_links = pl.get("equivalent", []) if isinstance(pl, dict) else []
+            rel_links = pl.get("related", []) if isinstance(pl, dict) else []
+            if eq_links or rel_links:
+                lines.append("**Property system:**")
+                if eq_links:
+                    lines.append(f"- Equivalent: {', '.join(eq_links)}")
+                if rel_links:
+                    lines.append(f"- Related: {', '.join(rel_links)}")
+                lines.append("")
+
+            # Interaction notes
+            if m.get("interactionNotes"):
+                lines.append("**Interaction notes:**")
+                for n in m.get("interactionNotes", []):
+                    lines.append(f"- {n}")
+                lines.append("")
+
             lines.append("---")
             lines.append("")
 
@@ -4074,6 +4165,19 @@ def run_filter_mcp(output_path=None, fallback_path=None):
                 xrefs = method_data.get("crossReferences", [])
                 if xrefs:
                     method_out["crossReferences"] = xrefs
+
+                # Property links
+                prop_links = method_data.get("propertyLinks", {})
+                if prop_links.get("equivalent") or prop_links.get("related"):
+                    method_out["propertyLinks"] = {
+                        "equivalent": prop_links.get("equivalent", []),
+                        "related": prop_links.get("related", []),
+                    }
+
+                # Interaction notes
+                interaction_notes = method_data.get("interactionNotes", [])
+                if interaction_notes:
+                    method_out["interactionNotes"] = interaction_notes
 
                 # Pitfalls (strip source tag, flatten to strings, exclude [BUG] entries)
                 pitfalls = method_data.get("pitfalls", [])
