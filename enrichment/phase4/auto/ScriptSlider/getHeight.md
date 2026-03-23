@@ -1,1 +1,1 @@
-Returns the slider height in pixels. Use it for layout maths and dynamic spacing calculations.
+Returns the height of this component in pixels.

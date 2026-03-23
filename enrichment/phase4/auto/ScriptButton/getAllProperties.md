@@ -1,1 +1,1 @@
-Returns an array of all valid property IDs for this component. Note that `min` and `max` do not appear in the result because they are deactivated on ScriptButton (the value range is always 0 to 1).
+Returns an array of all active property IDs for this component. The `min` and `max` properties are deactivated on ScriptButton (the value range is always 0 to 1) and will not appear in the result.

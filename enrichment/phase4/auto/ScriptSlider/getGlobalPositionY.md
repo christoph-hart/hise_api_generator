@@ -1,1 +1,1 @@
-Returns the absolute Y coordinate of this slider in interface space, including parent offsets. It is commonly paired with `getGlobalPositionX()` for overlay positioning.
+Returns the absolute y-position of this component relative to the interface root, accounting for all parent component offsets.

@@ -25,6 +25,23 @@ The component resolves its audio data source in priority order:
 2. A connected processor set via the `processorId` property
 3. An internal buffer created at construction
 
+## Complex Data Chain
+
+Audio file workflows use a three-part complex-data chain:
+
+![Audio File Data Chain](topology_complex-audio-data-chain.svg)
+
+- `AudioSampleProcessor` selects the module that owns one or more audio file slots.
+- `AudioFile` is the complex-data handle for one slot within that module.
+- `ScriptAudioWaveform` displays or edits one selected slot in the UI.
+
+Use the binding properties separately:
+
+- `processorId` selects the owning processor.
+- `sampleIndex` selects which audio slot inside that processor should be displayed.
+
+This is not the normal parameter binding path. `parameterId` targets processor parameters, while audio-slot binding uses `sampleIndex` instead.
+
 Colour properties control the waveform appearance:
 
 | Property | Element |

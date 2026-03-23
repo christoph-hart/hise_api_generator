@@ -1,1 +1,1 @@
-Sets the CSS class selectors for this component. The component's own type class is automatically prepended.
+Sets CSS class selectors on this component for stylesheet-based styling. The component's type class (`.scriptedviewport`) is automatically prepended, so passing `".primary"` results in the selector `.scriptedviewport .primary`. Use `setStyleSheetProperty()` instead when you only need to change a single CSS variable rather than switching the entire class.

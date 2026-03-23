@@ -1,1 +1,1 @@
-Sets space-separated CSS class selectors for this slider while keeping the component type class automatically. Use it to switch visual variants without touching look-and-feel drawing code.
+Sets CSS class selectors on this component for stylesheet-based styling. The component's type class (`.scriptslider`) is automatically prepended, so passing `".primary"` results in the selector `.scriptslider .primary`. Use `setStyleSheetProperty()` instead when you only need to change a single CSS variable rather than switching the entire class.

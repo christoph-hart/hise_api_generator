@@ -1,3 +1,3 @@
-Sets the selected item through the undo manager, enabling undo/redo for the value change. Pass a 1-based integer index as with `setValue()`.
+Sets the value through the undo manager, allowing the change to be reverted. Use this for user-initiated value changes that should support undo/redo.
 
-> **Warning:** Do not call this from control callbacks. It is intended for user-initiated value changes that should be undoable.
+> **Warning:** Do not call this from `onControl` or a custom control callback. The undo operation itself triggers the control callback, creating a feedback loop.

@@ -2,9 +2,18 @@ ScriptComboBox (object)
 Obtain via: Content.addComboBox(name, x, y)
 
 Drop-down list component for selecting from named items using 1-based integer
-indexing. Items stored as newline-separated string. Supports dynamic item
-management, custom popup menus with submenus/headers/separators, and host
-automation via plugin parameters.
+indexing. Items are stored as a newline-separated string. Supports dynamic item
+management, custom popup menus with submenus, headers, separators, and disabled
+items, plus host automation via plugin parameters.
+
+When useCustomPopup is enabled, the item string supports these special forms:
+  - **HeaderText** for non-selectable section headers
+  - ___ for separator lines
+  - Category::ItemName for submenu items
+  - ~~DisabledItem~~ for greyed-out disabled entries
+
+Headers and separators do not consume selection indices, so the selected value
+counts only real selectable items.
 
 Complexity tiers:
   1. Static selector: set("items", ...), setControlCallback, getValue. Fixed-option

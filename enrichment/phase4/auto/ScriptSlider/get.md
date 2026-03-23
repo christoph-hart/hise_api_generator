@@ -1,1 +1,1 @@
-Returns the current value of a slider property by name, including inherited component properties. Use this for dynamic inspection or when mirroring UI state into JSON or debug output.
+Returns the value of a component property. See `set()` for the full property list.

@@ -80,6 +80,13 @@ wf.set("height", 150);
 ## Related Preprocessors
 None.
 
+## Diagrams
+
+### complex-audio-data-chain
+- **Brief:** Audio File Data Chain
+- **Type:** topology
+- **Description:** Audio file workflows use a three-part chain. `AudioSampleProcessor` selects the processor that owns one or more audio file slots, `AudioFile` exposes the complex data stored in a specific slot, and `ScriptAudioWaveform` displays or edits that same slot in the UI. The binding pair is `processorId` plus `sampleIndex`, which is a complex-data connection and not the normal `parameterId` parameter binding path.
+
 ## Diagnostic Ideas
 Reviewed: Yes
 Count: 0

@@ -1,5 +1,3 @@
-Registers a custom slider callback `(component, value)` for control events. Use this when you want local callback handling instead of a single global `onControl` branch.
+Assigns a custom inline function as the control callback for this component, replacing the default `onControl` handler. The function receives two parameters: the component reference and the new value. Pass `false` to revert to the default `onControl` callback.
 
-> **Warning:** The callback must be an inline function with exactly two parameters.
-
-> **Warning:** Do not use this if the active scriptnode network is already forwarding controls to parameters; that path reports an error.
+> **Warning:** The function must be declared with `inline function` and must have exactly two parameters. Regular function references are rejected with a script error.

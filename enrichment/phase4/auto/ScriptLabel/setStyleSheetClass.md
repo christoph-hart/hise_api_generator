@@ -1,1 +1,1 @@
-Assigns CSS class selectors to this component for stylesheet lookups. The component type class is prepended automatically.
+Sets CSS class selectors on this component for stylesheet-based styling. The component's type class (`.scriptlabel`) is automatically prepended, so passing `".primary"` results in the selector `.scriptlabel .primary`. Use `setStyleSheetProperty()` instead when you only need to change a single CSS variable rather than switching the entire class.

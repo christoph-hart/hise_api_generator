@@ -1,1 +1,1 @@
-Notifies z-level listeners that the component wants to grab keyboard focus.
+Requests keyboard focus for this component. Call this to ensure the component receives subsequent key events from `setKeyPressCallback()`.

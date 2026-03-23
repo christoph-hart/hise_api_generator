@@ -1,1 +1,1 @@
-Returns components whose `parentComponent` points to this slider. Use it when you manage composite widgets and need to iterate child controls from script.
+Returns an array of references to all child components whose `parentComponent` property is set to this component.

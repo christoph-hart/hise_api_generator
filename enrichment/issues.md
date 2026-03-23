@@ -552,6 +552,14 @@ Sorted by severity (critical first).
 - **Observed:** If `layoutDescription` is not a DynamicObject (e.g., an array, string, number, or undefined), `createLayout()` produces an empty `MemoryLayoutItem::List` and sets `initResult = Result::fail("No data")`. The Factory is still created and returned to the user. All subsequent `create()`, `createArray()`, and `createStack()` calls check `initResult.wasOk()`, fail silently, and return empty `var()`. The user receives no error message explaining why the factory produces no objects.
 - **Expected:** Report a script error in the Factory constructor when `initResult` fails, e.g., `reportScriptError("Invalid layout description: " + initResult.getErrorMessage())`.
 
+### ScriptWebView.addBufferToWebSocket -- silently ignores non-Buffer argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp (ScriptWebView::addBufferToWebSocket)
+- **Observed:** If the second argument is not a Buffer (e.g., an Array, number, or string), the method silently does nothing. No error is reported and no buffer is registered at the given index.
+- **Expected:** Report a script error when the second argument is not a Buffer, e.g., "addBufferToWebSocket expects a Buffer as the second argument".
+
 ### ScriptAudioWaveform.referToData -- silently ignores invalid data source argument
 
 - **Type:** missing-validation
@@ -559,6 +567,118 @@ Sorted by severity (critical first).
 - **Location:** ScriptComponentWrappers.cpp (ComplexDataScriptComponent::referToData implementation)
 - **Observed:** If the `audioData` argument is not a ScriptAudioFile, another ComplexDataScriptComponent, nor the integer `-1`, the method silently does nothing -- no error is reported and the data source remains unchanged. The user has no indication that the call had no effect.
 - **Expected:** Report a script error when the argument is not one of the three accepted types, e.g., "referToData expects a ScriptAudioFile, another waveform component, or -1 to reset".
+
+### ScriptTable.referToData -- silently ignores unsupported argument types
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3198-3224
+- **Observed:** `referToData()` delegates to `ComplexDataScriptComponent::referToDataBase`, which only handles ScriptComplexDataReferenceBase objects, ComplexDataScriptComponent objects, or integer `-1`. Any other argument type is silently ignored without error, so the table keeps its previous data binding.
+- **Expected:** Report a script error when `tableData` is not one of the accepted argument types.
+
+### ScriptSliderPack.referToData -- silently ignores unsupported argument types
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3793-3796, ScriptComponentWrappers.cpp (ComplexDataScriptComponent::referToDataBase)
+- **Observed:** `referToData()` delegates to `ComplexDataScriptComponent::referToDataBase`, which only handles ScriptComplexDataReferenceBase objects, ComplexDataScriptComponent objects, or integer `-1`. Any other argument type is silently ignored without error, so the slider pack keeps its previous data binding.
+- **Expected:** Report a script error when `sliderPackData` is not one of the accepted argument types.
+
+### ScriptTable.getTableValue -- missing table binding silently returns 0.0
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3256-3274
+- **Observed:** If `getTableValue()` cannot resolve a valid `SampleLookupTable` from the current binding, it returns `0.0` without reporting an error. Calls appear to succeed but return a misleading value that is indistinguishable from a valid table lookup at zero.
+- **Expected:** Report a script error (or return `undefined`) when no valid lookup table is available, so missing bindings are diagnosable.
+
+### ScriptTable.setTablePoint -- invalid point index silently ignored
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3229-3254
+- **Observed:** Out-of-range `pointIndex` values are ignored without any error or warning, so the call appears to succeed but does not modify the table.
+- **Expected:** Validate the index and report a script error when it does not reference an existing point.
+
+### ScriptTable.setSnapValues -- validation occurs after internal state mutation
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3302-3322
+- **Observed:** Non-array input reports an error in wrapper-side validation, but the method has already mutated internal `snapValues` state. This yields a partial-failure state where script output reports an error yet behavior still changes.
+- **Expected:** Validate input type before mutating internal state, or roll back state changes when validation fails.
+
+### ScriptTable.registerAtParent -- unsupported parent type returns undefined silently
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3324-3350
+- **Observed:** When the script processor is not a `ProcessorWithDynamicExternalData`, `registerAtParent()` returns `undefined` without reporting an error. Users can proceed with an invalid handle without feedback on why registration failed.
+- **Expected:** Report a script error when registration is not possible in the current parent context.
+
+### ScriptSliderPack.registerAtParent -- unsupported parent type returns undefined silently
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3812-3815
+- **Observed:** `registerAtParent()` returns the result of `registerComplexDataObjectAtParent(index)`. When the script processor is not a `ProcessorWithDynamicExternalData`, this returns `undefined` without reporting an error. Users can continue with an invalid handle without knowing registration failed.
+- **Expected:** Report a script error when registration is not possible in the current parent context.
+
+### ScriptSliderPack.setAllValuesWithUndo -- callback toggle is ignored
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~3668-3670
+- **Observed:** Notification mode uses `auto n = (true || allValueChangeCausesCallback) ? sendNotificationAsync : dontSendNotification;`, so the `allValueChangeCausesCallback` setting is effectively ignored and callbacks always fire.
+- **Expected:** Respect the `allValueChangeCausesCallback` flag, or rename the API to clarify that undo writes always notify by design.
+
+### ScriptDynamicContainer.setValueCallback -- silently does nothing if called before setData()
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp (ScriptDynamicContainer::Wrapper::setValueCallback)
+- **Observed:** If `setValueCallback` is called before `setData()`, the method silently returns without registering the callback or reporting any error. The data model's Values tree does not exist yet, so the ValueTree listener cannot be attached. The user has no indication that the callback will never fire.
+- **Expected:** Report a script error when `setData()` has not been called yet, e.g., "setValueCallback requires setData() to have been called first".
+
+### TableProcessor.addTablePoint -- x and y values not clamped to 0.0-1.0 unlike setTablePoint
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptingTableProcessor::addTablePoint)
+- **Observed:** `addTablePoint` stores x and y values as-is without clamping to the 0.0-1.0 range. In contrast, `setTablePoint` clamps all coordinate and curve values to 0.0-1.0 via `jlimit`. Out-of-range values in `addTablePoint` are written directly to the graph point array, producing unexpected table shapes.
+- **Expected:** Clamp x and y to 0.0-1.0 before storing, consistent with `setTablePoint`.
+
+### TableProcessor.setTablePoint -- out-of-range pointIndex silently ignored
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** Tables.cpp:~122
+- **Observed:** `Table::setTablePoint` checks `if (pointIndex >= 0 && pointIndex < graphPoints.size())` and silently skips the modification when the index is out of range. The `ScriptingTableProcessor::setTablePoint` wrapper does not add any additional validation. The call appears to succeed but has no effect, and the user has no way to diagnose the issue. Same root cause as the ScriptTable.setTablePoint issue (both delegate to `Table::setTablePoint`).
+- **Expected:** Report a script error when `pointIndex` is out of range, e.g., "pointIndex N is out of range (0-M)".
+
+### AudioSampleProcessor.getAudioFile -- slotIndex parameter is not bounds-checked
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptAudioSampleProcessor::getAudioFile)
+- **Observed:** The `slotIndex` parameter is passed directly to `getComplexBaseType` without validation. AudioSampleProcessor modules always have exactly one audio file slot (index 0). Passing any other index creates an AudioFile handle pointing to a non-existent slot, which may produce undefined behavior when reading or writing through the handle.
+- **Expected:** Validate that `slotIndex` is 0 (or within `getNumDataObjects(ExternalData::DataType::AudioFile)`) and report a script error for out-of-range values, e.g., "slotIndex must be 0 for AudioSampleProcessor (single audio file slot)".
+
+### SliderPackData.getStepSize -- method not registered in constructor
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2236-2259 (constructor), ~2261 (implementation)
+- **Observed:** `getStepSize()` is declared in the header (line 1322), has a C++ implementation (line 2261), and appears in the API reference via Doxygen, but is NOT registered via `ADD_API_METHOD_0(getStepSize)` in the constructor and has no Wrapper entry. The method cannot be called from HiseScript. The step size can be set via `setRange()` but there is no way to read it back from script.
+- **Expected:** Add `ADD_API_METHOD_0(getStepSize)` to the constructor and add the corresponding `API_METHOD_WRAPPER_0` to the Wrapper struct, or remove the method from the API reference if it is intentionally not exposed.
+
+### AudioFile.loadBuffer -- uninitialized channel pointers and size mismatch with Array input
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~1720-1733
+- **Observed:** When `bufferData` is an Array, the loop only sets `ptrs[i]` when `getBuffer()` succeeds. If any array element is not a valid Buffer, `ptrs[i]` remains uninitialized (stack garbage), and `AudioSampleBuffer ab(ptrs, numChannels, numSamples)` uses the garbage pointer, causing a crash or data corruption. Additionally, `numSamples` is overwritten each iteration with the last valid Buffer's length. If Buffers have different sizes, shorter ones are read past their end.
+- **Expected:** Validate that all array elements are valid Buffers with identical sample counts before constructing the AudioSampleBuffer. Report a script error or skip invalid elements.
 
 ## Low
 
@@ -825,3 +945,11 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiContent.cpp:~setSuspendTimerCallback
 - **Observed:** If the argument is not a valid JavaScript function (checked via `HiseJavascriptEngine::isJavascriptFunction`), the method silently does nothing -- no error is reported and the previous callback (if any) remains active. The user has no indication that the callback registration failed.
 - **Expected:** Report a script error when the argument is not a function, e.g., "suspendFunction must be a function".
+
+### ScriptImage.setImageFile -- forceUseRealFile parameter is ignored
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiContent.cpp:~4132-4152
+- **Observed:** The `forceUseRealFile` parameter is declared in the method signature but immediately discarded via `ignoreUnused(forceUseRealFile)`. The image is always loaded through the pool/expansion handler regardless of this parameter's value. Users passing `true` expecting cache bypass get no effect and no warning.
+- **Expected:** Either implement the cache-bypass behavior or remove the parameter and deprecate the 2-argument overload in favor of a 1-argument version.

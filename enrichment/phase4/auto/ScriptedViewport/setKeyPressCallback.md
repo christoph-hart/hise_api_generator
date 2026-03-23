@@ -1,30 +1,5 @@
-Registers a callback that fires when a consumed key is pressed while this component has focus. The callback receives an event object:
+Registers a callback that fires when a consumed key is pressed while this component has focus. The callback receives an event object describing the key press or a focus change event.
 
-```json
-{
-  "isFocusChange": false,
-  "character": "a",
-  "specialKey": false,
-  "isWhitespace": false,
-  "isLetter": true,
-  "isDigit": false,
-  "keyCode": 65,
-  "description": "a",
-  "shift": false,
-  "cmd": false,
-  "alt": false
-}
-```
+For key press events, the object contains `isFocusChange` (false), `character`, `specialKey`, `keyCode`, `description`, and modifier flags (`shift`, `cmd`, `alt`). For focus change events, it contains `isFocusChange` (true) and `hasFocus`.
 
-When the component gains or loses focus, the callback fires with a different shape:
-
-```json
-{
-  "isFocusChange": true,
-  "hasFocus": true
-}
-```
-
-Check `isFocusChange` first to determine which set of properties is available.
-
-> **Warning:** MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
+> **Warning:** You must call `setConsumedKeyPresses()` before this method. Calling them in the wrong order reports a script error.

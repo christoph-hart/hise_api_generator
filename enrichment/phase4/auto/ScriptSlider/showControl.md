@@ -1,1 +1,1 @@
-Shows or hides the slider by toggling its `visible` state. Use `fadeComponent()` when you need animated transitions instead of immediate visibility changes.
+Shows or hides this component immediately. Pass `1` to show, `0` to hide. For an animated transition, use `fadeComponent()` instead.

@@ -1,1 +1,1 @@
-Requests keyboard focus for this component. Only notifies the first registered focus listener.
+Requests keyboard focus for this component. Call this to ensure the component receives subsequent key events from `setKeyPressCallback()`.

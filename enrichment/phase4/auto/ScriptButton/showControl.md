@@ -1,1 +1,1 @@
-Sets the visibility of this component. Pass 1 to show, 0 to hide. Unlike `fadeComponent()`, the change is instant with no animation.
+Shows or hides this component immediately. Pass `1` to show, `0` to hide. For an animated transition, use `fadeComponent()` instead.

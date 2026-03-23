@@ -1,1 +1,1 @@
-Sets tooltip text shown when the user hovers the slider. This is commonly used to add units, shortcuts, or semantic labels for complex controls.
+Sets the tooltip text displayed when the mouse hovers over this component.

@@ -1,3 +1,9 @@
-Defines which key events this slider will consume before they reach parent handlers. Call this before `setKeyPressCallback()` so the callback has an input scope to listen to.
+Defines which key presses this component captures when it has focus. Pass `"all"` to consume all keys exclusively, `"all_nonexclusive"` to receive all keys while still letting the parent handle them, or an array of key descriptions (strings like `"ctrl + S"` or objects with `keyCode`, `shift`, `cmd`, `alt` properties).
 
-> **Warning:** Invalid key descriptors are ignored, so malformed entries silently reduce what your callback can receive.
+| Value | Behaviour |
+|-------|-----------|
+| `"all"` | Catches all keys exclusively - parent does not receive them |
+| `"all_nonexclusive"` | Catches all keys but parent still receives them |
+| Array of strings/objects | Catches only the specified key combinations |
+
+> **Warning:** Must be called before `setKeyPressCallback()`. Calling them in the wrong order reports a script error.

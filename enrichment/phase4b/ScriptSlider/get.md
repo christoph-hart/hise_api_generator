@@ -1,15 +1,12 @@
 ScriptSlider::get(String propertyName) -> var
 
 Thread safety: SAFE
-Returns the current value of the named property, or default when unset.
-Reports a script error for unknown property names.
+Returns the current value of the named property. Reports a script error if the
+property does not exist. See set() for the full property list.
 
-Required setup:
-  const var sl = Content.addKnob("MySlider", 0, 0);
-
-Pair with:
-  set -- updates the same property map
-  setPropertiesFromJSON -- batch property updates
+Anti-patterns:
+  - Do NOT use an invalid property name -- throws a script error
 
 Source:
-  ScriptingApiContent.cpp:2054  ValueTree-backed property read path
+  ScriptingApiContent.cpp  ScriptComponent::get()
+    -> property tree lookup, returns value or default

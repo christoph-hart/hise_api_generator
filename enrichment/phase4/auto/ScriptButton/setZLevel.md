@@ -1,4 +1,4 @@
-Sets the rendering depth level for this component among its siblings.
+Sets the depth level for this component among its siblings. The value must be one of four case-sensitive strings:
 
 | Value | Behaviour |
 |-------|-----------|

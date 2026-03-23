@@ -1,1 +1,1 @@
-Returns the current value of the named property.
+Returns the value of a component property. See `set()` for the full property list.

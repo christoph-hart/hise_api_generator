@@ -1,1 +1,1 @@
-Sets the position and size of this component in a single call. Coordinates are relative to the parent component.
+Sets the position and size of this component in one call. Coordinates are in pixels, relative to the parent component.

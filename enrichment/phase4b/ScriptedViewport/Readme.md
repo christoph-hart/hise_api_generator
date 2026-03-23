@@ -6,6 +6,8 @@ and interactive table modes. Mode is determined at init time: default is a plain
 scrollable viewport, useList property enables list mode, setTableMode() enables
 table mode with sortable columns and editable cells.
 
+Use Viewport mode when you only need scrolling, List mode for simple item selection, and Table mode when each row has multiple columns or interactive cells.
+
 Complexity tiers:
   1. Plain viewport: Content.addViewport, set, showControl. Scrollable container
      for child panels. Only drawScrollbar LAF and scrollBarThickness needed.
@@ -27,6 +29,12 @@ Practical defaults:
     drawScrollbar LAF.
   - Pass a Broadcaster to setTableCallback() instead of an inline function when
     table events need to drive multiple listeners.
+
+Table setup sequence:
+
+![Table Mode Setup Sequence](sequence_table-setup.svg)
+
+All table setup must happen during onInit. After that, update only the row data and table state.
 
 Common mistakes:
   - Using obj.rowIndex to index data when sorting is enabled -- display indices

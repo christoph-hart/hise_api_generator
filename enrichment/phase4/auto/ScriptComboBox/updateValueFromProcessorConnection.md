@@ -1,1 +1,1 @@
-Reads the current value from the connected processor (set via `processorId` and `parameterId` properties) and updates the combo box to match. Does nothing if no processor connection is established. Useful for syncing the UI after loading a preset or changing processor state externally.
+Reads the current value from the connected processor (set via the `processorId` and `parameterId` properties) and updates this component accordingly. Does nothing if no processor connection is established.

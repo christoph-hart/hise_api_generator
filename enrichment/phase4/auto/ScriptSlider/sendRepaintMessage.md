@@ -1,1 +1,1 @@
-Queues an asynchronous repaint for this slider. Use it when a scripted state change affects visuals but does not automatically trigger redraw.
+Queues an asynchronous repaint of this component. Call this after changing visual properties programmatically when the component does not repaint automatically.

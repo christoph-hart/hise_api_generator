@@ -2,6 +2,15 @@ ScriptedViewport::setTableColumns(Array columnMetadata) -> undefined
 
 Thread safety: INIT
 Defines the table columns. Must be called in onInit after setTableMode(). Each element is a JSON object with at minimum an ID property matching row data keys.
+
+Supported common properties: `ID`, `Type`, `Label`, `Width`, `MinWidth`, `MaxWidth`, `Visible`, `Focus`.
+Type-specific additions:
+  - Button: `Toggle`, `Text`
+  - Slider: `MinValue`, `MaxValue`, `StepSize`, `SkewFactor`, `suffix`, `defaultValue`, `showTextBox`, `style`
+  - ComboBox: `items`, `ValueMode`, `Text`
+
+For ComboBox columns, row data can override `items` and `Value` dynamically on a per-row basis.
+
 Required setup:
   const var vp = Content.addViewport("ViewportId", 0, 0);
   vp.setTableMode({});

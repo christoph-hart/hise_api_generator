@@ -1,1 +1,17 @@
-Sets a component property to the given value. Setting `viewPositionX` or `viewPositionY` broadcasts the new scroll position to the underlying viewport.
+Sets a component property to the given value. During `onInit`, changes are applied without UI notification; outside `onInit`, the UI updates automatically.
+
+| Property | Description |
+|----------|-------------|
+| `x`, `y`, `width`, `height` | Position and size in pixels, relative to parent |
+| `visible`, `enabled`, `locked` | Display and interaction state |
+| `text`, `tooltip` | Display text and hover tooltip |
+| `bgColour`, `itemColour`, `itemColour2`, `textColour` | Colour properties |
+| `parentComponent` | Parent component for layout nesting |
+| `saveInPreset`, `useUndoManager`, `deferControlCallback` | Preset persistence, undo, and callback deferral |
+| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `automationId`, `isMetaParameter`, `linkedTo` | Automation and parameter-linking support |
+| `processorId`, `parameterId` | Standard parameter connection |
+| `defaultValue`, *`Items`* | Default selection value and newline-separated item list |
+| *`FontName`*, *`FontSize`*, *`FontStyle`*, *`Alignment`* | Font family, size, style, and text alignment |
+| *`scrollBarThickness`*, *`autoHide`* | Scrollbar size and auto-hide behavior |
+| *`viewPositionX`*, *`viewPositionY`* | Current scroll position |
+| *`useList`* | Enables list mode instead of plain viewport mode |

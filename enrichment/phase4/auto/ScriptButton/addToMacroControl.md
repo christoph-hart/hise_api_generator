@@ -1,1 +1,1 @@
-Assigns this button to one of the eight macro controller slots (index 0-7). Once assigned, the macro controller can modulate the button's value from the macro control panel.
+Assigns this component to one of the eight macro controller slots (index 0-7). Once assigned, the macro controller can modulate the component's value.

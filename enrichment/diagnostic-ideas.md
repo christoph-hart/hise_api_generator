@@ -131,6 +131,62 @@ Sorted by priority (high first).
 - **Rationale:** Both methods accept a `converterMode` / `convertedMode` string that must be one of 7 exact values (`"Frequency"`, `"Time"`, `"TempoSync"`, `"Pan"`, `"NormalizedPercentage"`, `"Decibel"`, `"Semitones"`). An invalid mode string silently falls back to plain numeric formatting/parsing with no error or warning, producing unexpected results (e.g., `getTextForValue(440.0, "Hz")` returns `"440"` instead of `"440 Hz"`). A parse-time check on string literals could catch typos like `"Hz"`, `"Freq"`, or `"dB"`.
 - **Sketch:** When `getTextForValue` or `getValueForText` is called with a string literal as the mode parameter, check it against the known set {"Frequency", "Time", "TempoSync", "Pan", "NormalizedPercentage", "Decibel", "Semitones"}. Emit a warning if no match.
 
+### ScriptTable.referToData -- unsupported source type is silently ignored
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** referToData
+- **Rationale:** `referToData` accepts only three source forms (`ScriptTableData`, another compatible complex-data component, or `-1`). Other values are silently ignored, so the previous binding remains active without feedback.
+- **Sketch:** When `referToData` is called with a literal argument that is neither `-1` nor an object expression known to be a complex-data handle, emit a warning that the call may be ignored at runtime.
+
+### ScriptTable.registerAtParent -- requires dynamic external-data parent
+
+- **Category:** precondition
+- **Priority:** low
+- **Methods involved:** registerAtParent
+- **Rationale:** `registerAtParent` returns `undefined` when the script processor is not a `ProcessorWithDynamicExternalData`, with no error. Users may assume registration worked and pass an invalid handle into follow-up calls.
+- **Sketch:** If `registerAtParent` is called and the result is used without a defined-check guard, emit a warning suggesting validation of the returned handle.
+
+### ScriptTable.setMouseHandlingProperties -- unknown config keys are ignored
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** setMouseHandlingProperties
+- **Rationale:** The parser accepts a fixed key set. Typos in keys (eg. `snapWitdh`) are silently ignored and defaults stay active.
+- **Sketch:** For object literals passed into `setMouseHandlingProperties`, warn on keys outside {syncStartEnd, allowSwap, fixLeftEdge, fixRightEdge, snapWidth, numSteps, midPointSize, dragPointSize, endPointSize, useMouseWheelForCurve, margin, closePath}.
+
+### ScriptTable.setTablePopupFunction -- non-function values silently fallback
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** setTablePopupFunction
+- **Rationale:** Passing a non-function value does not error - the wrapper silently uses default popup text. This often hides mistakes when callback variables are misspelled or unset.
+- **Sketch:** Warn when a literal non-function value is passed as the first argument to `setTablePopupFunction`.
+
+### ScriptSliderPack.setWidthArray -- width-map length should match slider count
+
+- **Category:** state-validation
+- **Priority:** low
+- **Methods involved:** setWidthArray, getNumSliders, set("sliderAmount", ...)
+- **Rationale:** `setWidthArray` expects `numSliders + 1` cumulative breakpoints. Mismatched lengths log an error and fall back to equal-width behavior, which can be easy to miss.
+- **Sketch:** When `setWidthArray` is called with an array literal and slider count is statically known from nearby `set("sliderAmount", N)` or literal construction patterns, warn if array length is not `N + 1`.
+
+### ScriptSliderPack.setKeyPressCallback -- requires setConsumedKeyPresses first
+
+- **Category:** timeline-dependency
+- **Priority:** low
+- **Methods involved:** setKeyPressCallback, setConsumedKeyPresses
+- **Rationale:** `setKeyPressCallback` depends on prior key-consumption setup. Without `setConsumedKeyPresses`, callbacks appear registered but never fire for key events, which is easy to misdiagnose.
+- **Sketch:** When `setKeyPressCallback` is called on a slider-pack variable, scan earlier statements in the same scope for `setConsumedKeyPresses` on the same variable. Warn if no prior call is found.
+
+### ScriptDynamicContainer.setValueCallback -- requires setData first
+
+- **Category:** timeline-dependency
+- **Priority:** low
+- **Methods involved:** setValueCallback, setData
+- **Rationale:** `setValueCallback` silently does nothing if called before `setData()`. The callback requires the data model's Values tree, which does not exist until `setData()` creates it. No error message or warning is produced -- the callback simply never fires.
+- **Sketch:** When `setValueCallback` is called on a dynamic container variable, scan earlier statements in the same scope for `setData` on the same variable. Warn if no prior call is found.
+
 ---
 
 ## Entry Template (do not delete)

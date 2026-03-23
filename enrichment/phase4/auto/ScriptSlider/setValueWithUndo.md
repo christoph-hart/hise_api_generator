@@ -1,3 +1,3 @@
-Sets the slider value through the undo manager so the change can be undone by the user. Use this for explicit command-style edits instead of live callback feedback paths.
+Sets the value through the undo manager, allowing the change to be reverted. Use this for user-initiated value changes that should support undo/redo.
 
-> **Warning:** Do not call this from `onControl`; it creates recursive undo/control behaviour.
+> **Warning:** Do not call this from `onControl` or a custom control callback. The undo operation itself triggers the control callback, creating a feedback loop.

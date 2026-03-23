@@ -1,1 +1,1 @@
-Requests keyboard focus for this slider through the registered z-level/focus listeners. Use it before keyboard-driven interaction or when guiding focus after UI navigation.
+Requests keyboard focus for this component. Call this to ensure the component receives subsequent key events from `setKeyPressCallback()`.

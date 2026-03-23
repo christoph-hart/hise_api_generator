@@ -1,1 +1,1 @@
-Notifies all z-level listeners that the component wants to lose keyboard focus.
+Releases keyboard focus from this component.

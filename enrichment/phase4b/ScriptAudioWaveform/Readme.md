@@ -6,6 +6,13 @@ range selection. Operates in two modes: AudioFile mode (file browsing, drag-and-
 range selection) or Sampler mode (auto-tracks playing voice, shows play/loop/crossfade
 areas) depending on the connected processor type.
 
+The component resolves its data source in priority order:
+  1. an external reference set with referToData()
+  2. a connected processor selected by processorId
+  3. an internal buffer created by the component itself
+
+In Sampler mode, sampleIndex chooses which sound should be shown. Leave it at the default for auto-tracking, or set a specific index to pin the display.
+
 Complexity tiers:
   1. Basic display: set processorId, optionally configure enableRange, showFileName,
      opaque. No custom LAF needed.
@@ -25,6 +32,21 @@ Practical defaults:
     samples where a symmetric waveform looks cleaner.
   - Use getThumbnailRenderOptions to set scaleVertically to true for IR displays
     where the absolute amplitude is less important than the shape.
+
+Complex data chain:
+
+![Audio File Data Chain](topology_complex-audio-data-chain.svg)
+
+  - AudioSampleProcessor selects the module that owns one or more audio file slots.
+  - AudioFile is the complex-data handle for one slot within that module.
+  - ScriptAudioWaveform displays or edits one selected slot in the UI.
+
+  Use the binding properties separately:
+  - processorId selects the owning processor.
+  - sampleIndex selects which audio slot inside that processor should be displayed.
+
+  This is not the normal parameter binding path. parameterId targets processor
+  parameters, while audio-slot binding uses sampleIndex instead.
 
 Common mistakes:
   - Passing a string path to setDefaultFolder() instead of a File object --

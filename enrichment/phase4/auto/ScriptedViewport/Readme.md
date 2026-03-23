@@ -13,6 +13,8 @@ ScriptedViewport is a UI component created with `Content.addViewport(name, x, y)
 | List | Set `useList` property to `true` | Selected index |
 | Table | Call `setTableMode()` in onInit | `[column, row]` array |
 
+Use Viewport mode when you just need a scrollable container. Use List mode for simple item selection. Use Table mode when each row has multiple columns, sorting, or interactive cell types.
+
 In table mode, you define columns, populate rows, and register a callback to handle interactions. The table supports five cell types:
 
 - Text

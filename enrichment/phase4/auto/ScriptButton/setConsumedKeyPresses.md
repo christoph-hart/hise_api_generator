@@ -1,4 +1,4 @@
-Defines which key presses this component captures. Pass `"all"` to consume all keys exclusively, `"all_nonexclusive"` to receive all keys while still letting the parent handle them, or an array of key descriptions (strings like `"ctrl + S"` or objects with `keyCode`, `shift`, `cmd`, `alt` properties).
+Defines which key presses this component captures when it has focus. Pass `"all"` to consume all keys exclusively, `"all_nonexclusive"` to receive all keys while still letting the parent handle them, or an array of key descriptions (strings like `"ctrl + S"` or objects with `keyCode`, `shift`, `cmd`, `alt` properties).
 
 | Value | Behaviour |
 |-------|-----------|
