@@ -1,0 +1,17 @@
+{
+  "name": "hise-signal-flow-renderer",
+  "version": "0.1.0",
+  "description": "SVG signal flow diagram renderer for HISE module documentation",
+  "type": "module",
+  "scripts": {
+    "render": "tsx src/render.ts",
+    "render:all": "tsx src/render.ts ../module_enrichment/phase1/ output/"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "tsx": "^4.19.0"
+  },
+  "dependencies": {
+    "elkjs": "^0.9.0"
+  }
+}

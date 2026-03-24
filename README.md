@@ -18,7 +18,8 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 | **Scripting API enrichment** | `enrichment/output/api_reference.json` | Active | [scripting-api-enrichment.md](doc_builders/scripting-api-enrichment.md) |
 | **LAF function extraction** | `laf_style_guide.json` | Active | [laf-extraction.md](doc_builders/laf-extraction.md) |
 | **Component properties** | TBD | Planned | [component-properties.md](doc_builders/component-properties.md) |
-| **Module list** | TBD | Planned | [module-list.md](doc_builders/module-list.md) |
+| **Module enrichment** | `module_enrichment/output/moduleList.json` | Planned | [module-enrichment.md](doc_builders/module-enrichment.md) |
+| **SVG signal flow diagrams** | `svg_renderer/output/*.svg` | Planned | [svg-signal-flow-renderer.md](doc_builders/module-enrichment/svg-signal-flow-renderer.md) |
 
 ## Directory Structure
 
@@ -53,9 +54,27 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   │   ├── phase3.md
 │   │   ├── phase4.md
 │   │   └── phase4b.md
+│   ├── module-enrichment.md               # Module enrichment orchestrator guide
+│   ├── module-enrichment/                 # Module enrichment sub-phase details
+│   │   ├── intermediate-format.md         # Signal flow JSON specification
+│   │   └── svg-signal-flow-renderer.md    # SVG rendering tool specification
 │   ├── laf-extraction.md
 │   ├── component-properties.md
 │   └── module-list.md
+├── module_enrichment/                     # Module enrichment work product
+│   ├── issues.md                          # Bugs discovered during C++ signal flow exploration
+│   ├── base/                              # Phase 0 output (tracked)
+│   │   └── moduleList.json
+│   ├── phase1/                            # Phase 1 intermediate JSONs (tracked)
+│   ├── phase2a/                           # Phase 2a usage summaries (tracked)
+│   ├── phase2b/                           # Phase 2b documentation extracts (tracked)
+│   ├── phase3/                            # Phase 3 enriched output (tracked)
+│   ├── resources/                         # Supporting data and guidelines
+│   └── output/                            # Final merged JSON (gitignored)
+├── svg_renderer/                          # SVG rendering tool (Node.js/TypeScript)
+│   ├── src/
+│   ├── test-data/
+│   └── output/                            # Generated SVGs (gitignored)
 ```
 
 ## Quick Start (Scripting API Enrichment)
