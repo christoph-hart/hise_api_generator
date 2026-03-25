@@ -1,6 +1,6 @@
 # Preliminary JSON Format (Steps 1-2)
 
-**Purpose:** Create an inventory of everything extractable from `moduleList.json` plus agent judgment, and identify specific gaps requiring C++ exploration. This is a working document for the agent - it is never rendered as SVG or served to users.
+**Purpose:** Create an inventory of everything extractable from `moduleList.json` plus agent judgment, and identify specific gaps requiring C++ exploration. This is a working document for the agent - it is never rendered or served to users.
 
 **Input:** One module entry from `module_enrichment/base/moduleList.json`
 **Output:** `module_enrichment/preliminary/{ModuleId}.json`
@@ -16,7 +16,7 @@ The preliminary JSON is a **structured analysis worksheet**. It captures:
 - How parameters relate to each other (semantic grouping, composite blocks)
 - What we cannot determine without reading C++ source (gaps)
 
-It is **not** a signal-flow topology. The enriched JSON (Step 4) will have a completely different structure - a directed graph with parameters placed at their point of action. The preliminary JSON groups information by source; the enriched JSON groups information by signal flow. You cannot transform one into the other mechanically.
+It is **not** a signal-flow topology. The graph JSON (Step 3 output) and reference page (Step 4 output) will have completely different structures - a directed graph with parameters placed at their point of action, and an MDC markdown page with interactive pseudo-code. The preliminary JSON groups information by source; the downstream outputs group information by signal flow. You cannot transform one into the other mechanically.
 
 ---
 
@@ -43,7 +43,7 @@ It is **not** a signal-flow topology. The enriched JSON (Step 4) will have a com
   "interfaces": [
     {
       "name": "string (interface name from moduleList.json)",
-      "diagramRole": "string (node type or 'skip' with reason)"
+      "signalFlowRole": "string (node type or 'skip' with reason)"
     }
   ],
 
@@ -96,7 +96,7 @@ It is **not** a signal-flow topology. The enriched JSON (Step 4) will have a com
       "id": "string (unique gap identifier, e.g. 'signal-path-order')",
       "category": "string (signal_path | parameter_behavior | conditional_logic | description_accuracy | interface_usage | performance)",
       "question": "string (specific question for C++ exploration)",
-      "context": "string (why this matters for the diagram)"
+      "context": "string (why this matters for the reference page)"
     }
   ],
 
@@ -116,7 +116,7 @@ It is **not** a signal-flow topology. The enriched JSON (Step 4) will have a com
 | `io` | yes | Type/subtype inference table | I/O configuration inferred from type/subtype |
 | `io.fxChain` | yes | moduleList.json `hasFX` + `fx_constrainer` | FX chain slot availability |
 | `voiceContext` | yes | Type/subtype inference table | Per-voice or monophonic |
-| `interfaces` | yes | moduleList.json | All interfaces with diagram role assessment |
+| `interfaces` | yes | moduleList.json | All interfaces with signal flow role assessment |
 | `parameterGroups` | yes | Agent judgment + moduleList.json | Semantically grouped parameters |
 | `standaloneModChains` | if any | moduleList.json (chains without `parameterIndex`) | Mod chains that don't target a named parameter |
 | `disabledModChains` | if any | moduleList.json (disabled chains) | Mod chains marked as disabled |
@@ -139,13 +139,12 @@ Identified when a parameter has a `chainIndex` linking it to a modulation chain.
   "details": {
     "chainName": "Gain Modulation",
     "chainIndex": 1,
-    "constrainer": "VoiceStartModulator|*",
-    "icon": "pulse|sine"
+    "constrainer": "VoiceStartModulator|*"
   }
 }
 ```
 
-Icon selection rule: If the chain's `constrainer` contains `VoiceStartModulator`, use `pulse`. Otherwise use `sine`.
+The constrainer type determines what modulators can be added to this chain (e.g. `VoiceStartModulator` means per-voice note-on scaling).
 
 ### tempoSyncMux
 
@@ -181,7 +180,7 @@ The `HostBPM` external input is implicit - it exists whenever any `tempoSyncInde
 
 3. **Infer voice context.** Use the type/subtype inference table to determine per-voice or monophonic.
 
-4. **Assess interfaces.** For each interface in the base data, determine its diagram role using the interface-to-node mapping table. Mark interfaces that map to nodes, and mark skipped interfaces with the reason.
+4. **Assess interfaces.** For each interface in the base data, determine its signal flow role using the interface-to-signal-path mapping table. Mark interfaces that map to signal path elements, and mark skipped interfaces with the reason.
 
 5. **Group parameters semantically.** Do not simply list parameters alphabetically. Group them by function:
    - Parameters that control the same processing stage belong together
@@ -190,7 +189,7 @@ The `HostBPM` external input is implicit - it exists whenever any `tempoSyncInde
    - Give each group a descriptive label and a one-sentence rationale
 
 6. **Identify composite blocks.** Scan all parameters for:
-   - `chainIndex` present -> modMultiply block (resolve the linked mod chain, determine constrainer, select icon)
+   - `chainIndex` present -> modMultiply block (resolve the linked mod chain, determine constrainer)
    - `tempoSyncIndex` present -> tempoSyncMux block (resolve the sync toggle parameter, add HostBPM external input)
    - Record each composite block with full details
 
@@ -198,7 +197,7 @@ The `HostBPM` external input is implicit - it exists whenever any `tempoSyncInde
 
 8. **Identify disabled modulation chains.** Find mod chains that are disabled. Record them with whatever context is available about why.
 
-9. **Link modulation chains to parameters.** For each parameter with a `chainIndex`, include the linked mod chain details (name, constrainer, icon) in the parameter entry.
+9. **Link modulation chains to parameters.** For each parameter with a `chainIndex`, include the linked mod chain details (name, constrainer) in the parameter entry.
 
 10. **Write notes.** Record any observations, uncertainties, or cross-module relationships noticed during analysis.
 
@@ -208,7 +207,7 @@ Before proceeding to Step 2, verify:
 
 - [ ] Every parameter from the base data appears in exactly one parameter group
 - [ ] Every modulation chain is accounted for (in a composite block, as a standalone chain, or as a disabled chain)
-- [ ] Every interface is listed with a diagram role or skip reason
+- [ ] Every interface is listed with a signal flow role or skip reason
 - [ ] I/O matches the type/subtype inference table
 - [ ] All `tempoSyncIndex` cross-references are resolved to tempoSyncMux composites
 - [ ] All `chainIndex` / `parameterIndex` cross-references are resolved to modMultiply composites or standalone chains
@@ -293,7 +292,7 @@ Modules in the `custom` category (14 total) have user-defined signal paths. For 
 - What the framework provides (I/O routing, modulation chain hosting)
 - What the user is expected to supply
 
-Detailed signal flow analysis is deferred - the diagram shows the framework structure, not a specific implementation.
+Detailed signal flow analysis is deferred - the reference page shows the framework structure, not a specific implementation.
 
 ### Step 2 Gate Checklist
 
@@ -305,5 +304,5 @@ Before handing off to Step 3, verify:
 - [ ] If any base data description seems inaccurate or vague, there is a `description_accuracy` gap
 - [ ] If the module implements `TableProcessor`, `SliderPackProcessor`, or `AudioSampleProcessor`, there is an `interface_usage` gap
 - [ ] If the module is in a CPU-relevant category (filter, reverb, delay, oscillator), there is a `performance` gap
-- [ ] Each gap has a unique ID, a category, a specific question, and context explaining why it matters for the diagram
+- [ ] Each gap has a unique ID, a category, a specific question, and context explaining why it matters for the reference page
 - [ ] Gaps are ordered by importance (signal_path gaps first, performance gaps last)

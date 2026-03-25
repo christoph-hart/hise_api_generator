@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaveSynth - Signal Path</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d1117;
+    color: #ccc;
+    font-family: Lato, sans-serif;
+    padding: 40px;
+  }
+
+  h1 {
+    font-size: 20px;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #808080;
+    margin-bottom: 24px;
+  }
+
+  .code-block {
+    background: #161b22;
+    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 6px;
+    padding: 20px 24px;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+    max-width: 720px;
+  }
+
+  .code-block .comment { color: #808080; }
+  .code-block .keyword { color: #c678dd; }
+  .code-block .param {
+    color: #4a9eff;
+    cursor: help;
+    border-bottom: 1px dotted rgba(74, 158, 255, 0.4);
+  }
+  .code-block .func {
+    color: #f97316;
+    cursor: help;
+    border-bottom: 1px dotted rgba(249, 115, 22, 0.4);
+  }
+  .code-block .mod {
+    color: #90FFB1;
+    cursor: help;
+    border-bottom: 1px dotted rgba(144, 255, 177, 0.4);
+  }
+
+  .tooltip {
+    display: none;
+    position: fixed;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 10px 14px;
+    max-width: 340px;
+    font-family: Lato, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ccc;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  .tooltip .tt-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .tooltip .tt-name.param { color: #4a9eff; }
+  .tooltip .tt-name.func { color: #f97316; }
+  .tooltip .tt-name.mod { color: #90FFB1; }
+
+  .tooltip .tt-desc { color: #ccc; margin-bottom: 6px; }
+
+  .tooltip .tt-meta {
+    font-size: 11px;
+    color: #808080;
+    font-family: Consolas, 'Courier New', monospace;
+  }
+
+  .tooltip .tt-meta span { margin-right: 12px; }
+
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: #808080;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .content {
+    max-width: 720px;
+  }
+
+  .section {
+    margin-top: 32px;
+  }
+
+  .section h2 {
+    font-size: 16px;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .prose {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #b0b8c4;
+    margin-bottom: 16px;
+  }
+
+  .prose code {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 13px;
+    background: #161b22;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #ccc;
+  }
+
+  .prose strong { color: #e2e8f0; }
+
+  .param-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+    background: #131920;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .param-table th {
+    text-align: left;
+    color: #909aab;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .param-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #1a1f27;
+    color: #b0b8c4;
+    vertical-align: top;
+  }
+
+  .param-table tr:hover td {
+    background: #1a1f27;
+  }
+
+  .param-table .p-name {
+    font-family: Consolas, 'Courier New', monospace;
+    color: #4a9eff;
+    white-space: nowrap;
+  }
+
+  .param-table .p-type {
+    color: #808080;
+    font-size: 11px;
+  }
+
+  .param-table .p-range {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 12px;
+    color: #808080;
+  }
+
+  .param-table .p-default {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 12px;
+    color: #ccc;
+  }
+
+  .group-row td {
+    padding-top: 16px !important;
+    color: #808080;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .mod-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+    background: #131920;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .mod-table th {
+    text-align: left;
+    color: #909aab;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .mod-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #1a1f27;
+    color: #b0b8c4;
+    vertical-align: top;
+  }
+
+  .mod-table tr:hover td {
+    background: #1a1f27;
+  }
+
+  .mod-table .m-name {
+    font-family: Consolas, 'Courier New', monospace;
+    color: #90FFB1;
+    white-space: nowrap;
+  }
+
+  .mod-table .m-scope {
+    font-size: 11px;
+    color: #808080;
+  }
+
+  .builder-path {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 13px;
+    background: #161b22;
+    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 4px;
+    padding: 8px 14px;
+    color: #90FFB1;
+    margin-bottom: 16px;
+    display: inline-block;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 6px;
+    margin-bottom: 8px;
+  }
+
+  .tag-type { background: #1c2536; color: #4a9eff; }
+  .tag-cat { background: #1a2420; color: #90FFB1; }
+
+  .screenshot {
+    max-width: 720px;
+    margin-bottom: 24px;
+    border-radius: 6px;
+    border: 1px solid #21262d;
+    overflow: hidden;
+  }
+
+  .screenshot img {
+    width: 100%;
+    display: block;
+  }
+
+  .waveform-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    background: #131920;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .waveform-table th {
+    text-align: left;
+    color: #909aab;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .waveform-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #1a1f27;
+    color: #b0b8c4;
+    vertical-align: middle;
+  }
+
+  .waveform-table tr:hover td {
+    background: #1a1f27;
+  }
+
+  .waveform-table .wf-index {
+    color: #808080;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 12px;
+    width: 30px;
+  }
+
+  .waveform-table .wf-name {
+    font-family: Consolas, 'Courier New', monospace;
+    color: #ccc;
+  }
+
+  .wf-icon {
+    width: 48px;
+    height: 24px;
+  }
+
+  .wf-icon svg {
+    width: 48px;
+    height: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="content">
+
+<h1>Waveform Generator</h1>
+<div class="subtitle">WaveSynth</div>
+
+<div style="margin-bottom: 16px">
+  <span class="tag tag-type">SoundGenerator</span>
+  <span class="tag tag-cat">Oscillator</span>
+</div>
+
+<div class="builder-path">b.SoundGenerators.WaveSynth</div>
+
+<div class="screenshot">
+  <img src="wavesynth.png" alt="WaveSynth module interface in HISE">
+</div>
+
+<p class="prose">
+  A dual-oscillator waveform generator based on Martin Finke's <strong>PolyBLEP</strong> algorithm for band-limited synthesis. Each oscillator supports 9 waveform types and can be independently tuned by octave, semitone, and cent offsets. The two oscillators are mixed with a linear crossfade and panned into stereo using an equal-power panning law.
+</p>
+
+<p class="prose">
+  When <code>EnableSecondOscillator</code> is off, oscillator 1's output is copied to both internal channels and the mix/pan stages are skipped entirely, saving CPU. When enabled, the second oscillator can be hard-synced to the first, or independently pitch-modulated at audio rate for FM-style synthesis via the <code>Osc2PitchMod</code> chain.
+</p>
+
+<div class="section">
+  <h2>Waveform Types</h2>
+  <p class="prose">Both oscillators support 9 waveform types, selectable via <code>WaveForm1</code> and <code>WaveForm2</code>.</p>
+  <table class="waveform-table">
+    <thead>
+      <tr><th>#</th><th>Waveform</th><th></th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="wf-index">1</td>
+        <td class="wf-name">Sine</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><path d="M0,12 C8,0 16,0 24,12 C32,24 40,24 48,12" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A sinusoidal curve</td>
+      </tr>
+      <tr>
+        <td class="wf-index">2</td>
+        <td class="wf-name">Triangle</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,12 12,2 24,22 36,2 48,12" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A triangular waveform</td>
+      </tr>
+      <tr>
+        <td class="wf-index">3</td>
+        <td class="wf-name">Saw</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,22 24,2 24,22 48,2" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A sawtooth waveform (odd harmonics only)</td>
+      </tr>
+      <tr>
+        <td class="wf-index">4</td>
+        <td class="wf-name">Square</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,22 0,2 12,2 12,22 24,22 24,2 36,2 36,22 48,22" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A square waveform. Pulse width adjustable via <code>PulseWidth</code>.</td>
+      </tr>
+      <tr>
+        <td class="wf-index">5</td>
+        <td class="wf-name">Noise</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,12 4,6 8,18 12,4 16,20 20,8 24,16 28,3 32,21 36,7 40,17 44,5 48,12" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>White noise</td>
+      </tr>
+      <tr>
+        <td class="wf-index">6</td>
+        <td class="wf-name">Triangle 2</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,12 8,2 20,22 32,2 44,22 48,12" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A variation of the triangle waveform</td>
+      </tr>
+      <tr>
+        <td class="wf-index">7</td>
+        <td class="wf-name">Square 2</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,22 0,2 8,2 8,22 16,22 16,2 28,2 28,22 36,22 36,2 48,2" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A variation of the square waveform</td>
+      </tr>
+      <tr>
+        <td class="wf-index">8</td>
+        <td class="wf-name">Trapezoid 1</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,22 6,2 18,2 24,22 30,2 42,2 48,22" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A trapezoidal waveform variation</td>
+      </tr>
+      <tr>
+        <td class="wf-index">9</td>
+        <td class="wf-name">Trapezoid 2</td>
+        <td class="wf-icon"><svg viewBox="0 0 48 24"><polyline points="0,22 4,2 12,2 20,22 28,22 32,2 40,2 48,22" stroke="#90FFB1" stroke-width="1.5" fill="none"/></svg></td>
+        <td>A trapezoidal waveform variation</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Signal Path</h2>
+  <div class="code-block" id="code"></div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div> Parameter</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Function</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#90FFB1"></div> Modulation</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Parameters</h2>
+  <table class="param-table">
+    <thead>
+      <tr><th>Parameter</th><th>Description</th><th>Range</th><th>Default</th></tr>
+    </thead>
+    <tbody>
+      <tr class="group-row"><td colspan="4">General</td></tr>
+      <tr>
+        <td class="p-name">Gain</td>
+        <td>Output volume (linear, not dB). Use a SimpleGain effect for decibel-scaled control.</td>
+        <td class="p-range">0.0 - 1.0</td>
+        <td class="p-default">0.25</td>
+      </tr>
+      <tr>
+        <td class="p-name">Balance</td>
+        <td>Stereo balance</td>
+        <td class="p-range">-1.0 - 1.0</td>
+        <td class="p-default">0.0</td>
+      </tr>
+      <tr>
+        <td class="p-name">VoiceLimit</td>
+        <td>Maximum number of simultaneous voices</td>
+        <td class="p-range">1 - 256</td>
+        <td class="p-default">256</td>
+      </tr>
+      <tr>
+        <td class="p-name">KillFadeTime</td>
+        <td>Fade-out time when voices are killed</td>
+        <td class="p-range">0 - 20000 ms</td>
+        <td class="p-default">20 ms</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Oscillator 1</td></tr>
+      <tr>
+        <td class="p-name">WaveForm1</td>
+        <td>Waveform type</td>
+        <td class="p-range">Sine, Triangle, Saw, Square, Noise, Triangle 2, Square 2, Trapezoid 1, Trapezoid 2</td>
+        <td class="p-default">Saw</td>
+      </tr>
+      <tr>
+        <td class="p-name">OctaveTranspose1</td>
+        <td>Octave transpose</td>
+        <td class="p-range">-5 - 5</td>
+        <td class="p-default">0</td>
+      </tr>
+      <tr>
+        <td class="p-name">SemiTones1</td>
+        <td>Semitone transpose</td>
+        <td class="p-range">-12 - 12</td>
+        <td class="p-default">0</td>
+      </tr>
+      <tr>
+        <td class="p-name">Detune1</td>
+        <td>Fine detune in cents</td>
+        <td class="p-range">-100 - 100</td>
+        <td class="p-default">0</td>
+      </tr>
+      <tr>
+        <td class="p-name">PulseWidth1</td>
+        <td>Pulse width (for square-type waveforms)</td>
+        <td class="p-range">0.0 - 1.0</td>
+        <td class="p-default">0.5</td>
+      </tr>
+      <tr>
+        <td class="p-name">Pan1</td>
+        <td>Stereo panning</td>
+        <td class="p-range">-1.0 - 1.0</td>
+        <td class="p-default">0.0</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Oscillator 2</td></tr>
+      <tr>
+        <td class="p-name">EnableSecondOscillator</td>
+        <td>Enable osc2. When off, osc1 output is copied to both channels.</td>
+        <td class="p-range">On / Off</td>
+        <td class="p-default">On</td>
+      </tr>
+      <tr>
+        <td class="p-name">WaveForm2</td>
+        <td>Waveform type</td>
+        <td class="p-range">Sine, Triangle, Saw, Square, Noise, Triangle 2, Square 2, Trapezoid 1, Trapezoid 2</td>
+        <td class="p-default">Saw</td>
+      </tr>
+      <tr>
+        <td class="p-name">OctaveTranspose2</td>
+        <td>Octave transpose</td>
+        <td class="p-range">-5 - 5</td>
+        <td class="p-default">0</td>
+      </tr>
+      <tr>
+        <td class="p-name">SemiTones2</td>
+        <td>Semitone transpose</td>
+        <td class="p-range">-12 - 12</td>
+        <td class="p-default">0</td>
+      </tr>
+      <tr>
+        <td class="p-name">Detune2</td>
+        <td>Fine detune in cents</td>
+        <td class="p-range">-100 - 100</td>
+        <td class="p-default">0</td>
+      </tr>
+      <tr>
+        <td class="p-name">PulseWidth2</td>
+        <td>Pulse width (for square-type waveforms)</td>
+        <td class="p-range">0.0 - 1.0</td>
+        <td class="p-default">0.5</td>
+      </tr>
+      <tr>
+        <td class="p-name">Pan2</td>
+        <td>Stereo panning</td>
+        <td class="p-range">-1.0 - 1.0</td>
+        <td class="p-default">0.0</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Mix</td></tr>
+      <tr>
+        <td class="p-name">Mix</td>
+        <td>Linear crossfade between oscillators</td>
+        <td class="p-range">0.0 - 1.0</td>
+        <td class="p-default">0.5</td>
+      </tr>
+      <tr>
+        <td class="p-name">HardSync</td>
+        <td>Resets osc2 phase when osc1 completes a cycle</td>
+        <td class="p-range">On / Off</td>
+        <td class="p-default">Off</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Modulation Chains</h2>
+  <p class="prose">
+    WaveSynth inherits standard <strong>Gain</strong> and <strong>Pitch</strong> modulation chains from its parent class. Additionally, it provides an independent pitch chain for oscillator 2 and a mix modulation chain.
+  </p>
+  <table class="mod-table">
+    <thead>
+      <tr><th>Chain</th><th>Description</th><th>Scope</th><th>Mode</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="m-name">GainMod</td>
+        <td>Modulates the output volume of both oscillators before mixing</td>
+        <td class="m-scope">per-voice</td>
+        <td>Gain</td>
+      </tr>
+      <tr>
+        <td class="m-name">PitchMod</td>
+        <td>Modulates pitch of both oscillators simultaneously</td>
+        <td class="m-scope">per-voice</td>
+        <td>Pitch</td>
+      </tr>
+      <tr>
+        <td class="m-name">Osc2PitchMod</td>
+        <td>Independent pitch chain for osc2. Supports audio-rate modulation for FM-style synthesis.</td>
+        <td class="m-scope">per-voice</td>
+        <td>Pitch</td>
+      </tr>
+      <tr>
+        <td class="m-name">MixMod</td>
+        <td>Modulates the oscillator crossfade. Audio rate, clamped 0-1.</td>
+        <td class="m-scope">per-voice</td>
+        <td>ScaleAdd</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Notes</h2>
+  <p class="prose">
+    The PolyBLEP algorithm automatically falls back to a pure sine wave when the oscillator frequency reaches <code>sampleRate / 4</code> to prevent aliasing artifacts. This is transparent to the user but means very high-pitched notes will always produce a sine regardless of the selected waveform.
+  </p>
+  <p class="prose">
+    The pitch calculation combines three layers: octave transpose (<code>pow(2, octaves)</code>), semitone transpose (<code>pow(2, semitones/12)</code>), and fine detune in cents (<code>pow(2, cents/1200)</code>). These are multiplied together with the base frequency from the MIDI note.
+  </p>
+  <p class="prose">
+    During voice rendering, osc1 writes to <code>voiceBuffer[0]</code> and osc2 writes to <code>voiceBuffer[1]</code>. These are <strong>not</strong> stereo channels but separate oscillator outputs that get mixed and panned into stereo afterward. The final stereo output is summed across all active voices by the parent <code>ModulatorSynth</code>.
+  </p>
+</div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const code = `// WaveSynth - per-voice sound generator
+// Note events in -> stereo audio out (summed across voices)
+
+process(note) {
+    freq = noteToFreq(note) * PitchMod;
+    osc1 = polyblep(freq, WaveForm1, PulseWidth1);
+
+    if (EnableSecondOscillator) {
+        osc2freq = freq * Osc2PitchMod;
+        osc2 = polyblep(osc2freq, WaveForm2, PulseWidth2);
+
+        if (HardSync)
+            osc2.resetPhaseOn(osc1.cycleComplete);
+
+        osc1 *= GainMod;
+        osc2 *= GainMod;
+
+        mixed = osc1 * (1 - Mix) + osc2 * Mix;
+        stereo = equalPowerPan(mixed, Pan1, Pan2);
+    } else {
+        stereo = [osc1, osc1] * GainMod;
+    }
+
+    output = effects(stereo);
+}`;
+
+const glossary = {
+  parameters: {
+    WaveForm1: { desc: "Waveform type for oscillator 1", range: "Sine, Triangle, Saw, Square, Noise, Triangle 2, Square 2, Trapezoid 1, Trapezoid 2", default: "Saw" },
+    WaveForm2: { desc: "Waveform type for oscillator 2", range: "Sine, Triangle, Saw, Square, Noise, Triangle 2, Square 2, Trapezoid 1, Trapezoid 2", default: "Saw" },
+    PulseWidth1: { desc: "Pulse width for oscillator 1 (square-type waveforms)", range: "0.0 - 1.0", default: "0.5" },
+    PulseWidth2: { desc: "Pulse width for oscillator 2 (square-type waveforms)", range: "0.0 - 1.0", default: "0.5" },
+    EnableSecondOscillator: { desc: "Enables osc2; when off, osc1 is copied to both channels and mix/pan are skipped", range: "On / Off", default: "On" },
+    HardSync: { desc: "Resets osc2 phase when osc1 completes a cycle", range: "On / Off", default: "Off" },
+    Mix: { desc: "Linear crossfade between oscillators", range: "0.0 - 1.0", default: "0.5" },
+    Pan1: { desc: "Stereo position of oscillator 1", range: "-1.0 - 1.0", default: "0.0" },
+    Pan2: { desc: "Stereo position of oscillator 2", range: "-1.0 - 1.0", default: "0.0" },
+  },
+  functions: {
+    polyblep: { desc: "PolyBLEP band-limited waveform synthesis. Falls back to sine when frequency >= sampleRate/4 to prevent aliasing" },
+    equalPowerPan: { desc: "Equal-power stereo panning using sqrt(2) * cos/sin law" },
+    noteToFreq: { desc: "Converts MIDI note number to frequency in Hz" },
+  },
+  modulations: {
+    PitchMod: { desc: "Inherited pitch chain, applies to both oscillators", scope: "per-voice" },
+    Osc2PitchMod: { desc: "Independent osc2 pitch chain, supports audio-rate modulation for FM-style synthesis", scope: "per-voice" },
+    GainMod: { desc: "Inherited gain chain, applied to both oscillator outputs before mix", scope: "per-voice" },
+  }
+};
+
+// Build a flat lookup: key -> { type, ...data }
+const lookup = {};
+for (const [type, entries] of Object.entries(glossary)) {
+  for (const [key, data] of Object.entries(entries)) {
+    lookup[key] = { type: type.slice(0, -1), ...data }; // "parameters" -> "parameter" etc
+  }
+}
+
+// Map type to CSS class
+const typeClass = { parameter: "param", function: "func", modulation: "mod" };
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function highlight(code) {
+  const lines = code.split("\n");
+  return lines.map(line => {
+    // Handle full-line comments
+    if (line.trimStart().startsWith("//")) {
+      return `<span class="comment">${escapeHtml(line)}</span>`;
+    }
+
+    // Handle inline comments
+    let mainPart = line;
+    let commentPart = "";
+    const commentIdx = line.indexOf("//");
+    if (commentIdx !== -1) {
+      mainPart = line.slice(0, commentIdx);
+      commentPart = `<span class="comment">${escapeHtml(line.slice(commentIdx))}</span>`;
+    }
+
+    let result = escapeHtml(mainPart);
+
+    // Replace glossary keys (longest first to avoid partial matches)
+    const keys = Object.keys(lookup).sort((a, b) => b.length - a.length);
+    for (const key of keys) {
+      const cls = typeClass[lookup[key].type];
+      // Word boundary match - but allow key at start/end of identifiers
+      const re = new RegExp(`\\b(${key})\\b`, "g");
+      result = result.replace(re, `<span class="${cls}" data-key="${key}">$1</span>`);
+    }
+
+    // Keyword highlighting (if, else, return) - only bare keywords not inside spans
+    result = result.replace(/\b(if|else|return|process)\b(?![^<]*<\/span>)/g,
+      '<span class="keyword">$1</span>');
+
+    return result + commentPart;
+  }).join("\n");
+}
+
+// Render
+document.getElementById("code").innerHTML = highlight(code);
+
+// Tooltip
+const tooltip = document.getElementById("tooltip");
+const codeBlock = document.getElementById("code");
+
+codeBlock.addEventListener("mouseover", (e) => {
+  const span = e.target.closest("[data-key]");
+  if (!span) return;
+
+  const key = span.dataset.key;
+  const entry = lookup[key];
+  if (!entry) return;
+
+  const cls = typeClass[entry.type];
+  let html = `<div class="tt-name ${cls}">${key}</div>`;
+  html += `<div class="tt-desc">${entry.desc}</div>`;
+
+  const meta = [];
+  if (entry.range) meta.push(`<span>Range: ${entry.range}</span>`);
+  if (entry.default) meta.push(`<span>Default: ${entry.default}</span>`);
+  if (entry.scope) meta.push(`<span>Scope: ${entry.scope}</span>`);
+  if (meta.length) html += `<div class="tt-meta">${meta.join("")}</div>`;
+
+  tooltip.innerHTML = html;
+  tooltip.style.display = "block";
+});
+
+codeBlock.addEventListener("mousemove", (e) => {
+  if (tooltip.style.display === "block") {
+    const x = e.clientX + 12;
+    const y = e.clientY - 10;
+    // Keep tooltip on screen
+    const rect = tooltip.getBoundingClientRect();
+    tooltip.style.left = Math.min(x, window.innerWidth - 360) + "px";
+    tooltip.style.top = Math.max(4, y - (rect.height || 0)) + "px";
+  }
+});
+
+codeBlock.addEventListener("mouseout", (e) => {
+  const span = e.target.closest("[data-key]");
+  if (span) {
+    tooltip.style.display = "none";
+  }
+});
+</script>
+</body>
+</html>

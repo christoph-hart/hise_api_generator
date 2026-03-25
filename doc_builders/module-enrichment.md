@@ -1,14 +1,14 @@
 # Module Enrichment Pipeline
 
-**Purpose:** Transform 79 HISE audio processor modules from basic C++-extracted metadata into rich documentation with signal flow diagrams, performance models, usage guidance, and LLM-optimized reference text. Consumed by the MCP server, docs site, and SVG renderer.
+**Purpose:** Transform 79 HISE audio processor modules from basic C++-extracted metadata into rich documentation with interactive pseudo-code reference pages, performance models, usage guidance, and LLM-optimized reference text. Consumed by the MCP server and Nuxt.js docs site.
 
 **Base data:** `module_enrichment/base/moduleList.json`
-**Output location:** `module_enrichment/enriched/` (one JSON per module)
+**Output location:** `module_enrichment/pages/` (one MDC markdown file per module)
 **Sub-phase details:**
 - `module-enrichment/preliminary-format.md` - Steps 1-2: preliminary JSON + gap listing
-- `module-enrichment/exploration-guide.md` - Step 3: C++ source exploration
-- `module-enrichment/enriched-format.md` - Step 4: enriched JSON authoring
-- `module-enrichment/svg-signal-flow-renderer.md` - Step 5: SVG rendering from enriched JSON
+- `module-enrichment/exploration-guide.md` - Step 3: C++ source exploration + graph JSON
+- `module-enrichment/reference-page-format.md` - Step 4: MDC reference page authoring
+- `module-enrichment/reference-page-renderer.md` - Nuxt.js Vue component spec
 
 ---
 
@@ -21,13 +21,13 @@ The module enrichment pipeline runs parallel to the scripting API enrichment pip
 | Unit of work | Method on a class | Audio processor |
 | Source of truth | C++ method body + Doxygen | C++ `processBlock` + module metadata |
 | Shape of knowledge | Parameter types, return values, thread safety | Signal flow topology, parameter interactions, CPU cost |
-| Visual output | None (text only) | SVG signal flow diagrams |
+| Visual output | None (text only) | Interactive pseudo-code with glossary highlighting |
 | User question | "What does this method do?" | "How does this module process audio?" |
 | Agent judgment | Low (mostly mechanical extraction) | High (topology authoring, parameter placement) |
 
-### Why Two JSON Formats
+### Why Multiple Intermediate Formats
 
-A single enrichment pass cannot produce the final signal-flow topology because the preliminary data (parameters, mod chains, I/O) maps to a fundamentally different structure than the enriched output (a directed graph with parameters placed at their point of action). The preliminary JSON is an inventory organized by data source. The enriched JSON is a topology organized by signal flow. You cannot "fill in the gaps" of one to get the other - the structure itself changes.
+A single enrichment pass cannot produce the final reference page because the preliminary data (parameters, mod chains, I/O) maps to a fundamentally different structure than the graph topology or the authored pseudo-code. The preliminary JSON is an inventory organised by data source. The graph JSON is a topology organised by signal flow. The MDC reference page is a human-readable document with interactive pseudo-code derived from the graph. Each step transforms the structure, not just fills in gaps.
 
 ---
 
@@ -48,26 +48,19 @@ moduleList.json (base data, 79 modules)
         |
   [Step 3] Agent explores C++ source
         |    - Answers gap questions from processBlock/renderNextBlock
-        |    - Writes exploration markdown
+        |    - Writes exploration markdown + graph JSON topology
         |    - Flags base JSON issues in issues.md
         |    - Gate: ALL gaps answered? ALL issues flagged?
         |
-  [Step 4] Agent authors enriched JSON
-        |    - Fresh signal-flow topology
-        |    - Parameters at point of action
-        |    - Composite blocks carried forward
+  [Step 4] Agent authors MDC reference page
+        |    - Interactive pseudo-code derived from graph JSON
+        |    - Parameter tables, modulation tables, prose, notes
+        |    - See Also with scriptnode equivalents, UI components
         |    - Gate: ALL parameters accounted for?
         |           ALL exploration answers incorporated?
-        |           ALL interfaces accounted for?
-        |
-  [Step 5] Renderer produces SVG
-        |    - Reads enriched JSON
-        |    - Resolves metadata from moduleList.json
-        |    - ELK layout + custom SVG rendering
-        |    - Budget filter for complexity tiers
+        |           No C++ leakage in prose?
         v
-  module_enrichment/enriched/{ModuleId}.json
-  svg_renderer/output/{ModuleId}.svg
+  module_enrichment/pages/{ModuleId}.md
 ```
 
 ### Step summary
@@ -75,9 +68,8 @@ moduleList.json (base data, 79 modules)
 | Step | Agent type | Input | Output | Guide |
 |------|-----------|-------|--------|-------|
 | 1-2 | General | moduleList.json entry | `module_enrichment/preliminary/{ModuleId}.json` | `preliminary-format.md` |
-| 3 | Explorer | Preliminary JSON + C++ source | `module_enrichment/exploration/{ModuleId}.md` | `exploration-guide.md` |
-| 4 | General | Preliminary JSON + exploration markdown | `module_enrichment/enriched/{ModuleId}.json` | `enriched-format.md` |
-| 5 | Automated | Enriched JSON + moduleList.json | `svg_renderer/output/{ModuleId}.svg` | `svg-signal-flow-renderer.md` |
+| 3 | Explorer | Preliminary JSON + C++ source | `module_enrichment/exploration/{ModuleId}.md` + `.json` | `exploration-guide.md` |
+| 4 | General | Graph JSON + exploration markdown + moduleList.json | `module_enrichment/pages/{ModuleId}.md` | `reference-page-format.md` |
 
 ---
 
@@ -89,14 +81,9 @@ tools/api generator/
     module-enrichment.md                      # This file (pipeline orchestrator)
     module-enrichment/
       preliminary-format.md                   # Steps 1-2 guide + schema
-      exploration-guide.md                    # Step 3 guide
-      enriched-format.md                      # Steps 4-5 guide + schema
-      svg-signal-flow-renderer.md             # SVG renderer spec
-    old/                                      # Superseded specs (reference only)
-      module-enrichment.md
-      module-enrichment/
-        intermediate-format.md
-        svg-signal-flow-renderer.md
+      exploration-guide.md                    # Step 3 guide + graph JSON schema
+      reference-page-format.md                # Step 4 guide (MDC authoring)
+      reference-page-renderer.md              # Nuxt.js Vue component spec
 
   module_enrichment/
     base/
@@ -104,21 +91,18 @@ tools/api generator/
     preliminary/                              # Step 1-2 output
       {ModuleId}.json                         # One per module
     exploration/                              # Step 3 output
-      {ModuleId}.md                           # One per module
-    enriched/                                 # Step 4 output (final)
-      {ModuleId}.json                         # One per module
+      {ModuleId}.md                           # Exploration findings
+      {ModuleId}.json                         # Graph JSON topology
+    pages/                                    # Step 4 output (final)
+      {ModuleId}.md                           # MDC markdown reference page
+    resources/
+      reference/                              # Design reference HTML prototypes
+        ahdsr-demo.html
+        delay-demo.html
+        macromodulator-demo.html
+        channelfilter-demo.html
+        pseudocode-demo.html
     issues.md                                 # Sidecar: bugs found during exploration
-
-  svg_renderer/
-    src/
-      render.ts                               # CLI entry point
-      types.ts                                # TypeScript types (to be updated)
-      rules.ts                                # Visual modifier rules
-    output/
-      {ModuleId}.svg                          # Step 5 output
-      {ModuleId}_baseline.svg                 # Baseline SVGs (design reference)
-    package.json
-    tsconfig.json
 ```
 
 ---
@@ -165,7 +149,7 @@ Each modulation chain may have:
 | Effect/MonophonicEffect | 1 |
 | **Total** | **79** |
 
-Of the 79 modules, 14 are in the `custom` category (user-defined signal paths). These get a brief structural diagram showing the callback/network slots rather than a fixed signal flow. Detailed treatment is deferred.
+Of the 79 modules, 14 are in the `custom` category (user-defined signal paths). These get a brief structural reference page showing the callback/network slots rather than a fixed signal flow. Detailed treatment is deferred.
 
 ---
 
@@ -188,7 +172,7 @@ These tables define what can be mechanically inferred from moduleList.json field
 
 ### Category Inference Table
 
-| Category | Inference for diagram |
+| Category | Inference for reference page |
 |----------|----------------------|
 | `input` | Module reads from a specific MIDI value source (velocity, CC, key, pitch wheel) |
 | `note_processing` | MIDI event transformation (MIDI in -> transform -> MIDI out) |
@@ -202,21 +186,21 @@ These tables define what can be mechanically inferred from moduleList.json field
 | `oscillator` | Periodic waveform output (also applies to modulators like LFO) |
 | `sample_playback` | Sample streaming, looping, pitch shifting |
 | `mixing` | Signal combination (usually simple, may have mid/side) |
-| `utility` | Mostly passthrough or non-audio (often no signal flow diagram needed) |
+| `utility` | Mostly passthrough or non-audio (often no signal path section needed) |
 | `custom` | Show callbacks/network slots as nodes (framework, not fixed signal path) |
 | `generator` | Signal generation, envelope stages |
 
-### Interface-to-Node Mapping
+### Interface-to-Signal-Path Mapping
 
-Interfaces declared in moduleList.json map to specific node types in the signal flow diagram.
+Interfaces declared in moduleList.json map to specific elements in the signal path pseudo-code and graph JSON.
 
-| Interface | Diagram representation |
-|-----------|----------------------|
-| `TableProcessor` | Lookup table node in signal path |
-| `SliderPackProcessor` | Slider pack / step sequencer node |
-| `AudioSampleProcessor` | Audio sample resource node |
-| `SlotFX` | Hot-swappable effect slot node |
-| `DisplayBufferSource` | Display buffer (UI communication point, not in signal path) |
+| Interface | Signal path role |
+|-----------|-----------------|
+| `TableProcessor` | Lookup table step in signal path |
+| `SliderPackProcessor` | Slider pack / step sequencer data source |
+| `AudioSampleProcessor` | Audio sample resource |
+| `SlotFX` | Hot-swappable effect slot |
+| `DisplayBufferSource` | UI communication point (not in signal path) |
 | `RoutingMatrix` | Skip - inferred from type/subtype |
 | `Sampler` | Skip - single-consumer, redundant with module identity |
 | `WavetableController` | Skip - single-consumer, redundant |
@@ -224,27 +208,18 @@ Interfaces declared in moduleList.json map to specific node types in the signal 
 
 ### Composite Block Patterns
 
-Two reusable sub-graph patterns appear across multiple modules. The agent identifies these in Step 1 and carries them through to the enriched JSON.
+Two reusable sub-graph patterns appear across multiple modules. The agent identifies these in Step 1 and carries them through to the graph JSON and reference page. Full schema and examples are in `preliminary-format.md`.
 
-**modMultiply** - Parameter modulated by a modulation chain:
-- Trigger: Parameter has a `chainIndex` linking it to a modulation chain
-- Rendering: `[Param] -> (*) <- [ModChain]` with constrainer-derived icon
-- Icon selection: If the mod chain's `constrainer` contains `VoiceStartModulator`, use pulse icon (`"pulse"` in JSON, rendered as SVG symbol `icon-voice-start`). Otherwise use sine icon (`"sine"` in JSON, rendered as SVG symbol `icon-sine`).
-- The modulation chain's `parameterIndex` links back to confirm the cross-reference.
-
-**tempoSyncMux** - Time parameter with tempo sync option:
-- Trigger: Parameter has a `tempoSyncIndex` pointing to a toggle parameter
-- Rendering: `[Param] -> [TempoSync] <- [Host BPM]` as an inline trapezoid node
-- Host BPM is an implicit external input inferred from the presence of `tempoSyncIndex`
-- Only 3 parameters across all 79 modules use this pattern (Delay: DelayTimeLeft, DelayTimeRight; LFO: Frequency)
+- **modMultiply** - Parameter modulated by a modulation chain. Trigger: parameter has a `chainIndex`. Pseudo-code pattern: `value = Param * ModChainName`
+- **tempoSyncMux** - Time parameter with tempo sync option. Trigger: parameter has a `tempoSyncIndex`. Pseudo-code pattern: `time = TempoSync ? tempoToMs(HostBPM) : Param`. Only 3 parameters use this pattern (Delay: DelayTimeLeft, DelayTimeRight; LFO: Frequency).
 
 ### Standalone Modulation Chains
 
-All modulation chains with `modulationMode: "pitch"` (15 total across all modules) have no `parameterIndex` - they modulate an implicit base pitch rather than a named parameter. These are rendered as standalone modulation inputs feeding into the voice's pitch calculation, not as modMultiply composites.
+All modulation chains with `modulationMode: "pitch"` (15 total across all modules) have no `parameterIndex` - they modulate an implicit base pitch rather than a named parameter. These are represented in the pseudo-code as standalone modulation inputs feeding into the voice's pitch calculation, not as modMultiply composites.
 
 Similarly, `Gain Modulation` chains at `chainIndex:1` with `parameterIndex:0` follow a base-class pattern on nearly all SoundGenerators. These are standard modMultiply blocks.
 
-Four modulation chains across all modules are disabled. These should be rendered differently (grayed out) or omitted entirely based on agent judgment.
+Four modulation chains across all modules are disabled. These should be omitted from the pseudo-code and parameter table, or noted briefly in the Notes section, based on agent judgment.
 
 ---
 
@@ -256,9 +231,8 @@ Every step ends with a gate checklist that must be satisfied before proceeding. 
 |------|------|-----------|
 | 1 | Completeness | Have I used ALL information available in the base JSON entry? |
 | 2 | Specificity | Are gap questions specific enough for targeted C++ exploration? |
-| 3 | Coverage | Have I answered ALL gap questions? Flagged ALL description issues? |
-| 4 | Accountability | Are ALL parameters accounted for (placed, consumed by composite, or explicitly omitted with reason)? Are ALL exploration answers incorporated (or stated why not)? Are ALL interfaces accounted for? |
-| 5 | Visual quality | Is the SVG legible at 800px? Are all nodes and edges present? Do composites render inline? |
+| 3 | Coverage | Have I answered ALL gap questions? Flagged ALL description issues? Graph JSON complete? |
+| 4 | Accountability | Are ALL parameters in the table? ALL exploration answers incorporated? No C++ leakage? At least 2 See Also entries? Glossary consistent with pseudo-code? |
 
 Full gate checklists are in each step's sub-document.
 
@@ -282,7 +256,7 @@ Process modules in seeAlso clusters so cross-module relationships can be identif
 | MIDI processors | Arpeggiator, TransposerMidiProcessor, ChannelFilter, ChannelRouter, ReleaseTrigger | Event transformation patterns |
 | Custom | ScriptSynth, ScriptFX, Hardcoded* | Dynamic modules - show framework slots, defer internals |
 
-Start with the **Envelopes** pilot batch. AHDSR already has baseline SVGs and exploration notes, providing immediate format validation. The four envelope modules should produce structurally similar graphs, validating cross-module consistency.
+Start with the **Envelopes** pilot batch. AHDSR already has exploration notes and HTML prototypes as design reference, providing immediate format validation. The four envelope modules should produce structurally similar reference pages, validating cross-module consistency.
 
 ### Which modules need signal flow exploration
 
@@ -303,13 +277,13 @@ Not all 79 modules need C++ exploration. Based on category:
 
 ---
 
-## Enriched Output Fields
+## Cross-Cutting Output Fields
 
-The enriched JSON (produced in Step 4) is fully specified in `enriched-format.md`. This section documents the additional cross-cutting fields that appear in the final enriched output but are not part of the signal-flow topology.
+The reference page (produced in Step 4) is fully specified in `reference-page-format.md`. This section documents the cross-cutting fields that appear in the MDC frontmatter for consumption by the MCP server, search, and sidebar display.
 
 ### seeAlso (2-8 entries per module)
 
-Each entry: `{id, type, reason}`. Relationship types:
+Each entry: `{id, type, reason}` in the frontmatter `seeAlso` array. Relationship types:
 
 | Type | Meaning | Reciprocal | Primary source |
 |------|---------|-----------|---------------|
@@ -336,16 +310,7 @@ Each entry: `{id, type, reason}`. Relationship types:
 
 ### cpuProfile
 
-Two-level CPU performance model. Hardware-independent, relative to "a simple gain multiply."
-
-**Node-level** (in enriched JSON processing nodes):
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `cpuWeight.base` | enum | Inherent cost tier: `negligible`, `low`, `medium`, `high`, `very_high` |
-| `cpuWeight.scaleFactor` | object | Optional. Parameter that multiplies cost. |
-| `cpuWeight.scaleFactor.parameter` | string | Parameter ID from moduleList.json |
-| `cpuWeight.scaleFactor.description` | string | How the parameter affects CPU cost |
+CPU performance model stored in the MDC frontmatter. Hardware-independent, relative to "a simple gain multiply."
 
 **Base cost tiers:**
 
@@ -357,7 +322,7 @@ Two-level CPU performance model. Hardware-independent, relative to "a simple gai
 | `high` | Multi-mode filter, FFT-based processing, per-sample nonlinearity |
 | `very_high` | Convolution, large FFT, heavy oversampling |
 
-**Module-level** (rolled up in enriched output):
+**Module-level** (in MDC frontmatter):
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -366,9 +331,9 @@ Two-level CPU performance model. Hardware-independent, relative to "a simple gai
 | `scalingFactors` | array | Parameters that significantly increase CPU beyond baseline. Each entry: `{parameter, impact, note}` |
 
 **Derivation:**
-- `baseline`: highest `cpuWeight.base` among nodes on the main signal path
-- `polyphonic`: from the module's subtype, confirmed by per_voice scope nodes
-- `scalingFactors`: collected from all nodes with `cpuWeight.scaleFactor` entries. The node-level `scaleFactor.description` field becomes the module-level `note` field; `impact` is the cost tier of the scaling effect.
+- `baseline`: determined from the exploration findings (Step 3 CPU Assessment section)
+- `polyphonic`: from the module's subtype
+- `scalingFactors`: parameters that significantly increase CPU beyond baseline, identified during exploration
 
 ### commonMistakes (0-5 entries per module)
 
@@ -398,7 +363,7 @@ Skip for: `custom` category (already custom), containers, routing, utility.
 
 ### llmRef (multi-paragraph reference)
 
-Pre-synthesized text blob served verbatim by the MCP server. Fixed section order:
+Pre-synthesised text blob served verbatim by the MCP server. Stored in the MDC frontmatter. Fixed section order:
 
 ```
 ModuleName (type/subtype)
@@ -406,7 +371,7 @@ ModuleName (type/subtype)
 [1-2 sentence overview]
 
 Signal flow:
-  [arrow notation derived from enriched JSON topology]
+  [arrow notation derived from the pseudo-code]
 
 CPU: [baseline tier], [polyphonic/monophonic]
   [scaling factors if any]
@@ -432,22 +397,7 @@ See also:
 
 ## Complexity Budget
 
-The enriched JSON includes an `importance` value (0.0-1.0) on each processing node, enabling multi-resolution SVG rendering from a single data source.
-
-| Budget tier | Target use | Importance threshold | Typical node count |
-|-------------|-----------|---------------------|-------------------|
-| `overview` | Tooltip, quick reference | >= 0.8 | 3-5 nodes |
-| `thumbnail` | Documentation sidebar | >= 0.5 | 5-10 nodes |
-| `documentation` | Full documentation page | >= 0.0 (all nodes) | 8-20 nodes |
-
-The SVG renderer filters nodes by budget before layout. Edges connected to filtered-out nodes are also removed. Groups containing no visible nodes after filtering are removed.
-
-Importance assignment guidelines:
-- I/O nodes: 1.0 (always visible)
-- Main signal path nodes: 0.7-0.9
-- Modulation/control inputs: 0.4-0.6
-- Secondary paths, conditional branches: 0.2-0.4
-- Implementation detail nodes: 0.1 (documentation-only)
+The graph JSON (Step 3 output) includes an `importance` value (0.0-1.0) on each node, controlling how much detail appears in the Step 4 pseudo-code. High-importance nodes (>= 0.7) become code statements; medium (0.3-0.7) may become comments; low (< 0.3) are typically omitted. See `exploration-guide.md` for the full importance table and assignment guidelines.
 
 ---
 
@@ -478,35 +428,28 @@ Read the guide: doc_builders/module-enrichment/exploration-guide.md
 Read the preliminary JSON: module_enrichment/preliminary/{ModuleId}.json
 Explore the C++ source at the repository root.
 
-Output: module_enrichment/exploration/{ModuleId}.md
+Output:
+  module_enrichment/exploration/{ModuleId}.md (exploration findings)
+  module_enrichment/exploration/{ModuleId}.json (graph JSON topology)
 Issues: append to module_enrichment/issues.md
 
 Follow the gate checklist. Answer ALL gap questions from the preliminary JSON.
 ```
 
-### Step 4: Enriched JSON
+### Step 4: MDC Reference Page
 
 ```
-Author the enriched JSON for module "{ModuleId}".
+Author the MDC reference page for module "{ModuleId}".
 
-Read the guide: doc_builders/module-enrichment/enriched-format.md
-Read the preliminary JSON: module_enrichment/preliminary/{ModuleId}.json
+Read the guide: doc_builders/module-enrichment/reference-page-format.md
+Read the graph JSON: module_enrichment/exploration/{ModuleId}.json
 Read the exploration markdown: module_enrichment/exploration/{ModuleId}.md
 Read the base data for metadata resolution: module_enrichment/base/moduleList.json
+Review the design reference prototypes: module_enrichment/resources/reference/
 
-Output: module_enrichment/enriched/{ModuleId}.json
+Output: module_enrichment/pages/{ModuleId}.md
 
-Follow the gate checklist. Account for ALL parameters.
-```
-
-### Step 5: SVG Rendering
-
-```
-Render SVG for module "{ModuleId}".
-
-npx tsx src/render.ts ../module_enrichment/enriched/{ModuleId}.json output/{ModuleId}.svg
-
-Run from: tools/api generator/svg_renderer/
+Follow the gate checklist. Account for ALL parameters. No C++ leakage.
 ```
 
 ### Batch processing
@@ -517,10 +460,9 @@ For a batch, process all modules in the batch through Steps 1-2 together, then S
 
 ## Feedback Loop Prevention
 
-- Steps 1-2 use ONLY moduleList.json and the inference tables in this document. Never reference enriched output, exploration markdown, or SVG output.
-- Step 3 uses ONLY the preliminary JSON and C++ source code. Never reference enriched output or previous exploration markdown for other modules (cross-contamination).
-- Step 4 uses the preliminary JSON, exploration markdown, and moduleList.json. Never reference SVG output or other modules' enriched JSONs (except within a batch for seeAlso cross-referencing).
-- Step 5 is automated and reads only enriched JSON + moduleList.json.
+- Steps 1-2 use ONLY moduleList.json and the inference tables in this document. Never reference exploration output or reference pages.
+- Step 3 uses ONLY the preliminary JSON and C++ source code. Never reference previous exploration markdown for other modules (cross-contamination).
+- Step 4 uses the graph JSON, exploration markdown, and moduleList.json. Never reference other modules' reference pages (except within a batch for seeAlso cross-referencing).
 
 ---
 
@@ -528,15 +470,11 @@ For a batch, process all modules in the batch through Steps 1-2 together, then S
 
 ### Phase 2a: Real-World Project Analysis
 
-Scanning 14 HISE projects for parameter histograms, co-occurrence matrices, and common configurations. This would feed `companion` seeAlso entries and "typical ranges" in llmRef. Not yet started; deferred until the core pipeline (Steps 1-5) is validated on the pilot batch.
+Scanning 14 HISE projects for parameter histograms, co-occurrence matrices, and common configurations. This would feed `companion` seeAlso entries and "typical ranges" in llmRef. Not yet started; deferred until the core pipeline (Steps 1-4) is validated on the pilot batch.
 
 ### Phase 2b: Documentation Salvage
 
 Extracting prose from the `hise_documentation` GitHub repo. Coverage is sparse (only ~5 modules have substantial docs, ~10 medium, ~50+ frontmatter only). Deferred until core pipeline validation.
-
-### SVG Renderer Update
-
-The existing renderer (`svg_renderer/src/`) currently consumes the old intermediate JSON format. It needs updating to consume the new enriched JSON format. The visual design system (colors, shapes, edge styles) is preserved. See `svg-signal-flow-renderer.md` for the updated spec.
 
 ---
 

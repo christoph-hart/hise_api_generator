@@ -1,9 +1,11 @@
 # C++ Exploration Guide (Step 3)
 
-**Purpose:** Answer the gap questions from the preliminary JSON by reading the module's C++ source code. Produce a structured exploration markdown that Step 4 will consume to author the enriched JSON. Flag any base data inaccuracies as sidecar issues.
+**Purpose:** Answer the gap questions from the preliminary JSON by reading the module's C++ source code. Produce a structured exploration markdown and a graph JSON topology that Step 4 will consume to author the MDC reference page. Flag any base data inaccuracies as sidecar issues.
 
 **Input:** `module_enrichment/preliminary/{ModuleId}.json`
-**Output:** `module_enrichment/exploration/{ModuleId}.md`
+**Output:**
+- `module_enrichment/exploration/{ModuleId}.md` (exploration findings)
+- `module_enrichment/exploration/{ModuleId}.json` (graph topology)
 **Issues:** Append to `module_enrichment/issues.md`
 
 ---
@@ -76,7 +78,7 @@ For modules that implement processor interfaces, trace how the interface is used
 
 ### Performance-Relevant Details
 
-For CPU cost assessment (cpuWeight):
+For CPU cost assessment (cpuProfile):
 - Is processing per-sample or per-block?
 - Are there expensive operations (FFT, convolution, oversampling)?
 - Do any parameters scale the computational cost (e.g., unisono count, filter order)?
@@ -103,7 +105,7 @@ Inspect `createEditor()` or the associated editor class for FloatingTile content
 
 5. **Look for per-voice state** (VoiceData structs, voice-indexed arrays) - these indicate `per_voice` scope nodes.
 
-6. **Check for vestigial code.** Parameters that are defined, serialized, and exposed in metadata but not used in any processing method are vestigial. Note these factually - they will be excluded from the enriched diagram.
+6. **Check for vestigial code.** Parameters that are defined, serialized, and exposed in metadata but not used in any processing method are vestigial. Note these factually - they will be marked as vestigial in the reference page.
 
 7. **Verify base data descriptions.** Compare the `description` field in moduleList.json against actual behavior. Flag inaccuracies.
 
@@ -190,12 +192,69 @@ Skip if none found.]
 Cross-module observations, unusual patterns, design decisions.]
 ```
 
-### Section Rules
+### Exploration Markdown Rules
 
 - **Signal Path** and **Gap Answers** are mandatory. Every other section can be omitted if not applicable.
 - **Gap Answers** must have one subsection per gap from the preliminary JSON. Use the exact gap ID as the heading.
 - **Processing Chain Detail** should be ordered by execution order, not parameter order.
-- Do not paste large C++ code blocks. Summarize the logic in plain language with method name references.
+- Do not paste large C++ code blocks. Summarise the logic in plain language with method name references.
+
+---
+
+## Output Format: Graph JSON
+
+Write one graph JSON file per module at `module_enrichment/exploration/{ModuleId}.json`. This is the structured signal-flow topology that Step 4 uses to derive pseudo-code for the reference page.
+
+### Schema
+
+```json
+{
+  "moduleId": "string",
+  "nodes": [
+    {
+      "id": "string (unique node ID)",
+      "label": "string (display name)",
+      "type": "string (input|output|process|decision|parameter|modulation|external)",
+      "importance": "number (0.0-1.0)",
+      "group": "string|null (group ID)",
+      "description": "string (what this node does)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "string (source node ID)",
+      "to": "string (target node ID)",
+      "type": "string (signal|control|feedback|conditional)",
+      "label": "string|null (edge label)"
+    }
+  ],
+  "groups": [
+    {
+      "id": "string (group ID)",
+      "label": "string (group display name)"
+    }
+  ]
+}
+```
+
+### Node Importance
+
+The `importance` value controls pseudo-code abstraction in Step 4:
+
+| Range | Step 4 treatment |
+|-------|-----------------|
+| >= 0.7 | Becomes a code statement or expression |
+| 0.3 - 0.7 | May become a comment or be folded into adjacent statements |
+| < 0.3 | Typically omitted from pseudo-code |
+
+### Graph Construction Rules
+
+1. Walk the signal path from input to output, creating nodes for each processing stage.
+2. Parameters that control a processing stage become `parameter` type nodes connected via `control` edges.
+3. Modulation chains become `modulation` type nodes connected via `control` edges.
+4. Decision nodes (mode switches, conditionals) use the `decision` type with `conditional` edges for branches.
+5. Feedback paths use `feedback` type edges (write-then-read patterns).
+6. Group related nodes logically (e.g. "Envelope Stages", "Feedback Loop").
 
 ---
 
@@ -241,7 +300,7 @@ Append new issues to `module_enrichment/issues.md` under the appropriate severit
 
 Issues found during exploration must NOT appear in any documentation output (description, commonMistakes, llmRef). Users should not see implementation bugs in their documentation. Bugs are transient; documentation is long-lived.
 
-The `notes` field in the exploration markdown may mention vestigial or non-functional features as factual observations about the DSP path (e.g., "LowPassFreq parameter is defined but not applied in applyEffect()"). This tells Step 4 to exclude the feature from the enriched diagram. Do not include line numbers, fix suggestions, or bug analysis in the notes - put those in issues.md only.
+The `notes` field in the exploration markdown may mention vestigial or non-functional features as factual observations about the DSP path (e.g., "LowPassFreq parameter is defined but not applied in applyEffect()"). This tells Step 4 to mark the feature as vestigial in the reference page. Do not include line numbers, fix suggestions, or bug analysis in the notes - put those in issues.md only.
 
 ---
 
@@ -252,8 +311,9 @@ Before handing off to Step 4, verify:
 - [ ] Every gap question from the preliminary JSON has a corresponding answer in the Gap Answers section (no gaps left unanswered)
 - [ ] The Signal Path section describes the complete processing chain from input to output
 - [ ] Every parameter from the preliminary JSON has been located in the C++ source and its behavior documented (either in Gap Answers, Processing Chain Detail, or Vestigial/Notable)
-- [ ] Every interface marked with a diagram role in the preliminary JSON has its usage documented in the Interface Usage section
+- [ ] Every interface marked with a signal flow role in the preliminary JSON has its usage documented in the Interface Usage section
 - [ ] All discovered vestigial parameters or inaccurate descriptions have been flagged in issues.md
 - [ ] CPU weight assessments are provided for all significant processing stages
 - [ ] Conditional behavior (if any) is documented with specific parameter values and their effects
-- [ ] The exploration markdown is self-contained - Step 4 can produce the enriched JSON without needing to re-read C++ source
+- [ ] The exploration markdown is self-contained - Step 4 can author the reference page without needing to re-read C++ source
+- [ ] The graph JSON captures the signal-flow topology with nodes, edges, groups, and importance values

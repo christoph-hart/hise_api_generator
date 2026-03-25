@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delay - Module Reference</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d1117;
+    color: #ccc;
+    font-family: Lato, sans-serif;
+    padding: 40px;
+  }
+
+  h1 { font-size: 20px; color: #e2e8f0; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #808080; margin-bottom: 24px; }
+
+  .content { max-width: 720px; }
+
+  .section { margin-top: 32px; }
+  .section h2 {
+    font-size: 16px; color: #e2e8f0; margin-bottom: 12px;
+    padding-bottom: 6px; border-bottom: 1px solid #21262d;
+  }
+
+  .prose {
+    font-size: 14px; line-height: 1.7; color: #b0b8c4; margin-bottom: 16px;
+  }
+  .prose code {
+    font-family: Consolas, 'Courier New', monospace; font-size: 13px;
+    background: #161b22; padding: 1px 5px; border-radius: 3px; color: #ccc;
+  }
+  .prose strong { color: #e2e8f0; }
+
+  .code-block {
+    background: #161b22; border: 1px solid rgba(0,0,0,0.5); border-radius: 6px;
+    padding: 20px 24px; font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px; line-height: 1.7; overflow-x: auto; white-space: pre; max-width: 720px;
+  }
+  .code-block .comment { color: #808080; }
+  .code-block .keyword { color: #c678dd; }
+  .code-block .param { color: #4a9eff; cursor: help; border-bottom: 1px dotted rgba(74, 158, 255, 0.4); }
+  .code-block .func { color: #f97316; cursor: help; border-bottom: 1px dotted rgba(249, 115, 22, 0.4); }
+  .code-block .mod { color: #90FFB1; cursor: help; border-bottom: 1px dotted rgba(144, 255, 177, 0.4); }
+
+  .tooltip {
+    display: none; position: fixed; background: #1e293b; border: 1px solid #334155;
+    border-radius: 6px; padding: 10px 14px; max-width: 340px; font-family: Lato, sans-serif;
+    font-size: 13px; line-height: 1.5; color: #ccc; pointer-events: none; z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .tooltip .tt-name { font-weight: bold; margin-bottom: 4px; }
+  .tooltip .tt-name.param { color: #4a9eff; }
+  .tooltip .tt-name.func { color: #f97316; }
+  .tooltip .tt-name.mod { color: #90FFB1; }
+  .tooltip .tt-desc { color: #ccc; margin-bottom: 6px; }
+  .tooltip .tt-meta { font-size: 11px; color: #808080; font-family: Consolas, 'Courier New', monospace; }
+  .tooltip .tt-meta span { margin-right: 12px; }
+
+  .legend { display: flex; gap: 24px; margin-top: 16px; font-size: 12px; color: #808080; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .param-table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px;
+    background: #131920; border: 1px solid #21262d; border-radius: 6px; overflow: hidden;
+  }
+  .param-table th {
+    text-align: left; color: #909aab; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px;
+    background: #161b22; border-bottom: 1px solid #21262d;
+  }
+  .param-table td {
+    padding: 8px 10px; border-bottom: 1px solid #1a1f27; color: #b0b8c4; vertical-align: top;
+  }
+  .param-table tr:hover td { background: #1a1f27; }
+
+  .param-table .p-name { font-family: Consolas, 'Courier New', monospace; color: #4a9eff; white-space: nowrap; }
+  .param-table .p-range { font-family: Consolas, 'Courier New', monospace; font-size: 12px; color: #808080; }
+  .param-table .p-default { font-family: Consolas, 'Courier New', monospace; font-size: 12px; color: #ccc; }
+
+  .group-row td {
+    padding-top: 16px !important; color: #808080; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #21262d;
+  }
+
+  .screenshot { max-width: 720px; margin-bottom: 24px; border-radius: 6px; border: 1px solid #21262d; overflow: hidden; }
+  .screenshot img { width: 100%; display: block; }
+
+  .builder-path {
+    font-family: Consolas, 'Courier New', monospace; font-size: 13px;
+    background: #161b22; border: 1px solid rgba(0,0,0,0.5); border-radius: 4px;
+    padding: 8px 14px; color: #90FFB1; margin-bottom: 16px; display: inline-block;
+  }
+
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 6px; margin-bottom: 8px; }
+  .tag-type { background: #1c2536; color: #4a9eff; }
+  .tag-cat { background: #1a2420; color: #90FFB1; }
+</style>
+</head>
+<body>
+
+<div class="content">
+
+<h1>Delay</h1>
+<div class="subtitle">Stereo Delay</div>
+
+<div style="margin-bottom: 16px">
+  <span class="tag tag-type">MasterEffect</span>
+  <span class="tag tag-cat">Delay</span>
+</div>
+
+<div class="builder-path">b.Effects.Delay</div>
+
+<div class="screenshot">
+  <img src="delay.png" alt="Delay module interface in HISE">
+</div>
+
+<p class="prose">
+  A stereo delay effect with <strong>independent left and right delay times</strong>, per-channel feedback, and a dry/wet mix. Delay times can be set in milliseconds or locked to the host tempo via <code>TempoSync</code>. The delay lines use <strong>integer-sample delay only</strong> (no fractional interpolation) and apply a built-in <strong>1024-sample crossfade</strong> when the delay time changes to prevent clicks.
+</p>
+
+<p class="prose">
+  The dry/wet mix uses an <strong>overlap fader</strong> (scriptnode <code>faders::overlap</code>): at <code>Mix = 0.5</code>, both dry and wet signals are at full volume (1.0). At the extremes, one fades to zero while the other stays at full level. The first audio buffer after construction is skipped entirely to avoid garbage output.
+</p>
+
+<div class="section">
+  <h2>Signal Path</h2>
+  <div class="code-block" id="code"></div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div> Parameter</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Function</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Parameters</h2>
+  <table class="param-table">
+    <thead>
+      <tr><th>Parameter</th><th>Description</th><th>Range</th><th>Default</th></tr>
+    </thead>
+    <tbody>
+      <tr class="group-row"><td colspan="4">Delay Time</td></tr>
+      <tr>
+        <td class="p-name">DelayTimeLeft</td>
+        <td>Left channel delay time in milliseconds, or tempo-synced note value when sync is enabled</td>
+        <td class="p-range">0 - 3000 ms</td>
+        <td class="p-default">(dynamic)</td>
+      </tr>
+      <tr>
+        <td class="p-name">DelayTimeRight</td>
+        <td>Right channel delay time in milliseconds, or tempo-synced note value when sync is enabled</td>
+        <td class="p-range">0 - 3000 ms</td>
+        <td class="p-default">(dynamic)</td>
+      </tr>
+      <tr>
+        <td class="p-name">TempoSync</td>
+        <td>Enables tempo-synced delay times instead of milliseconds</td>
+        <td class="p-range">On / Off</td>
+        <td class="p-default">On</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Feedback</td></tr>
+      <tr>
+        <td class="p-name">FeedbackLeft</td>
+        <td>Left channel feedback amount (0.0 = no repeats, 1.0 = infinite)</td>
+        <td class="p-range">0 - 100%</td>
+        <td class="p-default">30%</td>
+      </tr>
+      <tr>
+        <td class="p-name">FeedbackRight</td>
+        <td>Right channel feedback amount (0.0 = no repeats, 1.0 = infinite)</td>
+        <td class="p-range">0 - 100%</td>
+        <td class="p-default">30%</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Filtering (Vestigial)</td></tr>
+      <tr>
+        <td class="p-name">LowPassFreq</td>
+        <td>Low-pass cutoff frequency - defined and serialized but never applied (no filter objects exist)</td>
+        <td class="p-range">20 - 20000 Hz</td>
+        <td class="p-default">20000 Hz</td>
+      </tr>
+      <tr>
+        <td class="p-name">HiPassFreq</td>
+        <td>High-pass cutoff frequency - defined and serialized but never applied (no filter objects exist)</td>
+        <td class="p-range">20 - 20000 Hz</td>
+        <td class="p-default">40 Hz</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Mix</td></tr>
+      <tr>
+        <td class="p-name">Mix</td>
+        <td>Dry/wet balance using overlap fader (at 50% both signals are at full volume)</td>
+        <td class="p-range">0 - 100%</td>
+        <td class="p-default">50%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Notes</h2>
+  <p class="prose">
+    <code>LowPassFreq</code> and <code>HiPassFreq</code> are <strong>vestigial parameters</strong> - they are defined in the parameter enum and serialized to presets, but never applied in <code>applyEffect()</code> because no filter objects exist in the class. Setting them has no audible effect.
+  </p>
+  <p class="prose">
+    The overlap fader mix behavior is non-standard: at <code>Mix = 0.5</code>, both dry and wet are at <strong>full volume</strong> (gain = 1.0), resulting in a +6dB boost. For equal-power mixing behavior, use a scriptnode network instead.
+  </p>
+  <p class="prose">
+    When <code>TempoSync</code> is enabled, the delay time sliders switch from millisecond values to tempo-synced note value indices. The crossfade on time changes (1024 samples) prevents clicks but means very fast automation of delay time will be smoothed.
+  </p>
+</div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const code = `// Delay - stereo delay effect
+// Audio in -> delayed audio out
+
+process(left, right) {
+    if (TempoSync)
+        delayTime = tempoToMs(DelayTimeLeft, DelayTimeRight);
+    else
+        delayTime = [DelayTimeLeft, DelayTimeRight];
+
+    // Left channel feedback loop
+    wetL = delayLine(left + lastL * FeedbackLeft, delayTime[0]);
+    lastL = wetL;
+
+    // Right channel feedback loop
+    wetR = delayLine(right + lastR * FeedbackRight, delayTime[1]);
+    lastR = wetR;
+
+    // Overlap fader: at Mix=0.5, both dry and wet are full volume
+    output = overlapFade(Mix, [left, right], [wetL, wetR]);
+}`;
+
+const glossary = {
+  parameters: {
+    DelayTimeLeft: { desc: "Left channel delay time in milliseconds or tempo-synced note value", range: "0 - 3000 ms", default: "(dynamic)" },
+    DelayTimeRight: { desc: "Right channel delay time in milliseconds or tempo-synced note value", range: "0 - 3000 ms", default: "(dynamic)" },
+    FeedbackLeft: { desc: "Left channel feedback amount (0 = no repeats, 1 = infinite)", range: "0 - 100%", default: "30%" },
+    FeedbackRight: { desc: "Right channel feedback amount (0 = no repeats, 1 = infinite)", range: "0 - 100%", default: "30%" },
+    Mix: { desc: "Dry/wet balance using overlap fader. At 50% both dry and wet are at full volume (1.0).", range: "0 - 100%", default: "50%" },
+    TempoSync: { desc: "Enables tempo-synced delay times instead of milliseconds", range: "On / Off", default: "On" },
+  },
+  functions: {
+    delayLine: { desc: "Integer-sample delay buffer. Applies a 1024-sample crossfade when delay time changes to prevent clicks. No fractional interpolation." },
+    tempoToMs: { desc: "Converts tempo-synced note value indices to millisecond delay times based on the current host BPM." },
+    overlapFade: { desc: "Overlap fader (scriptnode faders::overlap): at 0.5 both inputs are at full volume. At extremes, one fades to zero while the other stays at 1.0." },
+  },
+  modulations: {}
+};
+
+const lookup = {};
+for (const [type, entries] of Object.entries(glossary)) {
+  for (const [key, data] of Object.entries(entries)) {
+    lookup[key] = { type: type.slice(0, -1), ...data };
+  }
+}
+
+const typeClass = { parameter: "param", function: "func", modulation: "mod" };
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function highlight(code) {
+  const lines = code.split("\n");
+  return lines.map(line => {
+    if (line.trimStart().startsWith("//")) {
+      return `<span class="comment">${escapeHtml(line)}</span>`;
+    }
+    let mainPart = line;
+    let commentPart = "";
+    const commentIdx = line.indexOf("//");
+    if (commentIdx !== -1) {
+      mainPart = line.slice(0, commentIdx);
+      commentPart = `<span class="comment">${escapeHtml(line.slice(commentIdx))}</span>`;
+    }
+    let result = escapeHtml(mainPart);
+    const keys = Object.keys(lookup).sort((a, b) => b.length - a.length);
+    for (const key of keys) {
+      const cls = typeClass[lookup[key].type];
+      const re = new RegExp(`\\b(${key})\\b`, "g");
+      result = result.replace(re, `<span class="${cls}" data-key="${key}">$1</span>`);
+    }
+    result = result.replace(/\b(if|else|return|process)\b(?![^<]*<\/span>)/g,
+      '<span class="keyword">$1</span>');
+    return result + commentPart;
+  }).join("\n");
+}
+
+document.getElementById("code").innerHTML = highlight(code);
+
+const tooltip = document.getElementById("tooltip");
+const codeBlock = document.getElementById("code");
+
+codeBlock.addEventListener("mouseover", (e) => {
+  const span = e.target.closest("[data-key]");
+  if (!span) return;
+  const key = span.dataset.key;
+  const entry = lookup[key];
+  if (!entry) return;
+  const cls = typeClass[entry.type];
+  let html = `<div class="tt-name ${cls}">${key}</div>`;
+  html += `<div class="tt-desc">${entry.desc}</div>`;
+  const meta = [];
+  if (entry.range) meta.push(`<span>Range: ${entry.range}</span>`);
+  if (entry.default) meta.push(`<span>Default: ${entry.default}</span>`);
+  if (entry.scope) meta.push(`<span>Scope: ${entry.scope}</span>`);
+  if (meta.length) html += `<div class="tt-meta">${meta.join("")}</div>`;
+  tooltip.innerHTML = html;
+  tooltip.style.display = "block";
+});
+
+codeBlock.addEventListener("mousemove", (e) => {
+  if (tooltip.style.display === "block") {
+    const x = e.clientX + 12;
+    const y = e.clientY - 10;
+    const rect = tooltip.getBoundingClientRect();
+    tooltip.style.left = Math.min(x, window.innerWidth - 360) + "px";
+    tooltip.style.top = Math.max(4, y - (rect.height || 0)) + "px";
+  }
+});
+
+codeBlock.addEventListener("mouseout", (e) => {
+  const span = e.target.closest("[data-key]");
+  if (span) tooltip.style.display = "none";
+});
+</script>
+</body>
+</html>

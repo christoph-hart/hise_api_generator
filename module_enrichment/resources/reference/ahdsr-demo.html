@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHDSR - Module Reference</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d1117;
+    color: #ccc;
+    font-family: Lato, sans-serif;
+    padding: 40px;
+  }
+
+  h1 { font-size: 20px; color: #e2e8f0; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #808080; margin-bottom: 24px; }
+
+  .content { max-width: 720px; }
+
+  .section { margin-top: 32px; }
+  .section h2 {
+    font-size: 16px; color: #e2e8f0; margin-bottom: 12px;
+    padding-bottom: 6px; border-bottom: 1px solid #21262d;
+  }
+
+  .prose {
+    font-size: 14px; line-height: 1.7; color: #b0b8c4; margin-bottom: 16px;
+  }
+  .prose code {
+    font-family: Consolas, 'Courier New', monospace; font-size: 13px;
+    background: #161b22; padding: 1px 5px; border-radius: 3px; color: #ccc;
+  }
+  .prose strong { color: #e2e8f0; }
+
+  .code-block {
+    background: #161b22; border: 1px solid rgba(0,0,0,0.5); border-radius: 6px;
+    padding: 20px 24px; font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px; line-height: 1.7; overflow-x: auto; white-space: pre; max-width: 720px;
+  }
+  .code-block .comment { color: #808080; }
+  .code-block .keyword { color: #c678dd; }
+  .code-block .param { color: #4a9eff; cursor: help; border-bottom: 1px dotted rgba(74, 158, 255, 0.4); }
+  .code-block .func { color: #f97316; cursor: help; border-bottom: 1px dotted rgba(249, 115, 22, 0.4); }
+  .code-block .mod { color: #90FFB1; cursor: help; border-bottom: 1px dotted rgba(144, 255, 177, 0.4); }
+
+  .tooltip {
+    display: none; position: fixed; background: #1e293b; border: 1px solid #334155;
+    border-radius: 6px; padding: 10px 14px; max-width: 340px; font-family: Lato, sans-serif;
+    font-size: 13px; line-height: 1.5; color: #ccc; pointer-events: none; z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .tooltip .tt-name { font-weight: bold; margin-bottom: 4px; }
+  .tooltip .tt-name.param { color: #4a9eff; }
+  .tooltip .tt-name.func { color: #f97316; }
+  .tooltip .tt-name.mod { color: #90FFB1; }
+  .tooltip .tt-desc { color: #ccc; margin-bottom: 6px; }
+  .tooltip .tt-meta { font-size: 11px; color: #808080; font-family: Consolas, 'Courier New', monospace; }
+  .tooltip .tt-meta span { margin-right: 12px; }
+
+  .legend { display: flex; gap: 24px; margin-top: 16px; font-size: 12px; color: #808080; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .param-table, .mod-table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px;
+    background: #131920; border: 1px solid #21262d; border-radius: 6px; overflow: hidden;
+  }
+  .param-table th, .mod-table th {
+    text-align: left; color: #909aab; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px;
+    background: #161b22; border-bottom: 1px solid #21262d;
+  }
+  .param-table td, .mod-table td {
+    padding: 8px 10px; border-bottom: 1px solid #1a1f27; color: #b0b8c4; vertical-align: top;
+  }
+  .param-table tr:hover td, .mod-table tr:hover td { background: #1a1f27; }
+
+  .param-table .p-name { font-family: Consolas, 'Courier New', monospace; color: #4a9eff; white-space: nowrap; }
+  .param-table .p-range { font-family: Consolas, 'Courier New', monospace; font-size: 12px; color: #808080; }
+  .param-table .p-default { font-family: Consolas, 'Courier New', monospace; font-size: 12px; color: #ccc; }
+  .mod-table .m-name { font-family: Consolas, 'Courier New', monospace; color: #90FFB1; white-space: nowrap; }
+  .mod-table .m-scope { font-size: 11px; color: #808080; }
+
+  .group-row td {
+    padding-top: 16px !important; color: #808080; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #21262d;
+  }
+
+  .screenshot { max-width: 720px; margin-bottom: 24px; border-radius: 6px; border: 1px solid #21262d; overflow: hidden; }
+  .screenshot img { width: 100%; display: block; }
+
+  .builder-path {
+    font-family: Consolas, 'Courier New', monospace; font-size: 13px;
+    background: #161b22; border: 1px solid rgba(0,0,0,0.5); border-radius: 4px;
+    padding: 8px 14px; color: #90FFB1; margin-bottom: 16px; display: inline-block;
+  }
+
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-right: 6px; margin-bottom: 8px; }
+  .tag-type { background: #1c2536; color: #4a9eff; }
+  .tag-cat { background: #1a2420; color: #90FFB1; }
+</style>
+</head>
+<body>
+
+<div class="content">
+
+<h1>AHDSR Envelope</h1>
+<div class="subtitle">AHDSR</div>
+
+<div style="margin-bottom: 16px">
+  <span class="tag tag-type">EnvelopeModulator</span>
+  <span class="tag tag-cat">Generator</span>
+</div>
+
+<div class="builder-path">b.Modulators.AHDSR</div>
+
+<div class="screenshot">
+  <img src="ahdsr.png" alt="AHDSR envelope module interface in HISE">
+</div>
+
+<p class="prose">
+  A classic <strong>Attack-Hold-Decay-Sustain-Release</strong> envelope with adjustable curve shapes and per-voice modulation of all time and level parameters. All curve shapes use <strong>exponential coefficients</strong> (not lookup tables) - the <code>AttackCurve</code> parameter controls the attack target ratio (concave to convex), and <code>DecayCurve</code> controls both the decay and release curve shapes.
+</p>
+
+<p class="prose">
+  The envelope runs per-voice in polyphonic mode. In <strong>monophonic mode</strong>, a single shared state is used with optional retrigger behavior when new notes arrive. The sustain phase uses a per-buffer ramp when the sustain value changes via modulation, avoiding zipper noise.
+</p>
+
+<div class="section">
+  <h2>Signal Path</h2>
+  <div class="code-block" id="code"></div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div> Parameter</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Function</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#90FFB1"></div> Modulation</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Parameters</h2>
+  <table class="param-table">
+    <thead>
+      <tr><th>Parameter</th><th>Description</th><th>Range</th><th>Default</th></tr>
+    </thead>
+    <tbody>
+      <tr class="group-row"><td colspan="4">Envelope</td></tr>
+      <tr>
+        <td class="p-name">Attack</td>
+        <td>Time to reach full level after note-on</td>
+        <td class="p-range">0 - 20000 ms</td>
+        <td class="p-default">20 ms</td>
+      </tr>
+      <tr>
+        <td class="p-name">AttackLevel</td>
+        <td>Peak level reached at the end of the attack phase</td>
+        <td class="p-range">-100 - 0 dB</td>
+        <td class="p-default">0 dB</td>
+      </tr>
+      <tr>
+        <td class="p-name">Hold</td>
+        <td>Time the envelope stays at the attack level before decaying</td>
+        <td class="p-range">0 - 20000 ms</td>
+        <td class="p-default">10 ms</td>
+      </tr>
+      <tr>
+        <td class="p-name">Decay</td>
+        <td>Time to fall from the attack level to the sustain level</td>
+        <td class="p-range">1 - 20000 ms</td>
+        <td class="p-default">300 ms</td>
+      </tr>
+      <tr>
+        <td class="p-name">Sustain</td>
+        <td>Level maintained while the note is held</td>
+        <td class="p-range">-100 - 0 dB</td>
+        <td class="p-default">0 dB</td>
+      </tr>
+      <tr>
+        <td class="p-name">Release</td>
+        <td>Time to fall from the sustain level to zero after note-off</td>
+        <td class="p-range">1 - 20000 ms</td>
+        <td class="p-default">20 ms</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Curve Shape</td></tr>
+      <tr>
+        <td class="p-name">AttackCurve</td>
+        <td>Curvature of the attack phase (0.0 = concave, 1.0 = convex)</td>
+        <td class="p-range">0.0 - 1.0</td>
+        <td class="p-default">0.0</td>
+      </tr>
+      <tr>
+        <td class="p-name">DecayCurve</td>
+        <td>Curvature of the decay and release phases</td>
+        <td class="p-range">0.0 - 1.0</td>
+        <td class="p-default">0.0</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="4">Voice Mode</td></tr>
+      <tr>
+        <td class="p-name">Monophonic</td>
+        <td>Enables monophonic mode with a single shared envelope state</td>
+        <td class="p-range">On / Off</td>
+        <td class="p-default">Off</td>
+      </tr>
+      <tr>
+        <td class="p-name">Retrigger</td>
+        <td>Restarts the envelope when a new note arrives in monophonic mode</td>
+        <td class="p-range">On / Off</td>
+        <td class="p-default">On</td>
+      </tr>
+      <tr>
+        <td class="p-name">EcoMode</td>
+        <td>Vestigial parameter - the setter is a no-op. Downsampling is now controlled globally.</td>
+        <td class="p-range">On / Off</td>
+        <td class="p-default">On</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Modulation Chains</h2>
+  <p class="prose">
+    Each time and level parameter has a corresponding <strong>VoiceStartModulator</strong> chain that scales the base value per-voice at note-on. These are evaluated once when the voice starts, not continuously.
+  </p>
+  <table class="mod-table">
+    <thead>
+      <tr><th>Chain</th><th>Description</th><th>Scope</th><th>Constrainer</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="m-name">AttackTimeMod</td>
+        <td>Scales the attack time per voice at note-on</td>
+        <td class="m-scope">per-voice</td>
+        <td>VoiceStartModulator</td>
+      </tr>
+      <tr>
+        <td class="m-name">AttackLevelMod</td>
+        <td>Scales the attack peak level per voice at note-on</td>
+        <td class="m-scope">per-voice</td>
+        <td>VoiceStartModulator</td>
+      </tr>
+      <tr>
+        <td class="m-name">DecayTimeMod</td>
+        <td>Scales the decay time per voice at note-on</td>
+        <td class="m-scope">per-voice</td>
+        <td>VoiceStartModulator</td>
+      </tr>
+      <tr>
+        <td class="m-name">SustainLevelMod</td>
+        <td>Scales the sustain level per voice at note-on</td>
+        <td class="m-scope">per-voice</td>
+        <td>VoiceStartModulator</td>
+      </tr>
+      <tr>
+        <td class="m-name">ReleaseTimeMod</td>
+        <td>Scales the release time per voice at note-on</td>
+        <td class="m-scope">per-voice</td>
+        <td>VoiceStartModulator</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Notes</h2>
+  <p class="prose">
+    The <code>EcoMode</code> parameter is <strong>vestigial</strong> - the setter is a no-op (source comment: "not needed anymore"). Downsampling is now controlled globally by <code>HISE_CONTROL_RATE_DOWNSAMPLING_FACTOR</code> (8x for instruments, 1x for effects).
+  </p>
+  <p class="prose">
+    The envelope state machine is shared with the scriptnode equivalent via <code>ahdsr_base::state_base::tick()</code>. All curve shapes use exponential coefficients computed from the curve parameter, not lookup tables.
+  </p>
+  <p class="prose">
+    Note that <code>DecayCurve</code> controls the curvature of <strong>both</strong> the decay and release phases - there is no separate release curve parameter.
+  </p>
+</div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const code = `// AHDSR - per-voice envelope modulator
+// Note events in -> modulation output (0..1)
+
+onNoteOn() {
+    attackTime = Attack * AttackTimeMod;
+    peak = AttackLevel * AttackLevelMod;
+
+    output = expRamp(0, peak, attackTime, AttackCurve);
+    hold(peak, Hold);
+
+    decayTime = Decay * DecayTimeMod;
+    sustain = Sustain * SustainLevelMod;
+    output = expRamp(peak, sustain, decayTime, DecayCurve);
+
+    output = sustain;
+}
+
+onNoteOff() {
+    releaseTime = Release * ReleaseTimeMod;
+    output = expRamp(sustain, 0, releaseTime, DecayCurve);
+}`;
+
+const glossary = {
+  parameters: {
+    Attack: { desc: "Time to reach full level after note-on", range: "0 - 20000 ms", default: "20 ms" },
+    AttackLevel: { desc: "Peak level at the end of the attack phase", range: "-100 - 0 dB", default: "0 dB" },
+    AttackCurve: { desc: "Curvature of the attack phase (0.0 = concave, 1.0 = convex)", range: "0.0 - 1.0", default: "0.0" },
+    Hold: { desc: "Time the envelope stays at the attack level before decaying", range: "0 - 20000 ms", default: "10 ms" },
+    Decay: { desc: "Time to fall from attack level to sustain level", range: "1 - 20000 ms", default: "300 ms" },
+    DecayCurve: { desc: "Curvature of the decay and release phases", range: "0.0 - 1.0", default: "0.0" },
+    Sustain: { desc: "Level maintained while the note is held", range: "-100 - 0 dB", default: "0 dB" },
+    Release: { desc: "Time to fall from sustain to zero after note-off", range: "1 - 20000 ms", default: "20 ms" },
+  },
+  functions: {
+    expRamp: { desc: "Exponential ramp between two levels over a given time. Curve shape controlled by the curve parameter (exponential coefficients, not lookup tables)." },
+    hold: { desc: "Holds output at a constant level for the specified duration." },
+  },
+  modulations: {
+    AttackTimeMod: { desc: "VoiceStartModulator chain - scales attack time per voice at note-on", scope: "per-voice" },
+    AttackLevelMod: { desc: "VoiceStartModulator chain - scales attack peak level per voice at note-on", scope: "per-voice" },
+    DecayTimeMod: { desc: "VoiceStartModulator chain - scales decay time per voice at note-on", scope: "per-voice" },
+    SustainLevelMod: { desc: "VoiceStartModulator chain - scales sustain level per voice at note-on", scope: "per-voice" },
+    ReleaseTimeMod: { desc: "VoiceStartModulator chain - scales release time per voice at note-on", scope: "per-voice" },
+  }
+};
+
+const lookup = {};
+for (const [type, entries] of Object.entries(glossary)) {
+  for (const [key, data] of Object.entries(entries)) {
+    lookup[key] = { type: type.slice(0, -1), ...data };
+  }
+}
+
+const typeClass = { parameter: "param", function: "func", modulation: "mod" };
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function highlight(code) {
+  const lines = code.split("\n");
+  return lines.map(line => {
+    if (line.trimStart().startsWith("//")) {
+      return `<span class="comment">${escapeHtml(line)}</span>`;
+    }
+    let mainPart = line;
+    let commentPart = "";
+    const commentIdx = line.indexOf("//");
+    if (commentIdx !== -1) {
+      mainPart = line.slice(0, commentIdx);
+      commentPart = `<span class="comment">${escapeHtml(line.slice(commentIdx))}</span>`;
+    }
+    let result = escapeHtml(mainPart);
+    const keys = Object.keys(lookup).sort((a, b) => b.length - a.length);
+    for (const key of keys) {
+      const cls = typeClass[lookup[key].type];
+      const re = new RegExp(`\\b(${key})\\b`, "g");
+      result = result.replace(re, `<span class="${cls}" data-key="${key}">$1</span>`);
+    }
+    result = result.replace(/\b(if|else|return|process|onNoteOn|onNoteOff)\b(?![^<]*<\/span>)/g,
+      '<span class="keyword">$1</span>');
+    return result + commentPart;
+  }).join("\n");
+}
+
+document.getElementById("code").innerHTML = highlight(code);
+
+const tooltip = document.getElementById("tooltip");
+const codeBlock = document.getElementById("code");
+
+codeBlock.addEventListener("mouseover", (e) => {
+  const span = e.target.closest("[data-key]");
+  if (!span) return;
+  const key = span.dataset.key;
+  const entry = lookup[key];
+  if (!entry) return;
+  const cls = typeClass[entry.type];
+  let html = `<div class="tt-name ${cls}">${key}</div>`;
+  html += `<div class="tt-desc">${entry.desc}</div>`;
+  const meta = [];
+  if (entry.range) meta.push(`<span>Range: ${entry.range}</span>`);
+  if (entry.default) meta.push(`<span>Default: ${entry.default}</span>`);
+  if (entry.scope) meta.push(`<span>Scope: ${entry.scope}</span>`);
+  if (meta.length) html += `<div class="tt-meta">${meta.join("")}</div>`;
+  tooltip.innerHTML = html;
+  tooltip.style.display = "block";
+});
+
+codeBlock.addEventListener("mousemove", (e) => {
+  if (tooltip.style.display === "block") {
+    const x = e.clientX + 12;
+    const y = e.clientY - 10;
+    const rect = tooltip.getBoundingClientRect();
+    tooltip.style.left = Math.min(x, window.innerWidth - 360) + "px";
+    tooltip.style.top = Math.max(4, y - (rect.height || 0)) + "px";
+  }
+});
+
+codeBlock.addEventListener("mouseout", (e) => {
+  const span = e.target.closest("[data-key]");
+  if (span) tooltip.style.display = "none";
+});
+</script>
+</body>
+</html>
