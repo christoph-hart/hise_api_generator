@@ -2326,6 +2326,7 @@ def run_merge():
 # ===================================================================
 
 PREVIEW_DIR = OUTPUT_DIR / "preview"
+WEBSITE_DIR = OUTPUT_DIR / "website"
 
 
 def strip_heading_section(text: str, heading: str) -> str:
@@ -4370,6 +4371,20 @@ def run_preview(class_filter: str = None):
             page_count += 1
 
     print(f"Preview: {page_count} page(s) generated.")
+
+    # Post-process markdown files into MDC format for Nuxt.js website
+    md_files = list(PREVIEW_DIR.glob("*.md"))
+    if md_files:
+        from postprocess_md import postprocess_file
+        WEBSITE_DIR.mkdir(parents=True, exist_ok=True)
+        changed = 0
+        for md_file in md_files:
+            dest = WEBSITE_DIR / md_file.name
+            shutil.copy2(md_file, dest)
+            if postprocess_file(dest):
+                changed += 1
+        print(f"Website: {len(md_files)} markdown file(s) copied to {WEBSITE_DIR}, "
+              f"{changed} post-processed to MDC format.")
 
 
 # ===================================================================

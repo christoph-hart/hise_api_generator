@@ -79,6 +79,8 @@ Phase 4b: LLM C++ reference authoring (LLMs writing HISEScript or C++)
        |   Output -> phase4b/ClassName/methodName.md (structured LLM reference)
        |
 python api_enrich.py merge -> output/api_reference.json
+python api_enrich.py preview -> output/preview/ (plain markdown + HTML)
+                             -> output/website/ (MDC post-processed via postprocess_md.py)
 ```
 
 ---
@@ -147,7 +149,9 @@ tools/api generator/
 │   │       ├── print.md                      # Per-method LLM reference entry
 │   │       └── ...
 │   └── output/
-│       └── api_reference.json                # Final merged output
+│       ├── api_reference.json                # Final merged output
+│       ├── preview/                          # Plain markdown + HTML previews
+│       └── website/                          # MDC-formatted markdown for Nuxt.js
 ```
 
 ---
@@ -950,8 +954,11 @@ Generates HTML preview pages from `api_reference.json`. If a class name is given
 For each class, produces:
 - `ClassName_review.html` -- raw C++ analysis (always generated for enriched classes)
 - `ClassName.html` -- user-facing userDocs view (generated only if any Phase 4a userDocs exist for the class)
+- `ClassName.md` -- plain markdown (generated only if any Phase 4a userDocs exist)
 
 Output: `enrichment/output/preview/`
+
+After generating all preview files, the command copies `.md` files to `enrichment/output/website/` and runs `postprocess_md.py` on them to convert plain markdown patterns into MDC (Markdown Components) format for the Nuxt.js documentation site. Transformations include converting method headings, parameter tables, warning blockquotes, see-also links, and common mistakes into their corresponding `::component` syntax.
 
 ### snippet_validator.py
 
