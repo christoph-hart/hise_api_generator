@@ -58,7 +58,39 @@ Sorted by severity (critical first).
 - **Observed:** The `Inverted` parameter is defined in the enum, exposed in the editor UI, and serialized, but the inversion code in `calculateBlock()` is commented out in both the table and non-table paths. The parameter has no effect on the modulation output despite being visible to users.
 - **Expected:** Either uncomment and verify the inversion code, or remove the Inverted parameter from the enum and editor to avoid user confusion.
 
+### SimpleReverb -- DryLevel parameter is vestigial (slaved to WetLevel)
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/SimpleReverb.h:99-101
+- **Observed:** In `setInternalAttribute()`, setting WetLevel (case WetLevel) also sets `parameters.dryLevel = 1.0f - newValue`. Setting DryLevel (case DryLevel) contains only `break;` - it does nothing. The DryLevel slider appears in the UI and its value is serialized, but changing it has no effect on the audio output. WetLevel fully controls both wet and dry levels.
+- **Expected:** Either make DryLevel independently functional (remove the automatic `dryLevel = 1 - wetLevel` coupling), or remove the DryLevel parameter from the enum and metadata and rename WetLevel to "Mix" to clarify that it controls the wet/dry balance.
+
+### ShapeFX -- Drive parameter is vestigial (not read in applyEffect)
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/ShapeFX.cpp:212, ShapeFX.cpp:574-665
+- **Observed:** The `Drive` parameter (index 10) is defined in the enum, stored as a member variable (`drive`), serialised in `exportAsValueTree`/`restoreFromValueTree`, and exposed in `createMetadata()` with description "Drive amount applied to the shaper input". However, in `setInternalAttribute()` the handler is `case Drive: drive = newValue; break;` with no call to `updateMode()` or `updateGain()`, and the `drive` member is never read in `applyEffect()`. The only input gain applied is via `gainer.processBlock()` which uses the `gain` member (set from the Gain parameter). Drive IS functional in the polyphonic variant PolyshapeFX where it multiplies the audio signal per-sample.
+- **Expected:** Either connect Drive to the DSP path (multiply into the signal before shaping, similar to PolyshapeFX), or remove it from the metadata to avoid user confusion. The parameter currently appears in the UI but does nothing.
+
 ## Low
+
+### Convolution -- ImpulseLength parameter is vestigial
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/Convolution.cpp:122, 147-148
+- **Observed:** The `ImpulseLength` parameter (index 3) is defined in the enum, serialised in `restoreFromValueTree`/`exportAsValueTree`, and registered in `createMetadata()` with description "Deprecated impulse length control". In `getAttribute()`, it returns a hardcoded `1.0f`. In `setInternalAttribute()`, it calls `setImpulse(sendNotificationAsync)` but stores no value - the reload uses the full buffer range from the AudioSampleProcessor. The parameter is fully vestigial. The metadata description correctly notes it as deprecated.
+- **Expected:** Remove the parameter from the enum and metadata, or keep it for serialisation backwards compatibility with a clearer note that it is a no-op.
+
+### Convolution -- Latency parameter stored but never consumed
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/Convolution.cpp:143-145; hi_dsp_library/dsp_basics/ConvolutionBase.cpp:610-621
+- **Observed:** The `Latency` parameter (index 2) is stored as `latency = (int)newValue` and triggers `setImpulse(sendNotificationAsync)`. However, `reloadInternal()` derives the head block size from `lastBlockSize` (the audio buffer size), not from the `latency` member. The `latency` member is never read in the signal path or IR reload. Additionally: (1) the metadata range is 0.0-1.0 (uninitialised default), inconsistent with the description "in samples, which must be a power of two"; (2) `jassert(isPowerOfTwo(latency))` fires on the default value of 0 in debug builds since `isPowerOfTwo(0)` returns false. The description claims it controls convolution latency but the parameter has no effect on processing.
+- **Expected:** Either wire the `latency` member into `reloadInternal()` as the head block size (replacing `lastBlockSize`), with a proper range and default, or remove the parameter if the automatic block-size-based head sizing is the intended behaviour.
 
 ### WaveSynth -- voicePitchValues incremented unconditionally when potentially null
 
