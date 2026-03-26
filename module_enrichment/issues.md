@@ -42,6 +42,22 @@ Sorted by severity (critical first).
 - **Observed:** The `EcoMode` parameter (index 10) is defined in the enum, serialized, exposed in metadata with description "Enables 16x downsampling for reduced CPU usage", and defaults to 1.0 (enabled). However, `setInternalAttribute` handles it with `case EcoMode: break; // not needed anymore...` and `getAttribute` returns a hardcoded `1.0f`. The actual control rate downsampling is now handled globally by `HISE_CONTROL_RATE_DOWNSAMPLING_FACTOR` (8x for instruments, 1x for effects), making EcoMode redundant.
 - **Expected:** Either remove the parameter from the enum and metadata, or document in the metadata description that it has no effect and downsampling is controlled globally.
 
+### GlobalTimeVariantModulator -- Inverted parameter has no effect when UseTable is enabled
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/GlobalModulators.cpp (calculateBlock table path)
+- **Observed:** In `calculateBlock()`, when `useTable` is true, the while loop uses `--numSamples` as both the loop condition and the per-sample counter, decrementing it to 0 or -1. After the loop, `invertBuffer(internalBuffer, numSamples)` is called, but `numSamples` is now <= 0, so the guard condition in `invertBuffer()` prevents execution. Inversion never applies in the table path. The non-table path works correctly because `numSamples` is not consumed before `invertBuffer()` is called.
+- **Expected:** Save `numSamples` to a local variable before the table loop, then pass the original count to `invertBuffer()`. Alternatively, restructure the loop to not consume `numSamples`.
+
+### GlobalEnvelopeModulator -- Inverted parameter is vestigial (inversion code commented out)
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/GlobalModulators.cpp (calculateBlock)
+- **Observed:** The `Inverted` parameter is defined in the enum, exposed in the editor UI, and serialized, but the inversion code in `calculateBlock()` is commented out in both the table and non-table paths. The parameter has no effect on the modulation output despite being visible to users.
+- **Expected:** Either uncomment and verify the inversion code, or remove the Inverted parameter from the enum and editor to avoid user confusion.
+
 ## Low
 
 ### WaveSynth -- voicePitchValues incremented unconditionally when potentially null
