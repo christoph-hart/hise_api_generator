@@ -244,13 +244,13 @@
       ]
     },
     "setMidPoint": {
-      "signature": "void setMidPoint(double valueForMidPoint)",
+      "signature": "void setMidPoint(var valueForMidPoint)",
       "returnType": "void",
       "description": "Sets the value that is shown in the middle position.",
       "parameters": [
         {
           "name": "valueForMidPoint",
-          "type": "double"
+          "type": "var"
         }
       ]
     },

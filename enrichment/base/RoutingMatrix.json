@@ -114,6 +114,17 @@
         }
       ]
     },
+    "setForcePeakMeters": {
+      "signature": "void setForcePeakMeters(bool shouldBeEnabled)",
+      "returnType": "void",
+      "description": "This forces the routing matrix to calculate its peak levels.",
+      "parameters": [
+        {
+          "name": "shouldBeEnabled",
+          "type": "bool"
+        }
+      ]
+    },
     "setNumChannels": {
       "signature": "void setNumChannels(int numSourceChannels)",
       "returnType": "void",
