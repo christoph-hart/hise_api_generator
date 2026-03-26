@@ -4,50 +4,14 @@
 
 ## addToMacroControl
 
-**Signature:** `undefined addToMacroControl(Integer macroIndex)`
-**Return Type:** `undefined`
-**Call Scope:** unsafe
-**Minimal Example:** `{obj}.addToMacroControl(0);`
-
-**Description:**
-Assigns this component to a macro controller slot. Sets the internal `connectedMacroIndex`.
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| macroIndex | Integer | no | The macro controller index | 0-7 |
-
-**Property Links:**
-- Equivalent: none
-- Related: set("macroControl", macroIndex), get("macroControl")
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget. The `macroControl` property is deactivated, so macro modulation has no effect.
 
 ---
 ## changed
 
-**Signature:** `undefined changed()`
-**Return Type:** `undefined`
-**Call Scope:** safe
-**Minimal Example:** `{obj}.changed();`
-
-**Description:**
-Triggers the control callback (either the custom one set via `setControlCallback` or the default `onControl` callback). Also notifies any registered value listeners.
-
-**Pitfalls:**
-- Cannot be called during `onInit` -- if called during `onInit`, it logs a console message and returns without executing.
-- If `deferControlCallback` is set, the callback is deferred to the message thread.
-- If the callback function throws an error, further script execution after the `changed()` call is aborted.
-
-**Property Links:**
-- Equivalent: none
-- Related: deferControlCallback
-
-**Interaction Notes:**
-- If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
-
-**Cross References:**
-- `ScriptFloatingTile.setControlCallback`
-- `ScriptFloatingTile.getValue`
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget with no meaningful control callback to trigger.
 
 ---
 
@@ -123,13 +87,8 @@ Returns an array of strings containing all active (non-deactivated) property IDs
 
 ## getChildComponents
 
-**Signature:** `Array getChildComponents()`
-**Return Type:** `Array`
-**Call Scope:** unsafe
-**Minimal Example:** `var children = {obj}.getChildComponents();`
-
-**Description:**
-Returns an array of ScriptComponent references for all child components (components whose `parentComponent` is set to this component). Does not include the component itself in the result.
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile wraps a built-in panel and does not support parenting other ScriptComponents.
 
 ---
 
@@ -221,17 +180,8 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 ---
 ## getValueNormalized
 
-**Signature:** `Double getValueNormalized()`
-**Return Type:** `Double`
-**Call Scope:** safe
-**Minimal Example:** `var v = {obj}.getValueNormalized();`
-
-**Description:**
-Returns the normalized value (0.0 to 1.0). Base implementation returns `getValue()` directly. Only meaningful on ScriptSlider, which maps the actual value back to the 0..1 range.
-
-**Cross References:**
-- `ScriptFloatingTile.setValueNormalized`
-- `ScriptFloatingTile.getValue`
+**Disabled:** redundant
+**Disabled Reason:** Base implementation simply returns `getValue()` directly. Only meaningful on ScriptSlider, which maps the actual value back to a 0..1 range using its configured mode.
 
 ---
 
@@ -450,45 +400,8 @@ ft.setContentData({
 
 ## setControlCallback
 
-**Signature:** `undefined setControlCallback(Function controlFunction)`
-**Return Type:** `undefined`
-**Call Scope:** unsafe
-**Minimal Example:** `{obj}.setControlCallback(onMyControl);`
-
-**Description:**
-Assigns a custom inline function as the control callback, replacing the default `onControl` handler for this component. Pass `undefined` to revert to the default `onControl` callback.
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| controlFunction | Function | no | An inline function with 2 parameters (component, value), or undefined to clear | Must be an inline function with exactly 2 parameters |
-
-**Pitfalls:**
-- The function MUST be declared with `inline function`. Regular function references are rejected with a script error.
-- Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
-- Reports an error if the script processor has a DspNetwork that is forwarding controls to parameters.
-- Passing `undefined` or empty `var()` clears the custom callback, reverting to the default `onControl` callback.
-
-**Property Links:**
-- Equivalent: none
-- Related: processorId, parameterId
-
-**Interaction Notes:**
-- If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
-
-**Cross References:**
-- `ScriptFloatingTile.changed`
-
-**Example:**
-```javascript
-inline function onMyButton(component, value)
-{
-    Console.print(component.getId() + ": " + value);
-};
-
-btn.setControlCallback(onMyButton);
-```
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget with no meaningful value changes to trigger a control callback.
 
 ---
 
@@ -608,23 +521,8 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 ---
 ## setPropertiesFromJSON
 
-**Signature:** `undefined setPropertiesFromJSON(JSON jsonData)`
-**Return Type:** `undefined`
-**Call Scope:** unsafe
-**Minimal Example:** `{obj}.setPropertiesFromJSON({"visible": false, "width": 300});`
-
-**Description:**
-Sets multiple component properties at once from a JSON object. Each key in the object is treated as a property name and its value is applied via the standard property setter. This is a convenience method equivalent to calling `set()` for each key-value pair.
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| jsonData | JSON | no | A JSON object where each key is a property name and each value is the property value | Keys must be valid property IDs for this component type |
-
-**Cross References:**
-- `ScriptFloatingTile.set`
-- `ScriptFloatingTile.get`
+**Disabled:** no-op
+**Disabled Reason:** Not registered as a direct API method on component instances. Available on the Content object as `Content.setPropertiesFromJSON(componentName, jsonData)` instead.
 
 ---
 
@@ -747,75 +645,21 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 
 ## setTooltip
 
-**Signature:** `undefined setTooltip(String tooltip)`
-**Return Type:** `undefined`
-**Call Scope:** unsafe
-**Minimal Example:** `{obj}.setTooltip("Hover text");`
-
-**Description:**
-Sets the tooltip text to display on mouse hover.
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| tooltip | String | no | The tooltip text to display on mouse hover | -- |
-
-**Property Links:**
-- Equivalent: set("tooltip", tooltip)
-- Related: get("tooltip")
+**Disabled:** no-op
+**Disabled Reason:** The `tooltip` property is deactivated on ScriptFloatingTile. Use a separate TooltipPanel floating tile for tooltip display.
 
 ---
 ## setValueNormalized
 
-**Signature:** `undefined setValueNormalized(Double normalizedValue)`
-**Return Type:** `undefined`
-**Call Scope:** safe
-**Minimal Example:** `{obj}.setValueNormalized(0.5);`
-
-**Description:**
-Sets the value using a normalized 0..1 range. The base implementation simply calls `setValue(normalizedValue)`. The behavior changes significantly for ScriptSlider, which maps the normalized 0..1 range to the slider's actual min/max range using its configured mode (linear, frequency, decibel, etc.).
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| normalizedValue | Double | no | A value in the range 0.0 to 1.0 | 0.0 to 1.0 |
-
-**Cross References:**
-- `ScriptFloatingTile.getValueNormalized`
-- `ScriptFloatingTile.setValue`
+**Disabled:** redundant
+**Disabled Reason:** Base implementation simply calls `setValue(normalizedValue)` without any range mapping. Only meaningful on ScriptSlider, which maps the 0..1 range to the slider's actual min/max using its configured mode.
 
 ---
 
 ## setValueWithUndo
 
-**Signature:** `undefined setValueWithUndo(NotUndefined newValue)`
-**Return Type:** `undefined`
-**Call Scope:** unsafe
-**Minimal Example:** `{obj}.setValueWithUndo(0.5);`
-
-**Description:**
-Sets the value through the undo manager, creating an `UndoableControlEvent`.
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| newValue | NotUndefined | no | The new value to set with undo support | Must not be a String |
-
-**Pitfalls:**
-- Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes that should be undoable.
-
-**Property Links:**
-- Equivalent: none
-- Related: useUndoManager
-
-**Interaction Notes:**
-- Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
-
-**Cross References:**
-- `ScriptFloatingTile.setValue`
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget. Undo support for value changes is not meaningful.
 
 ---
 
@@ -873,75 +717,19 @@ Sets the `visible` property with change message notification.
 
 ## updateValueFromProcessorConnection
 
-**Signature:** `undefined updateValueFromProcessorConnection()`
-**Return Type:** `undefined`
-**Call Scope:** unsafe
-**Minimal Example:** `{obj}.updateValueFromProcessorConnection();`
-
-**Description:**
-Reads the current attribute value from the connected processor (set via the `processorId` and `parameterId` properties) and calls `setValue()` with that value. Does nothing if no processor connection is established.
-
-Special parameter index values for the `parameterId` property:
-- `-2`: Reads modulation intensity from a Modulation processor
-- `-3`: Reads bypass state (1.0 if bypassed, 0.0 if not)
-- `-4`: Reads inverted bypass state (0.0 if bypassed, 1.0 if not)
-- `>= 0`: Reads the attribute at the given parameter index
-
-**Property Links:**
-- Equivalent: none
-- Related: get("processorId"), get("parameterId"), setValue(...)
-
-**Cross References:**
-- `ScriptFloatingTile.setValue`
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget. The `processorId` and `parameterId` properties are deactivated, so processor connections have no effect.
 
 ---
 
 ## getValue
 
-**Signature:** `var getValue()`
-**Return Type:** `var`
-**Call Scope:** safe
-**Minimal Example:** `var v = {obj}.getValue();`
-
-**Description:**
-Returns the current value of the floating tile. Unlike the ScriptComponent base implementation, this override is a direct field read with no `SimpleReadWriteLock` and no string assertion. The value is whatever was last set via `setValue()` or through the component's internal state.
-
-**Cross References:**
-- `ScriptFloatingTile.setValue`
-- `ScriptFloatingTile.getValueNormalized`
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget. The value has no user-facing meaning. Use `setContentData()` to configure the embedded panel instead.
 
 ---
 
 ## setValue
 
-**Signature:** `undefined setValue(NotUndefined newValue)`
-**Return Type:** `undefined`
-**Call Scope:** safe
-**Minimal Example:** `{obj}.setValue(0.5);`
-
-**Description:**
-Sets the floating tile's value. Unlike the ScriptComponent base implementation, this override is a direct field assignment with no validation, no `triggerAsyncUpdate()`, no linked-component propagation, and no value-listener notification. The value is simply stored.
-
-When the `updateAfterInit` property is `true` (the default), the component wrapper responds to value changes by triggering a complete content reload -- the entire floating tile panel is destroyed and recreated with the current JSON configuration. Set `updateAfterInit` to `false` to prevent this reload behavior.
-
-**Parameters:**
-
-| Name | Type | Forced | Description | Constraints |
-|------|------|--------|-------------|-------------|
-| newValue | NotUndefined | no | The new value to set | -- |
-
-**Pitfalls:**
-- When `updateAfterInit` is true (default), every `setValue()` call triggers a full content reload of the embedded panel. This is expensive and should not be called frequently at runtime.
-
-**Property Links:**
-- Equivalent: none
-- Related: linkedTo
-
-**Interaction Notes:**
-- Value propagation can forward to linked components through the `linkedTo` routing setup.
-
-**Cross References:**
-- `ScriptFloatingTile.getValue`
-- `ScriptFloatingTile.setContentData`
-- `ScriptFloatingTile.setValueNormalized`
-- `ScriptFloatingTile.setValueWithUndo`
+**Disabled:** no-op
+**Disabled Reason:** ScriptFloatingTile is a display-only widget. Use `setContentData()` to configure the embedded panel instead. When `updateAfterInit` is true (default), setValue triggers a full content reload which is expensive and rarely intended.

@@ -10,7 +10,7 @@ However from a workflow perspective, it behaves just like a JSON object:
 
 You can of course put these objects into a JS array or JSON object, however it's highly recommended to use one of the special data containers instead. If you do so, you will most likely need to create a single object alongside the data container and then use this as "interface object" for shuffling data in and out of the container:
 
-```javascript
+```javascript:create-interface-object
 
 const var f1 = Engine.createFixObjectFactory({
 	"myValue": 17,
@@ -50,4 +50,12 @@ obj.myValue = 90;
 const var idx2 = list.indexOf(obj);
 
 Console.print(idx2); // => -1
+```
+```json:testMetadata:create-interface-object
+{
+  "testable": true,
+  "verifyScript": [
+    {"type": "REPL", "checks": [{"expression": "idx", "value": "0"}, {"expression": "idx2", "value": "-1"}]}
+  ]
+}
 ```

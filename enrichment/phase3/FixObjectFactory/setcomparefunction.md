@@ -6,7 +6,7 @@ This is where this function comes in handy as it allows you to define different 
 2. Compare multiple properties. This can be achieved by passing up to 4 IDs separated by a comma. It will then compare all those the properties
 3. Define a custom JS function by passing in a callable object into the method. The function you pass in needs to have two parameters and must return either `-1`, `1` or `0` depending on the relation between the two objects (this is similar to `Engine.sortWithFunction()`)
 
-```javascript
+```javascript:single-property-comparator
 const var f1 = Engine.createFixObjectFactory({
 	"eventId": 0,
 	"noteNumber": 0
@@ -14,6 +14,12 @@ const var f1 = Engine.createFixObjectFactory({
 
 // This will make all indexing functions only look for the eventID
 f1.setCompareFunction("eventId");
+```
+```json:testMetadata:single-property-comparator
+{
+  "testable": false,
+  "skipReason": "No observable output; example demonstrates API call syntax only"
+}
 ```
 
 > Be aware that using the third option has a noticeable performance impact so only use this as last resort.

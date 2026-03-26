@@ -38,6 +38,22 @@ Sorted by severity (critical first).
 - **Observed:** The formula `1200.0 * log2(pitchRatio)` returns cents (1/100th of a semitone), not semitones. For a pitch ratio of 2.0, the method returns 1200.0 instead of 12.0. The inverse method `getPitchRatioFromSemitones` uses `pow(2.0, semiTones / 12.0)` which correctly operates in semitones. These two methods are not true inverses: `getPitchRatioFromSemitones(getSemitonesFromPitchRatio(2.0))` does not return 2.0.
 - **Expected:** Change the formula to `12.0 * log2(pitchRatio)` to return semitones, matching the method name and the inverse method's convention.
 
+### FixObjectStack.insert / set -- off-by-one reduces effective capacity by 1
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** FixLayoutObjects.cpp:~1325 (insert), ~1389 (set)
+- **Observed:** `insert()` clamps the position pointer with `jmin<int>(position + 1, numElements - 1)` after writing. When the stack has N-1 elements (position = N-1), the write goes to `items[N-1]` and position stays at N-1 because `jmin(N, N-1) = N-1`. The element is written but never counted by `size()`, making it invisible to `indexOf()`, `contains()`, and iteration. The method returns true despite the data being inaccessible. For a capacity-1 stack, every `insert()` produces an invisible element. `set()` uses `isPositiveAndBelow(position, numElements - 1)` which rejects when `position >= numElements - 1`, so it correctly returns false but the effective capacity is still N-1 instead of N.
+- **Expected:** Check capacity before writing: `if (position >= numElements) return false;` then increment without clamping. This makes the full capacity usable and returns false when genuinely full.
+
+### UnorderedStack.setIsEventStack -- NoteNumberAndChannel compares truthiness instead of equality
+
+- **Type:** inconsistency
+- **Severity:** high
+- **Location:** ScriptingApiObjects.h:~1796 (MCF::equals template)
+- **Observed:** The `NoteNumberAndChannel` compare mode uses `e1.getNoteNumber() && e2.getNoteNumber() && e1.getChannel() == e2.getChannel()`. The `&&` checks note number truthiness (non-zero) rather than equality. Note number 0 (C-2) never matches because `0` is falsy. Any two events with non-zero note numbers on the same channel match regardless of actual pitch.
+- **Expected:** Change to `e1.getNoteNumber() == e2.getNoteNumber() && e1.getChannel() == e2.getChannel()` for correct note-number equality comparison.
+
 ## Medium
 
 ### Buffer.decompose -- fast threshold array gated by wrong size check
@@ -680,6 +696,54 @@ Sorted by severity (critical first).
 - **Observed:** When `bufferData` is an Array, the loop only sets `ptrs[i]` when `getBuffer()` succeeds. If any array element is not a valid Buffer, `ptrs[i]` remains uninitialized (stack garbage), and `AudioSampleBuffer ab(ptrs, numChannels, numSamples)` uses the garbage pointer, causing a crash or data corruption. Additionally, `numSamples` is overwritten each iteration with the last valid Buffer's length. If Buffers have different sizes, shorter ones are read past their end.
 - **Expected:** Validate that all array elements are valid Buffers with identical sample counts before constructing the AudioSampleBuffer. Report a script error or skip invalid elements.
 
+### FixObjectStack.set -- scripting wrapper discards bool return value
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** FixLayoutObjects.cpp:~1278 (Wrapper struct)
+- **Observed:** The `set()` method returns `bool` in C++ (false when the stack is full and the object is not found), but the Wrapper struct uses `API_VOID_METHOD_WRAPPER_1` instead of `API_METHOD_WRAPPER_1`. The scripting layer wraps it as a void method, so the return value is always `undefined` from HISEScript. Users cannot detect when `set()` fails due to a full stack.
+- **Expected:** Change `API_VOID_METHOD_WRAPPER_1(Stack, set)` to `API_METHOD_WRAPPER_1(Stack, set)` so the bool return is preserved.
+
+### FixObjectStack.toBase64 / fromBase64 -- position pointer not included in serialization
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** FixLayoutObjects.cpp:~1048-1066 (inherited from Array)
+- **Observed:** `toBase64()` and `fromBase64()` are inherited from FixObjectArray and serialize only the raw memory block. The Stack's `position` pointer (which determines `size()`) is not included. After a `fromBase64()` restore, `size()` returns the pre-restore value, not the original stack's used count. A stack serialized with 5 elements and restored into an empty stack has `size() == 0` despite all 5 elements' data being present in memory.
+- **Expected:** Override `toBase64()` and `fromBase64()` in Stack to include the position value in the serialized data, or document that users must save and restore `size()` separately.
+
+### FixObjectArray.indexOf / contains -- silently returns -1/0 for non-FixObject arguments
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** FixLayoutObjects.cpp (indexOf implementation)
+- **Observed:** Passing a non-FixObject value (e.g., a plain JSON object `{"id": 5}`) to `indexOf` silently returns -1. `contains` delegates to `indexOf` and silently returns 0. No error is reported. The user has no indication that the argument type was wrong.
+- **Expected:** Report a script error when the argument is not a FixObject from the same factory layout.
+
+### FixObjectArray.copy -- silently returns 0 for non-Buffer/Array target
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** FixLayoutObjects.cpp (copy implementation)
+- **Observed:** Passing a target that is neither a Buffer nor an Array silently returns 0 with no error message. The return value 0 is indistinguishable from a legitimate failure.
+- **Expected:** Report a script error when the target is not a Buffer or Array, e.g., "copy target must be a Buffer or Array".
+
+### FixObjectArray.fill -- plain JSON object silently resets all elements instead of filling
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** FixLayoutObjects.cpp (fill implementation)
+- **Observed:** Passing a plain JSON object (e.g., `{"id": 5}`) does not fill elements with those values. The dynamic_cast to ObjectReference fails, triggering the clear branch. All elements are reset to defaults with no error or warning. The silent wrong-branch behavior is indistinguishable from an intentional clear.
+- **Expected:** Report a script error when a non-FixObject, non-undefined value is passed, to distinguish intentional clearing from accidental wrong-type input.
+
+### UnorderedStack.setIsEventStack -- EqualData constant exposed but unimplemented
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.h:~1800 (MCF::equals template, default case)
+- **Observed:** The `EqualData` constant (value 4) is exposed via `addConstant()` but has no case in the MCF compare template. It falls through to the `default` branch which hits `jassertfalse` (debug assertion) and returns `false`. In release builds, all comparisons silently return false, making `contains()`, `remove()`, and `removeIfEqual()` non-functional.
+- **Expected:** Either implement the EqualData comparison logic or remove the constant from the scripting API to prevent users from selecting a broken mode.
+
 ## Low
 
 ### Synth.removeModulator -- audio-thread error message says "Effects" instead of "Modules"
@@ -953,3 +1017,11 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiContent.cpp:~4132-4152
 - **Observed:** The `forceUseRealFile` parameter is declared in the method signature but immediately discarded via `ignoreUnused(forceUseRealFile)`. The image is always loaded through the pool/expansion handler regardless of this parameter's value. Users passing `true` expecting cache bypass get no effect and no warning.
 - **Expected:** Either implement the cache-bypass behavior or remove the parameter and deprecate the 2-argument overload in favor of a 1-argument version.
+
+### UnorderedStack.copyTo -- buffer target uses strict less-than size check
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~copyTo Buffer path
+- **Observed:** The Buffer target path checks `data.size() < b->size` (strict less-than). A buffer with exactly the same number of elements as the stack fails silently and returns false. Users would naturally create a buffer matching `size()` and expect it to work.
+- **Expected:** Change to `data.size() <= b->size` so an equal-sized buffer is accepted.
