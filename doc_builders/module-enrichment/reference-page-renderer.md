@@ -495,19 +495,197 @@ interface Chain {
 
 ---
 
+## 4. `CategoryTags.vue`
+
+Renders category tags as pill-shaped badges below the page heading. Each tag links to the corresponding anchor on the categories index page and shows a tooltip with the category description on hover.
+
+### MDC Usage
+
+```markdown
+::category-tags
+---
+tags:
+  - { name: routing, desc: "Modules that forward, distribute, or proxy signals or events across the module tree" }
+  - { name: container, desc: "Modules that hold and combine other sound generators" }
+---
+::
+```
+
+### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Array<Tag>` | Yes | Category tag definitions |
+
+```typescript
+interface Tag {
+  name: string;   // Category key from moduleList.json (e.g. "routing")
+  desc: string;   // Category description from moduleList.json
+}
+```
+
+### Category Colour Map
+
+Each category has a dedicated colour. Define these as CSS custom properties alongside the existing theme constants:
+
+```css
+:root {
+  --hise-cat-oscillator:       #f59e0b;
+  --hise-cat-sample_playback:  #d97706;
+  --hise-cat-container:        #64748b;
+  --hise-cat-sequencing:       #a78bfa;
+  --hise-cat-note_processing:  #8b5cf6;
+  --hise-cat-dynamics:         #ef4444;
+  --hise-cat-filter:           #22d3ee;
+  --hise-cat-delay:            #14b8a6;
+  --hise-cat-reverb:           #38bdf8;
+  --hise-cat-mixing:           #a1a1aa;
+  --hise-cat-input:            #4ade80;
+  --hise-cat-generator:        #34d399;
+  --hise-cat-routing:          #60a5fa;
+  --hise-cat-utility:          #737373;
+  --hise-cat-custom:           #f472b6;
+}
+```
+
+The component resolves the colour for each tag from `--hise-cat-{name}`. If the variable is not defined, fall back to `var(--hise-text-muted)`.
+
+### Display Name Mapping
+
+Category keys use snake_case internally. The component converts them to title-case display names for rendering:
+
+| Key | Display Name |
+|-----|-------------|
+| `oscillator` | Oscillator |
+| `sample_playback` | Sample Playback |
+| `container` | Container |
+| `sequencing` | Sequencing |
+| `note_processing` | Note Processing |
+| `dynamics` | Dynamics |
+| `filter` | Filter |
+| `delay` | Delay |
+| `reverb` | Reverb |
+| `mixing` | Mixing |
+| `input` | Input |
+| `generator` | Generator |
+| `routing` | Routing |
+| `utility` | Utility |
+| `custom` | Custom |
+
+Conversion rule: split on `_`, capitalise each word, join with space.
+
+### Link Destination
+
+Each tag links to the categories index page with a kebab-case anchor derived from the display name:
+
+```
+/v2/reference/audio-modules/categories#{kebab-display-name}
+```
+
+Conversion rule: take the display name (split `name` on `_`, capitalise each word, join with space), then lowercase and replace spaces with hyphens. Examples:
+
+| `name` | Display Name | Anchor |
+|--------|-------------|--------|
+| `routing` | Routing | `#routing` |
+| `sample_playback` | Sample Playback | `#sample-playback` |
+| `note_processing` | Note Processing | `#note-processing` |
+
+### Rendered Structure
+
+```html
+<div class="ct-tags">
+  <!-- Repeat per tag -->
+  <a class="ct-tag" href="/v2/reference/audio-modules/categories#{kebab-display-name}"
+     style="--ct-color: var(--hise-cat-{name})">
+    <span class="ct-dot"></span>
+    {Display Name}
+  </a>
+</div>
+
+<!-- Shared tooltip (one per component instance) -->
+<div class="ct-tooltip">{desc}</div>
+```
+
+### Tooltip Behaviour
+
+- **Trigger:** `mouseenter` on any `.ct-tag` element.
+- **Content:** The `desc` string from the tag entry.
+- **Positioning:** Fixed position, appears below the tag. Clamped to viewport edges (max 340px width).
+- **Dismiss:** `mouseleave` from the `.ct-tag` hides the tooltip.
+- **No click blocking.** The tooltip is `pointer-events: none`; the tag link remains clickable at all times.
+
+### Styles
+
+```css
+.ct-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 16px 0;
+}
+
+.ct-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--ct-color) 40%, transparent);
+  background: color-mix(in srgb, var(--ct-color) 10%, transparent);
+  color: var(--ct-color);
+  font-family: var(--hise-font-body);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.ct-tag:hover {
+  background: color-mix(in srgb, var(--ct-color) 20%, transparent);
+  border-color: color-mix(in srgb, var(--ct-color) 60%, transparent);
+}
+
+.ct-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ct-color);
+}
+
+.ct-tooltip {
+  position: fixed;
+  display: none;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 8px 12px;
+  max-width: 340px;
+  font-family: var(--hise-font-body);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--hise-text);
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+```
+
+---
+
 ## Component Registration
 
-Register all three components as global Nuxt Content MDC components in `components/content/`:
+Register all four components as global Nuxt Content MDC components in `components/content/`:
 
 ```
 components/
   content/
+    CategoryTags.vue
     SignalPath.vue
     ParameterTable.vue
     ModulationTable.vue
 ```
 
-Nuxt Content automatically maps `::signal-path` to `SignalPath.vue`, `::parameter-table` to `ParameterTable.vue`, and `::modulation-table` to `ModulationTable.vue` (kebab-case to PascalCase).
+Nuxt Content automatically maps `::category-tags` to `CategoryTags.vue`, `::signal-path` to `SignalPath.vue`, `::parameter-table` to `ParameterTable.vue`, and `::modulation-table` to `ModulationTable.vue` (kebab-case to PascalCase).
 
 ---
 
@@ -518,6 +696,7 @@ Nuxt Content automatically maps `::signal-path` to `SignalPath.vue`, `::paramete
 - Table rows have hover states for scanability.
 - The pseudo-code label makes it clear this is not executable code.
 - Colour is not the only differentiator - the legend provides text labels, and tooltips show the category in the name line.
+- Category tags use both a coloured dot and text label. Tags are rendered as `<a>` elements for keyboard accessibility and screen reader link semantics.
 
 ---
 
@@ -528,3 +707,5 @@ Nuxt Content automatically maps `::signal-path` to `SignalPath.vue`, `::paramete
 - **Long pseudo-code:** The code block scrolls horizontally. No line wrapping.
 - **Glossary key appears in a comment:** The highlighting engine skips full-line comments but will highlight keys in inline comments after `//`. This is acceptable - inline comments are rare in the pseudo-code style.
 - **Overlapping glossary keys:** Longest-first matching prevents partial matches. If two keys are substrings of each other (e.g. `Attack` and `AttackLevel`), the longer one matches first and is wrapped in a span, preventing the shorter one from matching inside it.
+- **Single category tag:** The flex container renders one tag; no special handling needed.
+- **Unknown category key:** If `--hise-cat-{name}` is not defined, the tag falls back to `var(--hise-text-muted)` for colour.

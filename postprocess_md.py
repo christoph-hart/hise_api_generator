@@ -29,6 +29,20 @@ def get_class_name_from_heading(lines):
     return ""
 
 
+def convert_h1_to_frontmatter(content):
+    """Convert '# ClassName\\n*category*\\n\\nbrief\\n' to YAML frontmatter and strip from body."""
+    m = re.match(r'^# (.+)\n\*(\w+)\*\n\n(.+)\n\n', content)
+    if not m:
+        return content
+    title = m.group(1)
+    category = m.group(2)
+    description = m.group(3)
+    frontmatter = (f"---\ntitle: {title}\ncategory: {category}\n"
+                   f"description: \"{description}\"\n---\n\n")
+    return frontmatter + content[m.end():]
+
+
+
 def convert_warning_blockquotes(content):
     """Convert > **Warning:** blockquotes to ::warning components."""
     pattern = r'^> \*\*Warning:\*\* (.+?)$'
@@ -67,97 +81,62 @@ def convert_tip_blockquotes(content):
     return "\n".join(result)
 
 
-def convert_see_also(content):
-    """Convert **See also:** lines to ::see-also components."""
-    pattern = r'^\*\*See also:\*\* (.+)$'
+def convert_see_also(content, class_name):
+    """Convert **See also:** lines with plain-text references to ::see-also components.
 
-    def replace_see_also(m):
-        line = m.group(1)
-        links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', line)
-        if not links:
-            return m.group(0)
-
-        yaml_links = []
-        for label, url in links:
-            # Check for annotation separator in label
-            if '` -- ' in label:
-                parts = label.split('` -- ', 1)
-                clean_label = parts[0].rstrip('`')
-                desc = parts[1]
-                # Fix URL if it also contains the annotation
-                if '` -- ' in url:
-                    url = url.split('` -- ')[0].rstrip('`')
-                    url = url.split('#')[0] + '#' + clean_label.split('.')[-1].lower() if '#' not in url else url
-                # Try to extract clean anchor from URL
-                if '#' in url:
-                    anchor_part = url.split('#')[1]
-                    # Clean up messy anchors
-                    anchor_part = anchor_part.split('`')[0].split(' ')[0].lower()
-                    base_path = url.split('#')[0]
-                    url = f"{base_path}#{anchor_part}"
-                yaml_links.append(
-                    f'  - {{ label: "{clean_label}", to: "{url}", desc: "{desc}" }}'
-                )
-            elif '/transporthandler#' in url or self_page_match(url, links):
-                # Internal link - extract just method name
-                method = label.split('.')[-1] if '.' in label else label
-                anchor = '#' + url.split('#')[-1] if '#' in url else url
-                yaml_links.append(f'  - {{ label: "{method}", to: "{anchor}" }}')
-            else:
-                # Check if it's a same-page link
-                if '#' in url:
-                    page_path = url.split('#')[0]
-                    anchor = url.split('#')[1]
-                    # We'll detect same-page links by checking if label starts with same class
-                    method = label.split('.')[-1] if '.' in label else label
-                    yaml_links.append(f'  - {{ label: "{label}", to: "{url}" }}')
-                else:
-                    yaml_links.append(f'  - {{ label: "{label}", to: "{url}" }}')
-
-        return "::see-also\n---\nlinks:\n" + "\n".join(yaml_links) + "\n---\n::"
-
-    return re.sub(pattern, replace_see_also, content, flags=re.MULTILINE)
-
-
-def self_page_match(url, all_links):
-    """Helper - not actually needed, we detect by URL pattern instead."""
-    return False
-
-
-def convert_see_also_smart(content, class_name):
-    """Convert **See also:** lines using class name for same-page detection."""
+    Handles two formats:
+    - Plain: ClassName.methodName
+    - Annotated: ClassName.methodName` -- description text
+    Same-class references become anchor-only links (#methodname).
+    Cross-class references link to /scripting-api/classname#methodname.
+    """
     slug = class_name.lower()
     pattern = r'^\*\*See also:\*\* (.+)$'
 
     def replace_see_also(m):
         line = m.group(1)
-        links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', line)
-        if not links:
+        # Split on comma, but not commas inside annotation text
+        # Strategy: split on ", " that is followed by a ClassName.method pattern
+        items = re.split(r',\s*(?=[A-Z]\w*\.)', line)
+        if not items:
             return m.group(0)
 
         yaml_links = []
-        for label, url in links:
-            # Check for annotation in label (cross-class with description)
-            if '` -- ' in label:
-                parts = label.split('` -- ', 1)
-                clean_label = parts[0].rstrip('`')
-                desc = parts[1].replace('"', '\\"')
-                # Clean up the URL
-                if '#' in url:
-                    base = url.split('#')[0]
-                    anchor = clean_label.split('.')[-1].lower()
-                    url = f"{base}#{anchor}"
-                yaml_links.append(
-                    f'  - {{ label: "{clean_label}", to: "{url}", desc: "{desc}" }}'
-                )
-            elif f"/{slug}#" in url:
-                # Same-page link
-                method = label.split('.')[-1] if '.' in label else label
-                anchor = '#' + url.split('#')[-1]
-                yaml_links.append(f'  - {{ label: "{method}", to: "{anchor}" }}')
+        for item in items:
+            item = item.strip().rstrip(',')
+            if not item:
+                continue
+
+            # Check for annotation: ClassName.method` -- description
+            ann_match = re.match(r'([A-Z]\w*\.\w+)`?\s*--\s*(.+)', item, re.DOTALL)
+            if ann_match:
+                ref = ann_match.group(1).strip()
+                desc = ann_match.group(2).strip().replace('"', '\\"')
+                cls, method = ref.split('.', 1)
+                if cls.lower() == slug:
+                    yaml_links.append(
+                        f'  - {{ label: "{method}", to: "#{method.lower()}", desc: "{desc}" }}'
+                    )
+                else:
+                    yaml_links.append(
+                        f'  - {{ label: "{ref}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}", desc: "{desc}" }}'
+                    )
             else:
-                # Cross-page link - keep full label
-                yaml_links.append(f'  - {{ label: "{label}", to: "{url}" }}')
+                # Plain reference: ClassName.methodName
+                ref = item.strip('` ')
+                if '.' in ref:
+                    cls, method = ref.split('.', 1)
+                    if cls.lower() == slug:
+                        yaml_links.append(f'  - {{ label: "{method}", to: "#{method.lower()}" }}')
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{ref}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}" }}'
+                        )
+                else:
+                    yaml_links.append(f'  - {{ label: "{ref}", to: "#{ref.lower()}" }}')
+
+        if not yaml_links:
+            return m.group(0)
 
         return "::see-also\n---\nlinks:\n" + "\n".join(yaml_links) + "\n---\n::"
 
@@ -216,7 +195,10 @@ def convert_method_headings(content):
         if (lines[i].startswith('### ')
                 and not lines[i].startswith('### #')  # skip anchor-only headings
                 and i + 2 < len(lines)):
-            method_name = lines[i][4:].strip()
+            raw_heading = lines[i][4:].strip()
+            # Extract plain method name from heading like `ClassName.methodName(args)`
+            sig_match = re.match(r'`?(?:\w+\s+)?(?:\w+\.)?(\w+)\(', raw_heading)
+            method_name = sig_match.group(1) if sig_match else raw_heading.strip('` ')
 
             # Check if next non-empty line is a backtick signature
             j = i + 1
@@ -303,6 +285,15 @@ def convert_method_headings(content):
     return "\n".join(result)
 
 
+def rewrite_svg_paths(content):
+    """Rewrite relative SVG image links to absolute Nuxt paths."""
+    return re.sub(
+        r'!\[([^\]]*)\]\(([^)]*\.svg)\)',
+        r'![\1](/images/v2/scripting-api/\2)',
+        content
+    )
+
+
 def fix_blank_lines_after_code_blocks(content):
     """Ensure a blank line exists after every code block closing fence.
     Without this, text immediately after ``` gets absorbed into the code block."""
@@ -319,11 +310,13 @@ def postprocess_file(filepath):
     class_name = get_class_name_from_heading(lines)
 
     # Apply transformations in order
+    content = convert_h1_to_frontmatter(content)
     content = convert_method_headings(content)
     content = convert_common_mistakes(content)
     content = convert_warning_blockquotes(content)
     content = convert_tip_blockquotes(content)
-    content = convert_see_also_smart(content, class_name)
+    content = convert_see_also(content, class_name)
+    content = rewrite_svg_paths(content)
     content = fix_blank_lines_after_code_blocks(content)
 
     if content != original:

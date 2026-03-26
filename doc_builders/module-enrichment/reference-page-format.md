@@ -32,13 +32,15 @@ type: Effect|Modulator|SoundGenerator|MidiProcessor
 subtype: MasterEffect|EnvelopeModulator|VoiceStartModulator|...
 tags: [category tags from moduleList.json]
 builderPath: b.Effects.Delay
-screenshot: /modules/moduleid.png
+screenshot: /images/v2/reference/audio-modules/moduleid.png
 cpuProfile:
   baseline: low|medium|high|very_high
   polyphonic: true|false
   scalingFactors: []
 seeAlso:
   - { id: ModuleId, type: alternative|scriptnode|ui_component|..., reason: "..." }
+  # seeAlso in frontmatter is for machine consumption (MCP server, llmRef).
+  # The rendered page uses a ::see-also MDC component in the body (see "See Also Section" below).
 commonMistakes:
   - { wrong: "...", right: "...", explanation: "..." }
 customEquivalent:
@@ -48,9 +50,14 @@ customEquivalent:
   description: "..."
 ---
 
-# Module Display Name
+::category-tags
+---
+tags:
+  - { name: category_key, desc: "Category description from moduleList.json" }
+---
+::
 
-![Module screenshot](/modules/moduleid.png)
+![Module screenshot](/images/v2/reference/audio-modules/moduleid.png)
 
 [1-2 paragraphs of overview prose. What the module does, when to use it,
 key characteristics. Written for HISEScript developers - no C++ internals.]
@@ -112,20 +119,26 @@ non-obvious behaviours, practical tips. No C++ internals.]
 
 ## See Also
 
-- **Scriptnode:** `equivalent.node` - description of the equivalent
-- **UI Component:** `FloatingTileName` - what it displays
-- **Alternative:** ModuleName - how it differs
+::see-also
+---
+links:
+  - { label: "equivalent.node", to: "/v2/reference/audio-modules/folder/moduleid", desc: "Description of the scriptnode equivalent" }
+  - { label: "FloatingTileName", to: "/v2/reference/audio-modules/folder/moduleid", desc: "What the UI component displays" }
+  - { label: "Module Name", to: "/v2/reference/audio-modules/folder/moduleid", desc: "How the alternative differs" }
+---
+::
 ```
 
 ### Section Rules
 
-- **Frontmatter** is required. All structured metadata lives here (seeAlso, cpuProfile, commonMistakes, customEquivalent).
+- **Frontmatter** is required. All structured metadata lives here (seeAlso, cpuProfile, commonMistakes, customEquivalent). The `title` field generates the page's `h1` heading automatically - do not add a `# heading` manually.
+- **Category Tags** is required. Place `::category-tags` as the first content after the frontmatter, before the screenshot. Embed the tag name and description for each category from `moduleList.json`.
 - **Overview prose** is required. 1-2 paragraphs.
 - **Signal Path** is required for all modules except containers and custom-category modules.
 - **Parameters** is required if the module has parameters.
 - **Modulation Chains** is required if the module has modulation chains. Omit the section entirely if there are none.
 - **Notes** is optional. Include only if there are non-obvious behaviours worth documenting.
-- **See Also** is required. At least 2 entries per module.
+- **See Also** is optional. Uses the `::see-also` MDC component in the body (not plain markdown). Only include entries that are closely related but non-obvious to someone unfamiliar with the HISE architecture. Do not force a minimum number of entries - omit the section entirely rather than padding with loosely related modules.
 
 ---
 
@@ -301,24 +314,68 @@ Include all modulation chains from moduleList.json that are not disabled. For di
 
 ## See Also Section
 
-The See Also section uses regular markdown (no custom component). It surfaces cross-module relationships discovered during C++ exploration.
+The See Also section uses the `::see-also` MDC component to render clickable cross-module links on the Nuxt.js docs site. It surfaces cross-module relationships discovered during C++ exploration.
 
-### Required relationship types
+### MDC format
 
-| Type | When to include | Format |
-|------|----------------|--------|
-| `scriptnode` | Module has a scriptnode equivalent | `**Scriptnode:** \`node.name\` - brief description` |
-| `ui_component` | Module has a dedicated FloatingTile | `**UI Component:** \`TileName\` - what it displays` |
-| `alternative` | Similar module with different tradeoffs | `**Alternative:** ModuleName - how it differs` |
-| `upgrade` | Newer module that replaces this one | `**Upgrade:** ModuleName - what it adds` |
+```markdown
+## See Also
 
-### Optional relationship types
+::see-also
+---
+links:
+  - { label: "Display Name", to: "/v2/reference/audio-modules/folder/moduleid", desc: "Why this module is related" }
+  - { label: "Another Module", to: "/v2/reference/audio-modules/folder/sub/moduleid", desc: "Relationship description" }
+---
+::
+```
+
+### Deriving the body component from frontmatter
+
+The `::see-also` body component is derived directly from the frontmatter `seeAlso` array. For each frontmatter entry `{ id: ModuleId, type: ..., reason: "..." }`:
+
+1. Take the `id` field (e.g., `SendFX`, `GlobalEnvelopeModulator`)
+2. Look up that ID in `moduleList.json` to get its `type` and `subtype`
+3. Map the type/subtype to a folder path using the table below
+4. Construct the URL: `/v2/reference/audio-modules/{folder}/{id-in-lowercase}`
+5. Use `reason` as the `desc` field
+
+**Do NOT resolve URLs from display names** - always use the module ID from the frontmatter. This ensures links stay correct as new modules are added.
+
+### Type/subtype to folder mapping
+
+| type / subtype | Folder path |
+|---|---|
+| `SoundGenerator/*` | `sound-generators` |
+| `MidiProcessor/*` | `midi-processors` |
+| `Modulator/EnvelopeModulator` | `modulators/envelope` |
+| `Modulator/TimeVariantModulator` | `modulators/time-variant` |
+| `Modulator/VoiceStartModulator` | `modulators/voice-start` |
+| `Effect/MasterEffect` | `effects/master` |
+| `Effect/MonophonicEffect` | `effects/monophonic` |
+| `Effect/VoiceEffect` | `effects/polyphonic` |
+
+### Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `label` | yes | Human-readable display name (can differ from module ID) |
+| `to` | yes | URL derived from the frontmatter `seeAlso[].id` using the scheme above |
+| `desc` | yes | Copied from the frontmatter `seeAlso[].reason` - the relationship reason, not the type label |
+
+### Relationship types to include
 
 | Type | When to include |
 |------|----------------|
+| `scriptnode` | Module has a scriptnode equivalent |
+| `ui_component` | Module has a dedicated FloatingTile |
+| `alternative` | Similar module with different tradeoffs |
+| `upgrade` | Newer module that replaces this one |
 | `source` / `target` | Producer/consumer relationship (e.g. GlobalModulatorContainer -> GlobalVoiceStartModulator) |
 | `companion` | Commonly used together |
 | `disambiguation` | Easily confused with another module |
+
+The relationship type is NOT included in the `desc` field - only the reason text. The type is stored in the frontmatter `seeAlso` array for machine consumption.
 
 ### Discovery
 
@@ -358,7 +415,7 @@ Pre-synthesised text blob for the MCP server. Written as a separate field in the
 
 ### Procedure
 
-1. **Set up frontmatter.** Extract moduleId, prettyName, type, subtype, category, builderPath from moduleList.json. Set screenshot path.
+1. **Set up frontmatter and category tags.** Extract moduleId, prettyName, type, subtype, category, builderPath from moduleList.json. Set screenshot path. Add `::category-tags` block after the `# h1` heading with the module's categories and their descriptions from moduleList.json.
 
 2. **Write overview prose.** 1-2 paragraphs explaining what the module does. Use the exploration markdown's Signal Path section as source. Strip all C++ internals per the translation table.
 
@@ -382,12 +439,13 @@ Pre-synthesised text blob for the MCP server. Written as a separate field in the
 
 Before declaring the reference page complete:
 
+- [ ] **Category tags:** `::category-tags` block is present after the `# h1` heading with correct tag names and descriptions from moduleList.json.
 - [ ] **Parameter accountability:** Every parameter from moduleList.json appears in the parameter table. Parameters referenced in pseudo-code have glossary entries.
 - [ ] **Modulation chain coverage:** Every non-disabled modulation chain is in the modulation table. Chains referenced in pseudo-code have glossary entries.
 - [ ] **Pseudo-code completeness:** The main signal path from input to output is covered. All high-importance nodes from the graph JSON are represented.
 - [ ] **Glossary consistency:** Every highlighted term in the pseudo-code has a glossary entry. No glossary entry is unused. No collisions between categories.
 - [ ] **No C++ leakage:** No C++ class names, method names, type names, assertions, or source references in prose, pseudo-code, or table descriptions.
-- [ ] **See Also completeness:** At least 2 entries. Scriptnode equivalent included if one exists. UI component included if a FloatingTile exists.
+- [ ] **See Also relevance:** Entries are closely related and non-obvious. No padding with loosely related modules. Scriptnode equivalent included if one exists. UI component included if a FloatingTile exists. Empty list is acceptable.
 - [ ] **Prose quality:** British English. No marketing language. No filler. Descriptions lead with what the module does, not how it is implemented.
 - [ ] **Exploration incorporation:** All relevant findings from the exploration markdown are reflected in the page (prose, pseudo-code, notes, or see-also).
 
