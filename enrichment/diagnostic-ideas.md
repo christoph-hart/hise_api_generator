@@ -107,6 +107,14 @@ Sorted by priority (high first).
 - **Rationale:** `refreshContextMenuState` silently does nothing if `attachToContextMenu` has not been called first. A parse-time check could warn when `refreshContextMenuState` is called on a broadcaster that was never seen to have `attachToContextMenu` called.
 - **Sketch:** Track broadcasters that have `attachToContextMenu` called in the same scope. When `refreshContextMenuState` is called, check whether the broadcaster variable was previously seen with `attachToContextMenu`. Emit a warning if not.
 
+### ComplexGroupManager.isNoteNumberMapped -- requires createNoteMap before use
+
+- **Category:** timeline-dependency
+- **Priority:** medium
+- **Methods involved:** isNoteNumberMapped, createNoteMap
+- **Rationale:** `isNoteNumberMapped` requires `createNoteMap()` to have been called first for the same layer. Without it, a script error is thrown at runtime. A parse-time check could catch this common setup mistake earlier by verifying that `createNoteMap` was called on the same ComplexGroupManager variable before any `isNoteNumberMapped` call.
+- **Sketch:** When `isNoteNumberMapped` is called on a ComplexGroupManager variable, scan earlier statements in the same scope for `createNoteMap` on the same variable with a matching layer argument. Warn if no prior call is found.
+
 ### Synth.attachNote -- requires setFixNoteOnAfterNoteOff before use
 
 - **Category:** timeline-dependency
@@ -114,6 +122,22 @@ Sorted by priority (high first).
 - **Methods involved:** attachNote, setFixNoteOnAfterNoteOff
 - **Rationale:** `attachNote` requires `setFixNoteOnAfterNoteOff(true)` to have been called first. Without it, a runtime script error is thrown: "You must call setFixNoteOnAfterNoteOff() before calling this method". A parse-time check could catch this by verifying that `setFixNoteOnAfterNoteOff` was called in the same script scope before any `attachNote` call.
 - **Sketch:** When `attachNote` is encountered, scan the onInit scope (or the current script's preceding statements) for a `setFixNoteOnAfterNoteOff` call. Emit a warning if not found.
+
+### Sampler.setActiveGroup / setMultiGroupIndex / getRRGroupsForMessage -- requires enableRoundRobin(false)
+
+- **Category:** timeline-dependency
+- **Priority:** medium
+- **Methods involved:** enableRoundRobin, setActiveGroup, setActiveGroupForEventId, setMultiGroupIndex, setMultiGroupIndexForEventId, getRRGroupsForMessage, refreshRRMap
+- **Rationale:** Six methods require `enableRoundRobin(false)` to have been called first. Calling them with RR enabled produces a runtime error, but this is a common setup mistake that could be caught at parse time.
+- **Sketch:** When any of `setActiveGroup`, `setActiveGroupForEventId`, `setMultiGroupIndex`, `setMultiGroupIndexForEventId`, `getRRGroupsForMessage`, or `refreshRRMap` is called on a Sampler variable, scan earlier statements in the same scope for `enableRoundRobin(false)` on the same variable. Warn if no prior call is found.
+
+### Sampler.getRRGroupsForMessage -- requires refreshRRMap() first
+
+- **Category:** timeline-dependency
+- **Priority:** medium
+- **Methods involved:** getRRGroupsForMessage, refreshRRMap
+- **Rationale:** `getRRGroupsForMessage` requires `refreshRRMap()` to have been called after loading a sample map. Without it, the internal RR map may be stale or empty, producing incorrect group counts. The error is silent -- no runtime message.
+- **Sketch:** When `getRRGroupsForMessage` is called, scan for a preceding `refreshRRMap()` call on the same Sampler variable. Warn if not found.
 
 ### Synth.setClockSpeed -- invalid clock speed value
 
@@ -186,6 +210,14 @@ Sorted by priority (high first).
 - **Methods involved:** setValueCallback, setData
 - **Rationale:** `setValueCallback` silently does nothing if called before `setData()`. The callback requires the data model's Values tree, which does not exist until `setData()` creates it. No error message or warning is produced -- the callback simply never fires.
 - **Sketch:** When `setValueCallback` is called on a dynamic container variable, scan earlier statements in the same scope for `setData` on the same variable. Warn if no prior call is found.
+
+### Timer.startTimer -- missing setTimerCallback
+
+- **Category:** timeline-dependency
+- **Priority:** low
+- **Methods involved:** startTimer, setTimerCallback
+- **Rationale:** Calling `startTimer` without a prior `setTimerCallback` causes the timer to auto-stop on the first tick with no warning. The internal `timerCallback()` checks the WeakCallbackHolder validity and calls `stopTimer()` if invalid. The user sees no error -- the timer just silently stops.
+- **Sketch:** When `startTimer` is called on a Timer variable, scan earlier statements in the same scope for `setTimerCallback` on the same variable. Warn if no prior call is found.
 
 ---
 

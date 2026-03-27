@@ -56,6 +56,14 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### ChildSynth.setEffectChainOrder -- doPoly parameter is ignored
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4512
+- **Observed:** The `doPoly` parameter is accepted in the method signature but hardcoded to `false` when calling `EffectProcessorChain::setFXOrder()`. The call reads `fx->setFXOrder(false, { p.x, p.y }, chainOrder)` instead of `fx->setFXOrder(doPoly, { p.x, p.y }, chainOrder)`. This means only master effect order can be changed, regardless of what the caller passes for `doPoly`.
+- **Expected:** Pass the `doPoly` parameter through: `fx->setFXOrder(doPoly, { p.x, p.y }, chainOrder)`.
+
 ### Buffer.decompose -- fast threshold array gated by wrong size check
 
 - **Type:** missing-validation
@@ -744,7 +752,127 @@ Sorted by severity (critical first).
 - **Observed:** The `EqualData` constant (value 4) is exposed via `addConstant()` but has no case in the MCF compare template. It falls through to the `default` branch which hits `jassertfalse` (debug assertion) and returns `false`. In release builds, all comparisons silently return false, making `contains()`, `remove()`, and `removeIfEqual()` non-functional.
 - **Expected:** Either implement the EqualData comparison logic or remove the constant from the scripting API to prevent users from selecting a broken mode.
 
+### ComplexGroupManager.setGroupVolume -- silently ignored on non-Custom layers
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (setGroupVolume -> ComplexGroupManager::setGroupVolume -> CustomLayer cast)
+- **Observed:** `setGroupVolume()` internally casts the target layer to `CustomLayer*`. On non-Custom LogicType layers, this cast returns null and the gain value is silently discarded. No script error or console warning is produced.
+- **Expected:** Validate the layer's LogicType before the cast. If not Custom, call `reportScriptError()` with a message indicating that `setGroupVolume` only works on Custom layers.
+
+### ChildSynth.addGlobalModulator -- silent return on invalid globalMod argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4470
+- **Observed:** If `globalMod` is not a ScriptingModulator (fails the `dynamic_cast<ScriptingModulator*>`), the method silently returns undefined without reporting any error. The user has no indication that the argument type was wrong.
+- **Expected:** Report a script error when the `globalMod` argument is not a ScriptingModulator, e.g., "globalMod must be a Modulator reference from a GlobalModulatorContainer".
+
+### ChildSynth.addModulator -- silent return on invalid type name
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4480
+- **Observed:** If `typeName` does not match any known modulator C++ class name, `ModuleHandler::addModule` fails silently and returns undefined. No error message indicates that the type name was invalid.
+- **Expected:** Report a script error when the type name does not match a known modulator type, e.g., "Unknown modulator type: [typeName]".
+
+### ChildSynth.addStaticGlobalModulator -- silent return on invalid timeVariantMod argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4475
+- **Observed:** If `timeVariantMod` is not a ScriptingModulator (fails the `dynamic_cast<ScriptingModulator*>`), the method silently returns undefined without reporting any error. Same root cause as `addGlobalModulator`.
+- **Expected:** Report a script error when the `timeVariantMod` argument is not a ScriptingModulator.
+
+### ChildSynth.asSampler -- creates Sampler wrapping nullptr on invalid object
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4530
+- **Observed:** If the underlying ChildSynth object reference is invalid (synth was deleted or null), `asSampler()` still creates a `ScriptingSampler` wrapping nullptr rather than returning undefined. The user receives a Sampler handle that will crash or produce confusing errors on subsequent calls.
+- **Expected:** Check object validity before creating the Sampler wrapper. Return undefined if the synth reference is invalid.
+
+### ChildSynth.getChildSynthByIndex -- silent invalid return on non-Chain type
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4500
+- **Observed:** If the wrapped synth is not a Chain type (SynthGroup or SynthChain), the `dynamic_cast<Chain*>` fails and the method returns an invalid ChildSynth wrapping nullptr without any error message. Subsequent calls on the returned handle produce confusing errors unrelated to the original lookup failure.
+- **Expected:** Report a script error when the synth is not a Chain type, e.g., "getChildSynthByIndex can only be called on Chain types (SynthGroup or SynthChain)".
+
+### ChildSynth.getModulatorChain -- no validation of chain index type
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~4490
+- **Observed:** Passing an invalid chain index (e.g., 0 for MidiProcessor) may succeed the `dynamic_cast<Modulator*>` but give a handle to the wrong chain type. The error message only triggers when the cast fails completely. No validation checks that the requested index corresponds to a ModulatorChain.
+- **Expected:** Validate that the chain index corresponds to a ModulatorChain (indices 1 or 2) before the cast, or at minimum verify the returned processor type is a ModulatorChain.
+
+### Effect.addModulator -- silently returns undefined for invalid type name
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~3600
+- **Observed:** If `typeName` does not match any known modulator C++ class name, `ModuleHandler::addModule` fails silently and the method returns `undefined`. No error message indicates that the type name was invalid. Same root cause as `ChildSynth.addModulator`.
+- **Expected:** Report a script error when the type name does not match a known modulator type, e.g., "Unknown modulator type: [typeName]".
+
+### Effect.addGlobalModulator / addStaticGlobalModulator -- silently returns undefined for non-Modulator input
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~3624, ~3650
+- **Observed:** Both `addGlobalModulator` and `addStaticGlobalModulator` use `dynamic_cast<ScriptingModulator*>(globalMod.getObject())` to validate the second parameter. If the cast fails (e.g., a plain object, string, or wrong scripting API handle is passed), the method silently returns `undefined` without reporting any error. The user has no indication that the call had no effect.
+- **Expected:** Report a script error when the second parameter is not a valid Modulator handle, e.g., "globalMod must be a Modulator reference".
+
+### Effect.restoreState -- does not fire attribute change notifications
+
+- **Type:** missing-notification
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (restoreState implementation)
+- **Observed:** `restoreState()` restores all parameter values from a Base64 string but does not fire attribute change notifications. Broadcasters attached via `attachToModuleParameter()` do not fire after a `restoreState()` call, leaving connected listeners out of sync with the restored state.
+- **Expected:** Either fire attribute change notifications for all restored parameters, or document the limitation prominently. Current workaround: manually re-set each parameter via `fx.setAttribute(fx.Param, fx.getAttribute(fx.Param))` to trigger the notification chain.
+
+### SlotFX.setEffect -- invalid effect name silently clears slot
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~3740-3755
+- **Observed:** When `setEffect()` is called with an effect name not in the module list, the C++ `SlotFX::setEffect()` clears the slot and returns `false`. However, the scripting wrapper (`ScriptingSlotFX::setEffect`) ignores this return value and unconditionally wraps `getCurrentEffect()` -- returning an `Effect` handle to EmptyFX. The caller receives a valid-looking Effect object with no indication that the requested effect was not found.
+- **Expected:** Check the return value of `slot->setEffect()`. If false, call `reportScriptError()` with the invalid name, or at minimum return an undefined/null value instead of wrapping EmptyFX.
+
+### Modulator.getGlobalModulatorId -- returns empty string silently for non-global modulators
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2960
+- **Observed:** When called on a modulator whose type name does not start with "Global", the method returns an empty string without reporting any error. Other type-restricted methods on Modulator (e.g., connectToGlobalModulator) report a script error for incompatible modulator types. The silent empty-string return is inconsistent and indistinguishable from a valid but unnamed global modulator.
+- **Expected:** Report a script error when the modulator is not a global type, e.g., "getGlobalModulatorId() only works on global receiver modulators", consistent with connectToGlobalModulator.
+
+### Modulator.setMatrixProperties -- silently does nothing for non-MatrixModulator types
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2950
+- **Observed:** When called on a modulator that is not a MatrixModulator instance, the dynamic_cast fails and the method silently does nothing. No error is reported. Other type-restricted methods on Modulator (e.g., connectToGlobalModulator, exportScriptControls) report script errors for incompatible modulator types.
+- **Expected:** Report a script error when the modulator is not a MatrixModulator, e.g., "setMatrixProperties() only works on MatrixModulator instances".
+
+### Modulator bracket-read -- getAssignedValue always returns 1.0
+
+- **Type:** code-smell
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2972-2975
+- **Observed:** `getAssignedValue()` (the bracket-read operator implementation from AssignableObject) is hardcoded to `return 1.0; // Todo...` regardless of the parameter index. Reading a parameter via bracket syntax `var x = mod["Frequency"]` always returns 1.0 instead of the actual attribute value. The bracket-write operator correctly delegates to `setAttribute()`, so the asymmetry is unexpected.
+- **Expected:** Should delegate to `mod->getAttribute(index)` to return the actual attribute value, symmetric with the bracket-write operator.
+
 ## Low
+
+### ChildSynth.getRoutingMatrix -- missing checkValidObject guard
+
+- **Type:** missing-validation
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~4534
+- **Observed:** `getRoutingMatrix()` creates a `ScriptRoutingMatrix` wrapping `synth.get()` without first calling `checkValidObject()`. If the synth reference is invalid (null or deleted), this creates a RoutingMatrix wrapping nullptr. The user gets no error from `getRoutingMatrix()` itself; subsequent calls on the returned matrix will fail with unrelated error messages.
+- **Expected:** Add `if (checkValidObject())` guard before creating the ScriptRoutingMatrix, consistent with all other methods on this class.
 
 ### Synth.removeModulator -- audio-thread error message says "Effects" instead of "Modules"
 
@@ -1025,3 +1153,91 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiObjects.cpp:~copyTo Buffer path
 - **Observed:** The Buffer target path checks `data.size() < b->size` (strict less-than). A buffer with exactly the same number of elements as the stack fails silently and returns false. Users would naturally create a buffer matching `size()` and expect it to work.
 - **Expected:** Change to `data.size() <= b->size` so an equal-sized buffer is accepted.
+
+### Sampler.isMicPositionPurged -- returns false silently for out-of-range mic indices
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp (ScriptingApiSampler::isMicPositionPurged)
+- **Observed:** Out-of-range `micIndex` values silently return false instead of reporting an error. The return value is indistinguishable from a legitimately unpurged mic position. The user has no indication that the index was invalid.
+- **Expected:** Validate `micIndex` against `0..getNumMicPositions()-1` and report a script error for out-of-range values.
+
+### Sampler.purgeSampleSelection -- wrong error message
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApi.cpp:~4505
+- **Observed:** The error message says "purgeMicPosition()" instead of "purgeSampleSelection()" when the sampler handle is invalid.
+- **Expected:** Change the error message to "purgeSampleSelection()".
+
+### Sampler.purgeSampleSelection -- null pointer dereference before null check
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~4500-4509
+- **Observed:** The sampler pointer `s` is dereferenced at line 4502 (`s->getNumSounds()` in `ensureStorageAllocated`) before the null check at line 4505 (`if (s == nullptr)`). If the Sampler handle is invalid, this causes undefined behavior (crash). Additionally, the error message says "purgeMicPosition()" instead of "purgeSampleSelection()".
+- **Expected:** Move the null check before the first use of `s`. Fix the error message to say "purgeSampleSelection()".
+
+### Sample.duplicateSample -- missing objectExists() check
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2670
+- **Observed:** `duplicateSample()` does not call `objectExists()` before accessing `sound->getData()`. If the underlying sound was removed, `sound` is null and the method dereferences it, causing undefined behavior. Other Sample methods (get, set, deleteSample, replaceAudioFile) check `objectExists()` first.
+- **Expected:** Add `if (!objectExists()) { reportScriptError("Sound does not exist"); RETURN_IF_NO_THROW(nullptr); }` at the top of the method.
+
+### Sample.loadIntoBufferArray -- missing objectExists() check
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2623
+- **Observed:** `loadIntoBufferArray()` does not call `objectExists()` before accessing `sound->getNumMultiMicSamples()`. If the underlying sound was removed, `sound` is null and the method dereferences it. Other Sample methods check `objectExists()` first.
+- **Expected:** Add `if (!objectExists()) { reportScriptError("Sound does not exist"); RETURN_IF_NO_THROW(var()); }` at the top of the method.
+
+### Sample.replaceAudioFile -- execution continues after reportScriptError for channel validation
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2780, 2784, 2796
+- **Observed:** After `reportScriptError("channel length mismatch: ...")` at line 2780, `reportScriptError("Invalid channel data at index ...")` at line 2784, and `reportScriptError("Invalid channel data at index ...")` at line 2796, execution continues without a return statement. In non-throwing builds, this proceeds with null channel pointers or inconsistent buffer lengths, leading to undefined behavior in `setDataToReferTo`.
+- **Expected:** Add `RETURN_IF_NO_THROW(false);` after each `reportScriptError` call in the channel validation loop.
+
+### Sample.setFromJSON -- silently ignores non-object input
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2560-2576
+- **Observed:** When the `object` parameter is not a DynamicObject (e.g., an array, string, number), the `if (auto dyn = object.getDynamicObject())` check fails and the method silently returns without modifying any properties or reporting an error.
+- **Expected:** Report a script error when the input is not a JSON object, e.g., "setFromJSON expects a JSON object".
+
+### Sample.refersToSameSample -- typo in error message
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~2823
+- **Observed:** The error message reads "refersToSampleSample: otherSample parameter is not a sample object" -- "SampleSample" instead of "SameSample".
+- **Expected:** Change to "refersToSameSample: otherSample parameter is not a sample object".
+
+### Sample.getId -- no bounds checking on property index
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~2723-2726
+- **Observed:** `getId(int id)` directly indexes into `sampleIds[id]` without checking that `id` is within `0..sampleIds.size()-1`. An out-of-range index accesses out-of-bounds memory in the juce::Array, which may crash or return garbage.
+- **Expected:** Validate that `id >= 0 && id < sampleIds.size()` and report a script error for out-of-range values.
+
+### SlotFX.swap -- silently returns false for HardcodedSwappableEffect targets
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~3760-3780
+- **Observed:** The `swap()` method checks `dynamic_cast<SlotFX*>` on the other slot's underlying processor. If the other slot wraps a `HardcodedSwappableEffect` (which also implements `HotswappableProcessor` and is a valid SlotFX script handle), the cast fails and swap silently returns false without an error message. The user has no indication that the swap did not occur.
+- **Expected:** Either support swapping between SlotFX and HardcodedSwappableEffect types, or report a script error when the target is not a plain SlotFX module, e.g., "swap only works between SlotFX module instances".
+
+### SlotFX.setBypassed -- declared but never registered or implemented
+
+- **Type:** code-smell
+- **Severity:** low
+- **Location:** ScriptingApiObjects.h:~2120
+- **Observed:** `setBypassed(bool)` is declared in the ScriptingSlotFX class header with a Doxygen comment, but has no implementation in any .cpp file, no Wrapper struct entry, and no ADD_API_METHOD registration. The Doxygen parser picks it up and includes it in auto-generated API docs, but it cannot be called from HiseScript. Users attempting `slot.setBypassed(true)` get a confusing "method not found" error.
+- **Expected:** Either remove the dead declaration from the header, or implement and register it (delegating to the wrapped effect's `setSoftBypass`).
