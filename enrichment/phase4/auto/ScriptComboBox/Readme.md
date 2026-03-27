@@ -40,22 +40,27 @@ The four colour properties map to specific visual roles:
 
 ## Common Mistakes
 
-- **Wrong:** `cb.setValue(0)` to select the first item
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `cb.setValue(0)` to select the first item
   **Right:** `cb.setValue(1)`
   *ScriptComboBox uses 1-based indexing. Value 0 means "nothing selected" and shows placeholder text.*
 
-- **Wrong:** `cb.set("items", "A,B,C")`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `cb.set("items", "A,B,C")`
   **Right:** `cb.set("items", "A\nB\nC")`
   *Items must be separated by newlines, not commas. Comma-separated text appears as a single item.*
 
-- **Wrong:** Using `value` directly as an array index
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `value` directly as an array index
   **Right:** `array[parseInt(value) - 1]`
   *Combo box values arrive as 1-based floats in callbacks. Convert to integer and subtract 1 for 0-based array access.*
 
-- **Wrong:** Populating with `addItem()` without clearing first
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Populating with `addItem()` without clearing first
   **Right:** `cb.set("items", ""); cb.addItem(...)`
   *The Interface Designer may have left stale items in the property. Clear before rebuilding.*
 
-- **Wrong:** Saving dynamic file lists in presets
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Saving dynamic file lists in presets
   **Right:** `cb.set("saveInPreset", false)`
   *File-scanned item lists differ between machines. Persist the file reference or processor state instead.*

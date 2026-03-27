@@ -12,4 +12,4 @@ Activates table mode and configures table-wide behaviour. Must be called in onIn
 | `CallbackOnSliderDrag` | bool | true | If true, slider cells fire callbacks during drag; if false, only on release |
 | `SliderRangeIdSet` | String | `"scriptnode"` | Which property name set to use for slider range values |
 
-> **Warning:** When `MultiColumnMode` is enabled, `setValue()` accepts a `[column, row]` array to select a specific cell programmatically. The column index refers to the column's position in the `setTableColumns()` array (0-based), not a column ID string.
+> [!Warning:$WARNING_TO_BE_REPLACED$] When `MultiColumnMode` is enabled, `setValue()` accepts a `[column, row]` array to select a specific cell programmatically. The column index refers to the column's position in the `setTableColumns()` array (0-based), not a column ID string.

@@ -250,11 +250,4 @@ When FM is disabled but CarrierIndex is set to a valid child index, that child i
 
 Unison voices receive randomised start offsets (up to ~10 ms) to prevent phase cancellation when multiple copies of the same waveform play simultaneously. The gain of each unison voice is compensated using equal-power scaling (divided by the square root of the voice count) to maintain consistent overall volume.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Container", to: "/v2/reference/audio-modules/sound-generators/synthchain", desc: "Simple container that sums children independently. Use when children do not need shared modulation, FM, or unison." }
----
-::
+**See also:** $MODULES.SynthChain$ -- Simple container that sums children independently. Use when children do not need shared modulation, FM, or unison.

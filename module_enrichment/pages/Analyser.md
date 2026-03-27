@@ -67,11 +67,4 @@ Setting PreviewType to Nothing does not explicitly disable the buffer write - th
 
 The BufferSize parameter can be changed at runtime. For the spectrum analyser, larger buffers provide finer frequency resolution at the cost of higher display latency. For the oscilloscope and goniometer, the default of 8192 samples is typically sufficient.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "AudioAnalyser", to: "/v2/reference/floating-tiles/audioanalyser", desc: "FloatingTile that renders the goniometer, oscilloscope, or spectrum analyser visualisation from this module's display buffer" }
----
-::
+**See also:** [AudioAnalyser](/v2/reference/floating-tiles/audioanalyser) -- FloatingTile that renders the goniometer, oscilloscope, or spectrum analyser visualisation from this module's display buffer

@@ -183,12 +183,4 @@ If the loaded audio file is shorter than one FFT frame at the current GrainSize,
 
 Grain playback speed is determined by the ratio between the host sample rate and the file's sample rate. It is not affected by voice pitch - all voices play grains at the same rate regardless of note number.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Polyshape FX", to: "/v2/reference/audio-modules/effects/polyphonic/polyshapefx", desc: "Another polyphonic effect with per-voice processing, but applies waveshaping rather than granular synthesis" }
-  - { label: "Convolution", to: "/v2/reference/audio-modules/effects/master/convolution", desc: "Also loads an audio file for processing, but applies it as an impulse response rather than decomposing it into noise grains" }
----
-::
+**See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect with per-voice processing, but applies waveshaping rather than granular synthesis, $MODULES.Convolution$ -- Also loads an audio file for processing, but applies it as an impulse response rather than decomposing it into noise grains

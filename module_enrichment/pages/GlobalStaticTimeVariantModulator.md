@@ -129,13 +129,4 @@ When disconnected (no source selected), the modulator returns 1.0 (pass-through 
 
 This module is often confused with the Global Time Variant Modulator. The key difference: this module freezes the source value at note-on (per-voice, constant), while the Global Time Variant Modulator continuously tracks the source (monophonic, changing). Choose this module when you want each note to capture a different snapshot of a shared modulation source.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Global Modulator Container", to: "/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer", desc: "hosts the source time-variant modulator" }
-  - { label: "Global Time Variant Modulator", to: "/v2/reference/audio-modules/modulators/time-variant/globaltimevariantmodulator", desc: "continuously tracks the same source type in real time (monophonic)" }
-  - { label: "Global Voice Start Modulator", to: "/v2/reference/audio-modules/modulators/voice-start/globalvoicestartmodulator", desc: "also a voice-start consumer, but reads from voice-start sources (velocity, key number) rather than time-variant sources (LFO)" }
----
-::
+**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source time-variant modulator, $MODULES.GlobalTimeVariantModulator$ -- continuously tracks the same source type in real time (monophonic), $MODULES.GlobalVoiceStartModulator$ -- also a voice-start consumer, but reads from voice-start sources (velocity, key number) rather than time-variant sources (LFO)

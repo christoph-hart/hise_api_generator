@@ -19,9 +19,9 @@ Adds an entire module's state to the user preset system. When user presets are s
 - Calling this method with the same module ID again silently replaces the previous registration without any console message. Only the initial registration produces a "Added X to user preset system" console message.
 
 **Cross References:**
-- `Engine.createUserPresetHandler`
-- `Engine.saveUserPreset`
-- `Engine.loadUserPreset`
+- `$API.Engine.createUserPresetHandler$`
+- `$API.Engine.saveUserPreset$`
+- `$API.Engine.loadUserPreset$`
 
 ## allNotesOff
 
@@ -38,7 +38,7 @@ Sends an all-notes-off message at the next audio buffer. This does not immediate
 None.
 
 **Cross References:**
-- `Synth.allNotesOff`
+- `$API.Synth.allNotesOff$`
 
 ## clearMidiFilePool
 
@@ -58,8 +58,8 @@ None.
 - This method is a complete no-op in exported plugins (guarded by `USE_BACKEND`). Calling it in a compiled plugin has no effect and produces no error or warning.
 
 **Cross References:**
-- `Engine.clearSampleMapPool`
-- `Engine.rebuildCachedPools`
+- `$API.Engine.clearSampleMapPool$`
+- `$API.Engine.rebuildCachedPools$`
 
 ## clearSampleMapPool
 
@@ -79,8 +79,8 @@ None.
 - This method is a complete no-op in exported plugins (guarded by `USE_BACKEND`). Calling it in a compiled plugin has no effect and produces no error or warning.
 
 **Cross References:**
-- `Engine.clearMidiFilePool`
-- `Engine.rebuildCachedPools`
+- `$API.Engine.clearMidiFilePool$`
+- `$API.Engine.rebuildCachedPools$`
 
 ## clearUndoHistory
 
@@ -97,9 +97,9 @@ Clears the undo history, removing all stored undoable actions. Throws a script e
 None.
 
 **Cross References:**
-- `Engine.undo`
-- `Engine.redo`
-- `Engine.performUndoAction`
+- `$API.Engine.undo$`
+- `$API.Engine.redo$`
+- `$API.Engine.performUndoAction$`
 
 ## compressJSON
 
@@ -119,8 +119,8 @@ Converts a JSON object to its string representation, compresses it using zstd co
 | object | JSON | no | The JSON object to compress. | Must be a valid JSON-serializable value. |
 
 **Cross References:**
-- `Engine.uncompressJSON`
-- `Engine.dumpAsJSON`
+- `$API.Engine.uncompressJSON$`
+- `$API.Engine.dumpAsJSON$`
 
 **Example:**
 ```javascript:compress-uncompress-roundtrip
@@ -159,7 +159,7 @@ Copies the given text string to the system clipboard. This wraps the JUCE `Syste
 | textToCopy | String | no | The text to copy to the clipboard. | -- |
 
 **Cross References:**
-- `Engine.getClipboardContent`
+- `$API.Engine.getClipboardContent$`
 
 ## createAndRegisterAudioFile
 
@@ -179,10 +179,10 @@ Creates a `ScriptAudioFile` object and registers it at the given slot index so i
 | index | Integer | no | The slot index to register the audio file in. | Zero-based index. |
 
 **Cross References:**
-- `Engine.createAndRegisterSliderPackData`
-- `Engine.createAndRegisterTableData`
-- `Engine.createAndRegisterRingBuffer`
-- `Engine.getComplexDataReference`
+- `$API.Engine.createAndRegisterSliderPackData$`
+- `$API.Engine.createAndRegisterTableData$`
+- `$API.Engine.createAndRegisterRingBuffer$`
+- `$API.Engine.getComplexDataReference$`
 
 ## createAndRegisterSliderPackData
 
@@ -202,10 +202,10 @@ Creates a `ScriptSliderPackData` object and registers it at the given slot index
 | index | Integer | no | The slot index to register the slider pack data in. | Zero-based index. |
 
 **Cross References:**
-- `Engine.createAndRegisterAudioFile`
-- `Engine.createAndRegisterTableData`
-- `Engine.createAndRegisterRingBuffer`
-- `Engine.getComplexDataReference`
+- `$API.Engine.createAndRegisterAudioFile$`
+- `$API.Engine.createAndRegisterTableData$`
+- `$API.Engine.createAndRegisterRingBuffer$`
+- `$API.Engine.getComplexDataReference$`
 
 ## createAndRegisterTableData
 
@@ -225,10 +225,10 @@ Creates a `ScriptTableData` object and registers it at the given slot index so i
 | index | Integer | no | The slot index to register the table data in. | Zero-based index. |
 
 **Cross References:**
-- `Engine.createAndRegisterAudioFile`
-- `Engine.createAndRegisterSliderPackData`
-- `Engine.createAndRegisterRingBuffer`
-- `Engine.getComplexDataReference`
+- `$API.Engine.createAndRegisterAudioFile$`
+- `$API.Engine.createAndRegisterSliderPackData$`
+- `$API.Engine.createAndRegisterRingBuffer$`
+- `$API.Engine.getComplexDataReference$`
 
 ## createBroadcaster
 
@@ -255,11 +255,11 @@ Creates a broadcaster that can send messages to attached listeners. The `default
 | args | Array or Object | Argument definitions: an array of argument name strings, or a JSON object mapping argument names to default values. |
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.sendAsyncMessage`
-- `Broadcaster.attachToComponentValue`
-- `Broadcaster.attachToComponentProperties`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.sendAsyncMessage$`
+- `$API.Broadcaster.attachToComponentValue$`
+- `$API.Broadcaster.attachToComponentProperties$`
 
 **Example:**
 ```javascript:create-broadcaster-with-listeners
@@ -311,7 +311,7 @@ Creates or retrieves a scriptnode DSP network with the given ID. The script proc
 - Calling this on a script processor that is not a `DspNetwork::Holder` (e.g., a plain Script Processor without scriptnode support) produces a script error "Not available on this script processor". Only Script FX and Script Synth modules that implement the `DspNetwork::Holder` interface can create DSP networks.
 
 **Cross References:**
-- `Engine.getDspNetworkReference`
+- `$API.Engine.getDspNetworkReference$`
 
 ## createBeatportManager
 
@@ -345,8 +345,8 @@ Returns the current maximum processing block size in samples. This is the larges
 None.
 
 **Cross References:**
-- `Engine.getSampleRate`
-- `Engine.setMaximumBlockSize`
+- `$API.Engine.getSampleRate$`
+- `$API.Engine.setMaximumBlockSize$`
 
 ## getClipboardContent
 
@@ -363,7 +363,7 @@ Returns the current text content of the system clipboard as a string. This wraps
 None.
 
 **Cross References:**
-- `Engine.copyToClipboard`
+- `$API.Engine.copyToClipboard$`
 
 ## createBackgroundTask
 
@@ -383,7 +383,7 @@ Creates a background task object that can execute heavyweight functions on a sep
 | name | String | no | The name of the background thread (used for debugging/profiling). | -- |
 
 **Cross References:**
-- `Engine.renderAudio`
+- `$API.Engine.renderAudio$`
 
 ## createBXLicenser
 
@@ -403,8 +403,8 @@ None.
 - Calling this method without the `HISE_INCLUDE_BX_LICENSER` preprocessor flag enabled throws a script error at runtime. This flag must be set in the project's extra definitions before export.
 
 **Cross References:**
-- `Engine.createLicenseUnlocker`
-- `Engine.createNKSManager`
+- `$API.Engine.createLicenseUnlocker$`
+- `$API.Engine.createNKSManager$`
 
 ## createAndRegisterRingBuffer
 
@@ -424,10 +424,10 @@ Creates a `ScriptRingBuffer` object and registers it at the given slot index so 
 | index | Integer | no | The slot index to register the ring buffer in. | Zero-based index. |
 
 **Cross References:**
-- `Engine.createAndRegisterAudioFile`
-- `Engine.createAndRegisterSliderPackData`
-- `Engine.createAndRegisterTableData`
-- `Engine.getComplexDataReference`
+- `$API.Engine.createAndRegisterAudioFile$`
+- `$API.Engine.createAndRegisterSliderPackData$`
+- `$API.Engine.createAndRegisterTableData$`
+- `$API.Engine.getComplexDataReference$`
 
 ## createErrorHandler
 
@@ -444,7 +444,7 @@ Creates a `ScriptErrorHandler` object that can react to initialization errors an
 None.
 
 **Cross References:**
-- `Engine.showErrorMessage`
+- `$API.Engine.showErrorMessage$`
 
 ## createExpansionHandler
 
@@ -461,8 +461,8 @@ Creates and activates the expansion handler, which provides scripting access to 
 None.
 
 **Cross References:**
-- `Engine.getExpansionList`
-- `Engine.setCurrentExpansion`
+- `$API.Engine.getExpansionList$`
+- `$API.Engine.setCurrentExpansion$`
 
 ## createFFT
 
@@ -479,7 +479,7 @@ Creates an FFT (Fast Fourier Transform) object for performing frequency-domain a
 None.
 
 **Cross References:**
-- `Engine.createAndRegisterRingBuffer`
+- `$API.Engine.createAndRegisterRingBuffer$`
 
 ## createFixObjectFactory
 
@@ -528,9 +528,9 @@ Console.print(point.x); // 1.5
 ```
 
 **Cross References:**
-- `FixObjectFactory.create`
-- `FixObjectFactory.createArray`
-- `FixObjectFactory.createStack`
+- `$API.FixObjectFactory.create$`
+- `$API.FixObjectFactory.createArray$`
+- `$API.FixObjectFactory.createStack$`
 
 ## createGlobalScriptLookAndFeel
 
@@ -550,7 +550,7 @@ None.
 - Multiple script processors can access the same global LAF instance. Registering a drawing function in one processor overwrites any previous registration for that function name made by another processor. The last registration wins with no warning.
 
 **Cross References:**
-- `Content.createLocalLookAndFeel`
+- `$API.Content.createLocalLookAndFeel$`
 
 ## createLicenseUnlocker
 
@@ -567,7 +567,7 @@ Creates a reference to the script license manager (copy protection system). The 
 None.
 
 **Cross References:**
-- `Engine.getProjectInfo`
+- `$API.Engine.getProjectInfo$`
 
 ## createMacroHandler
 
@@ -584,8 +584,8 @@ Creates a macro handler that provides scripting access to HISE's macro control s
 None.
 
 **Cross References:**
-- `Engine.setFrontendMacros`
-- `Engine.getMacroName`
+- `$API.Engine.setFrontendMacros$`
+- `$API.Engine.getMacroName$`
 
 ## createMessageHolder
 
@@ -602,8 +602,8 @@ Creates a storage object for MIDI message events. A `ScriptingMessageHolder` wra
 None.
 
 **Cross References:**
-- `Engine.renderAudio`
-- `Message`
+- `$API.Engine.renderAudio$`
+- `$API.Message$`
 
 ## createMidiAutomationHandler
 
@@ -620,8 +620,8 @@ Creates a MIDI automation handler object that provides script-level access to th
 None.
 
 **Cross References:**
-- `Engine.isControllerUsedByAutomation`
-- `Engine.createUserPresetHandler`
+- `$API.Engine.isControllerUsedByAutomation$`
+- `$API.Engine.createUserPresetHandler$`
 
 ## createMidiList
 
@@ -638,7 +638,7 @@ Creates a MIDI list object -- a fixed-size array of 128 integer values (one per 
 None.
 
 **Cross References:**
-- `MidiList`
+- `$API.MidiList$`
 
 ## createModulationMatrix
 
@@ -661,7 +661,7 @@ Creates a modulation matrix object that manages dynamic modulation routing using
 - If the `containerId` does not match any `GlobalModulatorContainer` in the module tree, the constructor of `ScriptModulationMatrix` will fail to find the container. The behavior depends on the internal validation of the `ScriptModulationMatrix` constructor.
 
 **Cross References:**
-- `ScriptModulationMatrix`
+- `$API.ScriptModulationMatrix$`
 
 ## createNKSManager
 
@@ -681,7 +681,7 @@ None.
 - Throws a script error at runtime if `HISE_INCLUDE_NKS_SDK` is not defined in the build configuration. There is no way to check at script level whether NKS support is compiled in before calling this method.
 
 **Cross References:**
-- `Engine.createBXLicenser`
+- `$API.Engine.createBXLicenser$`
 
 **Related Preprocessors:**
 `HISE_INCLUDE_NKS_SDK`
@@ -704,7 +704,7 @@ Creates a neural network object with the given string identifier. The `ScriptNeu
 | id | String | no | A unique identifier for the neural network instance | -- |
 
 **Cross References:**
-- `ScriptNeuralNetwork`
+- `$API.ScriptNeuralNetwork$`
 
 ## createThreadSafeStorage
 
@@ -721,7 +721,7 @@ Creates a thread-safe storage container that enables safe data exchange between 
 None.
 
 **Cross References:**
-- `ScriptThreadSafeStorage`
+- `$API.ScriptThreadSafeStorage$`
 
 ## createTimerObject
 
@@ -738,7 +738,7 @@ Creates a timer object that provides periodic callback execution at a configurab
 None.
 
 **Cross References:**
-- `TimerObject`
+- `$API.TimerObject$`
 
 ## createTransportHandler
 
@@ -755,9 +755,9 @@ Creates a transport handler object that provides callback-based access to host t
 None.
 
 **Cross References:**
-- `TransportHandler`
-- `Engine.getPlayHead`
-- `Engine.getHostBpm`
+- `$API.TransportHandler$`
+- `$API.Engine.getPlayHead$`
+- `$API.Engine.getHostBpm$`
 
 ## createUnorderedStack
 
@@ -774,7 +774,7 @@ Creates an unordered stack data structure that can hold up to 128 float numbers.
 None.
 
 **Cross References:**
-- `Engine.createMidiList`
+- `$API.Engine.createMidiList$`
 
 ## createUserPresetHandler
 
@@ -791,10 +791,10 @@ Creates a user preset handler object that provides scripting access to the user 
 None.
 
 **Cross References:**
-- `Engine.loadUserPreset`
-- `Engine.saveUserPreset`
-- `Engine.getCurrentUserPresetName`
-- `Engine.addModuleStateToUserPreset`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.saveUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
+- `$API.Engine.addModuleStateToUserPreset$`
 
 ## decodeBase64ValueTree
 
@@ -817,8 +817,8 @@ Decodes a Base64-encoded ValueTree (such as a HISE snippet) and returns its cont
 - Returns an empty string (not an error) when the input cannot be decoded by any of the three strategies. There is no way to distinguish between "successfully decoded an empty tree" and "all decoding attempts failed" from the return value alone.
 
 **Cross References:**
-- `Engine.compressJSON`
-- `Engine.uncompressJSON`
+- `$API.Engine.compressJSON$`
+- `$API.Engine.uncompressJSON$`
 
 ## doubleToString
 
@@ -839,8 +839,8 @@ Returns a string representation of the given double value with the specified num
 | digits | Integer | no | The number of decimal places to include. | 0 or positive integer. |
 
 **Cross References:**
-- `Engine.intToHexString`
-- `Engine.getTextForValue`
+- `$API.Engine.intToHexString$`
+- `$API.Engine.getTextForValue$`
 
 ## dumpAsJSON
 
@@ -864,8 +864,8 @@ Exports a JSON object to a file. If `fileName` is an absolute path, writes to th
 - Only DynamicObjects (JSON objects) are accepted. Passing an Array causes a script error, even though arrays are valid JSON. To export an array, wrap it in an object: `Engine.dumpAsJSON({"data": myArray}, "file.json")`.
 
 **Cross References:**
-- `Engine.loadFromJSON`
-- `Engine.compressJSON`
+- `$API.Engine.loadFromJSON$`
+- `$API.Engine.compressJSON$`
 
 **Example:**
 ```javascript:dump-and-load-json
@@ -940,10 +940,10 @@ Returns a scripting reference to a complex data object (Table, SliderPack, Audio
 - The error message for invalid `dataType` values ("Must be Table, SliderPack, AudioFile or DisplayBuffer") does not mention `"FilterCoefficients"`, even though it is accepted by the validation.
 
 **Cross References:**
-- `Engine.createAndRegisterTableData`
-- `Engine.createAndRegisterSliderPackData`
-- `Engine.createAndRegisterAudioFile`
-- `Engine.createAndRegisterRingBuffer`
+- `$API.Engine.createAndRegisterTableData$`
+- `$API.Engine.createAndRegisterSliderPackData$`
+- `$API.Engine.createAndRegisterAudioFile$`
+- `$API.Engine.createAndRegisterRingBuffer$`
 
 **Example:**
 ```javascript:cross-module-table-access
@@ -978,7 +978,7 @@ Returns the downsampling factor used for the modulation signal (control rate). T
 None.
 
 **Cross References:**
-- `Engine.getSampleRate`
+- `$API.Engine.getSampleRate$`
 
 ## getCpuUsage
 
@@ -996,8 +996,8 @@ Returns the current CPU usage of the audio engine as a percentage value in the r
 None.
 
 **Cross References:**
-- `Engine.getMemoryUsage`
-- `Engine.getNumVoices`
+- `$API.Engine.getMemoryUsage$`
+- `$API.Engine.getNumVoices$`
 
 ## getCurrentUserPresetName
 
@@ -1018,10 +1018,10 @@ None.
 - Returns only the filename without directory path. If presets in different subdirectories share the same name, this method cannot distinguish between them. Use `Engine.getUserPresetList()` to get full relative paths if disambiguation is needed.
 
 **Cross References:**
-- `Engine.loadUserPreset`
-- `Engine.getUserPresetList`
-- `Engine.loadNextUserPreset`
-- `Engine.loadPreviousUserPreset`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.getUserPresetList$`
+- `$API.Engine.loadNextUserPreset$`
+- `$API.Engine.loadPreviousUserPreset$`
 
 ## getDecibelsForGainFactor
 
@@ -1041,7 +1041,7 @@ Converts a linear gain factor to decibels. A gain of 1.0 returns 0.0 dB, a gain 
 | gainFactor | Number | yes | The linear gain factor to convert. | Typically 0.0 to 1.0 for attenuation, > 1.0 for boost. 0.0 returns -100.0 dB. |
 
 **Cross References:**
-- `Engine.getGainFactorForDecibels`
+- `$API.Engine.getGainFactorForDecibels$`
 
 ## getDeviceResolution
 
@@ -1059,7 +1059,7 @@ Returns the full screen resolution of the current device as an array with four e
 None.
 
 **Cross References:**
-- `Engine.getDeviceType`
+- `$API.Engine.getDeviceType$`
 
 ## getDeviceType
 
@@ -1087,8 +1087,8 @@ None.
 | `"iPhoneAUv3"` | Running on an iPhone as an AUv3 plugin. |
 
 **Cross References:**
-- `Engine.getDeviceResolution`
-- `Engine.getOS`
+- `$API.Engine.getDeviceResolution$`
+- `$API.Engine.getOS$`
 
 ## getDspNetworkReference
 
@@ -1112,7 +1112,7 @@ Returns a reference to a DSP network owned by another script processor. This all
 - If the `processorId` does not match any `DspNetwork::Holder` processor, the method silently returns `undefined` with no error message. Only a wrong `id` on a found processor produces a script error. Check the return value with `isDefined()` if the processor might not exist.
 
 **Cross References:**
-- `Engine.createDspNetwork`
+- `$API.Engine.createDspNetwork$`
 
 ## getExpansionList
 
@@ -1129,9 +1129,9 @@ Returns an array of `Expansion` references representing all currently available 
 None.
 
 **Cross References:**
-- `Engine.createExpansionHandler`
-- `Engine.setCurrentExpansion`
-- `ExpansionHandler.getExpansionList`
+- `$API.Engine.createExpansionHandler$`
+- `$API.Engine.setCurrentExpansion$`
+- `$API.ExpansionHandler.getExpansionList$`
 
 ## getExtraDefinitionsInBackend
 
@@ -1151,7 +1151,7 @@ None.
 - In compiled plugins, this method silently returns an empty object (`{}`) rather than returning the definitions that were active at compile time. The "InBackend" suffix in the method name hints at this, but users may still expect the compile-time definitions to be available. Use `Engine.isHISE()` to guard calls if needed.
 
 **Cross References:**
-- `Engine.isHISE`
+- `$API.Engine.isHISE$`
 
 ## getFilterModeList
 
@@ -1189,7 +1189,7 @@ Returns a `FilterModes` object containing named constants for all available filt
 None.
 
 **Cross References:**
-- `Effect.setAttribute`
+- `$API.Effect.setAttribute$`
 
 **Example:**
 ```javascript:filter-mode-lookup
@@ -1223,9 +1223,9 @@ Converts a MIDI note number to its corresponding frequency in Hertz using the st
 | midiNumber | Number | yes | The MIDI note number to convert. | Typically 0-127, but not range-checked. |
 
 **Cross References:**
-- `Engine.getMidiNoteName`
-- `Engine.getMidiNoteFromName`
-- `Engine.getPitchRatioFromSemitones`
+- `$API.Engine.getMidiNoteName$`
+- `$API.Engine.getMidiNoteFromName$`
+- `$API.Engine.getPitchRatioFromSemitones$`
 
 ## getGainFactorForDecibels
 
@@ -1245,7 +1245,7 @@ Converts a decibel value to a linear gain factor. Uses the standard formula `pow
 | decibels | Number | yes | The decibel value to convert to a linear gain factor. | Values at or below -100 dB return 0.0. |
 
 **Cross References:**
-- `Engine.getDecibelsForGainFactor`
+- `$API.Engine.getDecibelsForGainFactor$`
 
 ## getGlobalPitchFactor
 
@@ -1262,7 +1262,7 @@ Returns the current global pitch factor in semitones. The internal storage is a 
 None.
 
 **Cross References:**
-- `Engine.setGlobalPitchFactor`
+- `$API.Engine.setGlobalPitchFactor$`
 
 ## getGlobalRoutingManager
 
@@ -1279,8 +1279,8 @@ Returns a `GlobalRoutingManager` scripting reference that provides access to glo
 None.
 
 **Cross References:**
-- `GlobalRoutingManager.getCable`
-- `GlobalRoutingManager.connectToOSC`
+- `$API.GlobalRoutingManager.getCable$`
+- `$API.GlobalRoutingManager.connectToOSC$`
 
 **Example:**
 ```javascript:global-routing-cable
@@ -1313,9 +1313,9 @@ Returns the current BPM (beats per minute) of the host or the manually set BPM o
 None.
 
 **Cross References:**
-- `Engine.setHostBpm`
-- `Engine.createTransportHandler`
-- `Engine.getMilliSecondsForTempo`
+- `$API.Engine.setHostBpm$`
+- `$API.Engine.createTransportHandler$`
+- `$API.Engine.getMilliSecondsForTempo$`
 
 ## getLatencySamples
 
@@ -1332,7 +1332,7 @@ Returns the plugin's latency in samples as reported to the host. The default val
 None.
 
 **Cross References:**
-- `Engine.setLatencySamples`
+- `$API.Engine.setLatencySamples$`
 
 ## getLorisManager
 
@@ -1375,8 +1375,8 @@ Returns the name of the macro at the given 1-based index (1 through 8). The macr
 - Uses 1-based indexing (1-8), not 0-based. Passing 0 reports "Illegal Macro Index".
 
 **Cross References:**
-- `Engine.setFrontendMacros`
-- `Engine.createMacroHandler`
+- `$API.Engine.setFrontendMacros$`
+- `$API.Engine.createMacroHandler$`
 
 ## getMasterPeakLevel
 
@@ -1399,7 +1399,7 @@ Returns the current peak volume level (0.0 to 1.0) for the given output channel.
 - Any channel value other than 0 silently returns the right channel level. There is no bounds checking or error for invalid channel indices (e.g., passing 5 returns the right channel level without warning).
 
 **Cross References:**
-- `Engine.getNumPluginChannels`
+- `$API.Engine.getNumPluginChannels$`
 
 ## getMemoryUsage
 
@@ -1416,8 +1416,8 @@ Returns the total memory usage of all loaded samples in megabytes (MB). This inc
 None.
 
 **Cross References:**
-- `Engine.getCpuUsage`
-- `Engine.getNumVoices`
+- `$API.Engine.getCpuUsage$`
+- `$API.Engine.getNumVoices$`
 
 ## getMidiNoteFromName
 
@@ -1441,8 +1441,8 @@ Converts a MIDI note name string (e.g., `"C3"` for middle C) to its correspondin
 - Returns -1 for unrecognized names without any console warning. The caller must check for -1.
 
 **Cross References:**
-- `Engine.getMidiNoteName`
-- `Engine.getFrequencyForMidiNoteNumber`
+- `$API.Engine.getMidiNoteName$`
+- `$API.Engine.getFrequencyForMidiNoteNumber$`
 
 ## getMidiNoteName
 
@@ -1462,8 +1462,8 @@ Converts a MIDI note number (0-127) to its note name string. Middle C (note 60) 
 | midiNumber | Integer | no | The MIDI note number to convert. | 0-127 |
 
 **Cross References:**
-- `Engine.getMidiNoteFromName`
-- `Engine.getFrequencyForMidiNoteNumber`
+- `$API.Engine.getMidiNoteFromName$`
+- `$API.Engine.getFrequencyForMidiNoteNumber$`
 
 ## getMilliSecondsForQuarterBeats
 
@@ -1483,10 +1483,10 @@ Converts a duration expressed in quarter beats to milliseconds using the current
 | quarterBeats | Number | yes | The duration in quarter beats to convert. | Any positive number. |
 
 **Cross References:**
-- `Engine.getMilliSecondsForQuarterBeatsWithTempo`
-- `Engine.getSamplesForQuarterBeats`
-- `Engine.getQuarterBeatsForMilliSeconds`
-- `Engine.getHostBpm`
+- `$API.Engine.getMilliSecondsForQuarterBeatsWithTempo$`
+- `$API.Engine.getSamplesForQuarterBeats$`
+- `$API.Engine.getQuarterBeatsForMilliSeconds$`
+- `$API.Engine.getHostBpm$`
 
 ## getMilliSecondsForQuarterBeatsWithTempo
 
@@ -1507,9 +1507,9 @@ Converts a duration expressed in quarter beats to milliseconds using an explicit
 | bpm | Double | no | The tempo in beats per minute to use for conversion. | Must be positive. |
 
 **Cross References:**
-- `Engine.getMilliSecondsForQuarterBeats`
-- `Engine.getSamplesForQuarterBeatsWithTempo`
-- `Engine.getQuarterBeatsForMilliSecondsWithTempo`
+- `$API.Engine.getMilliSecondsForQuarterBeats$`
+- `$API.Engine.getSamplesForQuarterBeatsWithTempo$`
+- `$API.Engine.getQuarterBeatsForMilliSecondsWithTempo$`
 
 ## getMilliSecondsForSamples
 
@@ -1529,8 +1529,8 @@ Converts a sample count to milliseconds using the current sample rate. The formu
 | samples | Number | yes | The number of samples to convert. | Any non-negative number. |
 
 **Cross References:**
-- `Engine.getSamplesForMilliSeconds`
-- `Engine.getSampleRate`
+- `$API.Engine.getSamplesForMilliSeconds$`
+- `$API.Engine.getSampleRate$`
 
 ## getMilliSecondsForTempo
 
@@ -1550,9 +1550,9 @@ Returns the duration in milliseconds for the given tempo subdivision index at th
 | tempoIndex | Number | yes | Index into the TempoSyncer::Tempo enum. | 0-18 (standard), or 0-23 with `HISE_USE_EXTENDED_TEMPO_VALUES`. |
 
 **Cross References:**
-- `Engine.getTempoName`
-- `Engine.getHostBpm`
-- `Engine.getSamplesForMilliSeconds`
+- `$API.Engine.getTempoName$`
+- `$API.Engine.getHostBpm$`
+- `$API.Engine.getSamplesForMilliSeconds$`
 
 ## getName
 
@@ -1569,8 +1569,8 @@ Returns the product name as defined in the project settings. In the HISE IDE (ba
 None.
 
 **Cross References:**
-- `Engine.getVersion`
-- `Engine.getProjectInfo`
+- `$API.Engine.getVersion$`
+- `$API.Engine.getProjectInfo$`
 
 ## getNumPluginChannels
 
@@ -1587,8 +1587,8 @@ Returns the number of output channels configured for the plugin, which is the co
 None.
 
 **Cross References:**
-- `Engine.getBufferSize`
-- `Engine.getSampleRate`
+- `$API.Engine.getBufferSize$`
+- `$API.Engine.getSampleRate$`
 
 ## getNumVoices
 
@@ -1605,8 +1605,8 @@ Returns the total number of currently active (sounding) voices across all synthe
 None.
 
 **Cross References:**
-- `Engine.getCpuUsage`
-- `Engine.getMemoryUsage`
+- `$API.Engine.getCpuUsage$`
+- `$API.Engine.getMemoryUsage$`
 
 ## getOS
 
@@ -1623,9 +1623,9 @@ Returns the current operating system as a short string identifier. The value is 
 None.
 
 **Cross References:**
-- `Engine.getDeviceType`
-- `Engine.getSystemStats`
-- `Engine.isPlugin`
+- `$API.Engine.getDeviceType$`
+- `$API.Engine.getSystemStats$`
+- `$API.Engine.isPlugin$`
 
 ## getPitchRatioFromSemitones
 
@@ -1645,8 +1645,8 @@ Converts a semitone offset to a pitch ratio using the formula `2^(semitones/12)`
 | semiTones | Number | yes | The semitone offset to convert. | Any number. Typical range: -12 to 12. |
 
 **Cross References:**
-- `Engine.getSemitonesFromPitchRatio`
-- `Engine.getFrequencyForMidiNoteNumber`
+- `$API.Engine.getSemitonesFromPitchRatio$`
+- `$API.Engine.getFrequencyForMidiNoteNumber$`
 
 ## getPlayHead
 
@@ -1666,8 +1666,8 @@ None.
 - [BUG] The returned object is empty because the property-population code in `MainController::setHostBpm()` (lines 1707-1720) is entirely commented out. All properties (`bpm`, `isPlaying`, `ppqPosition`, etc.) are undefined on the returned object. Use `Engine.createTransportHandler()` or `Engine.getHostBpm()` instead.
 
 **Cross References:**
-- `Engine.createTransportHandler`
-- `Engine.getHostBpm`
+- `$API.Engine.createTransportHandler$`
+- `$API.Engine.getHostBpm$`
 
 ## getPreloadMessage
 
@@ -1684,8 +1684,8 @@ Returns the current sample preload status message. During sample loading, this c
 None.
 
 **Cross References:**
-- `Engine.getPreloadProgress`
-- `Engine.setPreloadMessage`
+- `$API.Engine.getPreloadProgress$`
+- `$API.Engine.setPreloadMessage$`
 
 ## getPreloadProgress
 
@@ -1702,8 +1702,8 @@ Returns the current sample preload progress as a value from 0.0 to 1.0. Returns 
 None.
 
 **Cross References:**
-- `Engine.getPreloadMessage`
-- `Engine.setPreloadMessage`
+- `$API.Engine.getPreloadMessage$`
+- `$API.Engine.setPreloadMessage$`
 
 ## getProjectInfo
 
@@ -1748,8 +1748,8 @@ None.
 | LicensedEmail | String | Licensed user email (empty if copy protection not enabled) |
 
 **Cross References:**
-- `Engine.getName`
-- `Engine.getVersion`
+- `$API.Engine.getName$`
+- `$API.Engine.getVersion$`
 
 **Example:**
 ```javascript:project-info-display
@@ -1788,10 +1788,10 @@ Converts a duration in milliseconds to quarter beats using the current host BPM 
 | milliSeconds | Number | yes | Duration in milliseconds to convert. | Any positive number. |
 
 **Cross References:**
-- `Engine.getQuarterBeatsForMilliSecondsWithTempo`
-- `Engine.getMilliSecondsForQuarterBeats`
-- `Engine.getQuarterBeatsForSamples`
-- `Engine.getHostBpm`
+- `$API.Engine.getQuarterBeatsForMilliSecondsWithTempo$`
+- `$API.Engine.getMilliSecondsForQuarterBeats$`
+- `$API.Engine.getQuarterBeatsForSamples$`
+- `$API.Engine.getHostBpm$`
 
 ## getQuarterBeatsForMilliSecondsWithTempo
 
@@ -1812,9 +1812,9 @@ Converts a duration in milliseconds to quarter beats using an explicit BPM value
 | bpm | Number | no | Tempo in beats per minute. | Positive number. 0.0 defaults to 120 internally. |
 
 **Cross References:**
-- `Engine.getQuarterBeatsForMilliSeconds`
-- `Engine.getMilliSecondsForQuarterBeatsWithTempo`
-- `Engine.getQuarterBeatsForSamplesWithTempo`
+- `$API.Engine.getQuarterBeatsForMilliSeconds$`
+- `$API.Engine.getMilliSecondsForQuarterBeatsWithTempo$`
+- `$API.Engine.getQuarterBeatsForSamplesWithTempo$`
 
 ## getQuarterBeatsForSamples
 
@@ -1834,10 +1834,10 @@ Converts a sample count to quarter beats using the current host BPM and sample r
 | samples | Number | yes | Number of audio samples to convert. | Any positive number. |
 
 **Cross References:**
-- `Engine.getQuarterBeatsForSamplesWithTempo`
-- `Engine.getSamplesForQuarterBeats`
-- `Engine.getQuarterBeatsForMilliSeconds`
-- `Engine.getHostBpm`
+- `$API.Engine.getQuarterBeatsForSamplesWithTempo$`
+- `$API.Engine.getSamplesForQuarterBeats$`
+- `$API.Engine.getQuarterBeatsForMilliSeconds$`
+- `$API.Engine.getHostBpm$`
 
 ## getQuarterBeatsForSamplesWithTempo
 
@@ -1858,9 +1858,9 @@ Converts a sample count to quarter beats using an explicit BPM value and the cur
 | bpm | Number | no | Tempo in beats per minute. | Positive number. 0.0 defaults to 120 internally. |
 
 **Cross References:**
-- `Engine.getQuarterBeatsForSamples`
-- `Engine.getSamplesForQuarterBeatsWithTempo`
-- `Engine.getQuarterBeatsForMilliSecondsWithTempo`
+- `$API.Engine.getQuarterBeatsForSamples$`
+- `$API.Engine.getSamplesForQuarterBeatsWithTempo$`
+- `$API.Engine.getQuarterBeatsForMilliSecondsWithTempo$`
 
 ## getRegexMatches
 
@@ -1885,7 +1885,7 @@ Returns an array of all regex matches found in the input string. Uses C++ `std::
 - Each loop iteration appends ALL sub-matches (full match + capture groups), not just the full match. A pattern with N capture groups produces N+1 entries per match occurrence.
 
 **Cross References:**
-- `Engine.matchesRegex`
+- `$API.Engine.matchesRegex$`
 
 ## getSampleFilesFromDirectory
 
@@ -1909,7 +1909,7 @@ Iterates the given subdirectory of the project's Samples folder and returns an a
 - Returns an empty array in compiled (frontend) plugins with no error or warning. Code relying on this method will silently produce no results in exported plugins.
 
 **Cross References:**
-- `Engine.loadAudioFilesIntoPool`
+- `$API.Engine.loadAudioFilesIntoPool$`
 
 ## getSampleRate
 
@@ -1926,9 +1926,9 @@ Returns the current audio sample rate in Hz as reported by the main synthesiser 
 (None.)
 
 **Cross References:**
-- `Engine.getSamplesForMilliSeconds`
-- `Engine.getMilliSecondsForSamples`
-- `Engine.getBufferSize`
+- `$API.Engine.getSamplesForMilliSeconds$`
+- `$API.Engine.getMilliSecondsForSamples$`
+- `$API.Engine.getBufferSize$`
 
 ## getSamplesForMilliSeconds
 
@@ -1947,8 +1947,8 @@ Converts a time value in milliseconds to the equivalent number of audio samples 
 | milliSeconds | Number | yes | Time in milliseconds to convert. | Any number. Negative values produce negative results. |
 
 **Cross References:**
-- `Engine.getMilliSecondsForSamples`
-- `Engine.getSampleRate`
+- `$API.Engine.getMilliSecondsForSamples$`
+- `$API.Engine.getSampleRate$`
 
 ## getSamplesForQuarterBeats
 
@@ -1967,9 +1967,9 @@ Converts a duration in quarter beats to the equivalent number of audio samples u
 | quarterBeats | Number | yes | Duration in quarter beats (1.0 = one quarter note). | Any positive number. |
 
 **Cross References:**
-- `Engine.getSamplesForQuarterBeatsWithTempo`
-- `Engine.getQuarterBeatsForSamples`
-- `Engine.getMilliSecondsForQuarterBeats`
+- `$API.Engine.getSamplesForQuarterBeatsWithTempo$`
+- `$API.Engine.getQuarterBeatsForSamples$`
+- `$API.Engine.getMilliSecondsForQuarterBeats$`
 
 ## getSamplesForQuarterBeatsWithTempo
 
@@ -1989,9 +1989,9 @@ Converts a duration in quarter beats to the equivalent number of audio samples u
 | bpm | Number | no | Tempo in beats per minute to use for the conversion. | Positive number. |
 
 **Cross References:**
-- `Engine.getSamplesForQuarterBeats`
-- `Engine.getQuarterBeatsForSamplesWithTempo`
-- `Engine.getMilliSecondsForQuarterBeatsWithTempo`
+- `$API.Engine.getSamplesForQuarterBeats$`
+- `$API.Engine.getQuarterBeatsForSamplesWithTempo$`
+- `$API.Engine.getMilliSecondsForQuarterBeatsWithTempo$`
 
 ## getSemitonesFromPitchRatio
 
@@ -2013,7 +2013,7 @@ Converts a pitch ratio to a value using the formula `1200.0 * log2(pitchRatio)`.
 - [BUG] Returns cents (1200 per octave) instead of semitones (12 per octave) despite the method name. The formula `1200.0 * log2(ratio)` should be `12.0 * log2(ratio)` to return semitones. Divide the result by 100 to get actual semitones, or use `getPitchRatioFromSemitones` as the authoritative direction and compute the inverse manually.
 
 **Cross References:**
-- `Engine.getPitchRatioFromSemitones`
+- `$API.Engine.getPitchRatioFromSemitones$`
 
 ## getSettingsWindowObject
 
@@ -2041,9 +2041,9 @@ Returns the pixel width of the given text string when rendered with the specifie
 | fontSpacing | Double | no | The kerning/character spacing factor. 0.0 = default spacing. | -- |
 
 **Cross References:**
-- `Engine.loadFontAs`
-- `Engine.setGlobalFont`
-- `Graphics.getStringWidth`
+- `$API.Engine.loadFontAs$`
+- `$API.Engine.setGlobalFont$`
+- `$API.Graphics.getStringWidth$`
 
 ## getSystemStats
 
@@ -2080,9 +2080,9 @@ None.
 | isDarkMode | Integer | 1 if the OS dark mode is active, 0 otherwise. |
 
 **Cross References:**
-- `Engine.getOS`
-- `Engine.getDeviceType`
-- `Engine.getDeviceResolution`
+- `$API.Engine.getOS$`
+- `$API.Engine.getDeviceType$`
+- `$API.Engine.getDeviceResolution$`
 
 **Example:**
 ```javascript:system-stats-dark-mode
@@ -2169,7 +2169,7 @@ With `HISE_USE_EXTENDED_TEMPO_VALUES` enabled, indices 0-4 are EightBar, SixBar,
 | tempoIndex | Integer | no | Index into the TempoSyncer tempo enum. | 0-18 (standard) or 0-23 (extended). Out-of-range returns "Invalid". |
 
 **Cross References:**
-- `Engine.getMilliSecondsForTempo`
+- `$API.Engine.getMilliSecondsForTempo$`
 
 ## getTextForValue
 
@@ -2217,8 +2217,8 @@ Available modes and their formatting behavior:
 - An invalid mode string silently falls back to plain integer conversion (e.g., `Engine.getTextForValue(440.0, "Hz")` returns `"440"` instead of `"440 Hz"`). No error or warning is produced for unrecognized modes.
 
 **Cross References:**
-- `Engine.getValueForText`
-- `Engine.getTempoName`
+- `$API.Engine.getValueForText$`
+- `$API.Engine.getTempoName$`
 
 ## getUptime
 
@@ -2235,7 +2235,7 @@ Returns the engine uptime in seconds as a double. When called from a MIDI callba
 None.
 
 **Cross References:**
-- `Engine.getSampleRate`
+- `$API.Engine.getSampleRate$`
 
 ## getUserPresetList
 
@@ -2252,11 +2252,11 @@ Returns an array of all available user preset file paths as strings. Each entry 
 None.
 
 **Cross References:**
-- `Engine.loadUserPreset`
-- `Engine.saveUserPreset`
-- `Engine.getCurrentUserPresetName`
-- `Engine.loadNextUserPreset`
-- `Engine.loadPreviousUserPreset`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.saveUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
+- `$API.Engine.loadNextUserPreset$`
+- `$API.Engine.loadPreviousUserPreset$`
 
 ## getValueForText
 
@@ -2304,7 +2304,7 @@ Parsing behavior per mode:
 - An invalid mode string silently falls back to plain `getDoubleValue()` parsing, which extracts any leading numeric characters. No error or warning is produced for unrecognized modes.
 
 **Cross References:**
-- `Engine.getTextForValue`
+- `$API.Engine.getTextForValue$`
 
 ## getVersion
 
@@ -2321,8 +2321,8 @@ Returns the product version string as configured in the project settings. In the
 None.
 
 **Cross References:**
-- `Engine.getName`
-- `Engine.getProjectInfo`
+- `$API.Engine.getName$`
+- `$API.Engine.getProjectInfo$`
 
 ## getWavetableList
 
@@ -2343,8 +2343,8 @@ None.
 - Always queries the first `WavetableSynth` found via `ProcessorHelpers::getFirstProcessorWithType`. If the project has multiple WavetableSynths with different wavetable sets, only the first one's list is returned.
 
 **Cross References:**
-- `Engine.setCurrentExpansion`
-- `Engine.getExpansionList`
+- `$API.Engine.setCurrentExpansion$`
+- `$API.Engine.getExpansionList$`
 
 ## getZoomLevel
 
@@ -2372,7 +2372,7 @@ Converts an integer to its hexadecimal string representation using JUCE's `Strin
 - The returned string uses lowercase hex digits with no `0x` prefix. To display as a colour constant (e.g., `0xFFFF0000`), you need to prepend `"0x"` manually.
 
 **Cross References:**
-- `Engine.doubleToString`
+- `$API.Engine.doubleToString$`
 
 ## isControllerUsedByAutomation
 
@@ -2391,7 +2391,7 @@ Checks if a given MIDI CC number is assigned to a parameter automation and retur
 | controllerNumber | Integer or Array | no | A single CC number (0-127) or a `[channel, ccNumber]` array. | When using an array, the first element is the MIDI channel (1-16), the second is the CC number (0-127). |
 
 **Cross References:**
-- `Engine.createMidiAutomationHandler`
+- `$API.Engine.createMidiAutomationHandler$`
 
 ## isHISE
 
@@ -2407,8 +2407,8 @@ Returns `true` if the project is running inside the HISE IDE (backend), `false` 
 None.
 
 **Cross References:**
-- `Engine.isPlugin`
-- `Engine.getExtraDefinitionsInBackend`
+- `$API.Engine.isPlugin$`
+- `$API.Engine.getExtraDefinitionsInBackend$`
 
 ## isMpeEnabled
 
@@ -2424,7 +2424,7 @@ Checks whether the global MPE (MIDI Polyphonic Expression) mode is currently ena
 None.
 
 **Cross References:**
-- `Engine.createMidiAutomationHandler`
+- `$API.Engine.createMidiAutomationHandler$`
 
 ## isPlugin
 
@@ -2440,8 +2440,8 @@ Returns `true` if the application is running as a VST, AU, or AAX plugin, `false
 None.
 
 **Cross References:**
-- `Engine.isHISE`
-- `Engine.quit`
+- `$API.Engine.isHISE$`
+- `$API.Engine.quit$`
 
 ## isUserPresetReadOnly
 
@@ -2468,9 +2468,9 @@ Checks whether a user preset is read-only. Behavior differs by build target:
 - In the HISE backend, the `optionalFile` parameter is completely ignored -- the method always returns the global project setting regardless of which file is passed. This is by design (all backend presets are treated as factory presets) but may be confusing during development when testing per-file read-only behavior.
 
 **Cross References:**
-- `Engine.loadUserPreset`
-- `Engine.saveUserPreset`
-- `Engine.getCurrentUserPresetName`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.saveUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
 
 ## loadAudioFileIntoBufferArray
 
@@ -2497,7 +2497,7 @@ Reports a script error if the file cannot be loaded.
 - The returned Buffer objects wrap the pool's internal memory directly (via `getWritePointer`). Modifying the buffer data modifies the cached pool entry, affecting all subsequent accesses to the same audio file reference.
 
 **Cross References:**
-- `Engine.loadAudioFilesIntoPool`
+- `$API.Engine.loadAudioFilesIntoPool$`
 
 **Example:**
 
@@ -2535,7 +2535,7 @@ The returned array contains reference strings (e.g., `"{PROJECT_FOLDER}myFile.wa
 None.
 
 **Cross References:**
-- `Engine.loadAudioFileIntoBufferArray`
+- `$API.Engine.loadAudioFileIntoBufferArray$`
 
 ## loadFont
 
@@ -2569,8 +2569,8 @@ Reports a script error if the font file is not found in the backend.
 - The font file must be placed in the Images folder, not a Fonts or other custom folder. This is a common source of "File not found" errors.
 
 **Cross References:**
-- `Engine.loadFont`
-- `Engine.setGlobalFont`
+- `$API.Engine.loadFont$`
+- `$API.Engine.setGlobalFont$`
 
 ## loadFromJSON
 
@@ -2596,9 +2596,9 @@ Returns an empty `var` (undefined) if the file does not exist. No error is repor
 - Relative paths are resolved against the UserPresets directory specifically, not the project root or Scripts folder. This matches `dumpAsJSON` behavior but may be unexpected.
 
 **Cross References:**
-- `Engine.dumpAsJSON`
-- `Engine.compressJSON`
-- `Engine.uncompressJSON`
+- `$API.Engine.dumpAsJSON$`
+- `$API.Engine.compressJSON$`
+- `$API.Engine.uncompressJSON$`
 
 ## loadImageIntoPool
 
@@ -2626,7 +2626,7 @@ If the reference matches an expansion wildcard, the expansion's image pool is us
 - The wildcard matching is a simple `contains()` check on the relative path, not a true glob pattern. `"*icons"` and `"icons*"` will both match any file whose path contains "icons".
 
 **Cross References:**
-- `Engine.loadAudioFilesIntoPool`
+- `$API.Engine.loadAudioFilesIntoPool$`
 
 ## loadNextUserPreset
 
@@ -2646,10 +2646,10 @@ Loads the next user preset in the preset list. Delegates to `UserPresetHandler::
 | stayInDirectory | Integer | no | If `true`, navigation stays within the current preset subfolder. If `false`, navigates across the entire preset list. | -- |
 
 **Cross References:**
-- `Engine.loadPreviousUserPreset`
-- `Engine.loadUserPreset`
-- `Engine.getCurrentUserPresetName`
-- `Engine.getUserPresetList`
+- `$API.Engine.loadPreviousUserPreset$`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
+- `$API.Engine.getUserPresetList$`
 
 ## loadPreviousUserPreset
 
@@ -2669,10 +2669,10 @@ Loads the previous user preset in the preset list. Delegates to `UserPresetHandl
 | stayInDirectory | Integer | no | If `true`, navigation stays within the current preset subfolder. If `false`, navigates across the entire preset list. | -- |
 
 **Cross References:**
-- `Engine.loadNextUserPreset`
-- `Engine.loadUserPreset`
-- `Engine.getCurrentUserPresetName`
-- `Engine.getUserPresetList`
+- `$API.Engine.loadNextUserPreset$`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
+- `$API.Engine.getUserPresetList$`
 
 ## loadUserPreset
 
@@ -2695,12 +2695,12 @@ Loads a user preset by relative path string or `ScriptFile` object. Relative pat
 - Calling this method during `onInit` throws a script error ("Do not load user presets at startup."). Load presets from runtime callbacks such as button handlers or timer callbacks instead.
 
 **Cross References:**
-- `Engine.saveUserPreset`
-- `Engine.loadNextUserPreset`
-- `Engine.loadPreviousUserPreset`
-- `Engine.getCurrentUserPresetName`
-- `Engine.getUserPresetList`
-- `Engine.createUserPresetHandler`
+- `$API.Engine.saveUserPreset$`
+- `$API.Engine.loadNextUserPreset$`
+- `$API.Engine.loadPreviousUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
+- `$API.Engine.getUserPresetList$`
+- `$API.Engine.createUserPresetHandler$`
 
 ## logSettingWarning
 
@@ -2720,9 +2720,9 @@ Internal deprecation helper that emits a console message of the form `"Engine.{m
 | methodName | String | no | The name of the deprecated Engine method to include in the warning message. | -- |
 
 **Cross References:**
-- `Engine.getZoomLevel`
-- `Engine.setZoomLevel`
-- `Engine.setDiskMode`
+- `$API.Engine.getZoomLevel$`
+- `$API.Engine.setZoomLevel$`
+- `$API.Engine.setDiskMode$`
 
 ## matchesRegex
 
@@ -2746,7 +2746,7 @@ Tests whether the given string matches the provided regular expression pattern. 
 - This method uses `std::regex_search`, not `std::regex_match`. The pattern does not need to cover the full string -- any substring match returns `true`. To require a full-string match, anchor the pattern with `^` and `$`.
 
 **Cross References:**
-- `Engine.getRegexMatches`
+- `$API.Engine.getRegexMatches$`
 
 ## openWebsite
 
@@ -2819,9 +2819,9 @@ Engine.performUndoAction({}, onUndoAction);
 - On the message thread, the callback is dispatched asynchronously, meaning the action may not be complete when `performUndoAction` returns. On the scripting thread and sample-loading thread it executes synchronously.
 
 **Cross References:**
-- `Engine.undo`
-- `Engine.redo`
-- `Engine.clearUndoHistory`
+- `$API.Engine.undo$`
+- `$API.Engine.redo$`
+- `$API.Engine.clearUndoHistory$`
 
 ## playBuffer
 
@@ -2870,8 +2870,8 @@ Engine.playBuffer(buffer, onPlaybackState, 44100.0);
 - Mono buffers are automatically duplicated to stereo (channel 0 is copied to channel 1). There is no way to play a true mono preview -- it always outputs at least 2 channels.
 
 **Cross References:**
-- `Engine.loadAudioFileIntoBufferArray`
-- `Engine.renderAudio`
+- `$API.Engine.loadAudioFileIntoBufferArray$`
+- `$API.Engine.renderAudio$`
 
 ## quit
 
@@ -2891,7 +2891,7 @@ None.
 - This method is a complete no-op in plugin builds (VST/AU/AAX). It only works in standalone applications. No error or warning is produced when called in a plugin context.
 
 **Cross References:**
-- `Engine.isPlugin`
+- `$API.Engine.isPlugin$`
 
 ## rebuildCachedPools
 
@@ -2911,8 +2911,8 @@ None.
 - This method is a complete no-op in compiled plugins (VST/AU/AAX/standalone). The entire implementation is inside a `#if USE_BACKEND` guard. No error or warning is produced when called in a frontend build.
 
 **Cross References:**
-- `Engine.clearMidiFilePool`
-- `Engine.clearSampleMapPool`
+- `$API.Engine.clearMidiFilePool$`
+- `$API.Engine.clearSampleMapPool$`
 
 ## redo
 
@@ -2929,9 +2929,9 @@ Redoes the last undone action from the undo manager. The method has two executio
 None.
 
 **Cross References:**
-- `Engine.undo`
-- `Engine.performUndoAction`
-- `Engine.clearUndoHistory`
+- `$API.Engine.undo$`
+- `$API.Engine.performUndoAction$`
+- `$API.Engine.clearUndoHistory$`
 
 ## reloadAllSamples
 
@@ -2951,7 +2951,7 @@ None.
 - This method kills all active voices before reloading. Any notes currently playing will be cut off immediately with no release phase.
 
 **Cross References:**
-- `Engine.setAllowDuplicateSamples`
+- `$API.Engine.setAllowDuplicateSamples$`
 
 ## renderAudio
 
@@ -2985,8 +2985,8 @@ Renders a list of MIDI events to audio buffers on a background thread. The `even
 - Calling `renderAudio` again while a render is in progress replaces the current render thread (the `ScopedPointer` assignment destroys the previous `AudioRenderer`). The previous render's callback will not receive a final `finished: true` call.
 
 **Cross References:**
-- `Engine.createMessageHolder`
-- `Engine.playBuffer`
+- `$API.Engine.createMessageHolder$`
+- `$API.Engine.playBuffer$`
 
 **Example:**
 ```javascript:render-midi-to-audio
@@ -3041,11 +3041,11 @@ Saves the current plugin state as a user preset. Accepts either a string name or
 | presetName | String | no | The preset name to save as, or a ScriptFile object for the target path. An empty string triggers a name prompt. | -- |
 
 **Cross References:**
-- `Engine.loadUserPreset`
-- `Engine.getCurrentUserPresetName`
-- `Engine.getUserPresetList`
-- `Engine.addModuleStateToUserPreset`
-- `Engine.createUserPresetHandler`
+- `$API.Engine.loadUserPreset$`
+- `$API.Engine.getCurrentUserPresetName$`
+- `$API.Engine.getUserPresetList$`
+- `$API.Engine.addModuleStateToUserPreset$`
+- `$API.Engine.createUserPresetHandler$`
 
 ## setAllowDuplicateSamples
 
@@ -3065,7 +3065,7 @@ Controls whether the sample pool allows duplicate sample references. When set to
 | shouldAllow | Integer | no | `true` to allow duplicate sample references (independent copies), `false` to deduplicate and share buffers. | -- |
 
 **Cross References:**
-- `Engine.reloadAllSamples`
+- `$API.Engine.reloadAllSamples$`
 
 ## setCurrentExpansion
 
@@ -3085,8 +3085,8 @@ Sets the active expansion by name and updates the preset browser to reflect the 
 | expansionName | String | no | The name of the expansion to activate, or an empty string to deactivate. | Must match an installed expansion name. |
 
 **Cross References:**
-- `Engine.getExpansionList`
-- `Engine.createExpansionHandler`
+- `$API.Engine.getExpansionList$`
+- `$API.Engine.createExpansionHandler$`
 
 ## setDiskMode
 
@@ -3114,8 +3114,8 @@ Enables the macro system for the end user and assigns names to each macro slot. 
 - If the array contains fewer entries than `HISE_NUM_MACROS`, the excess slots silently receive empty-string names with no warning. The method does not validate the array length against the macro count.
 
 **Cross References:**
-- `Engine.getMacroName`
-- `Engine.createMacroHandler`
+- `$API.Engine.getMacroName$`
+- `$API.Engine.createMacroHandler$`
 
 ## setGlobalFont
 
@@ -3138,8 +3138,8 @@ Sets the default font used throughout the plugin for UI elements such as labels,
 - If the font name does not match any loaded font, the method silently falls back to a system font lookup with no warning. The UI will use whatever font the OS resolves, which may differ across platforms.
 
 **Cross References:**
-- `Engine.loadFontAs`
-- `Engine.loadFont`
+- `$API.Engine.loadFontAs$`
+- `$API.Engine.loadFont$`
 
 ## setGlobalPitchFactor
 
@@ -3159,7 +3159,7 @@ Sets the global pitch factor in semitones, affecting the pitch of all voices in 
 | pitchFactorInSemitones | Double | no | The global pitch offset in semitones. | Clamped to -12.0 .. 12.0. |
 
 **Cross References:**
-- `Engine.getGlobalPitchFactor`
+- `$API.Engine.getGlobalPitchFactor$`
 
 ## setHostBpm
 
@@ -3182,8 +3182,8 @@ Overwrites the host BPM with a fixed value. All tempo-based calculations (tempo 
 - Passing 0 or any non-negative value below a reasonable BPM will not produce an error. The value is stored as-is and will cause division-by-zero or extreme results in tempo-based conversions.
 
 **Cross References:**
-- `Engine.getHostBpm`
-- `Engine.createTransportHandler`
+- `$API.Engine.getHostBpm$`
+- `$API.Engine.createTransportHandler$`
 
 ## setKeyColour
 
@@ -3204,7 +3204,7 @@ Sets the colour of a single key on the on-screen MIDI keyboard. The key number i
 | colourAsHex | Integer | no | The colour in `0xAARRGGBB` format. | Full 32-bit colour with alpha. |
 
 **Cross References:**
-- `Engine.setLowestKeyToDisplay`
+- `$API.Engine.setLowestKeyToDisplay$`
 
 ## setLatencySamples
 
@@ -3224,7 +3224,7 @@ Sets the plugin's reported latency in samples. The host DAW uses this value to c
 | latency | Integer | no | The latency in samples to report to the host. | Should be >= 0. |
 
 **Cross References:**
-- `Engine.getLatencySamples`
+- `$API.Engine.getLatencySamples$`
 
 ## setLowestKeyToDisplay
 
@@ -3244,7 +3244,7 @@ Sets the lowest visible key on the on-screen MIDI keyboard, effectively scrollin
 | keyNumber | Integer | no | The MIDI note number to use as the lowest visible key. | 0-127. No range validation is performed. |
 
 **Cross References:**
-- `Engine.setKeyColour`
+- `$API.Engine.setKeyColour$`
 
 ## setMaximumBlockSize
 
@@ -3267,9 +3267,9 @@ Sets the maximum buffer size that HISE uses for its internal processing. If the 
 - The value is silently rounded down to the nearest multiple of `HISE_EVENT_RASTER` (default 8). Passing a value like 100 results in an effective block size of 96 with no warning.
 
 **Cross References:**
-- `Engine.getBufferSize`
-- `Engine.getControlRateDownsamplingFactor`
-- `Engine.setMinimumSampleRate`
+- `$API.Engine.getBufferSize$`
+- `$API.Engine.getControlRateDownsamplingFactor$`
+- `$API.Engine.setMinimumSampleRate$`
 
 ## setPreloadMessage
 
@@ -3289,8 +3289,8 @@ Sets the preload message that is displayed during sample loading. This allows sc
 | message | String | no | The message text to display during preloading. | -- |
 
 **Cross References:**
-- `Engine.getPreloadMessage`
-- `Engine.getPreloadProgress`
+- `$API.Engine.getPreloadMessage$`
+- `$API.Engine.getPreloadProgress$`
 
 ## setMinimumSampleRate
 
@@ -3310,8 +3310,8 @@ Sets the minimum sample rate for the global audio processing chain. If the curre
 | minimumSampleRate | Number | yes | The minimum sample rate for internal processing. If the device sample rate is below this, oversampling is enabled. | Clamped to 1.0 .. 384000.0 |
 
 **Cross References:**
-- `Engine.getSampleRate`
-- `Engine.setMaximumBlockSize`
+- `$API.Engine.getSampleRate$`
+- `$API.Engine.setMaximumBlockSize$`
 
 ## setUserPresetTagList
 
@@ -3334,8 +3334,8 @@ Sets the list of tags that appear in the user preset browser for filtering prese
 - If the argument is not an array (e.g., a single string), the method silently does nothing. No error is reported.
 
 **Cross References:**
-- `Engine.getUserPresetList`
-- `Engine.loadUserPreset`
+- `$API.Engine.getUserPresetList$`
+- `$API.Engine.loadUserPreset$`
 
 ## setZoomLevel
 
@@ -3361,8 +3361,8 @@ Shows an error message as an overlay on the compiled plugin interface. When `isC
 | isCritical | Integer | no | If `true`, the Ignore button is disabled, preventing the user from dismissing the error. | -- |
 
 **Cross References:**
-- `Engine.showMessage`
-- `Engine.showMessageBox`
+- `$API.Engine.showMessage$`
+- `$API.Engine.showMessageBox$`
 
 ## showMessage
 
@@ -3382,9 +3382,9 @@ Shows an informational message as an overlay on the compiled plugin interface wi
 | message | String | no | The informational message text to display. | -- |
 
 **Cross References:**
-- `Engine.showErrorMessage`
-- `Engine.showMessageBox`
-- `Engine.showYesNoWindow`
+- `$API.Engine.showErrorMessage$`
+- `$API.Engine.showMessageBox$`
+- `$API.Engine.showYesNoWindow$`
 
 ## showMessageBox
 
@@ -3415,9 +3415,9 @@ Shows a modal message box with a title, a markdown-formatted message body, and a
 | 3 | Error icon -- used for error notifications. |
 
 **Cross References:**
-- `Engine.showMessage`
-- `Engine.showErrorMessage`
-- `Engine.showYesNoWindow`
+- `$API.Engine.showMessage$`
+- `$API.Engine.showErrorMessage$`
+- `$API.Engine.showYesNoWindow$`
 
 ## showYesNoWindow
 
@@ -3441,9 +3441,9 @@ Shows a modal yes/no dialog with a title and a markdown-formatted message body, 
 **Callback Signature:** callback(ok: bool)
 
 **Cross References:**
-- `Engine.showMessage`
-- `Engine.showErrorMessage`
-- `Engine.showMessageBox`
+- `$API.Engine.showMessage$`
+- `$API.Engine.showErrorMessage$`
+- `$API.Engine.showMessageBox$`
 
 **Example:**
 ```javascript:yes-no-confirm-action
@@ -3487,7 +3487,7 @@ Sorts an array in-place using a custom comparison function. The comparator recei
 - Returns `false` silently if `arrayToSort` is not an Array or `sortFunction` is not a valid JavaScript function. No error is reported -- the call simply returns `false`.
 
 **Cross References:**
-- `Array.sort`
+- `$API.Array.sort$`
 
 **Example:**
 ```javascript:sort-objects-by-property
@@ -3540,7 +3540,7 @@ Decompresses a Base64-encoded, zstd-compressed string back into a JSON object. T
 - Passing an arbitrary Base64 string that was not produced by `compressJSON` (or equivalent zstd compression) will produce a zstd decompression error or a JSON parse error. The JSON parse failure reports a script error, but zstd decompression failure may produce an empty string that then fails JSON parsing with a generic error.
 
 **Cross References:**
-- `Engine.compressJSON`
+- `$API.Engine.compressJSON$`
 
 **Example:**
 ```javascript:roundtrip-compress-uncompress
@@ -3582,6 +3582,6 @@ None.
 - Non-script undo operations are dispatched asynchronously to the message thread. The undo has not completed when `undo()` returns. Do not read state immediately after calling `undo()` and expect it to reflect the reverted value.
 
 **Cross References:**
-- `Engine.redo`
-- `Engine.performUndoAction`
-- `Engine.clearUndoHistory`
+- `$API.Engine.redo$`
+- `$API.Engine.performUndoAction$`
+- `$API.Engine.clearUndoHistory$`

@@ -173,11 +173,4 @@ The Send Modulation chain is sampled twice per block (at the start and end of th
 
 If a Send Container is deleted while a Send Effect references it, the connection safely becomes inactive. The effect will attempt to reconnect on the next audio preparation cycle if a container with the matching index exists.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Send Container", to: "/v2/reference/audio-modules/sound-generators/sendcontainer", desc: "the receive side of the send/return pair, accumulates signals from Send Effects and processes them through its FX chain" }
----
-::
+**See also:** $MODULES.SendContainer$ -- the receive side of the send/return pair, accumulates signals from Send Effects and processes them through its FX chain

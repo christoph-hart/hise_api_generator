@@ -33,9 +33,9 @@ None.
 | Converter | String | Value-to-text converter serialization |
 
 **Cross References:**
-- `MidiAutomationHandler.setAutomationDataFromObject`
-- `MidiAutomationHandler.setUpdateCallback`
-- `MacroHandler.getMacroDataObject`
+- `$API.MidiAutomationHandler.setAutomationDataFromObject$`
+- `$API.MidiAutomationHandler.setUpdateCallback$`
+- `$API.MacroHandler.getMacroDataObject$`
 
 **Example:**
 ```javascript:inspect-automation-data
@@ -81,9 +81,9 @@ Internally, the method converts the array to a ValueTree and calls `restoreFromV
 - [BUG] Passing a non-Array value (e.g., a single object, a number, or a string) silently clears all automation data instead of reporting an error. The internal converter produces an empty ValueTree, and `restoreFromValueTree` wipes all entries.
 
 **Cross References:**
-- `MidiAutomationHandler.getAutomationDataObject`
-- `MidiAutomationHandler.setUpdateCallback`
-- `MacroHandler.setMacroDataFromObject`
+- `$API.MidiAutomationHandler.getAutomationDataObject$`
+- `$API.MidiAutomationHandler.setUpdateCallback$`
+- `$API.MacroHandler.setMacroDataFromObject$`
 
 **Example:**
 ```javascript:roundtrip-automation-data
@@ -124,7 +124,7 @@ Controls whether MIDI CC messages that match an automation entry are removed fro
 | shouldBeConsumed | Integer | no | `true` (default) to consume automated CC messages, `false` to let them pass through to script callbacks | -- |
 
 **Cross References:**
-- `MidiAutomationHandler.setAutomationDataFromObject`
+- `$API.MidiAutomationHandler.setAutomationDataFromObject$`
 
 ## setControllerNumberNames
 
@@ -147,7 +147,7 @@ This method is typically used together with `setControllerNumbersInPopup()` to s
 | nameArray | Array | no | Array of display names for CC numbers. Index maps to CC number (index 0 = CC#0). | Elements are converted to strings via `toString()` |
 
 **Cross References:**
-- `MidiAutomationHandler.setControllerNumbersInPopup`
+- `$API.MidiAutomationHandler.setControllerNumbersInPopup$`
 
 **Example:**
 ```javascript:custom-cc-names
@@ -196,8 +196,8 @@ Passing an empty array resets the filter, restoring the default behavior where a
 | numberArray | Array | no | Array of CC numbers to show in the popup. Each element is cast to int. | Values 0-127 |
 
 **Cross References:**
-- `MidiAutomationHandler.setControllerNumberNames`
-- `MidiAutomationHandler.setExclusiveMode`
+- `$API.MidiAutomationHandler.setControllerNumberNames$`
+- `$API.MidiAutomationHandler.setExclusiveMode$`
 
 ## setExclusiveMode
 
@@ -218,8 +218,8 @@ When disabled (the default), multiple parameters can share the same CC number, a
 | shouldBeExclusive | Integer | no | `true` to enable exclusive mode (one CC per parameter), `false` (default) to allow shared CC assignments | -- |
 
 **Cross References:**
-- `MidiAutomationHandler.setControllerNumbersInPopup`
-- `MacroHandler.setExclusiveMode`
+- `$API.MidiAutomationHandler.setControllerNumbersInPopup$`
+- `$API.MacroHandler.setExclusiveMode$`
 
 ## setUpdateCallback
 
@@ -255,9 +255,9 @@ There is no mechanism to unregister the callback. Passing a non-function value i
 - Do not call `setAutomationDataFromObject()` from inside the update callback. Since `setAutomationDataFromObject` triggers the callback synchronously during preset loads, calling it from the callback creates infinite recursion.
 
 **Cross References:**
-- `MidiAutomationHandler.getAutomationDataObject`
-- `MidiAutomationHandler.setAutomationDataFromObject`
-- `MacroHandler.setUpdateCallback`
+- `$API.MidiAutomationHandler.getAutomationDataObject$`
+- `$API.MidiAutomationHandler.setAutomationDataFromObject$`
+- `$API.MacroHandler.setUpdateCallback$`
 
 **Example:**
 ```javascript:automation-update-callback

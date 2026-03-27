@@ -14,8 +14,8 @@ Resets all 128 slots to the sentinel value `-1` and sets the internal count of n
 None.
 
 **Cross References:**
-- `MidiList.fill`
-- `MidiList.isEmpty`
+- `$API.MidiList.fill$`
+- `$API.MidiList.isEmpty$`
 
 **Example:**
 ```javascript:verify-clear-resets-list
@@ -50,8 +50,8 @@ Sets all 128 slots to `valueToFill`. The internal non-empty counter is set to 12
 | valueToFill | int | Number | The value to write into every slot. | -- |
 
 **Cross References:**
-- `MidiList.clear`
-- `MidiList.setRange`
+- `$API.MidiList.clear$`
+- `$API.MidiList.setRange$`
 
 **Example:**
 ```javascript:fill-all-slots
@@ -86,7 +86,7 @@ Returns the value stored at the given index. If the index is out of range (negat
 | index | int | no | Zero-based index (0-127). | -- |
 
 **Cross References:**
-- `MidiList.setValue`
+- `$API.MidiList.setValue$`
 
 **Example:**
 ```javascript:read-value-and-out-of-range
@@ -121,8 +121,8 @@ Counts how many of the 128 slots contain the specified value. When the list is e
 | valueToCheck | int | no | The value to count occurrences of. | -- |
 
 **Cross References:**
-- `MidiList.getIndex`
-- `MidiList.getNumSetValues`
+- `$API.MidiList.getIndex$`
+- `$API.MidiList.getNumSetValues$`
 
 **Example:**
 ```javascript:count-occurrences
@@ -159,7 +159,7 @@ Returns the index of the first slot that contains the specified value, scanning 
 | value | int | Number | The value to search for. | -- |
 
 **Cross References:**
-- `MidiList.getValueAmount`
+- `$API.MidiList.getValueAmount$`
 
 **Example:**
 ```javascript:find-first-match
@@ -193,8 +193,8 @@ Returns `true` if all 128 slots contain the sentinel value `-1` (i.e., `numValue
 None.
 
 **Cross References:**
-- `MidiList.clear`
-- `MidiList.getNumSetValues`
+- `$API.MidiList.clear$`
+- `$API.MidiList.getNumSetValues$`
 
 **Example:**
 ```javascript:check-empty-state
@@ -227,8 +227,8 @@ Returns the number of slots that contain a value other than `-1`. This is an O(1
 None.
 
 **Cross References:**
-- `MidiList.isEmpty`
-- `MidiList.getValueAmount`
+- `$API.MidiList.isEmpty$`
+- `$API.MidiList.getValueAmount$`
 
 **Example:**
 ```javascript:count-non-empty
@@ -268,8 +268,8 @@ Sets the value at the given index. If the index is out of range (negative or >= 
 - Out-of-range index access is silent - no error is reported.
 
 **Cross References:**
-- `MidiList.getValue`
-- `MidiList.setRange`
+- `$API.MidiList.getValue$`
+- `$API.MidiList.setRange$`
 
 **Example:**
 ```javascript:set-and-read-back
@@ -308,8 +308,8 @@ Sets a contiguous range of slots to the same value. The start index is clamped t
 - [BUG] The `numToFill` parameter is used as an absolute end index in the loop, not as a count relative to `startIndex`. Calling `setRange(10, 5, 99)` fills zero slots because the loop condition `10 < 5` is immediately false.
 
 **Cross References:**
-- `MidiList.fill`
-- `MidiList.setValue`
+- `$API.MidiList.fill$`
+- `$API.MidiList.setValue$`
 
 **Example:**
 ```javascript:fill-octave-range
@@ -344,7 +344,7 @@ Serializes all 128 integer values into a Base64-encoded string. The encoding cov
 None.
 
 **Cross References:**
-- `MidiList.restoreFromBase64String`
+- `$API.MidiList.restoreFromBase64String$`
 
 **Example:**
 ```javascript:serialize-to-base64
@@ -383,7 +383,7 @@ Restores all 128 values from a Base64-encoded string previously created by `getB
 - [BUG] The `numValues` counter is not recalculated after `restoreFromBase64String()`. This means `isEmpty()` and `getNumSetValues()` may return incorrect values until you manually set or clear a value (which triggers a counter update).
 
 **Cross References:**
-- `MidiList.getBase64String`
+- `$API.MidiList.getBase64String$`
 
 **Example:**
 ```javascript:round-trip-serialization

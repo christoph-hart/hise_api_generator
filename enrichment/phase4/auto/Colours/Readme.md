@@ -24,14 +24,17 @@ All methods accept flexible colour input - an ARGB integer, a hex string, or a n
 
 ## Common Mistakes
 
-- **Wrong:** `Colours.fromHsl(Colours.toHsl(c))` for a roundtrip
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Colours.fromHsl(Colours.toHsl(c))` for a roundtrip
   **Right:** `var hsl = Colours.toHsl(c); hsl[3] = Math.round(hsl[3] * 255); Colours.fromHsl(hsl);`
   *`toHsl` returns alpha as a 0.0-1.0 float, but `fromHsl` expects alpha as a 0-255 integer. Passing the float directly truncates it to 0, making the colour fully transparent.*
 
-- **Wrong:** `g.setColour(obj.hover ? highlightColour : baseColour)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `g.setColour(obj.hover ? highlightColour : baseColour)`
   **Right:** `g.setColour(Colours.mix(baseColour, Colours.white, obj.hover * 0.25))`
   *A ternary causes a hard colour switch. Mixing with the hover flag as blend factor keeps highlight intensity consistent and works smoothly when `obj.hover` is a float animation state.*
 
-- **Wrong:** Hardcoding `0xFF` alpha variants throughout LAF functions
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Hardcoding `0xFF` alpha variants throughout LAF functions
   **Right:** Defining `const var ACCENT = 0xFFC9EAF1;` once and deriving variants with `Colours.withAlpha(ACCENT, 0.5)`
   *Centralising theme colours makes global colour changes trivial and prevents inconsistencies between LAF functions.*

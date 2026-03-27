@@ -17,22 +17,27 @@ The typical initialisation sequence in `onInit` is: load fonts, load resource po
 
 ## Common Mistakes
 
-- **Wrong:** `Engine.loadUserPreset("MyPreset")` in `onInit`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Engine.loadUserPreset("MyPreset")` in `onInit`
   **Right:** Call `loadUserPreset` from a button callback or timer.
   *Loading user presets during initialisation is explicitly rejected with an error message.*
 
-- **Wrong:** `Engine.getPlayHead().bpm`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Engine.getPlayHead().bpm`
   **Right:** `Engine.getHostBpm()` or use `Engine.createTransportHandler()`.
   *The play head object's properties are not populated. Use the dedicated BPM methods or a TransportHandler for reliable host transport data.*
 
-- **Wrong:** `Engine.getMacroName(0)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Engine.getMacroName(0)`
   **Right:** `Engine.getMacroName(1)`
   *Macro indices are 1-based (1-8), not 0-based.*
 
-- **Wrong:** Calling `Engine.setKeyColour()` only for mapped notes.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `Engine.setKeyColour()` only for mapped notes.
   **Right:** Set all 128 keys, using a dim colour for unmapped notes.
   *Skipping unmapped keys leaves stale colours from a previous instrument or preset state.*
 
-- **Wrong:** `Engine.addModuleStateToUserPreset("MyEQ")` with just a string.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Engine.addModuleStateToUserPreset("MyEQ")` with just a string.
   **Right:** Pass a JSON object with `RemovedProperties` to exclude noise like routing matrix and bypass state.
   *Without filtering, the full module state is saved, bloating presets and causing unexpected state restoration.*

@@ -155,14 +155,5 @@ When all connections are removed, the modulator automatically bypasses itself an
 
 Connections are created via the matrix table editor, drag-and-drop from the container, or the right-click popup menu.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Global Modulator Container", to: "/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer", desc: "hosts the source modulators that this matrix reads from" }
-  - { label: "Global Envelope Modulator", to: "/v2/reference/audio-modules/modulators/envelope/globalenvelopemodulator", desc: "reads a single envelope source (simpler, lower CPU)" }
-  - { label: "Global Time Variant Modulator", to: "/v2/reference/audio-modules/modulators/time-variant/globaltimevariantmodulator", desc: "reads a single time-variant source (simpler, lower CPU)" }
----
-::- **UI Component:** `ModulationMatrixPanel` - displays the connection matrix
+**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source modulators that this matrix reads from, $MODULES.GlobalEnvelopeModulator$ -- reads a single envelope source (simpler, lower CPU), $MODULES.GlobalTimeVariantModulator$ -- reads a single time-variant source (simpler, lower CPU)- **UI Component:** `ModulationMatrixPanel` - displays the connection matrix
 - **UI Component:** `ModulationMatrixControlPanel` - provides drag buttons for creating connections

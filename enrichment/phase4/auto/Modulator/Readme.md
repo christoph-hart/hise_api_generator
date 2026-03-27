@@ -33,22 +33,27 @@ const var mod = Synth.getModulator("LFO1");
 
 ## Common Mistakes
 
-- **Wrong:** `var mod = Synth.getModulator("LFO1");` in `onNoteOn`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var mod = Synth.getModulator("LFO1");` in `onNoteOn`
   **Right:** `const var mod = Synth.getModulator("LFO1");` in `onInit`
   *`getModulator` is restricted to `onInit`. Store references as top-level const variables.*
 
-- **Wrong:** `mod.setIntensity(1.0)` on a pitch modulator expecting full range
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `mod.setIntensity(1.0)` on a pitch modulator expecting full range
   **Right:** `mod.setIntensity(12.0)` for a full octave, or the desired semitone value
   *PitchMode intensity is in semitones (-12 to 12), not a normalised 0-1 range. A value of 1.0 gives only 1 semitone of bend.*
 
-- **Wrong:** Calling `addGlobalModulator` without checking if a connection already exists
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `addGlobalModulator` without checking if a connection already exists
   **Right:** Track active connections and check before creating new ones
   *Duplicate connections stack - each call adds another modulator to the chain, doubling the modulation depth.*
 
-- **Wrong:** Using `addGlobalModulator` for velocity or note-number sources
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `addGlobalModulator` for velocity or note-number sources
   **Right:** Use `addStaticGlobalModulator` for voice-start sources
   *Voice-start modulators produce a single value at note-on that never changes mid-note. The static variant avoids wasting CPU on per-block polling.*
 
-- **Wrong:** Calling `getCurrentLevel` in `onControl` or `onNoteOn`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `getCurrentLevel` in `onControl` or `onNoteOn`
   **Right:** Poll in a timer callback at ~30ms intervals
   *The display value updates once per audio buffer. Polling from non-periodic callbacks gives stale or inconsistent readings.*

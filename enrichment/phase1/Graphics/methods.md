@@ -22,10 +22,10 @@ Adds a drop shadow behind the current rendering based on the alpha values of the
 - This method uses the `wantsCachedImage()` mechanism, meaning it receives a snapshot of the entire parent component's rendered image. It must be placed in the draw sequence AFTER the shapes whose alpha channel should generate the shadow. Drawing it first produces no shadow because the cached image is empty.
 
 **Cross References:**
-- `Graphics.drawDropShadow`
-- `Graphics.drawDropShadowFromPath`
-- `Graphics.drawInnerShadowFromPath`
-- `Graphics.drawAlignedTextShadow`
+- `$API.Graphics.drawDropShadow$`
+- `$API.Graphics.drawDropShadowFromPath$`
+- `$API.Graphics.drawInnerShadowFromPath$`
+- `$API.Graphics.drawAlignedTextShadow$`
 
 ## addNoise
 
@@ -68,9 +68,9 @@ The method accepts two input formats:
 - The `scaleFactor` value of `-1.0` is a special sentinel that reads the draw handler's current scale factor. Other negative values are clamped to 0.125.
 
 **Cross References:**
-- `Graphics.applyGamma`
-- `Graphics.applyHSL`
-- `Graphics.gaussianBlur`
+- `$API.Graphics.applyGamma$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.gaussianBlur$`
 
 **Example:**
 ```javascript:addnoise-advanced
@@ -109,11 +109,11 @@ Applies a gamma correction curve to the current layer's pixel data. This is a po
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.applyHSL`
-- `Graphics.desaturate`
-- `Graphics.applyGradientMap`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.desaturate$`
+- `$API.Graphics.applyGradientMap$`
 
 ## applyGradientMap
 
@@ -137,10 +137,10 @@ Maps the brightness values of the current layer's pixels to a two-colour gradien
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.applyHSL`
-- `Graphics.desaturate`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.desaturate$`
 
 ## applyHSL
 
@@ -166,11 +166,11 @@ Applies HSL (Hue, Saturation, Lightness) colour grading adjustments to the curre
 - The parameters are additive offsets, not absolute values. Passing `(0.0, 0.0, 0.0)` produces no change.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.desaturate`
-- `Graphics.applyGamma`
-- `Graphics.applyGradientMap`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.desaturate$`
+- `$API.Graphics.applyGamma$`
+- `$API.Graphics.applyGradientMap$`
 
 ## applyMask
 
@@ -196,9 +196,9 @@ Applies a path-based alpha mask to the current layer. Pixels inside the path are
 - The path is scaled to fit the area with non-uniform scaling (`scaleToFit` with `preserveProportions=false`). The mask shape may be distorted if the path's aspect ratio does not match the area's aspect ratio.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.fillPath`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.fillPath$`
 
 **Example:**
 ```javascript:applymask-circular
@@ -244,12 +244,12 @@ Applies an old-school sepia tone filter to the current layer's pixel data, conve
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.desaturate`
-- `Graphics.applyHSL`
-- `Graphics.applyGradientMap`
-- `Graphics.applyGamma`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.desaturate$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.applyGradientMap$`
+- `$API.Graphics.applyGamma$`
 
 ## applyShader
 
@@ -275,8 +275,8 @@ Applies an OpenGL shader to the specified rectangular area within the current re
 - Requires OpenGL to be enabled. If the OpenGL context is not active, the backend logs "Open GL is not enabled" during rendering.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.drawImage`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.drawImage$`
 
 ## applySharpness
 
@@ -299,12 +299,12 @@ Applies a sharpness or softening filter to the current layer's pixel data. Posit
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.gaussianBlur`
-- `Graphics.boxBlur`
-- `Graphics.applyHSL`
-- `Graphics.desaturate`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.gaussianBlur$`
+- `$API.Graphics.boxBlur$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.desaturate$`
 
 ## applyVignette
 
@@ -330,12 +330,12 @@ Applies a vignette effect (darkened corners) to the current layer's pixel data. 
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.applyGamma`
-- `Graphics.applyHSL`
-- `Graphics.gaussianBlur`
-- `Graphics.desaturate`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.applyGamma$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.gaussianBlur$`
+- `$API.Graphics.desaturate$`
 
 ## beginBlendLayer
 
@@ -391,8 +391,8 @@ The blend mode must be one of 25 supported string values (case-sensitive). An in
 - [BUG] Invalid blend mode strings silently fail. The method returns without creating a layer or reporting an error. Subsequent draw calls go to the parent canvas instead of the intended blend layer.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
 
 **Example:**
 ```javascript:beginblendlayer-multiply
@@ -439,18 +439,18 @@ The `drawOnParent` parameter controls whether the layer renders its own contents
 - Every `beginLayer()` must be matched with a corresponding `endLayer()`. Forgetting `endLayer()` leaves the layer on the stack and subsequent draw calls continue targeting the layer instead of the main canvas.
 
 **Cross References:**
-- `Graphics.endLayer`
-- `Graphics.beginBlendLayer`
-- `Graphics.gaussianBlur`
-- `Graphics.boxBlur`
-- `Graphics.desaturate`
-- `Graphics.applyMask`
-- `Graphics.applyHSL`
-- `Graphics.applyGamma`
-- `Graphics.applyGradientMap`
-- `Graphics.applySepia`
-- `Graphics.applySharpness`
-- `Graphics.applyVignette`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.beginBlendLayer$`
+- `$API.Graphics.gaussianBlur$`
+- `$API.Graphics.boxBlur$`
+- `$API.Graphics.desaturate$`
+- `$API.Graphics.applyMask$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.applyGamma$`
+- `$API.Graphics.applyGradientMap$`
+- `$API.Graphics.applySepia$`
+- `$API.Graphics.applySharpness$`
+- `$API.Graphics.applyVignette$`
 
 **DiagramRef:** graphics-layer-stack
 
@@ -495,9 +495,9 @@ Applies a box blur (uniform average filter) to the current layer's pixel data. B
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.gaussianBlur`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.gaussianBlur$`
 
 ## desaturate
 
@@ -518,11 +518,11 @@ Removes all colour saturation from the current layer's pixel data, converting it
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.applyHSL`
-- `Graphics.applySepia`
-- `Graphics.applyGradientMap`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.applyHSL$`
+- `$API.Graphics.applySepia$`
+- `$API.Graphics.applyGradientMap$`
 
 ## drawAlignedText
 
@@ -567,12 +567,12 @@ The alignment must be one of 11 supported string values (see Value Descriptions)
 - Uses British spelling "centred" not American "center". Passing "center", "centered", or "Centre" triggers a script error.
 
 **Cross References:**
-- `Graphics.drawAlignedTextShadow`
-- `Graphics.drawMultiLineText`
-- `Graphics.drawMarkdownText`
-- `Graphics.drawText`
-- `Graphics.setFont`
-- `Graphics.setColour`
+- `$API.Graphics.drawAlignedTextShadow$`
+- `$API.Graphics.drawMultiLineText$`
+- `$API.Graphics.drawMarkdownText$`
+- `$API.Graphics.drawText$`
+- `$API.Graphics.setFont$`
+- `$API.Graphics.setColour$`
 
 ## drawAlignedTextShadow
 
@@ -614,11 +614,11 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - Uses British spelling "centred" for alignment, same as `drawAlignedText`.
 
 **Cross References:**
-- `Graphics.drawAlignedText`
-- `Graphics.drawDropShadow`
-- `Graphics.drawDropShadowFromPath`
-- `Graphics.setFont`
-- `Graphics.setColour`
+- `$API.Graphics.drawAlignedText$`
+- `$API.Graphics.drawDropShadow$`
+- `$API.Graphics.drawDropShadowFromPath$`
+- `$API.Graphics.setFont$`
+- `$API.Graphics.setColour$`
 
 **Example:**
 ```javascript:drawalignedtextshadow-usage
@@ -669,10 +669,10 @@ Internally, the rectangle is converted to a Path and rendered via `melatonin::Dr
 - The shadow offset is fixed at (0, 0). The shadow extends equally in all directions. Use `drawDropShadowFromPath` if you need a directional shadow with an offset.
 
 **Cross References:**
-- `Graphics.drawDropShadowFromPath`
-- `Graphics.drawInnerShadowFromPath`
-- `Graphics.addDropShadowFromAlpha`
-- `Graphics.drawAlignedTextShadow`
+- `$API.Graphics.drawDropShadowFromPath$`
+- `$API.Graphics.drawInnerShadowFromPath$`
+- `$API.Graphics.addDropShadowFromAlpha$`
+- `$API.Graphics.drawAlignedTextShadow$`
 
 ## drawDropShadowFromPath
 
@@ -707,9 +707,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - The offset is converted to integer coordinates, so sub-pixel shadow offsets are not supported.
 
 **Cross References:**
-- `Graphics.drawInnerShadowFromPath`
-- `Graphics.drawDropShadow`
-- `Graphics.addDropShadowFromAlpha`
+- `$API.Graphics.drawInnerShadowFromPath$`
+- `$API.Graphics.drawDropShadow$`
+- `$API.Graphics.addDropShadowFromAlpha$`
 
 **Example:**
 ```javascript:drawdropshadowfrompath-rounded
@@ -756,9 +756,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | lineThickness | Double | no | Width of the outline stroke in pixels | -- |
 
 **Cross References:**
-- `Graphics.fillEllipse`
-- `Graphics.drawRect`
-- `Graphics.setColour`
+- `$API.Graphics.fillEllipse$`
+- `$API.Graphics.drawRect$`
+- `$API.Graphics.setColour$`
 
 ## drawFFTSpectrum
 
@@ -786,8 +786,8 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - [BUG] If the `fftObject` parameter is not a valid FFT object, the error message says "not a SVG object" instead of "not a FFT object". This is a copy-paste error from the `drawSVG` method.
 
 **Cross References:**
-- `Graphics.drawImage`
-- `Graphics.drawSVG`
+- `$API.Graphics.drawImage$`
+- `$API.Graphics.drawSVG$`
 
 ## drawFittedText
 
@@ -795,8 +795,8 @@ This method does NOT require an active layer -- it adds a regular draw action.
 **Disabled Reason:** The method has a wrapper and full implementation but is NOT registered via `ADD_API_METHOD_5` in the constructor. It is inaccessible from HISEScript. Use `drawAlignedText` or `drawMultiLineText` instead.
 
 **Cross References:**
-- `Graphics.drawAlignedText`
-- `Graphics.drawMultiLineText`
+- `$API.Graphics.drawAlignedText$`
+- `$API.Graphics.drawMultiLineText$`
 
 ## drawHorizontalLine
 
@@ -822,9 +822,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | x2 | Double | no | End x-coordinate | SANITIZED against NaN/Inf |
 
 **Cross References:**
-- `Graphics.drawVerticalLine`
-- `Graphics.drawLine`
-- `Graphics.setColour`
+- `$API.Graphics.drawVerticalLine$`
+- `$API.Graphics.drawLine$`
+- `$API.Graphics.setColour$`
 
 ## drawImage
 
@@ -858,8 +858,8 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - [BUG] When the image is not found, the placeholder rendering overwrites the current colour state (sets it to grey then black). Drawing operations after a failed `drawImage` call will use black as the current colour unless `setColour` is called again.
 
 **Cross References:**
-- `Graphics.drawSVG`
-- `Graphics.fillPath`
+- `$API.Graphics.drawSVG$`
+- `$API.Graphics.fillPath$`
 
 **Example:**
 ```javascript:drawimage-filmstrip
@@ -912,9 +912,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - The offset is converted to integer coordinates, so sub-pixel shadow offsets are not supported.
 
 **Cross References:**
-- `Graphics.drawDropShadowFromPath`
-- `Graphics.drawDropShadow`
-- `Graphics.drawAlignedTextShadow`
+- `$API.Graphics.drawDropShadowFromPath$`
+- `$API.Graphics.drawDropShadow$`
+- `$API.Graphics.drawAlignedTextShadow$`
 
 **Example:**
 ```javascript:drawinnershadowfrompath-inset
@@ -965,9 +965,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - The parameter order is `(x1, x2, y1, y2)`, grouping x-coordinates then y-coordinates. This is unusual -- most drawing APIs use `(x1, y1, x2, y2)` point-by-point order. Despite the unusual order, the line draws correctly from (x1, y1) to (x2, y2).
 
 **Cross References:**
-- `Graphics.drawHorizontalLine`
-- `Graphics.drawVerticalLine`
-- `Graphics.setColour`
+- `$API.Graphics.drawHorizontalLine$`
+- `$API.Graphics.drawVerticalLine$`
+- `$API.Graphics.setColour$`
 
 ## drawMarkdownText
 
@@ -996,9 +996,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - The MarkdownRenderer must have `setTextBounds()` called before this method. Without it, the render area is empty and the method reports a script error.
 
 **Cross References:**
-- `Graphics.drawAlignedText`
-- `Graphics.drawMultiLineText`
-- `Graphics.drawAlignedTextShadow`
+- `$API.Graphics.drawAlignedText$`
+- `$API.Graphics.drawMultiLineText$`
+- `$API.Graphics.drawAlignedTextShadow$`
 
 ## drawMultiLineText
 
@@ -1035,11 +1035,11 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - Both `xy` values and `maxWidth` are cast to `int`, so sub-pixel positioning is not available.
 
 **Cross References:**
-- `Graphics.drawAlignedText`
-- `Graphics.drawAlignedTextShadow`
-- `Graphics.drawMarkdownText`
-- `Graphics.setFont`
-- `Graphics.setColour`
+- `$API.Graphics.drawAlignedText$`
+- `$API.Graphics.drawAlignedTextShadow$`
+- `$API.Graphics.drawMarkdownText$`
+- `$API.Graphics.setFont$`
+- `$API.Graphics.setColour$`
 
 ## drawPath
 
@@ -1096,10 +1096,10 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - When using the JSON stroke style, an unrecognized `EndCapStyle` or `JointStyle` string causes `StringArray::indexOf` to return -1, which is cast to the enum type. This produces a default stroke type rather than an error.
 
 **Cross References:**
-- `Graphics.fillPath`
-- `Graphics.drawDropShadowFromPath`
-- `Graphics.drawInnerShadowFromPath`
-- `Graphics.setColour`
+- `$API.Graphics.fillPath$`
+- `$API.Graphics.drawDropShadowFromPath$`
+- `$API.Graphics.drawInnerShadowFromPath$`
+- `$API.Graphics.setColour$`
 
 **Example:**
 ```javascript:drawpath-custom-stroke
@@ -1154,10 +1154,10 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | borderSize | Double | no | Width of the outline stroke in pixels | SANITIZED |
 
 **Cross References:**
-- `Graphics.fillRect`
-- `Graphics.drawRoundedRectangle`
-- `Graphics.drawEllipse`
-- `Graphics.setColour`
+- `$API.Graphics.fillRect$`
+- `$API.Graphics.drawRoundedRectangle$`
+- `$API.Graphics.drawEllipse$`
+- `$API.Graphics.setColour$`
 
 ## drawRepaintMarker
 
@@ -1183,7 +1183,7 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | label | String | no | Identifier for Perfetto profiling traces | Empty string defaults to "anonymous repaint" |
 
 **Cross References:**
-- `Graphics.fillAll`
+- `$API.Graphics.fillAll$`
 
 ## drawRoundedRectangle
 
@@ -1227,9 +1227,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | Rounded | Array | Array of 4 booleans: `[topLeft, topRight, bottomLeft, bottomRight]` |
 
 **Cross References:**
-- `Graphics.fillRoundedRectangle`
-- `Graphics.drawRect`
-- `Graphics.setColour`
+- `$API.Graphics.fillRoundedRectangle$`
+- `$API.Graphics.drawRect$`
+- `$API.Graphics.setColour$`
 
 **Example:**
 ```javascript:drawroundedrectangle-percorner
@@ -1276,10 +1276,10 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | opacity | Double | no | Overall opacity for the SVG rendering | 0.0 = transparent, 1.0 = opaque |
 
 **Cross References:**
-- `Graphics.drawImage`
-- `Graphics.drawFFTSpectrum`
-- `Graphics.fillPath`
-- `Graphics.drawPath`
+- `$API.Graphics.drawImage$`
+- `$API.Graphics.drawFFTSpectrum$`
+- `$API.Graphics.fillPath$`
+- `$API.Graphics.drawPath$`
 
 ## drawText
 
@@ -1287,7 +1287,7 @@ This method does NOT require an active layer -- it adds a regular draw action.
 **Disabled Reason:** Superseded by `drawAlignedText` which supports alignment options. Registered with `ADD_API_METHOD_2_DEPRECATED("use drawAlignedText for better placement")`.
 
 **Cross References:**
-- `Graphics.drawAlignedText`
+- `$API.Graphics.drawAlignedText$`
 
 ## drawTriangle
 
@@ -1315,9 +1315,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | lineThickness | Double | no | Width of the outline stroke in pixels | -- |
 
 **Cross References:**
-- `Graphics.fillTriangle`
-- `Graphics.drawPath`
-- `Graphics.setColour`
+- `$API.Graphics.fillTriangle$`
+- `$API.Graphics.drawPath$`
+- `$API.Graphics.setColour$`
 
 ## drawVerticalLine
 
@@ -1343,9 +1343,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | y2 | Double | no | End y-coordinate | SANITIZED against NaN/Inf |
 
 **Cross References:**
-- `Graphics.drawHorizontalLine`
-- `Graphics.drawLine`
-- `Graphics.setColour`
+- `$API.Graphics.drawHorizontalLine$`
+- `$API.Graphics.drawLine$`
+- `$API.Graphics.setColour$`
 
 ## endLayer
 
@@ -1369,12 +1369,12 @@ Every `beginLayer()` or `beginBlendLayer()` call must be matched with a correspo
 - Forgetting to call `endLayer()` after `beginLayer()` causes all subsequent draw calls to target the orphaned layer. The layer's content is discarded when `flush()` clears the stack at the end of the paint callback.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.beginBlendLayer`
-- `Graphics.gaussianBlur`
-- `Graphics.boxBlur`
-- `Graphics.desaturate`
-- `Graphics.applyHSL`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.beginBlendLayer$`
+- `$API.Graphics.gaussianBlur$`
+- `$API.Graphics.boxBlur$`
+- `$API.Graphics.desaturate$`
+- `$API.Graphics.applyHSL$`
 
 **DiagramRef:** graphics-layer-stack
 
@@ -1400,9 +1400,9 @@ This method does NOT require an active layer -- it adds a regular draw action. W
 | colour | Colour | no | Fill colour in 0xAARRGGBB format | Alpha channel controls opacity |
 
 **Cross References:**
-- `Graphics.fillRect`
-- `Graphics.setColour`
-- `Graphics.setGradientFill`
+- `$API.Graphics.fillRect$`
+- `$API.Graphics.setColour$`
+- `$API.Graphics.setGradientFill$`
 
 ## fillEllipse
 
@@ -1426,9 +1426,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | area | Array | no | Bounding rectangle `[x, y, w, h]` for the ellipse | Float precision |
 
 **Cross References:**
-- `Graphics.drawEllipse`
-- `Graphics.fillRect`
-- `Graphics.setColour`
+- `$API.Graphics.drawEllipse$`
+- `$API.Graphics.fillRect$`
+- `$API.Graphics.setColour$`
 
 ## fillPath
 
@@ -1460,10 +1460,10 @@ This method does NOT require an active layer -- it adds a regular draw action.
 - Unlike `drawPath`, `fillPath` always returns early when the path is empty, regardless of whether an area is specified.
 
 **Cross References:**
-- `Graphics.drawPath`
-- `Graphics.fillRect`
-- `Graphics.fillTriangle`
-- `Graphics.setColour`
+- `$API.Graphics.drawPath$`
+- `$API.Graphics.fillRect$`
+- `$API.Graphics.fillTriangle$`
+- `$API.Graphics.setColour$`
 
 ## fillRect
 
@@ -1489,10 +1489,10 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | area | Array | no | Bounding rectangle `[x, y, w, h]` | Float precision |
 
 **Cross References:**
-- `Graphics.drawRect`
-- `Graphics.fillRoundedRectangle`
-- `Graphics.fillAll`
-- `Graphics.setColour`
+- `$API.Graphics.drawRect$`
+- `$API.Graphics.fillRoundedRectangle$`
+- `$API.Graphics.fillAll$`
+- `$API.Graphics.setColour$`
 
 ## fillRoundedRectangle
 
@@ -1535,9 +1535,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | Rounded | Array | Array of 4 booleans: `[topLeft, topRight, bottomLeft, bottomRight]` |
 
 **Cross References:**
-- `Graphics.drawRoundedRectangle`
-- `Graphics.fillRect`
-- `Graphics.setColour`
+- `$API.Graphics.drawRoundedRectangle$`
+- `$API.Graphics.fillRect$`
+- `$API.Graphics.setColour$`
 
 **Example:**
 ```javascript:fillroundedrectangle-percorner
@@ -1583,9 +1583,9 @@ This method does NOT require an active layer -- it adds a regular draw action.
 | angle | Double | no | Rotation angle in radians (0 = upward-pointing) | -- |
 
 **Cross References:**
-- `Graphics.drawTriangle`
-- `Graphics.fillPath`
-- `Graphics.setColour`
+- `$API.Graphics.drawTriangle$`
+- `$API.Graphics.fillPath$`
+- `$API.Graphics.setColour$`
 
 ## flip
 
@@ -1618,7 +1618,7 @@ This method does NOT require an active layer -- it adds a regular draw action (a
 - The `totalArea` is converted to integer coordinates. Sub-pixel precision is lost in the mirror axis position.
 
 **Cross References:**
-- `Graphics.rotate`
+- `$API.Graphics.rotate$`
 
 ## gaussianBlur
 
@@ -1643,9 +1643,9 @@ Requires an active layer created with `beginLayer()` -- calling without one trig
 - Requires an active layer. Must be called between `beginLayer()` and `endLayer()`.
 
 **Cross References:**
-- `Graphics.beginLayer`
-- `Graphics.endLayer`
-- `Graphics.boxBlur`
+- `$API.Graphics.beginLayer$`
+- `$API.Graphics.endLayer$`
+- `$API.Graphics.boxBlur$`
 
 ## getStringWidth
 
@@ -1669,9 +1669,9 @@ This is the only Graphics method that returns a value instead of being a void dr
 | text | String | no | The text string to measure | -- |
 
 **Cross References:**
-- `Graphics.setFont`
-- `Graphics.setFontWithSpacing`
-- `Graphics.drawAlignedText`
+- `$API.Graphics.setFont$`
+- `$API.Graphics.setFontWithSpacing$`
+- `$API.Graphics.drawAlignedText$`
 
 ## rotate
 
@@ -1696,7 +1696,7 @@ This method does NOT require an active layer -- it adds a regular draw action. T
 | center | Array | no | Center of rotation as `[x, y]` | 2-element array |
 
 **Cross References:**
-- `Graphics.flip`
+- `$API.Graphics.flip$`
 
 ## setColour
 
@@ -1725,9 +1725,9 @@ The backend diagnostic system (`CHECK_AREA_AND_COLOUR`) warns at parse time when
 | colour | Colour | no | Drawing colour in 0xAARRGGBB format | Alpha channel controls opacity |
 
 **Cross References:**
-- `Graphics.setGradientFill`
-- `Graphics.setOpacity`
-- `Graphics.fillAll`
+- `$API.Graphics.setGradientFill$`
+- `$API.Graphics.setOpacity$`
+- `$API.Graphics.fillAll$`
 
 ## setFont
 
@@ -1759,10 +1759,10 @@ The backend diagnostic system (`CHECK_FONT_AND_COLOUR`) warns at parse time when
 | fontSize | Double | no | Font height in pixels | SANITIZED; 0.0 produces invisible text |
 
 **Cross References:**
-- `Graphics.setFontWithSpacing`
-- `Graphics.getStringWidth`
-- `Graphics.drawAlignedText`
-- `Graphics.drawMultiLineText`
+- `$API.Graphics.setFontWithSpacing$`
+- `$API.Graphics.getStringWidth$`
+- `$API.Graphics.drawAlignedText$`
+- `$API.Graphics.drawMultiLineText$`
 
 ## setFontWithSpacing
 
@@ -1794,10 +1794,10 @@ The backend diagnostic system (`CHECK_FONT_AND_COLOUR`) warns at parse time when
 | spacing | Double | no | Extra kerning factor added between characters | Typically small values like -0.1 to 0.2; 0.0 is no extra spacing |
 
 **Cross References:**
-- `Graphics.setFont`
-- `Graphics.getStringWidth`
-- `Graphics.drawAlignedText`
-- `Graphics.drawMultiLineText`
+- `$API.Graphics.setFont$`
+- `$API.Graphics.getStringWidth$`
+- `$API.Graphics.drawAlignedText$`
+- `$API.Graphics.drawMultiLineText$`
 
 ## setGradientFill
 
@@ -1835,10 +1835,10 @@ The backend diagnostic system (`checkColourSet`) treats `setGradientFill` equiva
 - [BUG] Passing an Array with fewer than 6 elements silently does nothing -- no gradient is set and no error is reported. Only non-Array input triggers a script error.
 
 **Cross References:**
-- `Graphics.setColour`
-- `Graphics.fillRect`
-- `Graphics.fillRoundedRectangle`
-- `Graphics.fillPath`
+- `$API.Graphics.setColour$`
+- `$API.Graphics.fillRect$`
+- `$API.Graphics.fillRoundedRectangle$`
+- `$API.Graphics.fillPath$`
 
 **Example:**
 ```javascript:multi-stop-gradient
@@ -1881,6 +1881,6 @@ Note that the `alphaValue` parameter is NOT wrapped in `SANITIZED()` -- it is pa
 | alphaValue | Double | no | Global opacity level | 0.0 (transparent) to 1.0 (opaque) |
 
 **Cross References:**
-- `Graphics.setColour`
-- `Graphics.setGradientFill`
-- `Graphics.beginBlendLayer`
+- `$API.Graphics.setColour$`
+- `$API.Graphics.setGradientFill$`
+- `$API.Graphics.beginBlendLayer$`

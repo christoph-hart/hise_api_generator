@@ -23,9 +23,9 @@ Adds a new graph point to the table at the specified position. The point is appe
 - [BUG] Unlike `setTablePoint`, this method does not clamp x and y to the 0.0-1.0 range. Out-of-range values are stored as-is and may produce unexpected table shapes.
 
 **Cross References:**
-- `TableProcessor.setTablePoint`
-- `TableProcessor.getTable`
-- `TableProcessor.reset`
+- `$API.TableProcessor.setTablePoint$`
+- `$API.TableProcessor.getTable$`
+- `$API.TableProcessor.reset$`
 
 ## exists
 
@@ -61,8 +61,8 @@ Serializes the table's graph points to a base64-encoded string. The string captu
 - Returns an empty string for the default table state rather than a base64 representation. This is an optimization -- `restoreFromBase64` handles empty strings by calling `reset()`, so the serialization roundtrip is consistent.
 
 **Cross References:**
-- `TableProcessor.restoreFromBase64`
-- `TableProcessor.reset`
+- `$API.TableProcessor.restoreFromBase64$`
+- `$API.TableProcessor.reset$`
 
 ## getTable
 
@@ -81,11 +81,11 @@ Returns a `Table` data object for the specified table index. The `Table` object 
 | tableIndex | Integer | no | Index of the table to retrieve. Most modules have one table (index 0). | >= 0 |
 
 **Cross References:**
-- `TableProcessor.addTablePoint`
-- `TableProcessor.setTablePoint`
-- `TableProcessor.reset`
-- `TableProcessor.exportAsBase64`
-- `TableProcessor.restoreFromBase64`
+- `$API.TableProcessor.addTablePoint$`
+- `$API.TableProcessor.setTablePoint$`
+- `$API.TableProcessor.reset$`
+- `$API.TableProcessor.exportAsBase64$`
+- `$API.TableProcessor.restoreFromBase64$`
 
 **Example:**
 ```javascript:get-table-object
@@ -133,8 +133,8 @@ Resets the table to its default state: a straight diagonal line from (0, 0) to (
 | tableIndex | Integer | no | Index of the table to reset. Most modules have one table (index 0). | >= 0 |
 
 **Cross References:**
-- `TableProcessor.addTablePoint`
-- `TableProcessor.restoreFromBase64`
+- `$API.TableProcessor.addTablePoint$`
+- `$API.TableProcessor.restoreFromBase64$`
 
 ## restoreFromBase64
 
@@ -154,9 +154,9 @@ Restores the table's graph points from a base64-encoded string previously create
 | state | String | no | Base64-encoded table state from `exportAsBase64`. | Valid base64 or empty string |
 
 **Cross References:**
-- `TableProcessor.exportAsBase64`
-- `TableProcessor.reset`
-- `TableProcessor.getTable`
+- `$API.TableProcessor.exportAsBase64$`
+- `$API.TableProcessor.reset$`
+- `$API.TableProcessor.getTable$`
 
 ## setTablePoint
 
@@ -183,6 +183,6 @@ Modifies an existing graph point in the table. All coordinate and curve values a
 - [BUG] An out-of-range pointIndex is silently ignored -- no error is reported and no modification occurs. The call appears to succeed but has no effect.
 
 **Cross References:**
-- `TableProcessor.addTablePoint`
-- `TableProcessor.getTable`
-- `TableProcessor.reset`
+- `$API.TableProcessor.addTablePoint$`
+- `$API.TableProcessor.getTable$`
+- `$API.TableProcessor.reset$`

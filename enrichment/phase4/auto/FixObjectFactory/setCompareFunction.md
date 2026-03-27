@@ -6,6 +6,6 @@ Sets the comparison function used by all arrays and stacks from this factory for
 
 Passing any other value (e.g. `0`) resets to the default comparator, which uses byte-level equality for matching.
 
-> **Warning:** The comparator propagates retroactively to all arrays and stacks previously created from this factory. There is no way to set a per-container comparator independently.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The comparator propagates retroactively to all arrays and stacks previously created from this factory. There is no way to set a per-container comparator independently.
 
-> **Warning:** A custom JavaScript comparison function makes sorting and search operations significantly slower due to synchronous script callback overhead. Prefer the string-based property comparator for performance-critical code.
+> [!Warning:$WARNING_TO_BE_REPLACED$] A custom JavaScript comparison function makes sorting and search operations significantly slower due to synchronous script callback overhead. Prefer the string-based property comparator for performance-critical code.

@@ -69,11 +69,4 @@ Two Effect Slots can exchange their hosted effects atomically using the swap ope
 
 Bypass is fully delegated to the hosted effect. Bypassing the Effect Slot forwards the bypass state to whatever effect is currently loaded.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Empty", to: "/v2/reference/audio-modules/effects/master/emptyfx", desc: "The default placeholder loaded when the slot is empty or cleared" }
----
-::
+**See also:** $MODULES.EmptyFX$ -- The default placeholder loaded when the slot is empty or cleared

@@ -29,14 +29,17 @@ For advanced use cases, `getAutomationDataObject()` and `setAutomationDataFromOb
 
 ## Common Mistakes
 
-- **Wrong:** Calling `setControllerNumbersInPopup()` without `setControllerNumberNames()`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `setControllerNumbersInPopup()` without `setControllerNumberNames()`
   **Right:** Always pair both calls so users see readable names instead of raw CC numbers.
   *When only the CC filter is set, the popup shows "CC#20", "CC#21", etc. - meaningless to end users.*
 
-- **Wrong:** Handling all automation-change logic directly inside the `setUpdateCallback` function.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Handling all automation-change logic directly inside the `setUpdateCallback` function.
   **Right:** Forward the data to a Broadcaster and add multiple independent listeners.
   *A single callback creates tight coupling between the automation system and every UI element that needs to react. A broadcaster allows indicator panels, enable-state managers, and other systems to subscribe independently.*
 
-- **Wrong:** Removing an automation entry by writing a filtered array without undo support.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Removing an automation entry by writing a filtered array without undo support.
   **Right:** Wrap `setAutomationDataFromObject()` in `Engine.performUndoAction()` with before/after snapshots.
   *Users expect automation assignment changes to be undoable. Store the old and new arrays in the undo object and call `setAutomationDataFromObject()` in both directions.*

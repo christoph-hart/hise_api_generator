@@ -178,13 +178,4 @@ Bands whose frequency would exceed a safety limit below the Nyquist frequency ar
 
 The module uses three slider packs internally: pack A and pack B hold the editable per-band gain values in dB (-24 to +24), and a third read-only pack displays the interpolated mix result. The crossfade interpolates gain values before filtering - it does not run two separate filter banks, so there is no additional CPU cost from using intermediate crossfade positions.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Polyphonic Filter", to: "/v2/reference/audio-modules/effects/polyphonic/polyphonicfilter", desc: "General-purpose polyphonic filter with standard filter modes. Use when you need a conventional LP/HP/BP filter per voice rather than harmonic resonance shaping." }
-  - { label: "Harmonic Filter Monophonic", to: "/v2/reference/audio-modules/effects/monophonic/harmonicfiltermono", desc: "Monophonic variant that tracks the last played note instead of maintaining independent filter state per voice. Lower CPU cost but no per-voice harmonic separation." }
-  - { label: "PolyshapeFX", to: "/v2/reference/audio-modules/effects/polyphonic/polyshapefx", desc: "Polyphonic waveshaper that can be placed before the Harmonic Filter to add harmonics for the filter to shape." }
----
-::
+**See also:** $MODULES.PolyphonicFilter$ -- General-purpose polyphonic filter with standard filter modes. Use when you need a conventional LP/HP/BP filter per voice rather than harmonic resonance shaping., $MODULES.HarmonicFilterMono$ -- Monophonic variant that tracks the last played note instead of maintaining independent filter state per voice. Lower CPU cost but no per-voice harmonic separation., $MODULES.PolyshapeFX$ -- Polyphonic waveshaper that can be placed before the Harmonic Filter to add harmonics for the filter to shape.

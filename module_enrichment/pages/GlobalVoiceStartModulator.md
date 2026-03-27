@@ -122,12 +122,4 @@ Voice-start values are indexed by MIDI note number (0-127), not by voice index. 
 
 When disconnected (no source selected), the modulator returns 1.0 (pass-through in gain mode).
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Global Modulator Container", to: "/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer", desc: "hosts the source voice-start modulator" }
-  - { label: "Global Static Time Variant Modulator", to: "/v2/reference/audio-modules/modulators/voice-start/globalstatictimevariantmodulator", desc: "also a voice-start consumer, but reads from a time-variant source (snapshots an LFO or similar at note-on)" }
----
-::
+**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source voice-start modulator, $MODULES.GlobalStaticTimeVariantModulator$ -- also a voice-start consumer, but reads from a time-variant source (snapshots an LFO or similar at note-on)

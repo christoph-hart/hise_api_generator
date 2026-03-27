@@ -91,11 +91,4 @@ All routing is configured through the editor panel's matrix grid. There are no s
 
 For gain-controlled routing to a separate effect chain (aux send/return), use a Send Effect targeting a Send Container instead. The Routing Matrix operates within a single processing buffer, while the Send Effect routes signal to a completely separate module's buffer.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Send Effect", to: "/v2/reference/audio-modules/effects/master/sendfx", desc: "Gain-controlled send to a separate Send Container, for aux send/return workflows" }
----
-::
+**See also:** $MODULES.SendFX$ -- Gain-controlled send to a separate Send Container, for aux send/return workflows

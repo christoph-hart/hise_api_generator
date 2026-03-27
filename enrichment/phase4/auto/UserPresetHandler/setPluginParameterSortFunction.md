@@ -12,4 +12,4 @@ Each parameter object has these properties:
 
 The default sort order groups by type (macros first, then custom automation, then script controls), and within each type by order of definition.
 
-> **Warning:** If you use parameter groups, the host requires ungrouped parameters first, followed by grouped parameters. This grouping overrides any custom sort order you define, so adding group names to an existing project may change the parameter order unexpectedly.
+> [!Warning:$WARNING_TO_BE_REPLACED$] If you use parameter groups, the host requires ungrouped parameters first, followed by grouped parameters. This grouping overrides any custom sort order you define, so adding group names to an existing project may change the parameter order unexpectedly.

@@ -20,8 +20,8 @@ Returns a new Rectangle that is moved to fit within the given target area, keepi
 - If the argument cannot be parsed as a rectangle (wrong type, wrong array length), the method silently returns a copy of the original rectangle unchanged instead of reporting an error.
 
 **Cross References:**
-- `Rectangle.contains`
-- `Rectangle.getIntersection`
+- `$API.Rectangle.contains$`
+- `$API.Rectangle.getIntersection$`
 
 ## contains
 
@@ -44,9 +44,9 @@ Tests whether this rectangle fully contains another rectangle or contains a poin
 - If the argument cannot be parsed as either a rectangle or a point, the method returns `false` silently rather than reporting an error.
 
 **Cross References:**
-- `Rectangle.intersects`
-- `Rectangle.constrainedWithin`
-- `Rectangle.isEmpty`
+- `$API.Rectangle.intersects$`
+- `$API.Rectangle.constrainedWithin$`
+- `$API.Rectangle.isEmpty$`
 
 ## expanded
 
@@ -69,7 +69,7 @@ Returns a new Rectangle that is larger than this one by the given amount. With o
 - Negative values are allowed and produce the same effect as `reduced()` -- the rectangle shrinks instead of growing.
 
 **Cross References:**
-- `Rectangle.reduced`
+- `$API.Rectangle.reduced$`
 
 ## getIntersection
 
@@ -91,9 +91,9 @@ Returns a new Rectangle representing the intersection of this rectangle and the 
 - If the argument cannot be parsed as a rectangle, the method silently returns a copy of the original rectangle unchanged instead of reporting an error or returning an empty rectangle.
 
 **Cross References:**
-- `Rectangle.intersects`
-- `Rectangle.getUnion`
-- `Rectangle.constrainedWithin`
+- `$API.Rectangle.intersects$`
+- `$API.Rectangle.getUnion$`
+- `$API.Rectangle.constrainedWithin$`
 
 ## getUnion
 
@@ -115,9 +115,9 @@ Returns a new Rectangle that is the smallest rectangle containing both this rect
 - If the argument cannot be parsed as a rectangle, the method silently returns a copy of the original rectangle unchanged instead of reporting an error.
 
 **Cross References:**
-- `Rectangle.getIntersection`
-- `Rectangle.intersects`
-- `Rectangle.contains`
+- `$API.Rectangle.getIntersection$`
+- `$API.Rectangle.intersects$`
+- `$API.Rectangle.contains$`
 
 ## intersects
 
@@ -139,9 +139,9 @@ Returns `true` if any part of another rectangle overlaps this one. Returns `fals
 - If the argument cannot be parsed as a rectangle, the method silently returns `false` instead of reporting an error. This is consistent with `contains()`.
 
 **Cross References:**
-- `Rectangle.contains`
-- `Rectangle.getIntersection`
-- `Rectangle.getUnion`
+- `$API.Rectangle.contains$`
+- `$API.Rectangle.getIntersection$`
+- `$API.Rectangle.getUnion$`
 
 ## reduced
 
@@ -164,8 +164,8 @@ Returns a new Rectangle that is smaller than this one by the given amount. With 
 - Negative values are allowed and produce the same effect as `expanded()` -- the rectangle grows instead of shrinking.
 
 **Cross References:**
-- `Rectangle.expanded`
-- `Rectangle.withTrimmedTop`
+- `$API.Rectangle.expanded$`
+- `$API.Rectangle.withTrimmedTop$`
 
 ## removeFromBottom
 
@@ -187,10 +187,10 @@ Removes a strip from the bottom of this rectangle. This method mutates the sourc
 - This method mutates the source rectangle. After calling, the source rectangle is smaller (its height is reduced by `numToRemove`). The returned Rectangle is the removed strip, not the remaining area.
 
 **Cross References:**
-- `Rectangle.removeFromTop`
-- `Rectangle.removeFromLeft`
-- `Rectangle.removeFromRight`
-- `Rectangle.withTrimmedBottom`
+- `$API.Rectangle.removeFromTop$`
+- `$API.Rectangle.removeFromLeft$`
+- `$API.Rectangle.removeFromRight$`
+- `$API.Rectangle.withTrimmedBottom$`
 
 ## removeFromLeft
 
@@ -212,10 +212,10 @@ Removes a strip from the left side of this rectangle. This method mutates the so
 - This method mutates the source rectangle. After calling, the source rectangle is narrower (its left edge moves right by `numToRemove`). The returned Rectangle is the removed strip, not the remaining area.
 
 **Cross References:**
-- `Rectangle.removeFromRight`
-- `Rectangle.removeFromTop`
-- `Rectangle.removeFromBottom`
-- `Rectangle.withTrimmedLeft`
+- `$API.Rectangle.removeFromRight$`
+- `$API.Rectangle.removeFromTop$`
+- `$API.Rectangle.removeFromBottom$`
+- `$API.Rectangle.withTrimmedLeft$`
 
 ## removeFromRight
 
@@ -237,10 +237,10 @@ Removes a strip from the right side of this rectangle. This method mutates the s
 - This method mutates the source rectangle. After calling, the source rectangle is narrower (its right edge moves left by `numToRemove`). The returned Rectangle is the removed strip, not the remaining area.
 
 **Cross References:**
-- `Rectangle.removeFromLeft`
-- `Rectangle.removeFromTop`
-- `Rectangle.removeFromBottom`
-- `Rectangle.withTrimmedRight`
+- `$API.Rectangle.removeFromLeft$`
+- `$API.Rectangle.removeFromTop$`
+- `$API.Rectangle.removeFromBottom$`
+- `$API.Rectangle.withTrimmedRight$`
 
 ## removeFromTop
 
@@ -262,10 +262,10 @@ Removes a strip from the top of this rectangle. This method mutates the source r
 - This method mutates the source rectangle. After calling, the source rectangle is smaller (its top edge moves down by `numToRemove`). The returned Rectangle is the removed strip, not the remaining area.
 
 **Cross References:**
-- `Rectangle.removeFromBottom`
-- `Rectangle.removeFromLeft`
-- `Rectangle.removeFromRight`
-- `Rectangle.withTrimmedTop`
+- `$API.Rectangle.removeFromBottom$`
+- `$API.Rectangle.removeFromLeft$`
+- `$API.Rectangle.removeFromRight$`
+- `$API.Rectangle.withTrimmedTop$`
 
 ## scaled
 
@@ -288,11 +288,11 @@ Returns a new Rectangle with both position and size scaled by the given factor(s
 - Scaling transforms both position and size. A rectangle not at the origin will move toward or away from `(0, 0)` when scaled. To scale only the size while keeping the centre, use `withSizeKeepingCentre()` instead.
 
 **Cross References:**
-- `Rectangle.withSizeKeepingCentre`
-- `Rectangle.withSize`
-- `Rectangle.translated`
-- `Rectangle.expanded`
-- `Rectangle.reduced`
+- `$API.Rectangle.withSizeKeepingCentre$`
+- `$API.Rectangle.withSize$`
+- `$API.Rectangle.translated$`
+- `$API.Rectangle.expanded$`
+- `$API.Rectangle.reduced$`
 
 ## isEmpty
 
@@ -309,8 +309,8 @@ Returns `true` if the rectangle's width or height is zero or less. An empty rect
 (No parameters.)
 
 **Cross References:**
-- `Rectangle.getIntersection`
-- `Rectangle.contains`
+- `$API.Rectangle.getIntersection$`
+- `$API.Rectangle.contains$`
 
 ## setCentre
 
@@ -330,8 +330,8 @@ Moves this rectangle so that its centre is at the given position, keeping its si
 | centerY | Double | no | The y coordinate for the new centre position. | Any number |
 
 **Cross References:**
-- `Rectangle.withCentre`
-- `Rectangle.setPosition`
+- `$API.Rectangle.withCentre$`
+- `$API.Rectangle.setPosition$`
 
 ## setPosition
 
@@ -351,10 +351,10 @@ Moves this rectangle's top-left corner to the given coordinates, keeping its siz
 | y | Double | no | The new y coordinate for the top-left corner. | Any number |
 
 **Cross References:**
-- `Rectangle.setCentre`
-- `Rectangle.withX`
-- `Rectangle.withY`
-- `Rectangle.translated`
+- `$API.Rectangle.setCentre$`
+- `$API.Rectangle.withX$`
+- `$API.Rectangle.withY$`
+- `$API.Rectangle.translated$`
 
 ## setSize
 
@@ -374,10 +374,10 @@ Changes this rectangle's width and height, keeping the position of its top-left 
 | height | Double | no | The new height of the rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withSize`
-- `Rectangle.withSizeKeepingCentre`
-- `Rectangle.withWidth`
-- `Rectangle.withHeight`
+- `$API.Rectangle.withSize$`
+- `$API.Rectangle.withSizeKeepingCentre$`
+- `$API.Rectangle.withWidth$`
+- `$API.Rectangle.withHeight$`
 
 ## toArray
 
@@ -411,10 +411,10 @@ Returns a new Rectangle that is the same as this one moved by the given offsets.
 | deltaY | Double | no | Vertical offset. Positive values move down, negative values move up. | Any number |
 
 **Cross References:**
-- `Rectangle.setPosition`
-- `Rectangle.scaled`
-- `Rectangle.withX`
-- `Rectangle.withY`
+- `$API.Rectangle.setPosition$`
+- `$API.Rectangle.scaled$`
+- `$API.Rectangle.withX$`
+- `$API.Rectangle.withY$`
 
 ## withAspectRatioLike
 
@@ -437,8 +437,8 @@ Returns the largest Rectangle that fits within this rectangle while matching the
 - [BUG] Passing a rectangle with zero width causes a division by zero when computing the aspect ratio, producing non-finite results.
 
 **Cross References:**
-- `Rectangle.withSizeKeepingCentre`
-- `Rectangle.scaled`
+- `$API.Rectangle.withSizeKeepingCentre$`
+- `$API.Rectangle.scaled$`
 
 **Example:**
 ```javascript:fit-aspect-ratio
@@ -477,9 +477,9 @@ Returns a new Rectangle with a different bottom edge position but the same top e
 | newBottom | Double | no | The y coordinate for the new bottom edge. | Any number |
 
 **Cross References:**
-- `Rectangle.withBottomY`
-- `Rectangle.withRight`
-- `Rectangle.withTrimmedBottom`
+- `$API.Rectangle.withBottomY$`
+- `$API.Rectangle.withRight$`
+- `$API.Rectangle.withTrimmedBottom$`
 
 ## withBottomY
 
@@ -498,9 +498,9 @@ Returns a new Rectangle with the same size and x-position as this one, but moved
 | newBottomY | Double | no | The y coordinate for the new bottom edge. The rectangle is moved vertically to place its bottom at this position. | Any number |
 
 **Cross References:**
-- `Rectangle.withBottom`
-- `Rectangle.withY`
-- `Rectangle.translated`
+- `$API.Rectangle.withBottom$`
+- `$API.Rectangle.withY$`
+- `$API.Rectangle.translated$`
 
 ## withCentre
 
@@ -520,9 +520,9 @@ Returns a new Rectangle with the same size as this one, but repositioned so that
 | newCentreY | Double | no | The y coordinate for the new centre position. | Any number |
 
 **Cross References:**
-- `Rectangle.setCentre`
-- `Rectangle.withSizeKeepingCentre`
-- `Rectangle.translated`
+- `$API.Rectangle.setCentre$`
+- `$API.Rectangle.withSizeKeepingCentre$`
+- `$API.Rectangle.translated$`
 
 ## withHeight
 
@@ -541,9 +541,9 @@ Returns a new Rectangle with the same position and width as this one, but with a
 | newHeight | Double | no | The new height for the returned rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withWidth`
-- `Rectangle.withSize`
-- `Rectangle.setSize`
+- `$API.Rectangle.withWidth$`
+- `$API.Rectangle.withSize$`
+- `$API.Rectangle.setSize$`
 
 ## withLeft
 
@@ -562,9 +562,9 @@ Returns a new Rectangle with a different left edge (x position) but the same rig
 | newLeft | Double | no | The x coordinate for the new left edge. | Any number |
 
 **Cross References:**
-- `Rectangle.withRight`
-- `Rectangle.withX`
-- `Rectangle.withTrimmedLeft`
+- `$API.Rectangle.withRight$`
+- `$API.Rectangle.withX$`
+- `$API.Rectangle.withTrimmedLeft$`
 
 ## withRight
 
@@ -583,9 +583,9 @@ Returns a new Rectangle with a different right edge position but the same left e
 | newRight | Double | no | The x coordinate for the new right edge. | Any number |
 
 **Cross References:**
-- `Rectangle.withLeft`
-- `Rectangle.withWidth`
-- `Rectangle.withTrimmedRight`
+- `$API.Rectangle.withLeft$`
+- `$API.Rectangle.withWidth$`
+- `$API.Rectangle.withTrimmedRight$`
 
 ## withSize
 
@@ -605,10 +605,10 @@ Returns a new Rectangle with the same top-left position as this one, but with a 
 | newHeight | Double | no | The new height for the returned rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withSizeKeepingCentre`
-- `Rectangle.setSize`
-- `Rectangle.withWidth`
-- `Rectangle.withHeight`
+- `$API.Rectangle.withSizeKeepingCentre$`
+- `$API.Rectangle.setSize$`
+- `$API.Rectangle.withWidth$`
+- `$API.Rectangle.withHeight$`
 
 ## withSizeKeepingCentre
 
@@ -628,10 +628,10 @@ Returns a new Rectangle with the same centre position as this one, but with a di
 | newHeight | Double | no | The new height for the returned rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withSize`
-- `Rectangle.withCentre`
-- `Rectangle.setCentre`
-- `Rectangle.scaled`
+- `$API.Rectangle.withSize$`
+- `$API.Rectangle.withCentre$`
+- `$API.Rectangle.setCentre$`
+- `$API.Rectangle.scaled$`
 
 ## withTrimmedBottom
 
@@ -650,11 +650,11 @@ Returns a new Rectangle with the given amount removed from its bottom edge. The 
 | amountToRemove | Double | no | The amount to trim from the bottom edge. Positive values shrink the rectangle; negative values extend it downward. | Any number |
 
 **Cross References:**
-- `Rectangle.removeFromBottom`
-- `Rectangle.withTrimmedTop`
-- `Rectangle.withTrimmedLeft`
-- `Rectangle.withTrimmedRight`
-- `Rectangle.reduced`
+- `$API.Rectangle.removeFromBottom$`
+- `$API.Rectangle.withTrimmedTop$`
+- `$API.Rectangle.withTrimmedLeft$`
+- `$API.Rectangle.withTrimmedRight$`
+- `$API.Rectangle.reduced$`
 
 ## withTrimmedLeft
 
@@ -673,11 +673,11 @@ Returns a new Rectangle with the given amount removed from its left-hand edge. T
 | amountToRemove | Double | no | The amount to trim from the left edge. Positive values shrink the rectangle from the left; negative values extend it leftward. | Any number |
 
 **Cross References:**
-- `Rectangle.removeFromLeft`
-- `Rectangle.withTrimmedRight`
-- `Rectangle.withTrimmedTop`
-- `Rectangle.withTrimmedBottom`
-- `Rectangle.reduced`
+- `$API.Rectangle.removeFromLeft$`
+- `$API.Rectangle.withTrimmedRight$`
+- `$API.Rectangle.withTrimmedTop$`
+- `$API.Rectangle.withTrimmedBottom$`
+- `$API.Rectangle.reduced$`
 
 ## withTrimmedRight
 
@@ -696,11 +696,11 @@ Returns a new Rectangle with the given amount removed from its right-hand edge. 
 | amountToRemove | Double | no | The amount to trim from the right edge. Positive values shrink the rectangle from the right; negative values extend it rightward. | Any number |
 
 **Cross References:**
-- `Rectangle.removeFromRight`
-- `Rectangle.withTrimmedLeft`
-- `Rectangle.withTrimmedTop`
-- `Rectangle.withTrimmedBottom`
-- `Rectangle.reduced`
+- `$API.Rectangle.removeFromRight$`
+- `$API.Rectangle.withTrimmedLeft$`
+- `$API.Rectangle.withTrimmedTop$`
+- `$API.Rectangle.withTrimmedBottom$`
+- `$API.Rectangle.reduced$`
 
 ## withTrimmedTop
 
@@ -719,11 +719,11 @@ Returns a new Rectangle with the given amount removed from its top edge. The bot
 | amountToRemove | Double | no | The amount to trim from the top edge. Positive values shrink the rectangle from the top; negative values extend it upward. | Any number |
 
 **Cross References:**
-- `Rectangle.removeFromTop`
-- `Rectangle.withTrimmedBottom`
-- `Rectangle.withTrimmedLeft`
-- `Rectangle.withTrimmedRight`
-- `Rectangle.reduced`
+- `$API.Rectangle.removeFromTop$`
+- `$API.Rectangle.withTrimmedBottom$`
+- `$API.Rectangle.withTrimmedLeft$`
+- `$API.Rectangle.withTrimmedRight$`
+- `$API.Rectangle.reduced$`
 
 ## withWidth
 
@@ -742,10 +742,10 @@ Returns a new Rectangle with the same position and height as this one, but with 
 | newWidth | Double | no | The new width for the returned rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withHeight`
-- `Rectangle.withSize`
-- `Rectangle.setSize`
-- `Rectangle.withRight`
+- `$API.Rectangle.withHeight$`
+- `$API.Rectangle.withSize$`
+- `$API.Rectangle.setSize$`
+- `$API.Rectangle.withRight$`
 
 ## withX
 
@@ -764,10 +764,10 @@ Returns a new Rectangle with the same size and y-position as this one, but with 
 | newX | Double | no | The new x coordinate for the left edge of the returned rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withY`
-- `Rectangle.withLeft`
-- `Rectangle.setPosition`
-- `Rectangle.translated`
+- `$API.Rectangle.withY$`
+- `$API.Rectangle.withLeft$`
+- `$API.Rectangle.setPosition$`
+- `$API.Rectangle.translated$`
 
 ## withY
 
@@ -786,7 +786,7 @@ Returns a new Rectangle with the same size and x-position as this one, but with 
 | newY | Double | no | The new y coordinate for the top edge of the returned rectangle. | Any number |
 
 **Cross References:**
-- `Rectangle.withX`
-- `Rectangle.withBottomY`
-- `Rectangle.setPosition`
-- `Rectangle.translated`
+- `$API.Rectangle.withX$`
+- `$API.Rectangle.withBottomY$`
+- `$API.Rectangle.setPosition$`
+- `$API.Rectangle.translated$`

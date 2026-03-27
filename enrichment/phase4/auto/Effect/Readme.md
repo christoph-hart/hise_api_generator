@@ -29,18 +29,22 @@ Effect shares its core API surface (parameter access, bypass, state serialisatio
 
 ## Common Mistakes
 
-- **Wrong:** `const var fx = Synth.getEffect("MyFX");` in `onNoteOn`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `const var fx = Synth.getEffect("MyFX");` in `onNoteOn`
   **Right:** `const var fx = Synth.getEffect("MyFX");` in `onInit`
   *`Synth.getEffect()` can only be called during initialisation. Store the reference as a top-level const.*
 
-- **Wrong:** `fx.setAttribute(0, 1000.0)` using raw integer indices
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `fx.setAttribute(0, 1000.0)` using raw integer indices
   **Right:** `fx.setAttribute(fx.Frequency, 1000.0)` using named constants
   *Named constants are generated per effect type. They make code self-documenting and survive parameter reordering.*
 
-- **Wrong:** `fx.exportScriptControls()` on a built-in effect
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `fx.exportScriptControls()` on a built-in effect
   **Right:** `fx.exportState()` on a built-in effect
   *`exportScriptControls()` and `restoreScriptControls()` only work on Script FX modules. Use the full state methods for built-in effects.*
 
-- **Wrong:** Calling `restoreState()` and expecting connected UI components to update automatically
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `restoreState()` and expecting connected UI components to update automatically
   **Right:** Calling `updateValueFromProcessorConnection()` on connected components after `restoreState()`
   *`restoreState()` does not send parameter change notifications. Connected knobs and sliders must be explicitly resynced.*

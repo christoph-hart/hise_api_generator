@@ -19,4 +19,4 @@ laf.registerFunction("drawRotarySlider", function(g, obj)
 });
 ```
 
-> **Warning:** When using `drawImage` in a LAF callback, load the image with `laf.loadImage()` on the LAF object, not on a panel. Images loaded onto a panel are not accessible from LAF draw functions and produce a grey "XXX" placeholder.
+> [!Warning:$WARNING_TO_BE_REPLACED$] When using `drawImage` in a LAF callback, load the image with `laf.loadImage()` on the LAF object, not on a panel. Images loaded onto a panel are not accessible from LAF draw functions and produce a grey "XXX" placeholder.

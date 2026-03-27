@@ -146,11 +146,4 @@ The delay buffer holds 2048 samples. At 44.1kHz, the maximum modulation depth is
 
 When Rate is set below approximately 1%, the LFO is frozen and the phase is reset, producing a static delay effect.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Phase FX", to: "/v2/reference/audio-modules/effects/master/phasefx", desc: "Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation" }
----
-::
+**See also:** $MODULES.PhaseFX$ -- Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation

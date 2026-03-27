@@ -23,18 +23,22 @@ For modules that are MidiPlayer instances, use `asMidiPlayer()` to cast the hand
 
 ## Common Mistakes
 
-- **Wrong:** `var v = mp["Intensity"];`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var v = mp["Intensity"];`
   **Right:** `var v = mp.getAttribute(mp.Intensity);`
   *Bracket read always returns 1.0 due to an internal limitation. Use `getAttribute()` for reading parameter values.*
 
-- **Wrong:** `mp.exportScriptControls()` on a Transposer
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `mp.exportScriptControls()` on a Transposer
   **Right:** `mp.exportState()` on a Transposer
   *`exportScriptControls()` only works on script processors. Use `exportState()` for built-in MIDI modules.*
 
-- **Wrong:** `Synth.getMidiProcessor("MidiMuter" + i)` inside a callback
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Synth.getMidiProcessor("MidiMuter" + i)` inside a callback
   **Right:** Cache all references in `onInit`: `for (i = 0; i < N; i++) muters.push(Synth.getMidiProcessor("MidiMuter" + (i + 1)));`
   *`Synth.getMidiProcessor()` is restricted to `onInit`. Cache references at init time and index into the array at runtime.*
 
-- **Wrong:** `mp.setAttribute(0, value)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `mp.setAttribute(0, value)`
   **Right:** `mp.setAttribute(mp.SomeParameter, value)`
   *Raw indices are fragile and unreadable. Dynamic constants are module-specific and self-documenting.*

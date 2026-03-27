@@ -7,4 +7,4 @@ When enabled, the system adds two automatic checks:
 
 The first check catches stuck notes from `Message.delayEvent()` and the second covers artificial note pairs created with `Synth.addNoteOn` / `Synth.addNoteOff`. This method is also required before using `Synth.attachNote()` - calling `attachNote` without it throws an error.
 
-> **Warning:** This is a per-sound-generator setting. Calling it in your Interface script does not affect child sound generators that perform their own MIDI manipulation. Enable it on each script processor that needs it.
+> [!Warning:$WARNING_TO_BE_REPLACED$] This is a per-sound-generator setting. Calling it in your Interface script does not affect child sound generators that perform their own MIDI manipulation. Enable it on each script processor that needs it.

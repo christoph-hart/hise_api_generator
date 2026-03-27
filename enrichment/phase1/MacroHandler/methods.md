@@ -36,8 +36,8 @@ Returns an array of JSON objects representing all active macro-to-parameter conn
 - The returned array is a snapshot. Modifying objects in the array does not change the actual macro connections -- call `setMacroDataFromObject` with the modified array to apply changes.
 
 **Cross References:**
-- `MacroHandler.setMacroDataFromObject`
-- `MacroHandler.setUpdateCallback`
+- `$API.MacroHandler.setMacroDataFromObject$`
+- `$API.MacroHandler.setUpdateCallback$`
 
 **Example:**
 ```javascript:macro-data-snapshot
@@ -77,8 +77,8 @@ Enables or disables exclusive mode for macro connections. When exclusive mode is
 | shouldBeExclusive | Integer | no | Whether each macro slot should allow only one connection | Boolean: true to enable, false to disable |
 
 **Cross References:**
-- `MacroHandler.getMacroDataObject`
-- `MacroHandler.setMacroDataFromObject`
+- `$API.MacroHandler.getMacroDataObject$`
+- `$API.MacroHandler.setMacroDataFromObject$`
 
 ## setMacroDataFromObject
 
@@ -119,9 +119,9 @@ Clears all existing macro connections and rebuilds them from the provided JSON a
 - All existing macro connections are cleared before the new ones are applied. There is no additive merge -- passing a partial list removes connections not in the array.
 
 **Cross References:**
-- `MacroHandler.getMacroDataObject`
-- `MacroHandler.setExclusiveMode`
-- `MacroHandler.setUpdateCallback`
+- `$API.MacroHandler.getMacroDataObject$`
+- `$API.MacroHandler.setExclusiveMode$`
+- `$API.MacroHandler.setUpdateCallback$`
 
 **Example:**
 ```javascript:macro-roundtrip
@@ -174,8 +174,8 @@ Registers a callback function that fires whenever a macro connection changes. Th
 - [BUG] There is no way to clear the callback. Passing `false` or a non-function value is silently ignored but does not unregister the previous callback. The callback remains active until the MacroHandler object is garbage collected.
 
 **Cross References:**
-- `MacroHandler.getMacroDataObject`
-- `MacroHandler.setMacroDataFromObject`
+- `$API.MacroHandler.getMacroDataObject$`
+- `$API.MacroHandler.setMacroDataFromObject$`
 
 **Example:**
 ```javascript:macro-update-callback

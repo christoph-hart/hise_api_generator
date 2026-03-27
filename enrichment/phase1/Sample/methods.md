@@ -21,8 +21,8 @@ The entire method body is guarded by the `HI_ENABLE_EXPANSION_EDITING` preproces
 - After calling deleteSample(), the Sample reference is invalidated. Any subsequent call on the same object throws "Sound does not exist".
 
 **Cross References:**
-- `Sample.duplicateSample`
-- `Sampler.createSelection`
+- `$API.Sample.duplicateSample$`
+- `$API.Sampler.createSelection$`
 
 ## duplicateSample
 
@@ -42,7 +42,7 @@ Creates a deep copy of this sample within the same sampler. The method performs 
 - [BUG] No `objectExists()` check -- if the underlying sound was deleted, this method dereferences a null pointer at `sound->getData()` instead of reporting "Sound does not exist".
 
 **Cross References:**
-- `Sample.deleteSample`
+- `$API.Sample.deleteSample$`
 
 ## get
 
@@ -65,9 +65,9 @@ Returns the value of the specified sample property. For the FileName property (i
 - All non-FileName properties are cast to int on return. Volume (dB) and Pan (percentage) values are integers, not floats.
 
 **Cross References:**
-- `Sample.set`
-- `Sample.setFromJSON`
-- `Sample.getRange`
+- `$API.Sample.set$`
+- `$API.Sample.setFromJSON$`
+- `$API.Sample.getRange$`
 
 ## getCustomProperties
 
@@ -108,9 +108,9 @@ Console.print(firstProps.category);
 ```
 
 **Cross References:**
-- `Sample.get`
-- `Sample.set`
-- `Sample.setFromJSON`
+- `$API.Sample.get$`
+- `$API.Sample.set$`
+- `$API.Sample.setFromJSON$`
 
 ## loadIntoBufferArray
 
@@ -131,7 +131,7 @@ Loads the complete audio data of this sample into an array of Buffer objects. It
 - Loads the entire sample into memory. For large samples or many mic positions, this allocates significant memory.
 
 **Cross References:**
-- `Sample.replaceAudioFile`
+- `$API.Sample.replaceAudioFile$`
 
 ## refersToSameSample
 
@@ -153,7 +153,7 @@ Returns true if both Sample objects refer to the same underlying ModulatorSample
 - [BUG] The error message when a non-Sample argument is passed contains a typo: "refersToSampleSample" instead of "refersToSameSample".
 
 **Cross References:**
-- `Sampler.createSelection`
+- `$API.Sampler.createSelection$`
 
 ## replaceAudioFile
 
@@ -180,7 +180,7 @@ Validation order: checks sound exists, validates audioData is array, checks no m
 - No explicit thread safety -- unlike duplicateSample and deleteSample, this method does not kill voices or acquire locks. The caller must ensure safe state.
 
 **Cross References:**
-- `Sample.loadIntoBufferArray`
+- `$API.Sample.loadIntoBufferArray$`
 
 ## set
 
@@ -201,9 +201,9 @@ Sets the specified sample property to the given value. The value is automaticall
 | newValue | var | no | New value for the property | Automatically clipped to valid range |
 
 **Cross References:**
-- `Sample.get`
-- `Sample.getRange`
-- `Sample.setFromJSON`
+- `$API.Sample.get$`
+- `$API.Sample.getRange$`
+- `$API.Sample.setFromJSON$`
 
 ## setFromJSON
 
@@ -249,9 +249,9 @@ for (s in allSamples)
 ```
 
 **Cross References:**
-- `Sample.set`
-- `Sample.get`
-- `Sample.getRange`
+- `$API.Sample.set$`
+- `$API.Sample.get$`
+- `$API.Sample.getRange$`
 
 ## getId
 
@@ -277,9 +277,9 @@ Note: This method is declared in the class header and present in the base JSON, 
 - No `objectExists()` check -- unlike most other Sample methods, this does not verify the underlying sound is still valid before executing. However, since the method only accesses the `sampleIds` array (which belongs to the wrapper, not the sound), this is not a practical concern.
 
 **Cross References:**
-- `Sample.get`
-- `Sample.set`
-- `Sample.setFromJSON`
+- `$API.Sample.get$`
+- `$API.Sample.set$`
+- `$API.Sample.setFromJSON$`
 
 ## getRange
 
@@ -321,6 +321,6 @@ Console.print("LoopStart valid range: " + loopRange[0] + " - " + loopRange[1]);
 ```
 
 **Cross References:**
-- `Sample.get`
-- `Sample.set`
-- `Sample.setFromJSON`
+- `$API.Sample.get$`
+- `$API.Sample.set$`
+- `$API.Sample.setFromJSON$`

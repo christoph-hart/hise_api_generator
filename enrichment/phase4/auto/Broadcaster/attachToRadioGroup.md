@@ -4,4 +4,4 @@ This is the only attachment mode that supports bidirectional communication: send
 
 This is commonly used for page-handling logic: attach to a radio group, then use `addComponentPropertyListener` to show or hide page panels based on the selected index.
 
-> **Warning:** The `radioGroupIndex` must be a positive integer (greater than zero). Passing `0` produces an error.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The `radioGroupIndex` must be a positive integer (greater than zero). Passing `0` produces an error.

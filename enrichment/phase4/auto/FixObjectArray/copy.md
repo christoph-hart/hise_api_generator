@@ -2,4 +2,4 @@ Extracts a single named property from every element and writes the values into a
 
 This is useful for feeding flat data to downstream systems that consume numeric arrays rather than structured objects - for example, extracting a column of gain values into a Buffer for DSP processing or shader upload. Pre-allocate all target Buffers at init time to preserve the allocation-free design.
 
-> **Warning:** When copying to a Buffer, all values are cast to float. Integer properties lose precision for values beyond +/-16,777,216.
+> [!Warning:$WARNING_TO_BE_REPLACED$] When copying to a Buffer, all values are cast to float. Integer properties lose precision for values beyond +/-16,777,216.

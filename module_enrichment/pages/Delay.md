@@ -168,13 +168,4 @@ The delay crossfades between old and new read positions when the delay time chan
 
 The first audio buffer after the module is initialised is skipped to avoid outputting uninitialised delay buffer contents.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Phase FX", to: "/v2/reference/audio-modules/effects/master/phasefx", desc: "Allpass-based phaser for notch sweeps rather than echo repeats" }
-  - { label: "Chorus", to: "/v2/reference/audio-modules/effects/master/chorus", desc: "Short modulated delay for chorus/thickening rather than rhythmic echoes" }
-  - { label: "Simple Gain", to: "/v2/reference/audio-modules/effects/master/simplegain", desc: "Includes a static delay feature useful for timing alignment without feedback" }
----
-::
+**See also:** $MODULES.PhaseFX$ -- Allpass-based phaser for notch sweeps rather than echo repeats, $MODULES.Chorus$ -- Short modulated delay for chorus/thickening rather than rhythmic echoes, $MODULES.SimpleGain$ -- Includes a static delay feature useful for timing alignment without feedback

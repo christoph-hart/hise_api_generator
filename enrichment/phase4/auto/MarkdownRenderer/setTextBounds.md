@@ -2,4 +2,4 @@ Sets the rendering area as an `[x, y, width, height]` array and returns the actu
 
 Since the height is auto-calculated from the text content, you can pass a large value (e.g. `9000`) for the height parameter - it serves only as an upper bound and does not affect the returned measurement.
 
-> **Warning:** This method must be called before `Graphics.drawMarkdownText()` or a script error is thrown. Call it again after each `setText()` to get an up-to-date height for the new content.
+> [!Warning:$WARNING_TO_BE_REPLACED$] This method must be called before `Graphics.drawMarkdownText()` or a script error is thrown. Call it again after each `setText()` to get an up-to-date height for the new content.

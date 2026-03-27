@@ -2,4 +2,4 @@ Loads a sample map from a JSON array of sample descriptor objects. Each object m
 
 For preset persistence, use `Sampler.getSampleMapAsBase64()` rather than re-saving the original JSON array - the base64 format captures post-load edits such as sample range changes made via an AudioWaveform.
 
-> **Warning:** The sampler does not store JSON-loaded maps automatically. Your script is responsible for persisting and restoring this data in user presets.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The sampler does not store JSON-loaded maps automatically. Your script is responsible for persisting and restoring this data in user presets.

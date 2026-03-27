@@ -35,7 +35,7 @@ Returns the current style configuration as a JSON object. The returned object co
 | tableLineColour | Integer | Table border colour as ARGB int64 |
 
 **Cross References:**
-- `MarkdownRenderer.setStyleData`
+- `$API.MarkdownRenderer.setStyleData$`
 
 **Example:**
 ```javascript:get-modify-style
@@ -98,7 +98,7 @@ Image entry properties:
 - URL matching compares the sanitized URL without anchors. The `URL` property in each entry should match the URL portion of the markdown image syntax, not the full `![alt](url)` markdown.
 
 **Cross References:**
-- `MarkdownRenderer.setText`
+- `$API.MarkdownRenderer.setText$`
 
 **Example:**
 ```javascript:image-provider-setup
@@ -166,7 +166,7 @@ Sets the visual style configuration for the markdown renderer. Accepts a JSON ob
 - When `BoldFont` is set to `"default"`, the C++ code forces `useSpecialBoldFont = true` regardless of the `UseSpecialBoldFont` property in the JSON. If you explicitly pass `UseSpecialBoldFont: false` alongside `BoldFont: "default"`, the `false` is overridden to `true` silently.
 
 **Cross References:**
-- `MarkdownRenderer.getStyleData`
+- `$API.MarkdownRenderer.getStyleData$`
 
 ## setText
 
@@ -189,9 +189,9 @@ Sets the markdown text to be parsed and rendered. The text is immediately parsed
 - Headline levels beyond 4 (`#####` or more) are clamped to level 4. No error is reported.
 
 **Cross References:**
-- `MarkdownRenderer.setTextBounds`
-- `MarkdownRenderer.setImageProvider`
-- `Graphics.drawMarkdownText`
+- `$API.MarkdownRenderer.setTextBounds$`
+- `$API.MarkdownRenderer.setImageProvider$`
+- `$API.Graphics.drawMarkdownText$`
 
 ## setTextBounds
 
@@ -214,8 +214,8 @@ Sets the rendering area for the markdown content and returns the actual height r
 - The returned height reflects the content set by the last `setText()` call. If `setText()` is called after `setTextBounds()`, the stored area dimensions remain but the returned height from the previous `setTextBounds()` call is stale. Call `setTextBounds()` again after `setText()` to get the correct height for the new content.
 
 **Cross References:**
-- `MarkdownRenderer.setText`
-- `Graphics.drawMarkdownText`
+- `$API.MarkdownRenderer.setText$`
+- `$API.Graphics.drawMarkdownText$`
 
 **Example:**
 ```javascript:dynamic-height-panel

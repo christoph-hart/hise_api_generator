@@ -2,4 +2,4 @@ Calls a function after a specified delay, independently of the broadcaster's lis
 
 Each new call cancels any previously pending delayed function. The `argArray` parameter must be an array, even for a single argument.
 
-> **Warning:** This does not dispatch through the listener system. It is a standalone timer-based function call, not a broadcast.
+> [!Warning:$WARNING_TO_BE_REPLACED$] This does not dispatch through the listener system. It is a standalone timer-based function call, not a broadcast.

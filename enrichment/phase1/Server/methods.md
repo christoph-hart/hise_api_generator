@@ -30,12 +30,12 @@ Sends an asynchronous HTTP GET request to a sub-URL appended to the base URL. Th
 - [BUG] Passing a complex JSON object (containing arrays or nested objects) as `parameters` silently sets the global `Content-Type: application/json` header via `getWithParameters()`, affecting all subsequent requests until `setHttpHeader()` is called again.
 
 **Cross References:**
-- `Server.callWithPOST`
-- `Server.setBaseURL`
-- `Server.setHttpHeader`
-- `Server.setServerCallback`
-- `Server.setTimeoutMessageString`
-- `Server.resendLastCall`
+- `$API.Server.callWithPOST$`
+- `$API.Server.setBaseURL$`
+- `$API.Server.setHttpHeader$`
+- `$API.Server.setServerCallback$`
+- `$API.Server.setTimeoutMessageString$`
+- `$API.Server.resendLastCall$`
 
 **Example:**
 ```javascript:get-request-with-response
@@ -96,13 +96,13 @@ Sends an asynchronous HTTP POST request to a sub-URL appended to the base URL. B
 - [BUG] Passing a complex JSON object (containing arrays or nested objects) as `parameters` silently sets the global `Content-Type: application/json` header via `getWithParameters()`, affecting all subsequent requests until `setHttpHeader()` is called again.
 
 **Cross References:**
-- `Server.callWithGET`
-- `Server.setBaseURL`
-- `Server.setEnforceTrailingSlash`
-- `Server.setHttpHeader`
-- `Server.setServerCallback`
-- `Server.setTimeoutMessageString`
-- `Server.resendLastCall`
+- `$API.Server.callWithGET$`
+- `$API.Server.setBaseURL$`
+- `$API.Server.setEnforceTrailingSlash$`
+- `$API.Server.setHttpHeader$`
+- `$API.Server.setServerCallback$`
+- `$API.Server.setTimeoutMessageString$`
+- `$API.Server.resendLastCall$`
 
 **Example:**
 ```javascript:post-request-with-json
@@ -142,8 +142,8 @@ Signals the Server Thread to remove all finished downloads from the pending down
 (none)
 
 **Cross References:**
-- `Server.getPendingDownloads`
-- `Server.downloadFile`
+- `$API.Server.getPendingDownloads$`
+- `$API.Server.downloadFile$`
 
 ## downloadFile
 
@@ -172,11 +172,11 @@ Initiates an asynchronous file download from a sub-URL appended to the base URL.
 - The download callback receives 0 arguments. The Download object is accessible as `this` inside the callback. Use `this.getProgress()`, `this.isRunning()`, etc. to query state.
 
 **Cross References:**
-- `Server.downloadFile`
-- `Server.cleanFinishedDownloads`
-- `Server.setNumAllowedDownloads`
-- `Server.setBaseURL`
-- `Server.setHttpHeader`
+- `$API.Server.downloadFile$`
+- `$API.Server.cleanFinishedDownloads$`
+- `$API.Server.setNumAllowedDownloads$`
+- `$API.Server.setBaseURL$`
+- `$API.Server.setHttpHeader$`
 
 **Example:**
 ```javascript:download-file-with-progress
@@ -225,9 +225,9 @@ Returns an array of all pending GET and POST request objects currently queued on
 (none)
 
 **Cross References:**
-- `Server.callWithGET`
-- `Server.callWithPOST`
-- `Server.getPendingDownloads`
+- `$API.Server.callWithGET$`
+- `$API.Server.callWithPOST$`
+- `$API.Server.getPendingDownloads$`
 
 ## getPendingDownloads
 
@@ -245,9 +245,9 @@ Returns an array of all Download objects currently tracked by the server, includ
 (none)
 
 **Cross References:**
-- `Server.downloadFile`
-- `Server.cleanFinishedDownloads`
-- `Server.getPendingCalls`
+- `$API.Server.downloadFile$`
+- `$API.Server.cleanFinishedDownloads$`
+- `$API.Server.getPendingCalls$`
 
 ## isEmailAddress
 
@@ -288,7 +288,7 @@ Checks whether the system has internet connectivity by attempting to connect to 
 - This method blocks synchronously and can take up to 20 seconds to return if there is no internet connection. Avoid calling it repeatedly or in performance-sensitive contexts. Consider caching the result or checking connectivity only when needed (e.g., before a retry flow).
 
 **Cross References:**
-- `Server.resendLastCall`
+- `$API.Server.resendLastCall$`
 
 ## resendLastCall
 
@@ -311,9 +311,9 @@ Re-queues the most recent GET or POST request for processing. First checks inter
 - Only the single most recent GET or POST call is tracked. If multiple calls are made, only the last one can be resent.
 
 **Cross References:**
-- `Server.isOnline`
-- `Server.callWithGET`
-- `Server.callWithPOST`
+- `$API.Server.isOnline$`
+- `$API.Server.callWithGET$`
+- `$API.Server.callWithPOST$`
 
 ## setBaseURL
 
@@ -336,9 +336,9 @@ Sets the base URL for all subsequent server requests (GET, POST, and downloads).
 - This method must be called before any `callWithGET()`, `callWithPOST()`, or `downloadFile()` call. Without it, the WebThread is not running and queued requests are not processed. The HISE IDE emits a diagnostic warning if request methods are called before `setBaseURL()`.
 
 **Cross References:**
-- `Server.callWithGET`
-- `Server.callWithPOST`
-- `Server.downloadFile`
+- `$API.Server.callWithGET$`
+- `$API.Server.callWithPOST$`
+- `$API.Server.downloadFile$`
 
 **DiagramRef:** server-architecture
 
@@ -360,7 +360,7 @@ Controls whether POST requests automatically append a trailing slash to the sub-
 | shouldAddSlash | Integer | no | Whether to append trailing slashes to POST URLs. `true` (default) or `false`. | -- |
 
 **Cross References:**
-- `Server.callWithPOST`
+- `$API.Server.callWithPOST$`
 
 ## setHttpHeader
 
@@ -384,9 +384,9 @@ Sets the HTTP header string applied to all subsequent GET, POST, and download re
 - The header is set globally -- it applies to all request types (GET, POST, downloads). There is no per-request header API.
 
 **Cross References:**
-- `Server.callWithGET`
-- `Server.callWithPOST`
-- `Server.downloadFile`
+- `$API.Server.callWithGET$`
+- `$API.Server.callWithPOST$`
+- `$API.Server.downloadFile$`
 
 ## setNumAllowedDownloads
 
@@ -406,8 +406,8 @@ Sets the maximum number of downloads that can run in parallel. The default is 1 
 | maxNumberOfParallelDownloads | Integer | no | Maximum number of concurrent downloads | Should be >= 1 |
 
 **Cross References:**
-- `Server.downloadFile`
-- `Server.getPendingDownloads`
+- `$API.Server.downloadFile$`
+- `$API.Server.getPendingDownloads$`
 
 ## setServerCallback
 
@@ -433,8 +433,8 @@ Registers a callback function that is invoked when the server's request queue ch
 - The callback is NOT triggered by download queue changes. Use the download callback on individual Download objects to track download state.
 
 **Cross References:**
-- `Server.callWithGET`
-- `Server.callWithPOST`
+- `$API.Server.callWithGET$`
+- `$API.Server.callWithPOST$`
 
 **Example:**
 ```javascript:server-activity-indicator
@@ -476,5 +476,5 @@ Sets the string that is used as the response body when a server request times ou
 | timeoutMessage | String | no | The string returned as the response body on timeout | -- |
 
 **Cross References:**
-- `Server.callWithGET`
-- `Server.callWithPOST`
+- `$API.Server.callWithGET$`
+- `$API.Server.callWithPOST$`

@@ -14,7 +14,7 @@ Returns whether the modulator reference is valid. Returns 1 if the internal C++ 
 None.
 
 **Cross References:**
-- `Modulator.getId`
+- `$API.Modulator.getId$`
 
 ---
 
@@ -33,8 +33,8 @@ Returns the ID (name) of the modulator as assigned in the HISE module tree. Retu
 None.
 
 **Cross References:**
-- `Modulator.getType`
-- `Modulator.exists`
+- `$API.Modulator.getType$`
+- `$API.Modulator.exists$`
 
 ---
 
@@ -53,7 +53,7 @@ Returns the C++ type name of the modulator (e.g., "LFO", "AHDSR", "Velocity", "C
 None.
 
 **Cross References:**
-- `Modulator.getId`
+- `$API.Modulator.getId$`
 
 ---
 
@@ -76,9 +76,9 @@ Sets a modulator attribute by its parameter index. Use the dynamic parameter con
 | value | Number | yes | New attribute value | Range depends on parameter |
 
 **Cross References:**
-- `Modulator.getAttribute`
-- `Modulator.getAttributeIndex`
-- `Modulator.getNumAttributes`
+- `$API.Modulator.getAttribute$`
+- `$API.Modulator.getAttributeIndex$`
+- `$API.Modulator.getNumAttributes$`
 
 ---
 
@@ -99,8 +99,8 @@ Returns the current value of a modulator attribute at the given parameter index.
 | parameterIndex | Number | yes | Parameter index | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `Modulator.setAttribute`
-- `Modulator.getAttributeId`
+- `$API.Modulator.setAttribute$`
+- `$API.Modulator.getAttributeId$`
 
 ---
 
@@ -122,8 +122,8 @@ Returns the name of the attribute at the given parameter index. Useful for itera
 | parameterIndex | Number | yes | Parameter index | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `Modulator.getAttributeIndex`
-- `Modulator.getNumAttributes`
+- `$API.Modulator.getAttributeIndex$`
+- `$API.Modulator.getNumAttributes$`
 
 ---
 
@@ -145,8 +145,8 @@ Returns the parameter index for a given attribute name. Returns -1 if the name i
 | parameterId | String | yes | Parameter name | Must match an existing attribute name |
 
 **Cross References:**
-- `Modulator.getAttributeId`
-- `Modulator.setAttribute`
+- `$API.Modulator.getAttributeId$`
+- `$API.Modulator.setAttribute$`
 
 ---
 
@@ -164,8 +164,8 @@ Returns the total number of parameters exposed by this modulator. The available 
 None.
 
 **Cross References:**
-- `Modulator.getAttribute`
-- `Modulator.getAttributeId`
+- `$API.Modulator.getAttribute$`
+- `$API.Modulator.getAttributeId$`
 
 ---
 
@@ -187,7 +187,7 @@ Enables or disables the bypass state of the modulator. When bypassed, the modula
 | shouldBeBypassed | Number | yes | 1 to bypass, 0 to activate | -- |
 
 **Cross References:**
-- `Modulator.isBypassed`
+- `$API.Modulator.isBypassed$`
 
 ---
 
@@ -205,7 +205,7 @@ Returns the current bypass state. 1 if bypassed, 0 if active.
 None.
 
 **Cross References:**
-- `Modulator.setBypassed`
+- `$API.Modulator.setBypassed$`
 
 ---
 
@@ -233,7 +233,7 @@ Values outside the valid range are clamped automatically without error.
 | newIntensity | Number | yes | New intensity value | Range depends on modulation mode |
 
 **Cross References:**
-- `Modulator.getIntensity`
+- `$API.Modulator.getIntensity$`
 
 ---
 
@@ -251,7 +251,7 @@ Returns the current modulation intensity. For PitchMode modulators, the internal
 None.
 
 **Cross References:**
-- `Modulator.setIntensity`
+- `$API.Modulator.setIntensity$`
 
 ---
 
@@ -272,7 +272,7 @@ Sets whether the modulator operates in bipolar mode. In GainMode, unipolar outpu
 | shouldBeBipolar | Number | yes | 1 for bipolar, 0 for unipolar | -- |
 
 **Cross References:**
-- `Modulator.isBipolar`
+- `$API.Modulator.isBipolar$`
 
 ---
 
@@ -290,7 +290,7 @@ Returns whether the modulator is in bipolar mode. 1 if bipolar, 0 if unipolar.
 None.
 
 **Cross References:**
-- `Modulator.setIsBipolar`
+- `$API.Modulator.setIsBipolar$`
 
 ---
 
@@ -309,7 +309,7 @@ Returns the current display output value of the modulator. For PitchMode modulat
 None.
 
 **Cross References:**
-- `Modulator.getIntensity`
+- `$API.Modulator.getIntensity$`
 
 ---
 
@@ -328,7 +328,7 @@ Serializes the complete modulator state (all attributes, bypass state, child pro
 None.
 
 **Cross References:**
-- `Modulator.restoreState`
+- `$API.Modulator.restoreState$`
 
 ---
 
@@ -350,7 +350,7 @@ Restores the complete modulator state from a base64-encoded string previously ob
 | base64State | String | no | Base64-encoded state from exportState() | Must be a valid base64 processor state |
 
 **Cross References:**
-- `Modulator.exportState`
+- `$API.Modulator.exportState$`
 
 ---
 
@@ -372,7 +372,7 @@ None.
 - Only functional on script modulators (ProcessorWithScriptingContent). Calling on a built-in modulator type (LFO, AHDSR, etc.) reports a script error.
 
 **Cross References:**
-- `Modulator.restoreScriptControls`
+- `$API.Modulator.restoreScriptControls$`
 
 ---
 
@@ -397,7 +397,7 @@ Restores the UI control values of a script modulator from a base64-encoded strin
 - Only functional on script modulators (ProcessorWithScriptingContent). Calling on a built-in modulator type reports a script error.
 
 **Cross References:**
-- `Modulator.exportScriptControls`
+- `$API.Modulator.exportScriptControls$`
 
 ---
 
@@ -423,8 +423,8 @@ Connects a global receiver modulator to a source modulator inside a GlobalModula
 - Only works on global receiver modulator types. Calling on a regular modulator (LFO, AHDSR, etc.) reports a script error.
 
 **Cross References:**
-- `Modulator.getGlobalModulatorId`
-- `Modulator.addGlobalModulator`
+- `$API.Modulator.getGlobalModulatorId$`
+- `$API.Modulator.addGlobalModulator$`
 
 ---
 
@@ -446,7 +446,7 @@ None.
 - [BUG] Returns an empty string silently when called on a non-global modulator type, with no error or indication that the call was inappropriate.
 
 **Cross References:**
-- `Modulator.connectToGlobalModulator`
+- `$API.Modulator.connectToGlobalModulator$`
 
 ---
 
@@ -471,7 +471,7 @@ Sets the matrix modulation range properties for a MatrixModulator. Converts the 
 - [BUG] Silently does nothing when called on a non-MatrixModulator. No error is reported, so the call appears to succeed.
 
 **Cross References:**
-- `Modulator.connectToGlobalModulator`
+- `$API.Modulator.connectToGlobalModulator$`
 
 ---
 
@@ -548,9 +548,9 @@ lfo.setIntensity(0.5);
 ```
 
 **Cross References:**
-- `Modulator.addGlobalModulator`
-- `Modulator.addStaticGlobalModulator`
-- `Modulator.getModulatorChain`
+- `$API.Modulator.addGlobalModulator$`
+- `$API.Modulator.addStaticGlobalModulator$`
+- `$API.Modulator.getModulatorChain$`
 
 ---
 
@@ -574,9 +574,9 @@ Creates a time-variant global modulator receiver in one of this modulator's inte
 | modName | String | no | ID for the new receiver modulator | Should be unique within the module tree |
 
 **Cross References:**
-- `Modulator.addStaticGlobalModulator`
-- `Modulator.connectToGlobalModulator`
-- `Modulator.addModulator`
+- `$API.Modulator.addStaticGlobalModulator$`
+- `$API.Modulator.connectToGlobalModulator$`
+- `$API.Modulator.addModulator$`
 
 ---
 
@@ -600,9 +600,9 @@ Creates a static time-variant global modulator receiver in one of this modulator
 | modName | String | no | ID for the new static receiver modulator | Should be unique within the module tree |
 
 **Cross References:**
-- `Modulator.addGlobalModulator`
-- `Modulator.addModulator`
-- `Modulator.connectToGlobalModulator`
+- `$API.Modulator.addGlobalModulator$`
+- `$API.Modulator.addModulator$`
+- `$API.Modulator.connectToGlobalModulator$`
 
 ---
 
@@ -624,6 +624,6 @@ Returns a `Modulator` handle for the internal modulator chain at the given index
 | chainIndex | Integer | no | Index of the child modulator chain | Must be a valid child chain index |
 
 **Cross References:**
-- `Modulator.addModulator`
-- `Modulator.addGlobalModulator`
-- `Modulator.addStaticGlobalModulator`
+- `$API.Modulator.addModulator$`
+- `$API.Modulator.addGlobalModulator$`
+- `$API.Modulator.addStaticGlobalModulator$`

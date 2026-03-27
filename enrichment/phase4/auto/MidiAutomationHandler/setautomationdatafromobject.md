@@ -2,4 +2,4 @@ Replaces all MIDI automation mappings with the entries from the given array. The
 
 After the data is applied, any registered update callback fires and the MidiLearnPanel refreshes automatically.
 
-> **Warning:** Calling `getAutomationDataObject()` again before writing your changes back returns the old state, not your pending modifications. Always complete your edits on the original snapshot and then call `setAutomationDataFromObject()` once.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Calling `getAutomationDataObject()` again before writing your changes back returns the old state, not your pending modifications. Always complete your edits on the original snapshot and then call `setAutomationDataFromObject()` once.

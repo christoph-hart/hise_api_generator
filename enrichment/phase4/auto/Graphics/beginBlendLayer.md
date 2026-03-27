@@ -30,4 +30,4 @@ The blend mode must be one of 25 supported string values (case-sensitive):
 | `"Glow"` | Inverse of Reflect, applied to the base |
 | `"Phoenix"` | Adds the minimum and subtracts the maximum of each channel |
 
-> **Warning:** An invalid blend mode string causes the method to silently fail - the layer is not created and no error is reported.
+> [!Warning:$WARNING_TO_BE_REPLACED$] An invalid blend mode string causes the method to silently fail - the layer is not created and no error is reported.

@@ -14,8 +14,8 @@ Returns the thread constant identifying which thread the caller is currently exe
 None.
 
 **Cross References:**
-- `Threads.getCurrentThreadName`
-- `Threads.toString`
+- `$API.Threads.getCurrentThreadName$`
+- `$API.Threads.toString$`
 
 ---
 
@@ -34,8 +34,8 @@ Returns a human-readable name for the current thread. Equivalent to calling `Thr
 None.
 
 **Cross References:**
-- `Threads.getCurrentThread`
-- `Threads.toString`
+- `$API.Threads.getCurrentThread$`
+- `$API.Threads.toString$`
 
 ---
 
@@ -56,8 +56,8 @@ Returns the lock type currently held by the specified thread. Pass a thread cons
 | threadThatIsLocked | Integer | no | Thread constant to query | One of `Threads.Audio`, `Threads.Scripting`, `Threads.Loading`, `Threads.UI` |
 
 **Cross References:**
-- `Threads.isLocked`
-- `Threads.isLockedByCurrentThread`
+- `$API.Threads.isLocked$`
+- `$API.Threads.isLockedByCurrentThread$`
 
 ---
 
@@ -75,8 +75,8 @@ Returns `true` if the audio callback is currently active. Returns `false` during
 None.
 
 **Cross References:**
-- `Threads.killVoicesAndCall`
-- `Threads.isCurrentlyExporting`
+- `$API.Threads.killVoicesAndCall$`
+- `$API.Threads.isCurrentlyExporting$`
 
 ---
 
@@ -94,8 +94,8 @@ Returns `true` if the audio export thread is active (offline rendering is in pro
 None.
 
 **Cross References:**
-- `Threads.isAudioRunning`
-- `Threads.getCurrentThread`
+- `$API.Threads.isAudioRunning$`
+- `$API.Threads.getCurrentThread$`
 
 ---
 
@@ -116,8 +116,8 @@ Returns `true` if the specified thread currently holds any lock. Delegates to `g
 | thread | Integer | no | Thread constant to query | One of `Threads.Audio`, `Threads.Scripting`, `Threads.Loading`, `Threads.UI` |
 
 **Cross References:**
-- `Threads.getLockerThread`
-- `Threads.isLockedByCurrentThread`
+- `$API.Threads.getLockerThread$`
+- `$API.Threads.isLockedByCurrentThread$`
 
 ---
 
@@ -138,8 +138,8 @@ Returns `true` if the calling thread currently holds the lock identified by the 
 | thread | Integer | no | Lock/thread constant to check | One of `Threads.Audio`, `Threads.Scripting`, `Threads.Loading`, `Threads.UI` |
 
 **Cross References:**
-- `Threads.isLocked`
-- `Threads.getLockerThread`
+- `$API.Threads.isLocked$`
+- `$API.Threads.getLockerThread$`
 
 ---
 
@@ -166,7 +166,7 @@ Suspends audio processing, kills all active voices, and executes the given funct
 - The return value `false` does not indicate failure -- it means the function was queued for deferred execution on the loading thread rather than running immediately. Both `true` and `false` are success outcomes.
 
 **Cross References:**
-- `Threads.isAudioRunning`
+- `$API.Threads.isAudioRunning$`
 
 **Example:**
 ```javascript:kill-voices-and-modify
@@ -231,7 +231,7 @@ Starts a thread profiling session. Accepts either a plain number (milliseconds t
 - Requires `HISE_INCLUDE_PROFILING_TOOLKIT` to be defined in the project settings. Without it, the method throws a script error rather than silently failing.
 
 **Cross References:**
-- `Threads.getCurrentThread`
+- `$API.Threads.getCurrentThread$`
 
 **Example:**
 ```javascript:profile-with-options
@@ -275,6 +275,6 @@ Returns a human-readable name for the given thread constant. The mapping is: `Th
 | thread | Integer | no | Thread constant to convert | One of the `Threads` constants |
 
 **Cross References:**
-- `Threads.getCurrentThread`
-- `Threads.getCurrentThreadName`
+- `$API.Threads.getCurrentThread$`
+- `$API.Threads.getCurrentThreadName$`
 

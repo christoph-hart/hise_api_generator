@@ -29,18 +29,22 @@ You can also pass a Broadcaster directly to `setPreCallback` or `setPostCallback
 
 ## Common Mistakes
 
-- **Wrong:** `uph.setCustomAutomation(data)` without enabling the custom model first.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `uph.setCustomAutomation(data)` without enabling the custom model first.
   **Right:** `uph.setUseCustomUserPresetModel(load, save, false); uph.setCustomAutomation(data);`
   *Custom automation requires the custom data model. Calling `setCustomAutomation` without it throws a script error.*
 
-- **Wrong:** Calling `uph.isInternalPresetLoad()` outside a pre/post callback.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `uph.isInternalPresetLoad()` outside a pre/post callback.
   **Right:** Only call `isInternalPresetLoad()` inside `setPreCallback` or `setPostCallback`.
   *Outside those callbacks, the flag retains its value from the most recent load, which may be stale.*
 
-- **Wrong:** Passing a single object to `updateAutomationValues`: `uph.updateAutomationValues({"id": "Vol", "value": 0.5}, ...)`.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Passing a single object to `updateAutomationValues`: `uph.updateAutomationValues({"id": "Vol", "value": 0.5}, ...)`.
   **Right:** Wrap in an array: `uph.updateAutomationValues([{"id": "Vol", "value": 0.5}], ...)`.
   *The method expects an Array. Passing an unwrapped object throws a script error.*
 
-- **Wrong:** Setting `allowHostAutomation: true` on every automation slot in a large instrument.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Setting `allowHostAutomation: true` on every automation slot in a large instrument.
   **Right:** Set `allowHostAutomation: false` on internal per-layer slots; only expose top-level parameters to the host.
   *Exposing hundreds of parameters to the DAW creates an unusable automation list for the end user.*

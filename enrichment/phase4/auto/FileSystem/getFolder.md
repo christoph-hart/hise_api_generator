@@ -1,3 +1,3 @@
 Returns a `File` object for the specified special folder location. This is the primary way to obtain file handles for well-known directories - pass one of the `SpecialLocations` constants (e.g. `FileSystem.Desktop`, `FileSystem.AppData`, `FileSystem.Samples`) and navigate from there with `File.getChildFile()`. Returns `undefined` if the resolved directory does not exist on disk.
 
-> **Warning:** `getFolder(FileSystem.Samples)` returns `undefined` when FullInstrumentExpansion is active but no expansion is loaded. Guard with `isDefined()` before chaining methods on the result.
+> [!Warning:$WARNING_TO_BE_REPLACED$] `getFolder(FileSystem.Samples)` returns `undefined` when FullInstrumentExpansion is active but no expansion is loaded. Guard with `isDefined()` before chaining methods on the result.

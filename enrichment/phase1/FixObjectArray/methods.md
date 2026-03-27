@@ -18,8 +18,8 @@ Resets all elements in the array to their default values. Internally delegates t
 - Unlike `FixObjectStack.clear()`, this does not change the array's `size()` or iteration range. All `length` elements remain valid and iterable after clearing -- they are simply reset to default values.
 
 **Cross References:**
-- `FixObjectArray.fill`
-- `FixObjectStack.clear`
+- `$API.FixObjectArray.fill$`
+- `$API.FixObjectStack.clear$`
 
 ## contains
 
@@ -44,8 +44,8 @@ The argument must be a FixObject (ObjectReference) from the same factory layout.
 - [BUG] Passing a plain JSON object (e.g. `{"id": 5}`) instead of a FixObject silently returns 0. The method does not report an error -- the argument type check fails quietly.
 
 **Cross References:**
-- `FixObjectArray.indexOf`
-- `FixObjectFactory.setCompareFunction`
+- `$API.FixObjectArray.indexOf$`
+- `$API.FixObjectFactory.setCompareFunction$`
 
 ## copy
 
@@ -74,8 +74,8 @@ The property name must match one of the members defined in the factory's layout 
 - [BUG] Passing a target that is neither a Buffer nor an Array silently returns 0 with no error message.
 
 **Cross References:**
-- `FixObjectArray.fill`
-- `FixObjectFactory.createArray`
+- `$API.FixObjectArray.fill$`
+- `$API.FixObjectFactory.createArray$`
 
 **Example:**
 ```javascript:copy-to-buffer
@@ -129,8 +129,8 @@ This makes `fill` a dual-purpose method: pass a FixObject to broadcast a templat
 - [BUG] Passing a plain JSON object (e.g., `{"id": 5}`) does not fill elements with those values. It triggers the non-FixObject branch, resetting all elements to defaults instead. No error is reported.
 
 **Cross References:**
-- `FixObjectArray.clear`
-- `FixObjectArray.copy`
+- `$API.FixObjectArray.clear$`
+- `$API.FixObjectArray.copy$`
 
 ## fromBase64
 
@@ -154,7 +154,7 @@ If the decoded size does not match, the array is left unchanged and the method r
 - Size mismatch on restore is silent. If the factory layout changed between saving and loading (different properties, different element count), `fromBase64` returns 0 without any error or warning. Always check the return value.
 
 **Cross References:**
-- `FixObjectArray.toBase64`
+- `$API.FixObjectArray.toBase64$`
 
 ## indexOf
 
@@ -182,8 +182,8 @@ With the default comparator, equality is byte-level (memcmp of the entire elemen
 - With the default byte-level comparator, two objects that differ in any property (even unused ones) are considered unequal. Set a property-based compare function on the factory for field-specific matching.
 
 **Cross References:**
-- `FixObjectArray.contains`
-- `FixObjectFactory.setCompareFunction`
+- `$API.FixObjectArray.contains$`
+- `$API.FixObjectFactory.setCompareFunction$`
 
 ## size
 
@@ -202,7 +202,7 @@ Note: FixObjectStack overrides this method to return the current occupancy (`pos
 (No parameters.)
 
 **Cross References:**
-- `FixObjectStack.size`
+- `$API.FixObjectStack.size$`
 
 ## sort
 
@@ -225,9 +225,9 @@ The sort is only meaningful when a property-based or custom compare function has
 - Calling `sort()` without first setting a compare function on the factory produces meaningless ordering (pointer address comparison). No warning or error is emitted.
 
 **Cross References:**
-- `FixObjectArray.indexOf`
-- `FixObjectArray.contains`
-- `FixObjectFactory.setCompareFunction`
+- `$API.FixObjectArray.indexOf$`
+- `$API.FixObjectArray.contains$`
+- `$API.FixObjectFactory.setCompareFunction$`
 
 **Example:**
 ```javascript:sort-by-property
@@ -283,4 +283,4 @@ The encoded string captures all element data in memory layout order. This is a b
 - The encoded string is layout-dependent. If the factory prototype changes (different properties, different order, different types), a previously saved Base64 string will have a different size and `fromBase64()` will reject it silently.
 
 **Cross References:**
-- `FixObjectArray.fromBase64`
+- `$API.FixObjectArray.fromBase64$`

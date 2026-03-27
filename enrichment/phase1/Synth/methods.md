@@ -26,8 +26,8 @@ The `number` parameter supports three event types through special constants: sta
 - The artificial flag is set on events created by `addController` but NOT by `sendController`. If downstream logic filters on the artificial flag, the two methods produce different results for the same CC number and value.
 
 **Cross References:**
-- `Synth.sendController`
-- `Synth.sendControllerToChildSynths`
+- `$API.Synth.sendController$`
+- `$API.Synth.sendControllerToChildSynths$`
 
 ## addEffect
 
@@ -56,8 +56,8 @@ The operation is thread-safe: it suspends audio processing, kills voices, waits 
 - If `type` is not a valid factory type name, `addModule` throws an internal string exception ("Module with type X could not be generated") which becomes a script error. The available types depend on the parent synth's factory configuration.
 
 **Cross References:**
-- `Synth.removeEffect`
-- `Synth.getEffect`
+- `$API.Synth.removeEffect$`
+- `$API.Synth.getEffect$`
 
 **Example:**
 ```javascript:add-effect-basic
@@ -100,9 +100,9 @@ This is a low-level method for injecting pre-constructed MIDI events. The `messa
 - For note-off events, the method uses `getEventIdForNoteOff` to find the matching note-on. If no matching note-on was registered (e.g., a note-on from a different source), the note-off may get event ID 0 and fail to stop the intended voice.
 
 **Cross References:**
-- `Synth.addNoteOn`
-- `Synth.addNoteOff`
-- `Synth.addController`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.addNoteOff$`
+- `$API.Synth.addController$`
 
 ## addModulator
 
@@ -129,10 +129,10 @@ The `chainId` parameter uses the C++ `ModulatorSynth::InternalChains` enum value
 - The `chainId` values (1=Gain, 2=Pitch) do not start at 0. Passing 0 produces a script error "No valid chainType". The base JSON description incorrectly states "PitchModulation = 0" -- the correct value is 2.
 
 **Cross References:**
-- `Synth.removeModulator`
-- `Synth.getModulator`
-- `Synth.getModulatorIndex`
-- `Synth.setModulatorAttribute`
+- `$API.Synth.removeModulator$`
+- `$API.Synth.getModulator$`
+- `$API.Synth.getModulatorIndex$`
+- `$API.Synth.setModulatorAttribute$`
 
 **Example:**
 ```javascript:add-modulator-basic
@@ -177,9 +177,9 @@ This is a low-level note-off method that matches by channel and note number. For
 - Unlike `addNoteOn`, this method does not return a value. There is no way to confirm which event ID was matched.
 
 **Cross References:**
-- `Synth.addNoteOn`
-- `Synth.noteOffByEventId`
-- `Synth.noteOffDelayedByEventId`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.noteOffDelayedByEventId$`
 
 ## addNoteOn
 
@@ -210,12 +210,12 @@ When `HISE_USE_BACKWARDS_COMPATIBLE_TIMESTAMPS` is enabled (the default), timest
 - Always store the returned event ID. Without it, you cannot reliably stop the note later -- `addNoteOff` matches by note number which is ambiguous with overlapping notes.
 
 **Cross References:**
-- `Synth.addNoteOff`
-- `Synth.noteOffByEventId`
-- `Synth.noteOffDelayedByEventId`
-- `Synth.addVolumeFade`
-- `Synth.playNote`
-- `Synth.playNoteWithStartOffset`
+- `$API.Synth.addNoteOff$`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.noteOffDelayedByEventId$`
+- `$API.Synth.addVolumeFade$`
+- `$API.Synth.playNote$`
+- `$API.Synth.playNoteWithStartOffset$`
 
 **DiagramRef:** synth-midi-event-flow
 
@@ -249,10 +249,10 @@ The method always returns `true` when given a valid `ScriptEffect` handle, even 
 - Calling from the audio thread throws a string exception, which may crash in non-throwing builds. This is the same pattern used by `removeModulator`.
 
 **Cross References:**
-- `Synth.addEffect`
-- `Synth.getEffect`
-- `Synth.getAllEffects`
-- `Synth.removeModulator`
+- `$API.Synth.addEffect$`
+- `$API.Synth.getEffect$`
+- `$API.Synth.getAllEffects$`
+- `$API.Synth.removeModulator$`
 
 ## removeModulator
 
@@ -284,10 +284,10 @@ The method always returns `true` when given a valid `ScriptModulator` handle. It
 - The removal is asynchronous. After `removeModulator` returns `true`, the modulator may still be active briefly until the GlobalAsyncModuleHandler processes the removal.
 
 **Cross References:**
-- `Synth.addModulator`
-- `Synth.getModulator`
-- `Synth.getAllModulators`
-- `Synth.removeEffect`
+- `$API.Synth.addModulator$`
+- `$API.Synth.getModulator$`
+- `$API.Synth.getAllModulators$`
+- `$API.Synth.removeEffect$`
 
 ## noteOffDelayedByEventId
 
@@ -322,10 +322,10 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null).
 - When the note-on has already been popped (e.g., by a prior `noteOffByEventId` call), the method does not fail -- it silently calls `setArtificialTimestamp` to update the timestamp of the existing note-off. This is by design for rescheduling scenarios, but it means a second call does not generate a second note-off event.
 
 **Cross References:**
-- `Synth.noteOffByEventId`
-- `Synth.playNote`
-- `Synth.addNoteOn`
-- `Synth.addVolumeFade`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.addVolumeFade$`
 
 **DiagramRef:** synth-midi-event-flow
 
@@ -377,9 +377,9 @@ No validation is performed on the channel or note number parameters. Invalid val
 - No parameter validation is performed. Out-of-range channel or note number values produce undefined behavior in the JUCE `MidiMessage` constructor.
 
 **Cross References:**
-- `Synth.playNoteFromUI`
-- `Synth.noteOffByEventId`
-- `Synth.addNoteOff`
+- `$API.Synth.playNoteFromUI$`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.addNoteOff$`
 
 ## playNote
 
@@ -411,11 +411,11 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null). Call
 - Unlike `addNoteOn`, `playNote` rejects velocity 0 with a script error. This is intentional -- a note-on with velocity 0 is ambiguous (it could mean "note off" in standard MIDI). Use the dedicated note-off methods instead.
 
 **Cross References:**
-- `Synth.noteOffByEventId`
-- `Synth.noteOffDelayedByEventId`
-- `Synth.addNoteOn`
-- `Synth.playNoteWithStartOffset`
-- `Synth.addVolumeFade`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.noteOffDelayedByEventId$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.playNoteWithStartOffset$`
+- `$API.Synth.addVolumeFade$`
 
 **DiagramRef:** synth-midi-event-flow
 
@@ -474,9 +474,9 @@ No validation is performed on parameters. Invalid channel, note number, or veloc
 - No parameter validation is performed. Out-of-range values are passed directly to JUCE's `MidiMessage::noteOn`, which casts the velocity to `uint8`. Values outside 0-127 will be truncated.
 
 **Cross References:**
-- `Synth.noteOffFromUI`
-- `Synth.playNote`
-- `Synth.addNoteOn`
+- `$API.Synth.noteOffFromUI$`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
 
 ## playNoteWithStartOffset
 
@@ -511,11 +511,11 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null).
 - The timestamp is fixed at 0. If you need both a start offset AND a non-zero timestamp, you must use `addNoteOn` (which has explicit timestamp but no start offset) combined with `Message.setStartOffset()` on the event, or construct the event manually via `MessageHolder`.
 
 **Cross References:**
-- `Synth.playNote`
-- `Synth.addNoteOn`
-- `Synth.noteOffByEventId`
-- `Synth.noteOffDelayedByEventId`
-- `Synth.addVolumeFade`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.noteOffDelayedByEventId$`
+- `$API.Synth.addVolumeFade$`
 
 **DiagramRef:** synth-midi-event-flow
 
@@ -548,10 +548,10 @@ The coarse and fine pitch values are cast to `uint8`, so negative values or valu
 - The `targetCoarsePitch` and `targetFinePitch` are cast to `uint8` internally. Values outside 0-255 will silently wrap due to truncation. Negative semitone values will not work as expected.
 
 **Cross References:**
-- `Synth.addVolumeFade`
-- `Synth.addNoteOn`
-- `Synth.playNote`
-- `Synth.noteOffByEventId`
+- `$API.Synth.addVolumeFade$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.playNote$`
+- `$API.Synth.noteOffByEventId$`
 
 ## addToFront
 
@@ -579,7 +579,7 @@ In exported frontend builds (`USE_FRONTEND`), calling this also unsuspends the c
 - If multiple script processors call `addToFront(true)`, `getFirstInterfaceScriptProcessor` returns the first one found during iteration. The behavior is undefined -- only one processor should be the front interface.
 
 **Cross References:**
-- `Synth.deferCallbacks`
+- `$API.Synth.deferCallbacks$`
 
 ## addVolumeFade
 
@@ -609,10 +609,10 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null). Call
 - The auto-kill note-off timestamp is calculated as `(1.0 + fadeTimeMs / 1000.0 * sampleRate)`, meaning it arrives one sample after the fade would complete. There is no way to customize this offset.
 
 **Cross References:**
-- `Synth.addPitchFade`
-- `Synth.addNoteOn`
-- `Synth.playNote`
-- `Synth.noteOffByEventId`
+- `$API.Synth.addPitchFade$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.playNote$`
+- `$API.Synth.noteOffByEventId$`
 
 **DiagramRef:** synth-midi-event-flow
 
@@ -662,10 +662,10 @@ Requires `Synth.setFixNoteOnAfterNoteOff(true)` to be called first (typically in
 - The method does not validate whether the event IDs correspond to currently active notes. Passing invalid or expired event IDs silently returns the result of `MidiProcessorChain::attachNote`, which may be `false` without explanation.
 
 **Cross References:**
-- `Synth.setFixNoteOnAfterNoteOff`
-- `Synth.playNote`
-- `Synth.addNoteOn`
-- `Synth.noteOffByEventId`
+- `$API.Synth.setFixNoteOnAfterNoteOff$`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.noteOffByEventId$`
 
 **Example:**
 ```javascript:attach-note-layering
@@ -711,9 +711,9 @@ This method has no restrictions on when it can be called, but the Builder object
 (None)
 
 **Cross References:**
-- `Builder.create`
-- `Builder.flush`
-- `Builder.clear`
+- `$API.Builder.create$`
+- `$API.Builder.flush$`
+- `$API.Builder.clear$`
 
 **Example:**
 ```javascript:create-builder-basic
@@ -762,9 +762,9 @@ Only works when the Synth object belongs to a `JavascriptMidiProcessor`. The int
 - The method performs an unchecked `dynamic_cast<JavascriptMidiProcessor*>` on the script processor. If somehow called from a non-JavascriptMidiProcessor context, this produces a null pointer dereference. In practice this is unlikely since only JavascriptMidiProcessor hosts expose the Synth namespace with full MIDI capabilities.
 
 **Cross References:**
-- `Synth.startTimer`
-- `Synth.stopTimer`
-- `Synth.addToFront`
+- `$API.Synth.startTimer$`
+- `$API.Synth.stopTimer$`
+- `$API.Synth.addToFront$`
 
 ## getAllEffects
 
@@ -793,9 +793,9 @@ Has `WARN_IF_AUDIO_THREAD` guard for debug builds.
 - [BUG] The method does not report an `onInit`-only error when called outside `onInit`. Instead, if `objectsCanBeCreated()` returns false, it falls through to `RETURN_IF_NO_THROW({})` and returns an empty object rather than an array. This differs from other `get*()` methods that call `reportIllegalCall()` -- `getAllEffects` just silently returns nothing.
 
 **Cross References:**
-- `Synth.getEffect`
-- `Synth.addEffect`
-- `Synth.removeEffect`
+- `$API.Synth.getEffect$`
+- `$API.Synth.addEffect$`
+- `$API.Synth.removeEffect$`
 
 ## getAllModulators
 
@@ -825,12 +825,12 @@ The returned array can be empty if no modulators match the pattern.
 - No `onInit` restriction is enforced, but calling this at runtime is unsafe because it allocates wrapper objects. Store the results in `onInit` and reuse them.
 
 **Cross References:**
-- `Synth.getModulator`
-- `Synth.addModulator`
-- `Synth.removeModulator`
-- `Synth.getModulatorIndex`
-- `Synth.setModulatorAttribute`
-- `Synth.getAllEffects`
+- `$API.Synth.getModulator$`
+- `$API.Synth.addModulator$`
+- `$API.Synth.removeModulator$`
+- `$API.Synth.getModulatorIndex$`
+- `$API.Synth.setModulatorAttribute$`
+- `$API.Synth.getAllEffects$`
 
 ## getAttribute
 
@@ -861,7 +861,7 @@ This method operates directly on the parent synth (`owner`). To get attributes o
 | attributeIndex | Integer | no | Parameter index from the parent synth's Parameters enum | Processor-type-specific |
 
 **Cross References:**
-- `Synth.setAttribute`
+- `$API.Synth.setAttribute$`
 
 ## getAudioSampleProcessor
 
@@ -891,9 +891,9 @@ Processors that expose AudioFile data include `AudioLooper`, `ConvolutionReverb`
 - [BUG] Unlike `getTableProcessor` and `getSliderPackProcessor`, this method does NOT enforce the `onInit` restriction. Calling it at runtime allocates a new wrapper object, which is unsafe on the audio thread.
 
 **Cross References:**
-- `Synth.getTableProcessor`
-- `Synth.getSliderPackProcessor`
-- `Synth.getDisplayBufferSource`
+- `$API.Synth.getTableProcessor$`
+- `$API.Synth.getSliderPackProcessor$`
+- `$API.Synth.getDisplayBufferSource$`
 
 ## getChildSynth
 
@@ -914,8 +914,8 @@ The parent synth must be a container type (SynthChain or SynthGroup) that has ch
 | name | String | no | Processor ID of the child synth to find | Must match exactly (case-sensitive) |
 
 **Cross References:**
-- `Synth.getChildSynthByIndex`
-- `Synth.getNumChildSynths`
+- `$API.Synth.getChildSynthByIndex$`
+- `$API.Synth.getNumChildSynths$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -953,8 +953,8 @@ This method is intended for use inside voice start modulators or similar voice-i
 - Negative voice indices are silently clamped to 0 via `jmax(0, voiceIndex)`. Passing -1 does not produce an error -- it sets the gain on voice 0.
 
 **Cross References:**
-- `Synth.setVoicePitchValue`
-- `Synth.addVolumeFade`
+- `$API.Synth.setVoicePitchValue$`
+- `$API.Synth.addVolumeFade$`
 
 ## setVoicePitchValue
 
@@ -986,8 +986,8 @@ This method is intended for use inside voice start modulators or similar voice-i
 - The `pitchValue` parameter is cast from `double` to `float` internally before storage. Very precise pitch values may lose precision in the conversion.
 
 **Cross References:**
-- `Synth.setVoiceGainValue`
-- `Synth.addPitchFade`
+- `$API.Synth.setVoiceGainValue$`
+- `$API.Synth.addPitchFade$`
 
 ## startTimer
 
@@ -1031,10 +1031,10 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null). Call
 - Calling `startTimer` while a timer is already running updates the interval without stopping and restarting -- there is no gap in timer events. In non-deferred mode, the next callback time is recalculated from the current uptime.
 
 **Cross References:**
-- `Synth.stopTimer`
-- `Synth.isTimerRunning`
-- `Synth.getTimerInterval`
-- `Synth.deferCallbacks`
+- `$API.Synth.stopTimer$`
+- `$API.Synth.isTimerRunning$`
+- `$API.Synth.getTimerInterval$`
+- `$API.Synth.deferCallbacks$`
 
 **Example:**
 ```javascript:start-timer-basic
@@ -1087,10 +1087,10 @@ After stopping, `isTimerRunning()` returns `false` and `getTimerInterval()` retu
 - Unlike `startTimer`, `stopTimer` has no null-pointer guard that reports an error when called from a non-MIDI processor. `startTimer` reports "Timers only work in MIDI processors!" but `stopTimer` does not.
 
 **Cross References:**
-- `Synth.startTimer`
-- `Synth.isTimerRunning`
-- `Synth.getTimerInterval`
-- `Synth.deferCallbacks`
+- `$API.Synth.startTimer$`
+- `$API.Synth.isTimerRunning$`
+- `$API.Synth.getTimerInterval$`
+- `$API.Synth.deferCallbacks$`
 
 
 ## noteOffByEventId
@@ -1121,11 +1121,11 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null). Call
 - When `HISE_USE_BACKWARDS_COMPATIBLE_TIMESTAMPS` is enabled (default), the zero timestamp passed internally to `noteOffDelayedByEventId` may be adjusted by subtracting one audio block size on the audio thread, then clamped to 0. This means the note-off always lands at sample position 0 of the current block.
 
 **Cross References:**
-- `Synth.noteOffDelayedByEventId`
-- `Synth.playNote`
-- `Synth.addNoteOn`
-- `Synth.addVolumeFade`
-- `Synth.isArtificialEventActive`
+- `$API.Synth.noteOffDelayedByEventId$`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.addVolumeFade$`
+- `$API.Synth.isArtificialEventActive$`
 
 **DiagramRef:** synth-midi-event-flow
 
@@ -1155,10 +1155,10 @@ Only artificial events (those generated by script via `playNote`, `addNoteOn`, `
 - The ring buffer uses modular indexing (`eventId % HISE_EVENT_ID_ARRAY_SIZE`). If the buffer has wrapped and the slot has been reused by a newer event, `isArtificialEventActive` returns `true` for the old event ID even though the original event is long gone. This is unlikely in practice but possible with very long-running sessions generating many artificial events.
 
 **Cross References:**
-- `Synth.playNote`
-- `Synth.addNoteOn`
-- `Synth.noteOffByEventId`
-- `Synth.noteOffDelayedByEventId`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.noteOffByEventId$`
+- `$API.Synth.noteOffDelayedByEventId$`
 
 ## isKeyDown
 
@@ -1185,9 +1185,9 @@ Only real (non-artificial) MIDI events affect the bitfield -- script-generated n
 - Only real MIDI note events are tracked. If you generate notes via `Synth.playNote()` or `Synth.addNoteOn()`, `isKeyDown` does NOT reflect those artificial notes as pressed.
 
 **Cross References:**
-- `Synth.getNumPressedKeys`
-- `Synth.isLegatoInterval`
-- `Synth.isSustainPedalDown`
+- `$API.Synth.getNumPressedKeys$`
+- `$API.Synth.isLegatoInterval$`
+- `$API.Synth.isSustainPedalDown$`
 
 ## isLegatoInterval
 
@@ -1218,8 +1218,8 @@ Only real (non-artificial) MIDI events affect the pressed key count.
 - Only real MIDI events affect the count. Script-generated artificial notes do not change `numPressedKeys`.
 
 **Cross References:**
-- `Synth.getNumPressedKeys`
-- `Synth.isKeyDown`
+- `$API.Synth.getNumPressedKeys$`
+- `$API.Synth.isKeyDown$`
 
 ## isSustainPedalDown
 
@@ -1241,10 +1241,10 @@ The sustain state reflects only the real MIDI pedal status. It is not affected b
 (None)
 
 **Cross References:**
-- `Synth.isKeyDown`
-- `Synth.getNumPressedKeys`
-- `Synth.isLegatoInterval`
-- `Synth.sendController`
+- `$API.Synth.isKeyDown$`
+- `$API.Synth.getNumPressedKeys$`
+- `$API.Synth.isLegatoInterval$`
+- `$API.Synth.sendController$`
 
 ## isTimerRunning
 
@@ -1265,9 +1265,9 @@ Returns `true` if the timer for this script processor is currently running, `fal
 (None)
 
 **Cross References:**
-- `Synth.getTimerInterval`
-- `Synth.startTimer`
-- `Synth.stopTimer`
+- `$API.Synth.getTimerInterval$`
+- `$API.Synth.startTimer$`
+- `$API.Synth.stopTimer$`
 
 ## noteOff
 
@@ -1296,9 +1296,9 @@ If no timer has been started, the return value is `0.0`.
 (None)
 
 **Cross References:**
-- `Synth.isTimerRunning`
-- `Synth.startTimer`
-- `Synth.stopTimer`
+- `$API.Synth.isTimerRunning$`
+- `$API.Synth.startTimer$`
+- `$API.Synth.stopTimer$`
 
 ## getWavetableController
 
@@ -1329,9 +1329,9 @@ Despite having no `onInit` restriction, this method allocates a wrapper object o
 - Unlike `getMidiPlayer` which has a two-step error reporting (distinguishes "not found" from "wrong type"), `getWavetableController` has no separate null check on the initial lookup. If the processor name does not exist at all, `dynamic_cast<WavetableSynth*>(nullptr)` returns null and the same "routing matrix" error is shown, making it impossible to distinguish between a missing processor and a type mismatch.
 
 **Cross References:**
-- `Synth.getEffect`
-- `Synth.getRoutingMatrix`
-- `Synth.getChildSynth`
+- `$API.Synth.getEffect$`
+- `$API.Synth.getRoutingMatrix$`
+- `$API.Synth.getChildSynth$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1360,9 +1360,9 @@ The returned `Sampler` handle provides methods for sample map loading, sample ed
 - [BUG] The `reportIllegalCall` error message when called outside `onInit` says `"getScriptingAudioSampleProcessor()"` instead of `"getSampler()"` -- a copy-paste error from another method.
 
 **Cross References:**
-- `Synth.getEffect`
-- `Synth.getModulator`
-- `Synth.getChildSynth`
+- `$API.Synth.getEffect$`
+- `$API.Synth.getModulator$`
+- `$API.Synth.getChildSynth$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1392,9 +1392,9 @@ Processors that expose slider pack data include LFO modulators (with table/slide
 - The method matches any `ExternalDataHolder` by name without verifying that the processor actually has slider pack data. If you pass the name of a processor that only has Table data (e.g., a Table envelope), you get a `ScriptSliderPackProcessor` handle that cannot access any slider pack -- methods on it may fail or return invalid data. Compare with `getAudioSampleProcessor`, which explicitly checks `getNumDataObjects(ExternalData::DataType::AudioFile) > 0`.
 
 **Cross References:**
-- `Synth.getTableProcessor`
-- `Synth.getAudioSampleProcessor`
-- `Synth.getDisplayBufferSource`
+- `$API.Synth.getTableProcessor$`
+- `$API.Synth.getAudioSampleProcessor$`
+- `$API.Synth.getDisplayBufferSource$`
 
 ## getSlotFX
 
@@ -1422,9 +1422,9 @@ The returned `ScriptSlotFX` handle provides methods for swapping effect algorith
 - [BUG] The compile-time diagnostic (ModuleDiagnoser) only searches `HotswappableProcessor` types. If you have a `DspNetwork::Holder` that the runtime method would find via the fallback search, the diagnostic may report a false "not found" warning in the HISE IDE while the code actually works at runtime.
 
 **Cross References:**
-- `Synth.getEffect`
-- `Synth.addEffect`
-- `ScriptSlotFX`
+- `$API.Synth.getEffect$`
+- `$API.Synth.addEffect$`
+- `$API.ScriptSlotFX$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1455,9 +1455,9 @@ Processors that expose table data include Table envelopes, Velocity modulators (
 - [BUG] The `reportIllegalCall` error message when called outside `onInit` says `"getScriptingTableProcessor()"` instead of `"getTableProcessor()"`. The internal C++ method name leaks into the user-facing error message.
 
 **Cross References:**
-- `Synth.getSliderPackProcessor`
-- `Synth.getAudioSampleProcessor`
-- `Synth.getDisplayBufferSource`
+- `$API.Synth.getSliderPackProcessor$`
+- `$API.Synth.getAudioSampleProcessor$`
+- `$API.Synth.getDisplayBufferSource$`
 
 
 ## getIdList
@@ -1485,12 +1485,12 @@ If no processors match the given type name, an empty array is returned. Restrict
 - [BUG] When called outside `onInit`, the method silently returns `undefined` instead of reporting an error via `reportIllegalCall`. Other `get*()` methods report a clear "can only be called in onInit" message. This inconsistency means callers get no feedback when misusing this method at runtime.
 
 **Cross References:**
-- `Synth.getModulator`
-- `Synth.getEffect`
-- `Synth.getChildSynth`
-- `Synth.getMidiProcessor`
-- `Synth.getAllEffects`
-- `Synth.getAllModulators`
+- `$API.Synth.getModulator$`
+- `$API.Synth.getEffect$`
+- `$API.Synth.getChildSynth$`
+- `$API.Synth.getMidiProcessor$`
+- `$API.Synth.getAllEffects$`
+- `$API.Synth.getAllModulators$`
 
 **Example:**
 ```javascript:get-id-list-usage
@@ -1532,8 +1532,8 @@ This method does NOT check `objectsCanBeCreated()` and does NOT have a `WARN_IF_
 - This method searches the entire module tree (global-rooted), not just the parent synth's subtree. A MIDI player in a sibling synth or a different hierarchy level will be found. This is different from `getEffect`, `getModulator`, etc. which only search the owner subtree.
 
 **Cross References:**
-- `Synth.getMidiProcessor`
-- `Synth.getEffect`
+- `$API.Synth.getMidiProcessor$`
+- `$API.Synth.getEffect$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1563,9 +1563,9 @@ Restricted to `onInit` via `objectsCanBeCreated()`. In backend builds, a compile
 - The self-exclusion check compares the `name` parameter against `getProcessor()->getId()` before checking `objectsCanBeCreated()`. If you pass the name of the current script processor, you always get the self-reference error, even when called outside `onInit`. This ordering is harmless but means the error message changes depending on whether you pass your own name vs. another valid name when calling from the wrong scope.
 
 **Cross References:**
-- `Synth.getModulator`
-- `Synth.getEffect`
-- `Synth.getMidiPlayer`
+- `$API.Synth.getModulator$`
+- `$API.Synth.getEffect$`
+- `$API.Synth.getMidiPlayer$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1594,8 +1594,8 @@ Restricted to `onInit` via `objectsCanBeCreated()`.
 - [BUG] The `reportIllegalCall` error message when called outside `onInit` says `"getChildSynth()"` instead of `"getChildSynthByIndex()"` -- a copy-paste error from the name-based variant.
 
 **Cross References:**
-- `Synth.getChildSynth`
-- `Synth.getNumChildSynths`
+- `$API.Synth.getChildSynth$`
+- `$API.Synth.getNumChildSynths$`
 
 ## getDisplayBufferSource
 
@@ -1623,9 +1623,9 @@ Processors that expose DisplayBuffer data include oscillators, analysers, and sc
 - [BUG] The `reportIllegalCall` error message when called outside `onInit` says `"getScriptingTableProcessor()"` instead of `"getDisplayBufferSource()"` -- a copy-paste error from the table processor method.
 
 **Cross References:**
-- `Synth.getAudioSampleProcessor`
-- `Synth.getTableProcessor`
-- `Synth.getSliderPackProcessor`
+- `$API.Synth.getAudioSampleProcessor$`
+- `$API.Synth.getTableProcessor$`
+- `$API.Synth.getSliderPackProcessor$`
 
 ## getEffect
 
@@ -1648,9 +1648,9 @@ The returned `ScriptEffect` handle provides methods for bypassing, setting attri
 | name | String | no | Processor ID of the effect to find | Must match exactly (case-sensitive) |
 
 **Cross References:**
-- `Synth.getAllEffects`
-- `Synth.addEffect`
-- `Synth.removeEffect`
+- `$API.Synth.getAllEffects$`
+- `$API.Synth.addEffect$`
+- `$API.Synth.removeEffect$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1677,11 +1677,11 @@ The returned `ScriptModulator` handle provides methods for setting attributes, b
 | name | String | no | Processor ID of the modulator to find | Must match exactly (case-sensitive) |
 
 **Cross References:**
-- `Synth.getAllModulators`
-- `Synth.addModulator`
-- `Synth.removeModulator`
-- `Synth.getModulatorIndex`
-- `Synth.setModulatorAttribute`
+- `$API.Synth.getAllModulators$`
+- `$API.Synth.addModulator$`
+- `$API.Synth.removeModulator$`
+- `$API.Synth.getModulatorIndex$`
+- `$API.Synth.setModulatorAttribute$`
 
 **DiagramRef:** synth-module-tree-search
 
@@ -1712,9 +1712,9 @@ This method does NOT check `objectsCanBeCreated()` -- it has no `onInit` restric
 - The returned index is positional within the chain's handler, which may differ from the visual order in the HISE IDE if modulators have been dynamically added or removed.
 
 **Cross References:**
-- `Synth.addModulator`
-- `Synth.setModulatorAttribute`
-- `Synth.getModulator`
+- `$API.Synth.addModulator$`
+- `$API.Synth.setModulatorAttribute$`
+- `$API.Synth.getModulator$`
 
 ## getNumChildSynths
 
@@ -1737,8 +1737,8 @@ This method has no `onInit` restriction and no `WARN_IF_AUDIO_THREAD` guard. It 
 - Calling this on a non-Chain synth (e.g., a script processor inside a standalone ModulatorSynth that is not a SynthChain or SynthGroup) produces a script error at runtime. There is no way to query whether the parent synth is a Chain type before calling this method.
 
 **Cross References:**
-- `Synth.getChildSynth`
-- `Synth.getChildSynthByIndex`
+- `$API.Synth.getChildSynth$`
+- `$API.Synth.getChildSynthByIndex$`
 
 ## getNumPressedKeys
 
@@ -1760,9 +1760,9 @@ This is distinct from the number of playing voices -- a single key press can tri
 (None)
 
 **Cross References:**
-- `Synth.isLegatoInterval`
-- `Synth.isKeyDown`
-- `Synth.isSustainPedalDown`
+- `$API.Synth.isLegatoInterval$`
+- `$API.Synth.isKeyDown$`
+- `$API.Synth.isSustainPedalDown$`
 
 ## sendController
 
@@ -1791,8 +1791,8 @@ Requires a MIDI processor context (`parentMidiProcessor` must be non-null). Call
 - There is no explicit channel parameter. The event uses the default HiseEvent channel, which may not match the channel of the incoming MIDI event. Use `addController` when you need to specify the channel.
 
 **Cross References:**
-- `Synth.addController`
-- `Synth.sendControllerToChildSynths`
+- `$API.Synth.addController$`
+- `$API.Synth.sendControllerToChildSynths$`
 
 ## sendControllerToChildSynths
 
@@ -1815,8 +1815,8 @@ All validation, event creation, and buffer insertion behavior is inherited from 
 | controllerValue | Integer | no | Controller value | 0-127 for CC/aftertouch, 0-16383 for pitch bend |
 
 **Cross References:**
-- `Synth.sendController`
-- `Synth.addController`
+- `$API.Synth.sendController$`
+- `$API.Synth.addController$`
 
 ## setAttribute
 
@@ -1853,7 +1853,7 @@ This method operates directly on the parent synth (`owner`). To set attributes o
 - No validation is performed on `attributeIndex`. Passing an index outside the valid range for the parent synth's parameter enum passes through to `setInternalAttribute`, which may silently write to an invalid parameter slot or be ignored depending on the synth subclass implementation.
 
 **Cross References:**
-- `Synth.getAttribute`
+- `$API.Synth.getAttribute$`
 
 ## setClockSpeed
 
@@ -1902,8 +1902,8 @@ Any other value produces a script error "Unknown clockspeed. Use 1,2,4,8,16 or 3
 - [BUG] The error message says "Use 1,2,4,8,16 or 32" but omits 0 (Inactive), which is a valid value that disables the clock. Passing 0 works correctly but is not mentioned in the error guidance.
 
 **Cross References:**
-- `Synth.startTimer`
-- `Synth.stopTimer`
+- `$API.Synth.startTimer$`
+- `$API.Synth.stopTimer$`
 
 ## setFixNoteOnAfterNoteOff
 
@@ -1930,9 +1930,9 @@ When `parentMidiProcessor` is null (i.e., called from a non-MIDI script processo
 - If `parentMidiProcessor` is null (e.g., called from a modulator or effect script), the method silently does nothing without any error. Other MIDI-requiring methods report "Only valid in MidiProcessors", but this one has no such guard.
 
 **Cross References:**
-- `Synth.attachNote`
-- `Synth.playNote`
-- `Synth.addNoteOn`
+- `$API.Synth.attachNote$`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
 
 ## setMacroControl
 
@@ -1961,8 +1961,8 @@ This method only works when the parent synth is a `ModulatorSynthChain`. If the 
 - Only works when the parent synth is a `ModulatorSynthChain`. Calling from a script processor inside a non-chain synth produces an error, even though the script has a valid Synth object. There is no way to query the parent synth type before calling.
 
 **Cross References:**
-- `Synth.getAttribute`
-- `Synth.setAttribute`
+- `$API.Synth.getAttribute$`
+- `$API.Synth.setAttribute$`
 
 ## setModulatorAttribute
 
@@ -2002,9 +2002,9 @@ After setting the attribute, the method calls `sendOtherChangeMessage` to notify
 - The standard `setAttribute` call uses `dontSendNotification` (unlike `Synth.setAttribute` which uses `sendNotification`), but then manually calls `sendOtherChangeMessage`. This means the notification path is different from calling `setAttribute` directly on a ScriptModulator handle.
 
 **Cross References:**
-- `Synth.getModulatorIndex`
-- `Synth.addModulator`
-- `Synth.getModulator`
+- `$API.Synth.getModulatorIndex$`
+- `$API.Synth.addModulator$`
+- `$API.Synth.getModulator$`
 
 **Example:**
 ```javascript:set-modulator-attribute-intensity
@@ -2043,9 +2043,9 @@ This is useful for polyphonic instruments where you want multiple velocity layer
 | killNote | Integer | no | Whether to kill retriggered notes | Boolean (0 or 1); default is true |
 
 **Cross References:**
-- `Synth.playNote`
-- `Synth.addNoteOn`
-- `Synth.noteOffByEventId`
+- `$API.Synth.playNote$`
+- `$API.Synth.addNoteOn$`
+- `$API.Synth.noteOffByEventId$`
 
 ## getRoutingMatrix
 
@@ -2075,9 +2075,9 @@ Despite having no `onInit` restriction, this method allocates a wrapper object o
 - No `onInit` restriction is enforced despite allocating a wrapper object. Calling this at runtime is unsafe on the audio thread but produces no error or warning outside debug builds.
 
 **Cross References:**
-- `Synth.getEffect`
-- `Synth.getChildSynth`
-- `RoutingMatrix`
+- `$API.Synth.getEffect$`
+- `$API.Synth.getChildSynth$`
+- `$API.RoutingMatrix$`
 
 **DiagramRef:** synth-module-tree-search
 

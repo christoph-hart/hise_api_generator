@@ -22,9 +22,9 @@ Adds a new control point to the table at the given normalized coordinates. The c
 - Calling `addTablePoint()` in a loop triggers a full lookup table re-render (512 floats via PathFlatteningIterator) on every call. Use `setTablePointsFromArray()` for bulk setup.
 
 **Cross References:**
-- `Table.setTablePointsFromArray` -- bulk alternative that renders once
-- `Table.setTablePoint` -- modify an existing point by index
-- `Table.getTablePointsAsArray` -- retrieve current points
+- `$API.Table.setTablePointsFromArray$` -- bulk alternative that renders once
+- `$API.Table.setTablePoint$` -- modify an existing point by index
+- `$API.Table.getTablePointsAsArray$` -- retrieve current points
 
 ## getCurrentlyDisplayedIndex
 
@@ -40,8 +40,8 @@ Returns the last ruler position that was sent to the table's display updater, as
 None.
 
 **Cross References:**
-- `Table.getTableValueNormalised` -- querying a value also updates the displayed index
-- `Table.setDisplayCallback` -- fires when the displayed index changes
+- `$API.Table.getTableValueNormalised$` -- querying a value also updates the displayed index
+- `$API.Table.setDisplayCallback$` -- fires when the displayed index changes
 
 ## getTablePointsAsArray
 
@@ -58,8 +58,8 @@ Returns all table control points as a nested array. Each element is a 3-element 
 None.
 
 **Cross References:**
-- `Table.setTablePointsFromArray` -- inverse operation: set points from an array in the same format
-- `Table.setTablePoint` -- modify a single point by index
+- `$API.Table.setTablePointsFromArray$` -- inverse operation: set points from an array in the same format
+- `$API.Table.setTablePoint$` -- modify a single point by index
 
 **Example:**
 ```javascript:read-modify-write-table
@@ -106,8 +106,8 @@ Returns the interpolated output value of the table at the given normalized input
 - Calling this method updates the display ruler position and fires the display callback. This is intentional but may be unexpected if you only want a value lookup without visual side effects.
 
 **Cross References:**
-- `Table.getCurrentlyDisplayedIndex` -- reads back the position last set by this method
-- `Table.setDisplayCallback` -- callback fired as a side effect of this method
+- `$API.Table.getCurrentlyDisplayedIndex$` -- reads back the position last set by this method
+- `$API.Table.setDisplayCallback$` -- callback fired as a side effect of this method
 
 **Example:**
 ```javascript:table-value-query
@@ -155,9 +155,9 @@ Makes this Table handle refer to the same underlying data as another Table objec
 - Linking is one-directional at the handle level: this handle starts pointing to the other's data, but the other handle is unaffected. Both handles then share the same underlying data, so modifications through either are visible to both.
 
 **Cross References:**
-- `Table.setContentCallback` -- content callbacks remain active after linking and fire on the linked data
-- `Table.setDisplayCallback` -- display callbacks remain active after linking
-- `Table.reset` -- resets table to default linear ramp; linkTo changes data identity while reset changes data content
+- `$API.Table.setContentCallback$` -- content callbacks remain active after linking and fire on the linked data
+- `$API.Table.setDisplayCallback$` -- display callbacks remain active after linking
+- `$API.Table.reset$` -- resets table to default linear ramp; linkTo changes data identity while reset changes data content
 
 **Example:**
 ```javascript:link-two-tables
@@ -202,9 +202,9 @@ Resets the table to its default state: two control points at (0, 0, 0.5) and (1,
 None.
 
 **Cross References:**
-- `Table.setTablePointsFromArray` -- alternative for setting a specific curve; reset restores the default linear ramp
-- `Table.setContentCallback` -- fires with index -1 after reset
-- `Table.linkTo` -- changes data identity (points to different data); reset changes data content (restores default curve)
+- `$API.Table.setTablePointsFromArray$` -- alternative for setting a specific curve; reset restores the default linear ramp
+- `$API.Table.setContentCallback$` -- fires with index -1 after reset
+- `$API.Table.linkTo$` -- changes data identity (points to different data); reset changes data content (restores default curve)
 
 ## setContentCallback
 
@@ -229,11 +229,11 @@ Registers a callback function that fires whenever the table's content changes --
 - The pointIndex argument is -1 for bulk operations (reset, setTablePointsFromArray). Check for -1 before using it as an array index into getTablePointsAsArray().
 
 **Cross References:**
-- `Table.setDisplayCallback` -- fires on ruler position changes, not content changes
-- `Table.addTablePoint` -- triggers this callback with the new point's index
-- `Table.setTablePoint` -- triggers this callback with the modified point's index
-- `Table.setTablePointsFromArray` -- triggers this callback with index -1 (bulk change)
-- `Table.reset` -- triggers this callback with index -1
+- `$API.Table.setDisplayCallback$` -- fires on ruler position changes, not content changes
+- `$API.Table.addTablePoint$` -- triggers this callback with the new point's index
+- `$API.Table.setTablePoint$` -- triggers this callback with the modified point's index
+- `$API.Table.setTablePointsFromArray$` -- triggers this callback with index -1 (bulk change)
+- `$API.Table.reset$` -- triggers this callback with index -1
 
 **Example:**
 ```javascript:content-callback-logging
@@ -281,9 +281,9 @@ Registers a callback function that fires whenever the table's ruler/display posi
 **Callback Signature:** displayFunction(position: double)
 
 **Cross References:**
-- `Table.setContentCallback` -- fires on content changes, not ruler position changes
-- `Table.getTableValueNormalised` -- triggers this callback as a side effect
-- `Table.getCurrentlyDisplayedIndex` -- reads back the last position without triggering the callback
+- `$API.Table.setContentCallback$` -- fires on content changes, not ruler position changes
+- `$API.Table.getTableValueNormalised$` -- triggers this callback as a side effect
+- `$API.Table.getCurrentlyDisplayedIndex$` -- reads back the last position without triggering the callback
 
 **Example:**
 ```javascript:display-callback-tracking
@@ -336,9 +336,9 @@ Modifies an existing control point at the given index. All coordinate values (x,
 - Each call triggers a full lookup table re-render. For modifying multiple points, consider using `setTablePointsFromArray()` which renders only once.
 
 **Cross References:**
-- `Table.addTablePoint` -- add a new point instead of modifying an existing one
-- `Table.setTablePointsFromArray` -- bulk alternative for setting all points at once
-- `Table.getTablePointsAsArray` -- retrieve current points to find indices
+- `$API.Table.addTablePoint$` -- add a new point instead of modifying an existing one
+- `$API.Table.setTablePointsFromArray$` -- bulk alternative for setting all points at once
+- `$API.Table.getTablePointsAsArray$` -- retrieve current points to find indices
 
 ## setTablePointsFromArray
 
@@ -361,10 +361,10 @@ Replaces all table control points from a nested array. Each element must be a 3-
 - The first point's x is silently forced to 0.0 and the last point's x to 1.0. Passing different x values for edge points does not produce an error -- the values are overwritten.
 
 **Cross References:**
-- `Table.getTablePointsAsArray` -- inverse operation: retrieve points in the same format
-- `Table.addTablePoint` -- add a single point; less efficient for bulk setup
-- `Table.setTablePoint` -- modify a single existing point by index
-- `Table.reset` -- shorthand for resetting to the default linear ramp
+- `$API.Table.getTablePointsAsArray$` -- inverse operation: retrieve points in the same format
+- `$API.Table.addTablePoint$` -- add a single point; less efficient for bulk setup
+- `$API.Table.setTablePoint$` -- modify a single existing point by index
+- `$API.Table.reset$` -- shorthand for resetting to the default linear ramp
 
 **Example:**
 ```javascript:custom-curve-setup

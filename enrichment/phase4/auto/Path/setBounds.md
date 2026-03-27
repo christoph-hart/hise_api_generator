@@ -10,4 +10,4 @@ p.setBounds(n);
 p.addArc(n, -2.4, 2.4);
 ```
 
-> **Warning:** `setBounds` does not resize or transform the path. This is the most common source of confusion. Use `scaleToFit` to actually rescale path geometry into a target area.
+> [!Warning:$WARNING_TO_BE_REPLACED$] `setBounds` does not resize or transform the path. This is the most common source of confusion. Use `scaleToFit` to actually rescale path geometry into a target area.

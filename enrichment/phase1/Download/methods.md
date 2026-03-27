@@ -21,9 +21,9 @@ After abort, `getStatusText()` returns `"Aborted"`, `data.aborted` is `true`, `d
 - Abort is asynchronous relative to the API call. When `abort()` returns, the file has not yet been deleted and `getStatusText()` may still return `"Downloading"`. The actual deletion happens on the WebThread's next iteration (up to 500ms later).
 
 **Cross References:**
-- `Download.stop`
-- `Download.resume`
-- `Download.getStatusText`
+- `$API.Download.stop$`
+- `$API.Download.resume$`
+- `$API.Download.getStatusText$`
 
 ## getDownloadedTarget
 
@@ -44,8 +44,8 @@ Returns the target file as a `File` scripting object, regardless of whether the 
 - The method name suggests it returns the target only after success, but it always returns the file path regardless of download state. Check `data.finished` and `data.success` before using the returned file.
 
 **Cross References:**
-- `Server.downloadFile`
-- `Download.abort`
+- `$API.Server.downloadFile$`
+- `$API.Download.abort$`
 
 ## getDownloadSize
 
@@ -65,8 +65,8 @@ This method reads the internal `totalLength_` member directly (updated by the JU
 (No parameters.)
 
 **Cross References:**
-- `Download.getNumBytesDownloaded`
-- `Download.getProgress`
+- `$API.Download.getNumBytesDownloaded$`
+- `$API.Download.getProgress$`
 
 ## getDownloadSpeed
 
@@ -84,9 +84,9 @@ Returns the current download speed in bytes per second. The speed is measured us
 (No parameters.)
 
 **Cross References:**
-- `Download.isRunning`
-- `Download.getNumBytesDownloaded`
-- `Download.getProgress`
+- `$API.Download.isRunning$`
+- `$API.Download.getNumBytesDownloaded$`
+- `$API.Download.getProgress$`
 
 ## getFullURL
 
@@ -104,7 +104,7 @@ Returns the full URL string of this download as passed to `Server.downloadFile()
 (No parameters.)
 
 **Cross References:**
-- `Server.downloadFile`
+- `$API.Server.downloadFile$`
 
 ## getNumBytesDownloaded
 
@@ -124,8 +124,8 @@ This method reads the internal `bytesDownloaded_` member directly (updated by th
 (No parameters.)
 
 **Cross References:**
-- `Download.getDownloadSize`
-- `Download.getProgress`
+- `$API.Download.getDownloadSize$`
+- `$API.Download.getProgress$`
 
 ## getProgress
 
@@ -146,8 +146,8 @@ Returns the download progress as a ratio from 0.0 to 1.0. Calculated as `numDown
 - [BUG] During resumed downloads, progress is double-counted. The `data.numDownloaded` and `data.numTotal` properties already include `existingBytesBeforeResuming` (added in the `progress()` callback at line 1437-1438), but `getProgress()` adds it again at lines 1304-1305. For fresh downloads (where `existingBytesBeforeResuming` is 0) the result is correct. For resumed downloads, the numerator and denominator are both inflated by the same offset, so the ratio may still appear approximately correct, but the intermediate values are wrong. For accurate progress during resumes, use `data.numDownloaded / data.numTotal` directly.
 
 **Cross References:**
-- `Download.getDownloadSize`
-- `Download.getNumBytesDownloaded`
+- `$API.Download.getDownloadSize$`
+- `$API.Download.getNumBytesDownloaded$`
 
 ## getStatusText
 
@@ -178,9 +178,9 @@ Returns a human-readable string describing the current download state. The retur
 - `"Completed"` does not imply success. A connection failure also results in `"Completed"` status with `data.success` set to `false`. Always check `data.success` alongside the status text.
 
 **Cross References:**
-- `Download.isRunning`
-- `Download.stop`
-- `Download.abort`
+- `$API.Download.isRunning$`
+- `$API.Download.stop$`
+- `$API.Download.abort$`
 
 ## isRunning
 
@@ -198,9 +198,9 @@ Returns `true` if the download is currently actively transferring data, `false` 
 (No parameters.)
 
 **Cross References:**
-- `Download.getStatusText`
-- `Download.stop`
-- `Download.resume`
+- `$API.Download.getStatusText$`
+- `$API.Download.stop$`
+- `$API.Download.resume$`
 
 ## resume
 
@@ -223,10 +223,10 @@ The guard condition `!isRunning() && !isFinished && !shouldAbort` means resume i
 - Returns `false` silently when the download has already finished or was aborted. There is no error message distinguishing "cannot resume because finished" from "cannot resume because aborted". Check `getStatusText()` to determine why `resume()` returned `false`.
 
 **Cross References:**
-- `Download.stop`
-- `Download.abort`
-- `Download.isRunning`
-- `Download.getStatusText`
+- `$API.Download.stop$`
+- `$API.Download.abort$`
+- `$API.Download.isRunning$`
+- `$API.Download.getStatusText$`
 
 **DiagramRef:** download-lifecycle
 
@@ -251,9 +251,9 @@ After stopping, `getStatusText()` returns `"Paused"` and the download can be res
 - Stop is asynchronous relative to the API call. When `stop()` returns `true`, the download has not yet actually stopped -- the `isWaitingForStop` flag has been set but `stopInternal()` has not yet executed. `isRunning()` may still return `true` until the WebThread processes the flag (up to 500ms later).
 
 **Cross References:**
-- `Download.resume`
-- `Download.abort`
-- `Download.isRunning`
-- `Download.getStatusText`
+- `$API.Download.resume$`
+- `$API.Download.abort$`
+- `$API.Download.isRunning$`
+- `$API.Download.getStatusText$`
 
 **DiagramRef:** download-lifecycle

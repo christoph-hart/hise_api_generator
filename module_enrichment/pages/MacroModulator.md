@@ -145,11 +145,4 @@ When the smoothing time is 0, value changes take effect immediately with no inte
 
 After disconnecting from a macro slot, the modulator retains whatever value it had at the moment of disconnection. It does not reset to 1.0 - only a newly created instance starts at the default.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Macro Modulation Source", to: "/v2/reference/audio-modules/sound-generators/macromodulationsource", desc: "the source side of the macro system, hosts modulation chains that drive the macro slots this modulator reads from" }
----
-::
+**See also:** $MODULES.MacroModulationSource$ -- the source side of the macro system, hosts modulation chains that drive the macro slots this modulator reads from

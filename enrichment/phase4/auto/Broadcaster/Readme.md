@@ -75,22 +75,27 @@ Many HiseScript APIs accept a function reference for a callback slot - for examp
 
 ## Common Mistakes
 
-- **Wrong:** Creating a broadcaster with the wrong argument count for the intended `attachTo*` method.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Creating a broadcaster with the wrong argument count for the intended `attachTo*` method.
   **Right:** Match the argument count to the source type: 1 for radio groups and non-realtime changes, 2 for component values, mouse events, interface size, processing specs, routing matrices, EQ events, and context menus, 3 for component properties, module parameters, complex data, and sample maps.
   *Each attach method validates the argument count and throws a descriptive error, but mismatches are a common setup stumble.*
 
-- **Wrong:** Mutating an object in-place and resending it, expecting change detection to trigger.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Mutating an object in-place and resending it, expecting change detection to trigger.
   **Right:** Create a new object instance, or enable queue mode with `setEnableQueue(true)`.
   *Change detection compares by reference for objects. Modifying properties on the same object reference does not count as a change.*
 
-- **Wrong:** Providing a callback to `addComponentPropertyListener` or `addComponentValueListener` with the wrong parameter count.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Providing a callback to `addComponentPropertyListener` or `addComponentValueListener` with the wrong parameter count.
   **Right:** The callback receives `targetIndex` as an extra first parameter (N+1 total) and must return the value to set.
   *Forgetting the extra `targetIndex` shifts all arguments. Forgetting the return value triggers an error.*
 
-- **Wrong:** Using `Content.getComponent()` inside a broadcaster callback to look up components on every fire.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `Content.getComponent()` inside a broadcaster callback to look up components on every fire.
   **Right:** Cache component references in `const var` at init time and pass them via closure or the `object` parameter.
   *Broadcaster callbacks can fire frequently. Repeated lookups are unnecessary overhead when references can be cached once.*
 
-- **Wrong:** Adding listeners in many separate scripts that directly call each other's functions.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Adding listeners in many separate scripts that directly call each other's functions.
   **Right:** Define core broadcasters in a central data file and subscribe from feature modules.
   *Broadcasters decouple event producers from consumers. A single broadcaster can notify 10+ scripts without any script knowing about the others.*

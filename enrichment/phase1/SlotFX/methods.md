@@ -18,9 +18,9 @@ None.
 - The old effect processor is deleted asynchronously. Any `Effect` handle obtained from a previous `setEffect()` or `getCurrentEffect()` call becomes invalid after `clear()`.
 
 **Cross References:**
-- `SlotFX.setEffect`
-- `SlotFX.getCurrentEffect`
-- `SlotFX.getCurrentEffectId`
+- `$API.SlotFX.setEffect$`
+- `$API.SlotFX.getCurrentEffect$`
+- `$API.SlotFX.getCurrentEffectId$`
 
 ## exists
 
@@ -36,7 +36,7 @@ Returns whether the underlying processor reference is still valid. Checks the in
 None.
 
 **Cross References:**
-- `SlotFX.getCurrentEffect`
+- `$API.SlotFX.getCurrentEffect$`
 
 ## getCurrentEffect
 
@@ -56,8 +56,8 @@ None.
 - The return type differs by mode: `Effect` for HotswappableProcessor slots, `DspNetwork` for scriptnode-based slots. Code that assumes one type will fail on the other.
 
 **Cross References:**
-- `SlotFX.setEffect`
-- `SlotFX.getCurrentEffectId`
+- `$API.SlotFX.setEffect$`
+- `$API.SlotFX.getCurrentEffectId$`
 
 ## getCurrentEffectId
 
@@ -74,9 +74,9 @@ Returns the type name string of the currently loaded effect. In HotswappableProc
 None.
 
 **Cross References:**
-- `SlotFX.getCurrentEffect`
-- `SlotFX.setEffect`
-- `SlotFX.getModuleList`
+- `$API.SlotFX.getCurrentEffect$`
+- `$API.SlotFX.setEffect$`
+- `$API.SlotFX.getModuleList$`
 
 ## getModuleList
 
@@ -96,7 +96,7 @@ None.
 - In DspNetwork::Holder mode (scriptnode-based slots), this method only works in the HISE IDE. In exported plugins, it silently returns an empty array with no error message.
 
 **Cross References:**
-- `SlotFX.setEffect`
+- `$API.SlotFX.setEffect$`
 
 ## getParameterProperties
 
@@ -127,9 +127,9 @@ None.
 - Returns undefined for a plain SlotFX module (which has no parameters of its own). Parameter properties belong to the loaded effect, not the slot container. This method is primarily useful for HardcodedMasterFX and DspNetwork-based slots.
 
 **Cross References:**
-- `SlotFX.setEffect`
-- `SlotFX.getCurrentEffect`
-- `SlotFX.getModuleList`
+- `$API.SlotFX.setEffect$`
+- `$API.SlotFX.getCurrentEffect$`
+- `$API.SlotFX.getModuleList$`
 
 **Example:**
 ```javascript:parameter-property-inspection
@@ -181,9 +181,9 @@ In DspNetwork::Holder mode, clears all existing networks and loads the named net
 - In DspNetwork mode, calling `setEffect()` clears ALL previously loaded networks before loading the new one. Any references to previously loaded DspNetwork objects become invalid.
 
 **Cross References:**
-- `SlotFX.clear`
-- `SlotFX.getCurrentEffect`
-- `SlotFX.getModuleList`
+- `$API.SlotFX.clear$`
+- `$API.SlotFX.getCurrentEffect$`
+- `$API.SlotFX.getModuleList$`
 
 ## swap
 
@@ -207,6 +207,6 @@ Atomically exchanges the loaded effects between this slot and another SlotFX ins
 - [BUG] The C++ swap only works between two `SlotFX` module instances. If the other slot wraps a HardcodedSwappableEffect (which also implements HotswappableProcessor), the swap silently returns false without an error message.
 
 **Cross References:**
-- `SlotFX.setEffect`
-- `SlotFX.clear`
-- `SlotFX.getCurrentEffect`
+- `$API.SlotFX.setEffect$`
+- `$API.SlotFX.clear$`
+- `$API.SlotFX.getCurrentEffect$`

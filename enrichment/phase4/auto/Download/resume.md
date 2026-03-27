@@ -2,4 +2,4 @@ Requests resumption of a stopped download. Returns `true` if the resume request 
 
 [See: Download State Machine](#diagram-download-lifecycle)
 
-> **Warning:** Returns `false` silently when the download cannot be resumed. Check `getStatusText()` to determine why - a finished or aborted download cannot be resumed.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Returns `false` silently when the download cannot be resumed. Check `getStatusText()` to determine why - a finished or aborted download cannot be resumed.

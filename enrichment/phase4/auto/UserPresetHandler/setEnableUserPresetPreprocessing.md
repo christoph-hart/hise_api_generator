@@ -14,4 +14,4 @@ The preset data object has this structure:
 
 When the second parameter (`shouldUnpackComplexData`) is true, JSON-encoded strings and Base64-encoded data within the preset are decoded back to native objects, making the data fully inspectable. Only enable this when you need to inspect encoded content (e.g. migrating sample map references) - it adds conversion overhead to every preset load.
 
-> **Warning:** Preprocessing has no effect without a pre-callback registered via `setPreCallback`. Enabling it alone just adds unnecessary conversion overhead on every load.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Preprocessing has no effect without a pre-callback registered via `setPreCallback`. Enabling it alone just adds unnecessary conversion overhead on every load.

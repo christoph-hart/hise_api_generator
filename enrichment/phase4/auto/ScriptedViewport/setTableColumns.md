@@ -45,4 +45,4 @@ Defines the columns of the table. Pass an array of column definition objects, ea
 
 For ComboBox columns, row data can override `items` and `Value` dynamically on a per-row basis. This is useful when different rows need different dropdown choices while sharing the same column definition.
 
-> **Warning:** Set `"Focus": false` on Button columns that should not participate in arrow-key navigation. Without this, the focus order includes every column, making keyboard navigation slow when there are many action buttons.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Set `"Focus": false` on Button columns that should not participate in arrow-key navigation. Without this, the focus order includes every column, making keyboard navigation slow when there are many action buttons.

@@ -29,11 +29,11 @@ When `forSaving` is true, the dialog presents a save-file interface with an over
 - [BUG] The `startFolder` parameter does not accept absolute path strings. Unlike `browseForMultipleDirectories` and `browseForMultipleFiles` (which use `getFileFromVar`), this method only checks for integer constants and `File` objects. Passing a string silently results in an empty start directory.
 
 **Cross References:**
-- `FileSystem.browseForDirectory`
-- `FileSystem.browseForMultipleFiles`
-- `FileSystem.browseForMultipleDirectories`
-- `FileSystem.getFolder`
-- `FileSystem.fromAbsolutePath`
+- `$API.FileSystem.browseForDirectory$`
+- `$API.FileSystem.browseForMultipleFiles$`
+- `$API.FileSystem.browseForMultipleDirectories$`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.fromAbsolutePath$`
 
 **Example:**
 ```javascript:browse-save-file
@@ -76,10 +76,10 @@ Opens a native directory browser dialog for selecting a single directory. The di
 - [BUG] The `startFolder` parameter does not accept absolute path strings. Like `browse`, this method only checks for integer constants and `File` objects. Passing a string silently results in an empty start directory. Use `FileSystem.fromAbsolutePath()` to convert a path string to a `File` first.
 
 **Cross References:**
-- `FileSystem.browse`
-- `FileSystem.browseForMultipleDirectories`
-- `FileSystem.getFolder`
-- `FileSystem.fromAbsolutePath`
+- `$API.FileSystem.browse$`
+- `$API.FileSystem.browseForMultipleDirectories$`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.fromAbsolutePath$`
 
 ## browseForMultipleDirectories
 
@@ -107,10 +107,10 @@ Unlike `browse` and `browseForDirectory`, this method uses the more permissive `
 - The callback receives an `Array` of `File` objects even if only one directory is selected. Always iterate the result rather than using it directly as a single `File`.
 
 **Cross References:**
-- `FileSystem.browseForDirectory`
-- `FileSystem.browse`
-- `FileSystem.browseForMultipleFiles`
-- `FileSystem.getFolder`
+- `$API.FileSystem.browseForDirectory$`
+- `$API.FileSystem.browse$`
+- `$API.FileSystem.browseForMultipleFiles$`
+- `$API.FileSystem.getFolder$`
 
 ## browseForMultipleFiles
 
@@ -139,10 +139,10 @@ Like `browseForMultipleDirectories`, this method uses the `getFileFromVar` utili
 - The callback receives an `Array` of `File` objects even if only one file is selected. Always iterate the result rather than using it directly as a single `File`.
 
 **Cross References:**
-- `FileSystem.browse`
-- `FileSystem.browseForDirectory`
-- `FileSystem.browseForMultipleDirectories`
-- `FileSystem.getFolder`
+- `$API.FileSystem.browse$`
+- `$API.FileSystem.browseForDirectory$`
+- `$API.FileSystem.browseForMultipleDirectories$`
+- `$API.FileSystem.getFolder$`
 
 ## decryptWithRSA
 
@@ -170,8 +170,8 @@ This is a raw RSA operation without hybrid encryption. The maximum data size is 
 - Returns an empty string silently when the key is invalid or when the decrypted data is not valid UTF-8. There is no error message or exception to indicate what went wrong, making debugging difficult. Check the return value to detect failure.
 
 **Cross References:**
-- `FileSystem.encryptWithRSA`
-- `FileSystem.getSystemId`
+- `$API.FileSystem.encryptWithRSA$`
+- `$API.FileSystem.getSystemId$`
 
 ## descriptionOfSizeInBytes
 
@@ -191,7 +191,7 @@ Converts a file size in bytes to a human-readable string description. Delegates 
 | bytes | Integer | no | Number of bytes to format as a human-readable size string. | Non-negative integer. |
 
 **Cross References:**
-- `FileSystem.getBytesFreeOnVolume`
+- `$API.FileSystem.getBytesFreeOnVolume$`
 
 ## encryptWithRSA
 
@@ -219,8 +219,8 @@ Unlike `decryptWithRSA`, this method does not validate the key before use. If th
 - [BUG] No key validation is performed. Unlike `decryptWithRSA` which checks `RSAKey::isValid()`, this method constructs and uses the key unconditionally. A malformed key string produces garbage output without any error.
 
 **Cross References:**
-- `FileSystem.decryptWithRSA`
-- `FileSystem.getSystemId`
+- `$API.FileSystem.decryptWithRSA$`
+- `$API.FileSystem.getSystemId$`
 
 **Example:**
 ```javascript:rsa-encrypt-decrypt-roundtrip
@@ -269,8 +269,8 @@ The method finds both files and directories, ignores hidden files, and explicitl
 - Does not accept `SpecialLocations` constants directly. Passing an integer constant (e.g. `FileSystem.Desktop`) silently returns an empty array because the `dynamic_cast<ScriptFile*>` check fails for integer values. You must call `FileSystem.getFolder()` first to get a `File` object.
 
 **Cross References:**
-- `FileSystem.getFolder`
-- `FileSystem.findFileSystemRoots`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.findFileSystemRoots$`
 
 **Example:**
 ```javascript:find-wav-files
@@ -306,8 +306,8 @@ Returns an `Array` of `File` objects representing all root drives on the current
 (No parameters.)
 
 **Cross References:**
-- `FileSystem.getFolder`
-- `FileSystem.findFiles`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.findFiles$`
 
 **Example:**
 ```javascript:list-filesystem-roots
@@ -349,9 +349,9 @@ The method does not verify that the file or directory actually exists on disk --
 - Returns `undefined` silently when given a relative path or non-path string. There is no error message -- the method simply returns an empty `var`. Check for `isDefined()` on the result if the path source is untrusted.
 
 **Cross References:**
-- `FileSystem.getFolder`
-- `FileSystem.fromReferenceString`
-- `FileSystem.browse`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.fromReferenceString$`
+- `$API.FileSystem.browse$`
 
 ## fromReferenceString
 
@@ -388,9 +388,9 @@ Only three location types are valid: `FileSystem.AudioFiles`, `FileSystem.Sample
 - Only three location types are accepted. Using constants like `FileSystem.Desktop`, `FileSystem.AppData`, etc. triggers a script error with the message `"X" is not a valid locationType`. This is because only AudioFiles, Samples, and UserPresets map to HISE's internal `FileHandlerBase::SubDirectories`.
 
 **Cross References:**
-- `FileSystem.fromAbsolutePath`
-- `FileSystem.getFolder`
-- `FileSystem.findFiles`
+- `$API.FileSystem.fromAbsolutePath$`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.findFiles$`
 
 ## getBytesFreeOnVolume
 
@@ -415,8 +415,8 @@ If the folder parameter is neither a valid `SpecialLocations` constant nor a `Fi
 - [BUG] Returns 0 silently for invalid folder arguments. If the parameter is not a `SpecialLocations` constant or `File` object (e.g. a string path), the internal File is empty and `getBytesFreeOnVolume()` returns 0 without error. The result is indistinguishable from a genuinely full volume.
 
 **Cross References:**
-- `FileSystem.getFolder`
-- `FileSystem.descriptionOfSizeInBytes`
+- `$API.FileSystem.getFolder$`
+- `$API.FileSystem.descriptionOfSizeInBytes$`
 
 **Example:**
 ```javascript:check-free-disk-space
@@ -476,9 +476,9 @@ Returns `undefined` if the resolved path does not point to an existing directory
 - [BUG] The integer cast from `var` to `SpecialLocations` has no range check. Passing an integer outside 0-11 results in undefined C++ behavior in the `switch` statement, likely falling through to the `default` case and returning an empty file (then `undefined` from the `isDirectory()` check).
 
 **Cross References:**
-- `FileSystem.fromAbsolutePath`
-- `FileSystem.fromReferenceString`
-- `FileSystem.findFiles`
+- `$API.FileSystem.fromAbsolutePath$`
+- `$API.FileSystem.fromReferenceString$`
+- `$API.FileSystem.findFiles$`
 
 **Example:**
 ```javascript:get-special-folders
@@ -524,8 +524,8 @@ The returned string is deterministic for a given machine -- calling it multiple 
 (No parameters.)
 
 **Cross References:**
-- `FileSystem.encryptWithRSA`
-- `FileSystem.decryptWithRSA`
+- `$API.FileSystem.encryptWithRSA$`
+- `$API.FileSystem.decryptWithRSA$`
 
 ## loadExampleAssets
 
@@ -548,4 +548,4 @@ The method accesses the `BackendProcessor`'s asset manager (lazily created on fi
 - No-op in compiled plugins. The method body is entirely wrapped in `#if USE_BACKEND`, so calling it in an exported plugin does nothing. No error or warning is produced.
 
 **Cross References:**
-- `FileSystem.getFolder`
+- `$API.FileSystem.getFolder$`

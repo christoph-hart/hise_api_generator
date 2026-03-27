@@ -13,26 +13,32 @@ Sequences and tracks use one-based indexing in the scripting API. Each player ha
 
 ## Common Mistakes
 
-- **Wrong:** Calling `setUseGlobalUndoManager(false)` after enabling it and expecting per-player undo to still work
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `setUseGlobalUndoManager(false)` after enabling it and expecting per-player undo to still work
   **Right:** Leave the default per-player undo alone, or commit to the global stack
   *Disabling the global undo manager destroys the per-player manager too. The previous undo history is lost.*
 
-- **Wrong:** `mp.setSequence(0);`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `mp.setSequence(0);`
   **Right:** `mp.setSequence(1);`
   *Sequence and track indices are one-based. Index 0 triggers a script error.*
 
-- **Wrong:** Modifying `Tempo` in the time signature object and calling `setTimeSignature()`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Modifying `Tempo` in the time signature object and calling `setTimeSignature()`
   **Right:** Set tempo via the module attribute instead
   *`setTimeSignature()` does not consume the `Tempo` property from the JSON object - it is read-only.*
 
-- **Wrong:** Calling `play()` / `stop()` when synced to master clock
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `play()` / `stop()` when synced to master clock
   **Right:** Use `TransportHandler.startInternalClock()` / `TransportHandler.stopInternalClock()`
   *When `setSyncToMasterClock(true)` is active, `play()` and `stop()` are no-ops that return false. Transport must be driven through the TransportHandler.*
 
-- **Wrong:** Creating sequences without clearing first
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Creating sequences without clearing first
   **Right:** Call `clearAllSequences()` then `create()` in a loop
   *`create()` appends to the sequence list. Without clearing, repeated initialisation accumulates sequences.*
 
-- **Wrong:** Using sample timestamps for grid-aligned editing
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using sample timestamps for grid-aligned editing
   **Right:** Call `setUseTimestampInTicks(true)` before `getEventList()` / `flushMessageList()`
   *Sample timestamps shift with tempo changes. Tick timestamps (960 per quarter note) are stable musical positions.*

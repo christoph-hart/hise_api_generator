@@ -37,18 +37,22 @@ The modulator chain methods (`addModulator`, `addGlobalModulator`, `addStaticGlo
 
 ## Common Mistakes
 
-- **Wrong:** `var cs = Synth.getChildSynth("Sine");` in `onNoteOn`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var cs = Synth.getChildSynth("Sine");` in `onNoteOn`
   **Right:** `const var cs = Synth.getChildSynth("Sine");` in `onInit`
   *`getChildSynth` is restricted to onInit. Store the reference as a top-level const variable and reuse it in all callbacks.*
 
-- **Wrong:** `cs.addModulator(0, "LFO", "MyLFO");`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `cs.addModulator(0, "LFO", "MyLFO");`
   **Right:** `cs.addModulator(1, "LFOModulator", "MyLFO");`
   *Chain index 0 is MidiProcessor, not a modulator chain. Use 1 (Gain) or 2 (Pitch). The type name must match the C++ class name (e.g. "LFOModulator", not "LFO").*
 
-- **Wrong:** Using `addGlobalModulator` for all modulation connections
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `addGlobalModulator` for all modulation connections
   **Right:** Use `addStaticGlobalModulator` for targets that do not need per-voice resolution
   *Static global modulators use one value per audio block instead of per-voice, which is significantly more CPU-efficient for effect parameters and synth-level controls.*
 
-- **Wrong:** Passing `getCurrentLevel` results directly to a UI meter
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Passing `getCurrentLevel` results directly to a UI meter
   **Right:** Apply decay smoothing in the timer callback
   *Raw peak values fluctuate rapidly. Use a formula like `level = Math.max(newPeak, level * 0.94)` for a stable meter display.*

@@ -38,10 +38,12 @@ A stopped download can be resumed with `resume()`, which uses HTTP Range headers
 
 ## Common Mistakes
 
-- **Wrong:** `Server.downloadFile(url, {}, f, function(dl){ dl.getProgress(); });`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Server.downloadFile(url, {}, f, function(dl){ dl.getProgress(); });`
   **Right:** `Server.downloadFile(url, {}, f, function(){ this.getProgress(); });`
   *The callback takes zero arguments. The Download object is bound as `this`, not passed as a parameter.*
 
-- **Wrong:** Calling `resume()` after `abort()`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `resume()` after `abort()`
   **Right:** Call `Server.downloadFile()` to start a fresh download
   *`abort()` deletes the target file and marks the download as finished. It cannot be resumed.*

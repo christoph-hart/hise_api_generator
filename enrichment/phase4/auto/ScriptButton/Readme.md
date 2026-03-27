@@ -29,14 +29,17 @@ The `setValueOnClick` property controls whether the button responds on mouse-dow
 
 ## Common Mistakes
 
-- **Wrong:** `btn.set("numStrips", 4)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `btn.set("numStrips", 4)`
   **Right:** `btn.set("numStrips", 2)` or `btn.set("numStrips", 6)`
   *Only 2-strip and 6-strip filmstrip modes are supported. Other values silently fall back to the default skin without any error message.*
 
-- **Wrong:** `btn.setPopupData(jsonData, [10, 20])`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `btn.setPopupData(jsonData, [10, 20])`
   **Right:** `btn.setPopupData(jsonData, [10, 20, 300, 200])`
   *The position parameter must be a 4-element array `[x, y, w, h]` specifying offset and popup dimensions. Incomplete arrays throw a script error.*
 
-- **Wrong:** Calling `setValueWithUndo()` from inside `onControl`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `setValueWithUndo()` from inside `onControl`
   **Right:** Use `setValueWithUndo()` only for user-initiated actions outside the control callback
   *Calling `setValueWithUndo()` from `onControl` creates a feedback loop because the undo operation itself triggers the control callback again.*

@@ -22,4 +22,4 @@ Configures the modulation and UI ranges for a MatrixModulator. Pass a JSON objec
 
 When supplying a text converter, only the `mode` property in `InputRange` is used for the lookup - other properties do not affect the converter.
 
-> **Warning:** Only works on MatrixModulator instances. Calling this on any other modulator type silently does nothing.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Only works on MatrixModulator instances. Calling this on any other modulator type silently does nothing.

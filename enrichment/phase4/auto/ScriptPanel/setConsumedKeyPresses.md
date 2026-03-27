@@ -14,4 +14,4 @@ To discover the correct key codes for your target keys:
 4. Copy the JSON objects from the console
 5. Replace `"all"` with the specific key objects
 
-> **Warning:** Must be called before `setKeyPressCallback()`. Calling them in the wrong order reports a script error.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Must be called before `setKeyPressCallback()`. Calling them in the wrong order reports a script error.

@@ -21,9 +21,9 @@ Returns `undefined` if the factory's layout description was invalid (see Pitfall
 - [BUG] If the factory was created with an invalid layout description (e.g., containing String or Object values), this method silently returns `undefined` with no error message. The layout validation failure occurs during `Engine.createFixObjectFactory()` but is not reported until a create method is called -- and even then, no error is thrown. Verify the prototype uses only Integer, Float, Boolean values, or fixed-size arrays of these types.
 
 **Cross References:**
-- `FixObjectFactory.createArray`
-- `FixObjectFactory.createStack`
-- `FixObjectFactory.getTypeHash`
+- `$API.FixObjectFactory.createArray$`
+- `$API.FixObjectFactory.createStack$`
+- `$API.FixObjectFactory.getTypeHash$`
 
 ## createArray
 
@@ -49,9 +49,9 @@ Returns `undefined` if the factory's layout description was invalid.
 - The array inherits the compare function set on the factory at creation time. However, calling `setCompareFunction` later also updates this array retroactively -- the inheritance is not a snapshot but a live propagation.
 
 **Cross References:**
-- `FixObjectFactory.create`
-- `FixObjectFactory.createStack`
-- `FixObjectFactory.setCompareFunction`
+- `$API.FixObjectFactory.create$`
+- `$API.FixObjectFactory.createStack$`
+- `$API.FixObjectFactory.setCompareFunction$`
 
 ## setCompareFunction
 
@@ -87,8 +87,8 @@ The new comparator propagates retroactively to all arrays and stacks previously 
 - The comparator propagates to ALL previously created arrays and stacks, not just future ones. This is by design but may be unexpected if different containers need different comparators -- there is no way to set a per-container comparator independently of the factory.
 
 **Cross References:**
-- `FixObjectFactory.createArray`
-- `FixObjectFactory.createStack`
+- `$API.FixObjectFactory.createArray$`
+- `$API.FixObjectFactory.createStack$`
 
 **Example:**
 ```javascript:compare-function-modes
@@ -154,9 +154,9 @@ Returns an integer hash computed from the factory's member names and data types 
 (none)
 
 **Cross References:**
-- `FixObjectFactory.create`
-- `FixObjectFactory.createArray`
-- `FixObjectFactory.createStack`
+- `$API.FixObjectFactory.create$`
+- `$API.FixObjectFactory.createArray$`
+- `$API.FixObjectFactory.createStack$`
 
 ## createStack
 
@@ -184,6 +184,6 @@ Returns `undefined` if the factory's layout description was invalid.
 - The stack inherits the compare function set on the factory at creation time. Calling `setCompareFunction` later also updates this stack retroactively.
 
 **Cross References:**
-- `FixObjectFactory.create`
-- `FixObjectFactory.createArray`
-- `FixObjectFactory.setCompareFunction`
+- `$API.FixObjectFactory.create$`
+- `$API.FixObjectFactory.createArray$`
+- `$API.FixObjectFactory.setCompareFunction$`

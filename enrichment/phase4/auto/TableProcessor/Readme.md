@@ -45,14 +45,17 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **Wrong:** `var tp = Synth.getTableProcessor("VeloMod");` in `onNoteOn`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var tp = Synth.getTableProcessor("VeloMod");` in `onNoteOn`
   **Right:** `const var tp = Synth.getTableProcessor("VeloMod");` in `onInit`
   *`getTableProcessor()` can only be called during `onInit`. Store the reference as a top-level const variable.*
 
-- **Wrong:** Calling `addTablePoint()` without `reset()` first
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `addTablePoint()` without `reset()` first
   **Right:** Always call `reset()` before building a new curve shape
   *Without reset, new points accumulate on top of existing ones, producing an unpredictable curve. Every curve-building sequence should start with `reset()`.*
 
-- **Wrong:** Many `addTablePoint()` calls in a loop for bulk curve building
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Many `addTablePoint()` calls in a loop for bulk curve building
   **Right:** Use the `Table` object from `getTable()` for batch operations
   *Each point modification through TableProcessor triggers an individual UI update. For bulk operations, work with the Table data object directly.*

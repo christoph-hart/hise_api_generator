@@ -2,4 +2,4 @@ Enables or disables callback triggering for non-undo write helpers such as `setA
 
 This is useful when loading or transforming large datasets and you only want one explicit refresh at the end.
 
-> **Warning:** This toggle does not silence undo bulk writes - `setAllValuesWithUndo` still emits change notification.
+> [!Warning:$WARNING_TO_BE_REPLACED$] This toggle does not silence undo bulk writes - `setAllValuesWithUndo` still emits change notification.

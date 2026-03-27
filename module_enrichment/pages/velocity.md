@@ -138,13 +138,4 @@ The three processing stages are applied in fixed order: inversion first, table l
 
 When both Inverted and UseTable are active, the table receives the inverted value. Design your table curve with this in mind - the X axis represents the already-inverted velocity.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "KeyNumber", to: "/v2/reference/audio-modules/modulators/voice-start/keynumber", desc: "similar voice-start modulator that reads MIDI note number instead of velocity" }
-  - { label: "ArrayModulator", to: "/v2/reference/audio-modules/modulators/voice-start/arraymodulator", desc: "per-note modulation values from a 128-entry slider pack, offering individual control per key" }
-  - { label: "Constant", to: "/v2/reference/audio-modules/modulators/voice-start/constant", desc: "also a VoiceStartModulator but outputs a fixed value (1.0) with no MIDI input" }
----
-::
+**See also:** $MODULES.KeyNumber$ -- similar voice-start modulator that reads MIDI note number instead of velocity, $MODULES.ArrayModulator$ -- per-note modulation values from a 128-entry slider pack, offering individual control per key, $MODULES.Constant$ -- also a VoiceStartModulator but outputs a fixed value (1.0) with no MIDI input

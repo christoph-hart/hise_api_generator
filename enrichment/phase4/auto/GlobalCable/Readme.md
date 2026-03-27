@@ -26,22 +26,27 @@ Cables can deliver values through callbacks (synchronous or asynchronous) or be 
 
 ## Common Mistakes
 
-- **Wrong:** Using a non-realtime-safe function as a synchronous callback
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using a non-realtime-safe function as a synchronous callback
   **Right:** Use `inline function` or pass `AsyncNotification`
   *Synchronous callbacks run on the calling thread which may be the audio thread. Non-realtime-safe functions are silently rejected - the callback never fires.*
 
-- **Wrong:** Calling `sendData()` from the audio thread
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `sendData()` from the audio thread
   **Right:** Move data sending to a timer or async context
   *`sendData()` performs a heap allocation internally, which is not audio-thread safe.*
 
-- **Wrong:** Polling `getValue()` in `onTimer` at 30ms for visual feedback without smoothing
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Polling `getValue()` in `onTimer` at 30ms for visual feedback without smoothing
   **Right:** Apply exponential smoothing (`smoothed = smoothed * 0.6 + newValue * 0.4`) before rendering
   *Raw cable values from DSP networks can change abruptly between timer ticks. Smoothing produces visually stable animations without requiring faster polling.*
 
-- **Wrong:** Creating many cables with separate `getGlobalRoutingManager()` calls
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Creating many cables with separate `getGlobalRoutingManager()` calls
   **Right:** Call `Engine.getGlobalRoutingManager()` once, store in `const var rm`, then call `rm.getCable()` for each cable
   *The routing manager is a singleton; repeated `getGlobalRoutingManager()` calls work but are wasteful. Cache the reference at init time.*
 
-- **Wrong:** Using `registerCallback` with `SyncNotification` for UI updates
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `registerCallback` with `SyncNotification` for UI updates
   **Right:** Use `AsyncNotification` or timer-polled `getValue()` for anything that triggers repaints
   *Synchronous callbacks run on the calling thread (possibly the audio thread). UI operations like `repaint()` or `Console.print()` are not realtime-safe and will silently fail or cause audio glitches.*

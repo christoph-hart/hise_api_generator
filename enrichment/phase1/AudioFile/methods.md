@@ -17,9 +17,9 @@ Returns the audio data as an Array of Buffer objects, one per channel. The retur
 - Returns data for the current range only. After `setRange(1000, 2000)`, the returned buffers contain 1000 samples, not the full file. Use `setRange(0, getTotalLengthInSamples())` first to access the full file content.
 
 **Cross References:**
-- `AudioFile.getNumSamples`
-- `AudioFile.setRange`
-- `AudioFile.loadBuffer`
+- `$API.AudioFile.getNumSamples$`
+- `$API.AudioFile.setRange$`
+- `$API.AudioFile.loadBuffer$`
 
 ---
 
@@ -38,7 +38,7 @@ Returns the current display position index as a floating-point value. This is th
 (No parameters.)
 
 **Cross References:**
-- `AudioFile.setDisplayCallback`
+- `$API.AudioFile.setDisplayCallback$`
 
 ---
 
@@ -61,7 +61,7 @@ Returns the reference string of the currently loaded audio file. This is a HISE 
 - Returns a HISE pool reference string, not a filesystem path. The format depends on the data provider (typically `{PROJECT_FOLDER}filename.wav` for pool-based files).
 
 **Cross References:**
-- `AudioFile.loadFile`
+- `$API.AudioFile.loadFile$`
 
 ---
 
@@ -83,10 +83,10 @@ Returns the loop range as a two-element array `[start, end]` in sample positions
 | subtractStart | Integer | no | If true, subtract the current range start from the loop positions | 0 or 1 |
 
 **Cross References:**
-- `AudioFile.setRange`
-- `AudioFile.getRange`
-- `AudioFile.loadFile`
-- `AudioFile.loadBuffer`
+- `$API.AudioFile.setRange$`
+- `$API.AudioFile.getRange$`
+- `$API.AudioFile.loadFile$`
+- `$API.AudioFile.loadBuffer$`
 
 ---
 
@@ -108,8 +108,8 @@ Returns the number of samples in the current range. After calling `setRange`, th
 - Returns the current range size, not the total file length. Use `getTotalLengthInSamples` for the full original file length.
 
 **Cross References:**
-- `AudioFile.getTotalLengthInSamples`
-- `AudioFile.setRange`
+- `$API.AudioFile.getTotalLengthInSamples$`
+- `$API.AudioFile.setRange$`
 
 ---
 
@@ -129,9 +129,9 @@ Returns the current sample range as a two-element array `[start, end]`. The rang
 (No parameters.)
 
 **Cross References:**
-- `AudioFile.setRange`
-- `AudioFile.getNumSamples`
-- `AudioFile.getTotalLengthInSamples`
+- `$API.AudioFile.setRange$`
+- `$API.AudioFile.getNumSamples$`
+- `$API.AudioFile.getTotalLengthInSamples$`
 
 ---
 
@@ -150,10 +150,10 @@ Returns the sample rate of the loaded audio file in Hz. Returns 0.0 if no audio 
 (No parameters.)
 
 **Cross References:**
-- `AudioFile.loadFile`
-- `AudioFile.loadBuffer`
-- `AudioFile.getTotalLengthInSamples`
-- `AudioFile.getNumSamples`
+- `$API.AudioFile.loadFile$`
+- `$API.AudioFile.loadBuffer$`
+- `$API.AudioFile.getTotalLengthInSamples$`
+- `$API.AudioFile.getNumSamples$`
 
 ---
 
@@ -172,8 +172,8 @@ Returns the total length of the original audio file in samples, regardless of th
 (No parameters.)
 
 **Cross References:**
-- `AudioFile.getNumSamples`
-- `AudioFile.setRange`
+- `$API.AudioFile.getNumSamples$`
+- `$API.AudioFile.setRange$`
 
 ---
 
@@ -198,9 +198,9 @@ Links this AudioFile's data slot to another AudioFile's data source. After linki
 - Type mismatch (e.g. linking an AudioFile to a Table) produces a script error "Type mismatch". Passing a non-data-reference object produces "Not a data object".
 
 **Cross References:**
-- `AudioFile.getContent`
-- `AudioFile.loadFile`
-- `AudioFile.loadBuffer`
+- `$API.AudioFile.getContent$`
+- `$API.AudioFile.loadFile$`
+- `$API.AudioFile.loadBuffer$`
 
 ---
 
@@ -228,9 +228,9 @@ Loads audio data from script Buffer objects into the AudioFile. Accepts either a
 - [BUG] When passing an Array of Buffers with different lengths, the sample count is taken from the last valid Buffer. Shorter buffers will be read past their end, causing undefined behavior. All Buffers in the array must have the same length.
 
 **Cross References:**
-- `AudioFile.loadFile`
-- `AudioFile.getContent`
-- `AudioFile.getLoopRange`
+- `$API.AudioFile.loadFile$`
+- `$API.AudioFile.getContent$`
+- `$API.AudioFile.getLoopRange$`
 
 **Example:**
 ```javascript:load-buffer-mono
@@ -277,8 +277,8 @@ Loads an audio file from a HISE pool reference string. The reference format is t
 - The parameter name "filePath" is misleading -- it accepts a HISE pool reference string (e.g. `{PROJECT_FOLDER}audio.wav`), not a filesystem path.
 
 **Cross References:**
-- `AudioFile.getCurrentlyLoadedFile`
-- `AudioFile.loadBuffer`
+- `$API.AudioFile.getCurrentlyLoadedFile$`
+- `$API.AudioFile.loadBuffer$`
 
 ---
 
@@ -302,9 +302,9 @@ Registers a callback function that fires when the audio content changes (file lo
 | contentFunction | Function | yes | Callback to execute on content change | `this` = the AudioFile |
 
 **Cross References:**
-- `AudioFile.setDisplayCallback`
-- `AudioFile.loadFile`
-- `AudioFile.update`
+- `$API.AudioFile.setDisplayCallback$`
+- `$API.AudioFile.loadFile$`
+- `$API.AudioFile.update$`
 
 **Example:**
 ```javascript:content-callback-setup
@@ -358,8 +358,8 @@ Registers a callback function that fires when the display index changes (e.g. du
 | displayFunction | Function | yes | Callback to execute on display index change | Must accept 1 argument |
 
 **Cross References:**
-- `AudioFile.setContentCallback`
-- `AudioFile.getCurrentlyDisplayedIndex`
+- `$API.AudioFile.setContentCallback$`
+- `$API.AudioFile.getCurrentlyDisplayedIndex$`
 
 **Example:**
 ```javascript:display-callback-setup
@@ -401,10 +401,10 @@ Sets the active sample range within the loaded audio file. The range is clamped 
 | max | Integer | no | End position in samples (exclusive) | <= total length, clamped |
 
 **Cross References:**
-- `AudioFile.getRange`
-- `AudioFile.getNumSamples`
-- `AudioFile.getTotalLengthInSamples`
-- `AudioFile.getContent`
+- `$API.AudioFile.getRange$`
+- `$API.AudioFile.getNumSamples$`
+- `$API.AudioFile.getTotalLengthInSamples$`
+- `$API.AudioFile.getContent$`
 
 ---
 
@@ -424,7 +424,7 @@ Sends an asynchronous content change notification to all registered listeners an
 (No parameters.)
 
 **Cross References:**
-- `AudioFile.getContent`
-- `AudioFile.setContentCallback`
-- `AudioFile.loadBuffer`
+- `$API.AudioFile.getContent$`
+- `$API.AudioFile.setContentCallback$`
+- `$API.AudioFile.loadBuffer$`
 

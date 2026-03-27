@@ -2,6 +2,6 @@ Attaches the broadcaster to the routing matrix of one or more processors, firing
 
 Queue mode is automatically enabled. On attachment, existing listeners immediately receive the current routing state.
 
-> **Warning:** The target module must have a routing matrix. Effects and sound generators have routing matrices; modulators do not. Passing a modulator ID produces an error.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The target module must have a routing matrix. Effects and sound generators have routing matrices; modulators do not. Passing a modulator ID produces an error.
 
-> **Warning:** Do not call functions in the listener callback that themselves change the routing matrix, or you will create an infinite loop.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Do not call functions in the listener callback that themselves change the routing matrix, or you will create an infinite loop.

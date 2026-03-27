@@ -47,18 +47,22 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **Wrong:** `af.getNumSamples()` after `setRange()` expecting the full file length
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `af.getNumSamples()` after `setRange()` expecting the full file length
   **Right:** `af.getTotalLengthInSamples()`
   *`getNumSamples()` returns the current sub-range size after `setRange()`, not the original file length.*
 
-- **Wrong:** `af.loadFile("C:/audio/file.wav")`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `af.loadFile("C:/audio/file.wav")`
   **Right:** `af.loadFile("{PROJECT_FOLDER}file.wav")`
   *`loadFile()` expects a HISE pool reference string. Use `Engine.loadAudioFilesIntoPool()` to get valid references, or `file.toString(0)` when loading from a file browser result.*
 
-- **Wrong:** `af.linkTo(table)` where `table` is a Table reference
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `af.linkTo(table)` where `table` is a Table reference
   **Right:** `af.linkTo(otherAudioFile)`
   *`linkTo()` requires the same complex data type. Linking an AudioFile to a Table or SliderPackData produces a type mismatch error.*
 
-- **Wrong:** Registering `setContentCallback()` on each of 12+ AudioFile handles individually
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Registering `setContentCallback()` on each of 12+ AudioFile handles individually
   **Right:** Using one `Broadcaster.attachToComplexData("AudioFile.Content", arrayOfModuleIds, 0, ...)`
   *A single broadcaster can monitor all processor slots at once, with the processor ID passed as a callback argument. Individual callbacks create redundant boilerplate and miss the broadcaster's built-in features like delayed listeners and queuing.*

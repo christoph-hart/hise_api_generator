@@ -19,9 +19,9 @@ Registers a buffer at a specific index for efficient repeated streaming through 
 - [BUG] Silently does nothing if the second argument is not a Buffer. No error is reported.
 
 **Cross References:**
-- `ScriptWebView.updateBuffer`
-- `ScriptWebView.setEnableWebSocket`
-- `ScriptWebView.sendToWebSocket`
+- `$API.ScriptWebView.updateBuffer$`
+- `$API.ScriptWebView.setEnableWebSocket$`
+- `$API.ScriptWebView.sendToWebSocket$`
 
 ---
 
@@ -54,8 +54,8 @@ The callback is executed synchronously via `WeakCallbackHolder::callSync` -- the
 **Callback Signature:** functionToCall(args: var)
 
 **Cross References:**
-- `ScriptWebView.callFunction`
-- `ScriptWebView.evaluate`
+- `$API.ScriptWebView.callFunction$`
+- `$API.ScriptWebView.evaluate$`
 
 **Example:**
 ```javascript:bind-callback-usage
@@ -96,8 +96,8 @@ Calls a JavaScript function in the global scope of the webview, passing the give
 | args | NotUndefined | no | Arguments to pass to the JS function | Any type; passed as-is to JS |
 
 **Cross References:**
-- `ScriptWebView.bindCallback`
-- `ScriptWebView.evaluate`
+- `$API.ScriptWebView.bindCallback$`
+- `$API.ScriptWebView.evaluate$`
 
 ---
 
@@ -117,9 +117,9 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If the callback function throws an error, further script execution after the `changed()` call is aborted.
 
 **Cross References:**
-- `ScriptWebView.setControlCallback`
-- `ScriptWebView.getValue`
-- `ScriptWebView.setValue`
+- `$API.ScriptWebView.setControlCallback$`
+- `$API.ScriptWebView.getValue$`
+- `$API.ScriptWebView.setValue$`
 
 ---
 
@@ -144,9 +144,9 @@ Evaluates arbitrary JavaScript code in the webview. The call is dispatched async
 - The identifier must be unique per logical operation. Reusing an identifier overwrites the previous code stored under that key in the persistence system, which may cause unexpected behavior on webview re-initialization.
 
 **Cross References:**
-- `ScriptWebView.callFunction`
-- `ScriptWebView.bindCallback`
-- `ScriptWebView.reset`
+- `$API.ScriptWebView.callFunction$`
+- `$API.ScriptWebView.bindCallback$`
+- `$API.ScriptWebView.reset$`
 
 ---
 
@@ -168,7 +168,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
 **Cross References:**
-- `ScriptWebView.showControl`
+- `$API.ScriptWebView.showControl$`
 
 ---
 
@@ -189,8 +189,8 @@ Returns the current value of the named property. Reports a script error if the p
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for ScriptWebView |
 
 **Cross References:**
-- `ScriptWebView.set`
-- `ScriptWebView.getAllProperties`
+- `$API.ScriptWebView.set$`
+- `$API.ScriptWebView.getAllProperties$`
 
 ---
 
@@ -205,8 +205,8 @@ Returns the current value of the named property. Reports a script error if the p
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes base ScriptComponent properties and the four WebView-specific properties (enableCache, enablePersistence, scaleFactorToZoom, enableDebugMode). Excludes deactivated properties such as macroControl, processorId, parameterId, tooltip, text, min, max, and defaultValue.
 
 **Cross References:**
-- `ScriptWebView.get`
-- `ScriptWebView.set`
+- `$API.ScriptWebView.get$`
+- `$API.ScriptWebView.set$`
 
 ---
 
@@ -233,7 +233,7 @@ Returns an array of ScriptComponent references for all child components (compone
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
 **Cross References:**
-- `ScriptWebView.getGlobalPositionY`
+- `$API.ScriptWebView.getGlobalPositionY$`
 
 ---
 
@@ -248,7 +248,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
 
 **Cross References:**
-- `ScriptWebView.getGlobalPositionX`
+- `$API.ScriptWebView.getGlobalPositionX$`
 
 ---
 
@@ -305,7 +305,7 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 Returns the current value of the component. Uses a `SimpleReadWriteLock` for thread-safe read access.
 
 **Cross References:**
-- `ScriptWebView.setValue`
+- `$API.ScriptWebView.setValue$`
 
 ---
 
@@ -339,7 +339,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptWebView.loseFocus`
+- `$API.ScriptWebView.loseFocus$`
 
 ---
 
@@ -354,7 +354,7 @@ Notifies z-level listeners that the component wants to grab keyboard focus. Only
 Notifies all z-level listeners that the component wants to lose keyboard focus.
 
 **Cross References:**
-- `ScriptWebView.grabFocus`
+- `$API.ScriptWebView.grabFocus$`
 
 ---
 
@@ -369,8 +369,8 @@ Notifies all z-level listeners that the component wants to lose keyboard focus.
 Clears all cached resources and persistent call data from the underlying WebViewData, but preserves the file structure (root directory and index file settings). Use this to force a clean reload of web content without re-specifying the content source.
 
 **Cross References:**
-- `ScriptWebView.evaluate`
-- `ScriptWebView.setIndexFile`
+- `$API.ScriptWebView.evaluate$`
+- `$API.ScriptWebView.setIndexFile$`
 
 ---
 
@@ -407,10 +407,10 @@ Sends data to the webview through the websocket connection. The data is dispatch
 | data | NotUndefined | no | The data to send | Must be String, Buffer, or JSON Object |
 
 **Cross References:**
-- `ScriptWebView.setEnableWebSocket`
-- `ScriptWebView.addBufferToWebSocket`
-- `ScriptWebView.setWebSocketCallback`
-- `ScriptWebView.updateBuffer`
+- `$API.ScriptWebView.setEnableWebSocket$`
+- `$API.ScriptWebView.addBufferToWebSocket$`
+- `$API.ScriptWebView.setWebSocketCallback$`
+- `$API.ScriptWebView.updateBuffer$`
 
 ---
 
@@ -432,8 +432,8 @@ Sets a component property to the given value. Reports a script error if the prop
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
 
 **Cross References:**
-- `ScriptWebView.get`
-- `ScriptWebView.getAllProperties`
+- `$API.ScriptWebView.get$`
+- `$API.ScriptWebView.getAllProperties$`
 
 ---
 
@@ -464,7 +464,7 @@ Defines which key presses this component consumes. Must be called before `setKey
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptWebView.setKeyPressCallback`
+- `$API.ScriptWebView.setKeyPressCallback$`
 
 ---
 
@@ -491,7 +491,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 
 **Cross References:**
-- `ScriptWebView.changed`
+- `$API.ScriptWebView.changed$`
 
 ---
 
@@ -512,9 +512,9 @@ Starts a TCP server on the specified port for websocket-style communication betw
 | port | Integer | no | The TCP port number for the websocket server | Use -1 for a random available port |
 
 **Cross References:**
-- `ScriptWebView.setWebSocketCallback`
-- `ScriptWebView.sendToWebSocket`
-- `ScriptWebView.addBufferToWebSocket`
+- `$API.ScriptWebView.setWebSocketCallback$`
+- `$API.ScriptWebView.sendToWebSocket$`
+- `$API.ScriptWebView.addBufferToWebSocket$`
 
 ---
 
@@ -535,8 +535,8 @@ Sets inline HTML content for the webview to render. This uses the Hardcoded cont
 | htmlCode | String | no | The HTML content to render | Must be valid HTML |
 
 **Cross References:**
-- `ScriptWebView.setIndexFile`
-- `ScriptWebView.reset`
+- `$API.ScriptWebView.setIndexFile$`
+- `$API.ScriptWebView.reset$`
 
 ---
 
@@ -560,8 +560,8 @@ Sets the HTML file to be displayed by the webview. The file's parent directory b
 - Passing a string path instead of a File object causes a script error: "setIndexFile must be called with a file object".
 
 **Cross References:**
-- `ScriptWebView.setHtmlContent`
-- `ScriptWebView.reset`
+- `$API.ScriptWebView.setHtmlContent$`
+- `$API.ScriptWebView.reset$`
 
 **Example:**
 ```javascript:set-index-file-usage
@@ -629,7 +629,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptWebView.setConsumedKeyPresses`
+- `$API.ScriptWebView.setConsumedKeyPresses$`
 
 ---
 
@@ -654,9 +654,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - If the LAF uses CSS, automatically initializes the class selector via `setStyleSheetClass({})`.
 
 **Cross References:**
-- `ScriptWebView.setStyleSheetClass`
-- `ScriptWebView.setStyleSheetProperty`
-- `ScriptWebView.setStyleSheetPseudoState`
+- `$API.ScriptWebView.setStyleSheetClass$`
+- `$API.ScriptWebView.setStyleSheetProperty$`
+- `$API.ScriptWebView.setStyleSheetPseudoState$`
 
 ---
 
@@ -705,9 +705,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptWebView.setStyleSheetProperty`
-- `ScriptWebView.setStyleSheetPseudoState`
-- `ScriptWebView.setLocalLookAndFeel`
+- `$API.ScriptWebView.setStyleSheetProperty$`
+- `$API.ScriptWebView.setStyleSheetPseudoState$`
+- `$API.ScriptWebView.setLocalLookAndFeel$`
 
 ---
 
@@ -743,9 +743,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptWebView.setStyleSheetClass`
-- `ScriptWebView.setStyleSheetPseudoState`
-- `ScriptWebView.setLocalLookAndFeel`
+- `$API.ScriptWebView.setStyleSheetClass$`
+- `$API.ScriptWebView.setStyleSheetPseudoState$`
+- `$API.ScriptWebView.setLocalLookAndFeel$`
 
 ---
 
@@ -780,9 +780,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state |
 
 **Cross References:**
-- `ScriptWebView.setStyleSheetClass`
-- `ScriptWebView.setStyleSheetProperty`
-- `ScriptWebView.setLocalLookAndFeel`
+- `$API.ScriptWebView.setStyleSheetClass$`
+- `$API.ScriptWebView.setStyleSheetProperty$`
+- `$API.ScriptWebView.setLocalLookAndFeel$`
 
 ---
 
@@ -814,8 +814,8 @@ Sets the component's value. Thread-safe -- can be called from any thread; the UI
 - If called during `onInit`, the value will NOT be restored after recompilation.
 
 **Cross References:**
-- `ScriptWebView.getValue`
-- `ScriptWebView.changed`
+- `$API.ScriptWebView.getValue$`
+- `$API.ScriptWebView.changed$`
 
 ---
 
@@ -855,8 +855,8 @@ Registers a callback function to receive incoming messages from the websocket co
 - Must call `setEnableWebSocket()` before this method. Reports a script error: "You have to enable the WebSocket before calling this method".
 
 **Cross References:**
-- `ScriptWebView.setEnableWebSocket`
-- `ScriptWebView.sendToWebSocket`
+- `$API.ScriptWebView.setEnableWebSocket$`
+- `$API.ScriptWebView.sendToWebSocket$`
 
 **Example:**
 ```javascript:websocket-callback-setup
@@ -924,7 +924,7 @@ Sets the `visible` property with change message notification.
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
 
 **Cross References:**
-- `ScriptWebView.fadeComponent`
+- `$API.ScriptWebView.fadeComponent$`
 
 ---
 
@@ -945,8 +945,8 @@ Marks the buffer at the given index as dirty so it will be sent to the webview o
 | bufferIndex | Integer | no | The slot index of the buffer to update | Must match an index used in addBufferToWebSocket |
 
 **Cross References:**
-- `ScriptWebView.addBufferToWebSocket`
-- `ScriptWebView.setEnableWebSocket`
+- `$API.ScriptWebView.addBufferToWebSocket$`
+- `$API.ScriptWebView.setEnableWebSocket$`
 
 ---
 

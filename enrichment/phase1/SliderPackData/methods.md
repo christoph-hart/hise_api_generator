@@ -21,8 +21,8 @@ Restores slider pack data from a Base64-encoded string containing raw float data
 - An empty string is silently ignored -- the data remains unchanged with no error.
 
 **Cross References:**
-- `SliderPackData.toBase64`
-- `SliderPackData.getNumSliders`
+- `$API.SliderPackData.toBase64$`
+- `$API.SliderPackData.getNumSliders$`
 
 ## getCurrentlyDisplayedIndex
 
@@ -38,7 +38,7 @@ Returns the last display index value from the internal updater. This reflects th
 None.
 
 **Cross References:**
-- `SliderPackData.setDisplayCallback`
+- `$API.SliderPackData.setDisplayCallback$`
 
 ## getDataAsBuffer
 
@@ -58,8 +58,8 @@ None.
 - The returned Buffer is a live reference. Any modification (e.g., `buf[0] = 0.5`) directly changes the slider pack data without triggering change notifications. Use `setValue()` or `setAllValues()` if you need listeners to be notified.
 
 **Cross References:**
-- `SliderPackData.setAllValues`
-- `SliderPackData.getValue`
+- `$API.SliderPackData.setAllValues$`
+- `$API.SliderPackData.getValue$`
 
 **Example:**
 ```javascript:buffer-reference-processing
@@ -100,7 +100,7 @@ Returns the number of sliders in the pack. Default is 16 if not changed via `set
 None.
 
 **Cross References:**
-- `SliderPackData.setNumSliders`
+- `$API.SliderPackData.setNumSliders$`
 
 ## getStepSize
 
@@ -128,8 +128,8 @@ Returns the slider value at the given index. If the index is out of range (negat
 - Out-of-range indices silently return the default value (1.0) instead of throwing an error. This can mask off-by-one bugs since you get a plausible float value rather than an error.
 
 **Cross References:**
-- `SliderPackData.setValue`
-- `SliderPackData.getDataAsBuffer`
+- `$API.SliderPackData.setValue$`
+- `$API.SliderPackData.getDataAsBuffer$`
 
 ## linkTo
 
@@ -149,7 +149,7 @@ Links this SliderPackData to another SliderPackData so they share the same under
 | other | ScriptObject | no | Another SliderPackData to link to | Must be SliderPackData type |
 
 **Cross References:**
-- `SliderPackData.getDataAsBuffer`
+- `$API.SliderPackData.getDataAsBuffer$`
 
 **Example:**
 ```javascript:link-two-slider-packs
@@ -198,8 +198,8 @@ Sets slider values from a single number, an Array, or a Buffer. When passed a si
 - When passing an Array or Buffer shorter than the slider count, only the first N sliders are updated. The remaining sliders keep their previous values, not the default.
 
 **Cross References:**
-- `SliderPackData.setAllValuesWithUndo`
-- `SliderPackData.setValue`
+- `$API.SliderPackData.setAllValuesWithUndo$`
+- `$API.SliderPackData.setValue$`
 
 **Example:**
 ```javascript:set-all-values-polymorphic
@@ -242,8 +242,8 @@ Same as `setAllValues()` but registers the operation with the undo manager, enab
 | value | NotUndefined | no | A Number (sets all), Array, or Buffer | -- |
 
 **Cross References:**
-- `SliderPackData.setAllValues`
-- `SliderPackData.setValueWithUndo`
+- `$API.SliderPackData.setAllValues$`
+- `$API.SliderPackData.setValueWithUndo$`
 
 ## setAssignIsUndoable
 
@@ -263,8 +263,8 @@ When enabled, `[]` operator assignments (e.g., `spd[3] = 0.75`) go through the u
 | shouldBeUndoable | Integer | no | Whether [] assignments should be undoable | true/false |
 
 **Cross References:**
-- `SliderPackData.setValueWithUndo`
-- `SliderPackData.setValue`
+- `$API.SliderPackData.setValueWithUndo$`
+- `$API.SliderPackData.setValue$`
 
 ## setContentCallback
 
@@ -286,8 +286,8 @@ Registers a callback that fires when slider values change. The callback receives
 **Callback Signature:** contentFunction(sliderIndex: int)
 
 **Cross References:**
-- `SliderPackData.setDisplayCallback`
-- `SliderPackData.setValue`
+- `$API.SliderPackData.setDisplayCallback$`
+- `$API.SliderPackData.setValue$`
 
 **Example:**
 ```javascript:content-callback-setup
@@ -338,8 +338,8 @@ Registers a callback that fires when the display/ruler position changes. The cal
 **Callback Signature:** displayFunction(displayIndex: float)
 
 **Cross References:**
-- `SliderPackData.getCurrentlyDisplayedIndex`
-- `SliderPackData.setContentCallback`
+- `$API.SliderPackData.getCurrentlyDisplayedIndex$`
+- `$API.SliderPackData.setContentCallback$`
 
 **Example:**
 ```javascript:display-callback-setup
@@ -383,8 +383,8 @@ Sets the number of sliders. Existing values are preserved up to the new count. N
 - Values <= 0 are silently ignored -- the slider count remains unchanged with no error.
 
 **Cross References:**
-- `SliderPackData.getNumSliders`
-- `SliderPackData.setUsePreallocatedLength`
+- `$API.SliderPackData.getNumSliders$`
+- `$API.SliderPackData.setUsePreallocatedLength$`
 
 ## setRange
 
@@ -406,8 +406,8 @@ Sets the value range and step size for all sliders. The range constrains values 
 | stepSize | Double | no | Value quantization step | > 0 |
 
 **Cross References:**
-- `SliderPackData.getValue`
-- `SliderPackData.setValue`
+- `$API.SliderPackData.getValue$`
+- `$API.SliderPackData.setValue$`
 
 ## setUsePreallocatedLength
 
@@ -427,7 +427,7 @@ Configures a fixed-size preallocated memory block for the slider data. Once set,
 | length | Integer | no | Maximum number of sliders to preallocate for, or 0 to disable | >= 0 |
 
 **Cross References:**
-- `SliderPackData.setNumSliders`
+- `$API.SliderPackData.setNumSliders$`
 
 **Example:**
 ```javascript:preallocated-resize
@@ -478,8 +478,8 @@ Sets the value of a single slider at the given index. Out-of-range indices are s
 - Out-of-range indices are silently ignored with no error, which can mask off-by-one bugs.
 
 **Cross References:**
-- `SliderPackData.getValue`
-- `SliderPackData.setValueWithUndo`
+- `$API.SliderPackData.getValue$`
+- `$API.SliderPackData.setValueWithUndo$`
 
 ## setValueWithUndo
 
@@ -500,9 +500,9 @@ Sets a single slider value with undo support. Behaves like `setValue()` but regi
 | value | Double | no | New slider value | Should be within range |
 
 **Cross References:**
-- `SliderPackData.setValue`
-- `SliderPackData.setAllValuesWithUndo`
-- `SliderPackData.setAssignIsUndoable`
+- `$API.SliderPackData.setValue$`
+- `$API.SliderPackData.setAllValuesWithUndo$`
+- `$API.SliderPackData.setAssignIsUndoable$`
 
 ## toBase64
 
@@ -519,4 +519,4 @@ Exports all slider values as a Base64-encoded string containing the raw float ar
 None.
 
 **Cross References:**
-- `SliderPackData.fromBase64`
+- `$API.SliderPackData.fromBase64$`

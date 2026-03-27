@@ -13,4 +13,4 @@ The callback receives a JSON object with `x`, `y`, `hover`, `drop`, and `fileNam
 
 To persist a dropped filename in a user preset, wrap it in a JSON object before calling `setValue()` - raw String values are not permitted as preset values.
 
-> **Warning:** The wildcard filter is checked before the callback fires. Files that do not match are silently ignored with no callback.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The wildcard filter is checked before the callback fires. Files that do not match are silently ignored with no callback.

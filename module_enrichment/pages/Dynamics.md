@@ -233,11 +233,4 @@ The limiter uses a one-block crossfade when its enabled state changes, preventin
 
 The Reduction parameters (GateReduction, CompressorReduction, LimiterReduction) use peak-hold with exponential decay for metering. They cannot be set - they are output-only values for display purposes.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Simple Gain", to: "/v2/reference/audio-modules/effects/master/simplegain", desc: "Simpler gain control without gate, compressor, or limiter stages" }
----
-::
+**See also:** $MODULES.SimpleGain$ -- Simpler gain control without gate, compressor, or limiter stages

@@ -31,14 +31,17 @@ The constant `ComplexGroupManager.IgnoreFlag` (255) indicates that a layer does 
 
 ## Common Mistakes
 
-- **Wrong:** `cgm.setGroupVolume(0, 1, 0.5);` on a non-Custom layer
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `cgm.setGroupVolume(0, 1, 0.5);` on a non-Custom layer
   **Right:** `cgm.setGroupVolume(0, 1, 0.5);` on a Custom layer
   *`setGroupVolume` only works with Custom LogicType layers. On other layer types, the call silently does nothing.*
 
-- **Wrong:** `cgm.isNoteNumberMapped(0, 60);` without calling `createNoteMap` first
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `cgm.isNoteNumberMapped(0, 60);` without calling `createNoteMap` first
   **Right:** `cgm.createNoteMap(0); cgm.isNoteNumberMapped(0, 60);`
   *`isNoteNumberMapped` requires `createNoteMap()` to have been called first for the same layer. Call it again after loading a new sample map.*
 
-- **Wrong:** `cgm.getCurrentPeak(0, 1, eventId);` without enabling tracking
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `cgm.getCurrentPeak(0, 1, eventId);` without enabling tracking
   **Right:** `cgm.setEnableGainTracking(0, 1, true);` then later `cgm.getCurrentPeak(0, 1, eventId);`
   *Peak tracking must be explicitly enabled per layer/group pair before values can be read.*

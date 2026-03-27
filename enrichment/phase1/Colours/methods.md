@@ -21,8 +21,8 @@ Converts an HSL colour array to an ARGB integer colour value. Takes a four-eleme
 - Invalid input (non-array or wrong element count) silently returns 0 (transparent black) with no error message.
 
 **Cross References:**
-- `Colours.toHsl`
-- `Colours.fromVec4`
+- `$API.Colours.toHsl$`
+- `$API.Colours.fromVec4$`
 
 **Example:**
 ```javascript:fromhsl-alpha-correction
@@ -62,8 +62,8 @@ Converts an RGBA float array to an ARGB integer colour value. Takes a four-eleme
 - Invalid input (non-array or wrong element count) silently returns 0 (transparent black) with no error message.
 
 **Cross References:**
-- `Colours.toVec4`
-- `Colours.fromHsl`
+- `$API.Colours.toVec4$`
+- `$API.Colours.fromHsl$`
 
 ## mix
 
@@ -87,10 +87,10 @@ Linearly interpolates between two colours in ARGB space. The `alpha` parameter c
 - The `alpha` parameter is not clamped to 0.0-1.0 (unlike the `with*` modifier methods). Values outside this range produce extrapolated channel values that wrap due to byte overflow, potentially yielding unexpected colours.
 
 **Cross References:**
-- `Colours.withAlpha`
-- `Colours.withBrightness`
-- `Colours.withSaturation`
-- `Colours.withHue`
+- `$API.Colours.withAlpha$`
+- `$API.Colours.withBrightness$`
+- `$API.Colours.withSaturation$`
+- `$API.Colours.withHue$`
 
 ## toHsl
 
@@ -112,8 +112,8 @@ Decomposes a colour into its HSL (hue, saturation, lightness) components plus al
 - The output alpha is a 0.0-1.0 float, but the corresponding `fromHsl` method casts alpha as `(uint8)(int)`, creating a roundtrip asymmetry. Pass the array directly to `fromHsl` only if the alpha is 0.0 or 1.0; otherwise, multiply `hsl[3]` by 255 first.
 
 **Cross References:**
-- `Colours.fromHsl`
-- `Colours.toVec4`
+- `$API.Colours.fromHsl$`
+- `$API.Colours.toVec4$`
 
 ## toVec4
 
@@ -132,8 +132,8 @@ Converts a colour to a four-element float array `[r, g, b, a]` where each compon
 | colour | Colour | no | The colour to decompose | ARGB integer, hex string, or named constant |
 
 **Cross References:**
-- `Colours.fromVec4`
-- `Colours.toHsl`
+- `$API.Colours.fromVec4$`
+- `$API.Colours.toHsl$`
 
 ## withAlpha
 
@@ -153,7 +153,7 @@ Returns a new colour with the alpha channel replaced by the specified value. The
 | alpha | Double | no | The new alpha value | Clamped to 0.0-1.0 |
 
 **Cross References:**
-- `Colours.withMultipliedAlpha`
+- `$API.Colours.withMultipliedAlpha$`
 
 ## withBrightness
 
@@ -173,9 +173,9 @@ Returns a new colour with the brightness (HSB value component) replaced by the s
 | brightness | Double | no | The new brightness value (HSB value component) | Clamped to 0.0-1.0 |
 
 **Cross References:**
-- `Colours.withMultipliedBrightness`
-- `Colours.withSaturation`
-- `Colours.withHue`
+- `$API.Colours.withMultipliedBrightness$`
+- `$API.Colours.withSaturation$`
+- `$API.Colours.withHue$`
 
 ## withHue
 
@@ -195,9 +195,9 @@ Returns a new colour with the hue replaced by the specified value. The hue param
 | hue | Double | no | The new hue value | Clamped to 0.0-1.0 (0.0 = red, 0.333 = green, 0.667 = blue) |
 
 **Cross References:**
-- `Colours.withSaturation`
-- `Colours.withBrightness`
-- `Colours.toHsl`
+- `$API.Colours.withSaturation$`
+- `$API.Colours.withBrightness$`
+- `$API.Colours.toHsl$`
 
 ## withMultipliedAlpha
 
@@ -217,9 +217,9 @@ Returns a new colour with the alpha channel multiplied by the given factor. The 
 | factor | Double | no | Multiplier for the current alpha value | >= 0.0 (no upper bound; result clamped to byte range) |
 
 **Cross References:**
-- `Colours.withAlpha`
-- `Colours.withMultipliedBrightness`
-- `Colours.withMultipliedSaturation`
+- `$API.Colours.withAlpha$`
+- `$API.Colours.withMultipliedBrightness$`
+- `$API.Colours.withMultipliedSaturation$`
 
 ## withMultipliedBrightness
 
@@ -239,9 +239,9 @@ Returns a new colour with the brightness (HSB value component) multiplied by the
 | factor | Double | no | Multiplier for the current brightness value | >= 0.0 (no upper bound; result clamped internally) |
 
 **Cross References:**
-- `Colours.withBrightness`
-- `Colours.withMultipliedAlpha`
-- `Colours.withMultipliedSaturation`
+- `$API.Colours.withBrightness$`
+- `$API.Colours.withMultipliedAlpha$`
+- `$API.Colours.withMultipliedSaturation$`
 
 ## withMultipliedSaturation
 
@@ -261,9 +261,9 @@ Returns a new colour with the saturation (HSB saturation component) multiplied b
 | factor | Double | no | Multiplier for the current saturation value | >= 0.0 (no upper bound; result clamped internally) |
 
 **Cross References:**
-- `Colours.withSaturation`
-- `Colours.withMultipliedAlpha`
-- `Colours.withMultipliedBrightness`
+- `$API.Colours.withSaturation$`
+- `$API.Colours.withMultipliedAlpha$`
+- `$API.Colours.withMultipliedBrightness$`
 
 ## withSaturation
 
@@ -283,6 +283,6 @@ Returns a new colour with the saturation (HSB saturation component) replaced by 
 | saturation | Double | no | The new saturation value | Clamped to 0.0-1.0 |
 
 **Cross References:**
-- `Colours.withMultipliedSaturation`
-- `Colours.withHue`
-- `Colours.withBrightness`
+- `$API.Colours.withMultipliedSaturation$`
+- `$API.Colours.withHue$`
+- `$API.Colours.withBrightness$`

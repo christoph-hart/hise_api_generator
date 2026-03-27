@@ -196,12 +196,4 @@ When a new impulse response is loaded or the IR is modified, the module crossfad
 
 The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Simple Reverb", to: "/v2/reference/audio-modules/effects/master/simplereverb", desc: "Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading" }
-  - { label: "fx.convolution", to: "/v2/reference/audio-modules/effects/master/convolution", desc: "The scriptnode node shares the same two-stage FFT convolution engine with additional routing flexibility" }
----
-::
+**See also:** $MODULES.SimpleReverb$ -- Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading, $MODULES.Convolution$ -- The scriptnode node shares the same two-stage FFT convolution engine with additional routing flexibility

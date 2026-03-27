@@ -19,8 +19,8 @@ Adds a new graph point to the table data. The point is appended and the table is
 - `addTablePoint()` does not clamp x / y to 0..1 in the underlying `Table` implementation, so out-of-range values can create unexpected curve shapes.
 
 **Cross References:**
-- `ScriptTable.setTablePoint`
-- `ScriptTable.reset`
+- `$API.ScriptTable.setTablePoint$`
+- `$API.ScriptTable.reset$`
 
 ---
 
@@ -44,8 +44,8 @@ Returns the interpolated table output value for a normalized input position.
 - [BUG] If the bound data source is missing or not a `SampleLookupTable`, this method silently returns `0.0`.
 
 **Cross References:**
-- `ScriptTable.addTablePoint`
-- `ScriptTable.setTablePoint`
+- `$API.ScriptTable.addTablePoint$`
+- `$API.ScriptTable.setTablePoint$`
 
 ---
 
@@ -73,8 +73,8 @@ Updates an existing graph point in the table.
 - The first and last points keep fixed x positions (`0` and `1`) even if another x value is supplied.
 
 **Cross References:**
-- `ScriptTable.addTablePoint`
-- `ScriptTable.getTableValue`
+- `$API.ScriptTable.addTablePoint$`
+- `$API.ScriptTable.getTableValue$`
 
 ---
 
@@ -100,8 +100,8 @@ Sets a custom function for drag-popup text formatting. The function receives `(x
 - Non-function values do not throw an error; the table silently falls back to default popup text (`x | y`).
 
 **Cross References:**
-- `ScriptTable.setSnapValues`
-- `ScriptTable.setMouseHandlingProperties`
+- `$API.ScriptTable.setSnapValues$`
+- `$API.ScriptTable.setMouseHandlingProperties$`
 
 **Example:**
 ```javascript:script-table-popup-function
@@ -159,9 +159,9 @@ Configures table drag interaction behavior by forwarding a property object to th
 | closePath | bool | Close path shape for area fill |
 
 **Cross References:**
-- `ScriptTable.setSnapValues`
-- `ScriptTable.setTablePoint`
-- `ScriptTable.setTablePopupFunction`
+- `$API.ScriptTable.setSnapValues$`
+- `$API.ScriptTable.setTablePoint$`
+- `$API.ScriptTable.setTablePopupFunction$`
 
 **Example:**
 ```javascript:script-table-mouse-drag-properties
@@ -207,8 +207,8 @@ Sets x-axis snap targets for drag operations.
 - [BUG] Passing a non-array reports an error, but the method still updates internal state before wrapper-side validation, which can make debugging mixed setups confusing.
 
 **Cross References:**
-- `ScriptTable.setMouseHandlingProperties`
-- `ScriptTable.setTablePopupFunction`
+- `$API.ScriptTable.setMouseHandlingProperties$`
+- `$API.ScriptTable.setTablePopupFunction$`
 
 ---
 
@@ -232,7 +232,7 @@ Rebinds this ScriptTable to another table data source. Accepts a `ScriptTableDat
 - [BUG] Passing an unsupported argument type silently does nothing and keeps the previous data source.
 
 **Cross References:**
-- `ScriptTable.registerAtParent`
+- `$API.ScriptTable.registerAtParent$`
 
 **Example:**
 ```javascript:script-table-refer-to-data
@@ -273,7 +273,7 @@ Registers this component's owned table at the parent processor's external-data s
 - [BUG] If the parent is not a `ProcessorWithDynamicExternalData`, this method returns `undefined` without a script error.
 
 **Cross References:**
-- `ScriptTable.referToData`
+- `$API.ScriptTable.referToData$`
 
 **Example:**
 ```javascript:script-table-register-at-parent
@@ -302,5 +302,5 @@ const var tableData = Table1.registerAtParent(0);
 Resets the table data to a default linear ramp from `(0, 0)` to `(1, 1)`.
 
 **Cross References:**
-- `ScriptTable.addTablePoint`
-- `ScriptTable.setTablePoint`
+- `$API.ScriptTable.addTablePoint$`
+- `$API.ScriptTable.setTablePoint$`

@@ -12,6 +12,6 @@ Extracts this ZIP archive to the specified target directory (either a File objec
 
 For archives with fewer than 500 entries, the callback fires for every extracted file. Larger archives throttle callbacks to conserve the scripting queue. To extract to privileged locations on Windows (e.g. the user's VST3 folder), enable the Admin Permissions checkbox in your project preferences.
 
-> **Warning:** User cancellation via the `Cancel` flag stops extraction, but files already written remain on disk. There is no automatic rollback.
+> [!Warning:$WARNING_TO_BE_REPLACED$] User cancellation via the `Cancel` flag stops extraction, but files already written remain on disk. There is no automatic rollback.
 
-> **Warning:** If the File object is garbage collected while extraction is still running, the operation aborts silently. Keep a persistent reference to the File object for the duration of the extraction.
+> [!Warning:$WARNING_TO_BE_REPLACED$] If the File object is garbage collected while extraction is still running, the operation aborts silently. Keep a persistent reference to the File object for the duration of the extraction.

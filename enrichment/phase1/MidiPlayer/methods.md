@@ -16,8 +16,8 @@ Returns a typed MidiProcessor reference for the underlying MIDI Player module. T
 (None.)
 
 **Cross References:**
-- `MidiProcessor.setAttribute`
-- `MidiProcessor.getAttribute`
+- `$API.MidiProcessor.setAttribute$`
+- `$API.MidiProcessor.getAttribute$`
 
 ---
 
@@ -38,8 +38,8 @@ Removes all loaded MIDI sequences and tracks from this player. Sends an async no
 (None.)
 
 **Cross References:**
-- `MidiPlayer.setFile`
-- `MidiPlayer.create`
+- `$API.MidiPlayer.setFile$`
+- `$API.MidiPlayer.create$`
 
 ---
 
@@ -86,7 +86,7 @@ Connects this MIDI player to a ScriptPanel for automatic UI updates. The connect
 - Passing a non-ScriptPanel object throws a script error ("Invalid panel").
 
 **Cross References:**
-- `MidiPlayer.setRepaintOnPositionChange`
+- `$API.MidiPlayer.setRepaintOnPositionChange$`
 
 ---
 
@@ -111,8 +111,8 @@ Each rectangle is `[x, y, width, height]` where x/width represent time position/
 | targetBounds | Array | no | Target rectangle as `[x, y, width, height]` to scale the output to. | Must be a valid 4-element bounds array. |
 
 **Cross References:**
-- `MidiPlayer.getNoteRectangleList`
-- `MidiPlayer.getEventList`
+- `$API.MidiPlayer.getNoteRectangleList$`
+- `$API.MidiPlayer.getEventList$`
 
 ---
 
@@ -136,8 +136,8 @@ Creates a new empty MIDI sequence with the given time signature and bar count, a
 | barLength | Integer | no | Number of bars in the sequence. | Must be > 0. |
 
 **Cross References:**
-- `MidiPlayer.clearAllSequences`
-- `MidiPlayer.setFile`
+- `$API.MidiPlayer.clearAllSequences$`
+- `$API.MidiPlayer.setFile$`
 
 **Example:**
 ```javascript:create-sequence-3-4
@@ -185,10 +185,10 @@ Event timestamps are interpreted as samples (default) or ticks, depending on `se
 | messageList | Array | no | Array of MessageHolder objects containing the MIDI events to write. | Each element must be a MessageHolder. Non-MessageHolder items trigger a script error. |
 
 **Cross References:**
-- `MidiPlayer.flushMessageListToSequence`
-- `MidiPlayer.getEventList`
-- `MidiPlayer.setUseTimestampInTicks`
-- `MidiPlayer.undo`
+- `$API.MidiPlayer.flushMessageListToSequence$`
+- `$API.MidiPlayer.getEventList$`
+- `$API.MidiPlayer.setUseTimestampInTicks$`
+- `$API.MidiPlayer.undo$`
 
 ---
 
@@ -213,9 +213,9 @@ Event timestamps are interpreted as samples (default) or ticks, depending on `se
 | sequenceIndexOneBased | Integer | no | One-based index of the target sequence. | Must be >= 1. Invalid index triggers a script error. |
 
 **Cross References:**
-- `MidiPlayer.flushMessageList`
-- `MidiPlayer.getEventListFromSequence`
-- `MidiPlayer.setUseTimestampInTicks`
+- `$API.MidiPlayer.flushMessageList$`
+- `$API.MidiPlayer.getEventListFromSequence$`
+- `$API.MidiPlayer.setUseTimestampInTicks$`
 
 ---
 
@@ -237,9 +237,9 @@ Internally delegates to `getEventListFromSequence(-1)` where -1 means "current s
 (None.)
 
 **Cross References:**
-- `MidiPlayer.getEventListFromSequence`
-- `MidiPlayer.flushMessageList`
-- `MidiPlayer.setUseTimestampInTicks`
+- `$API.MidiPlayer.getEventListFromSequence$`
+- `$API.MidiPlayer.flushMessageList$`
+- `$API.MidiPlayer.setUseTimestampInTicks$`
 
 **Example:**
 ```javascript:transpose-events-up-octave
@@ -311,8 +311,8 @@ Returns an array of MessageHolder objects for all MIDI events in the specified s
 | sequenceIndexOneBased | Integer | no | One-based index of the sequence to read. | Must be >= 1. Index 0 triggers a script error ("Nope. One based!!!"). |
 
 **Cross References:**
-- `MidiPlayer.getEventList`
-- `MidiPlayer.flushMessageListToSequence`
+- `$API.MidiPlayer.getEventList$`
+- `$API.MidiPlayer.flushMessageListToSequence$`
 
 ---
 
@@ -332,7 +332,7 @@ Returns the normalised position (0.0-1.0) of the last note that was played durin
 (None.)
 
 **Cross References:**
-- `MidiPlayer.getPlaybackPosition`
+- `$API.MidiPlayer.getPlaybackPosition$`
 
 ---
 
@@ -352,7 +352,7 @@ Returns an array of string references for all MIDI files embedded in the plugin'
 (None.)
 
 **Cross References:**
-- `MidiPlayer.setFile`
+- `$API.MidiPlayer.setFile$`
 
 ---
 
@@ -376,8 +376,8 @@ Returns an empty array if no sequence is loaded.
 | targetBounds | Array | no | Target rectangle as `[x, y, width, height]` to scale the note positions to. | Must be a valid 4-element bounds array. |
 
 **Cross References:**
-- `MidiPlayer.convertEventListToNoteRectangles`
-- `MidiPlayer.connectToPanel`
+- `$API.MidiPlayer.convertEventListToNoteRectangles$`
+- `$API.MidiPlayer.connectToPanel$`
 
 ---
 
@@ -396,8 +396,8 @@ Returns the number of MIDI sequences currently loaded in this player. Returns 0 
 (None.)
 
 **Cross References:**
-- `MidiPlayer.setSequence`
-- `MidiPlayer.setFile`
+- `$API.MidiPlayer.setSequence$`
+- `$API.MidiPlayer.setFile$`
 
 ---
 
@@ -416,7 +416,7 @@ Returns the number of tracks in the current sequence. Returns 0 if no sequence i
 (None.)
 
 **Cross References:**
-- `MidiPlayer.setTrack`
+- `$API.MidiPlayer.setTrack$`
 
 ---
 
@@ -436,8 +436,8 @@ Returns the current playback position as a normalised value between 0.0 and 1.0 
 (None.)
 
 **Cross References:**
-- `MidiPlayer.setPlaybackPosition`
-- `MidiPlayer.getLastPlayedNotePosition`
+- `$API.MidiPlayer.setPlaybackPosition$`
+- `$API.MidiPlayer.getLastPlayedNotePosition$`
 
 ---
 
@@ -464,10 +464,10 @@ Returns the current transport state as an integer: 0 = Stop, 1 = Play, 2 = Recor
 | 2 | Player is recording incoming MIDI events into the sequence. |
 
 **Cross References:**
-- `MidiPlayer.play`
-- `MidiPlayer.stop`
-- `MidiPlayer.record`
-- `MidiPlayer.setPlaybackCallback`
+- `$API.MidiPlayer.play$`
+- `$API.MidiPlayer.stop$`
+- `$API.MidiPlayer.record$`
+- `$API.MidiPlayer.setPlaybackCallback$`
 
 ---
 
@@ -487,7 +487,7 @@ Returns the MIDI tick resolution per quarter note. Always returns 960. Use this 
 (None.)
 
 **Cross References:**
-- `MidiPlayer.setUseTimestampInTicks`
+- `$API.MidiPlayer.setUseTimestampInTicks$`
 
 ---
 
@@ -518,8 +518,8 @@ Returns the time signature of the current sequence as a JSON object. Internally 
 (None.)
 
 **Cross References:**
-- `MidiPlayer.getTimeSignatureFromSequence`
-- `MidiPlayer.setTimeSignature`
+- `$API.MidiPlayer.getTimeSignatureFromSequence$`
+- `$API.MidiPlayer.setTimeSignature$`
 
 ---
 
@@ -541,8 +541,8 @@ Returns the time signature of the sequence at the given one-based index as a JSO
 | index | Integer | no | One-based index of the sequence. -1 returns the current sequence. | One-based, or -1 for current. |
 
 **Cross References:**
-- `MidiPlayer.getTimeSignature`
-- `MidiPlayer.setTimeSignatureToSequence`
+- `$API.MidiPlayer.getTimeSignature$`
+- `$API.MidiPlayer.setTimeSignatureToSequence$`
 
 ---
 
@@ -561,7 +561,7 @@ Returns true if the player has no valid sequence loaded (either the player refer
 (None.)
 
 **Cross References:**
-- `MidiPlayer.isSequenceEmpty`
+- `$API.MidiPlayer.isSequenceEmpty$`
 
 ---
 
@@ -582,8 +582,8 @@ Returns true if the sequence at the given one-based index contains no MIDI event
 | indexOneBased | Integer | no | One-based index of the sequence to check. | Must be >= 1. |
 
 **Cross References:**
-- `MidiPlayer.isEmpty`
-- `MidiPlayer.getNumSequences`
+- `$API.MidiPlayer.isEmpty$`
+- `$API.MidiPlayer.getNumSequences$`
 
 ---
 
@@ -607,10 +607,10 @@ When `syncToMasterClock` is enabled, this method returns false without doing any
 | timestamp | Integer | no | Sample offset within the current buffer for sample-accurate start. | 0 for immediate, or use `Message.getTimestamp()` for sample-accurate timing. |
 
 **Cross References:**
-- `MidiPlayer.stop`
-- `MidiPlayer.record`
-- `MidiPlayer.getPlayState`
-- `MidiPlayer.setSyncToMasterClock`
+- `$API.MidiPlayer.stop$`
+- `$API.MidiPlayer.record$`
+- `$API.MidiPlayer.getPlayState$`
+- `$API.MidiPlayer.setSyncToMasterClock$`
 
 ---
 
@@ -634,9 +634,9 @@ The recording uses overdub mode by default, where new notes are merged with exis
 | timestamp | Integer | no | Sample offset for sample-accurate start. | 0 for immediate. |
 
 **Cross References:**
-- `MidiPlayer.play`
-- `MidiPlayer.stop`
-- `MidiPlayer.setRecordEventCallback`
+- `$API.MidiPlayer.play$`
+- `$API.MidiPlayer.stop$`
+- `$API.MidiPlayer.setRecordEventCallback$`
 
 ---
 
@@ -656,8 +656,8 @@ Redoes the last undone edit operation. Throws a script error if undo is deactiva
 (None.)
 
 **Cross References:**
-- `MidiPlayer.undo`
-- `MidiPlayer.setUseGlobalUndoManager`
+- `$API.MidiPlayer.undo$`
+- `$API.MidiPlayer.setUseGlobalUndoManager$`
 
 ---
 
@@ -677,8 +677,8 @@ Resets the current sequence to the state it was in when last loaded from a MIDI 
 (None.)
 
 **Cross References:**
-- `MidiPlayer.undo`
-- `MidiPlayer.setFile`
+- `$API.MidiPlayer.undo$`
+- `$API.MidiPlayer.setFile$`
 
 ---
 
@@ -703,8 +703,8 @@ After saving, the MIDI file pool is reloaded so the file is immediately availabl
 | trackIndex | Integer | no | Track index in the output MIDI file (zero-based). | >= 0. |
 
 **Cross References:**
-- `MidiPlayer.setFile`
-- `MidiPlayer.getMidiFileList`
+- `$API.MidiPlayer.setFile$`
+- `$API.MidiPlayer.getMidiFileList$`
 
 ---
 
@@ -748,9 +748,9 @@ The filename should be a pool reference string (use `getMidiFileList()` to get v
 | selectNewSequence | Integer | no | If true, selects the newly loaded sequence as current. | Boolean (0 or 1). |
 
 **Cross References:**
-- `MidiPlayer.getMidiFileList`
-- `MidiPlayer.clearAllSequences`
-- `MidiPlayer.create`
+- `$API.MidiPlayer.getMidiFileList$`
+- `$API.MidiPlayer.clearAllSequences$`
+- `$API.MidiPlayer.create$`
 
 **Example:**
 ```javascript:load-midi-from-pool
@@ -859,10 +859,10 @@ mp.play(0);
 - When using synchronous mode, the callback runs on the audio thread. In the HISE IDE (USE_BACKEND), a realtime safety check validates that the callback is safe. In exported plugins, only `isRealtimeSafe()` is checked.
 
 **Cross References:**
-- `MidiPlayer.getPlayState`
-- `MidiPlayer.play`
-- `MidiPlayer.stop`
-- `MidiPlayer.record`
+- `$API.MidiPlayer.getPlayState$`
+- `$API.MidiPlayer.play$`
+- `$API.MidiPlayer.stop$`
+- `$API.MidiPlayer.record$`
 
 ---
 
@@ -884,7 +884,7 @@ Sets the playback position within the current loop. The value is clamped to 0.0-
 | newPosition | Double | no | Normalised position between 0.0 (start) and 1.0 (end). | Clamped to [0.0, 1.0]. |
 
 **Cross References:**
-- `MidiPlayer.getPlaybackPosition`
+- `$API.MidiPlayer.getPlaybackPosition$`
 
 ---
 
@@ -943,7 +943,7 @@ mp.setRecordEventCallback(onRecordEvent);
 ```
 
 **Cross References:**
-- `MidiPlayer.record`
+- `$API.MidiPlayer.record$`
 
 ---
 
@@ -965,7 +965,7 @@ When enabled, the connected panel (set via `connectToPanel()`) receives `repaint
 | shouldRepaintPanel | Integer | no | Whether to enable position-change repainting. | Boolean (0 or 1). |
 
 **Cross References:**
-- `MidiPlayer.connectToPanel`
+- `$API.MidiPlayer.connectToPanel$`
 
 ---
 
@@ -987,8 +987,8 @@ Selects one of the previously loaded sequences as the current active sequence. U
 | sequenceIndex | Integer | no | One-based index of the sequence to activate. | Must be >= 1. |
 
 **Cross References:**
-- `MidiPlayer.getNumSequences`
-- `MidiPlayer.setFile`
+- `$API.MidiPlayer.getNumSequences$`
+- `$API.MidiPlayer.setFile$`
 
 ---
 
@@ -1046,8 +1046,8 @@ mp.setSequenceCallback(onSequenceChange);
 ```
 
 **Cross References:**
-- `MidiPlayer.setPlaybackCallback`
-- `MidiPlayer.connectToPanel`
+- `$API.MidiPlayer.setPlaybackCallback$`
+- `$API.MidiPlayer.connectToPanel$`
 
 ---
 
@@ -1075,10 +1075,10 @@ Throws a script error if the master clock grid is not enabled when trying to ena
 - When synced, `play()` and `stop()` return false without doing anything. Only `record()` has a special handling (defers to next clock start).
 
 **Cross References:**
-- `MidiPlayer.play`
-- `MidiPlayer.stop`
-- `MidiPlayer.record`
-- `TransportHandler.setOnGridChange`
+- `$API.MidiPlayer.play$`
+- `$API.MidiPlayer.stop$`
+- `$API.MidiPlayer.record$`
+- `$API.TransportHandler.setOnGridChange$`
 
 ---
 
@@ -1115,8 +1115,8 @@ The Tempo property from `getTimeSignature()` is NOT consumed -- only Nominator, 
 - The Tempo property from `getTimeSignature()` is ignored when setting. Tempo is derived from the host/master clock, not the sequence metadata.
 
 **Cross References:**
-- `MidiPlayer.getTimeSignature`
-- `MidiPlayer.setTimeSignatureToSequence`
+- `$API.MidiPlayer.getTimeSignature$`
+- `$API.MidiPlayer.setTimeSignatureToSequence$`
 
 ---
 
@@ -1139,8 +1139,8 @@ Sets the time signature and length of the sequence at the given one-based index.
 | timeSignatureObject | JSON | no | Object with time signature properties. | See setTimeSignature for property format. |
 
 **Cross References:**
-- `MidiPlayer.setTimeSignature`
-- `MidiPlayer.getTimeSignatureFromSequence`
+- `$API.MidiPlayer.setTimeSignature$`
+- `$API.MidiPlayer.getTimeSignatureFromSequence$`
 
 ---
 
@@ -1162,7 +1162,7 @@ Sets the active track within the current sequence. Uses one-based indexing. Affe
 | trackIndex | Integer | no | One-based track index. | Must be >= 1. |
 
 **Cross References:**
-- `MidiPlayer.getNumTracks`
+- `$API.MidiPlayer.getNumTracks$`
 
 ---
 
@@ -1187,9 +1187,9 @@ Enables or disables undo tracking for MIDI edit operations. When enabled, uses t
 - Calling `setUseGlobalUndoManager(false)` after previously enabling it destroys the internal undo manager. Undo cannot be re-enabled using the internal manager after this -- only the global manager can be re-attached by calling `setUseGlobalUndoManager(true)` again.
 
 **Cross References:**
-- `MidiPlayer.undo`
-- `MidiPlayer.redo`
-- `MidiPlayer.flushMessageList`
+- `$API.MidiPlayer.undo$`
+- `$API.MidiPlayer.redo$`
+- `$API.MidiPlayer.flushMessageList$`
 
 ---
 
@@ -1212,9 +1212,9 @@ Tick mode is recommended for musical editing (quantization, grid alignment) sinc
 | shouldUseTicksAsTimestamps | Integer | no | Whether to use ticks (true) or samples (false) for timestamps. | Boolean (0 or 1). |
 
 **Cross References:**
-- `MidiPlayer.getTicksPerQuarter`
-- `MidiPlayer.getEventList`
-- `MidiPlayer.flushMessageList`
+- `$API.MidiPlayer.getTicksPerQuarter$`
+- `$API.MidiPlayer.getEventList$`
+- `$API.MidiPlayer.flushMessageList$`
 
 ---
 
@@ -1238,9 +1238,9 @@ If the player was recording, stops recording and flushes recorded events to the 
 | timestamp | Integer | no | Sample offset for sample-accurate stop. | 0 for immediate. |
 
 **Cross References:**
-- `MidiPlayer.play`
-- `MidiPlayer.record`
-- `MidiPlayer.setSyncToMasterClock`
+- `$API.MidiPlayer.play$`
+- `$API.MidiPlayer.record$`
+- `$API.MidiPlayer.setSyncToMasterClock$`
 
 ---
 
@@ -1260,6 +1260,6 @@ Undoes the last MIDI edit operation (flushMessageList, setTimeSignature, etc.). 
 (None.)
 
 **Cross References:**
-- `MidiPlayer.redo`
-- `MidiPlayer.setUseGlobalUndoManager`
-- `MidiPlayer.flushMessageList`
+- `$API.MidiPlayer.redo$`
+- `$API.MidiPlayer.setUseGlobalUndoManager$`
+- `$API.MidiPlayer.flushMessageList$`

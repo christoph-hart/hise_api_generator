@@ -46,18 +46,22 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **Wrong:** Expecting `spk.setAllValuesWithUndo(...)` to stay callback-silent after `spk.setAllValueChangeCausesCallback(0)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Expecting `spk.setAllValuesWithUndo(...)` to stay callback-silent after `spk.setAllValueChangeCausesCallback(0)`
   **Right:** Treat `setAllValuesWithUndo(...)` as callback-producing and guard callback logic when needed
   *Undo bulk writes still emit change notification, so callback suppression assumptions do not apply to that path.*
 
-- **Wrong:** Treating the `value` argument in `setControlCallback` as the lane amplitude
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Treating the `value` argument in `setControlCallback` as the lane amplitude
   **Right:** Parse it as the edited index, then call `getSliderValueAt(index)`
   *Slider-pack callbacks are index-centric in common lane editors, so direct use as value can read the wrong data.*
 
-- **Wrong:** Importing large arrays with callbacks enabled
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Importing large arrays with callbacks enabled
   **Right:** Disable callbacks for import, then trigger one explicit refresh after the write
   *This avoids repeated rebuild logic and unnecessary UI churn during setup operations.*
 
-- **Wrong:** Updating `setWidthArray(...)` without updating `sliderAmount` in the same code path
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Updating `setWidthArray(...)` without updating `sliderAmount` in the same code path
   **Right:** Set slider count and width map together from one grid/subdivision function
   *Width breakpoints and slider count must stay aligned for predictable drawing and hit-testing.*

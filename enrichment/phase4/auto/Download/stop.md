@@ -2,4 +2,4 @@ Pauses the download, preserving the target file with whatever data has been down
 
 [See: Download State Machine](#diagram-download-lifecycle)
 
-> **Warning:** The stop is asynchronous. When `stop()` returns, the download has not yet paused - `isRunning()` may still return `true` until the background thread processes the request.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The stop is asynchronous. When `stop()` returns, the download has not yet paused - `isRunning()` may still return `true` until the background thread processes the request.

@@ -20,7 +20,7 @@ Prints a value to the HISE console. The value is converted to a string represent
 - On the audio thread, the output is deferred to the message thread internally, but the call itself is permitted.
 
 **Cross References:**
-- `Console.clear`
+- `$API.Console.clear$`
 
 **Example:**
 ```javascript
@@ -43,7 +43,7 @@ Starts a high-resolution benchmark timer by recording the current timestamp. Cal
 None.
 
 **Cross References:**
-- `Console.stopBenchmark`
+- `$API.Console.stopBenchmark$`
 
 ## stopBenchmark
 
@@ -63,7 +63,7 @@ None.
 - The result is only printed in backend builds; in exported plugins this is a no-op.
 
 **Cross References:**
-- `Console.startBenchmark`
+- `$API.Console.startBenchmark$`
 
 **Example:**
 ```javascript
@@ -95,8 +95,8 @@ A cooperative breakpoint that halts script execution when `condition` is true. O
 - While paused, the audio thread outputs silence. This is by design -- the kill state handler suspends audio processing during the breakpoint.
 
 **Cross References:**
-- `Console.breakInDebugger`
-- `Console.blink`
+- `$API.Console.breakInDebugger$`
+- `$API.Console.blink$`
 
 **Example:**
 ```javascript:basic
@@ -152,8 +152,8 @@ Throws a script error if `condition` evaluates to `false`. The value is cast to 
 | condition | NotUndefined | no | The condition to check. Cast to `bool` -- falsy values trigger the assertion. | -- |
 
 **Cross References:**
-- `Console.assertWithMessage`
-- `Console.assertEqual`
+- `$API.Console.assertWithMessage$`
+- `$API.Console.assertEqual$`
 
 ## assertEqual
 
@@ -172,8 +172,8 @@ Throws a script error if `v1` and `v2` are not equal. Uses the generic `!=` oper
 | v2 | NotUndefined | no | The actual value to compare against `v1`. | -- |
 
 **Cross References:**
-- `Console.assertTrue`
-- `Console.assertWithMessage`
+- `$API.Console.assertTrue$`
+- `$API.Console.assertWithMessage$`
 
 **Example:**
 ```javascript
@@ -197,7 +197,7 @@ Throws a script error if `value` is `undefined` or void. This is useful for vali
 | value | NotUndefined | no | The value to check for definedness. Triggers the assertion if undefined or void. | -- |
 
 **Cross References:**
-- `Console.assertTrue`
+- `$API.Console.assertTrue$`
 
 ## assertIsObjectOrArray
 
@@ -215,8 +215,8 @@ Throws a script error if `value` is not a JSON object or an array. The error mes
 | value | NotUndefined | no | The value to check. Must be an object or array, otherwise the assertion fails. | -- |
 
 **Cross References:**
-- `Console.assertLegalNumber`
-- `Console.assertNoString`
+- `$API.Console.assertLegalNumber$`
+- `$API.Console.assertNoString$`
 
 ## assertNoString
 
@@ -237,8 +237,8 @@ Throws a script error if `value` is a string. The error message includes the str
 - The error message is `"Assertion failure: " + value.toString()`, which means the string value itself becomes the error message body. This can be confusing if the string content looks like a different error.
 
 **Cross References:**
-- `Console.assertLegalNumber`
-- `Console.assertIsObjectOrArray`
+- `$API.Console.assertLegalNumber$`
+- `$API.Console.assertIsObjectOrArray$`
 
 ## assertWithMessage
 
@@ -257,7 +257,7 @@ Throws a script error with the provided `errorMessage` if `condition` is false. 
 | errorMessage | String | no | The error message to display on assertion failure, prefixed with "Assertion failure: ". | -- |
 
 **Cross References:**
-- `Console.assertTrue`
+- `$API.Console.assertTrue$`
 
 **Example:**
 ```javascript:basic
@@ -296,8 +296,8 @@ Throws a script error if `value` is not a finite, legal number. This performs tw
 | value | NotUndefined | no | The value to validate. Must be a finite number (int or double). | -- |
 
 **Cross References:**
-- `Console.assertNoString`
-- `Console.assertIsObjectOrArray`
+- `$API.Console.assertNoString$`
+- `$API.Console.assertIsObjectOrArray$`
 
 **Example:**
 ```javascript:basic
@@ -338,7 +338,7 @@ None.
 - This breaks into the **C++ debugger**, not the HISEScript debugger. It has no effect if no native debugger is attached (the assertion is silently ignored in release builds).
 
 **Cross References:**
-- `Console.stop`
+- `$API.Console.stop$`
 
 ## startSampling
 
@@ -356,7 +356,7 @@ Starts a data sampling session with the given identifier. Once a session is acti
 | sessionId | String | no | A unique identifier for the sampling session. | -- |
 
 **Cross References:**
-- `Console.sample`
+- `$API.Console.sample$`
 
 **Example:**
 ```javascript:basic
@@ -419,4 +419,4 @@ Records a labelled data snapshot into the currently active sampling session. The
 - The "no session started" warning is only shown once per Console instance. Subsequent calls without a session are silently skipped.
 
 **Cross References:**
-- `Console.startSampling`
+- `$API.Console.startSampling$`

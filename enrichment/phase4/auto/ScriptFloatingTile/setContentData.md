@@ -15,6 +15,6 @@ ft.setContentData({
 
 Available content types include `"PresetBrowser"`, `"Keyboard"`, `"PerformanceLabel"`, `"CustomSettings"`, `"AHDSRGraph"`, `"FilterDisplay"`, `"AudioAnalyser"`, `"MarkdownPanel"`, `"MatrixPeakMeter"`, `"TooltipPanel"`, `"MidiLearnPanel"`, `"ActivityLed"`, `"Plotter"`, `"Waveform"`, `"DraggableFilterPanel"`, `"WavetableWaterfall"`, `"MPEPanel"`, `"AboutPagePanel"`, `"MidiOverlayPanel"`, `"MidiSources"`, `"MidiChannelList"`, `"FrontendMacroPanel"`, and `"ModulationMatrix"`. Backend-only panel types are not available.
 
-> **Warning:** Calling this method destroys and recreates the entire panel. Avoid calling it at high frequency.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Calling this method destroys and recreates the entire panel. Avoid calling it at high frequency.
 
-> **Warning:** Use `"itemColour1"` (not `"itemColour"`) in the `ColourData` sub-object. The base property `itemColour` maps to `"itemColour1"` internally.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Use `"itemColour1"` (not `"itemColour"`) in the `ColourData` sub-object. The base property `itemColour` maps to `"itemColour1"` internally.

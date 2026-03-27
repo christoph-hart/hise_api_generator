@@ -21,8 +21,8 @@ Returns a Buffer reference to the underlying float array without copying. When `
 - The returned Buffer is a live view, not a copy. Modifying the buffer modifies the stack's backing array directly.
 
 **Cross References:**
-- `UnorderedStack.insert`
-- `UnorderedStack.copyTo`
+- `$API.UnorderedStack.insert$`
+- `$API.UnorderedStack.copyTo$`
 
 **Example:**
 ```javascript:asbuffer-views
@@ -70,8 +70,8 @@ None.
 None.
 
 **Cross References:**
-- `UnorderedStack.isEmpty`
-- `UnorderedStack.size`
+- `$API.UnorderedStack.isEmpty$`
+- `$API.UnorderedStack.size$`
 
 ---
 
@@ -95,10 +95,10 @@ Returns true if the stack contains the specified value. In float mode, performs 
 - Float comparison uses exact equality. Floating-point precision issues may cause contains to return false for values that appear equal.
 
 **Cross References:**
-- `UnorderedStack.insert`
-- `UnorderedStack.remove`
-- `UnorderedStack.setIsEventStack`
-- `UnorderedStack.isEmpty`
+- `$API.UnorderedStack.insert$`
+- `$API.UnorderedStack.remove$`
+- `$API.UnorderedStack.setIsEventStack$`
+- `$API.UnorderedStack.isEmpty$`
 
 ---
 
@@ -125,8 +125,8 @@ Copies all elements from this stack into the target container. Accepts three tar
 - When copying to another UnorderedStack, the target is cleared first and elements are inserted without duplicate checking.
 
 **Cross References:**
-- `UnorderedStack.asBuffer`
-- `UnorderedStack.storeEvent`
+- `$API.UnorderedStack.asBuffer$`
+- `$API.UnorderedStack.storeEvent$`
 
 **Example:**
 ```javascript:copyto-targets
@@ -180,9 +180,9 @@ Inserts a value into the stack if it is not already present (set semantics). Ret
 - In event mode, passing a non-MessageHolder value silently returns false with no error.
 
 **Cross References:**
-- `UnorderedStack.contains`
-- `UnorderedStack.remove`
-- `UnorderedStack.removeElement`
+- `$API.UnorderedStack.contains$`
+- `$API.UnorderedStack.remove$`
+- `$API.UnorderedStack.removeElement$`
 
 ---
 
@@ -203,9 +203,9 @@ None.
 None.
 
 **Cross References:**
-- `UnorderedStack.size`
-- `UnorderedStack.clear`
-- `UnorderedStack.contains`
+- `$API.UnorderedStack.size$`
+- `$API.UnorderedStack.clear$`
+- `$API.UnorderedStack.contains$`
 
 ---
 
@@ -229,10 +229,10 @@ Removes the first matching value from the stack. Returns true if found and remov
 - Removal does not preserve element order. The removed element's slot is filled by moving the last element into its position.
 
 **Cross References:**
-- `UnorderedStack.insert`
-- `UnorderedStack.contains`
-- `UnorderedStack.removeElement`
-- `UnorderedStack.removeIfEqual`
+- `$API.UnorderedStack.insert$`
+- `$API.UnorderedStack.contains$`
+- `$API.UnorderedStack.removeElement$`
+- `$API.UnorderedStack.removeIfEqual$`
 
 ---
 
@@ -256,8 +256,8 @@ Removes the element at the specified index by swapping it with the last element 
 - Does not preserve element order. The element at `index` is replaced by the last element in the stack.
 
 **Cross References:**
-- `UnorderedStack.remove`
-- `UnorderedStack.insert`
+- `$API.UnorderedStack.remove$`
+- `$API.UnorderedStack.insert$`
 
 ---
 
@@ -282,9 +282,9 @@ Event-mode only. Finds the first event matching the provided MessageHolder using
 - The holder is modified in-place with the removed event's data, which may differ from the search key. If no match is found, the holder is unchanged.
 
 **Cross References:**
-- `UnorderedStack.remove`
-- `UnorderedStack.contains`
-- `UnorderedStack.setIsEventStack`
+- `$API.UnorderedStack.remove$`
+- `$API.UnorderedStack.contains$`
+- `$API.UnorderedStack.setIsEventStack$`
 
 ---
 
@@ -314,9 +314,9 @@ Switches the stack between float mode (default) and event mode. The second param
 - Mode should be set once during initialization. Switching modes does not clear the previously active stack's data.
 
 **Cross References:**
-- `UnorderedStack.contains`
-- `UnorderedStack.remove`
-- `UnorderedStack.removeIfEqual`
+- `$API.UnorderedStack.contains$`
+- `$API.UnorderedStack.remove$`
+- `$API.UnorderedStack.removeIfEqual$`
 
 **Example:**
 ```javascript:setiseventstack-modes
@@ -377,8 +377,8 @@ None.
 None.
 
 **Cross References:**
-- `UnorderedStack.isEmpty`
-- `UnorderedStack.clear`
+- `$API.UnorderedStack.isEmpty$`
+- `$API.UnorderedStack.clear$`
 
 ---
 
@@ -403,6 +403,6 @@ Event-mode only. Copies the event at the specified index into the provided Messa
 None.
 
 **Cross References:**
-- `UnorderedStack.removeIfEqual`
-- `UnorderedStack.copyTo`
-- `UnorderedStack.setIsEventStack`
+- `$API.UnorderedStack.removeIfEqual$`
+- `$API.UnorderedStack.copyTo$`
+- `$API.UnorderedStack.setIsEventStack$`

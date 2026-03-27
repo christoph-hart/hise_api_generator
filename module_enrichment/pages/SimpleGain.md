@@ -196,11 +196,4 @@ The gain smoothing ramp is 50ms, while the balance smoothing is 1000ms. The slow
 
 When Width is exactly 100% (the default), mid/side processing is skipped entirely. Similarly, when Delay is 0ms, the delay line is bypassed. This means the module at default settings is essentially just a smoothed gain multiply.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Delay", to: "/v2/reference/audio-modules/effects/master/delay", desc: "Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment" }
----
-::
+**See also:** $MODULES.Delay$ -- Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment

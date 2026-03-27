@@ -42,18 +42,22 @@ Some methods operate on the full allocated capacity rather than just the used po
 
 ## Common Mistakes
 
-- **Wrong:** Creating a new FixObject for every insert
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Creating a new FixObject for every insert
   **Right:** Reuse a single temp object: mutate its properties, then call `insert()`
   *`insert()` copies the data into the stack's preallocated slot. Creating new objects per event defeats the allocation-free design.*
 
-- **Wrong:** `s.copy("value", buf);` and assuming only used elements are copied
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `s.copy("value", buf);` and assuming only used elements are copied
   **Right:** Iterate from 0 to `s.size()` to copy only the used portion
   *`copy()` reads from all allocated slots including unused ones beyond the position pointer, which contain default values.*
 
-- **Wrong:** `for (i = 0; i < stack.size(); i++) { stack.removeElement(i); }`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `for (i = 0; i < stack.size(); i++) { stack.removeElement(i); }`
   **Right:** `stack.removeElement(i--);` after each removal
   *`removeElement()` swaps the last element into the removed slot. Without decrementing `i`, the swapped-in element is skipped.*
 
-- **Wrong:** Relying on element order after `removeElement()` or `remove()`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Relying on element order after `removeElement()` or `remove()`
   **Right:** Call `sort()` after modifications if downstream code depends on ordering
   *Swap-and-pop removal does not preserve insertion order. If you need oldest-first or any specific ordering, sort explicitly.*

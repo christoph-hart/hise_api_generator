@@ -2,4 +2,4 @@ Registers a callback that fires after a user preset has finished loading. The ca
 
 You can pass a Broadcaster instead of a plain function to fan out preset-change notifications to multiple independent listeners.
 
-> **Warning:** The callback argument is `undefined` (not a file reference) when the preset was loaded from a DAW session restore rather than a physical file. Guard with `isDefined(presetFile)` before calling methods on it.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The callback argument is `undefined` (not a file reference) when the preset was loaded from a DAW session restore rather than a physical file. Guard with `isDefined(presetFile)` before calling methods on it.

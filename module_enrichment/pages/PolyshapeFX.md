@@ -180,12 +180,4 @@ Modes 3 (Tanh), 6 (Saturate), 7 (Square), and 8 (SquareRoot) are visible in the 
 
 The Curve mode (32) uses Table 0, which maps absolute input amplitude to output (symmetric around zero). The Asymmetrical Curve mode (33) uses Table 1, which maps the full -1 to +1 input range, allowing different shaping for positive and negative signal halves.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Shape FX", to: "/v2/reference/audio-modules/effects/master/shapefx", desc: "Monophonic variant with pre-shaper filtering, autogain, dry/wet mix, bit reduction, and configurable oversampling factors (1x-16x)" }
-  - { label: "Saturator", to: "/v2/reference/audio-modules/effects/master/saturator", desc: "Simpler monophonic saturation effect without table-based modes or per-voice processing" }
----
-::
+**See also:** $MODULES.ShapeFX$ -- Monophonic variant with pre-shaper filtering, autogain, dry/wet mix, bit reduction, and configurable oversampling factors (1x-16x), $MODULES.Saturator$ -- Simpler monophonic saturation effect without table-based modes or per-voice processing

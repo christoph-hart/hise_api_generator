@@ -26,14 +26,17 @@ Three methods depend on the factory's compare function: `indexOf()`, `contains()
 
 ## Common Mistakes
 
-- **Wrong:** `a.sort()` (without setting a compare function)
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `a.sort()` (without setting a compare function)
   **Right:** `f.setCompareFunction("id"); a.sort();`
   *The default comparator orders by raw memory layout, producing meaningless results. Set a property-based compare function on the factory first.*
 
-- **Wrong:** `if (a.fromBase64(str)) ...` assuming an error is thrown on mismatch
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `if (a.fromBase64(str)) ...` assuming an error is thrown on mismatch
   **Right:** Check the return value; `fromBase64()` returns `false` silently on size mismatch.
   *`fromBase64()` does not throw a script error when the decoded data does not match the array's allocation size. Always check the return value.*
 
-- **Wrong:** Creating a Buffer of a different size than the array for use with `copy()`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Creating a Buffer of a different size than the array for use with `copy()`
   **Right:** `const var buf = Buffer.create(a.length);`
   *`copy()` requires the Buffer size to exactly match the array's `length` constant. Use the same size for both.*

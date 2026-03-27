@@ -1,3 +1,3 @@
 Returns whether the current event is a monophonic (channel pressure) aftertouch message. Use inside `onController` to distinguish aftertouch from standard CC events before calling `Message.getMonophonicAftertouchPressure()`.
 
-> **Warning:** HISE does not distinguish between channel pressure and polyphonic aftertouch at the event type level - both `isMonophonicAfterTouch()` and `isPolyAftertouch()` return true for any aftertouch event. In practice, channel pressure events typically have note number 0, while polyphonic aftertouch events carry the target note number.
+> [!Warning:$WARNING_TO_BE_REPLACED$] HISE does not distinguish between channel pressure and polyphonic aftertouch at the event type level - both `isMonophonicAfterTouch()` and `isPolyAftertouch()` return true for any aftertouch event. In practice, channel pressure events typically have note number 0, while polyphonic aftertouch events carry the target note number.

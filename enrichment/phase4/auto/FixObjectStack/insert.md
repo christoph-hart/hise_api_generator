@@ -1,3 +1,3 @@
 Inserts a copy of the given object at the end of the used portion if no duplicate exists. Duplicates are detected using the factory's compare function. Returns `true` on success, `false` if the object already exists.
 
-> **Warning:** When the stack is full, `insert()` silently overwrites the last element rather than failing. Check `size()` against `length` before inserting and evict entries manually to stay within safe bounds.
+> [!Warning:$WARNING_TO_BE_REPLACED$] When the stack is full, `insert()` silently overwrites the last element rather than failing. Check `size()` against `length` before inserting and evict entries manually to stay within safe bounds.

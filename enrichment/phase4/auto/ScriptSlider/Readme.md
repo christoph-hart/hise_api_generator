@@ -49,26 +49,32 @@ The matrix target bridge is driven by the `matrixTargetId` property and connecti
 
 ## Common Mistakes
 
-- **Wrong:** `sl.setMinValue(0.2);` while style is `Knob`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `sl.setMinValue(0.2);` while style is `Knob`
   **Right:** `sl.setStyle("Range"); sl.setMinValue(0.2);`
   *Range helper methods only apply in `Range` style, so call them after switching style.*
 
-- **Wrong:** `sl.setMode("Db");`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `sl.setMode("Db");`
   **Right:** `sl.setMode("Decibel");`
   *Mode names must match the supported strings exactly.*
 
-- **Wrong:** `sl.setModifiers("Reset", [mods.altDown]);`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `sl.setModifiers("Reset", [mods.altDown]);`
   **Right:** `sl.setModifiers("ResetToDefault", [mods.altDown]);`
   *Action keys are exact identifiers. Unknown keys are ignored by the runtime mapping logic.*
 
-- **Wrong:** Recreating modifier objects for every slider in a loop
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Recreating modifier objects for every slider in a loop
   **Right:** Create one modifiers object, then reuse it across the slider group
   *Shared mappings keep interaction behaviour consistent and make remapping easier later.*
 
-- **Wrong:** Calling `setValueNormalized()` and assuming callback-driven logic already ran
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `setValueNormalized()` and assuming callback-driven logic already ran
   **Right:** Call `setValueNormalized(...)`, then `changed()` when you need callback side effects
   *Value assignment updates state, but callback-based workflows still need an explicit trigger.*
 
-- **Wrong:** `sl.setMidPoint(-1);` to disable skew in every range
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `sl.setMidPoint(-1);` to disable skew in every range
   **Right:** `sl.setMidPoint("disabled");`
   *Numeric `-1` is now treated like any other midpoint value and can apply skew when the range includes `-1`.*

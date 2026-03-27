@@ -35,18 +35,22 @@ The factory's comparison function controls how containers perform sorting and lo
 
 ## Common Mistakes
 
-- **Wrong:** `Engine.createFixObjectFactory({ "name": "hello" })`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Engine.createFixObjectFactory({ "name": "hello" })`
   **Right:** `Engine.createFixObjectFactory({ "id": 0, "value": 0.0 })`
   *String and object values are not valid member types. Only integers, floats, booleans, and arrays of these are supported.*
 
-- **Wrong:** Creating a new `factory.create()` object for every note-on event
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Creating a new `factory.create()` object for every note-on event
   **Right:** Create one temporary object at init time, overwrite its properties before each `insert()`
   *`create()` allocates heap memory. In a note-on handler or timer callback, repeated allocation causes memory pressure. Reuse a single object as an insertion template.*
 
-- **Wrong:** Using `createArray()` for a dynamically-sized collection
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `createArray()` for a dynamically-sized collection
   **Right:** Use `createStack()` for insert/remove workflows
   *FixObjectArray has a fixed element count with no insert or remove operations. FixObjectStack tracks active element count and supports `insert()`, `removeElement()`, and `size()`.*
 
-- **Wrong:** `f.setCompareFunction("a,b,c,d,e")`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `f.setCompareFunction("a,b,c,d,e")`
   **Right:** `f.setCompareFunction(function(a, b) { ... })`
   *Multi-property string comparison is limited to 2-4 properties. Use a custom function for more complex comparisons.*

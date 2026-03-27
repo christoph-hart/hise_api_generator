@@ -154,12 +154,4 @@ Width is applied to the combined output buffer after all voices are summed, not 
 
 Pan uses an equal-power pan law that maintains unity gain at centre. At full left or right, the active channel is boosted by approximately 3 dB to preserve perceived loudness.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "PolyshapeFX", to: "/v2/reference/audio-modules/effects/polyphonic/polyshapefx", desc: "Another polyphonic effect - applies waveshaping per-voice rather than stereo processing" }
-  - { label: "Simple Gain", to: "/v2/reference/audio-modules/effects/master/simplegain", desc: "Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning" }
----
-::
+**See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect - applies waveshaping per-voice rather than stereo processing, $MODULES.SimpleGain$ -- Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning

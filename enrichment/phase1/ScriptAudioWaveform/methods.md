@@ -17,7 +17,7 @@ Returns the start position (in samples) of the currently selected sample range o
 - Related: enableRange
 
 **Cross References:**
-- `ScriptAudioWaveform.getRangeEnd`
+- `$API.ScriptAudioWaveform.getRangeEnd$`
 
 ---
 
@@ -36,7 +36,7 @@ Returns the end position (in samples) of the currently selected sample range on 
 - Related: enableRange
 
 **Cross References:**
-- `ScriptAudioWaveform.getRangeStart`
+- `$API.ScriptAudioWaveform.getRangeStart$`
 
 ---
 
@@ -68,7 +68,7 @@ Connects this waveform component to an external audio data source. After calling
 - Related: processorId, sampleIndex source binding
 
 **Cross References:**
-- `ScriptAudioWaveform.registerAtParent`
+- `$API.ScriptAudioWaveform.registerAtParent$`
 
 **Example:**
 ```javascript:referToData-audio-file
@@ -109,7 +109,7 @@ If the parent processor is not a `ProcessorWithDynamicExternalData`, returns an 
 | index | Integer | no | The slot index to register at in the parent processor | >= 0 |
 
 **Cross References:**
-- `ScriptAudioWaveform.referToData`
+- `$API.ScriptAudioWaveform.referToData$`
 
 **Example:**
 ```javascript:registerAtParent-usage
@@ -150,8 +150,8 @@ This only affects AudioFile mode. In Sampler mode (when connected to a Modulator
 - If no audio file is loaded (the cached audio file is null), the call silently does nothing.
 
 **Cross References:**
-- `ScriptAudioWaveform.referToData`
-- `FileSystem.getFolder`
+- `$API.ScriptAudioWaveform.referToData$`
+- `$API.FileSystem.getFolder$`
 
 ---
 
@@ -177,8 +177,8 @@ This is a display-only method -- it does not affect actual audio playback. It is
 - If no audio data is loaded (the cached audio file is null), the call silently does nothing.
 
 **Cross References:**
-- `ScriptAudioWaveform.getRangeStart`
-- `ScriptAudioWaveform.getRangeEnd`
+- `$API.ScriptAudioWaveform.getRangeStart$`
+- `$API.ScriptAudioWaveform.getRangeEnd$`
 
 ---
 
@@ -212,7 +212,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptAudioWaveform.changed`
+- `$API.ScriptAudioWaveform.changed$`
 
 **Example:**
 ```javascript:custom-control-callback
@@ -289,7 +289,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptAudioWaveform.setConsumedKeyPresses`
+- `$API.ScriptAudioWaveform.setConsumedKeyPresses$`
 
 **Example:**
 ```javascript:key-press-handler
@@ -363,7 +363,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptAudioWaveform.setKeyPressCallback`
+- `$API.ScriptAudioWaveform.setKeyPressCallback$`
 
 **Example:**
 ```javascript:consumed-key-formats
@@ -442,9 +442,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptAudioWaveform.setStyleSheetClass`
-- `ScriptAudioWaveform.setStyleSheetPseudoState`
-- `ScriptAudioWaveform.setLocalLookAndFeel`
+- `$API.ScriptAudioWaveform.setStyleSheetClass$`
+- `$API.ScriptAudioWaveform.setStyleSheetPseudoState$`
+- `$API.ScriptAudioWaveform.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:css-variable-types
@@ -489,9 +489,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptAudioWaveform.setStyleSheetProperty`
-- `ScriptAudioWaveform.setStyleSheetPseudoState`
-- `ScriptAudioWaveform.setLocalLookAndFeel`
+- `$API.ScriptAudioWaveform.setStyleSheetProperty$`
+- `$API.ScriptAudioWaveform.setStyleSheetPseudoState$`
+- `$API.ScriptAudioWaveform.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:css-class-selectors

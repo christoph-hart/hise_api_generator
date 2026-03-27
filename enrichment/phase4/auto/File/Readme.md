@@ -33,18 +33,22 @@ The `toString` method accepts a format constant to extract different path compon
 
 ## Common Mistakes
 
-- **Wrong:** `f.rename("newName"); f.toString(0);`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `f.rename("newName"); f.toString(0);`
   **Right:** `var newFile = f.getParentDirectory().getChildFile("newName"); f.rename("newName");`
   *After `rename`, `move`, or `deleteFileOrDirectory`, the File object still points to the old path. Obtain a new handle for the updated location.*
 
-- **Wrong:** `f.loadEncryptedObject(rsaKey)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `f.loadEncryptedObject(rsaKey)`
   **Right:** `f.loadEncryptedObject(blowfishKey)`
   *`writeEncryptedObject` / `loadEncryptedObject` use BlowFish symmetric encryption (max 72-byte key), not RSA. For public-key encryption, use `FileSystem.encryptWithRSA` / `FileSystem.decryptWithRSA`.*
 
-- **Wrong:** `var data = f.loadAsObject();` then immediately access `data.SomeKey`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var data = f.loadAsObject();` then immediately access `data.SomeKey`
   **Right:** `var data = f.loadAsObject(); if (!isDefined(data)) data = {};`
   *On first launch the file may not exist, and `loadAsObject` returns undefined. Always provide a fallback.*
 
-- **Wrong:** Using `toString(0)` as a portable key across machines
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using `toString(0)` as a portable key across machines
   **Right:** Use `getRelativePathFrom(baseDir)` or `toReferenceString(folderType)`
   *Full paths are machine-specific. Relative paths or pool references are portable across installations.*

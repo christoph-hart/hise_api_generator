@@ -19,8 +19,8 @@ Clears the current sample map by removing all samples. Kills all active voices b
 - This is an asynchronous operation internally -- the sample map clear happens via `killAllVoicesAndCall`. The return value indicates the clear was scheduled, not necessarily completed.
 
 **Cross References:**
-- `Sampler.loadSampleMap`
-- `Sampler.loadSampleMapFromJSON`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.loadSampleMapFromJSON$`
 
 ---
 
@@ -43,9 +43,9 @@ Returns an array of Sample objects corresponding to the samples currently select
 - Returns an empty array silently in exported plugins (compiled with USE_FRONTEND). No error is reported.
 
 **Cross References:**
-- `Sampler.createListFromScriptSelection`
-- `Sampler.createSelection`
-- `Sampler.setGUISelection`
+- `$API.Sampler.createListFromScriptSelection$`
+- `$API.Sampler.createSelection$`
+- `$API.Sampler.setGUISelection$`
 
 **Related Preprocessors:**
 USE_BACKEND
@@ -68,8 +68,8 @@ Converts the legacy script selection (populated by `selectSounds()`) into an arr
 (No parameters.)
 
 **Cross References:**
-- `Sampler.selectSounds`
-- `Sampler.createSelection`
+- `$API.Sampler.selectSounds$`
+- `$API.Sampler.createSelection$`
 
 ---
 
@@ -91,9 +91,9 @@ Creates an array of Sample objects matching the given regex pattern against samp
 | regex | String | no | Regular expression to match against sample file names | Valid regex pattern |
 
 **Cross References:**
-- `Sampler.createSelectionFromIndexes`
-- `Sampler.createSelectionWithFilter`
-- `Sampler.selectSounds`
+- `$API.Sampler.createSelectionFromIndexes$`
+- `$API.Sampler.createSelectionWithFilter$`
+- `$API.Sampler.selectSounds$`
 
 ---
 
@@ -115,8 +115,8 @@ Creates an array of Sample objects from sample indices. Accepts an array of inte
 | indexData | Array | yes | Array of sample indices, a single index, or -1 for all | -1 or valid sample indices |
 
 **Cross References:**
-- `Sampler.createSelection`
-- `Sampler.createSelectionWithFilter`
+- `$API.Sampler.createSelection$`
+- `$API.Sampler.createSelectionWithFilter$`
 
 ---
 
@@ -159,8 +159,8 @@ Console.print("Found " + loudSamples.length + " loud samples");
 ```
 
 **Cross References:**
-- `Sampler.createSelection`
-- `Sampler.createSelectionFromIndexes`
+- `$API.Sampler.createSelection$`
+- `$API.Sampler.createSelectionFromIndexes$`
 
 ---
 
@@ -182,9 +182,9 @@ Enables or disables automatic round robin group cycling. Must be disabled before
 | shouldUseRoundRobin | Integer | no | true to enable automatic RR, false to disable | -- |
 
 **Cross References:**
-- `Sampler.setActiveGroup`
-- `Sampler.setMultiGroupIndex`
-- `Sampler.getRRGroupsForMessage`
+- `$API.Sampler.setActiveGroup$`
+- `$API.Sampler.setMultiGroupIndex$`
+- `$API.Sampler.getRRGroupsForMessage$`
 
 ---
 
@@ -203,8 +203,8 @@ Returns the currently active round robin group index. Delegates to `getActiveRRG
 (No parameters.)
 
 **Cross References:**
-- `Sampler.getActiveRRGroupForEventId`
-- `Sampler.setActiveGroup`
+- `$API.Sampler.getActiveRRGroupForEventId$`
+- `$API.Sampler.setActiveGroup$`
 
 ---
 
@@ -225,8 +225,8 @@ Returns the active round robin group for a specific event. Pass -1 for the globa
 | eventId | Integer | no | The event ID, or -1 for global state | -1 or valid event ID |
 
 **Cross References:**
-- `Sampler.getActiveRRGroup`
-- `Sampler.setActiveGroupForEventId`
+- `$API.Sampler.getActiveRRGroup$`
+- `$API.Sampler.setActiveGroupForEventId$`
 
 ---
 
@@ -247,10 +247,10 @@ Returns the value of a sampler module attribute (processor parameter) by index. 
 | index | Number | yes | Parameter index | Valid parameter index |
 
 **Cross References:**
-- `Sampler.setAttribute`
-- `Sampler.getAttributeId`
-- `Sampler.getAttributeIndex`
-- `Sampler.getNumAttributes`
+- `$API.Sampler.setAttribute$`
+- `$API.Sampler.getAttributeId$`
+- `$API.Sampler.getAttributeIndex$`
+- `$API.Sampler.getNumAttributes$`
 
 ---
 
@@ -272,8 +272,8 @@ Returns the string identifier of a sampler parameter by its index.
 | parameterIndex | Number | yes | Parameter index | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `Sampler.getAttributeIndex`
-- `Sampler.getAttribute`
+- `$API.Sampler.getAttributeIndex$`
+- `$API.Sampler.getAttribute$`
 
 ---
 
@@ -295,8 +295,8 @@ Returns the parameter index for a given parameter identifier string. Returns -1 
 | parameterId | String | yes | The parameter identifier string | Valid parameter name |
 
 **Cross References:**
-- `Sampler.getAttributeId`
-- `Sampler.getAttribute`
+- `$API.Sampler.getAttributeId$`
+- `$API.Sampler.getAttribute$`
 
 ---
 
@@ -326,8 +326,8 @@ Converts an AudioWaveform user preset object into a base64-encoded sample map. R
 | rangeEnd | Integer | Sample end offset (0 if not set) |
 
 **Cross References:**
-- `Sampler.parseSampleFile`
-- `Sampler.loadSampleMapFromBase64`
+- `$API.Sampler.parseSampleFile$`
+- `$API.Sampler.loadSampleMapFromBase64$`
 
 ---
 
@@ -347,9 +347,9 @@ Returns a ComplexGroupManager object for advanced group management on this sampl
 (No parameters.)
 
 **Cross References:**
-- `Sampler.setActiveGroup`
-- `Sampler.setMultiGroupIndex`
-- `Sampler.enableRoundRobin`
+- `$API.Sampler.setActiveGroup$`
+- `$API.Sampler.setMultiGroupIndex$`
+- `$API.Sampler.enableRoundRobin$`
 
 ---
 
@@ -369,8 +369,8 @@ Returns the ID string of the currently loaded sample map. Returns an empty strin
 (No parameters.)
 
 **Cross References:**
-- `Sampler.loadSampleMap`
-- `Sampler.getSampleMapList`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.getSampleMapList$`
 
 ---
 
@@ -395,9 +395,9 @@ Returns the name (suffix) of a mic position channel by index. Only works with mu
 - Reports a script error if the sampler has only one mic position and is not using static matrix. Check `getNumMicPositions()` first.
 
 **Cross References:**
-- `Sampler.getNumMicPositions`
-- `Sampler.purgeMicPosition`
-- `Sampler.isMicPositionPurged`
+- `$API.Sampler.getNumMicPositions$`
+- `$API.Sampler.purgeMicPosition$`
+- `$API.Sampler.isMicPositionPurged$`
 
 ---
 
@@ -416,8 +416,8 @@ Returns the number of currently active round robin groups.
 (No parameters.)
 
 **Cross References:**
-- `Sampler.getActiveRRGroup`
-- `Sampler.setActiveGroup`
+- `$API.Sampler.getActiveRRGroup$`
+- `$API.Sampler.setActiveGroup$`
 
 ---
 
@@ -436,8 +436,8 @@ Returns the total number of processor parameters (attributes) available on this 
 (No parameters.)
 
 **Cross References:**
-- `Sampler.getAttribute`
-- `Sampler.setAttribute`
+- `$API.Sampler.getAttribute$`
+- `$API.Sampler.setAttribute$`
 
 ---
 
@@ -456,9 +456,9 @@ Returns the number of mic positions (channels) configured on this sampler.
 (No parameters.)
 
 **Cross References:**
-- `Sampler.getMicPositionName`
-- `Sampler.isMicPositionPurged`
-- `Sampler.purgeMicPosition`
+- `$API.Sampler.getMicPositionName$`
+- `$API.Sampler.isMicPositionPurged$`
+- `$API.Sampler.purgeMicPosition$`
 
 ---
 
@@ -478,9 +478,9 @@ Returns the number of sounds in the legacy script selection (populated by `selec
 (No parameters.)
 
 **Cross References:**
-- `Sampler.selectSounds`
-- `Sampler.getSoundProperty`
-- `Sampler.createListFromScriptSelection`
+- `$API.Sampler.selectSounds$`
+- `$API.Sampler.getSoundProperty$`
+- `$API.Sampler.createListFromScriptSelection$`
 
 ---
 
@@ -505,8 +505,8 @@ Returns the number of round robin groups that have samples mapped for the given 
 - Requires `enableRoundRobin(false)` and `refreshRRMap()` to have been called first. Reports a script error if round robin is still enabled.
 
 **Cross References:**
-- `Sampler.enableRoundRobin`
-- `Sampler.refreshRRMap`
+- `$API.Sampler.enableRoundRobin$`
+- `$API.Sampler.refreshRRMap$`
 
 ---
 
@@ -536,8 +536,8 @@ Returns the current release start options as a JSON object. Requires the HISE_SA
 | PeakSmoothing | Double | Peak smoothing factor (default 0.96) |
 
 **Cross References:**
-- `Sampler.setReleaseStartOptions`
-- `Sampler.setAllowReleaseStart`
+- `$API.Sampler.setReleaseStartOptions$`
+- `$API.Sampler.setAllowReleaseStart$`
 
 **Related Preprocessors:**
 HISE_SAMPLER_ALLOW_RELEASE_START
@@ -560,8 +560,8 @@ Returns the current sample map as a zstd-compressed, base64-encoded string. This
 (No parameters.)
 
 **Cross References:**
-- `Sampler.loadSampleMapFromBase64`
-- `Sampler.saveCurrentSampleMap`
+- `$API.Sampler.loadSampleMapFromBase64$`
+- `$API.Sampler.saveCurrentSampleMap$`
 
 ---
 
@@ -581,8 +581,8 @@ Returns a sorted array of reference strings for all available sample maps in the
 (No parameters.)
 
 **Cross References:**
-- `Sampler.loadSampleMap`
-- `Sampler.getCurrentSampleMapId`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.getCurrentSampleMapId$`
 
 ---
 
@@ -605,9 +605,9 @@ Returns the value of a sound property for a specific sound in the legacy script 
 | soundIndex | Integer | no | Index into the legacy script selection | 0 to getNumSelectedSounds()-1 |
 
 **Cross References:**
-- `Sampler.setSoundProperty`
-- `Sampler.selectSounds`
-- `Sampler.getNumSelectedSounds`
+- `$API.Sampler.setSoundProperty$`
+- `$API.Sampler.selectSounds$`
+- `$API.Sampler.getNumSelectedSounds$`
 
 ---
 
@@ -637,8 +637,8 @@ Returns the current timestretch configuration as a JSON object.
 | PreferredEngine | String | Engine identifier string |
 
 **Cross References:**
-- `Sampler.setTimestretchOptions`
-- `Sampler.setTimestretchRatio`
+- `$API.Sampler.setTimestretchOptions$`
+- `$API.Sampler.setTimestretchRatio$`
 
 ---
 
@@ -665,8 +665,8 @@ Imports audio files into the sampler and returns an array of Sample objects for 
 - Returns the input array unchanged if it is empty.
 
 **Cross References:**
-- `Sampler.loadSampleMap`
-- `Sampler.parseSampleFile`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.parseSampleFile$`
 
 **Related Preprocessors:**
 HI_ENABLE_EXPANSION_EDITING
@@ -693,8 +693,8 @@ Returns whether a mic position channel is purged (disabled). Returns the inverse
 - [BUG] Returns false silently for out-of-range indices instead of reporting an error.
 
 **Cross References:**
-- `Sampler.purgeMicPosition`
-- `Sampler.getNumMicPositions`
+- `$API.Sampler.purgeMicPosition$`
+- `$API.Sampler.getNumMicPositions$`
 
 ---
 
@@ -715,7 +715,7 @@ Returns whether any samples are mapped to the given MIDI note number.
 | noteNumber | Integer | no | MIDI note number to check | 0-127 |
 
 **Cross References:**
-- `Sampler.getRRGroupsForMessage`
+- `$API.Sampler.getRRGroupsForMessage$`
 
 ---
 
@@ -737,9 +737,9 @@ Loads a sample from the legacy script selection into a buffer array for analysis
 | soundIndex | Integer | no | Index into the legacy script selection | 0 to getNumSelectedSounds()-1 |
 
 **Cross References:**
-- `Sampler.selectSounds`
-- `Sampler.getNumSelectedSounds`
-- `Sampler.createSelection`
+- `$API.Sampler.selectSounds$`
+- `$API.Sampler.getNumSelectedSounds$`
+- `$API.Sampler.createSelection$`
 
 ---
 
@@ -764,11 +764,11 @@ Loads a sample map by its pool reference string. Kills all active voices before 
 - Reports a script error for empty strings or invalid pool references.
 
 **Cross References:**
-- `Sampler.getSampleMapList`
-- `Sampler.getCurrentSampleMapId`
-- `Sampler.loadSampleMapFromJSON`
-- `Sampler.loadSampleMapFromBase64`
-- `Sampler.clearSampleMap`
+- `$API.Sampler.getSampleMapList$`
+- `$API.Sampler.getCurrentSampleMapId$`
+- `$API.Sampler.loadSampleMapFromJSON$`
+- `$API.Sampler.loadSampleMapFromBase64$`
+- `$API.Sampler.clearSampleMap$`
 
 ---
 
@@ -790,9 +790,9 @@ Loads a sample map from a zstd-compressed, base64-encoded string (as produced by
 | b64 | String | no | Base64-encoded, zstd-compressed sample map data | Valid encoded string |
 
 **Cross References:**
-- `Sampler.getSampleMapAsBase64`
-- `Sampler.loadSampleMap`
-- `Sampler.loadSampleMapFromJSON`
+- `$API.Sampler.getSampleMapAsBase64$`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.loadSampleMapFromJSON$`
 
 ---
 
@@ -832,9 +832,9 @@ Sampler.loadSampleMapFromJSON(samples);
 ```
 
 **Cross References:**
-- `Sampler.loadSampleMap`
-- `Sampler.loadSampleMapFromBase64`
-- `Sampler.parseSampleFile`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.loadSampleMapFromBase64$`
+- `$API.Sampler.parseSampleFile$`
 
 ---
 
@@ -859,8 +859,8 @@ Loads a sample map from an SFZ file. Accepts a ScriptFile object or an absolute 
 - Uses an inverted return convention: undefined means success, a String means failure. Check with `isDefined(result)` to detect errors.
 
 **Cross References:**
-- `Sampler.loadSampleMap`
-- `Sampler.loadSampleMapFromJSON`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.loadSampleMapFromJSON$`
 
 ---
 
@@ -882,8 +882,8 @@ Parses an audio file and returns its metadata as a JSON object. The returned obj
 | sampleFile | ScriptObject | no | ScriptFile object or absolute path string | Must point to valid audio file |
 
 **Cross References:**
-- `Sampler.loadSampleMapFromJSON`
-- `Sampler.getAudioWaveformContentAsBase64`
+- `$API.Sampler.loadSampleMapFromJSON$`
+- `$API.Sampler.getAudioWaveformContentAsBase64$`
 
 ---
 
@@ -910,9 +910,9 @@ Purges or unpurges a mic position channel by name. The name must match the chann
 - Reports an error if called on a single-mic sampler without static matrix.
 
 **Cross References:**
-- `Sampler.getMicPositionName`
-- `Sampler.isMicPositionPurged`
-- `Sampler.getNumMicPositions`
+- `$API.Sampler.getMicPositionName$`
+- `$API.Sampler.isMicPositionPurged$`
+- `$API.Sampler.getNumMicPositions$`
 
 ---
 
@@ -939,8 +939,8 @@ Purges the specified Sample objects and unpurges all other samples. The selectio
 - Reports errors if the array contains duplicate Sample objects or samples not in the current sampler.
 
 **Cross References:**
-- `Sampler.createSelection`
-- `Sampler.createSelectionFromIndexes`
+- `$API.Sampler.createSelection$`
+- `$API.Sampler.createSelectionFromIndexes$`
 
 ---
 
@@ -960,8 +960,8 @@ Sends change notifications to update the sampler interface and sound pool displa
 (No parameters.)
 
 **Cross References:**
-- `Sampler.setSoundPropertyForAllSamples`
-- `Sampler.setSoundPropertyForSelection`
+- `$API.Sampler.setSoundPropertyForAllSamples$`
+- `$API.Sampler.setSoundPropertyForSelection$`
 
 ---
 
@@ -984,8 +984,8 @@ Rebuilds the internal round robin group map. Must be called after loading a samp
 - Reports a script error if round robin is still enabled. Call `enableRoundRobin(false)` first.
 
 **Cross References:**
-- `Sampler.getRRGroupsForMessage`
-- `Sampler.enableRoundRobin`
+- `$API.Sampler.getRRGroupsForMessage$`
+- `$API.Sampler.enableRoundRobin$`
 
 ---
 
@@ -1007,9 +1007,9 @@ Saves the current sample map to an XML file in the SampleMaps directory. The pat
 | relativePathWithoutXml | String | no | Relative path within SampleMaps directory (no .xml extension) | Non-empty |
 
 **Cross References:**
-- `Sampler.getSampleMapAsBase64`
-- `Sampler.loadSampleMap`
-- `Sampler.getCurrentSampleMapId`
+- `$API.Sampler.getSampleMapAsBase64$`
+- `$API.Sampler.loadSampleMap$`
+- `$API.Sampler.getCurrentSampleMapId$`
 
 ---
 
@@ -1031,10 +1031,10 @@ Populates the legacy script selection by matching sample file names against a re
 | regexWildcard | String | no | Regular expression to match against sample file names | Valid regex pattern |
 
 **Cross References:**
-- `Sampler.getNumSelectedSounds`
-- `Sampler.getSoundProperty`
-- `Sampler.setSoundProperty`
-- `Sampler.createSelection`
+- `$API.Sampler.getNumSelectedSounds$`
+- `$API.Sampler.getSoundProperty$`
+- `$API.Sampler.setSoundProperty$`
+- `$API.Sampler.createSelection$`
 
 ---
 
@@ -1059,9 +1059,9 @@ Sets a single active round robin group. Delegates to `setActiveGroupForEventId(-
 - Reports an error if the group index is invalid.
 
 **Cross References:**
-- `Sampler.setActiveGroupForEventId`
-- `Sampler.enableRoundRobin`
-- `Sampler.setMultiGroupIndex`
+- `$API.Sampler.setActiveGroupForEventId$`
+- `$API.Sampler.enableRoundRobin$`
+- `$API.Sampler.setMultiGroupIndex$`
 
 ---
 
@@ -1088,9 +1088,9 @@ Sets the active round robin group for a specific event or globally. Pass -1 for 
 - When eventId != -1, reports "This method is only available in the onNoteOnCallback" if called outside the audio thread.
 
 **Cross References:**
-- `Sampler.setActiveGroup`
-- `Sampler.getActiveRRGroupForEventId`
-- `Sampler.enableRoundRobin`
+- `$API.Sampler.setActiveGroup$`
+- `$API.Sampler.getActiveRRGroupForEventId$`
+- `$API.Sampler.enableRoundRobin$`
 
 ---
 
@@ -1112,8 +1112,8 @@ Enables or disables release start for a specific event. Returns true on success.
 | shouldBeAllowed | Integer | no | true to allow release start, false to disallow | -- |
 
 **Cross References:**
-- `Sampler.getReleaseStartOptions`
-- `Sampler.setReleaseStartOptions`
+- `$API.Sampler.getReleaseStartOptions$`
+- `$API.Sampler.setReleaseStartOptions$`
 
 **Related Preprocessors:**
 HISE_SAMPLER_ALLOW_RELEASE_START
@@ -1138,9 +1138,9 @@ Sets a sampler module attribute (processor parameter) by index. Uses the standar
 | newValue | Number | yes | New parameter value | Depends on parameter |
 
 **Cross References:**
-- `Sampler.getAttribute`
-- `Sampler.getAttributeId`
-- `Sampler.getNumAttributes`
+- `$API.Sampler.getAttribute$`
+- `$API.Sampler.getAttributeId$`
+- `$API.Sampler.getNumAttributes$`
 
 ---
 
@@ -1163,8 +1163,8 @@ Sets the sample editor GUI selection to the given array of Sample objects. Only 
 | addToSelection | Integer | no | true to add to existing selection, false to replace | -- |
 
 **Cross References:**
-- `Sampler.createListFromGUISelection`
-- `Sampler.createSelection`
+- `$API.Sampler.createListFromGUISelection$`
+- `$API.Sampler.createSelection$`
 
 **Related Preprocessors:**
 USE_BACKEND
@@ -1192,9 +1192,9 @@ Enables or disables one or more round robin groups simultaneously. Accepts a sin
 - Requires `enableRoundRobin(false)` first. Reports a script error if round robin is enabled.
 
 **Cross References:**
-- `Sampler.setMultiGroupIndexForEventId`
-- `Sampler.setActiveGroup`
-- `Sampler.enableRoundRobin`
+- `$API.Sampler.setMultiGroupIndexForEventId$`
+- `$API.Sampler.setActiveGroup$`
+- `$API.Sampler.enableRoundRobin$`
 
 ---
 
@@ -1220,9 +1220,9 @@ Enables or disables one or more round robin groups for a specific event or globa
 - Requires `enableRoundRobin(false)` first. Reports a script error if round robin is enabled.
 
 **Cross References:**
-- `Sampler.setMultiGroupIndex`
-- `Sampler.setActiveGroupForEventId`
-- `Sampler.enableRoundRobin`
+- `$API.Sampler.setMultiGroupIndex$`
+- `$API.Sampler.setActiveGroupForEventId$`
+- `$API.Sampler.enableRoundRobin$`
 
 ---
 
@@ -1244,9 +1244,9 @@ Sets the volume for a round robin group in decibels. Pass -1 as group index to s
 | gainInDecibels | Integer | no | Volume in decibels | Negative for attenuation |
 
 **Cross References:**
-- `Sampler.setActiveGroup`
-- `Sampler.getNumActiveGroups`
-- `Sampler.enableRoundRobin`
+- `$API.Sampler.setActiveGroup$`
+- `$API.Sampler.getNumActiveGroups$`
+- `$API.Sampler.enableRoundRobin$`
 
 ---
 
@@ -1278,8 +1278,8 @@ Sets the release start options from a JSON object. Requires HISE_SAMPLER_ALLOW_R
 | PeakSmoothing | Double | Peak smoothing factor (default 0.96) |
 
 **Cross References:**
-- `Sampler.getReleaseStartOptions`
-- `Sampler.setAllowReleaseStart`
+- `$API.Sampler.getReleaseStartOptions$`
+- `$API.Sampler.setAllowReleaseStart$`
 
 **Related Preprocessors:**
 HISE_SAMPLER_ALLOW_RELEASE_START
@@ -1304,8 +1304,8 @@ Enables or disables sorting samples by round robin group for optimized voice sta
 | shouldSort | Integer | no | true to enable group sorting, false to disable | -- |
 
 **Cross References:**
-- `Sampler.enableRoundRobin`
-- `Sampler.setActiveGroup`
+- `$API.Sampler.enableRoundRobin$`
+- `$API.Sampler.setActiveGroup$`
 
 ---
 
@@ -1332,10 +1332,10 @@ Sets a sound property for a specific sound in the legacy script selection. Note 
 - Parameter order is reversed compared to `getSoundProperty(propertyIndex, soundIndex)`. This inconsistency can cause hard-to-diagnose bugs.
 
 **Cross References:**
-- `Sampler.getSoundProperty`
-- `Sampler.selectSounds`
-- `Sampler.setSoundPropertyForSelection`
-- `Sampler.setSoundPropertyForAllSamples`
+- `$API.Sampler.getSoundProperty$`
+- `$API.Sampler.selectSounds$`
+- `$API.Sampler.setSoundPropertyForSelection$`
+- `$API.Sampler.setSoundPropertyForAllSamples$`
 
 ---
 
@@ -1358,8 +1358,8 @@ Sets a sound property to the same value for ALL samples in the sampler (not just
 | newValue | NotUndefined | no | New property value | Depends on property |
 
 **Cross References:**
-- `Sampler.setSoundPropertyForSelection`
-- `Sampler.setSoundProperty`
+- `$API.Sampler.setSoundPropertyForSelection$`
+- `$API.Sampler.setSoundProperty$`
 
 ---
 
@@ -1382,9 +1382,9 @@ Sets a sound property to the same value for all sounds in the legacy script sele
 | newValue | NotUndefined | no | New property value | Depends on property |
 
 **Cross References:**
-- `Sampler.selectSounds`
-- `Sampler.setSoundPropertyForAllSamples`
-- `Sampler.setSoundProperty`
+- `$API.Sampler.selectSounds$`
+- `$API.Sampler.setSoundPropertyForAllSamples$`
+- `$API.Sampler.setSoundProperty$`
 
 ---
 
@@ -1415,8 +1415,8 @@ Sets the timestretch configuration from a JSON object.
 | "TempoSynced" | Ratio automatically calculated from sample length and current tempo |
 
 **Cross References:**
-- `Sampler.getTimestretchOptions`
-- `Sampler.setTimestretchRatio`
+- `$API.Sampler.getTimestretchOptions$`
+- `$API.Sampler.setTimestretchRatio$`
 
 ---
 
@@ -1438,8 +1438,8 @@ Sets the timestretch ratio. A value of 1.0 means original speed, 2.0 means doubl
 | newRatio | Double | no | Timestretch ratio | Positive value, 1.0 = original speed |
 
 **Cross References:**
-- `Sampler.setTimestretchOptions`
-- `Sampler.getTimestretchOptions`
+- `$API.Sampler.setTimestretchOptions$`
+- `$API.Sampler.getTimestretchOptions$`
 
 ---
 
@@ -1461,5 +1461,5 @@ Enables or disables the static routing matrix for this sampler. When enabled, th
 | shouldUseStaticMatrix | Integer | no | true to enable static matrix, false for dynamic mic routing | -- |
 
 **Cross References:**
-- `Sampler.getNumMicPositions`
-- `Sampler.purgeMicPosition`
+- `$API.Sampler.getNumMicPositions$`
+- `$API.Sampler.purgeMicPosition$`

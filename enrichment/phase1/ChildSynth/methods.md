@@ -23,9 +23,9 @@ Adds a global modulator receiver to the specified modulator chain of this synth.
 - [BUG] If `globalMod` is not a ScriptingModulator (fails the dynamic_cast), the method silently returns undefined without an error message.
 
 **Cross References:**
-- `ChildSynth.addStaticGlobalModulator`
-- `ChildSynth.addModulator`
-- `ChildSynth.getModulatorChain`
+- `$API.ChildSynth.addStaticGlobalModulator$`
+- `$API.ChildSynth.addModulator$`
+- `$API.ChildSynth.getModulatorChain$`
 
 ---
 
@@ -52,9 +52,9 @@ Creates and adds a new modulator of the specified type to the given modulator ch
 - [BUG] The `typeName` must be the exact C++ class name, not a human-readable name. Using incorrect type names causes silent failure (returns undefined, no error message).
 
 **Cross References:**
-- `ChildSynth.addGlobalModulator`
-- `ChildSynth.addStaticGlobalModulator`
-- `ChildSynth.getModulatorChain`
+- `$API.ChildSynth.addGlobalModulator$`
+- `$API.ChildSynth.addStaticGlobalModulator$`
+- `$API.ChildSynth.getModulatorChain$`
 
 ---
 
@@ -81,9 +81,9 @@ Adds a static global modulator receiver to the specified modulator chain. Unlike
 - [BUG] If `timeVariantMod` is not a ScriptingModulator (fails the dynamic_cast), the method silently returns undefined without an error message.
 
 **Cross References:**
-- `ChildSynth.addGlobalModulator`
-- `ChildSynth.addModulator`
-- `ChildSynth.getModulatorChain`
+- `$API.ChildSynth.addGlobalModulator$`
+- `$API.ChildSynth.addModulator$`
+- `$API.ChildSynth.getModulatorChain$`
 
 ---
 
@@ -105,8 +105,8 @@ None.
 - [BUG] If the underlying object reference is invalid (synth was deleted), still creates a Sampler wrapping nullptr rather than returning undefined.
 
 **Cross References:**
-- `Synth.getSampler`
-- `ChildSynth.getChildSynthByIndex`
+- `$API.Synth.getSampler$`
+- `$API.ChildSynth.getChildSynthByIndex$`
 
 ---
 
@@ -124,8 +124,8 @@ Checks whether the wrapped synth module still exists and has not been deleted. R
 None.
 
 **Cross References:**
-- `Effect.exists`
-- `MidiProcessor.exists`
+- `$API.Effect.exists$`
+- `$API.MidiProcessor.exists$`
 
 ---
 
@@ -144,7 +144,7 @@ Exports the complete processor state as a base64-encoded string. The state captu
 None.
 
 **Cross References:**
-- `ChildSynth.restoreState`
+- `$API.ChildSynth.restoreState$`
 
 ---
 
@@ -165,10 +165,10 @@ Returns the current value of the attribute at the specified parameter index. Sta
 | parameterIndex | Integer | no | Index of the attribute to get | Must be a valid parameter index for the wrapped processor |
 
 **Cross References:**
-- `ChildSynth.setAttribute`
-- `ChildSynth.getAttributeId`
-- `ChildSynth.getAttributeIndex`
-- `ChildSynth.getNumAttributes`
+- `$API.ChildSynth.setAttribute$`
+- `$API.ChildSynth.getAttributeId$`
+- `$API.ChildSynth.getAttributeIndex$`
+- `$API.ChildSynth.getNumAttributes$`
 
 ---
 
@@ -190,10 +190,10 @@ Returns the string identifier of the attribute at the specified parameter index.
 | parameterIndex | Integer | no | Index of the attribute | Must be a valid parameter index |
 
 **Cross References:**
-- `ChildSynth.getAttribute`
-- `ChildSynth.setAttribute`
-- `ChildSynth.getAttributeIndex`
-- `ChildSynth.getNumAttributes`
+- `$API.ChildSynth.getAttribute$`
+- `$API.ChildSynth.setAttribute$`
+- `$API.ChildSynth.getAttributeIndex$`
+- `$API.ChildSynth.getNumAttributes$`
 
 ---
 
@@ -215,10 +215,10 @@ Returns the integer parameter index for the given string identifier. This is the
 | parameterId | String | no | String identifier of the attribute (e.g., "Gain") | -- |
 
 **Cross References:**
-- `ChildSynth.getAttributeId`
-- `ChildSynth.getAttribute`
-- `ChildSynth.setAttribute`
-- `ChildSynth.getNumAttributes`
+- `$API.ChildSynth.getAttributeId$`
+- `$API.ChildSynth.getAttribute$`
+- `$API.ChildSynth.setAttribute$`
+- `$API.ChildSynth.getNumAttributes$`
 
 ---
 
@@ -242,9 +242,9 @@ Returns a ChildSynth reference to the child sound generator at the specified ind
 - [BUG] If the synth is not a Chain type (e.g., a plain SineSynth), the cast to `Chain*` fails and returns an invalid ChildSynth without an error message.
 
 **Cross References:**
-- `Synth.getChildSynth`
-- `Synth.getChildSynthByIndex`
-- `ChildSynth.asSampler`
+- `$API.Synth.getChildSynth$`
+- `$API.Synth.getChildSynthByIndex$`
+- `$API.ChildSynth.asSampler$`
 
 ---
 
@@ -309,10 +309,10 @@ Returns a Modulator reference to the modulator chain at the specified index. The
 - [BUG] Passing an invalid chain index (e.g., 0 for MidiProcessor) may succeed the Modulator cast but give a handle to the wrong chain type. The error message only triggers when the cast to `Modulator*` fails completely.
 
 **Cross References:**
-- `ChildSynth.addModulator`
-- `ChildSynth.addGlobalModulator`
-- `ChildSynth.addStaticGlobalModulator`
-- `ChildSynth.setModulationInitialValue`
+- `$API.ChildSynth.addModulator$`
+- `$API.ChildSynth.addGlobalModulator$`
+- `$API.ChildSynth.addStaticGlobalModulator$`
+- `$API.ChildSynth.setModulationInitialValue$`
 
 ---
 
@@ -330,10 +330,10 @@ Returns the total number of attributes (parameters) on the wrapped synth process
 None.
 
 **Cross References:**
-- `ChildSynth.getAttribute`
-- `ChildSynth.setAttribute`
-- `ChildSynth.getAttributeId`
-- `ChildSynth.getAttributeIndex`
+- `$API.ChildSynth.getAttribute$`
+- `$API.ChildSynth.setAttribute$`
+- `$API.ChildSynth.getAttributeId$`
+- `$API.ChildSynth.getAttributeIndex$`
 
 ---
 
@@ -355,7 +355,7 @@ None.
 - [BUG] Does not call `checkValidObject()` before creating the ScriptRoutingMatrix. If the synth reference is invalid, creates a RoutingMatrix wrapping nullptr, which will fail on subsequent calls.
 
 **Cross References:**
-- `Synth.getRoutingMatrix`
+- `$API.Synth.getRoutingMatrix$`
 
 ---
 
@@ -373,7 +373,7 @@ Returns whether the wrapped synth is currently bypassed.
 None.
 
 **Cross References:**
-- `ChildSynth.setBypassed`
+- `$API.ChildSynth.setBypassed$`
 
 ---
 
@@ -395,7 +395,7 @@ Restores the processor state from a base64-encoded string previously obtained vi
 | base64State | String | no | Base64-encoded processor state from exportState() | Must be a valid base64-encoded ValueTree |
 
 **Cross References:**
-- `ChildSynth.exportState`
+- `$API.ChildSynth.exportState$`
 
 ---
 
@@ -418,10 +418,10 @@ Sets the value of the attribute at the specified parameter index. Uses thread-sa
 | newValue | Double | no | New value for the attribute | Range depends on the specific parameter |
 
 **Cross References:**
-- `ChildSynth.getAttribute`
-- `ChildSynth.getAttributeId`
-- `ChildSynth.getAttributeIndex`
-- `ChildSynth.getNumAttributes`
+- `$API.ChildSynth.getAttribute$`
+- `$API.ChildSynth.getAttributeId$`
+- `$API.ChildSynth.getAttributeIndex$`
+- `$API.ChildSynth.getNumAttributes$`
 
 ---
 
@@ -443,7 +443,7 @@ Sets the bypass state of the wrapped synth. When bypassed, the synth does not pr
 | shouldBeBypassed | Integer | no | true to bypass, false to enable | -- |
 
 **Cross References:**
-- `ChildSynth.isBypassed`
+- `$API.ChildSynth.isBypassed$`
 
 ---
 
@@ -493,5 +493,5 @@ Sets the initial modulation value for the specified modulator chain. This is the
 | initialValue | Double | no | The initial modulation value | -- |
 
 **Cross References:**
-- `ChildSynth.getModulatorChain`
-- `ChildSynth.addModulator`
+- `$API.ChildSynth.getModulatorChain$`
+- `$API.ChildSynth.addModulator$`

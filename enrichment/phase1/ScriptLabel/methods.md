@@ -42,8 +42,8 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
-- `ScriptComponent.setControlCallback`
-- `ScriptComponent.getValue`
+- `$API.ScriptComponent.setControlCallback$`
+- `$API.ScriptComponent.getValue$`
 
 ---
 
@@ -69,7 +69,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptComponent.showControl`
+- `$API.ScriptComponent.showControl$`
 
 ---
 
@@ -96,8 +96,8 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.set
 
 **Cross References:**
-- `ScriptComponent.set`
-- `ScriptComponent.getAllProperties`
+- `$API.ScriptComponent.set$`
+- `$API.ScriptComponent.getAllProperties$`
 
 ---
 
@@ -112,8 +112,8 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes both base ScriptComponent properties and any child-class-specific properties.
 
 **Cross References:**
-- `ScriptComponent.get`
-- `ScriptComponent.set`
+- `$API.ScriptComponent.get$`
+- `$API.ScriptComponent.set$`
 
 ---
 
@@ -144,7 +144,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 - Related: get("x"), get("parentComponent")
 
 **Cross References:**
-- `ScriptComponent.getGlobalPositionY`
+- `$API.ScriptComponent.getGlobalPositionY$`
 
 ---
 
@@ -163,7 +163,7 @@ Returns the absolute y-position relative to the interface root, computed by recu
 - Related: get("y"), get("parentComponent")
 
 **Cross References:**
-- `ScriptComponent.getGlobalPositionX`
+- `$API.ScriptComponent.getGlobalPositionX$`
 
 ---
 
@@ -227,8 +227,8 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 Returns the label text (`text` property).
 
 **Cross References:**
-- `ScriptLabel.setValue`
-- `ScriptLabel.set`
+- `$API.ScriptLabel.setValue$`
+- `$API.ScriptLabel.set$`
 
 ---
 
@@ -265,7 +265,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptComponent.loseFocus`
+- `$API.ScriptComponent.loseFocus$`
 
 ---
 
@@ -280,7 +280,7 @@ Notifies z-level listeners that the component wants to grab keyboard focus. Only
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptComponent.grabFocus`
+- `$API.ScriptComponent.grabFocus$`
 
 ---
 
@@ -320,9 +320,9 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptComponent.get`
-- `ScriptComponent.getAllProperties`
-- `ScriptLabel.getValue`
+- `$API.ScriptComponent.get$`
+- `$API.ScriptComponent.getAllProperties$`
+- `$API.ScriptLabel.getValue$`
 
 ---
 
@@ -367,7 +367,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptComponent.setKeyPressCallback`
+- `$API.ScriptComponent.setKeyPressCallback$`
 
 **Example:**
 ```javascript:consume-key-presses
@@ -445,7 +445,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptComponent.changed`
+- `$API.ScriptComponent.changed$`
 
 **Example:**
 ```javascript:label-control-callback
@@ -544,7 +544,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptComponent.setConsumedKeyPresses`
+- `$API.ScriptComponent.setConsumedKeyPresses$`
 
 **Example:**
 ```javascript:label-key-press-callback
@@ -605,9 +605,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - When CSS mode is active, colour properties (bgColour, itemColour, itemColour2, textColour) are initialized in the property tree if not already present, and default-property-removal is disabled.
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setStyleSheetPseudoState`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
 
 ---
 
@@ -659,9 +659,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setStyleSheetPseudoState`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:component-css-classes
@@ -712,9 +712,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetPseudoState`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:component-css-variables
@@ -769,9 +769,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state (bitmask 256) |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 ---
 
@@ -865,7 +865,7 @@ Sets the `visible` property with change message notification.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptComponent.fadeComponent`
+- `$API.ScriptComponent.fadeComponent$`
 
 ---
 

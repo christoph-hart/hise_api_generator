@@ -22,7 +22,7 @@ Adds a visual overlay guide (line or rectangle) for layout debugging. Pass a 4-e
 - [BUG] A 2-element array with both values non-zero (e.g., `[50, 100]`) does not create any guide -- neither the horizontal nor vertical code path matches, and the VisualGuide is added with an uninitialized type and default area.
 
 **Cross References:**
-- `Content.createScreenshot`
+- `$API.Content.createScreenshot$`
 
 **Example:**
 ```javascript:visual-guide-types
@@ -73,7 +73,7 @@ Schedules a function to execute after the specified delay in milliseconds. The c
 - [BUG] The wrapper returns `isMouseDown()` instead of undefined due to a copy-paste error. The method is void but script callers receive a spurious integer (0, 1, or 2).
 
 **Cross References:**
-- `Engine.createTimerObject`
+- `$API.Engine.createTimerObject$`
 
 **Example:**
 ```javascript:delayed-action
@@ -110,10 +110,10 @@ Creates a local Look and Feel object that can be used to customize the appearanc
 (No parameters.)
 
 **Cross References:**
-- `ScriptLookAndFeel.registerFunction`
-- `ScriptComponent.setLocalLookAndFeel`
-- `Engine.createGlobalScriptLookAndFeel`
-- `Content.createMarkdownRenderer`
+- `$API.ScriptLookAndFeel.registerFunction$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
+- `$API.Engine.createGlobalScriptLookAndFeel$`
+- `$API.Content.createMarkdownRenderer$`
 
 **Example:**
 ```javascript:local-laf-button
@@ -156,10 +156,10 @@ Creates a MarkdownRenderer object for rendering markdown text in ScriptPanel pai
 (No parameters.)
 
 **Cross References:**
-- `MarkdownRenderer.setText`
-- `MarkdownRenderer.setTextBounds`
-- `Graphics.drawMarkdownText`
-- `Content.createLocalLookAndFeel`
+- `$API.MarkdownRenderer.setText$`
+- `$API.MarkdownRenderer.setTextBounds$`
+- `$API.Graphics.drawMarkdownText$`
+- `$API.Content.createLocalLookAndFeel$`
 
 ## createPath
 
@@ -177,12 +177,12 @@ Creates a new Path object for vector drawing. Use Path methods like `startNewSub
 (No parameters.)
 
 **Cross References:**
-- `Path.startNewSubPath`
-- `Path.lineTo`
-- `Graphics.fillPath`
-- `Graphics.drawPath`
-- `Content.createSVG`
-- `Content.createShader`
+- `$API.Path.startNewSubPath$`
+- `$API.Path.lineTo$`
+- `$API.Graphics.fillPath$`
+- `$API.Graphics.drawPath$`
+- `$API.Content.createSVG$`
+- `$API.Content.createShader$`
 
 ## createScreenshot
 
@@ -207,8 +207,8 @@ Creates a PNG screenshot of a specified area and saves it to a directory. The `a
 - Does nothing if no screenshot listeners are registered (the `screenshotListeners` array is empty). This typically means no shaders or visual elements that support screenshots are active.
 
 **Cross References:**
-- `Content.addVisualGuide`
-- `FileSystem.getFolder`
+- `$API.Content.addVisualGuide$`
+- `$API.FileSystem.getFolder$`
 
 ## createShader
 
@@ -228,10 +228,10 @@ Creates a ScriptShader object for GLSL-based rendering in ScriptPanels. If `file
 | fileName | String | no | Fragment shader filename (from the project's shader folder) | Empty string to skip loading |
 
 **Cross References:**
-- `ScriptShader.setFragmentShader`
-- `ScriptPanel.setShader`
-- `Content.createPath`
-- `Content.createSVG`
+- `$API.ScriptShader.setFragmentShader$`
+- `$API.ScriptPanel.setShader$`
+- `$API.Content.createPath$`
+- `$API.Content.createSVG$`
 
 ## createSVG
 
@@ -254,9 +254,9 @@ Creates an SVG object from base64-encoded, zstd-compressed SVG data. The encoded
 - The SVG parsing happens asynchronously (SafeAsyncCall). The SVG object may not be immediately valid after creation -- the drawable is set on the message thread after XML parsing completes.
 
 **Cross References:**
-- `Graphics.drawSVG`
-- `Content.createPath`
-- `Content.createShader`
+- `$API.Graphics.drawSVG$`
+- `$API.Content.createPath$`
+- `$API.Content.createShader$`
 
 ## getAllComponents
 
@@ -276,8 +276,8 @@ Returns an array of all component references whose names match the given regex p
 | regex | String | no | Regex pattern to match component names | ".*" for all |
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addDynamicContainer
 
@@ -301,8 +301,8 @@ Creates a ScriptDynamicContainer component (a layout container that dynamically 
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addButton
 
@@ -326,8 +326,8 @@ Creates a ScriptButton (toggle button) component and adds it to the interface. A
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 **Example:**
 ```javascript:add-button-basic
@@ -365,8 +365,8 @@ Creates a ScriptComboBox (dropdown selector) component and adds it to the interf
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addFloatingTile
 
@@ -390,8 +390,8 @@ Creates a ScriptFloatingTile component (an embedded floating tile for preset bro
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addImage
 
@@ -415,8 +415,8 @@ Creates a ScriptImage component (a static image display) and adds it to the inte
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addKnob
 
@@ -440,8 +440,8 @@ Creates a ScriptSlider component (rotary knob or linear slider, depending on the
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 **Example:**
 ```javascript:add-knob-basic
@@ -480,8 +480,8 @@ Creates a ScriptLabel component (a text input/display label) and adds it to the 
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addMultipageDialog
 
@@ -505,8 +505,8 @@ Creates a ScriptMultipageDialog component (a multi-page dialog for installers, s
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addPanel
 
@@ -530,8 +530,8 @@ Creates a ScriptPanel component (a drawable panel with paint routines and mouse 
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addSliderPack
 
@@ -555,8 +555,8 @@ Creates a ScriptSliderPack component (an array of sliders for multi-value editin
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addTable
 
@@ -580,8 +580,8 @@ Creates a ScriptTable component (a curve editor for mapping tables) and adds it 
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addViewport
 
@@ -605,8 +605,8 @@ Creates a ScriptedViewport component (a scrollable viewport for child content) a
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## addWebView
 
@@ -630,8 +630,8 @@ Creates a ScriptWebView component (an embedded web browser view) and adds it to 
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## componentExists
 
@@ -650,8 +650,8 @@ Checks whether a component with the given name exists on the interface. Returns 
 | name | String | no | The component name to check | Case-sensitive |
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.getAllComponents`
+- `$API.Content.getComponent$`
+- `$API.Content.getAllComponents$`
 
 **Example:**
 ```javascript:component-exists-check
@@ -694,8 +694,8 @@ If the named component does not exist, a script error is thrown.
 - If a property key in the JSON does not match any valid property of the target component, it is silently ignored.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 **Example:**
 ```javascript:set-props-from-json
@@ -744,7 +744,7 @@ In exported plugins (USE_FRONTEND), the filename is matched against the embedded
 - The file is written relative to the UserPresets directory. Using absolute paths or paths outside this directory may not work as expected.
 
 **Cross References:**
-- `Content.restoreAllControlsFromPreset`
+- `$API.Content.restoreAllControlsFromPreset$`
 
 ## getComponent
 
@@ -768,7 +768,7 @@ Returns a reference to the component with the given name. Performs a linear sear
 - Calling `Content.getComponent()` inside callbacks, timer functions, or paint routines is a common performance mistake. Each call performs a linear search through all components. In a plugin with hundreds of components, this overhead is measurable. Always cache references as `const var` at init time.
 
 **Cross References:**
-- `Content.getAllComponents`
+- `$API.Content.getAllComponents$`
 
 **Example:**
 ```javascript:caching-component-refs
@@ -842,8 +842,8 @@ Console.print(channelVolumes.length); // 4
 Returns the component ID of the component currently being dragged, by querying registered RebuildListeners via the `DragAction::Query` action. Returns an empty string if no drag operation is active. This is part of the Content drag operation system.
 
 **Cross References:**
-- `Content.refreshDragImage`
-- `Content.getComponentUnderMouse`
+- `$API.Content.refreshDragImage$`
+- `$API.Content.getComponentUnderMouse$`
 
 ## getComponentUnderMouse
 
@@ -860,8 +860,8 @@ Returns the JUCE component ID of whatever JUCE Component is currently under the 
 - Returns the JUCE component ID, not the HISEScript component name. These may differ depending on the component wrapping hierarchy.
 
 **Cross References:**
-- `Content.getComponentUnderDrag`
-- `Content.isMouseDown`
+- `$API.Content.getComponentUnderDrag$`
+- `$API.Content.isMouseDown$`
 
 ## getCurrentTooltip
 
@@ -875,8 +875,8 @@ Returns the JUCE component ID of whatever JUCE Component is currently under the 
 Returns the tooltip text of the component currently under the mouse cursor. Uses JUCE's `TooltipClient` interface to query the tooltip. Returns an empty string if no tooltip-capable component is under the mouse or if touch input is active.
 
 **Cross References:**
-- `Content.setContentTooltip`
-- `ScriptComponent.set` (tooltip property)`
+- `$API.Content.setContentTooltip$`
+- `$API.ScriptComponent.set$` (tooltip property)`
 
 **Example:**
 ```javascript:example
@@ -933,9 +933,9 @@ t.startTimer(100);
 Returns the current interface dimensions as a `[width, height]` array.
 
 **Cross References:**
-- `Content.setWidth`
-- `Content.setHeight`
-- `Content.makeFrontInterface`
+- `$API.Content.setWidth$`
+- `$API.Content.setHeight$`
+- `$API.Content.makeFrontInterface$`
 
 **Example:**
 ```javascript:get-interface-size
@@ -985,7 +985,7 @@ Returns the screen bounds as an `[x, y, width, height]` array. When `getTotalAre
 - Acquires a `MessageManagerLock` internally. Calling this from the audio thread will block until the message thread is free, which may cause audio dropouts.
 
 **Cross References:**
-- `Content.getInterfaceSize`
+- `$API.Content.getInterfaceSize$`
 
 **Example:**
 ```javascript:drag-to-zoom-handler
@@ -1056,7 +1056,7 @@ namespace ZoomHandler
 Returns true (1) if either the Ctrl key (Windows/Linux) or Command key (macOS) is currently pressed. This provides cross-platform modifier detection -- on macOS, it checks both Command and Ctrl.
 
 **Cross References:**
-- `Content.isMouseDown`
+- `$API.Content.isMouseDown$`
 
 ## isMouseDown
 
@@ -1070,8 +1070,8 @@ Returns true (1) if either the Ctrl key (Windows/Linux) or Command key (macOS) i
 Returns the current mouse button state: 0 if no button is pressed, 1 if the left button is down, 2 if the right button is down.
 
 **Cross References:**
-- `Content.isCtrlDown`
-- `Content.getComponentUnderMouse`
+- `$API.Content.isCtrlDown$`
+- `$API.Content.getComponentUnderMouse$`
 
 ## makeFrontInterface
 
@@ -1092,10 +1092,10 @@ Sets the interface dimensions and registers this script processor as the front i
 | height | Integer | no | Interface height in pixels | > 0 |
 
 **Cross References:**
-- `Content.setWidth`
-- `Content.setHeight`
-- `Content.makeFullScreenInterface`
-- `Content.getInterfaceSize`
+- `$API.Content.setWidth$`
+- `$API.Content.setHeight$`
+- `$API.Content.makeFullScreenInterface$`
+- `$API.Content.getInterfaceSize$`
 
 **Example:**
 ```javascript:init-scaffold
@@ -1151,7 +1151,7 @@ Console.print(size[1]); // 600
 Sets the interface dimensions to the device simulator's display resolution and registers this script as the front interface. Uses `HiseDeviceSimulator::getDisplayResolution()` to determine the size. This is intended for full-screen interfaces.
 
 **Cross References:**
-- `Content.makeFrontInterface`
+- `$API.Content.makeFrontInterface$`
 
 ## refreshDragImage
 
@@ -1165,7 +1165,7 @@ Sets the interface dimensions to the device simulator's display resolution and r
 Triggers a repaint of the current drag image by notifying RebuildListeners via the `DragAction::Repaint` action. Returns true (1) if a listener handled the repaint, false (0) otherwise.
 
 **Cross References:**
-- `Content.getComponentUnderDrag`
+- `$API.Content.getComponentUnderDrag$`
 
 ## restoreAllControlsFromPreset
 
@@ -1189,7 +1189,7 @@ Restores all component values from a saved preset file. Accepts either an absolu
 - If the file exists but the processor ID does not match any child in the preset XML, a "Preset ID not found" error is thrown.
 
 **Cross References:**
-- `UserPresetHandler.loadUserPreset`
+- `$API.UserPresetHandler.loadUserPreset$`
 
 ## setContentTooltip
 
@@ -1209,7 +1209,7 @@ Sets the tooltip text for the entire content area. This tooltip appears when hov
 | tooltipText | String | no | Tooltip text for the content background | -- |
 
 **Cross References:**
-- `Content.getCurrentTooltip`
+- `$API.Content.getCurrentTooltip$`
 
 ## setHeight
 
@@ -1232,9 +1232,9 @@ Sets the interface height in pixels. Only broadcasts a size change if the new va
 - If `setHeight` is called before `setWidth` (width is still 0), no size broadcast is sent. The resize only takes effect after width is also set.
 
 **Cross References:**
-- `Content.setWidth`
-- `Content.makeFrontInterface`
-- `Content.getInterfaceSize`
+- `$API.Content.setWidth$`
+- `$API.Content.makeFrontInterface$`
+- `$API.Content.getInterfaceSize$`
 
 ## setKeyPressCallback
 
@@ -1261,7 +1261,7 @@ The callback receives a single argument: a JSON object with properties describin
 - The callback receives a JSON event object with properties like `description`, `keyCode`, `shift`, `cmd`, `alt`, but for simple shortcuts the callback typically ignores the argument and performs a direct action.
 
 **Cross References:**
-- `ScriptComponent.setKeyPressCallback`
+- `$API.ScriptComponent.setKeyPressCallback$`
 
 **Example:**
 ```javascript:keyboard-shortcut-navigation
@@ -1343,8 +1343,8 @@ Registers a callback that is called when panel timers are suspended or resumed (
 - [BUG] If the argument is not a valid JavaScript function, the method silently does nothing -- no error is reported and any previously registered callback remains active.
 
 **Cross References:**
-- `ScriptPanel.setTimerCallback`
-- `Engine.createTimerObject`
+- `$API.ScriptPanel.setTimerCallback$`
+- `$API.Engine.createTimerObject$`
 
 **Example:**
 ```javascript:suspend-timer-callback
@@ -1383,7 +1383,7 @@ Enables or disables double-resolution rendering for ScriptPanel paint routines. 
 | shouldUseDoubleResolution | Integer | no | True to enable 2x resolution for panels | Boolean |
 
 **Cross References:**
-- `ScriptPanel.setPaintRoutine`
+- `$API.ScriptPanel.setPaintRoutine$`
 
 **Example:**
 ```javascript:hidpi-panel-rendering
@@ -1432,7 +1432,7 @@ Configures the global appearance of value popups that appear when interacting wi
 | jsonData | JSON | no | Configuration object for value popup appearance | See schema below |
 
 **Cross References:**
-- `ScriptSlider.showControl`
+- `$API.ScriptSlider.showControl$`
 
 **Example:**
 ```javascript:example
@@ -1485,9 +1485,9 @@ Sets the interface width in pixels. Only broadcasts a size change if the new val
 - If `setWidth` is called before `setHeight` (height is still the default 50, which is non-zero), it will broadcast. But if height were 0, no broadcast occurs.
 
 **Cross References:**
-- `Content.setHeight`
-- `Content.makeFrontInterface`
-- `Content.getInterfaceSize`
+- `$API.Content.setHeight$`
+- `$API.Content.makeFrontInterface$`
+- `$API.Content.getInterfaceSize$`
 
 ## showModalTextInput
 
@@ -1511,8 +1511,8 @@ Shows a modal text input overlay on the interface. The properties JSON configure
 - The callback uses a closure with a capture list (`function [knob](ok, input)`) because inner anonymous functions cannot access outer function parameters. Without the capture, the component reference would be undefined inside the callback.
 
 **Cross References:**
-- `ScriptPanel.showAsPopup`
-- `Engine.getValueForText`
+- `$API.ScriptPanel.showAsPopup$`
+- `$API.Engine.getValueForText$`
 
 **Example:**
 ```javascript:example
@@ -1592,8 +1592,8 @@ Creates a ScriptAudioWaveform component (an audio waveform display for visualisi
 - Calling this method after onInit throws "Tried to add a component after onInit()". All component creation must happen during onInit.
 
 **Cross References:**
-- `Content.getComponent`
-- `Content.componentExists`
+- `$API.Content.getComponent$`
+- `$API.Content.componentExists$`
 
 ## setUpdateExistingPosition
 
@@ -1615,7 +1615,7 @@ The flag is checked inside the `addComponent<T>()` template: `if ((x != -1 && y 
 
 **Cross References:**
 - All `addXXX()` component creation methods (addKnob, addButton, addPanel, etc.)
-- `Content.setPropertiesFromJSON`
+- `$API.Content.setPropertiesFromJSON$`
 
 **Example:**
 ```javascript:disable-position-update

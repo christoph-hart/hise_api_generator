@@ -31,9 +31,9 @@ Returns the current value of the module parameter at the given index. Use the dy
 | parameterIndex | Number | no | Index of the parameter to query. Use the dynamic constants on the handle. | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `AudioSampleProcessor.getSampleRange`
-- `AudioSampleProcessor.getSampleStart`
-- `AudioSampleProcessor.setSampleRange`
+- `$API.AudioSampleProcessor.getSampleRange$`
+- `$API.AudioSampleProcessor.getSampleStart$`
+- `$API.AudioSampleProcessor.setSampleRange$`
 
 ## getNumAttributes
 
@@ -50,9 +50,9 @@ Returns the total number of parameters exposed by the wrapped processor module. 
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.getAttribute`
-- `AudioSampleProcessor.getAttributeId`
-- `AudioSampleProcessor.getAttributeIndex`
+- `$API.AudioSampleProcessor.getAttribute$`
+- `$API.AudioSampleProcessor.getAttributeId$`
+- `$API.AudioSampleProcessor.getAttributeIndex$`
 
 ## getSampleLength
 
@@ -69,8 +69,8 @@ Returns the length of the current sample range in samples. This is the differenc
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.getSampleRange`
-- `AudioSampleProcessor.getTotalLengthInSamples`
+- `$API.AudioSampleProcessor.getSampleRange$`
+- `$API.AudioSampleProcessor.getTotalLengthInSamples$`
 
 ## getSampleRange
 
@@ -88,9 +88,9 @@ Returns the active sample playback range as a two-element array `[start, end]` i
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.setSampleRange`
-- `AudioSampleProcessor.getSampleLength`
-- `AudioSampleProcessor.getSampleStart`
+- `$API.AudioSampleProcessor.setSampleRange$`
+- `$API.AudioSampleProcessor.getSampleLength$`
+- `$API.AudioSampleProcessor.getSampleStart$`
 
 ## getSampleStart
 
@@ -107,8 +107,8 @@ Returns the start position of the current sample range in samples. Equivalent to
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.getSampleRange`
-- `AudioSampleProcessor.setSampleRange`
+- `$API.AudioSampleProcessor.getSampleRange$`
+- `$API.AudioSampleProcessor.setSampleRange$`
 
 ## getTotalLengthInSamples
 
@@ -125,8 +125,8 @@ Returns the total length of the loaded audio file in samples, regardless of the 
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.getSampleLength`
-- `AudioSampleProcessor.setSampleRange`
+- `$API.AudioSampleProcessor.getSampleLength$`
+- `$API.AudioSampleProcessor.setSampleRange$`
 
 ## getAttributeId
 
@@ -146,9 +146,9 @@ Returns the name of the module parameter at the given index as a string. Use thi
 | parameterIndex | Number | no | Index of the parameter to query. | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `AudioSampleProcessor.getAttributeIndex`
-- `AudioSampleProcessor.getAttribute`
-- `AudioSampleProcessor.getNumAttributes`
+- `$API.AudioSampleProcessor.getAttributeIndex$`
+- `$API.AudioSampleProcessor.getAttribute$`
+- `$API.AudioSampleProcessor.getNumAttributes$`
 
 ## getAttributeIndex
 
@@ -168,9 +168,9 @@ Returns the parameter index for the given parameter name string. This is the rev
 | parameterId | String | no | The parameter name to look up. | Must match a valid parameter name for the wrapped processor |
 
 **Cross References:**
-- `AudioSampleProcessor.getAttributeId`
-- `AudioSampleProcessor.getAttribute`
-- `AudioSampleProcessor.setAttribute`
+- `$API.AudioSampleProcessor.getAttributeId$`
+- `$API.AudioSampleProcessor.getAttribute$`
+- `$API.AudioSampleProcessor.setAttribute$`
 
 ## getAudioFile
 
@@ -193,8 +193,8 @@ Returns an `AudioFile` scripting object for the audio file data at the given slo
 - [BUG] The `slotIndex` parameter is not bounds-checked. AudioSampleProcessor modules always have exactly one slot (index 0). Passing any other index creates an AudioFile handle pointing to a non-existent slot, which may produce undefined behavior.
 
 **Cross References:**
-- `AudioSampleProcessor.setFile`
-- `AudioSampleProcessor.getFilename`
+- `$API.AudioSampleProcessor.setFile$`
+- `$API.AudioSampleProcessor.getFilename$`
 
 ## getFilename
 
@@ -212,8 +212,8 @@ Returns the pool reference string of the currently loaded audio file (e.g., `{PR
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.setFile`
-- `AudioSampleProcessor.getAudioFile`
+- `$API.AudioSampleProcessor.setFile$`
+- `$API.AudioSampleProcessor.getAudioFile$`
 
 ## getLoopRange
 
@@ -233,9 +233,9 @@ Returns the loop range as a two-element array `[start, end]` in samples. When `s
 | subtractStart | Number | no | Whether to make the loop range relative to the current sample range start. | Boolean (0 or 1) |
 
 **Cross References:**
-- `AudioSampleProcessor.getSampleRange`
-- `AudioSampleProcessor.setSampleRange`
-- `AudioSampleProcessor.getSampleStart`
+- `$API.AudioSampleProcessor.getSampleRange$`
+- `$API.AudioSampleProcessor.setSampleRange$`
+- `$API.AudioSampleProcessor.getSampleStart$`
 
 ## isBypassed
 
@@ -252,7 +252,7 @@ Returns whether the wrapped processor module is currently bypassed. Returns fals
 None.
 
 **Cross References:**
-- `AudioSampleProcessor.setBypassed`
+- `$API.AudioSampleProcessor.setBypassed$`
 
 ## setAttribute
 
@@ -273,8 +273,8 @@ Sets the value of the module parameter at the given index. Uses the dynamic cons
 | newValue | Number | no | The new parameter value. | Range depends on the parameter |
 
 **Cross References:**
-- `AudioSampleProcessor.getAttribute`
-- `AudioSampleProcessor.getAttributeId`
+- `$API.AudioSampleProcessor.getAttribute$`
+- `$API.AudioSampleProcessor.getAttributeId$`
 
 ## setBypassed
 
@@ -294,7 +294,7 @@ Sets the bypass state of the wrapped processor module. When bypassed, the module
 | shouldBeBypassed | Number | no | Whether to bypass the module. | Boolean (0 or 1) |
 
 **Cross References:**
-- `AudioSampleProcessor.isBypassed`
+- `$API.AudioSampleProcessor.isBypassed$`
 
 ## setFile
 
@@ -314,9 +314,9 @@ Loads an audio file from the HISE audio file pool. The `fileName` parameter is a
 | fileName | String | no | Pool reference string for the audio file. | Must use HISE pool reference format |
 
 **Cross References:**
-- `AudioSampleProcessor.getFilename`
-- `AudioSampleProcessor.getAudioFile`
-- `Engine.loadAudioFilesIntoPool`
+- `$API.AudioSampleProcessor.getFilename$`
+- `$API.AudioSampleProcessor.getAudioFile$`
+- `$API.Engine.loadAudioFilesIntoPool$`
 
 **Example:**
 ```javascript:set-file-with-range
@@ -355,6 +355,6 @@ Sets the active sample playback range in samples. The `start` and `end` values d
 | end | Number | no | End position in samples (exclusive). | start to total file length |
 
 **Cross References:**
-- `AudioSampleProcessor.getSampleRange`
-- `AudioSampleProcessor.getSampleLength`
-- `AudioSampleProcessor.getTotalLengthInSamples`
+- `$API.AudioSampleProcessor.getSampleRange$`
+- `$API.AudioSampleProcessor.getSampleLength$`
+- `$API.AudioSampleProcessor.getTotalLengthInSamples$`

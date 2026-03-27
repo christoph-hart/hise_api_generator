@@ -2,4 +2,4 @@ Splits the buffer into sinusoidal, noise, optional transient, and noise-grain ou
 
 `configData` is case-sensitive and only reads `SlowFFTOrder`, `FastFFTOrder`, `FreqResolution`, `TimeResolution`, `CalculateTransients`, `SlowTransientTreshold`, and `FastTransientTreshold`.
 
-> **Warning:** The transient threshold keys must use the implemented `...Treshold` spelling exactly. `...Threshold` is ignored.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The transient threshold keys must use the implemented `...Treshold` spelling exactly. `...Threshold` is ignored.

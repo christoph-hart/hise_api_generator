@@ -154,15 +154,4 @@ The Pitch Modulation chain is disabled and cannot be used.
 
 Polyphonic envelope synchronisation between the container and consumers uses event IDs rather than voice indices. This means consumers work correctly even when the consumer's parent Sound Generator has a different voice allocation than the container. A two-phase release mechanism prevents envelope tails from being cut off prematurely when voices are reused.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Global Envelope Modulator", to: "/v2/reference/audio-modules/modulators/envelope/globalenvelopemodulator", desc: "reads per-voice envelope values from this container" }
-  - { label: "Global Voice Start Modulator", to: "/v2/reference/audio-modules/modulators/voice-start/globalvoicestartmodulator", desc: "reads per-note voice-start values from this container" }
-  - { label: "Global Time Variant Modulator", to: "/v2/reference/audio-modules/modulators/time-variant/globaltimevariantmodulator", desc: "continuously reads monophonic time-variant values from this container" }
-  - { label: "Global Static Time Variant Modulator", to: "/v2/reference/audio-modules/modulators/voice-start/globalstatictimevariantmodulator", desc: "snapshots a time-variant value at note-on from this container" }
-  - { label: "Matrix Modulator", to: "/v2/reference/audio-modules/modulators/envelope/matrixmodulator", desc: "combines multiple modulators from this container via a connection matrix" }
----
-::
+**See also:** $MODULES.GlobalEnvelopeModulator$ -- reads per-voice envelope values from this container, $MODULES.GlobalVoiceStartModulator$ -- reads per-note voice-start values from this container, $MODULES.GlobalTimeVariantModulator$ -- continuously reads monophonic time-variant values from this container, $MODULES.GlobalStaticTimeVariantModulator$ -- snapshots a time-variant value at note-on from this container, $MODULES.MatrixModulator$ -- combines multiple modulators from this container via a connection matrix

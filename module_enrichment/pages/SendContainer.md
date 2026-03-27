@@ -145,11 +145,4 @@ Multiple Send Effects can target the same container. Their signals are summed ad
 
 The routing matrix is resizable, supporting more than two internal channels. The Send Effect's channel offset determines which stereo pair within the internal buffer receives the send signal. The routing matrix then maps each internal channel to an output channel, enabling flexible multichannel routing configurations.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Send Effect", to: "/v2/reference/audio-modules/effects/master/sendfx", desc: "the send side of the send/return pair, routes audio into this container with adjustable gain and channel offset" }
----
-::
+**See also:** $MODULES.SendFX$ -- the send side of the send/return pair, routes audio into this container with adjustable gain and channel offset

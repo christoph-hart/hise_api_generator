@@ -17,8 +17,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setFineDetune`
-- `MessageHolder.getCoarseDetune`
+- `$API.MessageHolder.setFineDetune$`
+- `$API.MessageHolder.getCoarseDetune$`
 
 ---
 
@@ -39,7 +39,7 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setGain`
+- `$API.MessageHolder.setGain$`
 
 ---
 
@@ -62,8 +62,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setMonophonicAfterTouchPressure`
-- `MessageHolder.isMonophonicAfterTouch`
+- `$API.MessageHolder.setMonophonicAfterTouchPressure$`
+- `$API.MessageHolder.isMonophonicAfterTouch$`
 
 ---
 
@@ -84,8 +84,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setNoteNumber`
-- `MessageHolder.getTransposeAmount`
+- `$API.MessageHolder.setNoteNumber$`
+- `$API.MessageHolder.getTransposeAmount$`
 
 ---
 
@@ -106,9 +106,9 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.getPolyAfterTouchPressureValue`
-- `MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue`
-- `MessageHolder.isPolyAftertouch`
+- `$API.MessageHolder.getPolyAfterTouchPressureValue$`
+- `$API.MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue$`
+- `$API.MessageHolder.isPolyAftertouch$`
 
 ---
 
@@ -129,9 +129,9 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.getPolyAfterTouchNoteNumber`
-- `MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue`
-- `MessageHolder.isPolyAftertouch`
+- `$API.MessageHolder.getPolyAfterTouchNoteNumber$`
+- `$API.MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue$`
+- `$API.MessageHolder.isPolyAftertouch$`
 
 ---
 
@@ -152,8 +152,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setTimestamp`
-- `MessageHolder.addToTimestamp`
+- `$API.MessageHolder.setTimestamp$`
+- `$API.MessageHolder.addToTimestamp$`
 
 ---
 
@@ -174,8 +174,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setTransposeAmount`
-- `MessageHolder.getNoteNumber`
+- `$API.MessageHolder.setTransposeAmount$`
+- `$API.MessageHolder.getNoteNumber$`
 
 ---
 
@@ -202,8 +202,8 @@ Note: The `int16` cast in the MessageHolder wrapper limits the effective delta r
 - [BUG] The `int16` cast silently truncates delta values outside -32768..32767. Passing a value like 50000 will overflow to a negative number, shifting the timestamp backward instead of forward. (Moot until the registration issue above is fixed.)
 
 **Cross References:**
-- `MessageHolder.setTimestamp`
-- `MessageHolder.getTimestamp`
+- `$API.MessageHolder.setTimestamp$`
+- `$API.MessageHolder.getTimestamp$`
 
 ---
 
@@ -225,9 +225,9 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.dump`
-- `Engine.createMessageHolder`
-- `Message.store`
+- `$API.MessageHolder.dump$`
+- `$API.Engine.createMessageHolder$`
+- `$API.Message.store$`
 
 **Example:**
 ```javascript:clone-independent-copy
@@ -273,8 +273,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.clone`
-- `Console.print`
+- `$API.MessageHolder.clone$`
+- `$API.Console.print$`
 
 **Example:**
 ```javascript:dump-debug-output
@@ -315,7 +315,7 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setChannel`
+- `$API.MessageHolder.setChannel$`
 
 ---
 
@@ -336,8 +336,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setCoarseDetune`
-- `MessageHolder.getFineDetune`
+- `$API.MessageHolder.setCoarseDetune$`
+- `$API.MessageHolder.getFineDetune$`
 
 ---
 
@@ -360,9 +360,9 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setControllerNumber`
-- `MessageHolder.getControllerValue`
-- `MessageHolder.isController`
+- `$API.MessageHolder.setControllerNumber$`
+- `$API.MessageHolder.getControllerValue$`
+- `$API.MessageHolder.isController$`
 
 ---
 
@@ -385,9 +385,9 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setControllerValue`
-- `MessageHolder.getControllerNumber`
-- `MessageHolder.isController`
+- `$API.MessageHolder.setControllerValue$`
+- `$API.MessageHolder.getControllerNumber$`
+- `$API.MessageHolder.isController$`
 
 ---
 
@@ -410,8 +410,8 @@ None.
 None.
 
 **Cross References:**
-- `Synth.addMessageFromHolder`
-- `Message.store`
+- `$API.Synth.addMessageFromHolder$`
+- `$API.Message.store$`
 
 ---
 
@@ -437,9 +437,9 @@ This property is independent of the transpose amount. Transpose preserves note-o
 None.
 
 **Cross References:**
-- `MessageHolder.getCoarseDetune`
-- `MessageHolder.setFineDetune`
-- `MessageHolder.setTransposeAmount`
+- `$API.MessageHolder.getCoarseDetune$`
+- `$API.MessageHolder.setFineDetune$`
+- `$API.MessageHolder.setTransposeAmount$`
 
 ---
 
@@ -467,9 +467,9 @@ MessageHolder performs no event-type guard. Calling this on a NoteOn event will 
 - Setting controller number to 128 or 129 changes the event type (to PitchBend or Aftertouch respectively) rather than storing a controller number. This is intentional but may be surprising if the caller expects only the number field to change.
 
 **Cross References:**
-- `MessageHolder.getControllerNumber`
-- `MessageHolder.setControllerValue`
-- `MessageHolder.setType`
+- `$API.MessageHolder.getControllerNumber$`
+- `$API.MessageHolder.setControllerValue$`
+- `$API.MessageHolder.setType$`
 
 **Example:**
 ```javascript:set-controller-number-type-coercion
@@ -517,8 +517,8 @@ MessageHolder performs no event-type guard beyond the pitch wheel check. Calling
 None.
 
 **Cross References:**
-- `MessageHolder.getControllerValue`
-- `MessageHolder.setControllerNumber`
+- `$API.MessageHolder.getControllerValue$`
+- `$API.MessageHolder.setControllerNumber$`
 
 ---
 
@@ -542,8 +542,8 @@ Sets the fine detune amount in cents for this event. The value is stored as an `
 None.
 
 **Cross References:**
-- `MessageHolder.getFineDetune`
-- `MessageHolder.setCoarseDetune`
+- `$API.MessageHolder.getFineDetune$`
+- `$API.MessageHolder.setCoarseDetune$`
 
 ---
 
@@ -567,8 +567,8 @@ Sets the per-event gain in decibels. The value is clamped to the range -100..36 
 None.
 
 **Cross References:**
-- `MessageHolder.getGain`
-- `MessageHolder.setVelocity`
+- `$API.MessageHolder.getGain$`
+- `$API.MessageHolder.setVelocity$`
 
 ---
 
@@ -594,9 +594,9 @@ MessageHolder performs no event-type guard. Calling this on a non-aftertouch eve
 None.
 
 **Cross References:**
-- `MessageHolder.getMonophonicAftertouchPressure`
-- `MessageHolder.isMonophonicAfterTouch`
-- `MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue`
+- `$API.MessageHolder.getMonophonicAftertouchPressure$`
+- `$API.MessageHolder.isMonophonicAfterTouch$`
+- `$API.MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue$`
 
 ---
 
@@ -624,8 +624,8 @@ Note: Changing the note number directly (rather than using `setTransposeAmount()
 - Changing the note number directly breaks automatic NoteOn/NoteOff matching. Use `setTransposeAmount()` instead for pitch shifting that preserves note pairing.
 
 **Cross References:**
-- `MessageHolder.getNoteNumber`
-- `MessageHolder.setTransposeAmount`
+- `$API.MessageHolder.getNoteNumber$`
+- `$API.MessageHolder.setTransposeAmount$`
 
 ---
 
@@ -654,10 +654,10 @@ MessageHolder performs no event-type guard. Calling this on a non-aftertouch eve
 None.
 
 **Cross References:**
-- `MessageHolder.getPolyAfterTouchNoteNumber`
-- `MessageHolder.getPolyAfterTouchPressureValue`
-- `MessageHolder.isPolyAftertouch`
-- `MessageHolder.setMonophonicAfterTouchPressure`
+- `$API.MessageHolder.getPolyAfterTouchNoteNumber$`
+- `$API.MessageHolder.getPolyAfterTouchPressureValue$`
+- `$API.MessageHolder.isPolyAftertouch$`
+- `$API.MessageHolder.setMonophonicAfterTouchPressure$`
 
 ---
 
@@ -678,8 +678,8 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.setVelocity`
-- `MessageHolder.getNoteNumber`
+- `$API.MessageHolder.setVelocity$`
+- `$API.MessageHolder.getNoteNumber$`
 
 ---
 
@@ -707,9 +707,9 @@ Unlike `Message.ignoreEvent()`, which operates on the live event in the audio bu
 None.
 
 **Cross References:**
-- `Synth.addMessageFromHolder`
-- `Message.store`
-- `Message.ignoreEvent`
+- `$API.Synth.addMessageFromHolder$`
+- `$API.Message.store$`
+- `$API.Message.ignoreEvent$`
 
 **Example:**
 ```javascript:ignore-and-reinject
@@ -762,13 +762,13 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.getControllerNumber`
-- `MessageHolder.getControllerValue`
-- `MessageHolder.isNoteOn`
-- `MessageHolder.isNoteOff`
-- `MessageHolder.isMonophonicAfterTouch`
-- `MessageHolder.isPolyAftertouch`
-- `MessageHolder.setType`
+- `$API.MessageHolder.getControllerNumber$`
+- `$API.MessageHolder.getControllerValue$`
+- `$API.MessageHolder.isNoteOn$`
+- `$API.MessageHolder.isNoteOff$`
+- `$API.MessageHolder.isMonophonicAfterTouch$`
+- `$API.MessageHolder.isPolyAftertouch$`
+- `$API.MessageHolder.setType$`
 
 ---
 
@@ -791,11 +791,11 @@ None.
 - `isMonophonicAfterTouch()` and `isPolyAftertouch()` are functionally identical -- both return true for any event with type Aftertouch (5). They cannot be used to distinguish between channel pressure and polyphonic aftertouch. To determine which type of aftertouch an event carries, check the note number field: monophonic aftertouch typically has note number 0, while polyphonic aftertouch has a non-zero note number.
 
 **Cross References:**
-- `MessageHolder.isPolyAftertouch`
-- `MessageHolder.getMonophonicAftertouchPressure`
-- `MessageHolder.setMonophonicAfterTouchPressure`
-- `MessageHolder.isController`
-- `MessageHolder.setType`
+- `$API.MessageHolder.isPolyAftertouch$`
+- `$API.MessageHolder.getMonophonicAftertouchPressure$`
+- `$API.MessageHolder.setMonophonicAfterTouchPressure$`
+- `$API.MessageHolder.isController$`
+- `$API.MessageHolder.setType$`
 
 ---
 
@@ -818,9 +818,9 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.isNoteOn`
-- `MessageHolder.isController`
-- `MessageHolder.setType`
+- `$API.MessageHolder.isNoteOn$`
+- `$API.MessageHolder.isController$`
+- `$API.MessageHolder.setType$`
 
 ---
 
@@ -843,10 +843,10 @@ None.
 None.
 
 **Cross References:**
-- `MessageHolder.isNoteOff`
-- `MessageHolder.isController`
-- `MessageHolder.setType`
-- `Synth.addMessageFromHolder`
+- `$API.MessageHolder.isNoteOff$`
+- `$API.MessageHolder.isController$`
+- `$API.MessageHolder.setType$`
+- `$API.Synth.addMessageFromHolder$`
 
 ---
 
@@ -869,12 +869,12 @@ None.
 - See `isMonophonicAfterTouch` -- both methods return the same result for all events. They do not distinguish between channel pressure and polyphonic aftertouch.
 
 **Cross References:**
-- `MessageHolder.isMonophonicAfterTouch`
-- `MessageHolder.getPolyAfterTouchNoteNumber`
-- `MessageHolder.getPolyAfterTouchPressureValue`
-- `MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue`
-- `MessageHolder.isController`
-- `MessageHolder.setType`
+- `$API.MessageHolder.isMonophonicAfterTouch$`
+- `$API.MessageHolder.getPolyAfterTouchNoteNumber$`
+- `$API.MessageHolder.getPolyAfterTouchPressureValue$`
+- `$API.MessageHolder.setPolyAfterTouchNoteNumberAndPressureValue$`
+- `$API.MessageHolder.isController$`
+- `$API.MessageHolder.setType$`
 
 ---
 
@@ -900,7 +900,7 @@ For standard MIDI usage, channels should be set in the 1-16 range. A channel of 
 None.
 
 **Cross References:**
-- `MessageHolder.getChannel`
+- `$API.MessageHolder.getChannel$`
 
 ---
 
@@ -927,8 +927,8 @@ The start offset is stored in a dedicated `uint16` field in the HiseEvent struct
 - There is no `getStartOffset()` method on MessageHolder. Once set, the value cannot be read back through the scripting API.
 
 **Cross References:**
-- `MessageHolder.setTimestamp`
-- `Synth.addMessageFromHolder`
+- `$API.MessageHolder.setTimestamp$`
+- `$API.Synth.addMessageFromHolder$`
 
 ---
 
@@ -956,9 +956,9 @@ This method is unique to MessageHolder -- the `Message` class provides `getTimes
 None.
 
 **Cross References:**
-- `MessageHolder.getTimestamp`
-- `MessageHolder.addToTimestamp`
-- `Synth.addMessageFromHolder`
+- `$API.MessageHolder.getTimestamp$`
+- `$API.MessageHolder.addToTimestamp$`
+- `$API.Synth.addMessageFromHolder$`
 
 **Example:**
 ```javascript:set-timestamp-event-sequence
@@ -1015,9 +1015,9 @@ This contrasts with `setNoteNumber()`, which overwrites the original note number
 None.
 
 **Cross References:**
-- `MessageHolder.getTransposeAmount`
-- `MessageHolder.setNoteNumber`
-- `MessageHolder.setCoarseDetune`
+- `$API.MessageHolder.getTransposeAmount$`
+- `$API.MessageHolder.setNoteNumber$`
+- `$API.MessageHolder.setCoarseDetune$`
 
 ---
 
@@ -1064,12 +1064,12 @@ The event type determines which fields are semantically meaningful (note number/
 None.
 
 **Cross References:**
-- `MessageHolder.isNoteOn`
-- `MessageHolder.isNoteOff`
-- `MessageHolder.isController`
-- `MessageHolder.isMonophonicAfterTouch`
-- `MessageHolder.isPolyAftertouch`
-- `Synth.addMessageFromHolder`
+- `$API.MessageHolder.isNoteOn$`
+- `$API.MessageHolder.isNoteOff$`
+- `$API.MessageHolder.isController$`
+- `$API.MessageHolder.isMonophonicAfterTouch$`
+- `$API.MessageHolder.isPolyAftertouch$`
+- `$API.Synth.addMessageFromHolder$`
 
 **Example:**
 ```javascript:set-type-construct-cc
@@ -1118,6 +1118,6 @@ Note: Setting velocity to 0 on a NoteOn event does NOT automatically convert it 
 None.
 
 **Cross References:**
-- `MessageHolder.getVelocity`
-- `MessageHolder.setNoteNumber`
-- `MessageHolder.setGain`
+- `$API.MessageHolder.getVelocity$`
+- `$API.MessageHolder.setNoteNumber$`
+- `$API.MessageHolder.setGain$`

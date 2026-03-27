@@ -22,8 +22,8 @@ Adds an arc (a section of an ellipse's outline) to the path. The arc is defined 
 - The arc always starts a new sub-path (JUCE's `addArc` with `startAsNewSubPath=true`). To connect the arc to the current path position, use `lineTo` to move to the arc's start point first, then construct the arc geometry manually with `quadraticTo` or `cubicTo`.
 
 **Cross References:**
-- `Path.addPieSegment`
-- `Path.addEllipse`
+- `$API.Path.addPieSegment$`
+- `$API.Path.addEllipse$`
 
 ## addArrow
 
@@ -46,8 +46,8 @@ Adds an arrow shape to the path. The arrow runs from `start` to `end` as a line 
 | headLength | Number | no | Length of the arrowhead from tip to base in pixels. | > 0 |
 
 **Cross References:**
-- `Path.lineTo`
-- `Path.startNewSubPath`
+- `$API.Path.lineTo$`
+- `$API.Path.startNewSubPath$`
 
 ## addEllipse
 
@@ -66,9 +66,9 @@ Adds a closed ellipse to the path. The ellipse fills the bounding rectangle spec
 | area | Array | no | Bounding rectangle `[x, y, width, height]` for the ellipse. | 4-element array or Rectangle object |
 
 **Cross References:**
-- `Path.addArc`
-- `Path.addPieSegment`
-- `Path.addRectangle`
+- `$API.Path.addArc$`
+- `$API.Path.addPieSegment$`
+- `$API.Path.addRectangle$`
 
 ## addPieSegment
 
@@ -90,8 +90,8 @@ Adds a pie segment (wedge shape) to the path. The segment is defined by the boun
 | innerCircleProportionalSize | Number | no | Proportional size of the inner circle cutout, 0.0 (solid wedge) to 1.0 (thin arc). | 0.0 - 1.0 |
 
 **Cross References:**
-- `Path.addArc`
-- `Path.addEllipse`
+- `$API.Path.addArc$`
+- `$API.Path.addEllipse$`
 
 **Example:**
 ```javascript:pie-segment-knob-arc
@@ -138,9 +138,9 @@ Adds a quadratic Bezier curve from the current path position to the endpoint `(x
 - [BUG] Coordinate values are NOT sanitized against NaN/Inf (unlike `startNewSubPath`, `lineTo`, `addArc`, and `addPieSegment` which use the `SANITIZED()` macro). Passing NaN or Inf values corrupts the path geometry silently.
 
 **Cross References:**
-- `Path.cubicTo`
-- `Path.lineTo`
-- `Path.startNewSubPath`
+- `$API.Path.cubicTo$`
+- `$API.Path.lineTo$`
+- `$API.Path.startNewSubPath$`
 
 ## roundCorners
 
@@ -160,9 +160,9 @@ Replaces the current path with a version where all sharp corners have been repla
 | radius | Number | no | Corner radius in pixels. Larger values produce smoother, wider curves at corners. | >= 0 |
 
 **Cross References:**
-- `Path.addRoundedRectangle`
-- `Path.addRoundedRectangleCustomisable`
-- `Path.createStrokedPath`
+- `$API.Path.addRoundedRectangle$`
+- `$API.Path.addRoundedRectangleCustomisable$`
+- `$API.Path.createStrokedPath$`
 
 ## scaleToFit
 
@@ -185,9 +185,9 @@ Transforms the path geometry to fit within the specified rectangle. The transfor
 | preserveProportions | Integer | yes | If `true`, maintains the path's aspect ratio within the target area. If `false`, stretches to fill the entire rectangle. | Boolean (0 or 1) |
 
 **Cross References:**
-- `Path.setBounds`
-- `Path.getBounds`
-- `Path.getRatio`
+- `$API.Path.setBounds$`
+- `$API.Path.getBounds$`
+- `$API.Path.getRatio$`
 
 ## setBounds
 
@@ -210,8 +210,8 @@ Expands the path's reported bounding box to include the specified rectangle, wit
 - The invisible anchor points are permanent additions to the path. They cannot be removed except by calling `clear()` and rebuilding the path. Calling `setBounds` multiple times accumulates anchor points, though only the outermost coordinates affect the reported bounds.
 
 **Cross References:**
-- `Path.scaleToFit`
-- `Path.getBounds`
+- `$API.Path.scaleToFit$`
+- `$API.Path.getBounds$`
 
 ## startNewSubPath
 
@@ -231,9 +231,9 @@ Begins a new sub-path at the given coordinates without drawing anything. This se
 | y | Number | no | Y coordinate of the new sub-path starting point. | Sanitized against NaN/Inf |
 
 **Cross References:**
-- `Path.lineTo`
-- `Path.closeSubPath`
-- `Path.clear`
+- `$API.Path.lineTo$`
+- `$API.Path.closeSubPath$`
+- `$API.Path.clear$`
 
 ## toBase64
 
@@ -247,9 +247,9 @@ Begins a new sub-path at the given coordinates without drawing anything. This se
 Serializes the path to a compact base64-encoded string representation. The path is first written to a binary `MemoryOutputStream` via JUCE's `Path::writePathToStream`, then the resulting memory block is base64-encoded. The output string can be stored, transmitted, or used as a CSS/StyleSheet path property value. Restore the path from this format using `loadFromData(base64String)`. This is the more compact serialization format compared to `toString()` which produces human-readable text. Returns an empty string for an empty path.
 
 **Cross References:**
-- `Path.loadFromData`
-- `Path.toString`
-- `Path.fromString`
+- `$API.Path.loadFromData$`
+- `$API.Path.toString$`
+- `$API.Path.fromString$`
 
 ## toString
 
@@ -263,9 +263,9 @@ Serializes the path to a compact base64-encoded string representation. The path 
 Converts the path to a human-readable string representation using JUCE's internal path serialization format. The format uses single-character commands followed by coordinate values: `m` (moveTo), `l` (lineTo), `q` (quadraticTo), `c` (cubicTo), `z` (closeSubPath), etc. This produces a longer but inspectable representation compared to `toBase64()`. The string can be restored to a path via `fromString()`. Returns an empty string for an empty path. Delegates directly to `juce::Path::toString()`.
 
 **Cross References:**
-- `Path.fromString`
-- `Path.toBase64`
-- `Path.loadFromData`
+- `$API.Path.fromString$`
+- `$API.Path.toBase64$`
+- `$API.Path.loadFromData$`
 
 ## addStar
 
@@ -288,8 +288,8 @@ Adds a star shape to the path centered at the given point. The star has the spec
 | angle | Number | no | Rotation angle of the star in radians. 0.0 starts with the first tip pointing right. | Any value |
 
 **Cross References:**
-- `Path.addPolygon`
-- `Path.addTriangle`
+- `$API.Path.addPolygon$`
+- `$API.Path.addTriangle$`
 
 ## addTriangle
 
@@ -310,8 +310,8 @@ Adds a triangle to the path defined by three corner points. Each point is a 2-el
 | xy3 | Array | no | Third vertex as `[x, y]`. | 2-element array |
 
 **Cross References:**
-- `Path.addPolygon`
-- `Path.addQuadrilateral`
+- `$API.Path.addPolygon$`
+- `$API.Path.addQuadrilateral$`
 
 ## clear
 
@@ -324,9 +324,9 @@ Adds a triangle to the path defined by three corner points. Each point is a 2-el
 Removes all lines, curves, and sub-paths from the path, resetting it to an empty state. Delegates directly to JUCE's `Path::clear()`. Use this to reuse a Path object for new geometry rather than creating a new one. The path's bounding box is also reset.
 
 **Cross References:**
-- `Path.startNewSubPath`
-- `Path.closeSubPath`
-- `Path.setBounds`
+- `$API.Path.startNewSubPath$`
+- `$API.Path.closeSubPath$`
+- `$API.Path.setBounds$`
 
 ## closeSubPath
 
@@ -339,10 +339,10 @@ Removes all lines, curves, and sub-paths from the path, resetting it to an empty
 Closes the current sub-path by adding a straight line from the current position back to the start of the sub-path. This is required for shapes that need to be filled -- `Graphics.fillPath` fills the interior of closed sub-paths. If the path has no current sub-path or the current position already matches the start point, this is a no-op. Delegates directly to JUCE's `Path::closeSubPath()`.
 
 **Cross References:**
-- `Path.startNewSubPath`
-- `Path.lineTo`
-- `Path.quadraticTo`
-- `Path.cubicTo`
+- `$API.Path.startNewSubPath$`
+- `$API.Path.lineTo$`
+- `$API.Path.quadraticTo$`
+- `$API.Path.cubicTo$`
 
 ## fromString
 
@@ -362,9 +362,9 @@ Restores path geometry from a human-readable string representation previously cr
 | stringPath | String | no | A path string in JUCE's path serialization format, as produced by `toString()`. | Must be valid JUCE path format |
 
 **Cross References:**
-- `Path.toString`
-- `Path.loadFromData`
-- `Path.toBase64`
+- `$API.Path.toString$`
+- `$API.Path.loadFromData$`
+- `$API.Path.toBase64$`
 
 ## getBounds
 
@@ -386,9 +386,9 @@ Returns the bounding rectangle of the path with an optional scale factor applied
 - The return type changes between a plain array and a Rectangle object depending on the project-level `HISE_USE_SCRIPT_RECTANGLE_OBJECT` preprocessor setting. Code that indexes the result (e.g., `bounds[2]` for width) works only with the default array format.
 
 **Cross References:**
-- `Path.setBounds`
-- `Path.scaleToFit`
-- `Path.getRatio`
+- `$API.Path.setBounds$`
+- `$API.Path.scaleToFit$`
+- `$API.Path.getRatio$`
 
 ## getIntersection
 
@@ -414,8 +414,8 @@ Tests whether a line segment intersects the path and returns the intersection po
 - Returns `false` (not an array) when no intersection is found. Callers must check the return type before indexing the result.
 
 **Cross References:**
-- `Path.contains`
-- `Path.getPointOnPath`
+- `$API.Path.contains$`
+- `$API.Path.getPointOnPath$`
 
 **Example:**
 ```javascript:path-intersection-test
@@ -453,9 +453,9 @@ else
 Returns the total length of the path in pixels. The length is calculated by flattening the path (approximating curves as line segments) and summing the segment lengths. Uses JUCE's `Path::getLength` with an identity transform (`AffineTransform::scale(1.0f)`) and a tolerance of 1.0 pixel. Returns 0.0 for an empty path.
 
 **Cross References:**
-- `Path.getPointOnPath`
-- `Path.getRatio`
-- `Path.getYAt`
+- `$API.Path.getPointOnPath$`
+- `$API.Path.getRatio$`
+- `$API.Path.getYAt$`
 
 ## getPointOnPath
 
@@ -475,9 +475,9 @@ Returns the coordinates of a point at a given distance along the path, measured 
 | distanceFromStart | Number | no | Distance in pixels from the start of the path. | >= 0 |
 
 **Cross References:**
-- `Path.getLength`
-- `Path.getYAt`
-- `Path.getIntersection`
+- `$API.Path.getLength$`
+- `$API.Path.getYAt$`
+- `$API.Path.getIntersection$`
 
 ## getRatio
 
@@ -493,8 +493,8 @@ Returns the width-to-height aspect ratio of the path's bounding box. Computed as
 - [BUG] Returns Infinity or NaN if the path's bounding box has zero height (e.g., a purely horizontal line). No validation is performed on the division result.
 
 **Cross References:**
-- `Path.getBounds`
-- `Path.scaleToFit`
+- `$API.Path.getBounds$`
+- `$API.Path.scaleToFit$`
 
 ## getYAt
 
@@ -517,9 +517,9 @@ Returns the Y coordinate of the first intersection between the path and a vertic
 - Returns `undefined` (not a number) when no match is found. Callers must check with `isDefined()` before using the result in arithmetic.
 
 **Cross References:**
-- `Path.getPointOnPath`
-- `Path.getIntersection`
-- `Path.getLength`
+- `$API.Path.getPointOnPath$`
+- `$API.Path.getIntersection$`
+- `$API.Path.getLength$`
 
 ## lineTo
 
@@ -539,10 +539,10 @@ Adds a straight line segment from the current path position to the point `(x, y)
 | y | Number | no | Y coordinate of the line endpoint. | Sanitized against NaN/Inf |
 
 **Cross References:**
-- `Path.startNewSubPath`
-- `Path.closeSubPath`
-- `Path.quadraticTo`
-- `Path.cubicTo`
+- `$API.Path.startNewSubPath$`
+- `$API.Path.closeSubPath$`
+- `$API.Path.quadraticTo$`
+- `$API.Path.cubicTo$`
 
 ## loadFromData
 
@@ -565,9 +565,9 @@ Loads path geometry from external data, replacing the current path contents. Acc
 - [BUG] If `data` is none of the three accepted types (e.g., a number, JSON object, or boolean), the method silently does nothing -- the existing path is left unchanged with no error reported.
 
 **Cross References:**
-- `Path.toBase64`
-- `Path.fromString`
-- `Path.toString`
+- `$API.Path.toBase64$`
+- `$API.Path.fromString$`
+- `$API.Path.toString$`
 
 **Example:**
 ```javascript:load-path-roundtrip
@@ -613,8 +613,8 @@ Adds a regular polygon to the path centered at the given point. The polygon has 
 | angle | Number | no | Rotation angle of the polygon in radians. 0.0 starts with the first vertex pointing right. | Any value |
 
 **Cross References:**
-- `Path.addStar`
-- `Path.addTriangle`
+- `$API.Path.addStar$`
+- `$API.Path.addTriangle$`
 
 ## addQuadrilateral
 
@@ -636,9 +636,9 @@ Adds a quadrilateral (four-sided polygon) to the path defined by four corner poi
 | xy4 | Array | no | Fourth vertex as `[x, y]`. | 2-element array |
 
 **Cross References:**
-- `Path.addTriangle`
-- `Path.addRectangle`
-- `Path.addPolygon`
+- `$API.Path.addTriangle$`
+- `$API.Path.addRectangle$`
+- `$API.Path.addPolygon$`
 
 ## addRectangle
 
@@ -657,10 +657,10 @@ Adds a closed rectangle to the path. The rectangle is defined by a bounding area
 | area | Array | no | Bounding rectangle as `[x, y, width, height]`. | 4-element array or Rectangle object |
 
 **Cross References:**
-- `Path.addRoundedRectangle`
-- `Path.addRoundedRectangleCustomisable`
-- `Path.addEllipse`
-- `Path.addQuadrilateral`
+- `$API.Path.addRoundedRectangle$`
+- `$API.Path.addRoundedRectangleCustomisable$`
+- `$API.Path.addEllipse$`
+- `$API.Path.addQuadrilateral$`
 
 ## addRoundedRectangle
 
@@ -680,9 +680,9 @@ Adds a closed rectangle with uniformly rounded corners to the path. The rectangl
 | cornerSize | Number | no | Radius of the rounded corners in pixels. Applied equally to all four corners. | >= 0 |
 
 **Cross References:**
-- `Path.addRoundedRectangleCustomisable`
-- `Path.addRectangle`
-- `Path.roundCorners`
+- `$API.Path.addRoundedRectangleCustomisable$`
+- `$API.Path.addRectangle$`
+- `$API.Path.roundCorners$`
 
 ## addRoundedRectangleCustomisable
 
@@ -703,9 +703,9 @@ Adds a closed rectangle with independently controllable corner rounding to the p
 | boolCurves | Array | no | Per-corner rounding flags as `[topLeft, topRight, bottomLeft, bottomRight]`. `true` rounds the corner, `false` keeps it sharp. | 4-element boolean array |
 
 **Cross References:**
-- `Path.addRoundedRectangle`
-- `Path.addRectangle`
-- `Path.roundCorners`
+- `$API.Path.addRoundedRectangle$`
+- `$API.Path.addRectangle$`
+- `$API.Path.roundCorners$`
 
 **Example:**
 ```javascript:rounded-rect-top-only
@@ -740,9 +740,9 @@ Tests whether a point lies within the path. The point is specified as a `[x, y]`
 | point | Array | no | Test point as `[x, y]`. | 2-element array |
 
 **Cross References:**
-- `Path.getIntersection`
-- `Path.getBounds`
-- `Path.closeSubPath`
+- `$API.Path.getIntersection$`
+- `$API.Path.getBounds$`
+- `$API.Path.closeSubPath$`
 
 ## createStrokedPath
 
@@ -777,8 +777,8 @@ Creates and returns a new Path object that represents the outlined (stroked) ver
 - [BUG] If `dotData` is not an array (e.g., a number or string), it is silently ignored and a solid stroke is produced. No error is reported.
 
 **Cross References:**
-- `Path.roundCorners`
-- `Graphics.drawPath`
+- `$API.Path.roundCorners$`
+- `$API.Graphics.drawPath$`
 
 **Example:**
 ```javascript:create-dashed-stroke
@@ -827,6 +827,6 @@ Adds a cubic Bezier curve from the current path position to the endpoint `(x, y)
 - [BUG] Coordinate values are NOT sanitized against NaN/Inf (unlike `startNewSubPath`, `lineTo`, `addArc`, and `addPieSegment` which use the `SANITIZED()` macro). Passing NaN or Inf values corrupts the path geometry silently.
 
 **Cross References:**
-- `Path.quadraticTo`
-- `Path.lineTo`
-- `Path.startNewSubPath`
+- `$API.Path.quadraticTo$`
+- `$API.Path.lineTo$`
+- `$API.Path.startNewSubPath$`

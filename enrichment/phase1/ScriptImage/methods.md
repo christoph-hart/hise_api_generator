@@ -53,8 +53,8 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.set
 
 **Cross References:**
-- `ScriptComponent.set`
-- `ScriptComponent.getAllProperties`
+- `$API.ScriptComponent.set$`
+- `$API.ScriptComponent.getAllProperties$`
 
 ---
 
@@ -82,10 +82,10 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptComponent.get`
-- `ScriptComponent.getAllProperties`
-- `ScriptImage.setImageFile` -- convenience wrapper for `set("fileName", path)`
-- `ScriptImage.setAlpha` -- convenience wrapper for `set("alpha", value)`
+- `$API.ScriptComponent.get$`
+- `$API.ScriptComponent.getAllProperties$`
+- `$API.ScriptImage.setImageFile$` -- convenience wrapper for `set("fileName", path)`
+- `$API.ScriptImage.setAlpha$` -- convenience wrapper for `set("alpha", value)`
 
 ---
 
@@ -115,7 +115,7 @@ Returns the current value of the component. Uses a `SimpleReadWriteLock` for thr
 - The stored value must not be a String. If it is, an assertion fires in debug builds.
 
 **Cross References:**
-- `ScriptComponent.setValue`
+- `$API.ScriptComponent.setValue$`
 
 ---
 
@@ -147,9 +147,9 @@ Sets the component's value. Thread-safe -- can be called from any thread; the UI
 - Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
-- `ScriptComponent.getValue`
-- `ScriptComponent.setValueWithUndo`
-- `ScriptComponent.changed` -- triggers control callback with the current value
+- `$API.ScriptComponent.getValue$`
+- `$API.ScriptComponent.setValueWithUndo$`
+- `$API.ScriptComponent.changed$` -- triggers control callback with the current value
 
 ---
 
@@ -180,7 +180,7 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 - Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
-- `ScriptComponent.setValue`
+- `$API.ScriptComponent.setValue$`
 
 ---
 
@@ -252,7 +252,7 @@ Sets the `visible` property with change message notification.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptComponent.fadeComponent`
+- `$API.ScriptComponent.fadeComponent$`
 
 ---
 
@@ -345,9 +345,9 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
-- `ScriptComponent.setControlCallback`
-- `ScriptComponent.getValue`
-- `ScriptComponent.setValue` -- sets the value that changed() reads and dispatches
+- `$API.ScriptComponent.setControlCallback$`
+- `$API.ScriptComponent.getValue$`
+- `$API.ScriptComponent.setValue$` -- sets the value that changed() reads and dispatches
 
 ---
 
@@ -366,7 +366,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 - Related: get("x"), get("parentComponent")
 
 **Cross References:**
-- `ScriptComponent.getGlobalPositionY`
+- `$API.ScriptComponent.getGlobalPositionY$`
 
 ---
 
@@ -385,7 +385,7 @@ Returns the absolute y-position relative to the interface root, computed by recu
 - Related: get("y"), get("parentComponent")
 
 **Cross References:**
-- `ScriptComponent.getGlobalPositionX`
+- `$API.ScriptComponent.getGlobalPositionX$`
 
 ---
 
@@ -419,7 +419,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptComponent.changed`
+- `$API.ScriptComponent.changed$`
 
 **Example:**
 ```javascript:control-callback-on-click
@@ -457,8 +457,8 @@ img.setControlCallback(onImageClicked);
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes both base ScriptComponent properties and ScriptImage-specific properties.
 
 **Cross References:**
-- `ScriptComponent.get`
-- `ScriptComponent.set`
+- `$API.ScriptComponent.get$`
+- `$API.ScriptComponent.set$`
 
 ---
 
@@ -509,7 +509,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptComponent.setConsumedKeyPresses`
+- `$API.ScriptComponent.setConsumedKeyPresses$`
 
 **Example:**
 ```javascript:key-press-handler
@@ -584,7 +584,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptComponent.setKeyPressCallback`
+- `$API.ScriptComponent.setKeyPressCallback$`
 
 **Example:**
 ```javascript:consume-specific-keys
@@ -616,7 +616,7 @@ img.setConsumedKeyPresses(["ctrl + S", "F5", "escape"]);
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptComponent.grabFocus`
+- `$API.ScriptComponent.grabFocus$`
 
 ---
 
@@ -631,7 +631,7 @@ Notifies all z-level listeners that the component wants to lose keyboard focus. 
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptComponent.loseFocus`
+- `$API.ScriptComponent.loseFocus$`
 
 ---
 
@@ -684,9 +684,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - When CSS mode is active, colour properties (bgColour, itemColour, itemColour2, textColour) are initialized in the property tree if not already present, and default-property-removal is disabled.
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setStyleSheetPseudoState`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
 
 ---
 
@@ -724,8 +724,8 @@ Toggles visibility with a fade animation over the specified duration in millisec
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptComponent.showControl`
-- `ScriptImage.setAlpha` -- setAlpha controls opacity; fadeComponent controls animated visibility
+- `$API.ScriptComponent.showControl$`
+- `$API.ScriptImage.setAlpha$` -- setAlpha controls opacity; fadeComponent controls animated visibility
 
 ---
 
@@ -761,9 +761,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetPseudoState`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:css-variable-types
@@ -801,9 +801,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setStyleSheetPseudoState`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:auto-prepend-type-class
@@ -853,9 +853,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state (bitmask 256) |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 ---
 
@@ -880,7 +880,7 @@ Special parameter index values for the `parameterId` property:
 - Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
-- `ScriptComponent.setValue`
+- `$API.ScriptComponent.setValue$`
 
 ---
 
@@ -905,7 +905,7 @@ Sets the image file to display. The file name is resolved via `PoolReference` wi
 - [BUG] The `forceUseRealFile` parameter is declared but completely ignored (`ignoreUnused(forceUseRealFile)` in C++). The image is always loaded through the pool/expansion handler regardless of this parameter's value.
 
 **Cross References:**
-- `ScriptComponent.set` -- can also set the image via `set("fileName", path)`
+- `$API.ScriptComponent.set$` -- can also set the image via `set("fileName", path)`
 
 **Example:**
 ```javascript:set-image-file
@@ -943,4 +943,4 @@ Sets the transparency of the displayed image. The alpha value is clamped to the 
 - Related: get("alpha")
 
 **Cross References:**
-- `ScriptComponent.fadeComponent` -- for animated visibility transitions
+- `$API.ScriptComponent.fadeComponent$` -- for animated visibility transitions

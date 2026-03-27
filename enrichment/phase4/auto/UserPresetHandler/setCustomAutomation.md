@@ -36,4 +36,4 @@ The `mode` property controls how the DAW displays the parameter value:
 | `"Decibel"` | dB |
 | `"Semitones"` | st |
 
-> **Warning:** MetaConnection targets (referenced via `automationId`) must appear earlier in the automation array than the slot that references them. Forward references to later slots are not resolved.
+> [!Warning:$WARNING_TO_BE_REPLACED$] MetaConnection targets (referenced via `automationId`) must appear earlier in the automation array than the slot that references them. Forward references to later slots are not resolved.

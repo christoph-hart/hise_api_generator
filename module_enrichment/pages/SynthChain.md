@@ -111,12 +111,4 @@ The root Container provides additional functionality not available on nested Con
 
 Children render in tree order (top to bottom). Each child adds its output to the shared buffer, so the mixing is purely additive with no inter-child modulation. For shared modulation across children (common envelopes, shared pitch), use a Synthesiser Group instead.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Synthesiser Group", to: "/v2/reference/audio-modules/sound-generators/synthgroup", desc: "Advanced container with shared modulation, FM synthesis, and unison. Use when children need common envelopes or pitch modulation." }
-  - { label: "Global Modulator Container", to: "/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer", desc: "Hosts global modulators accessible from anywhere in the module tree. Must be placed as a child of a Container." }
----
-::
+**See also:** $MODULES.SynthGroup$ -- Advanced container with shared modulation, FM synthesis, and unison. Use when children need common envelopes or pitch modulation., $MODULES.GlobalModulatorContainer$ -- Hosts global modulators accessible from anywhere in the module tree. Must be placed as a child of a Container.

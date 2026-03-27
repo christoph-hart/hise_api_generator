@@ -40,18 +40,22 @@ For WebSocket communication, the JavaScript side connects using the built-in `Hi
 
 ## Common Mistakes
 
-- **Wrong:** `wv.setIndexFile("/path/to/index.html");`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `wv.setIndexFile("/path/to/index.html");`
   **Right:** `wv.setIndexFile(FileSystem.getFolder(FileSystem.AudioFiles).getChildFile("webview/index.html"));`
   *`setIndexFile` requires a File object from the FileSystem API, not a string path.*
 
-- **Wrong:** Call `callFunction` and expect synchronous execution or a return value.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Call `callFunction` and expect synchronous execution or a return value.
   **Right:** Use `callFunction` as fire-and-forget; use `bindCallback` when JavaScript needs to return data to HiseScript.
   *`callFunction` dispatches asynchronously. To receive data back from JavaScript, bind a callback that JavaScript calls with the result.*
 
-- **Wrong:** Place web files outside the project folder with `enableCache` set to `true`.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Place web files outside the project folder with `enableCache` set to `true`.
   **Right:** Place web files inside the project folder (e.g. under the `Images/` directory).
   *HISE only embeds web resources when the root directory is inside the project folder.*
 
-- **Wrong:** `wv.setWebSocketCallback(fn);` without calling `setEnableWebSocket` first.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `wv.setWebSocketCallback(fn);` without calling `setEnableWebSocket` first.
   **Right:** `wv.setEnableWebSocket(port); wv.setWebSocketCallback(fn);`
   *The WebSocket must be enabled before registering a callback or sending data.*

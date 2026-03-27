@@ -17,7 +17,7 @@ Resets all allocated slots to their default values and sets the position pointer
 - Iterates all allocated slots (the full `length` capacity), not just the used portion. On large stacks this does more work than `clearQuick()`.
 
 **Cross References:**
-- `FixObjectStack.clearQuick`
+- `$API.FixObjectStack.clearQuick$`
 
 ---
 
@@ -38,7 +38,7 @@ Resets the position pointer to zero without modifying element data. Elements rem
 - Old data persists in memory. `toBase64()` still serializes the full memory block including slots that were logically removed by `clearQuick()`.
 
 **Cross References:**
-- `FixObjectStack.clear`
+- `$API.FixObjectStack.clear$`
 
 ---
 
@@ -63,7 +63,7 @@ Returns true (1) if the stack contains an element matching `obj` according to th
 - Returns false (not an error) when `obj` is not a valid FixObject. Non-FixObject arguments silently fail the internal type check.
 
 **Cross References:**
-- `FixObjectStack.indexOf`
+- `$API.FixObjectStack.indexOf$`
 
 ---
 
@@ -89,8 +89,8 @@ Copies the value of the named property from each element into a target Buffer or
 - Reads from all allocated slots including unused ones beyond `size()`. Unused slots contain default values (0 for int/float, false for bool). To copy only the used portion, iterate manually from 0 to `size()`.
 
 **Cross References:**
-- `FixObjectStack.size`
-- `FixObjectStack.fill`
+- `$API.FixObjectStack.size$`
+- `$API.FixObjectStack.fill$`
 
 **Example:**
 ```javascript:copy-used-portion-workaround
@@ -151,8 +151,8 @@ Copies the data from `obj` into ALL allocated slots (the full `length` capacity)
 - Fills beyond the used portion. On a stack with `size()` of 3 and `length` of 16, all 16 slots receive the data.
 
 **Cross References:**
-- `FixObjectStack.clear`
-- `FixObjectStack.copy`
+- `$API.FixObjectStack.clear$`
+- `$API.FixObjectStack.copy$`
 
 ---
 
@@ -177,7 +177,7 @@ Restores the raw memory block from a Base64-encoded string produced by `toBase64
 - [BUG] Does not save or restore the position pointer. The serialization format (inherited from FixObjectArray) only contains raw element data. After `fromBase64()`, `size()` returns the pre-restore value. To correctly restore a stack, save `size()` separately before `toBase64()` and re-insert elements after `fromBase64()`, or track the used count externally.
 
 **Cross References:**
-- `FixObjectStack.toBase64`
+- `$API.FixObjectStack.toBase64$`
 
 ---
 
@@ -202,8 +202,8 @@ Returns the index of the first element matching `obj` according to the factory's
 - Returns -1 (not an error) when `obj` is not a valid FixObject. Non-FixObject arguments silently fail the internal type check.
 
 **Cross References:**
-- `FixObjectStack.contains`
-- `FixObjectStack.remove`
+- `$API.FixObjectStack.contains$`
+- `$API.FixObjectStack.remove$`
 
 ---
 
@@ -229,9 +229,9 @@ Inserts a copy of `obj` at the end of the used portion if no duplicate exists. D
 - Returns false for non-FixObject arguments without reporting an error.
 
 **Cross References:**
-- `FixObjectStack.set`
-- `FixObjectStack.remove`
-- `FixObjectStack.contains`
+- `$API.FixObjectStack.set$`
+- `$API.FixObjectStack.remove$`
+- `$API.FixObjectStack.contains$`
 
 **Example:**
 ```javascript:insert-with-duplicates
@@ -285,8 +285,8 @@ Returns true (1) if the stack has no used elements (position is 0), false (0) ot
 (none)
 
 **Cross References:**
-- `FixObjectStack.size`
-- `FixObjectStack.clear`
+- `$API.FixObjectStack.size$`
+- `$API.FixObjectStack.clear$`
 
 ---
 
@@ -311,9 +311,9 @@ Finds and removes the first element matching `obj` according to the factory's co
 - Does not preserve element order. The last used element replaces the removed one. If iteration order matters, call `sort()` after removal.
 
 **Cross References:**
-- `FixObjectStack.removeElement`
-- `FixObjectStack.insert`
-- `FixObjectStack.indexOf`
+- `$API.FixObjectStack.removeElement$`
+- `$API.FixObjectStack.insert$`
+- `$API.FixObjectStack.indexOf$`
 
 ---
 
@@ -337,7 +337,7 @@ Removes the element at the given index using swap-and-pop: the last used element
 - Does not preserve element order. The last used element replaces the removed one. If iteration order matters, call `sort()` after removal.
 
 **Cross References:**
-- `FixObjectStack.remove`
+- `$API.FixObjectStack.remove$`
 
 ---
 
@@ -363,8 +363,8 @@ Upsert operation: if an element matching `obj` exists (by the factory's compare 
 - [BUG] Shares the insert off-by-one: the capacity check uses `position < length - 1`, so the effective capacity for new elements is `length - 1`.
 
 **Cross References:**
-- `FixObjectStack.insert`
-- `FixObjectStack.contains`
+- `$API.FixObjectStack.insert$`
+- `$API.FixObjectStack.contains$`
 
 **Example:**
 ```javascript:set-upsert
@@ -416,7 +416,7 @@ Returns the number of used elements in the stack (the current position pointer v
 (none)
 
 **Cross References:**
-- `FixObjectStack.isEmpty`
+- `$API.FixObjectStack.isEmpty$`
 
 ---
 
@@ -435,8 +435,8 @@ Sorts the used portion of the stack (indices 0 to `size() - 1`) using the factor
 (none)
 
 **Cross References:**
-- `FixObjectStack.removeElement`
-- `FixObjectStack.remove`
+- `$API.FixObjectStack.removeElement$`
+- `$API.FixObjectStack.remove$`
 
 ---
 
@@ -458,4 +458,4 @@ Serializes the entire raw memory block (all allocated slots) as a Base64-encoded
 - [BUG] Serializes the full memory block including unused slots. The position pointer is not included in the output. Use a separate mechanism to save and restore the used count alongside the Base64 string.
 
 **Cross References:**
-- `FixObjectStack.fromBase64`
+- `$API.FixObjectStack.fromBase64$`

@@ -42,22 +42,27 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **Wrong:** `table.getTableValue(Message.getVelocity())`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `table.getTableValue(Message.getVelocity())`
   **Right:** `table.getTableValue(Message.getVelocity() / 127.0)`
   *Table lookup input is normalised. Raw MIDI values collapse the curve response.*
 
-- **Wrong:** Calling `registerAtParent()` inside `onNoteOn`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `registerAtParent()` inside `onNoteOn`
   **Right:** Call `registerAtParent()` once in `onInit` and cache the returned handle
   *Registration is setup work, not per-note work. Repeating it during playback adds avoidable overhead.*
 
-- **Wrong:** `st.setSnapValues(0.25)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `st.setSnapValues(0.25)`
   **Right:** `st.setSnapValues([0.0, 0.25, 0.5, 0.75, 1.0])`
   *Snap values must be an array of x positions.*
 
-- **Wrong:** `st.referToData(sliderPackDataObj)`
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `st.referToData(sliderPackDataObj)`
   **Right:** `st.referToData(tableDataObj)`
   *`referToData` only accepts table-compatible data sources.*
 
-- **Wrong:** Styling only one table draw function
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Styling only one table draw function
   **Right:** Override the full set (`drawTableBackground`, `drawTablePath`, `drawTablePoint`, `drawTableRuler`)
   *Partial overrides often produce mixed default/custom rendering that looks inconsistent.*

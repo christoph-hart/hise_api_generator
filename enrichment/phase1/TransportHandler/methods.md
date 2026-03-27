@@ -24,8 +24,8 @@ Registers a callback that fires whenever the host tempo (BPM) changes. The `sync
 - The callback fires immediately upon registration with the current BPM value (via forceSync=true), even if registered as async. This initial fire is always synchronous regardless of the dispatch mode.
 
 **Cross References:**
-- `TransportHandler.setOnTransportChange`
-- `TransportHandler.setOnSignatureChange`
+- `$API.TransportHandler.setOnTransportChange$`
+- `$API.TransportHandler.setOnSignatureChange$`
 
 **DiagramRef:** sync-async-dispatch
 
@@ -82,8 +82,8 @@ Registers a callback that fires when the transport state changes (play/stop). Th
 **Callback Signature:** f(isPlaying: bool)
 
 **Cross References:**
-- `TransportHandler.isPlaying`
-- `TransportHandler.setOnTempoChange`
+- `$API.TransportHandler.isPlaying$`
+- `$API.TransportHandler.setOnTempoChange$`
 
 **DiagramRef:** sync-async-dispatch
 
@@ -143,8 +143,8 @@ Registers a callback that fires on each musical beat. The callback receives two 
 - Does not fire immediately upon registration (unlike `setOnTempoChange` and `setOnTransportChange`). The first callback comes at the next beat boundary.
 
 **Cross References:**
-- `TransportHandler.setOnGridChange`
-- `TransportHandler.setOnSignatureChange`
+- `$API.TransportHandler.setOnGridChange$`
+- `$API.TransportHandler.setOnSignatureChange$`
 
 **Example:**
 ```javascript:basic
@@ -190,11 +190,11 @@ Registers a callback that fires on each grid tick. The grid must be enabled firs
 - Does not fire immediately upon registration.
 
 **Cross References:**
-- `TransportHandler.setEnableGrid`
-- `TransportHandler.setLocalGridMultiplier`
-- `TransportHandler.setLocalGridBypassed`
-- `TransportHandler.getGridPosition`
-- `TransportHandler.getGridLengthInSamples`
+- `$API.TransportHandler.setEnableGrid$`
+- `$API.TransportHandler.setLocalGridMultiplier$`
+- `$API.TransportHandler.setLocalGridBypassed$`
+- `$API.TransportHandler.getGridPosition$`
+- `$API.TransportHandler.getGridLengthInSamples$`
 
 **DiagramRef:** sync-async-dispatch
 
@@ -241,7 +241,7 @@ Registers a callback that fires when the time signature changes. The callback re
 **Callback Signature:** f(nominator: int, denominator: int)
 
 **Cross References:**
-- `TransportHandler.setOnBeatChange`
+- `$API.TransportHandler.setOnBeatChange$`
 
 **Example:**
 ```javascript:basic
@@ -325,9 +325,9 @@ Sets the sync mode for the global master clock. This controls how the internal c
 | SyncInternal (5) | Internal clock drives start/stop, but PPQ position continuously syncs to DAW position while DAW is playing. External stop commands are ignored -- internal clock keeps running. Combines internal control with external musical alignment. |
 
 **Cross References:**
-- `TransportHandler.startInternalClock`
-- `TransportHandler.stopInternalClock`
-- `TransportHandler.setLinkBpmToSyncMode`
+- `$API.TransportHandler.startInternalClock$`
+- `$API.TransportHandler.stopInternalClock$`
+- `$API.TransportHandler.setLinkBpmToSyncMode$`
 
 **DiagramRef:** clock-sync-modes
 
@@ -348,9 +348,9 @@ Starts the internal master clock at the given sample timestamp offset within the
 | timestamp | Integer | no | Sample offset within the current audio block for sub-block start accuracy. | 0 to current block size |
 
 **Cross References:**
-- `TransportHandler.stopInternalClock`
-- `TransportHandler.setSyncMode`
-- `TransportHandler.setOnTransportChange`
+- `$API.TransportHandler.stopInternalClock$`
+- `$API.TransportHandler.setSyncMode$`
+- `$API.TransportHandler.setOnTransportChange$`
 
 ## stopInternalClock
 
@@ -369,9 +369,9 @@ Stops the internal master clock at the given sample timestamp offset within the 
 | timestamp | Integer | no | Sample offset within the current audio block for sub-block stop accuracy. | 0 to current block size |
 
 **Cross References:**
-- `TransportHandler.startInternalClock`
-- `TransportHandler.setSyncMode`
-- `TransportHandler.setOnTransportChange`
+- `$API.TransportHandler.startInternalClock$`
+- `$API.TransportHandler.setSyncMode$`
+- `$API.TransportHandler.setOnTransportChange$`
 
 ## stopInternalClockOnExternalStop
 
@@ -390,9 +390,9 @@ Configures whether the internal clock should automatically stop when the externa
 | shouldStop | Integer | no | Whether to stop the internal clock on external stop. | Boolean: true/false |
 
 **Cross References:**
-- `TransportHandler.startInternalClock`
-- `TransportHandler.stopInternalClock`
-- `TransportHandler.setSyncMode`
+- `$API.TransportHandler.startInternalClock$`
+- `$API.TransportHandler.stopInternalClock$`
+- `$API.TransportHandler.setSyncMode$`
 
 ## setLinkBpmToSyncMode
 
@@ -411,7 +411,7 @@ When enabled, the BPM source (internal vs external) is automatically linked to t
 | shouldPrefer | Integer | no | Whether to link BPM source to the sync mode. | Boolean: true/false |
 
 **Cross References:**
-- `TransportHandler.setSyncMode`
+- `$API.TransportHandler.setSyncMode$`
 
 ## setEnableGrid
 
@@ -458,9 +458,9 @@ Enables or disables the high-precision grid timer at a specific musical tempo di
 - [BUG] The error message says "Use 1-18" but valid indices actually start at 0 (Whole note). Index 0 is valid.
 
 **Cross References:**
-- `TransportHandler.setOnGridChange`
-- `TransportHandler.setLocalGridMultiplier`
-- `TransportHandler.getGridLengthInSamples`
+- `$API.TransportHandler.setOnGridChange$`
+- `$API.TransportHandler.setLocalGridMultiplier$`
+- `$API.TransportHandler.getGridLengthInSamples$`
 
 **Example:**
 ```javascript:basic
@@ -499,9 +499,9 @@ Sets a per-instance multiplier that slows down the grid callbacks for this Trans
 | factor | Integer | no | Grid rate divisor. | Must be 1 or a power of two (2, 4, 8, 16, 32, 64). Reports script error if not. Clamped to [1, 64]. |
 
 **Cross References:**
-- `TransportHandler.setEnableGrid`
-- `TransportHandler.setOnGridChange`
-- `TransportHandler.getGridLengthInSamples`
+- `$API.TransportHandler.setEnableGrid$`
+- `$API.TransportHandler.setOnGridChange$`
+- `$API.TransportHandler.getGridLengthInSamples$`
 
 ## setLocalGridBypassed
 
@@ -520,8 +520,8 @@ Bypasses the grid callback for this TransportHandler instance. When bypassed, no
 | shouldBeBypassed | Integer | no | Whether to bypass grid callbacks. | Boolean: true/false |
 
 **Cross References:**
-- `TransportHandler.setOnGridChange`
-- `TransportHandler.setEnableGrid`
+- `$API.TransportHandler.setOnGridChange$`
+- `$API.TransportHandler.setEnableGrid$`
 
 ## sendGridSyncOnNextCallback
 
@@ -534,7 +534,7 @@ Bypasses the grid callback for this TransportHandler instance. When bypassed, no
 Forces the next grid callback to have its `firstGridInPlayback` argument set to `true`. This provides a manual resync point for the grid, useful when you need to reset sequencer state to the beginning. This is a global operation on the MasterClock -- it affects all TransportHandler instances.
 
 **Cross References:**
-- `TransportHandler.setOnGridChange`
+- `$API.TransportHandler.setOnGridChange$`
 
 ## isPlaying
 
@@ -547,8 +547,8 @@ Forces the next grid callback to have its `firstGridInPlayback` argument set to 
 Returns whether the transport is currently playing (internal or external clock, depending on sync mode). Returns 1 if playing, 0 if stopped.
 
 **Cross References:**
-- `TransportHandler.setOnTransportChange`
-- `TransportHandler.startInternalClock`
+- `$API.TransportHandler.setOnTransportChange$`
+- `$API.TransportHandler.startInternalClock$`
 
 ## isNonRealtime
 
@@ -571,8 +571,8 @@ Returns whether the DAW is currently bouncing/exporting the audio to a file (non
 Returns the duration of one grid tick in samples, based on the current BPM, the global grid tempo setting, the local grid multiplier, and the sample rate. This accounts for the local multiplier -- if the multiplier is 4, the returned length is 4x the base grid length. Useful for calculating buffer sizes or scheduling positions relative to the grid.
 
 **Cross References:**
-- `TransportHandler.setEnableGrid`
-- `TransportHandler.setLocalGridMultiplier`
+- `$API.TransportHandler.setEnableGrid$`
+- `$API.TransportHandler.setLocalGridMultiplier$`
 
 ## getGridPosition
 
@@ -591,4 +591,4 @@ Returns the current PPQ position as an integer for the given sample timestamp of
 | timestamp | Integer | no | Sample offset within the current audio block. | 0 to current block size |
 
 **Cross References:**
-- `TransportHandler.setOnGridChange`
+- `$API.TransportHandler.setOnGridChange$`

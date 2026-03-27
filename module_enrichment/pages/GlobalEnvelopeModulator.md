@@ -135,12 +135,4 @@ When disconnected (no source selected), the modulator outputs a constant 1.0 in 
 
 The Monophonic and Retrigger parameters affect the local voice management framework but do not influence the envelope shape, which is always determined by the source envelope in the container.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Global Modulator Container", to: "/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer", desc: "hosts the source envelope that this modulator reads from" }
-  - { label: "Matrix Modulator", to: "/v2/reference/audio-modules/modulators/envelope/matrixmodulator", desc: "combines multiple global modulators into one output with per-connection modes" }
----
-::
+**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source envelope that this modulator reads from, $MODULES.MatrixModulator$ -- combines multiple global modulators into one output with per-connection modes

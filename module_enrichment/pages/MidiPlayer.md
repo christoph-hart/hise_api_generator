@@ -191,11 +191,4 @@ When bypassed, note-on events are suppressed but CC and pitch wheel events still
 
 The MidiOverlayPanel FloatingTile hosts several editor overlays for the MIDI Player: a note viewer, CC viewer, loop-based editor, and drag-and-drop file loader. Overlays connect to any MidiPlayer in the module tree and support real-time editing with undo/redo.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "MidiMetronome", to: "/v2/reference/audio-modules/effects/master/midimetronome", desc: "Generates metronome clicks synchronised to this player's position and time signature" }
----
-::
+**See also:** $MODULES.MidiMetronome$ -- Generates metronome clicks synchronised to this player's position and time signature

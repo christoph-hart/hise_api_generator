@@ -32,18 +32,22 @@ Response callbacks receive an integer status code and a parsed JSON response obj
 
 ## Common Mistakes
 
-- **Wrong:** Calling `Server.isOnline()` before every request to check connectivity.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `Server.isOnline()` before every request to check connectivity.
   **Right:** Let the request callback handle `status == 0` for timeouts; reserve `Server.isOnline()` for explicit connectivity gates (e.g. before showing an activation panel).
   *`isOnline()` blocks for up to 20 seconds when offline. The callback already reports connection failures via status code 0, which is non-blocking.*
 
-- **Wrong:** Checking only `status == 200` in the response callback.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Checking only `status == 200` in the response callback.
   **Right:** Handle `status == 0` (timeout/no connection) separately from non-200 error codes (403, 404, 500).
   *Status 0 means no response was received at all. Non-200 codes are actual server responses with potentially useful error messages in the response body. Conflating the two leads to misleading messages for the user.*
 
-- **Wrong:** Hardcoding product names and version strings in request parameters.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Hardcoding product names and version strings in request parameters.
   **Right:** Use `Engine.getProjectInfo().ProjectName`, `Engine.getVersion()`, and `Engine.getOS()` to build request payloads dynamically.
   *These methods return the correct values from the project settings, keeping the request logic reusable across products without code changes.*
 
-- **Wrong:** Storing sensitive server response data (tokens, API keys) to disk as plain JSON.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Storing sensitive server response data (tokens, API keys) to disk as plain JSON.
   **Right:** Use `File.writeEncryptedObject()` to persist any sensitive data received from the server.
   *Plain JSON files are trivially readable. Encrypted objects protect credentials and sensitive data at rest.*

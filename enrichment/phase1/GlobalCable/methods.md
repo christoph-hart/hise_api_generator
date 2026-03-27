@@ -13,9 +13,9 @@ Returns the current cable value converted from the internal normalised range (0.
 (None)
 
 **Cross References:**
-- `GlobalCable.getValueNormalised`
-- `GlobalCable.setValue`
-- `GlobalCable.setRange`
+- `$API.GlobalCable.getValueNormalised$`
+- `$API.GlobalCable.setValue$`
+- `$API.GlobalCable.setRange$`
 
 ---
 
@@ -34,8 +34,8 @@ Returns the raw normalised cable value between 0.0 and 1.0, bypassing the local 
 (None)
 
 **Cross References:**
-- `GlobalCable.getValue`
-- `GlobalCable.setValueNormalised`
+- `$API.GlobalCable.getValue$`
+- `$API.GlobalCable.setValueNormalised$`
 
 ---
 
@@ -59,9 +59,9 @@ Converts the input value from the local input range to normalised 0..1 using `co
 - The value is only meaningful if a range has been configured with `setRange()`, `setRangeWithSkew()`, or `setRangeWithStep()`. Without a range, this is equivalent to `setValueNormalised()`.
 
 **Cross References:**
-- `GlobalCable.setValueNormalised`
-- `GlobalCable.getValue`
-- `GlobalCable.setRange`
+- `$API.GlobalCable.setValueNormalised$`
+- `$API.GlobalCable.getValue$`
+- `$API.GlobalCable.setRange$`
 
 **DiagramRef:** cable-dispatch
 
@@ -108,8 +108,8 @@ Sends a normalised value (0..1) directly to all cable targets, bypassing the loc
 | normalisedInput | Double | no | The normalised value to send. | 0.0 to 1.0; values outside this range are clamped. |
 
 **Cross References:**
-- `GlobalCable.setValue`
-- `GlobalCable.getValueNormalised`
+- `$API.GlobalCable.setValue$`
+- `$API.GlobalCable.getValueNormalised$`
 
 ---
 
@@ -134,7 +134,7 @@ Serialises any HISEScript value (JSON objects, strings, arrays, buffers) to a bi
 - The data is serialised and deserialised on each send, so large objects incur a performance cost.
 
 **Cross References:**
-- `GlobalCable.registerDataCallback`
+- `$API.GlobalCable.registerDataCallback$`
 
 **Example:**
 ```javascript
@@ -165,10 +165,10 @@ Sets the local input range for this cable reference using a minimum and maximum 
 | max | Double | no | The maximum value of the input range. | Must be greater than min. |
 
 **Cross References:**
-- `GlobalCable.setRangeWithSkew`
-- `GlobalCable.setRangeWithStep`
-- `GlobalCable.setValue`
-- `GlobalCable.getValue`
+- `$API.GlobalCable.setRangeWithSkew$`
+- `$API.GlobalCable.setRangeWithStep$`
+- `$API.GlobalCable.setValue$`
+- `$API.GlobalCable.getValue$`
 
 ---
 
@@ -191,8 +191,8 @@ Sets the local input range with a skew factor derived from a mid point. The `mid
 | midPoint | Double | no | The input value that maps to 0.5 in normalised space. | Must be between min and max. |
 
 **Cross References:**
-- `GlobalCable.setRange`
-- `GlobalCable.setRangeWithStep`
+- `$API.GlobalCable.setRange$`
+- `$API.GlobalCable.setRangeWithStep$`
 
 **Example:**
 ```javascript:basic
@@ -240,8 +240,8 @@ Sets the local input range with a step size for quantised values. The output of 
 | stepSize | Double | no | The step size for value quantisation. | Must be greater than 0. |
 
 **Cross References:**
-- `GlobalCable.setRange`
-- `GlobalCable.setRangeWithSkew`
+- `$API.GlobalCable.setRange$`
+- `$API.GlobalCable.setRangeWithSkew$`
 
 ---
 
@@ -273,8 +273,8 @@ When `synchronous` is `AsyncNotification`, the callback executes asynchronously 
 - Each call to `registerCallback` adds a new callback. There is no automatic replacement -- call `deregisterCallback` first to remove an existing one.
 
 **Cross References:**
-- `GlobalCable.deregisterCallback`
-- `GlobalCable.registerDataCallback`
+- `$API.GlobalCable.deregisterCallback$`
+- `$API.GlobalCable.registerDataCallback$`
 
 **Diagram:**
 - **Brief:** Sync vs Async Callback Dispatch
@@ -347,9 +347,9 @@ The callback is always asynchronous (high-priority via `WeakCallbackHolder`). A 
 **Callback Signature:** dataCallbackFunction(data: var)
 
 **Cross References:**
-- `GlobalCable.sendData`
-- `GlobalCable.deregisterCallback`
-- `GlobalCable.registerCallback`
+- `$API.GlobalCable.sendData$`
+- `$API.GlobalCable.deregisterCallback$`
+- `$API.GlobalCable.registerCallback$`
 
 **Example:**
 ```javascript:data-callback-json
@@ -399,8 +399,8 @@ Removes a previously registered callback (either value or data callback) from th
 | callbackFunction | Function | no | The function reference that was previously registered via `registerCallback` or `registerDataCallback`. | Must be the same function reference used during registration. |
 
 **Cross References:**
-- `GlobalCable.registerCallback`
-- `GlobalCable.registerDataCallback`
+- `$API.GlobalCable.registerCallback$`
+- `$API.GlobalCable.registerDataCallback$`
 
 ---
 
@@ -429,8 +429,8 @@ Currently only `macroIsTarget=true` (cable drives macro) is implemented. The rev
 - Macro values are scaled 0..1 -> 0..127 internally. The cable's input range does not affect this -- the raw normalised value is used.
 
 **Cross References:**
-- `GlobalCable.connectToModuleParameter`
-- `GlobalCable.connectToGlobalModulator`
+- `$API.GlobalCable.connectToModuleParameter$`
+- `$API.GlobalCable.connectToGlobalModulator$`
 
 **Example:**
 ```javascript:basic
@@ -473,8 +473,8 @@ Different modulator types are handled automatically: time-variant modulators sen
 - [BUG] The modulator must be inside a `GlobalModulatorContainer`. If the modulator exists but its parent is not a `GlobalModulatorContainer`, the call silently does nothing.
 
 **Cross References:**
-- `GlobalCable.connectToMacroControl`
-- `GlobalCable.connectToModuleParameter`
+- `$API.GlobalCable.connectToMacroControl$`
+- `$API.GlobalCable.connectToModuleParameter$`
 
 ---
 
@@ -509,8 +509,8 @@ The parameter can be specified by index (integer) or by name (string). Passing `
 | SmoothingTime | Double | Smoothing time in milliseconds applied to value changes (optional, default 0). |
 
 **Cross References:**
-- `GlobalCable.connectToMacroControl`
-- `GlobalCable.connectToGlobalModulator`
+- `$API.GlobalCable.connectToMacroControl$`
+- `$API.GlobalCable.connectToGlobalModulator$`
 
 **Example:**
 ```javascript

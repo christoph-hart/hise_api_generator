@@ -10,4 +10,4 @@ The `dotData` parameter controls dashing: pass `[]` for a solid stroke, or an ar
 
 This is essential when you need to apply gradient fills, shadows, or other fill effects to arc strokes - `Graphics.drawPath` can only stroke with a solid colour, while `Graphics.fillPath` on the stroked result supports the full range of fill modes.
 
-> **Warning:** Always pass `[]` (empty array) for solid strokes, not an empty string. While empty strings may work silently, `[]` is the correct format.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Always pass `[]` (empty array) for solid strokes, not an empty string. While empty strings may work silently, `[]` is the correct format.

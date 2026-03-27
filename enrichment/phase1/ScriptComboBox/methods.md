@@ -25,9 +25,9 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.set
 
 **Cross References:**
-- `ScriptComboBox.set`
-- `ScriptComboBox.getAllProperties`
-- `ScriptComboBox.setPropertiesFromJSON`
+- `$API.ScriptComboBox.set$`
+- `$API.ScriptComboBox.getAllProperties$`
+- `$API.ScriptComboBox.setPropertiesFromJSON$`
 
 ---
 
@@ -55,9 +55,9 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptComboBox.get`
-- `ScriptComboBox.getAllProperties`
-- `ScriptComboBox.setPropertiesFromJSON`
+- `$API.ScriptComboBox.get$`
+- `$API.ScriptComboBox.getAllProperties$`
+- `$API.ScriptComboBox.setPropertiesFromJSON$`
 
 **Example:**
 ```javascript:combobox-set-items
@@ -106,10 +106,10 @@ Returns the current value of the combo box as a 1-based integer index. Value 1 c
 - The stored value must not be a String. If it is, an assertion fires in debug builds.
 
 **Cross References:**
-- `ScriptComboBox.setValue`
-- `ScriptComboBox.setValueNormalized`
-- `ScriptComboBox.getValueNormalized`
-- `ScriptComboBox.getItemText`
+- `$API.ScriptComboBox.setValue$`
+- `$API.ScriptComboBox.setValueNormalized$`
+- `$API.ScriptComboBox.getValueNormalized$`
+- `$API.ScriptComboBox.getItemText$`
 
 ---
 
@@ -142,10 +142,10 @@ Sets the combo box's value as a 1-based integer index. Thread-safe -- can be cal
 - Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
-- `ScriptComboBox.getValue`
-- `ScriptComboBox.getValueNormalized`
-- `ScriptComboBox.setValueNormalized`
-- `ScriptComboBox.setValueWithUndo`
+- `$API.ScriptComboBox.getValue$`
+- `$API.ScriptComboBox.getValueNormalized$`
+- `$API.ScriptComboBox.setValueNormalized$`
+- `$API.ScriptComboBox.setValueWithUndo$`
 
 ---
 
@@ -166,9 +166,9 @@ Sets the value using a normalized 0..1 range. The base implementation calls `set
 | normalizedValue | Double | no | A value in the range 0.0 to 1.0 | 0.0 to 1.0 |
 
 **Cross References:**
-- `ScriptComboBox.getValue`
-- `ScriptComboBox.getValueNormalized`
-- `ScriptComboBox.setValue`
+- `$API.ScriptComboBox.getValue$`
+- `$API.ScriptComboBox.getValueNormalized$`
+- `$API.ScriptComboBox.setValue$`
 
 ---
 
@@ -183,9 +183,9 @@ Sets the value using a normalized 0..1 range. The base implementation calls `set
 Returns the normalized value (0.0 to 1.0). Base implementation returns `getValue()` directly. For ScriptComboBox, this returns the raw stored value without mapping from the 1..N range.
 
 **Cross References:**
-- `ScriptComboBox.getValue`
-- `ScriptComboBox.setValueNormalized`
-- `ScriptComboBox.setValue`
+- `$API.ScriptComboBox.getValue$`
+- `$API.ScriptComboBox.setValueNormalized$`
+- `$API.ScriptComboBox.setValue$`
 
 ---
 
@@ -216,7 +216,7 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`. Pas
 - Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
-- `ScriptComboBox.setValue`
+- `$API.ScriptComboBox.setValue$`
 
 ---
 
@@ -286,7 +286,7 @@ Sets the `visible` property with change message notification.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptComboBox.fadeComponent`
+- `$API.ScriptComboBox.fadeComponent$`
 
 ---
 
@@ -397,8 +397,8 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
-- `ScriptComboBox.setControlCallback`
-- `ScriptComboBox.getValue`
+- `$API.ScriptComboBox.setControlCallback$`
+- `$API.ScriptComboBox.getValue$`
 
 ---
 
@@ -417,7 +417,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 - Related: get("x"), get("parentComponent")
 
 **Cross References:**
-- `ScriptComboBox.getGlobalPositionY`
+- `$API.ScriptComboBox.getGlobalPositionY$`
 
 ---
 
@@ -436,7 +436,7 @@ Returns the absolute y-position relative to the interface root, computed by recu
 - Related: get("y"), get("parentComponent")
 
 **Cross References:**
-- `ScriptComboBox.getGlobalPositionX`
+- `$API.ScriptComboBox.getGlobalPositionX$`
 
 ---
 
@@ -472,7 +472,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptComboBox.changed`
+- `$API.ScriptComboBox.changed$`
 
 **Example:**
 ```javascript:combobox-control-callback
@@ -513,9 +513,9 @@ cb.setControlCallback(onComboChanged);
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes both base ScriptComponent properties and ScriptComboBox-specific properties (`items`, `fontName`, `fontSize`, `fontStyle`, `enableMidiLearn`, `popupAlignment`, `useCustomPopup`). Note that the `min` and `max` properties are deactivated on ScriptComboBox and will not appear in the result.
 
 **Cross References:**
-- `ScriptComboBox.get`
-- `ScriptComboBox.set`
-- `ScriptComboBox.setPropertiesFromJSON`
+- `$API.ScriptComboBox.get$`
+- `$API.ScriptComboBox.set$`
+- `$API.ScriptComboBox.setPropertiesFromJSON$`
 
 ---
 
@@ -568,7 +568,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptComboBox.setConsumedKeyPresses`
+- `$API.ScriptComboBox.setConsumedKeyPresses$`
 
 ---
 
@@ -613,7 +613,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptComboBox.setKeyPressCallback`
+- `$API.ScriptComboBox.setKeyPressCallback$`
 
 ---
 
@@ -628,7 +628,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptComboBox.grabFocus`
+- `$API.ScriptComboBox.grabFocus$`
 
 ---
 
@@ -643,7 +643,7 @@ Notifies all z-level listeners that the component wants to lose keyboard focus. 
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptComboBox.loseFocus`
+- `$API.ScriptComboBox.loseFocus$`
 
 ---
 
@@ -696,9 +696,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - When CSS mode is active, colour properties (bgColour, itemColour, itemColour2, textColour) are initialized in the property tree if not already present, and default-property-removal is disabled.
 
 **Cross References:**
-- `ScriptComboBox.setStyleSheetClass`
-- `ScriptComboBox.setStyleSheetProperty`
-- `ScriptComboBox.setStyleSheetPseudoState`
+- `$API.ScriptComboBox.setStyleSheetClass$`
+- `$API.ScriptComboBox.setStyleSheetProperty$`
+- `$API.ScriptComboBox.setStyleSheetPseudoState$`
 
 ---
 
@@ -736,7 +736,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptComboBox.showControl`
+- `$API.ScriptComboBox.showControl$`
 
 ---
 
@@ -772,9 +772,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptComboBox.setStyleSheetClass`
-- `ScriptComboBox.setStyleSheetPseudoState`
-- `ScriptComboBox.setLocalLookAndFeel`
+- `$API.ScriptComboBox.setStyleSheetClass$`
+- `$API.ScriptComboBox.setStyleSheetPseudoState$`
+- `$API.ScriptComboBox.setLocalLookAndFeel$`
 
 ---
 
@@ -795,9 +795,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptComboBox.setStyleSheetProperty`
-- `ScriptComboBox.setStyleSheetPseudoState`
-- `ScriptComboBox.setLocalLookAndFeel`
+- `$API.ScriptComboBox.setStyleSheetProperty$`
+- `$API.ScriptComboBox.setStyleSheetPseudoState$`
+- `$API.ScriptComboBox.setLocalLookAndFeel$`
 
 ---
 
@@ -832,9 +832,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state (bitmask 256) |
 
 **Cross References:**
-- `ScriptComboBox.setStyleSheetClass`
-- `ScriptComboBox.setStyleSheetProperty`
-- `ScriptComboBox.setLocalLookAndFeel`
+- `$API.ScriptComboBox.setStyleSheetClass$`
+- `$API.ScriptComboBox.setStyleSheetProperty$`
+- `$API.ScriptComboBox.setLocalLookAndFeel$`
 
 ---
 
@@ -859,7 +859,7 @@ Special parameter index values for the `parameterId` property:
 - Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
-- `ScriptComboBox.setValue`
+- `$API.ScriptComboBox.setValue$`
 
 ---
 
@@ -895,8 +895,8 @@ Appends a new item to the combo box's item list. Adds a newline and the item nam
 - Related: items payload mutation (`set("items", ...)` pattern)
 
 **Cross References:**
-- `ScriptComboBox.getItemText`
-- `ScriptComboBox.set`
+- `$API.ScriptComboBox.getItemText$`
+- `$API.ScriptComboBox.set$`
 
 **Example:**
 ```javascript:combobox-add-items
@@ -939,9 +939,9 @@ Returns the display text of the currently selected item based on the 1-based val
 - Related: items payload lookup (`get("items")` source)
 
 **Cross References:**
-- `ScriptComboBox.getValue`
-- `ScriptComboBox.setValue`
-- `ScriptComboBox.addItem`
+- `$API.ScriptComboBox.getValue$`
+- `$API.ScriptComboBox.setValue$`
+- `$API.ScriptComboBox.addItem$`
 
 **Example:**
 ```javascript:combobox-get-item-text

@@ -2,4 +2,4 @@ Re-dispatches the broadcaster's current values to all listeners, bypassing the c
 
 This is commonly used after unbypassing a broadcaster to resynchronise listeners, or when external state has changed and listeners need updating without the values themselves having changed.
 
-> **Warning:** If any of the current values are `undefined`, the message is silently suppressed despite the forced resend.
+> [!Warning:$WARNING_TO_BE_REPLACED$] If any of the current values are `undefined`, the message is silently suppressed despite the forced resend.

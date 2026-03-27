@@ -2,4 +2,4 @@ Chains this broadcaster to one or more source broadcasters so that messages from
 
 The `async` parameter controls whether forwarded messages dispatch synchronously or asynchronously. On attachment, existing listeners immediately receive the source broadcaster's current values.
 
-> **Warning:** The transform function must return an array. Returning a scalar value causes the original source arguments to be forwarded unchanged, which may trigger an argument count mismatch if the two broadcasters have different argument counts.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The transform function must return an array. Returning a scalar value causes the original source arguments to be forwarded unchanged, which may trigger an argument count mismatch if the two broadcasters have different argument counts.

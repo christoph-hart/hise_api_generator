@@ -27,22 +27,27 @@ The class also provides an internal clock with configurable sync modes - you can
 
 ## Common Mistakes
 
-- **Wrong:** `th.setOnGridChange(SyncNotification, onGrid);` without calling `th.setEnableGrid(true, tempoFactor)`  
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `th.setOnGridChange(SyncNotification, onGrid);` without calling `th.setEnableGrid(true, tempoFactor)`  
   **Right:** Call `th.setEnableGrid(true, 7)` before registering the grid callback  
   *The grid must be enabled globally before grid callbacks fire. Without it, the grid callback is registered but never triggered.*
 
-- **Wrong:** Using a regular `function` with `SyncNotification`  
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Using a regular `function` with `SyncNotification`  
   **Right:** Use `inline function` for synchronous callbacks  
   *Synchronous callbacks run on the audio thread and require `inline function`. A regular function will throw "Must use inline functions for synchronous callback" at registration.*
 
-- **Wrong:** Calling `startInternalClock(0)` from a MIDI callback  
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `startInternalClock(0)` from a MIDI callback  
   **Right:** Call `startInternalClock(Message.getTimestamp())` from MIDI callbacks  
   *The timestamp parameter provides sample-accurate positioning within the audio block. Using 0 always starts at the block boundary, which can cause timing jitter of up to one block size.*
 
-- **Wrong:** Updating UI components directly in the transport callback  
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Updating UI components directly in the transport callback  
   **Right:** Bridge the transport callback to a Broadcaster  
   *When multiple script files need to react to transport changes, direct component updates create tight coupling. Passing a Broadcaster as the callback function enables loose coupling across many listener sites.*
 
-- **Wrong:** Not stopping the internal clock before loading a preset  
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Not stopping the internal clock before loading a preset  
   **Right:** Call `stopInternalClock(0)` before `Engine.loadUserPreset()`  
   *Loading a preset while the clock is running can cause timing discontinuities. Stop playback first, then call `sendGridSyncOnNextCallback()` and restart the clock after the preset loads.*

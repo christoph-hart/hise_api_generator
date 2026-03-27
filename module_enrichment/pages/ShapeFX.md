@@ -232,11 +232,4 @@ The DC removal filter (30 Hz high-pass) runs after the shaper but is tied to the
 
 Modes 32 (Curve) and 33 (Asymmetrical Curve) use the lookup table edited in the module's panel. The table maps input amplitude to output amplitude. All other modes use fixed mathematical functions.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Polyshape FX", to: "/v2/reference/audio-modules/effects/polyphonic/polyshapefx", desc: "Polyphonic variant with per-voice processing and a drive modulation chain" }
----
-::
+**See also:** $MODULES.PolyshapeFX$ -- Polyphonic variant with per-voice processing and a drive modulation chain

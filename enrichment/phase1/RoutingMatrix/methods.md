@@ -22,8 +22,8 @@ Adds a primary channel connection, routing audio from `sourceIndex` to `destinat
 - When `numAllowedConnections` is 2 (default stereo), adding a third connection automatically removes an existing connection on the same even/odd side. After `setNumChannels(n)`, the constraint relaxes to `n` allowed connections.
 
 **Cross References:**
-- `RoutingMatrix.removeConnection`
-- `RoutingMatrix.addSendConnection`
+- `$API.RoutingMatrix.removeConnection$`
+- `$API.RoutingMatrix.addSendConnection$`
 
 ## addSendConnection
 
@@ -44,8 +44,8 @@ Adds a send connection, routing a copy of the audio from `sourceIndex` to `desti
 | destinationIndex | Number | no | Send destination channel index | 0 to numDestinationChannels-1 |
 
 **Cross References:**
-- `RoutingMatrix.removeSendConnection`
-- `RoutingMatrix.addConnection`
+- `$API.RoutingMatrix.removeSendConnection$`
+- `$API.RoutingMatrix.addConnection$`
 
 ## clear
 
@@ -62,10 +62,10 @@ Removes all primary and send connections. Internally calls `resetToDefault()` (w
 - When `numAllowedConnections` is 2 (default stereo constraint), the internal `removeConnection` calls trigger auto-correction that may re-add a default passthrough connection. The matrix may not end up truly empty unless `setNumChannels` was called first to relax the constraint.
 
 **Cross References:**
-- `RoutingMatrix.removeConnection`
-- `RoutingMatrix.setNumChannels`
-- `RoutingMatrix.addConnection`
-- `RoutingMatrix.addSendConnection`
+- `$API.RoutingMatrix.removeConnection$`
+- `$API.RoutingMatrix.setNumChannels$`
+- `$API.RoutingMatrix.addConnection$`
+- `$API.RoutingMatrix.addSendConnection$`
 
 ## getDestinationChannelForSource
 
@@ -85,8 +85,8 @@ Returns the destination channel index that the given source channel is connected
 | sourceIndex | Number or Array | no | Source channel index or array of indices | 0 to numSourceChannels-1 per element |
 
 **Cross References:**
-- `RoutingMatrix.getSourceChannelsForDestination`
-- `RoutingMatrix.addConnection`
+- `$API.RoutingMatrix.getSourceChannelsForDestination$`
+- `$API.RoutingMatrix.addConnection$`
 
 ## getNumDestinationChannels
 
@@ -99,8 +99,8 @@ Returns the destination channel index that the given source channel is connected
 Returns the current number of destination (output) channels in the routing matrix. Unlike the `NumOutputs` constant (which is a snapshot from construction time), this reflects the live value.
 
 **Cross References:**
-- `RoutingMatrix.getNumSourceChannels`
-- `RoutingMatrix.setNumChannels`
+- `$API.RoutingMatrix.getNumSourceChannels$`
+- `$API.RoutingMatrix.setNumChannels$`
 
 ## getNumSourceChannels
 
@@ -113,8 +113,8 @@ Returns the current number of destination (output) channels in the routing matri
 Returns the current number of source (input) channels in the routing matrix. Unlike the `NumInputs` constant (which is a snapshot from construction time), this reflects the live value and updates after `setNumChannels` is called.
 
 **Cross References:**
-- `RoutingMatrix.getNumDestinationChannels`
-- `RoutingMatrix.setNumChannels`
+- `$API.RoutingMatrix.getNumDestinationChannels$`
+- `$API.RoutingMatrix.setNumChannels$`
 
 ## getSourceChannelsForDestination
 
@@ -137,8 +137,8 @@ Returns the source channel(s) connected to the given destination via primary con
 - The return type varies depending on the connection state: -1 (Integer, no connection), a single Integer (one source), or an Array (multiple sources in fan-in). Always check the type before using the result as an array index.
 
 **Cross References:**
-- `RoutingMatrix.getDestinationChannelForSource`
-- `RoutingMatrix.addConnection`
+- `$API.RoutingMatrix.getDestinationChannelForSource$`
+- `$API.RoutingMatrix.addConnection$`
 
 ## getSourceGainValue
 
@@ -161,7 +161,7 @@ Returns the current peak level for the given source channel as a linear gain val
 - Peak values are only computed when the routing editor is actively displayed in the HISE IDE. The internal `handleDisplayValues` method only runs when `anyChannelActive()` returns true, which requires at least one editor reference count. In exported plugins or when no editor is shown, all channels return 0.0. There is no script-level API to force peak metering.
 
 **Cross References:**
-- `RoutingMatrix.getNumSourceChannels`
+- `$API.RoutingMatrix.getNumSourceChannels$`
 
 ## removeConnection
 
@@ -185,8 +185,8 @@ Removes the primary channel connection between `sourceIndex` and `destinationInd
 - When `numAllowedConnections` is 2 (default stereo), removing a connection that drops the count below 2 auto-restores a default passthrough connection (`channelConnections[index] = index`). The matrix maintains at least a stereo pair under the default constraint.
 
 **Cross References:**
-- `RoutingMatrix.addConnection`
-- `RoutingMatrix.clear`
+- `$API.RoutingMatrix.addConnection$`
+- `$API.RoutingMatrix.clear$`
 
 ## removeSendConnection
 
@@ -207,8 +207,8 @@ Removes a send connection between `sourceIndex` and `destinationIndex`. Returns 
 | destinationIndex | Number | no | Send destination channel index | 0 to numDestinationChannels-1 |
 
 **Cross References:**
-- `RoutingMatrix.addSendConnection`
-- `RoutingMatrix.clear`
+- `$API.RoutingMatrix.addSendConnection$`
+- `$API.RoutingMatrix.clear$`
 
 ## setForcePeakMeters
 
@@ -238,5 +238,5 @@ Sets the number of source channels and the maximum number of allowed connections
 - The `NumInputs` and `NumOutputs` constants are snapshot values from construction time and do NOT update. Use `getNumSourceChannels()` to read the live channel count after calling `setNumChannels`.
 
 **Cross References:**
-- `RoutingMatrix.getNumSourceChannels`
-- `RoutingMatrix.clear`
+- `$API.RoutingMatrix.getNumSourceChannels$`
+- `$API.RoutingMatrix.clear$`

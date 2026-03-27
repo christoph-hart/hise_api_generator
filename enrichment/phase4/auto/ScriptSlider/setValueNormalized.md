@@ -2,6 +2,6 @@ Maps a 0..1 input to the slider's actual range using current midpoint/skew setti
 
 For vertically inverted gesture surfaces, invert the input (`1.0 - n`) before calling this method so upward motion still feels like increasing value.
 
-> **Warning:** If range settings are invalid, the value is not updated.
+> [!Warning:$WARNING_TO_BE_REPLACED$] If range settings are invalid, the value is not updated.
 
-> **Warning:** Do not rely on legacy `-1` midpoint values to disable skew in all ranges. Use `setMidPoint("disabled")` for explicit no-skew behaviour.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Do not rely on legacy `-1` midpoint values to disable skew in all ranges. Use `setMidPoint("disabled")` for explicit no-skew behaviour.

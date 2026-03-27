@@ -34,18 +34,22 @@ const var mh = Engine.createMessageHolder();
 
 ## Common Mistakes
 
-- **Wrong:** `Synth.addMessageFromHolder(mh)` without setting the type first.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `Synth.addMessageFromHolder(mh)` without setting the type first.
   **Right:** `mh.setType(mh.NoteOn); mh.setNoteNumber(60); Synth.addMessageFromHolder(mh);`
   *A default MessageHolder has type Empty. Passing it to `Synth.addMessageFromHolder()` triggers an "Event is empty" error.*
 
-- **Wrong:** Reusing a single MessageHolder in a loop and pushing it to an array.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Reusing a single MessageHolder in a loop and pushing it to an array.
   **Right:** Create a new `Engine.createMessageHolder()` for each event, or use `clone()`.
   *MessageHolder is a reference-counted object. Pushing the same reference multiple times means all array slots point to the same event - every modification affects all "copies".*
 
-- **Wrong:** Calling `Synth.addMessageFromHolder(holder)` after `Message.store(holder)` in `onNoteOff` without checking the stored event type.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `Synth.addMessageFromHolder(holder)` after `Message.store(holder)` in `onNoteOff` without checking the stored event type.
   **Right:** Use `Message.store(holder)` which captures the correct type from the callback context, and verify the stored type matches your intent before re-injection.
   *When `Message.store()` runs in `onNoteOff`, the stored type is NoteOff. Re-injecting a NoteOff without a matching NoteOn event ID can produce orphaned voice state.*
 
-- **Wrong:** Setting timestamp to 0 for all events in a MidiPlayer sequence.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Setting timestamp to 0 for all events in a MidiPlayer sequence.
   **Right:** Use `setTimestamp()` with proper tick or sample offsets based on `MidiPlayer.setUseTimestampInTicks()`.
   *MidiPlayer uses timestamps to position events. All events at timestamp 0 fire simultaneously on the first beat.*

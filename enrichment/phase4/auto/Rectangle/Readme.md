@@ -41,14 +41,17 @@ Alternatively, new projects that have no existing code depending on array return
 
 ## Common Mistakes
 
-- **Wrong:** `var strip = rect.removeFromTop(30);` and expecting `rect` to be unchanged.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var strip = rect.removeFromTop(30);` and expecting `rect` to be unchanged.
   **Right:** `var strip = rect.removeFromTop(30);` - `rect` is now smaller and `strip` holds the removed portion.
   *The `removeFrom*` methods mutate the source rectangle and return the removed strip. This dual behaviour is intentional for the layout slicing pattern.*
 
-- **Wrong:** `var area = obj.area; area.removeFromTop(30);` when `obj.area` is still a `[x,y,w,h]` array.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** `var area = obj.area; area.removeFromTop(30);` when `obj.area` is still a `[x,y,w,h]` array.
   **Right:** `var area = Rectangle(obj.area); area.removeFromTop(30);`
   *When `obj.area` is a plain array, slicing it mutates the array in place, which corrupts the original `obj.area` for subsequent repaints. Wrapping in `Rectangle()` creates an independent copy.*
 
-- **Wrong:** Writing a custom `Rect` helper namespace with manual array arithmetic for layout calculations.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Writing a custom `Rect` helper namespace with manual array arithmetic for layout calculations.
   **Right:** Using the built-in `Rectangle()` class, which provides all layout slicing, transformation, and query methods natively.
   *The helper namespace pattern was necessary before Rectangle existed but is now redundant.*

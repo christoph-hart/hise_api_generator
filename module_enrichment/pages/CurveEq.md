@@ -172,12 +172,4 @@ The spectrum analyser is disabled by default to save CPU. It shows the post-filt
 
 The module is automatically suspended when the input signal is silent.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Polyphonic Filter", to: "/v2/reference/audio-modules/effects/polyphonic/polyphonicfilter", desc: "Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed" }
-  - { label: "Harmonic Filter", to: "/v2/reference/audio-modules/effects/master/harmonicfilter", desc: "Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping" }
----
-::
+**See also:** $MODULES.PolyphonicFilter$ -- Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed, $MODULES.HarmonicFilter$ -- Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping

@@ -18,9 +18,9 @@ Returns the pressure value of a monophonic (channel pressure) aftertouch event. 
 - Channel pressure and polyphonic aftertouch both use the same underlying `Aftertouch` event type in HISE's event system. Use `Message.isMonophonicAfterTouch()` to distinguish them before calling this method.
 
 **Cross References:**
-- `Message.isMonophonicAfterTouch`
-- `Message.setMonophonicAfterTouchPressure`
-- `Message.getControllerValue`
+- `$API.Message.isMonophonicAfterTouch$`
+- `$API.Message.setMonophonicAfterTouchPressure$`
+- `$API.Message.getControllerValue$`
 
 ## getNoteNumber
 
@@ -37,9 +37,9 @@ Returns the MIDI note number (0-127) of the current note-on or note-off event. O
 (No parameters.)
 
 **Cross References:**
-- `Message.setNoteNumber`
-- `Message.getTransposeAmount`
-- `Message.getVelocity`
+- `$API.Message.setNoteNumber$`
+- `$API.Message.getTransposeAmount$`
+- `$API.Message.getVelocity$`
 
 ## getPolyAfterTouchNoteNumber
 
@@ -59,9 +59,9 @@ Returns the note number associated with a polyphonic aftertouch event. Only vali
 - [BUG] This method accesses the mutable `messageHolder` pointer internally despite being a const getter. In read-only contexts (e.g., voice start modulators), the null check on `constMessageHolder` passes but the method dereferences the null `messageHolder`, causing undefined behavior. Use `getControllerNumber()` and `getControllerValue()` as safer alternatives for aftertouch data in read-only contexts.
 
 **Cross References:**
-- `Message.getPolyAfterTouchPressureValue`
-- `Message.isPolyAftertouch`
-- `Message.setPolyAfterTouchNoteNumberAndPressureValue`
+- `$API.Message.getPolyAfterTouchPressureValue$`
+- `$API.Message.isPolyAftertouch$`
+- `$API.Message.setPolyAfterTouchNoteNumberAndPressureValue$`
 
 ## getPolyAfterTouchPressureValue
 
@@ -81,10 +81,10 @@ Returns the pressure value (0-127) of a polyphonic aftertouch event. Only valid 
 - [BUG] This method accesses the mutable `messageHolder` pointer internally despite being a const getter. In read-only contexts (e.g., voice start modulators), the null check on `constMessageHolder` passes but the method dereferences the null `messageHolder`, causing undefined behavior. Same root cause as `getPolyAfterTouchNoteNumber`.
 
 **Cross References:**
-- `Message.getPolyAfterTouchNoteNumber`
-- `Message.isPolyAftertouch`
-- `Message.setPolyAfterTouchNoteNumberAndPressureValue`
-- `Message.getControllerValue`
+- `$API.Message.getPolyAfterTouchNoteNumber$`
+- `$API.Message.isPolyAftertouch$`
+- `$API.Message.setPolyAfterTouchNoteNumberAndPressureValue$`
+- `$API.Message.getControllerValue$`
 
 ## getProgramChangeNumber
 
@@ -104,7 +104,7 @@ Returns the program change number (0-127) of a MIDI program change event. Only v
 - [BUG] The null-pointer guard checks `messageHolder` (mutable pointer) instead of `constMessageHolder`, and the error message incorrectly says `"setVelocity()"` instead of `"getProgramChangeNumber()"`. This means the method fails with a misleading error in read-only contexts, and the wrong method name appears in the error output.
 
 **Cross References:**
-- `Message.isProgramChange`
+- `$API.Message.isProgramChange$`
 
 ## getTimestamp
 
@@ -121,7 +121,7 @@ Returns the sample-accurate timestamp of the current MIDI event. The timestamp i
 (No parameters.)
 
 **Cross References:**
-- `Message.delayEvent`
+- `$API.Message.delayEvent$`
 
 ## getTransposeAmount
 
@@ -141,8 +141,8 @@ Returns the transpose amount in semitones applied to the current event. This is 
 - In exported plugins (frontend builds), this method silently returns 0 instead of throwing an error when called outside a MIDI callback. Backend builds report an error via `reportIllegalCall()`. This behavioral difference means code that accidentally calls `getTransposeAmount()` outside a callback may work in the exported plugin but fail during development.
 
 **Cross References:**
-- `Message.setTransposeAmount`
-- `Message.getNoteNumber`
+- `$API.Message.setTransposeAmount$`
+- `$API.Message.getNoteNumber$`
 
 ## getVelocity
 
@@ -159,9 +159,9 @@ Returns the velocity (0-127) of the current note-on or note-off event. Only vali
 (No parameters.)
 
 **Cross References:**
-- `Message.setVelocity`
-- `Message.getNoteNumber`
-- `Message.getGain`
+- `$API.Message.setVelocity$`
+- `$API.Message.getNoteNumber$`
+- `$API.Message.getGain$`
 
 ## delayEvent
 
@@ -183,8 +183,8 @@ Adds a sample offset to the current event's timestamp, delaying when it is proce
 - Does not delay sample playback position -- only delays when the event is processed. Use `setStartOffset()` to skip ahead in the sample without delaying event processing.
 
 **Cross References:**
-- `Message.getTimestamp`
-- `Message.setStartOffset`
+- `$API.Message.getTimestamp$`
+- `$API.Message.setStartOffset$`
 
 ## getChannel
 
@@ -201,7 +201,7 @@ Returns the MIDI channel (1-16) of the current event. Unlike most Message getter
 (No parameters.)
 
 **Cross References:**
-- `Message.setChannel`
+- `$API.Message.setChannel$`
 
 ## getCoarseDetune
 
@@ -218,9 +218,9 @@ Returns the coarse detune amount in semitones stored on the current event. This 
 (No parameters.)
 
 **Cross References:**
-- `Message.setCoarseDetune`
-- `Message.getFineDetune`
-- `Message.getTransposeAmount`
+- `$API.Message.setCoarseDetune$`
+- `$API.Message.getFineDetune$`
+- `$API.Message.getTransposeAmount$`
 
 ## getControllerNumber
 
@@ -240,8 +240,8 @@ Returns the controller number of the current event. Works on Controller, PitchBe
 - Returns virtual CC numbers 128 and 129 for PitchBend and Aftertouch events respectively. These are not real MIDI CC numbers but HISE-internal conventions. Code that filters by CC number range (e.g., `if (cc < 128)`) implicitly excludes pitch wheel and aftertouch events.
 
 **Cross References:**
-- `Message.setControllerNumber`
-- `Message.getControllerValue`
+- `$API.Message.setControllerNumber$`
+- `$API.Message.getControllerValue$`
 
 ## getControllerValue
 
@@ -261,8 +261,8 @@ Returns the value of the current controller-type event. The return value range d
 - The return value range is not uniform: PitchBend returns 0-16383 while CC and Aftertouch return 0-127. Code that normalizes by dividing by 127.0 will produce values greater than 1.0 for pitch wheel messages.
 
 **Cross References:**
-- `Message.setControllerValue`
-- `Message.getControllerNumber`
+- `$API.Message.setControllerValue$`
+- `$API.Message.getControllerNumber$`
 
 ## getEventId
 
@@ -282,9 +282,9 @@ Returns the unique event ID assigned to the current event by HISE's EventIdHandl
 - Event IDs wrap around at 65536 (uint16 overflow). Do not assume older notes have lower IDs than newer notes.
 
 **Cross References:**
-- `Message.makeArtificial`
-- `Message.makeArtificialOrLocal`
-- `Message.isArtificial`
+- `$API.Message.makeArtificial$`
+- `$API.Message.makeArtificialOrLocal$`
+- `$API.Message.isArtificial$`
 
 ## setNoteNumber
 
@@ -306,8 +306,8 @@ Sets the MIDI note number of the current note-on or note-off event. The value is
 - Values above 127 are silently clamped to 127 rather than producing an error. Negative values are cast to `uint8`, which wraps (e.g., -1 becomes 255, then clamped to 127). Always pass values in the 0-127 range.
 
 **Cross References:**
-- `Message.getNoteNumber`
-- `Message.setTransposeAmount`
+- `$API.Message.getNoteNumber$`
+- `$API.Message.setTransposeAmount$`
 
 ## setPolyAfterTouchNoteNumberAndPressureValue
 
@@ -330,10 +330,10 @@ Sets both the note number and pressure value of a polyphonic aftertouch event in
 - Both monophonic (channel pressure) and polyphonic aftertouch use the same `Aftertouch` event type in HISE. The type check uses `isAftertouch()`, which returns true for both subtypes. Calling this on a channel pressure event will silently convert it to a polyphonic aftertouch format by writing the note number field.
 
 **Cross References:**
-- `Message.getPolyAfterTouchNoteNumber`
-- `Message.getPolyAfterTouchPressureValue`
-- `Message.isPolyAftertouch`
-- `Message.setMonophonicAfterTouchPressure`
+- `$API.Message.getPolyAfterTouchNoteNumber$`
+- `$API.Message.getPolyAfterTouchPressureValue$`
+- `$API.Message.isPolyAftertouch$`
+- `$API.Message.setMonophonicAfterTouchPressure$`
 
 ## setStartOffset
 
@@ -356,7 +356,7 @@ Sets the sample start offset on the current event. The start offset tells the so
 - [BUG] The error message says "Max start offset is 65536 (2^16)" but the actual maximum accepted value is 65535 (UINT16_MAX). The check `newStartOffset > UINT16_MAX` correctly accepts 65535 and rejects 65536, but the error text is off by one.
 
 **Cross References:**
-- `Message.delayEvent`
+- `$API.Message.delayEvent$`
 
 ## setTransposeAmount
 
@@ -378,10 +378,10 @@ Sets the transpose amount in semitones on the current event. The value is stored
 - In exported plugins (frontend builds), this method silently returns instead of throwing an error when called outside a mutable callback context. Backend builds report an error via `reportIllegalCall()`. Code that accidentally calls `setTransposeAmount()` outside a callback may appear to work in the exported plugin but fail during development.
 
 **Cross References:**
-- `Message.getTransposeAmount`
-- `Message.getNoteNumber`
-- `Message.setCoarseDetune`
-- `Message.setNoteNumber`
+- `$API.Message.getTransposeAmount$`
+- `$API.Message.getNoteNumber$`
+- `$API.Message.setCoarseDetune$`
+- `$API.Message.setNoteNumber$`
 
 ## setVelocity
 
@@ -404,9 +404,9 @@ Sets the velocity of the current note-on event. Only valid when the current even
 - No range validation is performed. Values outside 0-127 are truncated by the `uint8` cast (e.g., 200 becomes 200, 256 wraps to 0). Always pass values in the 1-127 range.
 
 **Cross References:**
-- `Message.getVelocity`
-- `Message.setGain`
-- `Message.getNoteNumber`
+- `$API.Message.getVelocity$`
+- `$API.Message.setGain$`
+- `$API.Message.getNoteNumber$`
 
 ## store
 
@@ -428,9 +428,9 @@ Copies the current MIDI event into a `MessageHolder` object, allowing event data
 - [BUG] If the argument is not a valid MessageHolder object, the method silently does nothing -- no error is reported. The `dynamic_cast` fails and execution falls through. Pass only objects created by `Engine.createMessageHolder()`.
 
 **Cross References:**
-- `Engine.createMessageHolder`
-- `Message.getEventId`
-- `Message.getNoteNumber`
+- `$API.Engine.createMessageHolder$`
+- `$API.Message.getEventId$`
+- `$API.Message.getNoteNumber$`
 
 **Example:**
 ```javascript:store-event-for-later
@@ -465,9 +465,9 @@ Returns whether the current event was created by a script or internal HISE mecha
 (No parameters.)
 
 **Cross References:**
-- `Message.makeArtificial`
-- `Message.makeArtificialOrLocal`
-- `Message.ignoreEvent`
+- `$API.Message.makeArtificial$`
+- `$API.Message.makeArtificialOrLocal$`
+- `$API.Message.ignoreEvent$`
 
 ## isMonophonicAfterTouch
 
@@ -487,9 +487,9 @@ Returns whether the current event is a monophonic (channel pressure) aftertouch 
 - Both `isMonophonicAfterTouch()` and `isPolyAftertouch()` check the same underlying event type (`Type::Aftertouch`). They both return `true` for ANY aftertouch event regardless of whether it originated as channel pressure or polyphonic aftertouch. The HISE event system does not distinguish between the two at the type level -- both MIDI message types are converted to `Type::Aftertouch` during ingestion. In practice, channel pressure events typically have note number 0 while poly aftertouch events carry the target note number, but neither method checks the note number field.
 
 **Cross References:**
-- `Message.getMonophonicAftertouchPressure`
-- `Message.setMonophonicAfterTouchPressure`
-- `Message.isPolyAftertouch`
+- `$API.Message.getMonophonicAftertouchPressure$`
+- `$API.Message.setMonophonicAfterTouchPressure$`
+- `$API.Message.isPolyAftertouch$`
 
 ## isPolyAftertouch
 
@@ -509,10 +509,10 @@ Returns whether the current event is a polyphonic aftertouch message. Internally
 - Returns `true` for both polyphonic aftertouch AND monophonic channel pressure events because both use the same `Type::Aftertouch` enum value internally. `isMonophonicAfterTouch()` has the exact same behavior -- neither method can reliably distinguish the two aftertouch types. See `isMonophonicAfterTouch` pitfall for details.
 
 **Cross References:**
-- `Message.getPolyAfterTouchNoteNumber`
-- `Message.getPolyAfterTouchPressureValue`
-- `Message.setPolyAfterTouchNoteNumberAndPressureValue`
-- `Message.isMonophonicAfterTouch`
+- `$API.Message.getPolyAfterTouchNoteNumber$`
+- `$API.Message.getPolyAfterTouchPressureValue$`
+- `$API.Message.setPolyAfterTouchNoteNumberAndPressureValue$`
+- `$API.Message.isMonophonicAfterTouch$`
 
 ## isProgramChange
 
@@ -529,7 +529,7 @@ Returns whether the current event is a MIDI program change message. Internally c
 (No parameters.)
 
 **Cross References:**
-- `Message.getProgramChangeNumber`
+- `$API.Message.getProgramChangeNumber$`
 
 ## makeArtificial
 
@@ -558,10 +558,10 @@ The modified event replaces the original in-place in the audio buffer via `swapW
 - The method resets `artificialNoteOnThatWasKilled` to an empty event at the start of every call. This means only the most recent `makeArtificial()` call's note-on is preserved for the `ignoreEvent` reinsert logic.
 
 **Cross References:**
-- `Message.makeArtificialOrLocal`
-- `Message.isArtificial`
-- `Message.ignoreEvent`
-- `Message.getEventId`
+- `$API.Message.makeArtificialOrLocal$`
+- `$API.Message.isArtificial$`
+- `$API.Message.ignoreEvent$`
+- `$API.Message.getEventId$`
 
 ## makeArtificialOrLocal
 
@@ -586,10 +586,10 @@ Use this method when you need to create multiple independent copies/branches of 
 - Unlike `makeArtificial()`, calling this on an already-artificial event always assigns a new event ID, which means subsequent `Synth.addVolumeFade()` or `Synth.addPitchFade()` calls targeting the old ID will no longer reach the voice.
 
 **Cross References:**
-- `Message.makeArtificial`
-- `Message.isArtificial`
-- `Message.ignoreEvent`
-- `Message.getEventId`
+- `$API.Message.makeArtificial$`
+- `$API.Message.isArtificial$`
+- `$API.Message.ignoreEvent$`
+- `$API.Message.getEventId$`
 
 ## getFineDetune
 
@@ -606,9 +606,9 @@ Returns the fine detune amount in cents stored on the current event. This is a p
 (No parameters.)
 
 **Cross References:**
-- `Message.setFineDetune`
-- `Message.getCoarseDetune`
-- `Message.getTransposeAmount`
+- `$API.Message.setFineDetune$`
+- `$API.Message.getCoarseDetune$`
+- `$API.Message.getTransposeAmount$`
 
 ## getGain
 
@@ -625,8 +625,8 @@ Returns the per-event gain in decibels. The gain is stored as an `int8` in the H
 (No parameters.)
 
 **Cross References:**
-- `Message.setGain`
-- `Message.getVelocity`
+- `$API.Message.setGain$`
+- `$API.Message.getVelocity$`
 
 ## ignoreEvent
 
@@ -651,10 +651,10 @@ When ignoring an artificial note-off whose event ID matches the `artificialNoteO
 - The note-on reinsert logic only triggers when all four conditions are met: `shouldBeIgnored` is truthy, the event is artificial, the event is a note-off, and its event ID matches `artificialNoteOnThatWasKilled`. If `makeArtificial()` was not called on the corresponding note-off (only on the note-on), the reinsert does not occur.
 
 **Cross References:**
-- `Message.makeArtificial`
-- `Message.makeArtificialOrLocal`
-- `Message.isArtificial`
-- `Message.getEventId`
+- `$API.Message.makeArtificial$`
+- `$API.Message.makeArtificialOrLocal$`
+- `$API.Message.isArtificial$`
+- `$API.Message.getEventId$`
 
 **Diagram:**
 - **Brief:** Artificial Note-Off Ignore Reinsert
@@ -685,8 +685,8 @@ Registers a callback function to be invoked when an AllNotesOff MIDI event is re
 - AllNotesOff events do not trigger `onNoteOff` or `onController`. If your script needs to respond to AllNotesOff (e.g., to reset internal state), this is the only way to receive it.
 
 **Cross References:**
-- `Message.ignoreEvent`
-- `Synth.allNotesOff`
+- `$API.Message.ignoreEvent$`
+- `$API.Synth.allNotesOff$`
 
 **Example:**
 ```javascript:all-notes-off-handler
@@ -727,7 +727,7 @@ Sets the MIDI channel of the current event. The channel uses 1-based numbering (
 - Uses 1-based channel numbering (1-16), not 0-based (0-15). Passing 0 triggers a script error in debug builds and wraps to 0 at the `uint8` level in release builds.
 
 **Cross References:**
-- `Message.getChannel`
+- `$API.Message.getChannel$`
 
 ## setCoarseDetune
 
@@ -746,9 +746,9 @@ Sets the coarse detune amount in semitones on the current event. The value is st
 | semiToneDetune | Number | yes | Coarse detune in semitones | Stored as int8 (-128 to 127) |
 
 **Cross References:**
-- `Message.getCoarseDetune`
-- `Message.setFineDetune`
-- `Message.setTransposeAmount`
+- `$API.Message.getCoarseDetune$`
+- `$API.Message.setFineDetune$`
+- `$API.Message.setTransposeAmount$`
 
 ## setControllerNumber
 
@@ -770,8 +770,8 @@ Sets the MIDI controller number on the current event. Only valid when the curren
 - Unlike `getControllerNumber()` which works on Controller, PitchBend, and Aftertouch events, `setControllerNumber()` only works on Controller events. Calling it on a PitchBend or Aftertouch event produces a script error. This asymmetry means you cannot remap a pitch wheel event to a CC by setting a controller number on it.
 
 **Cross References:**
-- `Message.getControllerNumber`
-- `Message.setControllerValue`
+- `$API.Message.getControllerNumber$`
+- `$API.Message.setControllerValue$`
 
 ## setControllerValue
 
@@ -793,9 +793,9 @@ Sets the MIDI controller value on the current event. Only valid when the current
 - Unlike `getControllerValue()` which works on Controller, PitchBend, and Aftertouch events, `setControllerValue()` only works on Controller events. To modify the value of a PitchBend event, there is no direct setter in the Message API. To modify Aftertouch pressure, use `setMonophonicAfterTouchPressure()` or `setPolyAfterTouchNoteNumberAndPressureValue()`.
 
 **Cross References:**
-- `Message.getControllerValue`
-- `Message.setControllerNumber`
-- `Message.setMonophonicAfterTouchPressure`
+- `$API.Message.getControllerValue$`
+- `$API.Message.setControllerNumber$`
+- `$API.Message.setMonophonicAfterTouchPressure$`
 
 ## setFineDetune
 
@@ -814,9 +814,9 @@ Sets the fine detune amount in cents on the current event. The value is stored a
 | cents | Number | yes | Fine detune in cents | Stored as int8 (-128 to 127) |
 
 **Cross References:**
-- `Message.getFineDetune`
-- `Message.setCoarseDetune`
-- `Message.setTransposeAmount`
+- `$API.Message.getFineDetune$`
+- `$API.Message.setCoarseDetune$`
+- `$API.Message.setTransposeAmount$`
 
 ## setGain
 
@@ -838,8 +838,8 @@ Sets the per-event gain in decibels. The value is clamped to the range -100 to 3
 - The value is clamped silently to -100..36 dB. Values outside this range do not produce an error; they are clamped to the nearest boundary. -100 dB produces effective silence (gain factor of 0.00001), not true zero.
 
 **Cross References:**
-- `Message.getGain`
-- `Message.setVelocity`
+- `$API.Message.getGain$`
+- `$API.Message.setVelocity$`
 
 ## setMonophonicAfterTouchPressure
 
@@ -861,9 +861,9 @@ Sets the pressure value of a monophonic (channel pressure) aftertouch event. Onl
 - Both monophonic (channel pressure) and polyphonic aftertouch use the same underlying `Aftertouch` event type in HISE. The type check uses `isChannelPressure()`, which returns true for ANY aftertouch event. Calling this on a polyphonic aftertouch event will succeed and overwrite the pressure value without any distinction.
 
 **Cross References:**
-- `Message.getMonophonicAftertouchPressure`
-- `Message.isMonophonicAfterTouch`
-- `Message.setPolyAfterTouchNoteNumberAndPressureValue`
+- `$API.Message.getMonophonicAftertouchPressure$`
+- `$API.Message.isMonophonicAfterTouch$`
+- `$API.Message.setPolyAfterTouchNoteNumberAndPressureValue$`
 
 ## sendToMidiOut
 
@@ -886,6 +886,6 @@ Forwards the current event to the plugin's MIDI output. The method first calls `
 - [BUG] The method accesses `messageHolder` directly without a null check (no `ENABLE_SCRIPTING_SAFE_CHECKS` guard). Calling it outside a mutable callback context will dereference a null pointer.
 
 **Cross References:**
-- `Message.makeArtificial`
-- `Message.isArtificial`
-- `Message.ignoreEvent`
+- `$API.Message.makeArtificial$`
+- `$API.Message.isArtificial$`
+- `$API.Message.ignoreEvent$`

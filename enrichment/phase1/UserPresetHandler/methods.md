@@ -24,10 +24,10 @@ Attaches a script callback to a custom automation slot. The callback fires whene
 - Synchronous callbacks are checked for audio-thread safety in backend builds. If the callback is not an `inline function` or performs unsafe operations, HISE reports a script error at registration time (backend only). In exported plugins this check is absent, so the callback will still register but may cause audio glitches.
 
 **Cross References:**
-- `UserPresetHandler.clearAttachedCallbacks`
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.setAutomationValue`
-- `UserPresetHandler.updateAutomationValues`
+- `$API.UserPresetHandler.clearAttachedCallbacks$`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.setAutomationValue$`
+- `$API.UserPresetHandler.updateAutomationValues$`
 
 **Example:**
 ```javascript:automation-callback-sync
@@ -64,8 +64,8 @@ Removes all automation callbacks that were previously attached via `attachAutoma
 (none)
 
 **Cross References:**
-- `UserPresetHandler.attachAutomationCallback`
-- `UserPresetHandler.setCustomAutomation`
+- `$API.UserPresetHandler.attachAutomationCallback$`
+- `$API.UserPresetHandler.setCustomAutomation$`
 
 ## createObjectForAutomationValues
 
@@ -90,8 +90,8 @@ Returns an array of objects representing the current values of all custom automa
 | value | Double | The current value of the automation slot |
 
 **Cross References:**
-- `UserPresetHandler.updateAutomationValues`
-- `UserPresetHandler.setCustomAutomation`
+- `$API.UserPresetHandler.updateAutomationValues$`
+- `$API.UserPresetHandler.setCustomAutomation$`
 
 **Example:**
 ```javascript:save-automation-values
@@ -130,8 +130,8 @@ Exports the current values of all UI components that have the `saveInPreset` fla
 (none)
 
 **Cross References:**
-- `UserPresetHandler.updateSaveInPresetComponents`
-- `UserPresetHandler.setUseCustomUserPresetModel`
+- `$API.UserPresetHandler.updateSaveInPresetComponents$`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
 
 ## getAutomationIndex
 
@@ -150,8 +150,8 @@ Returns the zero-based index of a custom automation slot by its string ID. Retur
 | automationID | String | no | The ID string of the automation slot to look up. | Must match an ID registered via `setCustomAutomation` |
 
 **Cross References:**
-- `UserPresetHandler.setAutomationValue`
-- `UserPresetHandler.setCustomAutomation`
+- `$API.UserPresetHandler.setAutomationValue$`
+- `$API.UserPresetHandler.setCustomAutomation$`
 
 ## getSecondsSinceLastPresetLoad
 
@@ -168,9 +168,9 @@ Returns the number of seconds elapsed since the last user preset was loaded. The
 (none)
 
 **Cross References:**
-- `UserPresetHandler.isCurrentlyLoadingPreset`
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setPostCallback`
+- `$API.UserPresetHandler.isCurrentlyLoadingPreset$`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setPostCallback$`
 
 ## isCurrentlyLoadingPreset
 
@@ -187,9 +187,9 @@ Returns true if this method is called from the same thread that is currently per
 (none)
 
 **Cross References:**
-- `UserPresetHandler.isInternalPresetLoad`
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setPostCallback`
+- `$API.UserPresetHandler.isInternalPresetLoad$`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setPostCallback$`
 
 ## isInternalPresetLoad
 
@@ -209,9 +209,9 @@ Returns true if the preset currently being loaded originates from a DAW state re
 - The flag is only reliably meaningful during pre/post callbacks. Calling this outside a preset load callback returns the stale value from the most recent load, which can produce incorrect logic if the code assumes the flag reflects the current state.
 
 **Cross References:**
-- `UserPresetHandler.isCurrentlyLoadingPreset`
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setPostCallback`
+- `$API.UserPresetHandler.isCurrentlyLoadingPreset$`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setPostCallback$`
 
 ## isOldVersion
 
@@ -231,8 +231,8 @@ Compares the given version string against the current project version and return
 | version | String | no | The version string to compare against the current project version. | Must be in "major.minor.patch" format (e.g., "1.2.0") |
 
 **Cross References:**
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setEnableUserPresetPreprocessing`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setEnableUserPresetPreprocessing$`
 
 **Example:**
 ```javascript:version-migration-in-precallback
@@ -277,10 +277,10 @@ Loads the default user preset as defined in the project settings. The default pr
 - Throws a script error if no default preset has been configured in the project settings. There is no query method to check whether a default preset exists before calling this.
 
 **Cross References:**
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setPostCallback`
-- `UserPresetHandler.setUseCustomUserPresetModel`
-- `UserPresetHandler.setUseUndoForPresetLoading`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setPostCallback$`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
+- `$API.UserPresetHandler.setUseUndoForPresetLoading$`
 
 ## runTest
 
@@ -305,9 +305,9 @@ This is a development-time diagnostic tool. All output goes to the console via `
 (none)
 
 **Cross References:**
-- `UserPresetHandler.setUseCustomUserPresetModel`
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.createObjectForSaveInPresetComponents`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.createObjectForSaveInPresetComponents$`
 
 ## sendParameterGesture
 
@@ -338,10 +338,10 @@ Sends a parameter gesture begin/end message to the DAW host for a specific plugi
 | 3 (NKSWrapper) | Targets an NKS integration parameter |
 
 **Cross References:**
-- `UserPresetHandler.setParameterGestureCallback`
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.setAutomationValue`
-- `UserPresetHandler.getAutomationIndex`
+- `$API.UserPresetHandler.setParameterGestureCallback$`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.setAutomationValue$`
+- `$API.UserPresetHandler.getAutomationIndex$`
 
 ## setAutomationValue
 
@@ -365,11 +365,11 @@ Sets the value of a custom automation slot by its zero-based index. The value is
 - Returns false silently if the custom data model is not active or the index is out of range. No error is thrown, so the caller must check the return value to detect failure.
 
 **Cross References:**
-- `UserPresetHandler.getAutomationIndex`
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.sendParameterGesture`
-- `UserPresetHandler.attachAutomationCallback`
-- `UserPresetHandler.updateAutomationValues`
+- `$API.UserPresetHandler.getAutomationIndex$`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.sendParameterGesture$`
+- `$API.UserPresetHandler.attachAutomationCallback$`
+- `$API.UserPresetHandler.updateAutomationValues$`
 
 ## setCustomAutomation
 
@@ -422,12 +422,12 @@ Defines the custom automation slot layout for host and MIDI parameter mapping. A
 - MetaConnection targets (referenced via `automationId`) must appear earlier in the automation array than the slot that references them. Forward references to later slots are not resolved.
 
 **Cross References:**
-- `UserPresetHandler.setUseCustomUserPresetModel`
-- `UserPresetHandler.attachAutomationCallback`
-- `UserPresetHandler.setAutomationValue`
-- `UserPresetHandler.getAutomationIndex`
-- `UserPresetHandler.updateAutomationValues`
-- `UserPresetHandler.setPluginParameterGroupNames`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
+- `$API.UserPresetHandler.attachAutomationCallback$`
+- `$API.UserPresetHandler.setAutomationValue$`
+- `$API.UserPresetHandler.getAutomationIndex$`
+- `$API.UserPresetHandler.updateAutomationValues$`
+- `$API.UserPresetHandler.setPluginParameterGroupNames$`
 
 **DiagramRef:** automation-connection-types
 
@@ -501,8 +501,8 @@ When `shouldUnpackComplexData` is true, values that were serialized as JSON stri
 - The pre-callback must be set via `setPreCallback` for preprocessing to have any effect. Enabling preprocessing without a pre-callback simply adds unnecessary JSON conversion overhead on every preset load.
 
 **Cross References:**
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.isOldVersion`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.isOldVersion$`
 
 **Diagram:**
 - **Brief:** Preprocessing Data Flow
@@ -531,8 +531,8 @@ Registers a callback that fires when a DAW host begins or ends a parameter gestu
 - [BUG] The `WeakCallbackHolder` for this callback is initialized with `numExpectedArgs=2` (in both the constructor initializer and `setParameterGestureCallback`), and the parse-time diagnostic (`ADD_CALLBACK_DIAGNOSTIC`) reports that the callback expects 2 arguments. However, the actual `onParameterGesture` implementation passes 3 arguments (type, slotIndex, startGesture) via `callSync(NativeFunctionArgs)`. A user following the diagnostic guidance would write a 2-parameter callback and silently miss the `startGesture` boolean. The callback must accept 3 arguments to receive all data.
 
 **Cross References:**
-- `UserPresetHandler.sendParameterGesture`
-- `UserPresetHandler.setCustomAutomation`
+- `$API.UserPresetHandler.sendParameterGesture$`
+- `$API.UserPresetHandler.setCustomAutomation$`
 
 **Example:**
 ```javascript:gesture-callback-setup
@@ -574,8 +574,8 @@ Registers the valid set of plugin parameter group names that can be used in `set
 - Passing a non-array value (e.g., a single string) throws a script error with message "pluginParameterGroupNames must be an array of strings". This is the only validation -- individual elements are not checked for type; they are silently converted to strings via `toString()`.
 
 **Cross References:**
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.setPluginParameterSortFunction`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.setPluginParameterSortFunction$`
 
 ## setPluginParameterSortFunction
 
@@ -616,8 +616,8 @@ Each of the two parameter objects passed to the callback has these properties:
 | group | String | Plugin parameter group name (empty string if ungrouped) |
 
 **Cross References:**
-- `UserPresetHandler.setPluginParameterGroupNames`
-- `UserPresetHandler.setCustomAutomation`
+- `$API.UserPresetHandler.setPluginParameterGroupNames$`
+- `$API.UserPresetHandler.setCustomAutomation$`
 
 **Example:**
 ```javascript:sort-params-by-group
@@ -665,10 +665,10 @@ Registers a callback that fires after a user preset has been loaded. The callbac
 - The callback argument is `undefined` (not a ScriptFile) when the preset was loaded from a non-file source such as a DAW session restore. Code that unconditionally calls methods on the argument (e.g., `presetFile.toString("")`) will produce an error in this case. Guard with `isDefined(presetFile)` or `typeof presetFile == "object"`.
 
 **Cross References:**
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setPostSaveCallback`
-- `UserPresetHandler.isInternalPresetLoad`
-- `UserPresetHandler.isCurrentlyLoadingPreset`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setPostSaveCallback$`
+- `$API.UserPresetHandler.isInternalPresetLoad$`
+- `$API.UserPresetHandler.isCurrentlyLoadingPreset$`
 
 **DiagramRef:** preset-load-sequence
 
@@ -714,9 +714,9 @@ Registers a callback that fires after a user preset has been saved. The callback
 - The callback argument is `undefined` when the preset was saved to a non-file target. Guard with `isDefined(presetFile)` before calling methods on it.
 
 **Cross References:**
-- `UserPresetHandler.setPostCallback`
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setUseCustomUserPresetModel`
+- `$API.UserPresetHandler.setPostCallback$`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
 
 **Example:**
 ```javascript:post-save-notification
@@ -762,10 +762,10 @@ The callback is invoked via `callSync`, so it blocks the preset load pipeline un
 **Callback Signature:** presetPreCallback(presetData: var)
 
 **Cross References:**
-- `UserPresetHandler.setPostCallback`
-- `UserPresetHandler.setEnableUserPresetPreprocessing`
-- `UserPresetHandler.isOldVersion`
-- `UserPresetHandler.isInternalPresetLoad`
+- `$API.UserPresetHandler.setPostCallback$`
+- `$API.UserPresetHandler.setEnableUserPresetPreprocessing$`
+- `$API.UserPresetHandler.isOldVersion$`
+- `$API.UserPresetHandler.isInternalPresetLoad$`
 
 **DiagramRef:** preset-load-sequence
 
@@ -826,10 +826,10 @@ The `usePersistentObject` flag is stored and controls whether the custom data pe
 - [BUG] If either `loadCallback` or `saveCallback` is not a valid JavaScript function, the method silently returns without enabling the custom model. No error is thrown, so the user may believe the custom model is active when it is not. Subsequent calls to `setCustomAutomation` will then fail with "you need to enable setUseCustomDataModel() before calling this method".
 
 **Cross References:**
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.createObjectForSaveInPresetComponents`
-- `UserPresetHandler.updateSaveInPresetComponents`
-- `UserPresetHandler.runTest`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.createObjectForSaveInPresetComponents$`
+- `$API.UserPresetHandler.updateSaveInPresetComponents$`
+- `$API.UserPresetHandler.runTest$`
 
 **Example:**
 ```javascript:custom-data-model-setup
@@ -880,11 +880,11 @@ Enables or disables undo support for user preset loading. When enabled, each pre
 | shouldUseUndoManager | Integer | no | Whether to wrap preset loads in undoable actions. | Boolean value |
 
 **Cross References:**
-- `UserPresetHandler.resetToDefaultUserPreset`
-- `UserPresetHandler.updateAutomationValues`
-- `UserPresetHandler.setPreCallback`
-- `UserPresetHandler.setPostCallback`
-- `Engine.undo`
+- `$API.UserPresetHandler.resetToDefaultUserPreset$`
+- `$API.UserPresetHandler.updateAutomationValues$`
+- `$API.UserPresetHandler.setPreCallback$`
+- `$API.UserPresetHandler.setPostCallback$`
+- `$API.Engine.undo$`
 
 ## updateAutomationValues
 
@@ -924,10 +924,10 @@ The `sendMessage` parameter uses dispatch type encoding: pass `SyncNotification`
 - [BUG] The undo path (`useUndoManager=true`) does not capture old values for array inputs. The `AutomationValueUndoAction` constructor attempts to capture old values via `newData.getDynamicObject()`, which returns null for array inputs. The undo action's `oldData` remains undefined, so `Engine.undo()` silently does nothing instead of restoring previous values.
 
 **Cross References:**
-- `UserPresetHandler.createObjectForAutomationValues`
-- `UserPresetHandler.setAutomationValue`
-- `UserPresetHandler.setCustomAutomation`
-- `UserPresetHandler.attachAutomationCallback`
+- `$API.UserPresetHandler.createObjectForAutomationValues$`
+- `$API.UserPresetHandler.setAutomationValue$`
+- `$API.UserPresetHandler.setCustomAutomation$`
+- `$API.UserPresetHandler.attachAutomationCallback$`
 
 **Example:**
 ```javascript:update-automation-batch
@@ -978,9 +978,9 @@ The processor connection types that are refreshed:
 (none)
 
 **Cross References:**
-- `UserPresetHandler.updateSaveInPresetComponents`
-- `UserPresetHandler.createObjectForSaveInPresetComponents`
-- `UserPresetHandler.setUseCustomUserPresetModel`
+- `$API.UserPresetHandler.updateSaveInPresetComponents$`
+- `$API.UserPresetHandler.createObjectForSaveInPresetComponents$`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
 
 ## updateSaveInPresetComponents
 
@@ -1004,8 +1004,8 @@ The `type` property is stripped during `createObjectForSaveInPresetComponents` (
 | obj | JSON | no | A JSON object previously returned by `createObjectForSaveInPresetComponents`, containing component id/value pairs. | Must be a valid JSON object with the structure produced by `createObjectForSaveInPresetComponents` |
 
 **Cross References:**
-- `UserPresetHandler.createObjectForSaveInPresetComponents`
-- `UserPresetHandler.setUseCustomUserPresetModel`
+- `$API.UserPresetHandler.createObjectForSaveInPresetComponents$`
+- `$API.UserPresetHandler.setUseCustomUserPresetModel$`
 
 **Example:**
 ```javascript:save-restore-component-state

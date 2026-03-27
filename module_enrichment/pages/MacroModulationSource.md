@@ -151,11 +151,4 @@ Only changed values trigger macro system updates. If a chain's output is the sam
 
 Empty chains are skipped entirely - they do not send a zero value or reset the macro slot. A macro chain with no modulators simply has no effect on its corresponding slot.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Macro Modulator", to: "/v2/reference/audio-modules/modulators/time-variant/macromodulator", desc: "the receive side of the macro system, reads macro slot values and converts them to modulation signals with smoothing and table-based response curves" }
----
-::
+**See also:** $MODULES.MacroModulator$ -- the receive side of the macro system, reads macro slot values and converts them to modulation signals with smoothing and table-based response curves

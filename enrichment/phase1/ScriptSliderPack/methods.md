@@ -52,8 +52,8 @@ Returns the current value of a property on this slider pack component.
 | propertyName | String | no | Property identifier to read | Must be a valid ScriptSliderPack property |
 
 **Cross References:**
-- `ScriptSliderPack.set`
-- `ScriptSliderPack.getAllProperties`
+- `$API.ScriptSliderPack.set$`
+- `$API.ScriptSliderPack.getAllProperties$`
 
 ---
 
@@ -68,8 +68,8 @@ Returns the current value of a property on this slider pack component.
 Returns all active property IDs for this component, including ScriptSliderPack-specific properties.
 
 **Cross References:**
-- `ScriptSliderPack.get`
-- `ScriptSliderPack.set`
+- `$API.ScriptSliderPack.get$`
+- `$API.ScriptSliderPack.set$`
 
 ---
 
@@ -99,8 +99,8 @@ Returns a direct buffer reference to the slider pack data.
 - Editing the returned buffer directly bypasses `setAllValues()` / `setSliderAtIndex()` callback flow.
 
 **Cross References:**
-- `ScriptSliderPack.setAllValues`
-- `ScriptSliderPack.setSliderAtIndex`
+- `$API.ScriptSliderPack.setAllValues$`
+- `$API.ScriptSliderPack.setSliderAtIndex$`
 
 ---
 
@@ -169,9 +169,9 @@ Returns local bounds reduced by the given inset amount.
 | reduceAmount | Double | no | Inset amount in pixels for all sides | >= 0.0 |
 
 **Cross References:**
-- `ScriptSliderPack.setPosition`
-- `ScriptSliderPack.getWidth`
-- `ScriptSliderPack.getHeight`
+- `$API.ScriptSliderPack.setPosition$`
+- `$API.ScriptSliderPack.getWidth$`
+- `$API.ScriptSliderPack.getHeight$`
 
 ---
 
@@ -189,9 +189,9 @@ Returns the number of sliders in the currently bound slider-pack data source.
 - Returns `0` when no valid slider-pack data source is resolved.
 
 **Cross References:**
-- `ScriptSliderPack.set`
-- `ScriptSliderPack.setWidthArray`
-- `ScriptSliderPack.referToData`
+- `$API.ScriptSliderPack.set$`
+- `$API.ScriptSliderPack.setWidthArray$`
+- `$API.ScriptSliderPack.referToData$`
 
 ---
 
@@ -215,8 +215,8 @@ Returns a slider value at the given index and updates the displayed index highli
 - Out-of-range indices return the slider-pack default value instead of throwing an error.
 
 **Cross References:**
-- `ScriptSliderPack.setSliderAtIndex`
-- `ScriptSliderPack.setAllValues`
+- `$API.ScriptSliderPack.setSliderAtIndex$`
+- `$API.ScriptSliderPack.setAllValues$`
 
 ---
 
@@ -250,8 +250,8 @@ Returns the current component width in pixels.
 Requests keyboard focus for this component via z-level listeners.
 
 **Cross References:**
-- `ScriptSliderPack.loseFocus`
-- `ScriptSliderPack.setKeyPressCallback`
+- `$API.ScriptSliderPack.loseFocus$`
+- `$API.ScriptSliderPack.setKeyPressCallback$`
 
 ---
 
@@ -266,8 +266,8 @@ Requests keyboard focus for this component via z-level listeners.
 Requests focus release for this component via z-level listeners.
 
 **Cross References:**
-- `ScriptSliderPack.grabFocus`
-- `ScriptSliderPack.setKeyPressCallback`
+- `$API.ScriptSliderPack.grabFocus$`
+- `$API.ScriptSliderPack.setKeyPressCallback$`
 
 ---
 
@@ -291,8 +291,8 @@ Rebinds the component to another slider-pack data source, another compatible com
 - [BUG] Unsupported argument types are silently ignored, leaving the previous binding active.
 
 **Cross References:**
-- `ScriptSliderPack.registerAtParent`
-- `ScriptSliderPack.getNumSliders`
+- `$API.ScriptSliderPack.registerAtParent$`
+- `$API.ScriptSliderPack.getNumSliders$`
 
 ---
 
@@ -316,8 +316,8 @@ Registers this slider-pack data object in the parent processor's dynamic externa
 - [BUG] Returns `undefined` without an error when the parent processor does not support dynamic external data.
 
 **Cross References:**
-- `ScriptSliderPack.referToData`
-- `ScriptSliderPack.set`
+- `$API.ScriptSliderPack.referToData$`
+- `$API.ScriptSliderPack.set$`
 
 ---
 
@@ -351,8 +351,8 @@ Sets a ScriptSliderPack property value.
 | value | NotUndefined | no | New property value | Must match property type |
 
 **Cross References:**
-- `ScriptSliderPack.get`
-- `ScriptSliderPack.getAllProperties`
+- `$API.ScriptSliderPack.get$`
+- `$API.ScriptSliderPack.getAllProperties$`
 
 ---
 
@@ -373,9 +373,9 @@ Enables or disables control-callback triggering for non-undo bulk/single write h
 | shouldBeEnabled | Integer | no | Toggle for callback behavior | 1 = enabled, 0 = disabled |
 
 **Cross References:**
-- `ScriptSliderPack.setAllValues`
-- `ScriptSliderPack.setSliderAtIndex`
-- `ScriptSliderPack.setAllValuesWithUndo`
+- `$API.ScriptSliderPack.setAllValues$`
+- `$API.ScriptSliderPack.setSliderAtIndex$`
+- `$API.ScriptSliderPack.setAllValuesWithUndo$`
 
 ---
 
@@ -399,9 +399,9 @@ Writes slider values in bulk. Accepts a Number (fill all), Array, or Buffer (cop
 - If the Array/Buffer is shorter than `getNumSliders()`, only the available indices are updated and remaining sliders keep their previous values.
 
 **Cross References:**
-- `ScriptSliderPack.setSliderAtIndex`
-- `ScriptSliderPack.setAllValuesWithUndo`
-- `ScriptSliderPack.setAllValueChangeCausesCallback`
+- `$API.ScriptSliderPack.setSliderAtIndex$`
+- `$API.ScriptSliderPack.setAllValuesWithUndo$`
+- `$API.ScriptSliderPack.setAllValueChangeCausesCallback$`
 
 **Example:**
 ```javascript:bulk-fill-slider-pack
@@ -448,8 +448,8 @@ Bulk value write with undo integration.
 - [BUG] This method always triggers callback/content-change notification, even when `setAllValueChangeCausesCallback(false)` was set.
 
 **Cross References:**
-- `ScriptSliderPack.setAllValues`
-- `ScriptSliderPack.setAllValueChangeCausesCallback`
+- `$API.ScriptSliderPack.setAllValues$`
+- `$API.ScriptSliderPack.setAllValueChangeCausesCallback$`
 
 ---
 
@@ -477,7 +477,7 @@ Defines which key presses this component consumes before key-press callbacks are
 | "all_nonexclusive" | Consume all keys but allow parent propagation |
 
 **Cross References:**
-- `ScriptSliderPack.setKeyPressCallback`
+- `$API.ScriptSliderPack.setKeyPressCallback$`
 
 ---
 
@@ -503,9 +503,9 @@ Assigns a custom inline control callback for this slider pack.
 - Callback must be declared with `inline function` and exactly two parameters.
 
 **Cross References:**
-- `ScriptSliderPack.setAllValueChangeCausesCallback`
-- `ScriptSliderPack.setAllValues`
-- `ScriptSliderPack.setSliderAtIndex`
+- `$API.ScriptSliderPack.setAllValueChangeCausesCallback$`
+- `$API.ScriptSliderPack.setAllValues$`
+- `$API.ScriptSliderPack.setSliderAtIndex$`
 
 **Example:**
 ```javascript:slider-pack-control-callback
@@ -569,9 +569,9 @@ Registers a key-press callback for this component. Requires `setConsumedKeyPress
 - Must call `setConsumedKeyPresses()` before this method.
 
 **Cross References:**
-- `ScriptSliderPack.setConsumedKeyPresses`
-- `ScriptSliderPack.grabFocus`
-- `ScriptSliderPack.loseFocus`
+- `$API.ScriptSliderPack.setConsumedKeyPresses$`
+- `$API.ScriptSliderPack.grabFocus$`
+- `$API.ScriptSliderPack.loseFocus$`
 
 **Example:**
 ```javascript:slider-pack-keypress-callback
@@ -651,9 +651,9 @@ Sets component position and size in one call.
 | h | Integer | no | Height in pixels | 0-MAX_SCRIPT_HEIGHT |
 
 **Cross References:**
-- `ScriptSliderPack.getLocalBounds`
-- `ScriptSliderPack.getWidth`
-- `ScriptSliderPack.getHeight`
+- `$API.ScriptSliderPack.getLocalBounds$`
+- `$API.ScriptSliderPack.getWidth$`
+- `$API.ScriptSliderPack.getHeight$`
 
 ---
 
@@ -682,9 +682,9 @@ Sets a single slider value in the currently bound slider-pack data source.
 | value | Double | no | New slider value | Typically within current min/max range |
 
 **Cross References:**
-- `ScriptSliderPack.getSliderValueAt`
-- `ScriptSliderPack.setAllValues`
-- `ScriptSliderPack.setAllValueChangeCausesCallback`
+- `$API.ScriptSliderPack.getSliderValueAt$`
+- `$API.ScriptSliderPack.setAllValues$`
+- `$API.ScriptSliderPack.setAllValueChangeCausesCallback$`
 
 ---
 
@@ -705,8 +705,8 @@ Sets additional CSS class selectors for this component.
 | classIds | String | no | Space-separated CSS classes | Component type class is prepended automatically |
 
 **Cross References:**
-- `ScriptSliderPack.setStyleSheetProperty`
-- `ScriptSliderPack.setStyleSheetPseudoState`
+- `$API.ScriptSliderPack.setStyleSheetProperty$`
+- `$API.ScriptSliderPack.setStyleSheetPseudoState$`
 
 ---
 
@@ -742,8 +742,8 @@ Sets a component stylesheet variable, with optional CSS conversion.
 | "" | Store value without conversion |
 
 **Cross References:**
-- `ScriptSliderPack.setStyleSheetClass`
-- `ScriptSliderPack.setStyleSheetPseudoState`
+- `$API.ScriptSliderPack.setStyleSheetClass$`
+- `$API.ScriptSliderPack.setStyleSheetPseudoState$`
 
 ---
 
@@ -778,8 +778,8 @@ Sets CSS pseudo-state flags for this component and triggers repaint.
 | ":checked" | Checked pseudo-state |
 
 **Cross References:**
-- `ScriptSliderPack.setStyleSheetClass`
-- `ScriptSliderPack.setStyleSheetProperty`
+- `$API.ScriptSliderPack.setStyleSheetClass$`
+- `$API.ScriptSliderPack.setStyleSheetProperty$`
 
 ---
 
@@ -821,8 +821,8 @@ Enables fixed-capacity preallocation for slider-pack storage to reduce reallocat
 - When preallocation is active, effective slider count cannot exceed `numMaxSliders`.
 
 **Cross References:**
-- `ScriptSliderPack.set`
-- `ScriptSliderPack.getNumSliders`
+- `$API.ScriptSliderPack.set$`
+- `$API.ScriptSliderPack.getNumSliders$`
 
 ---
 
@@ -860,8 +860,8 @@ Sets non-uniform slider widths using normalized cumulative breakpoints.
 - Length mismatch logs an error but still stores the array; rendering falls back to equal-width layout when the size does not match `numSliders + 1`.
 
 **Cross References:**
-- `ScriptSliderPack.set`
-- `ScriptSliderPack.getNumSliders`
+- `$API.ScriptSliderPack.set$`
+- `$API.ScriptSliderPack.getNumSliders$`
 
 **Example:**
 ```javascript:slider-pack-width-map
@@ -923,7 +923,7 @@ Shows or hides the component by updating the `visible` property.
 | shouldBeVisible | Integer | no | Visibility flag | 1 = show, 0 = hide |
 
 **Cross References:**
-- `ScriptSliderPack.fadeComponent`
+- `$API.ScriptSliderPack.fadeComponent$`
 
 ---
 

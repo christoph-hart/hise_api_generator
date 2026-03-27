@@ -2,4 +2,4 @@ Captures a section of the interface and saves it as a PNG file. The `area` param
 
 Visual guides added with `addVisualGuide()` are automatically hidden during capture.
 
-> **Warning:** The current UI zoom factor affects the output dimensions. At 200% zoom, the resulting image is twice the default interface size. OpenGL shaders are not captured by default - call `ScriptShader.setEnableCachedBuffer()` to include them in screenshots.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The current UI zoom factor affects the output dimensions. At 200% zoom, the resulting image is twice the default interface size. OpenGL shaders are not captured by default - call `ScriptShader.setEnableCachedBuffer()` to include them in screenshots.

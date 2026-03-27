@@ -21,7 +21,7 @@ Creates a data reference to the slider pack at the given index. The returned obj
 None.
 
 **Cross References:**
-- `Synth.getSliderPackProcessor` -- factory method that creates the SliderPackProcessor wrapper
-- `ScriptSliderPackData` -- the returned data handle class (HiseScript name: SliderPackData)
-- `TableProcessor.getTable` -- analogous method for Table data (same processor-wrapper pattern)
-- `AudioSampleProcessor.getAudioFile` -- analogous method for AudioFile data (same processor-wrapper pattern)
+- `$API.Synth.getSliderPackProcessor$` -- factory method that creates the SliderPackProcessor wrapper
+- `$API.ScriptSliderPackData$` -- the returned data handle class (HiseScript name: SliderPackData)
+- `$API.TableProcessor.getTable$` -- analogous method for Table data (same processor-wrapper pattern)
+- `$API.AudioSampleProcessor.getAudioFile$` -- analogous method for AudioFile data (same processor-wrapper pattern)

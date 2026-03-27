@@ -9,9 +9,9 @@
 Creates a new ScriptPanel as a child of this panel and returns it. The child panel is a full ScriptPanel instance with its own paint routine, mouse callbacks, timers, and `data` object. Child panels are added to the parent's internal child panel list.
 
 **Cross References:**
-- `ScriptPanel.getChildPanelList`
-- `ScriptPanel.getParentPanel`
-- `ScriptPanel.removeFromParent`
+- `$API.ScriptPanel.getChildPanelList$`
+- `$API.ScriptPanel.getParentPanel$`
+- `$API.ScriptPanel.removeFromParent$`
 
 **Example:**
 ```javascript:child-panel-setup
@@ -74,9 +74,9 @@ Assigns this component to a macro controller slot. Sets the internal `connectedM
 Hides this panel if it is currently shown as a popup overlay. Sets the internal `shownAsPopup` flag to false and removes the panel from the Content's popup panel list. Has no effect if the panel is not currently shown as a popup.
 
 **Cross References:**
-- `ScriptPanel.showAsPopup`
-- `ScriptPanel.isVisibleAsPopup`
-- `ScriptPanel.setIsModalPopup`
+- `$API.ScriptPanel.showAsPopup$`
+- `$API.ScriptPanel.isVisibleAsPopup$`
+- `$API.ScriptPanel.setIsModalPopup$`
 
 ---
 
@@ -98,7 +98,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
 **Cross References:**
-- `ScriptComponent.showControl`
+- `$API.ScriptComponent.showControl$`
 
 ---
 
@@ -119,8 +119,8 @@ Returns the current value of the named property. Reports a script error if the p
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid property ID for this component type |
 
 **Cross References:**
-- `ScriptComponent.set`
-- `ScriptComponent.getAllProperties`
+- `$API.ScriptComponent.set$`
+- `$API.ScriptComponent.getAllProperties$`
 
 ---
 
@@ -135,8 +135,8 @@ Returns the current value of the named property. Reports a script error if the p
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes both base ScriptComponent properties and ScriptPanel-specific properties.
 
 **Cross References:**
-- `ScriptComponent.get`
-- `ScriptComponent.set`
+- `$API.ScriptComponent.get$`
+- `$API.ScriptComponent.set$`
 
 ---
 
@@ -160,8 +160,8 @@ Returns a JSON object describing the current Lottie animation state. Requires `H
 | frameRate | int | Animation frame rate (frames per second) |
 
 **Cross References:**
-- `ScriptPanel.setAnimation`
-- `ScriptPanel.setAnimationFrame`
+- `$API.ScriptPanel.setAnimation$`
+- `$API.ScriptPanel.setAnimationFrame$`
 
 ---
 
@@ -176,7 +176,7 @@ Returns a JSON object describing the current Lottie animation state. Requires `H
 Returns an array of ScriptComponent references for all child components (components whose `parentComponent` property is set to this component). Does not include the component itself in the result.
 
 **Cross References:**
-- `ScriptPanel.getChildPanelList`
+- `$API.ScriptPanel.getChildPanelList$`
 
 ---
 
@@ -191,9 +191,9 @@ Returns an array of ScriptComponent references for all child components (compone
 Returns an array of ScriptPanel references for all child panels created via `addChildPanel()`. This is separate from `getChildComponents()` which returns components parented via the `parentComponent` property. Child panels are ScriptPanel instances within this panel's internal child panel hierarchy.
 
 **Cross References:**
-- `ScriptPanel.addChildPanel`
-- `ScriptPanel.getParentPanel`
-- `ScriptComponent.getChildComponents`
+- `$API.ScriptPanel.addChildPanel$`
+- `$API.ScriptPanel.getParentPanel$`
+- `$API.ScriptComponent.getChildComponents$`
 
 ---
 
@@ -208,7 +208,7 @@ Returns an array of ScriptPanel references for all child panels created via `add
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
 **Cross References:**
-- `ScriptComponent.getGlobalPositionY`
+- `$API.ScriptComponent.getGlobalPositionY$`
 
 ---
 
@@ -223,7 +223,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
 
 **Cross References:**
-- `ScriptComponent.getGlobalPositionX`
+- `$API.ScriptComponent.getGlobalPositionX$`
 
 ---
 
@@ -280,9 +280,9 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 Returns the parent ScriptPanel if this panel was created via `addChildPanel()`, or `undefined` if this is a top-level panel. This is specific to the child panel hierarchy, not the `parentComponent` property system.
 
 **Cross References:**
-- `ScriptPanel.addChildPanel`
-- `ScriptPanel.getChildPanelList`
-- `ScriptPanel.removeFromParent`
+- `$API.ScriptPanel.addChildPanel$`
+- `$API.ScriptPanel.getChildPanelList$`
+- `$API.ScriptPanel.removeFromParent$`
 
 ---
 
@@ -300,8 +300,8 @@ Returns the current value of the component. Uses a `SimpleReadWriteLock` for thr
 - The stored value must not be a String. If it is, an assertion fires in debug builds.
 
 **Cross References:**
-- `ScriptComponent.setValue`
-- `ScriptComponent.getValueNormalized`
+- `$API.ScriptComponent.setValue$`
+- `$API.ScriptComponent.getValueNormalized$`
 
 ---
 
@@ -335,7 +335,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptComponent.loseFocus`
+- `$API.ScriptComponent.loseFocus$`
 
 ---
 
@@ -356,8 +356,8 @@ Returns true (1) if an image with the given pretty name has been loaded via `loa
 | prettyName | String | no | The pretty name assigned during loadImage() | -- |
 
 **Cross References:**
-- `ScriptPanel.loadImage`
-- `ScriptPanel.unloadAllImages`
+- `$API.ScriptPanel.loadImage$`
+- `$API.ScriptPanel.unloadAllImages$`
 
 ---
 
@@ -372,8 +372,8 @@ Returns true (1) if an image with the given pretty name has been loaded via `loa
 Returns true (1) if this panel is currently shown as a popup overlay, false (0) otherwise.
 
 **Cross References:**
-- `ScriptPanel.showAsPopup`
-- `ScriptPanel.closeAsPopup`
+- `$API.ScriptPanel.showAsPopup$`
+- `$API.ScriptPanel.closeAsPopup$`
 
 ---
 
@@ -395,9 +395,9 @@ Loads an image from the project's Images pool and stores it with the given prett
 | prettyName | String | no | An alias for referencing this image later | Should be unique among loaded images |
 
 **Cross References:**
-- `ScriptPanel.isImageLoaded`
-- `ScriptPanel.unloadAllImages`
-- `ScriptPanel.setImage`
+- `$API.ScriptPanel.isImageLoaded$`
+- `$API.ScriptPanel.unloadAllImages$`
+- `$API.ScriptPanel.setImage$`
 
 ---
 
@@ -412,7 +412,7 @@ Loads an image from the project's Images pool and stores it with the given prett
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptComponent.grabFocus`
+- `$API.ScriptComponent.grabFocus$`
 
 ---
 
@@ -427,9 +427,9 @@ Notifies all z-level listeners that the component wants to lose keyboard focus. 
 Removes this panel from its parent panel's child list. Returns true (1) if the panel was successfully removed, false (0) if it has no parent or removal failed. Only applies to panels created via `addChildPanel()`.
 
 **Cross References:**
-- `ScriptPanel.addChildPanel`
-- `ScriptPanel.getParentPanel`
-- `ScriptPanel.getChildPanelList`
+- `$API.ScriptPanel.addChildPanel$`
+- `$API.ScriptPanel.getParentPanel$`
+- `$API.ScriptPanel.getChildPanelList$`
 
 ---
 
@@ -444,8 +444,8 @@ Removes this panel from its parent panel's child list. Returns true (1) if the p
 Schedules an asynchronous repaint of this panel. Safe to call from any thread -- the method checks the current thread and dispatches appropriately. On the scripting, sample loading, or message thread, the paint job is scheduled directly. From other threads (e.g. audio thread), it is deferred via the JavaScript thread pool. The actual paint routine executes on the scripting thread via a low-priority callback.
 
 **Cross References:**
-- `ScriptPanel.setPaintRoutine`
-- `ScriptPanel.repaintImmediately`
+- `$API.ScriptPanel.setPaintRoutine$`
+- `$API.ScriptPanel.repaintImmediately$`
 
 ---
 
@@ -463,8 +463,8 @@ Schedules a repaint. Despite the name, this method currently behaves identically
 - Despite the name suggesting synchronous behavior, this is identical to `repaint()` and schedules an asynchronous paint. Do not rely on the paint having completed after this call returns.
 
 **Cross References:**
-- `ScriptPanel.repaint`
-- `ScriptPanel.setPaintRoutine`
+- `$API.ScriptPanel.repaint$`
+- `$API.ScriptPanel.setPaintRoutine$`
 
 ---
 
@@ -486,8 +486,8 @@ Sets a component property to the given value. Reports a script error if the prop
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
 
 **Cross References:**
-- `ScriptComponent.get`
-- `ScriptComponent.getAllProperties`
+- `$API.ScriptComponent.get$`
+- `$API.ScriptComponent.getAllProperties$`
 
 ---
 
@@ -508,8 +508,8 @@ Loads a Lottie animation from a base64-encoded JSON string. Requires `HISE_INCLU
 | base64LottieAnimation | String | no | A base64-encoded Lottie JSON animation string | Must be valid base64-encoded Lottie JSON |
 
 **Cross References:**
-- `ScriptPanel.setAnimationFrame`
-- `ScriptPanel.getAnimationData`
+- `$API.ScriptPanel.setAnimationFrame$`
+- `$API.ScriptPanel.getAnimationData$`
 
 ---
 
@@ -530,8 +530,8 @@ Renders the specified frame of the loaded Lottie animation. Requires `HISE_INCLU
 | numFrame | Integer | no | The frame number to render | 0 to numFrames-1 |
 
 **Cross References:**
-- `ScriptPanel.setAnimation`
-- `ScriptPanel.getAnimationData`
+- `$API.ScriptPanel.setAnimation$`
+- `$API.ScriptPanel.getAnimationData$`
 
 ---
 
@@ -574,7 +574,7 @@ When passing individual key descriptions, each can be a string using JUCE key de
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptComponent.setKeyPressCallback`
+- `$API.ScriptComponent.setKeyPressCallback$`
 
 ---
 
@@ -602,7 +602,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - Reports an error if the script processor has a DspNetwork that is forwarding controls to parameters.
 
 **Cross References:**
-- `ScriptComponent.changed`
+- `$API.ScriptComponent.changed$`
 
 ---
 
@@ -623,7 +623,7 @@ Sets the rectangular area that constrains this panel's drag movement when `allow
 | area | Array | no | Bounding rectangle as [x, y, width, height] | Array with 4 numeric elements |
 
 **Cross References:**
-- `ScriptPanel.startInternalDrag`
+- `$API.ScriptPanel.startInternalDrag$`
 
 ---
 
@@ -657,7 +657,7 @@ Registers a callback for file drag-and-drop events on this panel. The callback l
 **Callback Signature:** dropFunction(dropInfo: Object)
 
 **Cross References:**
-- `ScriptPanel.startExternalFileDrag`
+- `$API.ScriptPanel.startExternalFileDrag$`
 
 **Example:**
 ```javascript:file-drop-handler
@@ -705,8 +705,8 @@ Switches the panel to fixed image mode, bypassing the paint routine entirely. Cl
 - Either xOffset or yOffset must be 0. The non-zero offset selects the frame along the strip direction.
 
 **Cross References:**
-- `ScriptPanel.loadImage`
-- `ScriptPanel.setPaintRoutine`
+- `$API.ScriptPanel.loadImage$`
+- `$API.ScriptPanel.setPaintRoutine$`
 
 ---
 
@@ -727,8 +727,8 @@ Sets whether this popup panel displays with a dark modal background overlay. Whe
 | shouldBeModal | Integer | no | Whether the popup should be modal | 1 = modal, 0 = non-modal |
 
 **Cross References:**
-- `ScriptPanel.showAsPopup`
-- `ScriptPanel.closeAsPopup`
+- `$API.ScriptPanel.showAsPopup$`
+- `$API.ScriptPanel.closeAsPopup$`
 
 ---
 
@@ -781,7 +781,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error otherwise.
 
 **Cross References:**
-- `ScriptComponent.setConsumedKeyPresses`
+- `$API.ScriptComponent.setConsumedKeyPresses$`
 
 ---
 
@@ -848,9 +848,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - If the LAF uses CSS (has a stylesheet), automatically calls `setStyleSheetClass({})` to initialize the class selector.
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setStyleSheetPseudoState`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
 
 ---
 
@@ -901,9 +901,9 @@ Registers a callback for mouse events on this panel. The `allowCallbacks` proper
 - The `allowCallbacks` property must be set to an appropriate level before the mouse callback will fire. The default is "No Callbacks", so calling `setMouseCallback` alone does nothing.
 
 **Cross References:**
-- `ScriptPanel.setPaintRoutine`
-- `ScriptPanel.setDraggingBounds`
-- `ScriptPanel.setMouseCursor`
+- `$API.ScriptPanel.setPaintRoutine$`
+- `$API.ScriptPanel.setDraggingBounds$`
+- `$API.ScriptPanel.setMouseCursor$`
 
 **Example:**
 ```javascript:mouse-callback-clicks
@@ -998,7 +998,7 @@ Sets the mouse cursor for this panel. Accepts either a Path object for a custom 
 | "BottomRightCornerResizeCursor" | Bottom-right corner resize cursor |
 
 **Cross References:**
-- `ScriptPanel.setMouseCallback`
+- `$API.ScriptPanel.setMouseCallback$`
 
 ---
 
@@ -1024,9 +1024,9 @@ Registers a paint function that receives a Graphics object for custom drawing. T
 - Calling `setImage()` clears the paint routine. Conversely, setting a new paint routine cancels fixed image mode.
 
 **Cross References:**
-- `ScriptPanel.repaint`
-- `ScriptPanel.repaintImmediately`
-- `ScriptPanel.setImage`
+- `$API.ScriptPanel.repaint$`
+- `$API.ScriptPanel.repaintImmediately$`
+- `$API.ScriptPanel.setImage$`
 
 **Example:**
 ```javascript:paint-routine-basics
@@ -1076,8 +1076,8 @@ Sets the panel value with undo support, creating an undoable action. For simple 
 - The `oldValue` parameter must match the current value for undo to restore correctly. It is the caller's responsibility to pass the correct current value.
 
 **Cross References:**
-- `ScriptComponent.setValue`
-- `ScriptComponent.setValueWithUndo`
+- `$API.ScriptComponent.setValue$`
+- `$API.ScriptComponent.setValueWithUndo$`
 
 ---
 
@@ -1099,9 +1099,9 @@ Configures this panel as a popup by setting its FloatingTile JSON configuration 
 | position | Array | no | Popup bounds as [x, y, width, height] | Array with 4 numeric elements |
 
 **Cross References:**
-- `ScriptPanel.showAsPopup`
-- `ScriptPanel.closeAsPopup`
-- `ScriptPanel.setIsModalPopup`
+- `$API.ScriptPanel.showAsPopup$`
+- `$API.ScriptPanel.closeAsPopup$`
+- `$API.ScriptPanel.setIsModalPopup$`
 
 ---
 
@@ -1150,9 +1150,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setStyleSheetPseudoState`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 ---
 
@@ -1188,9 +1188,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetPseudoState`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetPseudoState$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 ---
 
@@ -1225,9 +1225,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state |
 
 **Cross References:**
-- `ScriptComponent.setStyleSheetClass`
-- `ScriptComponent.setStyleSheetProperty`
-- `ScriptComponent.setLocalLookAndFeel`
+- `$API.ScriptComponent.setStyleSheetClass$`
+- `$API.ScriptComponent.setStyleSheetProperty$`
+- `$API.ScriptComponent.setLocalLookAndFeel$`
 
 ---
 
@@ -1250,8 +1250,8 @@ Registers a callback function that fires periodically when the timer is active. 
 **Callback Signature:** timerFunction()
 
 **Cross References:**
-- `ScriptPanel.setPaintRoutine`
-- `ScriptPanel.repaint`
+- `$API.ScriptPanel.setPaintRoutine$`
+- `$API.ScriptPanel.repaint$`
 
 **Example:**
 ```javascript:timer-callback-counter
@@ -1330,10 +1330,10 @@ Sets the component's value. Thread-safe -- can be called from any thread; the UI
 - If called during `onInit`, the value will NOT be restored after recompilation.
 
 **Cross References:**
-- `ScriptComponent.getValue`
-- `ScriptComponent.setValueNormalized`
-- `ScriptComponent.setValueWithUndo`
-- `ScriptPanel.setPanelValueWithUndo`
+- `$API.ScriptComponent.getValue$`
+- `$API.ScriptComponent.setValueNormalized$`
+- `$API.ScriptComponent.setValueWithUndo$`
+- `$API.ScriptPanel.setPanelValueWithUndo$`
 
 ---
 
@@ -1364,8 +1364,8 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 - Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes.
 
 **Cross References:**
-- `ScriptComponent.setValue`
-- `ScriptPanel.setPanelValueWithUndo`
+- `$API.ScriptComponent.setValue$`
+- `$API.ScriptPanel.setPanelValueWithUndo$`
 
 ---
 
@@ -1413,10 +1413,10 @@ Shows this panel as a popup overlay on top of the interface. The `isPopupPanel` 
 | closeOtherPopups | Integer | no | Whether to close other visible popup panels | 1 = close others, 0 = keep others |
 
 **Cross References:**
-- `ScriptPanel.closeAsPopup`
-- `ScriptPanel.isVisibleAsPopup`
-- `ScriptPanel.setIsModalPopup`
-- `ScriptPanel.setPopupData`
+- `$API.ScriptPanel.closeAsPopup$`
+- `$API.ScriptPanel.isVisibleAsPopup$`
+- `$API.ScriptPanel.setIsModalPopup$`
+- `$API.ScriptPanel.setPopupData$`
 
 ---
 
@@ -1437,7 +1437,7 @@ Sets the `visible` property with change message notification.
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
 
 **Cross References:**
-- `ScriptComponent.fadeComponent`
+- `$API.ScriptComponent.fadeComponent$`
 
 ---
 
@@ -1460,8 +1460,8 @@ Initiates an OS-level file drag operation. Accepts a string file path, File obje
 | finishCallback | Function | no | Callback called when drag completes | -- |
 
 **Cross References:**
-- `ScriptPanel.startInternalDrag`
-- `ScriptPanel.setFileDropCallback`
+- `$API.ScriptPanel.startInternalDrag$`
+- `$API.ScriptPanel.setFileDropCallback$`
 
 ---
 
@@ -1482,8 +1482,8 @@ Initiates an internal HISE UI drag operation from this panel. Sends a `DragActio
 | dragData | var | no | Data to associate with the drag operation | -- |
 
 **Cross References:**
-- `ScriptPanel.startExternalFileDrag`
-- `ScriptPanel.setDraggingBounds`
+- `$API.ScriptPanel.startExternalFileDrag$`
+- `$API.ScriptPanel.setDraggingBounds$`
 
 ---
 
@@ -1498,8 +1498,8 @@ Initiates an internal HISE UI drag operation from this panel. Sends a `DragActio
 Removes all images previously loaded via `loadImage()` from this panel's image cache. After calling this, `isImageLoaded()` will return false for all previously loaded image names.
 
 **Cross References:**
-- `ScriptPanel.loadImage`
-- `ScriptPanel.isImageLoaded`
+- `$API.ScriptPanel.loadImage$`
+- `$API.ScriptPanel.isImageLoaded$`
 
 ---
 
@@ -1520,4 +1520,4 @@ Special parameter index values for the `parameterId` property:
 - `>= 0`: Reads the attribute at the given parameter index
 
 **Cross References:**
-- `ScriptComponent.setValue`
+- `$API.ScriptComponent.setValue$`

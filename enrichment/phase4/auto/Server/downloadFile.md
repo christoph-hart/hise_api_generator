@@ -13,4 +13,4 @@ You can also call any `Download` class method on `this` inside the callback (e.g
 
 If you call this method again with the same URL and parameters, the existing download's callback is replaced rather than starting a second download. If the target file already exists, the download resumes from where it left off - delete the file first if you want a fresh download.
 
-> **Warning:** The target file is deleted and overwritten when the download begins. Do not point it at an existing file you want to keep unless you intend to resume a previous download of the same URL.
+> [!Warning:$WARNING_TO_BE_REPLACED$] The target file is deleted and overwritten when the download begins. Do not point it at an existing file you want to keep unless you intend to resume a previous download of the same URL.

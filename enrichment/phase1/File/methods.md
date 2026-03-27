@@ -22,9 +22,9 @@ Copies this file to the location specified by the target File object. The target
 - The target must be a File object, not a string path. Passing a string reports a script error "target is not a file".
 
 **Cross References:**
-- `File.move`
-- `File.rename`
-- `File.copyDirectory`
+- `$API.File.move$`
+- `$API.File.rename$`
+- `$API.File.copyDirectory$`
 
 ## copyDirectory
 
@@ -48,8 +48,8 @@ Recursively copies this directory to the target location. The target parameter i
 - The target is the destination directory path itself, not a parent to copy into. Passing the parent directory overwrites it with the source content.
 
 **Cross References:**
-- `File.copy`
-- `File.move`
+- `$API.File.copy$`
+- `$API.File.move$`
 
 ## createDirectory
 
@@ -73,9 +73,9 @@ Creates a child directory with the given name inside this directory. If the dire
 - [BUG] No error is reported if directory creation fails silently (e.g., insufficient permissions). The JUCE `createDirectory()` return value is not checked.
 
 **Cross References:**
-- `File.getChildFile`
-- `File.isDirectory`
-- `File.deleteFileOrDirectory`
+- `$API.File.getChildFile$`
+- `$API.File.isDirectory$`
+- `$API.File.deleteFileOrDirectory$`
 
 ## deleteFileOrDirectory
 
@@ -97,9 +97,9 @@ Deletes the file or directory at this path WITHOUT any confirmation dialog. For 
 - Deletion is recursive for directories with no confirmation prompt. There is no undo mechanism.
 
 **Cross References:**
-- `File.isFile`
-- `File.isDirectory`
-- `File.createDirectory`
+- `$API.File.isFile$`
+- `$API.File.isDirectory$`
+- `$API.File.createDirectory$`
 
 ## extractZipFile
 
@@ -142,7 +142,7 @@ For archives with fewer than 500 entries, the callback fires for every extracted
 - If the File object is garbage collected during async extraction, the operation aborts silently (checked via weak reference).
 
 **Cross References:**
-- `File.getNumZippedItems`
+- `$API.File.getNumZippedItems$`
 
 **Example:**
 ```javascript:extract-zip-progress
@@ -188,8 +188,8 @@ Returns the number of bytes of free disk space on the volume that this file resi
 (No parameters.)
 
 **Cross References:**
-- `File.getSize`
-- `File.hasWriteAccess`
+- `$API.File.getSize$`
+- `$API.File.hasWriteAccess$`
 
 ## getChildFile
 
@@ -209,8 +209,8 @@ Returns a new File object representing a child path relative to this directory. 
 | childFileName | String | no | Filename or relative path of the child | -- |
 
 **Cross References:**
-- `File.getParentDirectory`
-- `File.createDirectory`
+- `$API.File.getParentDirectory$`
+- `$API.File.createDirectory$`
 
 ## getHash
 
@@ -231,8 +231,8 @@ Reads the file and computes its SHA-256 hash, returning the result as a lowercas
 - Reads the entire file into memory for hashing. For very large files, this may consume significant memory and block the calling thread for a noticeable duration.
 
 **Cross References:**
-- `File.getSize`
-- `File.isSameFileAs`
+- `$API.File.getSize$`
+- `$API.File.isSameFileAs$`
 
 ## getNonExistentSibling
 
@@ -253,8 +253,8 @@ Returns a new File object representing a sibling path that does not currently ex
 - The returned File object is only guaranteed to be unique at the moment of the call. A concurrent process could create a file at that path before you write to it.
 
 **Cross References:**
-- `File.getChildFile`
-- `File.getParentDirectory`
+- `$API.File.getChildFile$`
+- `$API.File.getParentDirectory$`
 
 ## getNumZippedItems
 
@@ -275,7 +275,7 @@ Returns the number of entries in this ZIP archive. Creates a new `juce::ZipFile`
 - Creates a new ZipFile parser on each call. For repeated queries, store the result in a variable rather than calling this method in a loop.
 
 **Cross References:**
-- `File.extractZipFile`
+- `$API.File.extractZipFile$`
 
 ## getParentDirectory
 
@@ -293,8 +293,8 @@ Returns a new File object representing the parent directory of this file or dire
 (No parameters.)
 
 **Cross References:**
-- `File.getChildFile`
-- `File.isChildOf`
+- `$API.File.getChildFile$`
+- `$API.File.isChildOf$`
 
 ## getRedirectedFolder
 
@@ -316,7 +316,7 @@ Checks this directory for a HISE link file and returns the redirect target if on
 - The link file name is platform-specific: `LinkWindows` on Windows, `LinkOSX` on macOS, `LinkLinux` on Linux. Link files from other platforms are ignored.
 
 **Cross References:**
-- `FileSystem.getFolder`
+- `$API.FileSystem.getFolder$`
 
 ## getRelativePathFrom
 
@@ -340,9 +340,9 @@ Returns the relative path from the given base directory to this file or director
 - Passing a non-File object (e.g., a string path) reports a script error "otherFile is not a file". Use `FileSystem.fromAbsolutePath()` to create a File object from a string path first.
 
 **Cross References:**
-- `File.isChildOf`
-- `File.getParentDirectory`
-- `File.toString`
+- `$API.File.isChildOf$`
+- `$API.File.getParentDirectory$`
+- `$API.File.toString$`
 
 ## getSize
 
@@ -360,8 +360,8 @@ Returns the size of the file in bytes. Delegates directly to `juce::File::getSiz
 (No parameters.)
 
 **Cross References:**
-- `File.getBytesFreeOnVolume`
-- `File.isFile`
+- `$API.File.getBytesFreeOnVolume$`
+- `$API.File.isFile$`
 
 ## hasWriteAccess
 
@@ -379,8 +379,8 @@ Returns `true` if the file or directory has write permissions for the current us
 (No parameters.)
 
 **Cross References:**
-- `File.setReadOnly`
-- `File.isFile`
+- `$API.File.setReadOnly$`
+- `$API.File.isFile$`
 
 ## isChildOf
 
@@ -404,9 +404,9 @@ Checks whether this file is a child of the given directory. When `checkSubdirect
 - Passing a non-File object as `otherFile` silently returns `false` instead of reporting an error. This can mask bugs where a string path is passed instead of a File object.
 
 **Cross References:**
-- `File.getParentDirectory`
-- `File.getRelativePathFrom`
-- `File.isSameFileAs`
+- `$API.File.getParentDirectory$`
+- `$API.File.getRelativePathFrom$`
+- `$API.File.isSameFileAs$`
 
 ## isDirectory
 
@@ -424,9 +424,9 @@ Returns `true` if this path exists on disk and is a directory, `false` otherwise
 (No parameters.)
 
 **Cross References:**
-- `File.isFile`
-- `File.createDirectory`
-- `File.deleteFileOrDirectory`
+- `$API.File.isFile$`
+- `$API.File.createDirectory$`
+- `$API.File.deleteFileOrDirectory$`
 
 ## isFile
 
@@ -444,9 +444,9 @@ Returns `true` if this path exists on disk as a regular file (not a directory), 
 (No parameters.)
 
 **Cross References:**
-- `File.isDirectory`
-- `File.getSize`
-- `File.hasWriteAccess`
+- `$API.File.isDirectory$`
+- `$API.File.getSize$`
+- `$API.File.hasWriteAccess$`
 
 ## isSameFileAs
 
@@ -470,9 +470,9 @@ Returns `true` if this file and the given File object reference the same path. C
 - The comparison uses path strings only and does not resolve symlinks or HISE link file redirects. Two File objects pointing to the same physical file via different paths (e.g., one through a symlink) will compare as different.
 
 **Cross References:**
-- `File.isChildOf`
-- `File.getRelativePathFrom`
-- `File.getHash`
+- `$API.File.isChildOf$`
+- `$API.File.getRelativePathFrom$`
+- `$API.File.getHash$`
 
 ## loadAsAudioFile
 
@@ -494,8 +494,8 @@ Reads the audio file and returns its sample data as Buffer objects. The return t
 - Reads the entire file into memory. For large audio files, this consumes significant memory. For streaming playback, use the sampler module workflow instead.
 
 **Cross References:**
-- `File.writeAudioFile`
-- `File.loadAudioMetadata`
+- `$API.File.writeAudioFile$`
+- `$API.File.loadAudioMetadata$`
 
 **Example:**
 ```javascript:load-audio-handle-channels
@@ -538,8 +538,8 @@ Reads the file as raw binary data and returns a Base64-encoded string representa
 - Reads the entire file into memory before encoding. For large files, this can consume significant memory.
 
 **Cross References:**
-- `File.loadAsString`
-- `File.getHash`
+- `$API.File.loadAsString$`
+- `$API.File.getHash$`
 
 ## loadAsMidiFile
 
@@ -579,8 +579,8 @@ Uses HISE's internal MIDI resolution of 960 ticks per quarter note. Events are c
 - Events are converted with a fixed sample rate of 44100 Hz and tempo of 120 BPM. If the actual playback sample rate or tempo differs, timestamps may not directly correspond to playback positions.
 
 **Cross References:**
-- `File.writeMidiFile`
-- `File.loadMidiMetadata`
+- `$API.File.writeMidiFile$`
+- `$API.File.loadMidiMetadata$`
 
 **Example:**
 ```javascript:load-midi-inspect
@@ -622,10 +622,10 @@ Reads the file as a text string and parses it as JSON, returning the resulting o
 - Reports a script error on parse failure, unlike `loadEncryptedObject` which silently returns undefined. If the file might contain invalid JSON, wrap the call in error handling or validate the file content first.
 
 **Cross References:**
-- `File.writeObject`
-- `File.loadAsString`
-- `File.loadEncryptedObject`
-- `File.loadFromXmlFile`
+- `$API.File.writeObject$`
+- `$API.File.loadAsString$`
+- `$API.File.loadEncryptedObject$`
+- `$API.File.loadFromXmlFile$`
 
 ## loadAsString
 
@@ -643,9 +643,9 @@ Reads the entire file content as a text string and returns it. Delegates directl
 (No parameters.)
 
 **Cross References:**
-- `File.writeString`
-- `File.loadAsObject`
-- `File.loadAsBase64String`
+- `$API.File.writeString$`
+- `$API.File.loadAsObject$`
+- `$API.File.loadAsBase64String$`
 
 ## loadAudioMetadata
 
@@ -678,8 +678,8 @@ Reads the audio file's header information without loading the full sample data. 
 - Returns `undefined` silently if the file does not exist or cannot be read as audio. Unlike `loadAsObject`, no script error is reported. Always check the result with `isDefined()` before accessing properties.
 
 **Cross References:**
-- `File.loadAsAudioFile`
-- `File.loadMidiMetadata`
+- `$API.File.loadAsAudioFile$`
+- `$API.File.loadMidiMetadata$`
 
 **Example:**
 ```javascript:audio-metadata-inspect
@@ -729,10 +729,10 @@ If parsing fails after decryption (e.g., wrong key producing garbled output), th
 - Key length is silently clamped to 72 bytes. Longer keys are truncated without warning, which means two different keys that share the same first 72 bytes will produce identical encryption.
 
 **Cross References:**
-- `File.writeEncryptedObject`
-- `File.loadAsObject`
-- `FileSystem.encryptWithRSA`
-- `FileSystem.decryptWithRSA`
+- `$API.File.writeEncryptedObject$`
+- `$API.File.loadAsObject$`
+- `$API.FileSystem.encryptWithRSA$`
+- `$API.FileSystem.decryptWithRSA$`
 
 ## loadFromXmlFile
 
@@ -756,9 +756,9 @@ The XML-to-JSON conversion preserves the hierarchical structure of the XML docum
 - The round-trip fidelity depends on the `ValueTreeConverters` implementation. Not all JSON structures survive a `writeAsXmlFile` -> `loadFromXmlFile` round-trip identically, particularly arrays of mixed types or deeply nested structures.
 
 **Cross References:**
-- `File.writeAsXmlFile`
-- `File.loadAsObject`
-- `File.loadAsString`
+- `$API.File.writeAsXmlFile$`
+- `$API.File.loadAsObject$`
+- `$API.File.loadAsString$`
 
 ## loadMidiMetadata
 
@@ -791,9 +791,9 @@ The returned object contains these properties:
 - Returns `undefined` silently on failure (no error reported). Always check with `isDefined()` before accessing properties.
 
 **Cross References:**
-- `File.loadAsMidiFile`
-- `File.writeMidiFile`
-- `File.loadAudioMetadata`
+- `$API.File.loadAsMidiFile$`
+- `$API.File.writeMidiFile$`
+- `$API.File.loadAudioMetadata$`
 
 ## move
 
@@ -817,8 +817,8 @@ Moves this file to the location specified by the target File object. The target 
 - The target must be a File object, not a string path. Passing a string reports a script error "target is not a file".
 
 **Cross References:**
-- `File.copy`
-- `File.rename`
+- `$API.File.copy$`
+- `$API.File.rename$`
 
 ## rename
 
@@ -842,10 +842,10 @@ Renames this file to the given name within the same directory. The original file
 - After renaming, the File object still references the old filename. The internal path is immutable. Obtain a new File handle via `getParentDirectory().getChildFile("newName")` to reference the renamed file.
 
 **Cross References:**
-- `File.move`
-- `File.copy`
-- `File.getParentDirectory`
-- `File.getChildFile`
+- `$API.File.move$`
+- `$API.File.copy$`
+- `$API.File.getParentDirectory$`
+- `$API.File.getChildFile$`
 
 ## setExecutePermission
 
@@ -865,8 +865,8 @@ Sets or clears the execute permission on this file. Delegates directly to `juce:
 | shouldBeExecutable | Integer | no | `true` to set execute permission, `false` to remove it | Boolean |
 
 **Cross References:**
-- `File.setReadOnly`
-- `File.hasWriteAccess`
+- `$API.File.setReadOnly$`
+- `$API.File.hasWriteAccess$`
 
 ## setReadOnly
 
@@ -891,8 +891,8 @@ Sets or clears the read-only (write-protected) attribute on this file or directo
 - When `applyRecursively` is `true`, this modifies permissions on all files and subdirectories. There is no confirmation prompt or undo mechanism.
 
 **Cross References:**
-- `File.hasWriteAccess`
-- `File.setExecutePermission`
+- `$API.File.hasWriteAccess$`
+- `$API.File.setExecutePermission$`
 
 ## show
 
@@ -910,9 +910,9 @@ Opens a native file explorer window (Explorer on Windows, Finder on macOS) with 
 (No parameters.)
 
 **Cross References:**
-- `File.isFile`
-- `File.isDirectory`
-- `File.toString`
+- `$API.File.isFile$`
+- `$API.File.isDirectory$`
+- `$API.File.toString$`
 
 ## startAsProcess
 
@@ -936,9 +936,9 @@ Launches this file as an external process with the given command-line parameters
 - On macOS, launching `.app` bundles may require the full bundle path. On Windows, file associations determine which application opens a document file.
 
 **Cross References:**
-- `File.setExecutePermission`
-- `File.isFile`
-- `File.show`
+- `$API.File.setExecutePermission$`
+- `$API.File.isFile$`
+- `$API.File.show$`
 
 ## toReferenceString
 
@@ -979,9 +979,9 @@ Converts this file's absolute path to a HISE pool reference string relative to t
 - The file must actually reside within the specified subdirectory for the reference string to be meaningful. The method does not validate that the file is actually inside the folder -- it constructs the reference regardless.
 
 **Cross References:**
-- `FileSystem.fromReferenceString`
-- `File.toString`
-- `File.getRelativePathFrom`
+- `$API.FileSystem.fromReferenceString$`
+- `$API.File.toString$`
+- `$API.File.getRelativePathFrom$`
 
 ## toString
 
@@ -1019,8 +1019,8 @@ Reports a script error for invalid format values with message "Illegal formatTyp
 | `Filename` (3) | Returns the filename with extension but without the directory path |
 
 **Cross References:**
-- `File.toReferenceString`
-- `File.getRelativePathFrom`
+- `$API.File.toReferenceString$`
+- `$API.File.getRelativePathFrom$`
 
 **Example:**
 ```javascript:file-tostring-formats
@@ -1067,9 +1067,9 @@ Converts a JSON object to XML format and writes it to this file. The `tagName` p
 - The `tagName` must be a valid XML identifier. Invalid characters in the tag name (spaces, special characters) may produce malformed XML output.
 
 **Cross References:**
-- `File.loadFromXmlFile`
-- `File.writeObject`
-- `File.writeString`
+- `$API.File.loadFromXmlFile$`
+- `$API.File.writeObject$`
+- `$API.File.writeString$`
 
 ## writeAudioFile
 
@@ -1110,8 +1110,8 @@ Reports script errors for: writing to a directory, incompatible data types, size
 - [BUG] The existing file is deleted before writing begins. If the write subsequently fails (e.g., invalid bit depth for the format), the original file is lost.
 
 **Cross References:**
-- `File.loadAsAudioFile`
-- `File.loadAudioMetadata`
+- `$API.File.loadAsAudioFile$`
+- `$API.File.loadAudioMetadata$`
 
 **Example:**
 ```javascript:write-stereo-audio
@@ -1166,9 +1166,9 @@ This uses JUCE's `BlowFish` cipher -- a symmetric block cipher. This is NOT the 
 - The on-disk format is Base64 text, not binary. This is human-readable (though not human-decodable) and will be approximately 33% larger than the encrypted binary data.
 
 **Cross References:**
-- `File.loadEncryptedObject`
-- `File.writeObject`
-- `FileSystem.encryptWithRSA`
+- `$API.File.loadEncryptedObject$`
+- `$API.File.writeObject$`
+- `$API.FileSystem.encryptWithRSA$`
 
 ## writeMidiFile
 
@@ -1209,9 +1209,9 @@ Returns `true` if the file was written successfully, `false` otherwise. Returns 
 - The `NumBars` auto-calculation divides the last event's timestamp by `TicksPerQuarter` (960) and rounds up. This only works correctly if event timestamps are in tick units. If events have sample-based timestamps, the auto-calculation produces incorrect bar counts.
 
 **Cross References:**
-- `File.loadAsMidiFile`
-- `File.loadMidiMetadata`
-- `Engine.createMessageHolder`
+- `$API.File.loadAsMidiFile$`
+- `$API.File.loadMidiMetadata$`
+- `$API.Engine.createMessageHolder$`
 
 **Example:**
 ```javascript:write-midi-file
@@ -1273,10 +1273,10 @@ Serializes a JSON value to a formatted text string and writes it to this file. I
 | jsonData | JSON | no | JSON value to serialize and write | Any value that `JSON::toString` can serialize (objects, arrays, primitives) |
 
 **Cross References:**
-- `File.loadAsObject`
-- `File.writeString`
-- `File.writeEncryptedObject`
-- `File.writeAsXmlFile`
+- `$API.File.loadAsObject$`
+- `$API.File.writeString$`
+- `$API.File.writeEncryptedObject$`
+- `$API.File.writeAsXmlFile$`
 
 ## writeString
 
@@ -1298,7 +1298,7 @@ This is the low-level text writing method that other write methods (`writeObject
 | text | String | no | Text content to write to the file | -- |
 
 **Cross References:**
-- `File.loadAsString`
-- `File.writeObject`
-- `File.writeAsXmlFile`
-- `File.writeEncryptedObject`
+- `$API.File.loadAsString$`
+- `$API.File.writeObject$`
+- `$API.File.writeAsXmlFile$`
+- `$API.File.writeEncryptedObject$`

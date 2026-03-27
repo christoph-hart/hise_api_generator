@@ -128,12 +128,4 @@ When disconnected (no source selected), the modulator fills its output buffer wi
 
 This modulator is monophonic - it reads from a single shared source buffer. All voices in the parent Sound Generator receive the same modulation values. For per-voice variation from a time-variant source, use the Global Static Time Variant Modulator instead, which snapshots the value at note-on.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Global Modulator Container", to: "/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer", desc: "hosts the source time-variant modulator" }
-  - { label: "Global Static Time Variant Modulator", to: "/v2/reference/audio-modules/modulators/voice-start/globalstatictimevariantmodulator", desc: "also reads from a time-variant source, but snapshots the value at note-on for per-voice variation" }
----
-::
+**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source time-variant modulator, $MODULES.GlobalStaticTimeVariantModulator$ -- also reads from a time-variant source, but snapshots the value at note-on for per-voice variation

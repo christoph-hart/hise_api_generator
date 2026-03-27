@@ -29,18 +29,22 @@ The class exposes two constants, `RoutingMatrix.NumInputs` and `RoutingMatrix.Nu
 
 ## Common Mistakes
 
-- **Wrong:** Reading `rm.NumInputs` after calling `setNumChannels(8)` and expecting 8.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Reading `rm.NumInputs` after calling `setNumChannels(8)` and expecting 8.
   **Right:** Call `rm.getNumSourceChannels()` instead.
   *`NumInputs` and `NumOutputs` are snapshot constants from construction time. They do not update when the channel count changes.*
 
-- **Wrong:** Calling `addConnection(0, 4)` without first calling `setNumChannels()`.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Calling `addConnection(0, 4)` without first calling `setNumChannels()`.
   **Right:** Call `setNumChannels(6)` or higher before routing beyond the default stereo pair.
   *The default stereo constraint auto-removes connections when you add a third. `setNumChannels` relaxes this constraint.*
 
-- **Wrong:** Adding new connections without clearing the matrix first when rebuilding a routing configuration.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Adding new connections without clearing the matrix first when rebuilding a routing configuration.
   **Right:** Call `clear()` then add all connections fresh.
   *Old connections from a previous configuration persist and create unexpected signal paths.*
 
-- **Wrong:** Not checking the return value of `addConnection()` when routing to higher channel pairs.
+- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+  **Wrong:** Not checking the return value of `addConnection()` when routing to higher channel pairs.
   **Right:** `local ok = rm.addConnection(1, 5); if(!ok) { /* fallback */ }`
   *The host DAW may not support the requested output channels. The method returns `false` when the destination is unavailable.*

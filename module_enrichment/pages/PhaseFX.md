@@ -155,11 +155,4 @@ Phase FX has no internal LFO. Without modulators in the Phase Modulation chain, 
 
 Frequency1 and Frequency2 are smoothed with a 50ms ramp to prevent clicks when changed via automation or scripting.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Chorus", to: "/v2/reference/audio-modules/effects/master/chorus", desc: "Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep" }
----
-::
+**See also:** $MODULES.Chorus$ -- Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep

@@ -21,10 +21,10 @@ Starts the given function on a dedicated high-priority background thread. The fu
 - Calling this while a previous task is running blocks the calling thread for up to `timeout` ms while the old thread is stopped. If the old task does not check `shouldAbort()`, this blocks for the full timeout duration before the new task starts.
 
 **Cross References:**
-- `BackgroundTask.killVoicesAndCall`
-- `BackgroundTask.shouldAbort`
-- `BackgroundTask.setFinishCallback`
-- `BackgroundTask.setTimeOut`
+- `$API.BackgroundTask.killVoicesAndCall$`
+- `$API.BackgroundTask.shouldAbort$`
+- `$API.BackgroundTask.setFinishCallback$`
+- `$API.BackgroundTask.setTimeOut$`
 
 **Example:**
 ```javascript:background-task-basic
@@ -67,7 +67,7 @@ Returns the current progress value set by `setProgress()`. The value is stored a
 None.
 
 **Cross References:**
-- `BackgroundTask.setProgress`
+- `$API.BackgroundTask.setProgress$`
 
 ## getProperty
 
@@ -87,7 +87,7 @@ Returns the value stored under the given key in the thread-safe property store. 
 | id | String | no | The property key to look up | -- |
 
 **Cross References:**
-- `BackgroundTask.setProperty`
+- `$API.BackgroundTask.setProperty$`
 
 ## getStatusMessage
 
@@ -104,7 +104,7 @@ Returns the current status message set by `setStatusMessage()`. The message is p
 None.
 
 **Cross References:**
-- `BackgroundTask.setStatusMessage`
+- `$API.BackgroundTask.setStatusMessage$`
 
 ## killVoicesAndCall
 
@@ -130,8 +130,8 @@ Kills all active voices and executes the given function on the sample loading th
 - The function receives no arguments, unlike `callOnBackgroundThread` where the function receives the task as its argument. There is no way to report progress or check abort from within the loading function.
 
 **Cross References:**
-- `BackgroundTask.callOnBackgroundThread`
-- `BackgroundTask.setFinishCallback`
+- `$API.BackgroundTask.callOnBackgroundThread$`
+- `$API.BackgroundTask.setFinishCallback$`
 
 **Example:**
 ```javascript:kill-voices-and-load
@@ -181,10 +181,10 @@ Spawns an OS child process on the background thread and streams its output line 
 - The `data` parameter changes type depending on `isFinished`: a String (line of text) during output, and an int (exit code) on completion. Check `isFinished` before using `data`.
 
 **Cross References:**
-- `BackgroundTask.callOnBackgroundThread`
-- `BackgroundTask.shouldAbort`
-- `BackgroundTask.setFinishCallback`
-- `BackgroundTask.setTimeOut`
+- `$API.BackgroundTask.callOnBackgroundThread$`
+- `$API.BackgroundTask.shouldAbort$`
+- `$API.BackgroundTask.setFinishCallback$`
+- `$API.BackgroundTask.setTimeOut$`
 
 **Example:**
 ```javascript:run-process-logging
@@ -229,8 +229,8 @@ Signals the background thread to stop. When `blockUntilStopped` is false, sets t
 - Calling with `blockUntilStopped = true` from within the background task function itself causes a deadlock (thread waiting for itself to stop). This is detected and throws a script error: "Can't stop with blocking on the worker thread".
 
 **Cross References:**
-- `BackgroundTask.shouldAbort`
-- `BackgroundTask.setTimeOut`
+- `$API.BackgroundTask.shouldAbort$`
+- `$API.BackgroundTask.setTimeOut$`
 
 ## setFinishCallback
 
@@ -255,9 +255,9 @@ Sets the callback that fires when a background task starts and finishes. The cal
 - Not triggered by `killVoicesAndCall()` -- only by `callOnBackgroundThread()` and `runProcess()`.
 
 **Cross References:**
-- `BackgroundTask.callOnBackgroundThread`
-- `BackgroundTask.runProcess`
-- `BackgroundTask.killVoicesAndCall`
+- `$API.BackgroundTask.callOnBackgroundThread$`
+- `$API.BackgroundTask.runProcess$`
+- `$API.BackgroundTask.killVoicesAndCall$`
 
 **Example:**
 ```javascript:finish-callback-protocol
@@ -300,8 +300,8 @@ When enabled, calls to `setProgress()` and `setStatusMessage()` additionally upd
 | enabled | Integer | no | Whether to forward progress and status to the loading overlay | Boolean (0 or 1) |
 
 **Cross References:**
-- `BackgroundTask.setProgress`
-- `BackgroundTask.setStatusMessage`
+- `$API.BackgroundTask.setProgress$`
+- `$API.BackgroundTask.setStatusMessage$`
 
 ## setProgress
 
@@ -321,8 +321,8 @@ Sets the progress value for this task, clamped to the range 0.0 to 1.0. The valu
 | p | Double | no | Progress value | 0.0-1.0 (clamped) |
 
 **Cross References:**
-- `BackgroundTask.getProgress`
-- `BackgroundTask.setForwardStatusToLoadingThread`
+- `$API.BackgroundTask.getProgress$`
+- `$API.BackgroundTask.setForwardStatusToLoadingThread$`
 
 ## setProperty
 
@@ -343,7 +343,7 @@ Stores a key-value pair in the thread-safe property store. The store is protecte
 | value | NotUndefined | no | The value to store | Any type |
 
 **Cross References:**
-- `BackgroundTask.getProperty`
+- `$API.BackgroundTask.getProperty$`
 
 ## setStatusMessage
 
@@ -363,8 +363,8 @@ Sets the status message for this task. The message is protected by a read-write 
 | m | String | no | The status message text | -- |
 
 **Cross References:**
-- `BackgroundTask.getStatusMessage`
-- `BackgroundTask.setForwardStatusToLoadingThread`
+- `$API.BackgroundTask.getStatusMessage$`
+- `$API.BackgroundTask.setForwardStatusToLoadingThread$`
 
 ## setTimeOut
 
@@ -383,8 +383,8 @@ Sets the timeout in milliseconds used for thread stop operations. This value aff
 | newTimeout | Integer | no | Timeout in milliseconds | Default: 500 |
 
 **Cross References:**
-- `BackgroundTask.shouldAbort`
-- `BackgroundTask.sendAbortSignal`
+- `$API.BackgroundTask.shouldAbort$`
+- `$API.BackgroundTask.sendAbortSignal$`
 
 ## shouldAbort
 
@@ -404,5 +404,5 @@ None.
 - Failing to call this regularly in a background task loop has two consequences: the task cannot be cancelled via `sendAbortSignal()`, and the script engine timeout is not extended, risking watchdog termination of the script.
 
 **Cross References:**
-- `BackgroundTask.sendAbortSignal`
-- `BackgroundTask.setTimeOut`
+- `$API.BackgroundTask.sendAbortSignal$`
+- `$API.BackgroundTask.setTimeOut$`

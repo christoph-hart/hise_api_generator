@@ -18,8 +18,8 @@ Returns the number of milliseconds elapsed since the internal counter was last r
 - The counter is not initialized until `startTimer()` or `resetCounter()` is called. Calling this method on a freshly created Timer before either of those methods returns an undefined elapsed value with no warning.
 
 **Cross References:**
-- `Timer.resetCounter`
-- `Timer.startTimer`
+- `$API.Timer.resetCounter$`
+- `$API.Timer.startTimer$`
 
 ## isTimerRunning
 
@@ -36,8 +36,8 @@ Returns whether the timer is currently running. Delegates directly to the intern
 (No parameters.)
 
 **Cross References:**
-- `Timer.startTimer`
-- `Timer.stopTimer`
+- `$API.Timer.startTimer$`
+- `$API.Timer.stopTimer$`
 
 ## resetCounter
 
@@ -54,8 +54,8 @@ Resets the internal millisecond counter to the current system time. Subsequent c
 (No parameters.)
 
 **Cross References:**
-- `Timer.getMilliSecondsSinceCounterReset`
-- `Timer.startTimer`
+- `$API.Timer.getMilliSecondsSinceCounterReset$`
+- `$API.Timer.startTimer$`
 
 ## setTimerCallback
 
@@ -77,8 +77,8 @@ Sets the function to be called on each timer tick. The callback receives zero ar
 **Callback Signature:** callbackFunction()
 
 **Cross References:**
-- `Timer.startTimer`
-- `Timer.stopTimer`
+- `$API.Timer.startTimer$`
+- `$API.Timer.stopTimer$`
 
 **Example:**
 ```javascript:timer-callback-self-stop
@@ -129,10 +129,10 @@ Starts the timer with the given interval in milliseconds. The minimum allowed in
 - Calling `startTimer` automatically resets the internal millisecond counter (calls `resetCounter()` internally). If you are using `getMilliSecondsSinceCounterReset()` to measure elapsed time independently of timer restarts, restarting the timer silently resets your measurement.
 
 **Cross References:**
-- `Timer.stopTimer`
-- `Timer.isTimerRunning`
-- `Timer.setTimerCallback`
-- `Timer.resetCounter`
+- `$API.Timer.stopTimer$`
+- `$API.Timer.isTimerRunning$`
+- `$API.Timer.setTimerCallback$`
+- `$API.Timer.resetCounter$`
 
 ## stopTimer
 
@@ -150,5 +150,5 @@ Stops the timer. No further callbacks will fire after this call. Calling `stopTi
 (No parameters.)
 
 **Cross References:**
-- `Timer.startTimer`
-- `Timer.isTimerRunning`
+- `$API.Timer.startTimer$`
+- `$API.Timer.isTimerRunning$`

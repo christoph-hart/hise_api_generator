@@ -34,10 +34,10 @@ On registration, the target is immediately initialized with the broadcaster's cu
 - The feedback-loop skip in direct mode compares `args[0]` against each target using `var::operator==`. If the source broadcaster sends a string component name rather than a component reference, the skip comparison will fail and the source component's property will also be set.
 
 **Cross References:**
-- `Broadcaster.attachToComponentProperties`
-- `Broadcaster.removeListener`
-- `Broadcaster.addComponentValueListener`
-- `Broadcaster.addComponentRefreshListener`
+- `$API.Broadcaster.attachToComponentProperties$`
+- `$API.Broadcaster.removeListener$`
+- `$API.Broadcaster.addComponentValueListener$`
+- `$API.Broadcaster.addComponentRefreshListener$`
 
 **Example:**
 ```javascript:component-property-listener-direct
@@ -112,9 +112,9 @@ On registration, the target is initialized with the broadcaster's current state,
 - If `componentIds` resolves to an empty list (all names invalid), an explicit error `"Can't find components for the given componentId object"` is thrown.
 
 **Cross References:**
-- `Broadcaster.addComponentPropertyListener`
-- `Broadcaster.addComponentValueListener`
-- `Broadcaster.removeListener`
+- `$API.Broadcaster.addComponentPropertyListener$`
+- `$API.Broadcaster.addComponentValueListener$`
+- `$API.Broadcaster.removeListener$`
 
 **Example:**
 ```javascript:component-refresh-repaint
@@ -173,9 +173,9 @@ On registration, the target is immediately initialized with the broadcaster's cu
 - The callback mode requires the function to return a value. Returning nothing (implicit undefined) causes an error for each target component.
 
 **Cross References:**
-- `Broadcaster.attachToComponentValue`
-- `Broadcaster.addComponentPropertyListener`
-- `Broadcaster.removeListener`
+- `$API.Broadcaster.attachToComponentValue$`
+- `$API.Broadcaster.addComponentPropertyListener$`
+- `$API.Broadcaster.removeListener$`
 
 **Example:**
 ```javascript:component-value-listener-callback
@@ -249,8 +249,8 @@ Duplicate listeners are rejected with an error `"this object is already register
 - The delayed callback is bypassed if the broadcaster is in bypassed state when the timer fires.
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `Broadcaster.removeListener`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.removeListener$`
 
 ## removeAllSources
 
@@ -274,9 +274,9 @@ This is a bulk removal operation. For selective removal by metadata, use `remove
 (None)
 
 **Cross References:**
-- `Broadcaster.removeSource`
-- `Broadcaster.removeAllListeners`
-- `Broadcaster.reset`
+- `$API.Broadcaster.removeSource$`
+- `$API.Broadcaster.removeAllListeners$`
+- `$API.Broadcaster.reset$`
 
 ## sendMessage
 
@@ -319,11 +319,11 @@ If `setForceSynchronousExecution(true)` has been called, the `forceSync` flag ov
 - If any of the arguments are undefined/void, `sendInternal` silently returns without calling any listeners (unless `setSendMessageForUndefinedArgs` was called, which only affects `initItem`, not `sendInternal`).
 
 **Cross References:**
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.sendMessageWithDelay`
-- `Broadcaster.resendLastMessage`
-- `Broadcaster.setEnableQueue`
-- `Broadcaster.setForceSynchronousExecution`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.sendMessageWithDelay$`
+- `$API.Broadcaster.resendLastMessage$`
+- `$API.Broadcaster.setEnableQueue$`
+- `$API.Broadcaster.setForceSynchronousExecution$`
 
 **Example:**
 ```javascript:send-async-message
@@ -381,10 +381,10 @@ This method is accessible from the debug popup (the reset button in the Broadcas
 - `reset()` bypasses the `bypassed` check. Even if the broadcaster is bypassed, `reset()` dispatches to all targets because it calls `sendInternal` directly, not `sendMessageInternal`.
 
 **Cross References:**
-- `Broadcaster.resendLastMessage`
-- `Broadcaster.removeAllListeners`
-- `Broadcaster.removeAllSources`
-- `Broadcaster.setSendMessageForUndefinedArgs`
+- `$API.Broadcaster.resendLastMessage$`
+- `$API.Broadcaster.removeAllListeners$`
+- `$API.Broadcaster.removeAllSources$`
+- `$API.Broadcaster.setSendMessageForUndefinedArgs$`
 
 ## removeListener
 
@@ -414,9 +414,9 @@ Only the first matching target is removed. If multiple targets share the same me
 - Returns `false` silently when no match is found. There is no error or warning for a failed removal.
 
 **Cross References:**
-- `Broadcaster.removeAllListeners`
-- `Broadcaster.addListener`
-- `Broadcaster.removeSource`
+- `$API.Broadcaster.removeAllListeners$`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.removeSource$`
 
 ## removeSource
 
@@ -445,8 +445,8 @@ Only the first matching source is removed. The source's destructor automatically
 - Some `attach*` methods use `optionalMetadata` which may default to an auto-generated internal metadata if omitted. If no explicit metadata was provided when attaching, the auto-generated ID may be difficult to discover for selective removal. In that case, `removeAllSources` may be more practical.
 
 **Cross References:**
-- `Broadcaster.removeAllSources`
-- `Broadcaster.removeListener`
+- `$API.Broadcaster.removeAllSources$`
+- `$API.Broadcaster.removeListener$`
 
 ## resendLastMessage
 
@@ -476,10 +476,10 @@ This method is commonly used after unbypassing a broadcaster (e.g., `setBypassed
 - The `forceSend` flag also does NOT bypass the `bypassed` check. If the broadcaster is bypassed, `resendLastMessage` stores values but does not dispatch them, even with `forceSend`.
 
 **Cross References:**
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.sendAsyncMessage`
-- `Broadcaster.setBypassed`
-- `Broadcaster.reset`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.sendAsyncMessage$`
+- `$API.Broadcaster.setBypassed$`
+- `$API.Broadcaster.reset$`
 
 
 **Example:**
@@ -545,10 +545,10 @@ Listeners are sorted by metadata priority (higher priority values execute first)
 - The `object` parameter replaces `this` inside the callback by default. If you need access to the original `this` scope, call `setReplaceThisReference(false)` before adding listeners.
 
 **Cross References:**
-- `Broadcaster.addDelayedListener`
-- `Broadcaster.removeListener`
-- `Broadcaster.setReplaceThisReference`
-- `Broadcaster.setRealtimeMode`
+- `$API.Broadcaster.addDelayedListener$`
+- `$API.Broadcaster.removeListener$`
+- `$API.Broadcaster.setReplaceThisReference$`
+- `$API.Broadcaster.setRealtimeMode$`
 
 **Example:**
 ```javascript:add-listener-basic
@@ -609,9 +609,9 @@ As a side effect, this method forces the broadcaster into synchronous execution 
 - If the module is deleted at runtime (weak reference becomes null), the syncer silently skips the `setAttribute` call without error.
 
 **Cross References:**
-- `Broadcaster.attachToModuleParameter`
-- `Broadcaster.setForceSynchronousExecution`
-- `Broadcaster.removeListener`
+- `$API.Broadcaster.attachToModuleParameter$`
+- `$API.Broadcaster.setForceSynchronousExecution$`
+- `$API.Broadcaster.removeListener$`
 
 **Example:**
 ```javascript:module-parameter-syncer
@@ -688,7 +688,7 @@ Queue mode is automatically enabled when multiple processors or multiple indices
 - The data type name must match the exact string returned by `ExternalData::getDataTypeName()`. Common mistake: using `"Audio"` instead of `"AudioFile"`.
 
 **Cross References:**
-- `Broadcaster.addListener`
+- `$API.Broadcaster.addListener$`
 
 **Diagram:**
 - **Brief:** Complex Data Event Flow
@@ -787,8 +787,8 @@ Mouse events have no initial values (getNumInitialCalls() returns 0), so existin
 - The `callbackLevel` value is converted to string via `callbackLevel.toString()` before matching, so passing an integer or other type will fail to match any valid level string.
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `Broadcaster.attachToContextMenu`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.attachToContextMenu$`
 
 **Example:**
 ```javascript:attach-mouse-events
@@ -843,10 +843,10 @@ This is a bulk removal operation. For selective removal by metadata ID, use `rem
 (None)
 
 **Cross References:**
-- `Broadcaster.removeListener`
-- `Broadcaster.removeAllSources`
-- `Broadcaster.reset`
-- `Broadcaster.addListener`
+- `$API.Broadcaster.removeListener$`
+- `$API.Broadcaster.removeAllSources$`
+- `$API.Broadcaster.reset$`
+- `$API.Broadcaster.addListener$`
 
 ## attachToComponentProperties
 
@@ -879,7 +879,7 @@ Unlike most other `attachTo*` methods, this method does NOT call `checkMetadataA
 - Invalid property IDs are validated against all components in the list. If a property exists on some components but not others, the entire attachment fails with `"Illegal property id: ..."`.
 
 **Cross References:**
-- `Broadcaster.addComponentPropertyListener`
+- `$API.Broadcaster.addComponentPropertyListener$`
 
 **Example:**
 ```javascript:attach-component-properties
@@ -946,9 +946,9 @@ On attachment, `checkMetadataAndCallWithInitValues()` is called, which dispatche
 - The value listener uses the component's `attachValueListener()` mechanism, which overwrites any previously attached broadcaster value listener on that component. If two broadcasters try to watch the same component's value, only the last one receives updates.
 
 **Cross References:**
-- `Broadcaster.addComponentValueListener`
-- `Broadcaster.attachToComponentProperties`
-- `Broadcaster.attachToComponentVisibility`
+- `$API.Broadcaster.addComponentValueListener$`
+- `$API.Broadcaster.attachToComponentProperties$`
+- `$API.Broadcaster.attachToComponentVisibility$`
 
 **Example:**
 ```javascript:attach-component-value
@@ -1014,8 +1014,8 @@ On attachment, `checkMetadataAndCallWithInitValues()` is called. The initial val
 - The broadcast is sent asynchronously via `sendAsyncMessage()`, so the listener callback may execute after a short delay from the actual visibility change.
 
 **Cross References:**
-- `Broadcaster.attachToComponentValue`
-- `Broadcaster.attachToComponentProperties`
+- `$API.Broadcaster.attachToComponentValue$`
+- `$API.Broadcaster.attachToComponentProperties$`
 
 **Example:**
 ```javascript:attach-component-visibility
@@ -1108,8 +1108,8 @@ Context menus have no initial values (getNumInitialCalls() returns 0), so existi
 - When `stateFunction` is `false` (not a callable), the `WeakCallbackHolder` is not valid, and the state queries return default values (`false` for active/enabled, `""` for text). All menu items appear enabled with no ticks.
 
 **Cross References:**
-- `Broadcaster.refreshContextMenuState`
-- `Broadcaster.attachToComponentMouseEvents`
+- `$API.Broadcaster.refreshContextMenuState$`
+- `$API.Broadcaster.attachToComponentMouseEvents$`
 
 **Example:**
 ```javascript:attach-context-menu
@@ -1209,7 +1209,7 @@ Invalid event type strings produce a descriptive error listing the supported typ
 - The module must implement `ProcessorFilterStatistics::Holder`. Passing a non-EQ module ID produces `"ModuleId is not an EQ"`.
 
 **Cross References:**
-- `Broadcaster.addListener`
+- `$API.Broadcaster.addListener$`
 
 **Example:**
 ```javascript:attach-eq-events
@@ -1271,7 +1271,7 @@ This source is particularly useful for responsive layouts where components need 
 - Interface size changes are dispatched asynchronously, so the callback may execute slightly after the actual resize.
 
 **Cross References:**
-- `Broadcaster.addListener`
+- `$API.Broadcaster.addListener$`
 
 **Example:**
 ```javascript:attach-interface-size
@@ -1355,8 +1355,8 @@ Queue mode is automatically enabled after attachment, ensuring parameter change 
 - Queue mode is enabled as a side effect, meaning subsequent manually sent messages also go through the queue mechanism.
 
 **Cross References:**
-- `Broadcaster.addModuleParameterSyncer`
-- `Broadcaster.addListener`
+- `$API.Broadcaster.addModuleParameterSyncer$`
+- `$API.Broadcaster.addListener$`
 
 **Diagram:**
 - **Brief:** Module Parameter Event Flow
@@ -1437,8 +1437,8 @@ Non-realtime change events have no initial values (getNumInitialCalls() returns 
 - The synchronous dispatch means the callback executes on whatever thread triggers the non-realtime state change. This can be the audio thread, so callbacks must not allocate, lock, or perform I/O.
 
 **Cross References:**
-- `Broadcaster.setRealtimeMode`
-- `Broadcaster.attachToProcessingSpecs`
+- `$API.Broadcaster.setRealtimeMode$`
+- `$API.Broadcaster.attachToProcessingSpecs$`
 
 **Example:**
 ```javascript:attach-nonrealtime-change
@@ -1497,9 +1497,9 @@ On attachment, the source broadcaster(s)' current `lastValues` are dispatched to
 - This method does not validate that the source broadcaster's argument count matches this broadcaster's argument count. If counts differ and no transform function is provided, the forwarded message will trigger an argument count mismatch error at runtime when `sendMessageInternal` validates against `defaultValues.size()`.
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.sendAsyncMessage`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.sendAsyncMessage$`
 
 **Example:**
 ```javascript:attach-to-other-broadcaster
@@ -1569,8 +1569,8 @@ Queue mode is explicitly disabled by this method (`enableQueue = false`), overri
 - This method explicitly sets `enableQueue = false`, which will override a prior `setEnableQueue(true)` call. This is intentional because processing spec changes are infrequent and coalescing is appropriate.
 
 **Cross References:**
-- `Broadcaster.attachToNonRealtimeChange`
-- `Broadcaster.resendLastMessage`
+- `$API.Broadcaster.attachToNonRealtimeChange$`
+- `$API.Broadcaster.resendLastMessage$`
 
 **Example:**
 ```javascript:attach-processing-specs
@@ -1627,8 +1627,8 @@ The function-call syntax on the broadcaster (`bc(button, isOn)`) has special han
 - The broadcaster must have exactly 1 argument. Unlike other attach methods, this is not validated at the `attachToRadioGroup` call site -- instead, a mismatch will cause issues downstream when `sendAsyncMessage` validates argument count.
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `Broadcaster.sendAsyncMessage`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.sendAsyncMessage$`
 
 **Example:**
 ```javascript:attach-to-radio-group
@@ -1701,8 +1701,8 @@ On attachment, initial values are dispatched for each monitored processor -- one
 - Queue mode is forced on by this method. If you previously called `setEnableQueue(false)`, this attachment overrides it.
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `RoutingMatrix`
+- `$API.Broadcaster.addListener$`
+- `$API.RoutingMatrix$`
 
 **Example:**
 ```javascript:attach-to-routing-matrix
@@ -1789,7 +1789,7 @@ On attachment, initial values are dispatched for each sampler: one call each for
 - Invalid event type values (strings not matching `"SampleMapChanged"` or `"SamplesAddedOrRemoved"`, or out-of-range integers) cause an error: "unknown eventTypes: ...".
 
 **Cross References:**
-- `Broadcaster.addListener`
+- `$API.Broadcaster.addListener$`
 
 **Example:**
 ```javascript:attach-to-samplemap
@@ -1858,9 +1858,9 @@ When the timer fires, it checks the broadcaster's bypass state -- if bypassed, t
 - Each new call to `callWithDelay` cancels any previously pending delayed function. There is no way to queue multiple delayed calls through this mechanism.
 
 **Cross References:**
-- `Broadcaster.sendMessageWithDelay`
-- `Broadcaster.addDelayedListener`
-- `Broadcaster.setBypassed`
+- `$API.Broadcaster.sendMessageWithDelay$`
+- `$API.Broadcaster.addDelayedListener$`
+- `$API.Broadcaster.setBypassed$`
 
 **Example:**
 ```javascript:call-with-delay-debounce
@@ -1905,7 +1905,7 @@ This is a simple read of the `bypassed` boolean member with no locks or allocati
 (None)
 
 **Cross References:**
-- `Broadcaster.setBypassed`
+- `$API.Broadcaster.setBypassed$`
 
 ## refreshContextMenuState
 
@@ -1931,7 +1931,7 @@ If no `ContextMenuListener` is attached to this broadcaster, the method iterates
 - The cached states are also automatically refreshed after each context menu selection. Calling `refreshContextMenuState` is only necessary when external state changes should be visible before the next menu interaction.
 
 **Cross References:**
-- `Broadcaster.attachToContextMenu`
+- `$API.Broadcaster.attachToContextMenu$`
 
 ## sendMessageWithDelay
 
@@ -1962,10 +1962,10 @@ Note that `sendMessageWithDelay` uses the broadcaster's own Timer (inherited via
 - Calling `sendMessageWithDelay` multiple times before the timer fires replaces the pending data and restarts the timer. Only the last call's arguments are sent. This is useful for debouncing but can cause data loss if every intermediate value matters -- use `setEnableQueue(true)` and `sendAsyncMessage` instead if all values must be delivered.
 
 **Cross References:**
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.sendAsyncMessage`
-- `Broadcaster.callWithDelay`
-- `Broadcaster.setForceSynchronousExecution`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.sendAsyncMessage$`
+- `$API.Broadcaster.callWithDelay$`
+- `$API.Broadcaster.setForceSynchronousExecution$`
 
 ## sendSyncMessage
 
@@ -1998,10 +1998,10 @@ For single-argument broadcasters, pass the value directly (not wrapped in an arr
 - In the HISE IDE (backend), calling this from the audio thread without `setRealtimeMode(true)` throws a script error. In exported plugins (frontend), no such check exists -- the send proceeds but may cause priority inversion or unsafe operations.
 
 **Cross References:**
-- `Broadcaster.sendAsyncMessage`
-- `Broadcaster.sendMessageWithDelay`
-- `Broadcaster.setRealtimeMode`
-- `Broadcaster.setEnableQueue`
+- `$API.Broadcaster.sendAsyncMessage$`
+- `$API.Broadcaster.sendMessageWithDelay$`
+- `$API.Broadcaster.setRealtimeMode$`
+- `$API.Broadcaster.setEnableQueue$`
 
 **Example:**
 ```javascript:sync-message-basic
@@ -2068,8 +2068,8 @@ The `bypass()` scoped statement in HiseScript provides a RAII alternative: the b
 - The bypass state is not checked during the realtime-safe fast path's value update in `sendMessageInternal`. Values are written to `lastValues` before the bypass check, so `lastValues` always reflects the most recent send attempt regardless of bypass state.
 
 **Cross References:**
-- `Broadcaster.isBypassed`
-- `Broadcaster.resendLastMessage`
+- `$API.Broadcaster.isBypassed$`
+- `$API.Broadcaster.resendLastMessage$`
 
 **Example:**
 ```javascript:bypass-and-resume
@@ -2137,11 +2137,11 @@ Calling `setEnableQueue(false)` after an attach method that auto-enables it will
 - Disabling queue mode on a broadcaster where an attach method auto-enabled it can cause silent message loss if the event source fires multiple times between scripting thread ticks.
 
 **Cross References:**
-- `Broadcaster.sendAsyncMessage`
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.attachToModuleParameter`
-- `Broadcaster.setForceSynchronousExecution`
-- `Broadcaster.setRealtimeMode`
+- `$API.Broadcaster.sendAsyncMessage$`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.attachToModuleParameter$`
+- `$API.Broadcaster.setForceSynchronousExecution$`
+- `$API.Broadcaster.setRealtimeMode$`
 
 ## setForceSynchronousExecution
 
@@ -2174,11 +2174,11 @@ Setting this to `true` on a broadcaster that receives messages from the audio th
 - Enabling force-synchronous execution on a broadcaster that receives async events from multiple sources can cause long callback chains on the calling thread. If the callbacks are expensive, this blocks the thread that triggered the event (which may be the audio thread if realtime mode is also enabled).
 
 **Cross References:**
-- `Broadcaster.setRealtimeMode`
-- `Broadcaster.setEnableQueue`
-- `Broadcaster.sendAsyncMessage`
-- `Broadcaster.sendMessageWithDelay`
-- `Broadcaster.addModuleParameterSyncer`
+- `$API.Broadcaster.setRealtimeMode$`
+- `$API.Broadcaster.setEnableQueue$`
+- `$API.Broadcaster.sendAsyncMessage$`
+- `$API.Broadcaster.sendMessageWithDelay$`
+- `$API.Broadcaster.addModuleParameterSyncer$`
 
 ## setRealtimeMode
 
@@ -2213,10 +2213,10 @@ This is automatically enabled by `attachToNonRealtimeChange()`.
 - The undefined-argument check in `sendInternal` unconditionally acquires a `SimpleReadWriteLock::ScopedReadLock` before the realtime-safe branch. This is a lightweight atomic operation (not a blocking mutex), so it does not break audio-thread safety, but it means even realtime-safe sends incur atomic read-lock overhead for the undefined check.
 
 **Cross References:**
-- `Broadcaster.setForceSynchronousExecution`
-- `Broadcaster.setEnableQueue`
-- `Broadcaster.attachToNonRealtimeChange`
-- `Broadcaster.addListener`
+- `$API.Broadcaster.setForceSynchronousExecution$`
+- `$API.Broadcaster.setEnableQueue$`
+- `$API.Broadcaster.attachToNonRealtimeChange$`
+- `$API.Broadcaster.addListener$`
 
 ## setReplaceThisReference
 
@@ -2242,7 +2242,7 @@ When set to `false`, the intention is that `this` retains its original binding (
 - [BUG] The `replaceThisReference` member is set by this method but never read by any dispatch code. `ScriptTarget::callSync` unconditionally uses the `obj` parameter from `addListener` as the `this` reference. Setting this to `false` is a no-op.
 
 **Cross References:**
-- `Broadcaster.addListener`
+- `$API.Broadcaster.addListener$`
 
 ## setSendMessageForUndefinedArgs
 
@@ -2272,7 +2272,7 @@ Setting this to `true` forces the initialization call to proceed even when some 
 - When attached sources are present (via any `attachTo*` method), the initialization path uses the source's `getInitialArgs()` instead of `lastValues`, so this flag has no effect in that case. The flag is only relevant for broadcasters without attached sources.
 
 **Cross References:**
-- `Broadcaster.addListener`
-- `Broadcaster.sendSyncMessage`
-- `Broadcaster.sendAsyncMessage`
+- `$API.Broadcaster.addListener$`
+- `$API.Broadcaster.sendSyncMessage$`
+- `$API.Broadcaster.sendAsyncMessage$`
 

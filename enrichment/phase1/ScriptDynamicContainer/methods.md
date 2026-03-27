@@ -21,9 +21,9 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - Cannot be called during `onInit` -- if called during `onInit`, it logs a console message and returns without executing.
 
 **Cross References:**
-- `ScriptDynamicContainer.setControlCallback`
-- `ScriptDynamicContainer.getValue`
-- `ScriptDynamicContainer.setValueCallback`
+- `$API.ScriptDynamicContainer.setControlCallback$`
+- `$API.ScriptDynamicContainer.getValue$`
+- `$API.ScriptDynamicContainer.setValueCallback$`
 
 ---
 
@@ -45,7 +45,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 | milliseconds | Integer | no | Duration of the fade animation in milliseconds | > 0 |
 
 **Cross References:**
-- `ScriptDynamicContainer.showControl`
+- `$API.ScriptDynamicContainer.showControl$`
 
 ---
 
@@ -66,8 +66,8 @@ Returns the current value of the named property. Reports a script error if the p
 | propertyName | String | no | The name of a component property to retrieve | Must be a valid active property ID for this component type |
 
 **Cross References:**
-- `ScriptDynamicContainer.set`
-- `ScriptDynamicContainer.getAllProperties`
+- `$API.ScriptDynamicContainer.set$`
+- `$API.ScriptDynamicContainer.getAllProperties$`
 
 ---
 
@@ -82,8 +82,8 @@ Returns the current value of the named property. Reports a script error if the p
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. ScriptDynamicContainer deactivates 16 base properties, so this returns a reduced set: `visible`, `enabled`, `locked`, `x`, `y`, `width`, `height`, `bgColour`, `itemColour`, `itemColour2`, `textColour`, `useUndoManager`, `parentComponent`.
 
 **Cross References:**
-- `ScriptDynamicContainer.get`
-- `ScriptDynamicContainer.set`
+- `$API.ScriptDynamicContainer.get$`
+- `$API.ScriptDynamicContainer.set$`
 
 ---
 
@@ -110,7 +110,7 @@ Returns an array of ScriptComponent references for all child components whose `p
 Returns the absolute x-position relative to the interface root, computed by recursively adding parent component x-offsets.
 
 **Cross References:**
-- `ScriptDynamicContainer.getGlobalPositionY`
+- `$API.ScriptDynamicContainer.getGlobalPositionY$`
 
 ---
 
@@ -125,7 +125,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 Returns the absolute y-position relative to the interface root, computed by recursively adding parent component y-offsets.
 
 **Cross References:**
-- `ScriptDynamicContainer.getGlobalPositionX`
+- `$API.ScriptDynamicContainer.getGlobalPositionX$`
 
 ---
 
@@ -182,9 +182,9 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 Returns the current value of the container component itself. This returns the container's own ScriptComponent value, not the values of dyncomp children. Use ContainerChild's `getValue()` or the `setValueCallback` listener for child component values.
 
 **Cross References:**
-- `ScriptDynamicContainer.setValue`
-- `ScriptDynamicContainer.changed`
-- `ScriptDynamicContainer.setValueCallback`
+- `$API.ScriptDynamicContainer.setValue$`
+- `$API.ScriptDynamicContainer.changed$`
+- `$API.ScriptDynamicContainer.setValueCallback$`
 
 ---
 
@@ -218,7 +218,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptDynamicContainer.loseFocus`
+- `$API.ScriptDynamicContainer.loseFocus$`
 
 ---
 
@@ -233,7 +233,7 @@ Notifies z-level listeners that the component wants to grab keyboard focus. Only
 Notifies all z-level listeners that the component wants to lose keyboard focus.
 
 **Cross References:**
-- `ScriptDynamicContainer.grabFocus`
+- `$API.ScriptDynamicContainer.grabFocus$`
 
 ---
 
@@ -248,7 +248,7 @@ Notifies all z-level listeners that the component wants to lose keyboard focus.
 Sends a repaint refresh message through the dyncomp data model's refresh broadcaster, triggering a visual update of all dynamic child components. This overrides the base ScriptComponent implementation, which uses the standard `repaintBroadcaster`. The dyncomp override ensures the refresh propagates through the dynamic component tree rather than just the container's own JUCE component.
 
 **Cross References:**
-- `ScriptDynamicContainer.setData`
+- `$API.ScriptDynamicContainer.setData$`
 
 ---
 
@@ -270,8 +270,8 @@ Sets a component property to the given value. Reports a script error if the prop
 | value | NotUndefined | no | The new value for the property | Type must match the property's expected type |
 
 **Cross References:**
-- `ScriptDynamicContainer.get`
-- `ScriptDynamicContainer.getAllProperties`
+- `$API.ScriptDynamicContainer.get$`
+- `$API.ScriptDynamicContainer.getAllProperties$`
 
 ---
 
@@ -299,7 +299,7 @@ Defines which key presses this component consumes. Must be called before `setKey
 | "all_nonexclusive" | Catch all key presses non-exclusively (parent still receives them) |
 
 **Cross References:**
-- `ScriptDynamicContainer.setKeyPressCallback`
+- `$API.ScriptDynamicContainer.setKeyPressCallback$`
 
 ---
 
@@ -326,8 +326,8 @@ Assigns a custom inline function as the control callback for the container's own
 - Must have exactly 2 parameters. Reports a script error if the parameter count is wrong.
 
 **Cross References:**
-- `ScriptDynamicContainer.changed`
-- `ScriptDynamicContainer.setValueCallback`
+- `$API.ScriptDynamicContainer.changed$`
+- `$API.ScriptDynamicContainer.setValueCallback$`
 
 ---
 
@@ -393,7 +393,7 @@ Supported component types: `"Button"`, `"Slider"`, `"ComboBox"`, `"Label"`, `"Pa
 - All previously returned ContainerChild references become invalid after calling `setData()`. Using an invalid reference throws a script error.
 
 **Cross References:**
-- `ScriptDynamicContainer.setValueCallback`
+- `$API.ScriptDynamicContainer.setValueCallback$`
 
 **Example:**
 ```javascript:dyncomp-setup
@@ -476,7 +476,7 @@ Focus change event:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error otherwise.
 
 **Cross References:**
-- `ScriptDynamicContainer.setConsumedKeyPresses`
+- `$API.ScriptDynamicContainer.setConsumedKeyPresses$`
 
 ---
 
@@ -501,8 +501,8 @@ Attaches a scripted look and feel object to this container and propagates it to 
 - If the LAF uses CSS (has a stylesheet), automatically calls `setStyleSheetClass({})` to initialize the class selector.
 
 **Cross References:**
-- `ScriptDynamicContainer.setStyleSheetClass`
-- `ScriptDynamicContainer.setStyleSheetProperty`
+- `$API.ScriptDynamicContainer.setStyleSheetClass$`
+- `$API.ScriptDynamicContainer.setStyleSheetProperty$`
 
 ---
 
@@ -551,9 +551,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptDynamicContainer.setStyleSheetProperty`
-- `ScriptDynamicContainer.setStyleSheetPseudoState`
-- `ScriptDynamicContainer.setLocalLookAndFeel`
+- `$API.ScriptDynamicContainer.setStyleSheetProperty$`
+- `$API.ScriptDynamicContainer.setStyleSheetPseudoState$`
+- `$API.ScriptDynamicContainer.setLocalLookAndFeel$`
 
 ---
 
@@ -589,8 +589,8 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptDynamicContainer.setStyleSheetClass`
-- `ScriptDynamicContainer.setStyleSheetPseudoState`
+- `$API.ScriptDynamicContainer.setStyleSheetClass$`
+- `$API.ScriptDynamicContainer.setStyleSheetPseudoState$`
 
 ---
 
@@ -625,8 +625,8 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state |
 
 **Cross References:**
-- `ScriptDynamicContainer.setStyleSheetClass`
-- `ScriptDynamicContainer.setStyleSheetProperty`
+- `$API.ScriptDynamicContainer.setStyleSheetClass$`
+- `$API.ScriptDynamicContainer.setStyleSheetProperty$`
 
 ---
 
@@ -658,9 +658,9 @@ Sets the container's own ScriptComponent value. Thread-safe -- can be called fro
 - If called during `onInit`, the value will NOT be restored after recompilation.
 
 **Cross References:**
-- `ScriptDynamicContainer.getValue`
-- `ScriptDynamicContainer.setValueWithUndo`
-- `ScriptDynamicContainer.setValueCallback`
+- `$API.ScriptDynamicContainer.getValue$`
+- `$API.ScriptDynamicContainer.setValueWithUndo$`
+- `$API.ScriptDynamicContainer.setValueCallback$`
 
 ---
 
@@ -687,8 +687,8 @@ Registers a callback that fires whenever any dyncomp child component's value cha
 - [BUG] Silently does nothing if called before `setData()`. The callback requires the data model's Values tree, which does not exist until `setData()` creates it.
 
 **Cross References:**
-- `ScriptDynamicContainer.setData`
-- `ScriptDynamicContainer.setControlCallback`
+- `$API.ScriptDynamicContainer.setData$`
+- `$API.ScriptDynamicContainer.setControlCallback$`
 
 **Example:**
 ```javascript:dyncomp-value-callback
@@ -756,7 +756,7 @@ Sets the container's own value through the undo manager, creating an `UndoableCo
 - Do NOT call this from `onControl` callbacks. It is intended for user-initiated value changes that should be undoable.
 
 **Cross References:**
-- `ScriptDynamicContainer.setValue`
+- `$API.ScriptDynamicContainer.setValue$`
 
 ---
 
@@ -804,7 +804,7 @@ Sets the `visible` property with change message notification.
 | shouldBeVisible | Integer | no | Whether the component should be visible | 1 = show, 0 = hide |
 
 **Cross References:**
-- `ScriptDynamicContainer.fadeComponent`
+- `$API.ScriptDynamicContainer.fadeComponent$`
 
 ---
 

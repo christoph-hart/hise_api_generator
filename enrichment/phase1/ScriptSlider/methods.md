@@ -46,8 +46,8 @@ Triggers the control callback (custom callback from `setControlCallback` or defa
 - If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
-- `ScriptSlider.setControlCallback`
-- `ScriptSlider.getValue`
+- `$API.ScriptSlider.setControlCallback$`
+- `$API.ScriptSlider.getValue$`
 
 ---
 
@@ -72,7 +72,7 @@ Connects the slider's modulation display query to a target processor parameter (
 - If `moduleId` is not found, the method reports an error and clears the previously registered modulation display query function.
 
 **Cross References:**
-- `ScriptSlider.updateValueFromProcessorConnection`
+- `$API.ScriptSlider.updateValueFromProcessorConnection$`
 
 ---
 
@@ -93,11 +93,11 @@ Checks whether `valueToCheck` is inside the current range selection (`minimum..m
 | valueToCheck | Number | no | Value to test against current range bounds | Numeric value |
 
 **Cross References:**
-- `ScriptSlider.setStyle`
-- `ScriptSlider.setMinValue`
-- `ScriptSlider.setMaxValue`
-- `ScriptSlider.getMinValue`
-- `ScriptSlider.getMaxValue`
+- `$API.ScriptSlider.setStyle$`
+- `$API.ScriptSlider.setMinValue$`
+- `$API.ScriptSlider.setMaxValue$`
+- `$API.ScriptSlider.getMinValue$`
+- `$API.ScriptSlider.getMaxValue$`
 
 ---
 
@@ -112,7 +112,7 @@ Checks whether `valueToCheck` is inside the current range selection (`minimum..m
 Creates and returns a `Modifiers` script object containing constants used with `setModifiers(action, modifiers)`.
 
 **Cross References:**
-- `ScriptSlider.setModifiers`
+- `$API.ScriptSlider.setModifiers$`
 
 ---
 
@@ -279,10 +279,10 @@ Returns the current upper handle value for range sliders.
 - Related: min/max range semantics (Range style helper)
 
 **Cross References:**
-- `ScriptSlider.setMaxValue`
-- `ScriptSlider.setStyle`
-- `ScriptSlider.getMinValue`
-- `ScriptSlider.contains`
+- `$API.ScriptSlider.setMaxValue$`
+- `$API.ScriptSlider.setStyle$`
+- `$API.ScriptSlider.getMinValue$`
+- `$API.ScriptSlider.contains$`
 
 ---
 
@@ -304,10 +304,10 @@ Returns the current lower handle value for range sliders.
 - Related: min/max range semantics (Range style helper)
 
 **Cross References:**
-- `ScriptSlider.setMinValue`
-- `ScriptSlider.setStyle`
-- `ScriptSlider.getMaxValue`
-- `ScriptSlider.contains`
+- `$API.ScriptSlider.setMinValue$`
+- `$API.ScriptSlider.setStyle$`
+- `$API.ScriptSlider.getMaxValue$`
+- `$API.ScriptSlider.contains$`
 
 ---
 
@@ -325,8 +325,8 @@ Returns the slider's current value. Uses a read lock for object-valued states.
 - String values are not supported as component values.
 
 **Cross References:**
-- `ScriptSlider.setValue`
-- `ScriptSlider.changed`
+- `$API.ScriptSlider.setValue$`
+- `$API.ScriptSlider.changed$`
 
 ---
 
@@ -345,9 +345,9 @@ Converts the current slider value into normalized 0..1 space using `min`, `max`,
 - Legacy projects that used `-1` as an implicit disable token can now produce skew in ranges that include `-1`; use `"disabled"` for explicit no-skew behavior.
 
 **Cross References:**
-- `ScriptSlider.setValueNormalized`
-- `ScriptSlider.setRange`
-- `ScriptSlider.setMidPoint`
+- `$API.ScriptSlider.setValueNormalized$`
+- `$API.ScriptSlider.setRange$`
+- `$API.ScriptSlider.setMidPoint$`
 
 ---
 
@@ -377,7 +377,7 @@ Returns the slider width in pixels.
 Requests keyboard focus by notifying the first registered z-level listener.
 
 **Cross References:**
-- `ScriptSlider.loseFocus`
+- `$API.ScriptSlider.loseFocus$`
 
 ---
 
@@ -392,7 +392,7 @@ Requests keyboard focus by notifying the first registered z-level listener.
 Requests focus loss by notifying all registered z-level listeners.
 
 **Cross References:**
-- `ScriptSlider.grabFocus`
+- `$API.ScriptSlider.grabFocus$`
 
 ---
 
@@ -430,8 +430,8 @@ Sets a property value on this slider. Invalid property names report a script err
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptSlider.get`
-- `ScriptSlider.setPropertiesFromJSON`
+- `$API.ScriptSlider.get$`
+- `$API.ScriptSlider.setPropertiesFromJSON$`
 
 ---
 
@@ -472,7 +472,7 @@ Defines which key presses this slider consumes. This must be called before `setK
 - Invalid key descriptors report an error and are not registered.
 
 **Cross References:**
-- `ScriptSlider.setKeyPressCallback`
+- `$API.ScriptSlider.setKeyPressCallback$`
 
 ---
 
@@ -507,7 +507,7 @@ Sets a custom control callback for this slider.
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptSlider.changed`
+- `$API.ScriptSlider.changed$`
 
 **Example:**
 ```javascript:slider-control-callback
@@ -577,7 +577,7 @@ Registers a key/focus callback for this component.
 - If `setConsumedKeyPresses` was not called first, this reports an error.
 
 **Cross References:**
-- `ScriptSlider.setConsumedKeyPresses`
+- `$API.ScriptSlider.setConsumedKeyPresses$`
 
 ---
 
@@ -627,10 +627,10 @@ Sets the upper range-handle value for range sliders and schedules an async UI up
 - Related: min/max range semantics (Range style helper)
 
 **Cross References:**
-- `ScriptSlider.getMaxValue`
-- `ScriptSlider.setMinValue`
-- `ScriptSlider.setStyle`
-- `ScriptSlider.contains`
+- `$API.ScriptSlider.getMaxValue$`
+- `$API.ScriptSlider.setMinValue$`
+- `$API.ScriptSlider.setStyle$`
+- `$API.ScriptSlider.contains$`
 
 ---
 
@@ -684,8 +684,8 @@ Slider1.setMidPoint("1.5");     // Numeric string route
 ```
 
 **Cross References:**
-- `ScriptSlider.setRange`
-- `ScriptSlider.setValueNormalized`
+- `$API.ScriptSlider.setRange$`
+- `$API.ScriptSlider.setValueNormalized$`
 
 ---
 
@@ -713,10 +713,10 @@ Sets the lower range-handle value for range sliders and schedules an async UI up
 - Related: min/max range semantics (Range style helper)
 
 **Cross References:**
-- `ScriptSlider.getMinValue`
-- `ScriptSlider.setMaxValue`
-- `ScriptSlider.setStyle`
-- `ScriptSlider.contains`
+- `$API.ScriptSlider.getMinValue$`
+- `$API.ScriptSlider.setMaxValue$`
+- `$API.ScriptSlider.setStyle$`
+- `$API.ScriptSlider.contains$`
 
 ---
 
@@ -757,10 +757,10 @@ Sets the slider conversion/display mode (`Frequency`, `Decibel`, `Time`, `TempoS
 - Related: set("mode", mode)
 
 **Cross References:**
-- `ScriptSlider.setRange`
-- `ScriptSlider.setValueNormalized`
-- `ScriptSlider.getValueNormalized`
-- `ScriptSlider.setStyle`
+- `$API.ScriptSlider.setRange$`
+- `$API.ScriptSlider.setValueNormalized$`
+- `$API.ScriptSlider.getValueNormalized$`
+- `$API.ScriptSlider.setStyle$`
 
 ---
 
@@ -782,7 +782,7 @@ Stores modifier mappings for slider interaction actions. Use constants from `cre
 | modifiers | IndexOrArray | yes | Modifier data (single flag or array of flags) | Use values from `createModifiers()` |
 
 **Cross References:**
-- `ScriptSlider.createModifiers`
+- `$API.ScriptSlider.createModifiers$`
 
 **Example:**
 ```javascript:slider-modifier-mapping
@@ -870,10 +870,10 @@ Sets slider min/max/step size in one call.
 - Related: set("min", min), set("max", max), set("stepSize", stepSize)
 
 **Cross References:**
-- `ScriptSlider.setMidPoint`
-- `ScriptSlider.setValueNormalized`
-- `ScriptSlider.getValueNormalized`
-- `ScriptSlider.setMode`
+- `$API.ScriptSlider.setMidPoint$`
+- `$API.ScriptSlider.setValueNormalized$`
+- `$API.ScriptSlider.getValueNormalized$`
+- `$API.ScriptSlider.setMode$`
 
 ---
 
@@ -910,12 +910,12 @@ Sets slider style (`Knob`, `Horizontal`, `Vertical`, `Range`).
 - Related: set("style", style)
 
 **Cross References:**
-- `ScriptSlider.contains`
-- `ScriptSlider.setMinValue`
-- `ScriptSlider.setMaxValue`
-- `ScriptSlider.getMinValue`
-- `ScriptSlider.getMaxValue`
-- `ScriptSlider.setMode`
+- `$API.ScriptSlider.contains$`
+- `$API.ScriptSlider.setMinValue$`
+- `$API.ScriptSlider.setMaxValue$`
+- `$API.ScriptSlider.getMinValue$`
+- `$API.ScriptSlider.getMaxValue$`
+- `$API.ScriptSlider.setMode$`
 
 ---
 
@@ -1037,9 +1037,9 @@ Sets the slider value, schedules async UI update, and broadcasts value listener 
 - Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
-- `ScriptSlider.getValue`
-- `ScriptSlider.changed`
-- `ScriptSlider.setValueWithUndo`
+- `$API.ScriptSlider.getValue$`
+- `$API.ScriptSlider.changed$`
+- `$API.ScriptSlider.setValueWithUndo$`
 
 ---
 
@@ -1064,9 +1064,9 @@ Maps normalized 0..1 input to actual slider value using current range and option
 - Legacy projects that used `-1` as an implicit disable token can get skew when range includes `-1`; use `setMidPoint("disabled")` for explicit no-skew behavior.
 
 **Cross References:**
-- `ScriptSlider.getValueNormalized`
-- `ScriptSlider.setRange`
-- `ScriptSlider.setMidPoint`
+- `$API.ScriptSlider.getValueNormalized$`
+- `$API.ScriptSlider.setRange$`
+- `$API.ScriptSlider.setMidPoint$`
 
 ---
 
@@ -1137,8 +1137,8 @@ Sets value through the undo manager by creating an undoable control event.
 - Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
-- `ScriptSlider.setValue`
-- `ScriptSlider.changed`
+- `$API.ScriptSlider.setValue$`
+- `$API.ScriptSlider.changed$`
 
 ---
 
@@ -1181,7 +1181,7 @@ Shows or hides the component by updating its `visible` property.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptSlider.fadeComponent`
+- `$API.ScriptSlider.fadeComponent$`
 
 ---
 
@@ -1207,4 +1207,4 @@ If no connection is active, the method does nothing.
 - Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
-- `ScriptSlider.connectToModulatedParameter`
+- `$API.ScriptSlider.connectToModulatedParameter$`

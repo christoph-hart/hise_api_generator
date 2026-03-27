@@ -45,11 +45,4 @@ A placeholder effect that passes audio through unchanged. It has no parameters, 
 
 The Empty effect is primarily used internally as the default child of the Effect Slot when no effect is loaded. It can also be added manually as a structural placeholder in an effect chain for routing purposes.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "Effect Slot", to: "/v2/reference/audio-modules/effects/master/slotfx", desc: "Uses Empty as the default placeholder when no effect is loaded in the slot" }
----
-::
+**See also:** $MODULES.SlotFX$ -- Uses Empty as the default placeholder when no effect is loaded in the slot

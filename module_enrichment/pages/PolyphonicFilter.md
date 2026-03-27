@@ -200,12 +200,4 @@ Two filter modes are non-functional: **StateVariablePeak** (index 11) and **Ladd
 
 The module automatically detects whether polyphonic processing is needed based on the modulator types in its chains. When a polyphonic modulator is added or removed, the module switches between per-voice and monophonic paths without manual configuration.
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "CurveEq", to: "/v2/reference/audio-modules/effects/master/curveeq", desc: "Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering" }
-  - { label: "Harmonic Filter", to: "/v2/reference/audio-modules/effects/polyphonic/harmonicfilter", desc: "Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency" }
----
-::
+**See also:** $MODULES.CurveEq$ -- Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering, $MODULES.HarmonicFilter$ -- Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency

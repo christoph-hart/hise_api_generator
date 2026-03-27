@@ -30,8 +30,8 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
-- `ScriptedViewport.setControlCallback`
-- `ScriptedViewport.getValue`
+- `$API.ScriptedViewport.setControlCallback$`
+- `$API.ScriptedViewport.getValue$`
 
 ## fadeComponent
 
@@ -55,7 +55,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptedViewport.showControl`
+- `$API.ScriptedViewport.showControl$`
 
 ## get
 
@@ -79,8 +79,8 @@ Returns the current value of the named property. If the property is set on the c
 - Related: ScriptComponent.set
 
 **Cross References:**
-- `ScriptedViewport.set`
-- `ScriptedViewport.getAllProperties`
+- `$API.ScriptedViewport.set$`
+- `$API.ScriptedViewport.getAllProperties$`
 
 ## getAllProperties
 
@@ -93,8 +93,8 @@ Returns the current value of the named property. If the property is set on the c
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. For ScriptedViewport, the deactivated properties `macroControl`, `min`, and `max` are excluded from the result.
 
 **Cross References:**
-- `ScriptedViewport.get`
-- `ScriptedViewport.set`
+- `$API.ScriptedViewport.get$`
+- `$API.ScriptedViewport.set$`
 
 ## getChildComponents
 
@@ -121,7 +121,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 - Related: get("x"), get("parentComponent")
 
 **Cross References:**
-- `ScriptedViewport.getGlobalPositionY`
+- `$API.ScriptedViewport.getGlobalPositionY$`
 
 ## getGlobalPositionY
 
@@ -138,7 +138,7 @@ Returns the absolute y-position relative to the interface root, computed by recu
 - Related: get("y"), get("parentComponent")
 
 **Cross References:**
-- `ScriptedViewport.getGlobalPositionX`
+- `$API.ScriptedViewport.getGlobalPositionX$`
 
 ## getHeight
 
@@ -205,8 +205,8 @@ Returns the index of the given row in the original (unsorted) data array that wa
 - Uses object identity (`indexOf`) to find the original row. If two row objects are structurally identical, the first match is returned.
 
 **Cross References:**
-- `ScriptedViewport.setTableRowData`
-- `ScriptedViewport.setTableSortFunction`
+- `$API.ScriptedViewport.setTableRowData$`
+- `$API.ScriptedViewport.setTableSortFunction$`
 
 ## getValue
 
@@ -222,8 +222,8 @@ Returns the current value of the component. The meaning depends on the active mo
 - The stored value must not be a String. If it is, an assertion fires in debug builds.
 
 **Cross References:**
-- `ScriptedViewport.setValue`
-- `ScriptedViewport.getValueNormalized`
+- `$API.ScriptedViewport.setValue$`
+- `$API.ScriptedViewport.getValueNormalized$`
 
 ## getValueNormalized
 
@@ -254,7 +254,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptedViewport.loseFocus`
+- `$API.ScriptedViewport.loseFocus$`
 
 ## loseFocus
 
@@ -267,7 +267,7 @@ Notifies z-level listeners that the component wants to grab keyboard focus. Only
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptedViewport.grabFocus`
+- `$API.ScriptedViewport.grabFocus$`
 
 ## sendRepaintMessage
 
@@ -301,8 +301,8 @@ Sets a component property to the given value. Reports a script error if the prop
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptedViewport.get`
-- `ScriptedViewport.getAllProperties`
+- `$API.ScriptedViewport.get$`
+- `$API.ScriptedViewport.getAllProperties$`
 
 ## setConsumedKeyPresses
 
@@ -343,7 +343,7 @@ JSON object format for individual key descriptions:
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptedViewport.setKeyPressCallback`
+- `$API.ScriptedViewport.setKeyPressCallback$`
 
 **Example:**
 ```javascript:basic
@@ -411,7 +411,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptedViewport.changed`
+- `$API.ScriptedViewport.changed$`
 
 **Example:**
 ```javascript:basic
@@ -474,9 +474,9 @@ Specifies which table event types trigger the parent component's `setValue()` ca
 - Related: table/list configuration payload
 
 **Cross References:**
-- `ScriptedViewport.setTableMode`
-- `ScriptedViewport.setTableCallback`
-- `ScriptedViewport.setValue`
+- `$API.ScriptedViewport.setTableMode$`
+- `$API.ScriptedViewport.setTableCallback$`
+- `$API.ScriptedViewport.setValue$`
 
 ## setKeyPressCallback
 
@@ -527,7 +527,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptedViewport.setConsumedKeyPresses`
+- `$API.ScriptedViewport.setConsumedKeyPresses$`
 
 **Example:**
 ```javascript:basic
@@ -591,9 +591,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - If the LAF uses CSS (has a stylesheet), automatically calls `setStyleSheetClass({})` to initialize the class selector.
 
 **Cross References:**
-- `ScriptedViewport.setStyleSheetClass`
-- `ScriptedViewport.setStyleSheetProperty`
-- `ScriptedViewport.setStyleSheetPseudoState`
+- `$API.ScriptedViewport.setStyleSheetClass$`
+- `$API.ScriptedViewport.setStyleSheetProperty$`
+- `$API.ScriptedViewport.setStyleSheetPseudoState$`
 
 **Example:**
 ```javascript:basic
@@ -664,9 +664,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptedViewport.setStyleSheetProperty`
-- `ScriptedViewport.setStyleSheetPseudoState`
-- `ScriptedViewport.setLocalLookAndFeel`
+- `$API.ScriptedViewport.setStyleSheetProperty$`
+- `$API.ScriptedViewport.setStyleSheetPseudoState$`
+- `$API.ScriptedViewport.setLocalLookAndFeel$`
 
 ## setStyleSheetProperty
 
@@ -700,9 +700,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptedViewport.setStyleSheetClass`
-- `ScriptedViewport.setStyleSheetPseudoState`
-- `ScriptedViewport.setLocalLookAndFeel`
+- `$API.ScriptedViewport.setStyleSheetClass$`
+- `$API.ScriptedViewport.setStyleSheetPseudoState$`
+- `$API.ScriptedViewport.setLocalLookAndFeel$`
 
 ## setStyleSheetPseudoState
 
@@ -735,9 +735,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state |
 
 **Cross References:**
-- `ScriptedViewport.setStyleSheetClass`
-- `ScriptedViewport.setStyleSheetProperty`
-- `ScriptedViewport.setLocalLookAndFeel`
+- `$API.ScriptedViewport.setStyleSheetClass$`
+- `$API.ScriptedViewport.setStyleSheetProperty$`
+- `$API.ScriptedViewport.setLocalLookAndFeel$`
 
 ## setTableCallback
 
@@ -776,10 +776,10 @@ Registers a callback function that is notified for all user interactions with th
 - Related: table/list configuration payload
 
 **Cross References:**
-- `ScriptedViewport.setTableMode`
-- `ScriptedViewport.setTableColumns`
-- `ScriptedViewport.setTableRowData`
-- `ScriptedViewport.setEventTypesForValueCallback`
+- `$API.ScriptedViewport.setTableMode$`
+- `$API.ScriptedViewport.setTableColumns$`
+- `$API.ScriptedViewport.setTableRowData$`
+- `$API.ScriptedViewport.setEventTypesForValueCallback$`
 
 **DiagramRef:** table-setup
 
@@ -864,9 +864,9 @@ Column definition object properties:
 - Related: table/list configuration payload
 
 **Cross References:**
-- `ScriptedViewport.setTableMode`
-- `ScriptedViewport.setTableRowData`
-- `ScriptedViewport.setTableCallback`
+- `$API.ScriptedViewport.setTableMode$`
+- `$API.ScriptedViewport.setTableRowData$`
+- `$API.ScriptedViewport.setTableCallback$`
 
 **DiagramRef:** table-setup
 
@@ -926,11 +926,11 @@ Table metadata properties:
 - Related: table/list configuration payload
 
 **Cross References:**
-- `ScriptedViewport.setTableColumns`
-- `ScriptedViewport.setTableRowData`
-- `ScriptedViewport.setTableCallback`
-- `ScriptedViewport.setTableSortFunction`
-- `ScriptedViewport.setEventTypesForValueCallback`
+- `$API.ScriptedViewport.setTableColumns$`
+- `$API.ScriptedViewport.setTableRowData$`
+- `$API.ScriptedViewport.setTableCallback$`
+- `$API.ScriptedViewport.setTableSortFunction$`
+- `$API.ScriptedViewport.setEventTypesForValueCallback$`
 
 **DiagramRef:** table-setup
 
@@ -984,9 +984,9 @@ Updates the row data for the table. Each element in the array must be a JSON obj
 - Related: table/list configuration payload
 
 **Cross References:**
-- `ScriptedViewport.setTableMode`
-- `ScriptedViewport.setTableColumns`
-- `ScriptedViewport.getOriginalRowIndex`
+- `$API.ScriptedViewport.setTableMode$`
+- `$API.ScriptedViewport.setTableColumns$`
+- `$API.ScriptedViewport.getOriginalRowIndex$`
 
 **DiagramRef:** table-setup
 
@@ -1039,8 +1039,8 @@ Sets a custom comparator function used when the user clicks a column header to s
 - Related: table/list configuration payload
 
 **Cross References:**
-- `ScriptedViewport.setTableMode`
-- `ScriptedViewport.getOriginalRowIndex`
+- `$API.ScriptedViewport.setTableMode$`
+- `$API.ScriptedViewport.getOriginalRowIndex$`
 
 **Example:**
 ```javascript:basic
@@ -1114,7 +1114,7 @@ Sets the value through the undo manager, creating an `UndoableControlEvent`.
 - Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
-- `ScriptedViewport.setValue`
+- `$API.ScriptedViewport.setValue$`
 
 ## setZLevel
 
@@ -1171,9 +1171,9 @@ Sets the component's value. In table mode with `MultiColumnMode` enabled, passin
 - Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
-- `ScriptedViewport.getValue`
-- `ScriptedViewport.setValueWithUndo`
-- `ScriptedViewport.setTableCallback`
+- `$API.ScriptedViewport.getValue$`
+- `$API.ScriptedViewport.setValueWithUndo$`
+- `$API.ScriptedViewport.setTableCallback$`
 
 ## showControl
 
@@ -1196,7 +1196,7 @@ Sets the `visible` property with change message notification.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptedViewport.fadeComponent`
+- `$API.ScriptedViewport.fadeComponent$`
 
 ## updateValueFromProcessorConnection
 
@@ -1213,4 +1213,4 @@ Reads the current attribute value from the connected processor (set via the `pro
 - Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
-- `ScriptedViewport.setValue`
+- `$API.ScriptedViewport.setValue$`

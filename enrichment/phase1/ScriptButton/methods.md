@@ -46,9 +46,9 @@ Triggers the control callback (either the custom one set via `setControlCallback
 - If `deferControlCallback` is enabled, callback execution is deferred to the message thread.
 
 **Cross References:**
-- `ScriptButton.setControlCallback`
-- `ScriptButton.getValue`
-- `ScriptButton.setValue`
+- `$API.ScriptButton.setControlCallback$`
+- `$API.ScriptButton.getValue$`
+- `$API.ScriptButton.setValue$`
 
 ---
 
@@ -74,7 +74,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptButton.showControl`
+- `$API.ScriptButton.showControl$`
 
 ---
 
@@ -101,9 +101,9 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.set
 
 **Cross References:**
-- `ScriptButton.set`
-- `ScriptButton.getAllProperties`
-- `ScriptButton.setPropertiesFromJSON`
+- `$API.ScriptButton.set$`
+- `$API.ScriptButton.getAllProperties$`
+- `$API.ScriptButton.setPropertiesFromJSON$`
 
 ---
 
@@ -118,9 +118,9 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes both base ScriptComponent properties and ScriptButton-specific properties. Note that `min` and `max` are deactivated on ScriptButton and will not appear in the result.
 
 **Cross References:**
-- `ScriptButton.get`
-- `ScriptButton.set`
-- `ScriptButton.setPropertiesFromJSON`
+- `$API.ScriptButton.get$`
+- `$API.ScriptButton.set$`
+- `$API.ScriptButton.setPropertiesFromJSON$`
 
 ---
 
@@ -151,7 +151,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 - Related: get("x"), get("parentComponent")
 
 **Cross References:**
-- `ScriptButton.getGlobalPositionY`
+- `$API.ScriptButton.getGlobalPositionY$`
 
 ---
 
@@ -170,7 +170,7 @@ Returns the absolute y-position relative to the interface root, computed by recu
 - Related: get("y"), get("parentComponent")
 
 **Cross References:**
-- `ScriptButton.getGlobalPositionX`
+- `$API.ScriptButton.getGlobalPositionX$`
 
 ---
 
@@ -189,9 +189,9 @@ Returns the `height` property as an integer.
 - Related: set("height", value), setPosition(...)
 
 **Cross References:**
-- `ScriptButton.getWidth`
-- `ScriptButton.getLocalBounds`
-- `ScriptButton.setPosition`
+- `$API.ScriptButton.getWidth$`
+- `$API.ScriptButton.getLocalBounds$`
+- `$API.ScriptButton.setPosition$`
 
 ---
 
@@ -228,9 +228,9 @@ Returns an array `[x, y, w, h]` representing the local bounds reduced by the giv
 - Related: get("width"), get("height")
 
 **Cross References:**
-- `ScriptButton.getWidth`
-- `ScriptButton.getHeight`
-- `ScriptButton.setPosition`
+- `$API.ScriptButton.getWidth$`
+- `$API.ScriptButton.getHeight$`
+- `$API.ScriptButton.setPosition$`
 
 ---
 
@@ -248,8 +248,8 @@ Returns the current value of the button. For ScriptButton, this is 0 (off) or 1 
 - The stored value must not be a String. If it is, an assertion fires in debug builds.
 
 **Cross References:**
-- `ScriptButton.setValue`
-- `ScriptButton.getValueNormalized`
+- `$API.ScriptButton.setValue$`
+- `$API.ScriptButton.getValueNormalized$`
 
 ---
 
@@ -264,8 +264,8 @@ Returns the current value of the button. For ScriptButton, this is 0 (off) or 1 
 Returns the normalized value (0.0 to 1.0). For ScriptButton, this is equivalent to `getValue()` since the button's range is already 0..1.
 
 **Cross References:**
-- `ScriptButton.setValueNormalized`
-- `ScriptButton.getValue`
+- `$API.ScriptButton.setValueNormalized$`
+- `$API.ScriptButton.getValue$`
 
 ---
 
@@ -284,9 +284,9 @@ Returns the `width` property as an integer.
 - Related: set("width", value), setPosition(...)
 
 **Cross References:**
-- `ScriptButton.getHeight`
-- `ScriptButton.getLocalBounds`
-- `ScriptButton.setPosition`
+- `$API.ScriptButton.getHeight$`
+- `$API.ScriptButton.getLocalBounds$`
+- `$API.ScriptButton.setPosition$`
 
 ---
 
@@ -301,7 +301,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptButton.loseFocus`
+- `$API.ScriptButton.loseFocus$`
 
 ---
 
@@ -316,7 +316,7 @@ Notifies z-level listeners that the component wants to grab keyboard focus. Only
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptButton.grabFocus`
+- `$API.ScriptButton.grabFocus$`
 
 ---
 
@@ -356,9 +356,9 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptButton.get`
-- `ScriptButton.getAllProperties`
-- `ScriptButton.setPropertiesFromJSON`
+- `$API.ScriptButton.get$`
+- `$API.ScriptButton.getAllProperties$`
+- `$API.ScriptButton.setPropertiesFromJSON$`
 
 ---
 
@@ -403,7 +403,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptButton.setKeyPressCallback`
+- `$API.ScriptButton.setKeyPressCallback$`
 
 **Example:**
 ```javascript:consumed-key-formats
@@ -463,7 +463,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - If `processorId` and `parameterId` are configured for processor forwarding, this custom callback path is bypassed.
 
 **Cross References:**
-- `ScriptButton.changed`
+- `$API.ScriptButton.changed$`
 
 **Example:**
 ```javascript:control-callback-registration
@@ -546,7 +546,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptButton.setConsumedKeyPresses`
+- `$API.ScriptButton.setConsumedKeyPresses$`
 
 **Example:**
 ```javascript:key-press-callback
@@ -606,9 +606,9 @@ Attaches a scripted look and feel object to this button and all its children. Pa
 - A custom LAF via `setLocalLookAndFeel` takes priority over filmstrip rendering set via the `filmstripImage` property.
 
 **Cross References:**
-- `ScriptButton.setStyleSheetClass`
-- `ScriptButton.setStyleSheetProperty`
-- `ScriptButton.setStyleSheetPseudoState`
+- `$API.ScriptButton.setStyleSheetClass$`
+- `$API.ScriptButton.setStyleSheetProperty$`
+- `$API.ScriptButton.setStyleSheetPseudoState$`
 
 **Example:**
 ```javascript:laf-draw-toggle-button
@@ -658,9 +658,9 @@ Sets the component's position and size in one call. Directly sets the `x`, `y`, 
 - Related: set("x", x), set("y", y), set("width", w), set("height", h)
 
 **Cross References:**
-- `ScriptButton.getWidth`
-- `ScriptButton.getHeight`
-- `ScriptButton.getLocalBounds`
+- `$API.ScriptButton.getWidth$`
+- `$API.ScriptButton.getHeight$`
+- `$API.ScriptButton.getLocalBounds$`
 
 ---
 
@@ -681,9 +681,9 @@ Sets multiple component properties at once from a JSON object. Each key in the o
 | jsonData | JSON | no | A JSON object where keys are property names and values are property values | Keys must be valid property IDs |
 
 **Cross References:**
-- `ScriptButton.set`
-- `ScriptButton.get`
-- `ScriptButton.getAllProperties`
+- `$API.ScriptButton.set$`
+- `$API.ScriptButton.get$`
+- `$API.ScriptButton.getAllProperties$`
 
 ---
 
@@ -704,9 +704,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptButton.setStyleSheetProperty`
-- `ScriptButton.setStyleSheetPseudoState`
-- `ScriptButton.setLocalLookAndFeel`
+- `$API.ScriptButton.setStyleSheetProperty$`
+- `$API.ScriptButton.setStyleSheetPseudoState$`
+- `$API.ScriptButton.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:stylesheet-class-assignment
@@ -758,9 +758,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptButton.setStyleSheetClass`
-- `ScriptButton.setStyleSheetPseudoState`
-- `ScriptButton.setLocalLookAndFeel`
+- `$API.ScriptButton.setStyleSheetClass$`
+- `$API.ScriptButton.setStyleSheetPseudoState$`
+- `$API.ScriptButton.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript:stylesheet-property-types
@@ -813,9 +813,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state (bitmask 256) |
 
 **Cross References:**
-- `ScriptButton.setStyleSheetClass`
-- `ScriptButton.setStyleSheetProperty`
-- `ScriptButton.setLocalLookAndFeel`
+- `$API.ScriptButton.setStyleSheetClass$`
+- `$API.ScriptButton.setStyleSheetProperty$`
+- `$API.ScriptButton.setLocalLookAndFeel$`
 
 ---
 
@@ -868,10 +868,10 @@ Sets the button's value. For ScriptButton, pass 1 for on or 0 for off. Thread-sa
 - Value propagation can forward to linked components through the `linkedTo` routing setup.
 
 **Cross References:**
-- `ScriptButton.getValue`
-- `ScriptButton.changed`
-- `ScriptButton.setValueNormalized`
-- `ScriptButton.setValueWithUndo`
+- `$API.ScriptButton.getValue$`
+- `$API.ScriptButton.changed$`
+- `$API.ScriptButton.setValueNormalized$`
+- `$API.ScriptButton.setValueWithUndo$`
 
 ---
 
@@ -892,8 +892,8 @@ Sets the value using a normalized 0..1 range. For ScriptButton, this is equivale
 | normalizedValue | Double | no | A value in the range 0.0 to 1.0 | 0.0 (off) or 1.0 (on) |
 
 **Cross References:**
-- `ScriptButton.getValueNormalized`
-- `ScriptButton.setValue`
+- `$API.ScriptButton.getValueNormalized$`
+- `$API.ScriptButton.setValue$`
 
 ---
 
@@ -924,7 +924,7 @@ Sets the button's value through the undo manager, creating an `UndoableControlEv
 - Undo integration depends on `useUndoManager`; if disabled, undo history integration is not active.
 
 **Cross References:**
-- `ScriptButton.setValue`
+- `$API.ScriptButton.setValue$`
 
 ---
 
@@ -976,7 +976,7 @@ Sets the `visible` property with change message notification.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptButton.fadeComponent`
+- `$API.ScriptButton.fadeComponent$`
 
 ---
 
@@ -1001,7 +1001,7 @@ Special parameter index values for the `parameterId` property:
 - Related: get("processorId"), get("parameterId"), setValue(...)
 
 **Cross References:**
-- `ScriptButton.setValue`
+- `$API.ScriptButton.setValue$`
 
 ---
 
@@ -1033,7 +1033,7 @@ The `jsonData` parameter is a JSON object describing the FloatingTile content ty
 - Related: popup configuration payload/state
 
 **Cross References:**
-- `ScriptButton.setValue`
+- `$API.ScriptButton.setValue$`
 
 **Example:**
 ```javascript:button-popup-keyboard

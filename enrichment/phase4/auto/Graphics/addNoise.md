@@ -9,4 +9,4 @@ Adds a pixelated noise texture overlay to the current rendering. The parameter c
 
 Noise images are cached internally for performance, but this caching increases memory usage proportional to the area size.
 
-> **Warning:** When using the simple float form inside a `ScriptLookAndFeel` callback, the area defaults to an empty rectangle because there is no parent ScriptPanel. Use the JSON object form with an explicit `area` property in LAF callbacks: `g.addNoise({"alpha": 0.05, "monochromatic": true, "area": obj.area})`.
+> [!Warning:$WARNING_TO_BE_REPLACED$] When using the simple float form inside a `ScriptLookAndFeel` callback, the area defaults to an empty rectangle because there is no parent ScriptPanel. Use the JSON object form with an explicit `area` property in LAF callbacks: `g.addNoise({"alpha": 0.05, "monochromatic": true, "area": obj.area})`.

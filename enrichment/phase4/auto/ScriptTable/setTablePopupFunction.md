@@ -1,3 +1,3 @@
 Sets a formatter callback for the point-drag popup text. The callback receives normalised `x` and `y` values and returns the string to display.
 
-> **Warning:** Returning `null` or an empty string hides popup text. Call `setTablePopupFunction(false)` to restore the default popup formatter.
+> [!Warning:$WARNING_TO_BE_REPLACED$] Returning `null` or an empty string hides popup text. Call `setTablePopupFunction(false)` to restore the default popup formatter.

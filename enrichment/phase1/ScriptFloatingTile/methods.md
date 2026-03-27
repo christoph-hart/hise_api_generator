@@ -37,7 +37,7 @@ Toggles visibility with a fade animation over the specified duration in millisec
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptFloatingTile.showControl`
+- `$API.ScriptFloatingTile.showControl$`
 
 ---
 
@@ -64,8 +64,8 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.set
 
 **Cross References:**
-- `ScriptFloatingTile.set`
-- `ScriptFloatingTile.getAllProperties`
+- `$API.ScriptFloatingTile.set$`
+- `$API.ScriptFloatingTile.getAllProperties$`
 
 ---
 
@@ -80,8 +80,8 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 Returns an array of strings containing all active (non-deactivated) property IDs for this component. Includes both base ScriptComponent properties and any child-class-specific properties.
 
 **Cross References:**
-- `ScriptFloatingTile.get`
-- `ScriptFloatingTile.set`
+- `$API.ScriptFloatingTile.get$`
+- `$API.ScriptFloatingTile.set$`
 
 ---
 
@@ -107,7 +107,7 @@ Returns the absolute x-position relative to the interface root, computed by recu
 - Related: get("x"), get("parentComponent")
 
 **Cross References:**
-- `ScriptFloatingTile.getGlobalPositionY`
+- `$API.ScriptFloatingTile.getGlobalPositionY$`
 
 ---
 
@@ -126,7 +126,7 @@ Returns the absolute y-position relative to the interface root, computed by recu
 - Related: get("y"), get("parentComponent")
 
 **Cross References:**
-- `ScriptFloatingTile.getGlobalPositionX`
+- `$API.ScriptFloatingTile.getGlobalPositionX$`
 
 ---
 
@@ -211,7 +211,7 @@ Returns the `width` property as an integer.
 Notifies z-level listeners that the component wants to grab keyboard focus. Only notifies the first listener (exclusive operation).
 
 **Cross References:**
-- `ScriptFloatingTile.loseFocus`
+- `$API.ScriptFloatingTile.loseFocus$`
 
 ---
 
@@ -226,7 +226,7 @@ Notifies z-level listeners that the component wants to grab keyboard focus. Only
 Notifies all z-level listeners that the component wants to lose keyboard focus. Triggers the `wantsToLoseFocus()` callback on all registered `ZLevelListener` instances.
 
 **Cross References:**
-- `ScriptFloatingTile.grabFocus`
+- `$API.ScriptFloatingTile.grabFocus$`
 
 ---
 
@@ -266,8 +266,8 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - Related: ScriptComponent.get
 
 **Cross References:**
-- `ScriptFloatingTile.get`
-- `ScriptFloatingTile.getAllProperties`
+- `$API.ScriptFloatingTile.get$`
+- `$API.ScriptFloatingTile.getAllProperties$`
 
 ---
 
@@ -312,7 +312,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - Must be called BEFORE `setKeyPressCallback`. Reports a script error if an invalid key description is provided.
 
 **Cross References:**
-- `ScriptFloatingTile.setKeyPressCallback`
+- `$API.ScriptFloatingTile.setKeyPressCallback$`
 
 **Example:**
 ```javascript
@@ -367,7 +367,7 @@ The JSON object should follow the FloatingTileContent configuration format. Colo
 - Related: floating tile content payload (`ContentType` / `Data`)
 
 **Cross References:**
-- `ScriptFloatingTile.setValue`
+- `$API.ScriptFloatingTile.setValue$`
 
 **Example:**
 ```javascript:floating-tile-content-data
@@ -452,7 +452,7 @@ Focus change event object:
 - MUST call `setConsumedKeyPresses()` BEFORE calling this method. Reports a script error if `setConsumedKeyPresses` has not been called yet.
 
 **Cross References:**
-- `ScriptFloatingTile.setConsumedKeyPresses`
+- `$API.ScriptFloatingTile.setConsumedKeyPresses$`
 
 **Example:**
 ```javascript
@@ -489,9 +489,9 @@ Attaches a scripted look and feel object to this component and all its children.
 - When CSS mode is active, colour properties (bgColour, itemColour, itemColour2, textColour) are initialized in the property tree if not already present, and default-property-removal is disabled.
 
 **Cross References:**
-- `ScriptFloatingTile.setStyleSheetClass`
-- `ScriptFloatingTile.setStyleSheetProperty`
-- `ScriptFloatingTile.setStyleSheetPseudoState`
+- `$API.ScriptFloatingTile.setStyleSheetClass$`
+- `$API.ScriptFloatingTile.setStyleSheetProperty$`
+- `$API.ScriptFloatingTile.setStyleSheetPseudoState$`
 
 ---
 
@@ -543,9 +543,9 @@ Sets the CSS class selectors for this component. The component's own type class 
 | classIds | String | no | Space-separated CSS class selectors to apply | e.g. ".myClass .highlighted" |
 
 **Cross References:**
-- `ScriptFloatingTile.setStyleSheetProperty`
-- `ScriptFloatingTile.setStyleSheetPseudoState`
-- `ScriptFloatingTile.setLocalLookAndFeel`
+- `$API.ScriptFloatingTile.setStyleSheetProperty$`
+- `$API.ScriptFloatingTile.setStyleSheetPseudoState$`
+- `$API.ScriptFloatingTile.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript
@@ -588,9 +588,9 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 | "" | No conversion -- stores the value as-is |
 
 **Cross References:**
-- `ScriptFloatingTile.setStyleSheetClass`
-- `ScriptFloatingTile.setStyleSheetPseudoState`
-- `ScriptFloatingTile.setLocalLookAndFeel`
+- `$API.ScriptFloatingTile.setStyleSheetClass$`
+- `$API.ScriptFloatingTile.setStyleSheetPseudoState$`
+- `$API.ScriptFloatingTile.setLocalLookAndFeel$`
 
 **Example:**
 ```javascript
@@ -637,9 +637,9 @@ Sets one or more CSS pseudo-state selectors on this component. Multiple states c
 | ":checked" | Checked/toggled state (bitmask 256) |
 
 **Cross References:**
-- `ScriptFloatingTile.setStyleSheetClass`
-- `ScriptFloatingTile.setStyleSheetProperty`
-- `ScriptFloatingTile.setLocalLookAndFeel`
+- `$API.ScriptFloatingTile.setStyleSheetClass$`
+- `$API.ScriptFloatingTile.setStyleSheetProperty$`
+- `$API.ScriptFloatingTile.setLocalLookAndFeel$`
 
 ---
 
@@ -711,7 +711,7 @@ Sets the `visible` property with change message notification.
 - Related: set("visible", shouldBeVisible), get("visible")
 
 **Cross References:**
-- `ScriptFloatingTile.fadeComponent`
+- `$API.ScriptFloatingTile.fadeComponent$`
 
 ---
 

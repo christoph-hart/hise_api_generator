@@ -20,9 +20,9 @@ Applies a median filter to the buffer and returns a new buffer containing the fi
 - [BUG] Calling this method without `windowSize` returns `undefined` instead of reporting an error.
 
 **Cross References:**
-- `Buffer.decompose`
-- `Buffer.trim`
-- `Buffer.getRMSLevel`
+- `$API.Buffer.decompose$`
+- `$API.Buffer.trim$`
+- `$API.Buffer.getRMSLevel$`
 
 **Example:**
 ```javascript:median-filter-buffer
@@ -78,9 +78,9 @@ Runs sinusoidal-transient-noise decomposition and returns an array of output buf
 - [BUG] `FastTransientTreshold` parsing checks `SlowTransientTreshold.size()` by mistake, so fast thresholds are ignored unless the slow-threshold array also has size 2.
 
 **Cross References:**
-- `Buffer.applyMedianFilter`
-- `Buffer.resample`
-- `Buffer.detectPitch`
+- `$API.Buffer.applyMedianFilter$`
+- `$API.Buffer.resample$`
+- `$API.Buffer.detectPitch$`
 
 **Example:**
 ```javascript:decompose-with-config
@@ -122,9 +122,9 @@ Estimates the fundamental frequency of the selected sample region and returns th
 - [BUG] Negative `startSample` is not clamped and can produce out-of-bounds reads.
 
 **Cross References:**
-- `Buffer.getMagnitude`
-- `Buffer.getRMSLevel`
-- `Buffer.decompose`
+- `$API.Buffer.getMagnitude$`
+- `$API.Buffer.getRMSLevel$`
+- `$API.Buffer.decompose$`
 
 ## resample
 
@@ -158,8 +158,8 @@ Creates and returns a new buffer resampled by `ratio` using the selected interpo
 - None.
 
 **Cross References:**
-- `Buffer.getSlice`
-- `Buffer.trim`
+- `$API.Buffer.getSlice$`
+- `$API.Buffer.trim$`
 
 **Example:**
 ```javascript:buffer-resample-linear
@@ -196,7 +196,7 @@ None.
 - `fromBase64` rejects payloads larger than 44100 samples, so very large serialized buffers cannot be restored with that method.
 
 **Cross References:**
-- `Buffer.fromBase64`
+- `$API.Buffer.fromBase64$`
 
 ## toCharString
 
@@ -219,8 +219,8 @@ Encodes buffer magnitudes into a compact two-character-per-bin string. Each outp
 - [BUG] If `numChars` is larger than buffer length, internal `samplesPerChar` becomes 0 and the loop step never advances.
 
 **Cross References:**
-- `Buffer.getPeakRange`
-- `Buffer.getMagnitude`
+- `$API.Buffer.getPeakRange$`
+- `$API.Buffer.getMagnitude$`
 
 **Example:**
 ```javascript:buffer-char-encoding
@@ -260,8 +260,8 @@ Returns a new copied buffer with samples removed from the start and end. The sou
 - None.
 
 **Cross References:**
-- `Buffer.getSlice`
-- `Buffer.resample`
+- `$API.Buffer.getSlice$`
+- `$API.Buffer.resample$`
 
 ## getRMSLevel
 
@@ -285,8 +285,8 @@ Returns the RMS (root mean square) level of the selected sample region.
 - [BUG] Negative `startSample` is not clamped and can cause out-of-bounds reads.
 
 **Cross References:**
-- `Buffer.getMagnitude`
-- `Buffer.getPeakRange`
+- `$API.Buffer.getMagnitude$`
+- `$API.Buffer.getPeakRange$`
 
 ## getSlice
 
@@ -310,8 +310,8 @@ Returns a new Buffer object that references a subrange of the original buffer. T
 - [BUG] Negative offsets are not clamped and can create invalid pointer offsets.
 
 **Cross References:**
-- `Buffer.trim`
-- `Buffer.resample`
+- `$API.Buffer.trim$`
+- `$API.Buffer.resample$`
 
 **Example:**
 ```javascript:buffer-slice-reference
@@ -355,8 +355,8 @@ Finds the index of the sample with the highest absolute value in the selected ra
 - [BUG] Negative `startSample` is not clamped and can cause out-of-bounds reads.
 
 **Cross References:**
-- `Buffer.getMagnitude`
-- `Buffer.getNextZeroCrossing`
+- `$API.Buffer.getMagnitude$`
+- `$API.Buffer.getNextZeroCrossing$`
 
 ## normalise
 
@@ -379,8 +379,8 @@ Scales the buffer in place so its peak magnitude becomes the target level.
 - [BUG] The implementation ignores `gainInDecibels` and always normalizes to 0 dB peak.
 
 **Cross References:**
-- `Buffer.getMagnitude`
-- `Buffer.getRMSLevel`
+- `$API.Buffer.getMagnitude$`
+- `$API.Buffer.getRMSLevel$`
 
 ## fromBase64
 
@@ -402,7 +402,7 @@ Decodes a Base64 payload created by `Buffer.toBase64()`, resizes this buffer to 
 - The method requires the literal `Buffer` prefix. Plain Base64 data without this prefix returns `0` silently.
 
 **Cross References:**
-- `Buffer.toBase64`
+- `$API.Buffer.toBase64$`
 
 **Example:**
 ```javascript:buffer-base64-roundtrip
@@ -446,10 +446,10 @@ Returns the absolute peak magnitude in the selected region. If the buffer is emp
 - None.
 
 **Cross References:**
-- `Buffer.getRMSLevel`
-- `Buffer.getPeakRange`
-- `Buffer.indexOfPeak`
-- `Buffer.detectPitch`
+- `$API.Buffer.getRMSLevel$`
+- `$API.Buffer.getPeakRange$`
+- `$API.Buffer.indexOfPeak$`
+- `$API.Buffer.detectPitch$`
 
 ## getNextZeroCrossing
 
@@ -472,7 +472,7 @@ Searches forward for the next negative-to-positive sign transition and returns i
 - [BUG] Negative indices are not clamped and can cause out-of-bounds reads.
 
 **Cross References:**
-- `Buffer.indexOfPeak`
+- `$API.Buffer.indexOfPeak$`
 
 ## getPeakRange
 
@@ -495,6 +495,6 @@ Returns a two-element array `[minValue, maxValue]` for the selected sample regio
 - [BUG] Negative `startSample` is not clamped and can cause out-of-bounds reads.
 
 **Cross References:**
-- `Buffer.getMagnitude`
-- `Buffer.getRMSLevel`
-- `Buffer.toCharString`
+- `$API.Buffer.getMagnitude$`
+- `$API.Buffer.getRMSLevel$`
+- `$API.Buffer.toCharString$`

@@ -18,9 +18,9 @@ Returns the current system time as an ISO-8601 formatted string using the local 
 | includeDividerCharacters | Integer | no | When true, includes dashes, colons, and T separator in the output. When false, omits divider characters. | Boolean (0 or 1) |
 
 **Cross References:**
-- `Date.getSystemTimeMs`
-- `Date.millisecondsToISO8601`
-- `Date.ISO8601ToMilliseconds`
+- `$API.Date.getSystemTimeMs$`
+- `$API.Date.millisecondsToISO8601$`
+- `$API.Date.ISO8601ToMilliseconds$`
 
 ## getSystemTimeMs
 
@@ -36,9 +36,9 @@ Returns the current system time as milliseconds since the Unix epoch (January 1,
 None.
 
 **Cross References:**
-- `Date.getSystemTimeISO8601`
-- `Date.ISO8601ToMilliseconds`
-- `Date.millisecondsToISO8601`
+- `$API.Date.getSystemTimeISO8601$`
+- `$API.Date.ISO8601ToMilliseconds$`
+- `$API.Date.millisecondsToISO8601$`
 
 ## ISO8601ToMilliseconds
 
@@ -61,9 +61,9 @@ Parses an ISO-8601 formatted date string and returns the corresponding time as m
 - [BUG] If an invalid or unparseable string is passed, the method silently returns 0 (the Unix epoch, January 1, 1970 00:00:00 UTC) instead of throwing an error. There is no way to distinguish between a genuinely parsed epoch timestamp and a parse failure.
 
 **Cross References:**
-- `Date.millisecondsToISO8601`
-- `Date.getSystemTimeISO8601`
-- `Date.getSystemTimeMs`
+- `$API.Date.millisecondsToISO8601$`
+- `$API.Date.getSystemTimeISO8601$`
+- `$API.Date.getSystemTimeMs$`
 
 ## millisecondsToISO8601
 
@@ -84,6 +84,6 @@ Converts a millisecond timestamp (since the Unix epoch) to an ISO-8601 formatted
 | includeDividerCharacters | Integer | no | When true, includes dashes, colons, and T separator in the output. When false, omits divider characters. | Boolean (0 or 1) |
 
 **Cross References:**
-- `Date.ISO8601ToMilliseconds`
-- `Date.getSystemTimeISO8601`
-- `Date.getSystemTimeMs`
+- `$API.Date.ISO8601ToMilliseconds$`
+- `$API.Date.getSystemTimeISO8601$`
+- `$API.Date.getSystemTimeMs$`

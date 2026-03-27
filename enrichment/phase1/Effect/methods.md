@@ -28,8 +28,8 @@ Returns the current value of the parameter at the given index. Use the effect's 
 | index | Number | yes | The parameter index | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `Effect.setAttribute`
-- `Effect.getAttributeId`
+- `$API.Effect.setAttribute$`
+- `$API.Effect.getAttributeId$`
 
 ## getAttributeId
 
@@ -49,8 +49,8 @@ Returns the name of the parameter at the given index as a string. Useful for bui
 | index | Number | yes | The parameter index | 0 to getNumAttributes()-1 |
 
 **Cross References:**
-- `Effect.getAttributeIndex`
-- `Effect.getNumAttributes`
+- `$API.Effect.getAttributeIndex$`
+- `$API.Effect.getNumAttributes$`
 
 ## getAttributeIndex
 
@@ -70,7 +70,7 @@ Returns the parameter index for the given parameter name string. Returns -1 if n
 | id | String | yes | The parameter name | Must match a valid parameter name |
 
 **Cross References:**
-- `Effect.getAttributeId`
+- `$API.Effect.getAttributeId$`
 
 ## getId
 
@@ -100,8 +100,8 @@ Returns the total number of parameters exposed by the wrapped effect module. Thi
 None.
 
 **Cross References:**
-- `Effect.getAttribute`
-- `Effect.getAttributeId`
+- `$API.Effect.getAttribute$`
+- `$API.Effect.getAttributeId$`
 
 ## isBypassed
 
@@ -117,7 +117,7 @@ Returns whether the effect is currently bypassed.
 None.
 
 **Cross References:**
-- `Effect.setBypassed`
+- `$API.Effect.setBypassed$`
 
 ## isSuspended
 
@@ -154,9 +154,9 @@ Sets the value of the parameter at the given index. Use the effect's named const
 | newValue | Number | yes | The new parameter value | Parameter-dependent range |
 
 **Cross References:**
-- `Effect.getAttribute`
-- `Effect.getAttributeId`
-- `Effect.getAttributeIndex`
+- `$API.Effect.getAttribute$`
+- `$API.Effect.getAttributeId$`
+- `$API.Effect.getAttributeIndex$`
 
 ## setBypassed
 
@@ -176,7 +176,7 @@ Enables or disables bypass for the effect. When bypassed, the effect passes audi
 | shouldBeBypassed | Number | yes | true to bypass, false to enable | -- |
 
 **Cross References:**
-- `Effect.isBypassed`
+- `$API.Effect.isBypassed$`
 
 ## exportState
 
@@ -193,8 +193,8 @@ Serializes the entire processor state (all parameters, internal data, child proc
 None.
 
 **Cross References:**
-- `Effect.restoreState`
-- `Effect.exportScriptControls`
+- `$API.Effect.restoreState$`
+- `$API.Effect.exportScriptControls$`
 
 ## restoreState
 
@@ -214,8 +214,8 @@ Restores the full processor state from a Base64 string previously obtained via `
 | base64State | String | no | Base64-encoded processor state | Must be a valid state from exportState() |
 
 **Cross References:**
-- `Effect.exportState`
-- `Effect.restoreScriptControls`
+- `$API.Effect.exportState$`
+- `$API.Effect.restoreScriptControls$`
 
 ## exportScriptControls
 
@@ -232,8 +232,8 @@ Serializes the script UI control values of the wrapped effect as a Base64 string
 None.
 
 **Cross References:**
-- `Effect.restoreScriptControls`
-- `Effect.exportState`
+- `$API.Effect.restoreScriptControls$`
+- `$API.Effect.exportState$`
 
 ## restoreScriptControls
 
@@ -253,8 +253,8 @@ Restores script UI control values from a Base64 string previously obtained via `
 | base64Controls | String | no | Base64-encoded script control state | Must be from exportScriptControls() |
 
 **Cross References:**
-- `Effect.exportScriptControls`
-- `Effect.restoreState`
+- `$API.Effect.exportScriptControls$`
+- `$API.Effect.restoreState$`
 
 ## getCurrentLevel
 
@@ -273,7 +273,7 @@ Returns the current output level of the effect for the specified channel. Pass t
 | leftChannel | Integer | no | true for left output channel, false for right | -- |
 
 **Cross References:**
-- `Effect.isSuspended`
+- `$API.Effect.isSuspended$`
 
 ## addModulator
 
@@ -298,9 +298,9 @@ Adds a new modulator of the specified type to one of the effect's internal modul
 - [BUG] Returns `undefined` without error if the module creation fails internally (e.g., invalid type name). Check the return value before using the handle.
 
 **Cross References:**
-- `Effect.getModulatorChain`
-- `Effect.addGlobalModulator`
-- `Synth.addModulator`
+- `$API.Effect.getModulatorChain$`
+- `$API.Effect.addGlobalModulator$`
+- `$API.Synth.addModulator$`
 
 ## getModulatorChain
 
@@ -320,7 +320,7 @@ Returns a `Modulator` handle to the modulator chain at the specified child proce
 | chainIndex | Integer | no | Index of the modulator chain | Must reference a valid ModulatorChain child processor |
 
 **Cross References:**
-- `Effect.addModulator`
+- `$API.Effect.addModulator$`
 
 ## addGlobalModulator
 
@@ -345,9 +345,9 @@ Creates a `GlobalTimeVariantModulator` receiver in the specified modulator chain
 - [BUG] Silently returns `undefined` without error if `globalMod` is not a valid `Modulator` handle. No script error is reported -- the call appears to succeed but produces no result.
 
 **Cross References:**
-- `Effect.addStaticGlobalModulator`
-- `Effect.addModulator`
-- `Synth.addGlobalModulator`
+- `$API.Effect.addStaticGlobalModulator$`
+- `$API.Effect.addModulator$`
+- `$API.Synth.addGlobalModulator$`
 
 ## addStaticGlobalModulator
 
@@ -372,8 +372,8 @@ Creates a `GlobalStaticTimeVariantModulator` receiver in the specified modulator
 - [BUG] Silently returns `undefined` without error if `timeVariantMod` is not a valid `Modulator` handle. No script error is reported.
 
 **Cross References:**
-- `Effect.addGlobalModulator`
-- `Synth.addStaticGlobalModulator`
+- `$API.Effect.addGlobalModulator$`
+- `$API.Synth.addStaticGlobalModulator$`
 
 ## getDraggableFilterData
 
@@ -393,7 +393,7 @@ None.
 - Silently returns `undefined` for effects that do not implement filter statistics (most built-in effects). No error is reported, so the caller should check the return value.
 
 **Cross References:**
-- `Effect.setDraggableFilterData`
+- `$API.Effect.setDraggableFilterData$`
 
 ## setDraggableFilterData
 
@@ -433,7 +433,7 @@ Configures the draggable filter visualization for effects that implement the `Pr
 - Silently does nothing on effects that do not implement filter statistics (most built-in effects). No error is reported.
 
 **Cross References:**
-- `Effect.getDraggableFilterData`
+- `$API.Effect.getDraggableFilterData$`
 
 **Example:**
 ```javascript:draggable-filter-config

@@ -17,9 +17,9 @@ Adds a sample start offset to the voice start data for a specific layer/group co
 | offsetSamples | Number | no | Sample start offset in samples | >= 0 |
 
 **Cross References:**
-- `ComplexGroupManager.delayGroupEvent`
-- `ComplexGroupManager.fadeInGroupEvent`
-- `ComplexGroupManager.setFixedGroupEventLength`
+- `$API.ComplexGroupManager.delayGroupEvent$`
+- `$API.ComplexGroupManager.fadeInGroupEvent$`
+- `$API.ComplexGroupManager.setFixedGroupEventLength$`
 
 ## createNoteMap
 
@@ -39,7 +39,7 @@ Builds a note-to-group mapping for the specified layer by iterating all samples 
 | layerIdOrIndex | Number | no | Layer index or string layer ID | Also accepts String layer ID |
 
 **Cross References:**
-- `ComplexGroupManager.isNoteNumberMapped`
+- `$API.ComplexGroupManager.isNoteNumberMapped$`
 
 ## delayGroupEvent
 
@@ -60,9 +60,9 @@ Sets a delay in samples for voice starts matching the specified layer/group comb
 | delayInSamples | Number | no | Delay time in samples | >= 0 |
 
 **Cross References:**
-- `ComplexGroupManager.addGroupEventStartOffset`
-- `ComplexGroupManager.fadeInGroupEvent`
-- `ComplexGroupManager.setFixedGroupEventLength`
+- `$API.ComplexGroupManager.addGroupEventStartOffset$`
+- `$API.ComplexGroupManager.fadeInGroupEvent$`
+- `$API.ComplexGroupManager.setFixedGroupEventLength$`
 
 ## fadeInGroupEvent
 
@@ -84,10 +84,10 @@ Sets a fade-in time and target gain for voice starts matching the specified laye
 | targetGainDb | Number | no | Target gain in decibels | 0.0 = unity gain, negative = attenuation |
 
 **Cross References:**
-- `ComplexGroupManager.fadeOutGroupEvent`
-- `ComplexGroupManager.delayGroupEvent`
-- `ComplexGroupManager.addGroupEventStartOffset`
-- `ComplexGroupManager.setFixedGroupEventLength`
+- `$API.ComplexGroupManager.fadeOutGroupEvent$`
+- `$API.ComplexGroupManager.delayGroupEvent$`
+- `$API.ComplexGroupManager.addGroupEventStartOffset$`
+- `$API.ComplexGroupManager.setFixedGroupEventLength$`
 
 ## fadeOutGroupEvent
 
@@ -111,8 +111,8 @@ Fades out all currently playing voices whose sound matches the specified layer/g
 - Unlike `delayGroupEvent`, `fadeInGroupEvent`, `addGroupEventStartOffset`, and `setFixedGroupEventLength` which set up start data for future voices, `fadeOutGroupEvent` acts on already-playing voices. Calling it before any matching voices are playing has no effect.
 
 **Cross References:**
-- `ComplexGroupManager.fadeInGroupEvent`
-- `ComplexGroupManager.setGroupVolume`
+- `$API.ComplexGroupManager.fadeInGroupEvent$`
+- `$API.ComplexGroupManager.setGroupVolume$`
 
 ## getCurrentPeak
 
@@ -133,7 +133,7 @@ Returns the current peak volume of the voice matching the specified layer, group
 | eventId | Number | no | Event ID of the voice to query | Valid event ID from Message.getEventId() |
 
 **Cross References:**
-- `ComplexGroupManager.setEnableGainTracking`
+- `$API.ComplexGroupManager.setEnableGainTracking$`
 
 ## getLayerIndex
 
@@ -192,8 +192,8 @@ Returns the value of a layer configuration property. The return type depends on 
 | "fadeTime" | Fade duration in milliseconds |
 
 **Cross References:**
-- `ComplexGroupManager.setLayerProperty`
-- `ComplexGroupManager.getLayerIndex`
+- `$API.ComplexGroupManager.setLayerProperty$`
+- `$API.ComplexGroupManager.getLayerIndex$`
 
 ## getNumGroupsInLayer
 
@@ -212,8 +212,8 @@ Returns the number of groups (tokens) defined in the specified layer. This corre
 | layerIndex | Number | no | Zero-based layer index | 0 to numLayers-1 |
 
 **Cross References:**
-- `ComplexGroupManager.getLayerProperty`
-- `ComplexGroupManager.setActiveGroup`
+- `$API.ComplexGroupManager.getLayerProperty$`
+- `$API.ComplexGroupManager.setActiveGroup$`
 
 ## isNoteNumberMapped
 
@@ -233,7 +233,7 @@ Returns whether any samples in the specified layer have a mapping that includes 
 | noteNumber | Number | no | MIDI note number to check | 0-127 |
 
 **Cross References:**
-- `ComplexGroupManager.createNoteMap`
+- `$API.ComplexGroupManager.createNoteMap$`
 
 ## registerGroupStartCallback
 
@@ -259,7 +259,7 @@ Registers a callback function that is invoked when a voice starts for the specif
 - The callback receives 255 (IgnoreFlag) as the group index when a started sample has no assignment in this layer. Handle this value explicitly rather than treating it as a regular group index.
 
 **Cross References:**
-- `ComplexGroupManager.setActiveGroup`
+- `$API.ComplexGroupManager.setActiveGroup$`
 
 **Example:**
 ```javascript:group-start-callback
@@ -302,8 +302,8 @@ Sets the active group filter for the specified layer. On the next noteOn, only s
 | groupIndex | Number | no | Zero-based group index to activate | 0 to numGroups-1; IgnoreFlag (255) rejected |
 
 **Cross References:**
-- `ComplexGroupManager.getNumGroupsInLayer`
-- `ComplexGroupManager.registerGroupStartCallback`
+- `$API.ComplexGroupManager.getNumGroupsInLayer$`
+- `$API.ComplexGroupManager.registerGroupStartCallback$`
 
 ## setEnableGainTracking
 
@@ -325,7 +325,7 @@ Enables or disables peak volume tracking for a specific layer/group combination.
 | shouldBeActive | Integer | no | Enable (1) or disable (0) gain tracking | 0 or 1 |
 
 **Cross References:**
-- `ComplexGroupManager.getCurrentPeak`
+- `$API.ComplexGroupManager.getCurrentPeak$`
 
 ## setFixedGroupEventLength
 
@@ -346,9 +346,9 @@ Sets a fixed playback length in samples for voice starts matching the specified 
 | numSamplesToPlayBeforeFadeout | Number | no | Fixed playback length in samples before fadeout | > 0 |
 
 **Cross References:**
-- `ComplexGroupManager.delayGroupEvent`
-- `ComplexGroupManager.fadeInGroupEvent`
-- `ComplexGroupManager.addGroupEventStartOffset`
+- `$API.ComplexGroupManager.delayGroupEvent$`
+- `$API.ComplexGroupManager.fadeInGroupEvent$`
+- `$API.ComplexGroupManager.addGroupEventStartOffset$`
 
 ## setGroupVolume
 
@@ -372,8 +372,8 @@ Sets the per-group gain factor for a specific layer/group combination. The gain 
 - [BUG] Silently does nothing when called on a non-Custom LogicType layer. The internal cast to CustomLayer returns null and the gain value is never applied. No error message is produced.
 
 **Cross References:**
-- `ComplexGroupManager.fadeOutGroupEvent`
-- `ComplexGroupManager.getLayerProperty`
+- `$API.ComplexGroupManager.fadeOutGroupEvent$`
+- `$API.ComplexGroupManager.getLayerProperty$`
 
 ## setLayerProperty
 
@@ -416,5 +416,5 @@ Sets a layer configuration property value. Validates the property ID against a f
 | "fadeTime" | Fade duration in milliseconds (double) |
 
 **Cross References:**
-- `ComplexGroupManager.getLayerProperty`
-- `ComplexGroupManager.getLayerIndex`
+- `$API.ComplexGroupManager.getLayerProperty$`
+- `$API.ComplexGroupManager.getLayerIndex$`
