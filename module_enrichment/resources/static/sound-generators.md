@@ -106,17 +106,17 @@ chains:
 
 ## Modules
 
-- [Audio Loop Player](/v2/reference/audio-modules/sound-generators/audiolooper): A single-file audio player with looping, pitch tracking, tempo sync, and reverse playback.
-- [Global Modulator Container](/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer): A container that processes Modulator instances that can be used at different locations.
-- [Hardcoded Synthesiser](/v2/reference/audio-modules/sound-generators/hardcodedsynth): Runs a compiled C++ DSP network as a polyphonic sound generator with per-voice processing and full modulator chain support.
-- [Macro Modulation Source](/v2/reference/audio-modules/sound-generators/macromodulationsource): A container that hosts modulator chains whose output drives the macro control system.
-- [Noise Generator](/v2/reference/audio-modules/sound-generators/noise): A white noise generator useful for layering, testing signal flow, or as a modulation source.
-- [Scriptnode Synthesiser](/v2/reference/audio-modules/sound-generators/scriptsynth): Generates polyphonic audio from a scriptnode DSP network, with per-voice processing and full modulator chain support.
-- [Send Container](/v2/reference/audio-modules/sound-generators/sendcontainer): A signal chain tool that receives the signal from a Send FX and applies its own effect chain.
-- [Silent Synth](/v2/reference/audio-modules/sound-generators/silentsynth): A silent sound generator that routes signals through its effect chain without producing audio of its own.
-- [Sine Wave Generator](/v2/reference/audio-modules/sound-generators/sinesynth): A lightweight sine wave generator for FM synthesis, additive synthesis, or adding subtle harmonics to other sounds.
-- [Sampler](/v2/reference/audio-modules/sound-generators/streamingsampler): A disk-streaming sampler with sample maps, round robin, crossfade groups, and timestretching.
-- [Container](/v2/reference/audio-modules/sound-generators/synthchain): A container for other Sound generators.
-- [Synthesiser Group](/v2/reference/audio-modules/sound-generators/synthgroup): A container for synthesisers that share common modulation, with optional FM synthesis and unison detune/spread.
-- [Waveform Generator](/v2/reference/audio-modules/sound-generators/wavesynth): A waveform generator based on BLIP synthesis of common synthesiser waveforms.
-- [Wavetable Synthesiser](/v2/reference/audio-modules/sound-generators/wavetablesynth): A two-dimensional wavetable synthesiser that morphs between waveforms using a table index and supports audio file resynthesis.
+- [Audio Loop Player]($MODULES.AudioLooper$): A single-file audio player with looping, pitch tracking, tempo sync, and reverse playback.
+- [Global Modulator Container]($MODULES.GlobalModulatorContainer$): A container that processes Modulator instances that can be used at different locations.
+- [Hardcoded Synthesiser]($MODULES.HardcodedSynth$): Runs a compiled C++ DSP network as a polyphonic sound generator with per-voice processing and full modulator chain support.
+- [Macro Modulation Source]($MODULES.MacroModulationSource$): A container that hosts modulator chains whose output drives the macro control system.
+- [Noise Generator]($MODULES.Noise$): A white noise generator useful for layering, testing signal flow, or as a modulation source.
+- [Scriptnode Synthesiser]($MODULES.ScriptSynth$): Generates polyphonic audio from a scriptnode DSP network, with per-voice processing and full modulator chain support.
+- [Send Container]($MODULES.SendContainer$): A signal chain tool that receives the signal from a Send FX and applies its own effect chain.
+- [Silent Synth]($MODULES.SilentSynth$): A silent sound generator that routes signals through its effect chain without producing audio of its own.
+- [Sine Wave Generator]($MODULES.SineSynth$): A lightweight sine wave generator for FM synthesis, additive synthesis, or adding subtle harmonics to other sounds.
+- [Sampler]($MODULES.StreamingSampler$): A disk-streaming sampler with sample maps, round robin, crossfade groups, and timestretching.
+- [Container]($MODULES.SynthChain$): A container for other Sound generators.
+- [Synthesiser Group]($MODULES.SynthGroup$): A container for synthesisers that share common modulation, with optional FM synthesis and unison detune/spread.
+- [Waveform Generator]($MODULES.WaveSynth$): A waveform generator based on BLIP synthesis of common synthesiser waveforms.
+- [Wavetable Synthesiser]($MODULES.WavetableSynth$): A two-dimensional wavetable synthesiser that morphs between waveforms using a table index and supports audio file resynthesis.

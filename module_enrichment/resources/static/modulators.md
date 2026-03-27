@@ -24,15 +24,13 @@ Modulators are placed inside **modulation chains** that belong to a parent modul
 - **Gain Modulation** - scales the output volume. Uses multiplicative (Gain) mode.
 - **Pitch Modulation** - modulates the pitch of all voices. Uses additive (Pitch) mode with bipolar range.
 - **Effect parameter chains** - some effects expose modulatable parameters with their own modulation chains.
-- **Global modulators** - modulators placed inside a [Global Modulator Container](/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer) can be shared across multiple targets using Global Voice Start, Global Time Variant, or Global Envelope proxy modules.
+- **Global modulators** - modulators placed inside a [Global Modulator Container]($MODULES.GlobalModulatorContainer$) can be shared across multiple targets using Global Voice Start, Global Time Variant, or Global Envelope proxy modules.
 
 ## Common Parameters
 
 All modulators share these properties from the `Modulation` base class.
 
-::warning{title="Scripting API"}
-Intensity and Bipolar are **not** regular parameters - they do not go through the `setAttribute()` system. In scripts, use `Modulator.setIntensity()` and `Modulator.setBipolar()` instead.
-::
+> [!Warning:Scripting API] Intensity and Bipolar are **not** regular parameters - they do not go through the `setAttribute()` system. In scripts, use `Modulator.setIntensity()` and `Modulator.setBipolar()` instead.
 
 ::parameter-table
 ---
@@ -77,15 +75,15 @@ onNoteOn(voice):
 
 #### Modules
 
-- [Array Modulator](/v2/reference/audio-modules/modulators/voice-start/arraymodulator): Creates a modulation signal from a slider pack array indexed by MIDI note number, allowing per-note modulation values.
-- [Constant](/v2/reference/audio-modules/modulators/voice-start/constant): Creates a constant modulation signal (1.0) that can be used as a fixed gain offset or modulation source.
-- [Event Data Modulator](/v2/reference/audio-modules/modulators/voice-start/eventdatamodulator): Creates a modulation value based on event data written through the global routing manager, allowing external control data to modulate voices.
-- [Global Static Time Variant Modulator](/v2/reference/audio-modules/modulators/voice-start/globalstatictimevariantmodulator): Captures the current value of a global TimeVariantModulator at voice start, creating a constant per-voice modulation based on the LFO/envelope state at note-on.
-- [Global Voice Start Modulator](/v2/reference/audio-modules/modulators/voice-start/globalvoicestartmodulator): Connects to a global VoiceStartModulator in a GlobalModulatorContainer, allowing voice-start modulation to be shared across multiple targets.
-- [Notenumber Modulator](/v2/reference/audio-modules/modulators/voice-start/keynumber): Creates a modulation value based on the MIDI note number, with optional table mapping for custom response curves.
-- [Random Modulator](/v2/reference/audio-modules/modulators/voice-start/random): Generates a random value at each voice start, with optional table mapping for custom probability distributions.
-- [Script Voice Start Modulator](/v2/reference/audio-modules/modulators/voice-start/scriptvoicestartmodulator): Computes a per-voice modulation value at note-on using a HiseScript callback, for custom velocity curves or scripted voice logic.
-- [Velocity Modulator](/v2/reference/audio-modules/modulators/voice-start/velocity): Creates a modulation value from the MIDI velocity of incoming note messages, with optional table mapping and decibel conversion.
+- [Array Modulator]($MODULES.ArrayModulator$): Creates a modulation signal from a slider pack array indexed by MIDI note number, allowing per-note modulation values.
+- [Constant]($MODULES.Constant$): Creates a constant modulation signal (1.0) that can be used as a fixed gain offset or modulation source.
+- [Event Data Modulator]($MODULES.EventDataModulator$): Creates a modulation value based on event data written through the global routing manager, allowing external control data to modulate voices.
+- [Global Static Time Variant Modulator]($MODULES.GlobalStaticTimeVariantModulator$): Captures the current value of a global TimeVariantModulator at voice start, creating a constant per-voice modulation based on the LFO/envelope state at note-on.
+- [Global Voice Start Modulator]($MODULES.GlobalVoiceStartModulator$): Connects to a global VoiceStartModulator in a GlobalModulatorContainer, allowing voice-start modulation to be shared across multiple targets.
+- [Notenumber Modulator]($MODULES.KeyNumber$): Creates a modulation value based on the MIDI note number, with optional table mapping for custom response curves.
+- [Random Modulator]($MODULES.Random$): Generates a random value at each voice start, with optional table mapping for custom probability distributions.
+- [Script Voice Start Modulator]($MODULES.ScriptVoiceStartModulator$): Computes a per-voice modulation value at note-on using a HiseScript callback, for custom velocity curves or scripted voice logic.
+- [Velocity Modulator]($MODULES.Velocity$): Creates a modulation value from the MIDI velocity of incoming note messages, with optional table mapping and decibel conversion.
 
 ## Time Variant Modulators
 
@@ -120,13 +118,13 @@ process(blockSize):
 
 #### Modules
 
-- [Global Time Variant Modulator](/v2/reference/audio-modules/modulators/time-variant/globaltimevariantmodulator): Shares a global TimeVariantModulator signal across multiple targets, allowing real-time continuous modulation from a single source.
-- [Hardcoded Time Variant Modulator](/v2/reference/audio-modules/modulators/time-variant/hardcodedtimevariantmodulator): Runs a compiled C++ DSP network as a monophonic time-variant modulator with dynamic parameters.
-- [LFO Modulator](/v2/reference/audio-modules/modulators/time-variant/lfo): Generates a periodic modulation signal with multiple waveform types, tempo sync, and an optional step sequencer mode.
-- [Macro Modulator](/v2/reference/audio-modules/modulators/time-variant/macromodulator): A modulator controlled by a macro controller slot, allowing real-time automation and MIDI learn functionality.
-- [Midi Controller](/v2/reference/audio-modules/modulators/time-variant/midicontroller): Creates a modulation signal from MIDI CC messages with adjustable smoothing and optional table mapping for custom response curves.
-- [Pitch Wheel Modulator](/v2/reference/audio-modules/modulators/time-variant/pitchwheel): Creates a monophonic modulation signal from the pitch wheel, with smoothing to reduce stepping artifacts.
-- [Script Time Variant Modulator](/v2/reference/audio-modules/modulators/time-variant/scripttimevariantmodulator): Generates a continuous monophonic modulation signal from a scriptnode DSP network or HiseScript timer callback.
+- [Global Time Variant Modulator]($MODULES.GlobalTimeVariantModulator$): Shares a global TimeVariantModulator signal across multiple targets, allowing real-time continuous modulation from a single source.
+- [Hardcoded Time Variant Modulator]($MODULES.HardcodedTimevariantModulator$): Runs a compiled C++ DSP network as a monophonic time-variant modulator with dynamic parameters.
+- [LFO Modulator]($MODULES.LFO$): Generates a periodic modulation signal with multiple waveform types, tempo sync, and an optional step sequencer mode.
+- [Macro Modulator]($MODULES.MacroModulator$): A modulator controlled by a macro controller slot, allowing real-time automation and MIDI learn functionality.
+- [Midi Controller]($MODULES.MidiController$): Creates a modulation signal from MIDI CC messages with adjustable smoothing and optional table mapping for custom response curves.
+- [Pitch Wheel Modulator]($MODULES.PitchWheel$): Creates a monophonic modulation signal from the pitch wheel, with smoothing to reduce stepping artifacts.
+- [Script Time Variant Modulator]($MODULES.ScriptTimeVariantModulator$): Generates a continuous monophonic modulation signal from a scriptnode DSP network or HiseScript timer callback.
 
 ## Envelope Modulators
 
@@ -189,14 +187,14 @@ groups:
 
 #### Modules
 
-- [AHDSR Envelope](/v2/reference/audio-modules/modulators/envelope/ahdsr): An AHDSR envelope with adjustable curve shapes, optional downsampling for CPU savings, and per-voice modulation of all time parameters.
-- [EventData Envelope](/v2/reference/audio-modules/modulators/envelope/eventdataenvelope): An envelope modulator for time-varying event data slots, with smoothing for continuous modulation changes.
-- [Flex AHDSR Envelope](/v2/reference/audio-modules/modulators/envelope/flexahdsr): A more complex AHDSR envelope with draggable curves and multiple playback modes.
-- [Global Envelope Modulator](/v2/reference/audio-modules/modulators/envelope/globalenvelopemodulator): Connects to a global EnvelopeModulator in a GlobalModulatorContainer, allowing envelope modulation to be shared across multiple targets.
-- [Hardcoded Envelope Modulator](/v2/reference/audio-modules/modulators/envelope/hardcodedenvelopemodulator): Runs a compiled C++ DSP network as a polyphonic envelope modulator with per-voice state and voice management.
-- [MPE Modulator](/v2/reference/audio-modules/modulators/envelope/mpemodulator): Creates per-voice modulation from MPE pressure, slide, or glide gestures with adjustable smoothing and default values.
-- [Matrix Modulator](/v2/reference/audio-modules/modulators/envelope/matrixmodulator): Combines multiple global modulators into a single modulation source with a base value and smoothed output.
-- [Script Envelope Modulator](/v2/reference/audio-modules/modulators/envelope/scriptenvelopemodulator): Generates a polyphonic envelope signal from a scriptnode DSP network, with per-voice state and voice kill detection.
-- [Scriptnode Voice Killer](/v2/reference/audio-modules/modulators/envelope/scriptnodevoicekiller): Monitors a scriptnode envelope's gate signal and terminates voices when the gate closes, required for voice management in scriptnode-based envelopes.
-- [Simple Envelope](/v2/reference/audio-modules/modulators/envelope/simpleenvelope): A lightweight two-stage envelope with attack and release, supporting linear or exponential curves.
-- [Table Envelope](/v2/reference/audio-modules/modulators/envelope/tableenvelope): An envelope with fully customizable attack and release shapes drawn as lookup tables.
+- [AHDSR Envelope]($MODULES.AHDSR$): An AHDSR envelope with adjustable curve shapes, optional downsampling for CPU savings, and per-voice modulation of all time parameters.
+- [EventData Envelope]($MODULES.EventDataEnvelope$): An envelope modulator for time-varying event data slots, with smoothing for continuous modulation changes.
+- [Flex AHDSR Envelope]($MODULES.FlexAHDSR$): A more complex AHDSR envelope with draggable curves and multiple playback modes.
+- [Global Envelope Modulator]($MODULES.GlobalEnvelopeModulator$): Connects to a global EnvelopeModulator in a GlobalModulatorContainer, allowing envelope modulation to be shared across multiple targets.
+- [Hardcoded Envelope Modulator]($MODULES.HardcodedEnvelopeModulator$): Runs a compiled C++ DSP network as a polyphonic envelope modulator with per-voice state and voice management.
+- [MPE Modulator]($MODULES.MPEModulator$): Creates per-voice modulation from MPE pressure, slide, or glide gestures with adjustable smoothing and default values.
+- [Matrix Modulator]($MODULES.MatrixModulator$): Combines multiple global modulators into a single modulation source with a base value and smoothed output.
+- [Script Envelope Modulator]($MODULES.ScriptEnvelopeModulator$): Generates a polyphonic envelope signal from a scriptnode DSP network, with per-voice state and voice kill detection.
+- [Scriptnode Voice Killer]($MODULES.ScriptnodeVoiceKiller$): Monitors a scriptnode envelope's gate signal and terminates voices when the gate closes, required for voice management in scriptnode-based envelopes.
+- [Simple Envelope]($MODULES.SimpleEnvelope$): A lightweight two-stage envelope with attack and release, supporting linear or exponential curves.
+- [Table Envelope]($MODULES.TableEnvelope$): An envelope with fully customizable attack and release shapes drawn as lookup tables.

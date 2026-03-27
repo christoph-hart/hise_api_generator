@@ -72,9 +72,7 @@ output = output * GainMod
 
 ::
 
-::tip{title="About this Pseudocode"}
-The pseudocode shows the abstract processing model, not literal C++ or HiseScript code. Each type's index page contains pseudocode blocks specific to that module type.
-::
+> [!Tip:About this Pseudocode] The pseudocode shows the abstract processing model, not literal C++ or HiseScript code. Each type's index page contains pseudocode blocks specific to that module type.
 
 ## Common Concepts
 
@@ -88,9 +86,7 @@ Modules form a hierarchical tree. A sound generator contains MIDI processors, mo
 
 Every module has a unique string ID used to identify it in the module tree and reference it from scripts. Changing a Processor ID will break existing script references.
 
-::tip{title="IDE Workflow"}
-Right-click a module's top bar in the HISE IDE to copy its XML to the clipboard or generate a script reference declaration that you can paste into a Script Processor's `onInit` callback.
-::
+> [!Tip:IDE Workflow] Right-click a module's top bar in the HISE IDE to copy its XML to the clipboard or generate a script reference declaration that you can paste into a Script Processor's `onInit` callback.
 
 ### Parameters
 
@@ -135,11 +131,11 @@ An overview of all audio modules grouped by functional category. Modules may app
 
 Modules that hold and combine other sound generators.
 
-- [Container](/v2/reference/audio-modules/sound-generators/synthchain): A container for other Sound generators.
-- [Synthesiser Group](/v2/reference/audio-modules/sound-generators/synthgroup): A container for synthesisers that share common modulation, with optional FM synthesis and unison detune/spread.
-- [Global Modulator Container](/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer): A container that processes Modulator instances that can be used at different locations.
-- [Send Container](/v2/reference/audio-modules/sound-generators/sendcontainer): A signal chain tool that receives the signal from a Send FX and applies its own effect chain.
-- [Macro Modulation Source](/v2/reference/audio-modules/sound-generators/macromodulationsource): A container that hosts modulator chains whose output drives the macro control system.
+- [Container]($MODULES.SynthChain$): A container for other Sound generators.
+- [Synthesiser Group]($MODULES.SynthGroup$): A container for synthesisers that share common modulation, with optional FM synthesis and unison detune/spread.
+- [Global Modulator Container]($MODULES.GlobalModulatorContainer$): A container that processes Modulator instances that can be used at different locations.
+- [Send Container]($MODULES.SendContainer$): A signal chain tool that receives the signal from a Send FX and applies its own effect chain.
+- [Macro Modulation Source]($MODULES.MacroModulationSource$): A container that hosts modulator chains whose output drives the macro control system.
 
 ---
 
@@ -149,26 +145,26 @@ Modules that run user-defined DSP logic via scriptnode networks, compiled C++ co
 
 #### Hardcoded modules
 
-- [Hardcoded Master FX](/v2/reference/audio-modules/effects/master/hardcodedmasterfx): Runs a compiled C++ DSP network as a master effect, with dynamic parameter and complex data exposure from the network.
-- [Hardcoded Polyphonic FX](/v2/reference/audio-modules/effects/polyphonic/hardcodedpolyphonicfx): Runs a compiled C++ DSP network as a polyphonic effect, processing each voice independently with per-voice state.
-- [Hardcoded Synthesiser](/v2/reference/audio-modules/sound-generators/hardcodedsynth): Runs a compiled C++ DSP network as a polyphonic sound generator with per-voice processing and full modulator chain support.
-- [Hardcoded Envelope Modulator](/v2/reference/audio-modules/modulators/envelope/hardcodedenvelopemodulator): Runs a compiled C++ DSP network as a polyphonic envelope modulator with per-voice state and voice management.
-- [Hardcoded Time Variant Modulator](/v2/reference/audio-modules/modulators/time-variant/hardcodedtimevariantmodulator): Runs a compiled C++ DSP network as a monophonic time-variant modulator with dynamic parameters.
+- [Hardcoded Master FX]($MODULES.HardcodedMasterFX$): Runs a compiled C++ DSP network as a master effect, with dynamic parameter and complex data exposure from the network.
+- [Hardcoded Polyphonic FX]($MODULES.HardcodedPolyphonicFX$): Runs a compiled C++ DSP network as a polyphonic effect, processing each voice independently with per-voice state.
+- [Hardcoded Synthesiser]($MODULES.HardcodedSynth$): Runs a compiled C++ DSP network as a polyphonic sound generator with per-voice processing and full modulator chain support.
+- [Hardcoded Envelope Modulator]($MODULES.HardcodedEnvelopeModulator$): Runs a compiled C++ DSP network as a polyphonic envelope modulator with per-voice state and voice management.
+- [Hardcoded Time Variant Modulator]($MODULES.HardcodedTimevariantModulator$): Runs a compiled C++ DSP network as a monophonic time-variant modulator with dynamic parameters.
 
 #### Scriptnode modules
 
-- [Script Processor](/v2/reference/audio-modules/midi-processors/scriptprocessor): The main scripting interface for MIDI processing, UI creation, and plugin control via the HiseScript API.
-- [Script FX](/v2/reference/audio-modules/effects/master/scriptfx): Processes audio through a scriptnode DSP network as a master effect, with scriptable parameters and complex data routing.
-- [Polyphonic Script FX](/v2/reference/audio-modules/effects/polyphonic/polyscriptfx): Processes each voice independently through a scriptnode DSP network, with per-voice state and polyphonic modulation support.
-- [Scriptnode Synthesiser](/v2/reference/audio-modules/sound-generators/scriptsynth): Generates polyphonic audio from a scriptnode DSP network, with per-voice processing and full modulator chain support.
-- [Script Envelope Modulator](/v2/reference/audio-modules/modulators/envelope/scriptenvelopemodulator): Generates a polyphonic envelope signal from a scriptnode DSP network, with per-voice state and voice kill detection.
-- [Script Time Variant Modulator](/v2/reference/audio-modules/modulators/time-variant/scripttimevariantmodulator): Generates a continuous monophonic modulation signal from a scriptnode DSP network or HiseScript timer callback.
-- [Script Voice Start Modulator](/v2/reference/audio-modules/modulators/voice-start/scriptvoicestartmodulator): Computes a per-voice modulation value at note-on using a HiseScript callback, for custom velocity curves or scripted voice logic.
+- [Script Processor]($MODULES.ScriptProcessor$): The main scripting interface for MIDI processing, UI creation, and plugin control via the HiseScript API.
+- [Script FX]($MODULES.ScriptFX$): Processes audio through a scriptnode DSP network as a master effect, with scriptable parameters and complex data routing.
+- [Polyphonic Script FX]($MODULES.PolyScriptFX$): Processes each voice independently through a scriptnode DSP network, with per-voice state and polyphonic modulation support.
+- [Scriptnode Synthesiser]($MODULES.ScriptSynth$): Generates polyphonic audio from a scriptnode DSP network, with per-voice processing and full modulator chain support.
+- [Script Envelope Modulator]($MODULES.ScriptEnvelopeModulator$): Generates a polyphonic envelope signal from a scriptnode DSP network, with per-voice state and voice kill detection.
+- [Script Time Variant Modulator]($MODULES.ScriptTimeVariantModulator$): Generates a continuous monophonic modulation signal from a scriptnode DSP network or HiseScript timer callback.
+- [Script Voice Start Modulator]($MODULES.ScriptVoiceStartModulator$): Computes a per-voice modulation value at note-on using a HiseScript callback, for custom velocity curves or scripted voice logic.
 
 #### Custom Utility modules
 
-- [Scriptnode Voice Killer](/v2/reference/audio-modules/modulators/envelope/scriptnodevoicekiller): Monitors a scriptnode envelope's gate signal and terminates voices when the gate closes, required for voice management in scriptnode-based envelopes.
-- [Silent Synth](/v2/reference/audio-modules/sound-generators/silentsynth): A silent sound generator that routes signals through its effect chain without producing audio of its own.
+- [Scriptnode Voice Killer]($MODULES.ScriptnodeVoiceKiller$): Monitors a scriptnode envelope's gate signal and terminates voices when the gate closes, required for voice management in scriptnode-based envelopes.
+- [Silent Synth]($MODULES.SilentSynth$): A silent sound generator that routes signals through its effect chain without producing audio of its own.
 
 ---
 
@@ -176,15 +172,15 @@ Modules that run user-defined DSP logic via scriptnode networks, compiled C++ co
 
 MIDI processors that transform, filter, or react to incoming note events. Contains MIDI processors and modulators.
 
-- [MIDI CC to Note Generator](/v2/reference/audio-modules/midi-processors/cc2note): Turns a selected MIDI CC into a note trigger, useful for controller-driven drum or round-robin triggering.
-- [MIDI Channel Filter](/v2/reference/audio-modules/midi-processors/channelfilter): Filters incoming MIDI by channel, with optional MPE start and end channel ranges for MPE setups.
-- [MIDI Channel Setter](/v2/reference/audio-modules/midi-processors/channelsetter): Rewrites the MIDI channel for all incoming messages, useful for routing or consolidating controllers.
-- [Choke Group Processor](/v2/reference/audio-modules/midi-processors/chokegroupprocessor): Kills active notes when another choke group processor in the same group receives a note-on, useful for hi-hat and mute group behavior.
-- [Notenumber Modulator](/v2/reference/audio-modules/modulators/voice-start/keynumber): Creates a modulation value based on the MIDI note number, with optional table mapping for custom response curves.
-- [Legato with Retrigger](/v2/reference/audio-modules/midi-processors/legatowithretrigger): Monophonic legato processor that retriggers the previous note after a release, useful for lead lines and expressive legato phrasing.
-- [Release Trigger](/v2/reference/audio-modules/midi-processors/releasetrigger): Release trigger generator that replays notes on key-up with velocity scaled by a time-based attenuation curve.
-- [Transposer](/v2/reference/audio-modules/midi-processors/transposer): Transposes incoming MIDI note-on events by a fixed number of semitones for quick key changes or interval shifts.
-- [Velocity Modulator](/v2/reference/audio-modules/modulators/voice-start/velocity): Creates a modulation value from the MIDI velocity of incoming note messages, with optional table mapping and decibel conversion.
+- [MIDI CC to Note Generator]($MODULES.CC2Note$): Turns a selected MIDI CC into a note trigger, useful for controller-driven drum or round-robin triggering.
+- [MIDI Channel Filter]($MODULES.ChannelFilter$): Filters incoming MIDI by channel, with optional MPE start and end channel ranges for MPE setups.
+- [MIDI Channel Setter]($MODULES.ChannelSetter$): Rewrites the MIDI channel for all incoming messages, useful for routing or consolidating controllers.
+- [Choke Group Processor]($MODULES.ChokeGroupProcessor$): Kills active notes when another choke group processor in the same group receives a note-on, useful for hi-hat and mute group behavior.
+- [Notenumber Modulator]($MODULES.KeyNumber$): Creates a modulation value based on the MIDI note number, with optional table mapping for custom response curves.
+- [Legato with Retrigger]($MODULES.LegatoWithRetrigger$): Monophonic legato processor that retriggers the previous note after a release, useful for lead lines and expressive legato phrasing.
+- [Release Trigger]($MODULES.ReleaseTrigger$): Release trigger generator that replays notes on key-up with velocity scaled by a time-based attenuation curve.
+- [Transposer]($MODULES.Transposer$): Transposes incoming MIDI note-on events by a fixed number of semitones for quick key changes or interval shifts.
+- [Velocity Modulator]($MODULES.Velocity$): Creates a modulation value from the MIDI velocity of incoming note messages, with optional table mapping and decibel conversion.
 
 ---
 
@@ -192,12 +188,12 @@ MIDI processors that transform, filter, or react to incoming note events. Contai
 
 Modulators that convert external events like MIDI or MPE into modulation signals.
 
-- [Array Modulator](/v2/reference/audio-modules/modulators/voice-start/arraymodulator): Creates a modulation signal from a slider pack array indexed by MIDI note number, allowing per-note modulation values.
-- [Notenumber Modulator](/v2/reference/audio-modules/modulators/voice-start/keynumber): Creates a modulation value based on the MIDI note number, with optional table mapping for custom response curves.
-- [MPE Modulator](/v2/reference/audio-modules/modulators/envelope/mpemodulator): Creates per-voice modulation from MPE pressure, slide, or glide gestures with adjustable smoothing and default values.
-- [Midi Controller](/v2/reference/audio-modules/modulators/time-variant/midicontroller): Creates a modulation signal from MIDI CC messages with adjustable smoothing and optional table mapping for custom response curves.
-- [Pitch Wheel Modulator](/v2/reference/audio-modules/modulators/time-variant/pitchwheel): Creates a monophonic modulation signal from the pitch wheel, with smoothing to reduce stepping artifacts.
-- [Velocity Modulator](/v2/reference/audio-modules/modulators/voice-start/velocity): Creates a modulation value from the MIDI velocity of incoming note messages, with optional table mapping and decibel conversion.
+- [Array Modulator]($MODULES.ArrayModulator$): Creates a modulation signal from a slider pack array indexed by MIDI note number, allowing per-note modulation values.
+- [Notenumber Modulator]($MODULES.KeyNumber$): Creates a modulation value based on the MIDI note number, with optional table mapping for custom response curves.
+- [MPE Modulator]($MODULES.MPEModulator$): Creates per-voice modulation from MPE pressure, slide, or glide gestures with adjustable smoothing and default values.
+- [Midi Controller]($MODULES.MidiController$): Creates a modulation signal from MIDI CC messages with adjustable smoothing and optional table mapping for custom response curves.
+- [Pitch Wheel Modulator]($MODULES.PitchWheel$): Creates a monophonic modulation signal from the pitch wheel, with smoothing to reduce stepping artifacts.
+- [Velocity Modulator]($MODULES.Velocity$): Creates a modulation value from the MIDI velocity of incoming note messages, with optional table mapping and decibel conversion.
 
 ---
 
@@ -205,10 +201,10 @@ Modulators that convert external events like MIDI or MPE into modulation signals
 
 MIDI processors that generate or play back note sequences.
 
-- [Arpeggiator](/v2/reference/audio-modules/midi-processors/arpeggiator): Configurable arpeggiator with tempo sync, direction, octave range, and per-step sliders for melodic sequencing and rhythm generation.
-- [Audio Loop Player](/v2/reference/audio-modules/sound-generators/audiolooper): A single-file audio player with looping, pitch tracking, tempo sync, and reverse playback.
-- [MidiMetronome](/v2/reference/audio-modules/effects/master/midimetronome): A metronome that produces click sounds synchronized to a connected MIDI player's tempo.
-- [MIDI Player](/v2/reference/audio-modules/midi-processors/midiplayer): Plays MIDI sequences with transport controls, loop regions, and multi-track support for piano roll and step sequencer overlays.
+- [Arpeggiator]($MODULES.Arpeggiator$): Configurable arpeggiator with tempo sync, direction, octave range, and per-step sliders for melodic sequencing and rhythm generation.
+- [Audio Loop Player]($MODULES.AudioLooper$): A single-file audio player with looping, pitch tracking, tempo sync, and reverse playback.
+- [MidiMetronome]($MODULES.MidiMetronome$): A metronome that produces click sounds synchronized to a connected MIDI player's tempo.
+- [MIDI Player]($MODULES.MidiPlayer$): Plays MIDI sequences with transport controls, loop regions, and multi-track support for piano roll and step sequencer overlays.
 
 ---
 
@@ -216,12 +212,12 @@ MIDI processors that generate or play back note sequences.
 
 Modules that generate audio or modulation signals from oscillators or synthesis algorithms. Contains sound generators and modulators.
 
-- [LFO Modulator](/v2/reference/audio-modules/modulators/time-variant/lfo): Generates a periodic modulation signal with multiple waveform types, tempo sync, and an optional step sequencer mode.
-- [Noise Generator](/v2/reference/audio-modules/sound-generators/noise): A white noise generator useful for layering, testing signal flow, or as a modulation source.
-- [Sine Wave Generator](/v2/reference/audio-modules/sound-generators/sinesynth): A lightweight sine wave generator for FM synthesis, additive synthesis, or adding subtle harmonics to other sounds.
-- [Synthesiser Group](/v2/reference/audio-modules/sound-generators/synthgroup): A container for synthesisers that share common modulation, with optional FM synthesis and unison detune/spread.
-- [Waveform Generator](/v2/reference/audio-modules/sound-generators/wavesynth): A waveform generator based on BLIP synthesis of common synthesiser waveforms.
-- [Wavetable Synthesiser](/v2/reference/audio-modules/sound-generators/wavetablesynth): A two-dimensional wavetable synthesiser that morphs between waveforms using a table index and supports audio file resynthesis.
+- [LFO Modulator]($MODULES.LFO$): Generates a periodic modulation signal with multiple waveform types, tempo sync, and an optional step sequencer mode.
+- [Noise Generator]($MODULES.Noise$): A white noise generator useful for layering, testing signal flow, or as a modulation source.
+- [Sine Wave Generator]($MODULES.SineSynth$): A lightweight sine wave generator for FM synthesis, additive synthesis, or adding subtle harmonics to other sounds.
+- [Synthesiser Group]($MODULES.SynthGroup$): A container for synthesisers that share common modulation, with optional FM synthesis and unison detune/spread.
+- [Waveform Generator]($MODULES.WaveSynth$): A waveform generator based on BLIP synthesis of common synthesiser waveforms.
+- [Wavetable Synthesiser]($MODULES.WavetableSynth$): A two-dimensional wavetable synthesiser that morphs between waveforms using a table index and supports audio file resynthesis.
 
 ---
 
@@ -229,8 +225,8 @@ Modules that generate audio or modulation signals from oscillators or synthesis 
 
 Modules that play back audio samples.
 
-- [Audio Loop Player](/v2/reference/audio-modules/sound-generators/audiolooper): A single-file audio player with looping, pitch tracking, tempo sync, and reverse playback.
-- [Sampler](/v2/reference/audio-modules/sound-generators/streamingsampler): A disk-streaming sampler with sample maps, round robin, crossfade groups, and timestretching.
+- [Audio Loop Player]($MODULES.AudioLooper$): A single-file audio player with looping, pitch tracking, tempo sync, and reverse playback.
+- [Sampler]($MODULES.StreamingSampler$): A disk-streaming sampler with sample maps, round robin, crossfade groups, and timestretching.
 
 ---
 
@@ -238,15 +234,15 @@ Modules that play back audio samples.
 
 Modulators that create modulation signals internally, such as envelopes and LFOs. Contains modulators and MIDI processors.
 
-- [AHDSR Envelope](/v2/reference/audio-modules/modulators/envelope/ahdsr): An AHDSR envelope with adjustable curve shapes, optional downsampling for CPU savings, and per-voice modulation of all time parameters.
-- [Arpeggiator](/v2/reference/audio-modules/midi-processors/arpeggiator): Configurable arpeggiator with tempo sync, direction, octave range, and per-step sliders for melodic sequencing and rhythm generation.
-- [Constant](/v2/reference/audio-modules/modulators/voice-start/constant): Creates a constant modulation signal (1.0) that can be used as a fixed gain offset or modulation source.
-- [Flex AHDSR Envelope](/v2/reference/audio-modules/modulators/envelope/flexahdsr): A more complex AHDSR envelope with draggable curves and multiple playback modes.
-- [LFO Modulator](/v2/reference/audio-modules/modulators/time-variant/lfo): Generates a periodic modulation signal with multiple waveform types, tempo sync, and an optional step sequencer mode.
-- [MIDI Player](/v2/reference/audio-modules/midi-processors/midiplayer): Plays MIDI sequences with transport controls, loop regions, and multi-track support for piano roll and step sequencer overlays.
-- [Random Modulator](/v2/reference/audio-modules/modulators/voice-start/random): Generates a random value at each voice start, with optional table mapping for custom probability distributions.
-- [Simple Envelope](/v2/reference/audio-modules/modulators/envelope/simpleenvelope): A lightweight two-stage envelope with attack and release, supporting linear or exponential curves.
-- [Table Envelope](/v2/reference/audio-modules/modulators/envelope/tableenvelope): An envelope with fully customizable attack and release shapes drawn as lookup tables.
+- [AHDSR Envelope]($MODULES.AHDSR$): An AHDSR envelope with adjustable curve shapes, optional downsampling for CPU savings, and per-voice modulation of all time parameters.
+- [Arpeggiator]($MODULES.Arpeggiator$): Configurable arpeggiator with tempo sync, direction, octave range, and per-step sliders for melodic sequencing and rhythm generation.
+- [Constant]($MODULES.Constant$): Creates a constant modulation signal (1.0) that can be used as a fixed gain offset or modulation source.
+- [Flex AHDSR Envelope]($MODULES.FlexAHDSR$): A more complex AHDSR envelope with draggable curves and multiple playback modes.
+- [LFO Modulator]($MODULES.LFO$): Generates a periodic modulation signal with multiple waveform types, tempo sync, and an optional step sequencer mode.
+- [MIDI Player]($MODULES.MidiPlayer$): Plays MIDI sequences with transport controls, loop regions, and multi-track support for piano roll and step sequencer overlays.
+- [Random Modulator]($MODULES.Random$): Generates a random value at each voice start, with optional table mapping for custom probability distributions.
+- [Simple Envelope]($MODULES.SimpleEnvelope$): A lightweight two-stage envelope with attack and release, supporting linear or exponential curves.
+- [Table Envelope]($MODULES.TableEnvelope$): An envelope with fully customizable attack and release shapes drawn as lookup tables.
 
 ---
 
@@ -254,10 +250,10 @@ Modulators that create modulation signals internally, such as envelopes and LFOs
 
 Effects that shape the frequency spectrum of the audio signal.
 
-- [Parametriq EQ](/v2/reference/audio-modules/effects/master/curveeq): A parametric equalizer with unlimited filter bands and an FFT spectrum display for visual feedback.
-- [Harmonic Filter](/v2/reference/audio-modules/effects/polyphonic/harmonicfilter): Polyphonic peak filters tuned to the root frequency and harmonics of each voice, with crossfadeable A/B slider pack configurations.
-- [Harmonic Filter Monophonic](/v2/reference/audio-modules/effects/monophonic/harmonicfiltermono): Monophonic peak filters tuned to the root frequency and harmonics of the last played note, with crossfadeable A/B configurations.
-- [Filter](/v2/reference/audio-modules/effects/polyphonic/polyphonicfilter): Applies monophonic or polyphonic filtering with modulatable frequency, gain, and resonance, supporting multiple filter types.
+- [Parametriq EQ]($MODULES.CurveEq$): A parametric equalizer with unlimited filter bands and an FFT spectrum display for visual feedback.
+- [Harmonic Filter]($MODULES.HarmonicFilter$): Polyphonic peak filters tuned to the root frequency and harmonics of each voice, with crossfadeable A/B slider pack configurations.
+- [Harmonic Filter Monophonic]($MODULES.HarmonicFilterMono$): Monophonic peak filters tuned to the root frequency and harmonics of the last played note, with crossfadeable A/B configurations.
+- [Filter]($MODULES.PolyphonicFilter$): Applies monophonic or polyphonic filtering with modulatable frequency, gain, and resonance, supporting multiple filter types.
 
 ---
 
@@ -265,10 +261,10 @@ Effects that shape the frequency spectrum of the audio signal.
 
 Effects that shape the amplitude or add distortion and saturation.
 
-- [Dynamics](/v2/reference/audio-modules/effects/master/dynamics): A dynamics processor combining gate, compressor, and limiter based on chunkware's SimpleCompressor algorithms.
-- [Polyshape FX](/v2/reference/audio-modules/effects/polyphonic/polyshapefx): A polyphonic waveshaper with multiple shaping modes, table-based curves, and optional oversampling.
-- [Saturator](/v2/reference/audio-modules/effects/master/saturator): Applies waveshaping saturation with pre/post gain controls and wet/dry mix.
-- [Shape FX](/v2/reference/audio-modules/effects/master/shapefx): Waveshaper effect with selectable shaping modes, bias, filters, and oversampling, suitable for distortion and tone shaping with optional autogain.
+- [Dynamics]($MODULES.Dynamics$): A dynamics processor combining gate, compressor, and limiter based on chunkware's SimpleCompressor algorithms.
+- [Polyshape FX]($MODULES.PolyshapeFX$): A polyphonic waveshaper with multiple shaping modes, table-based curves, and optional oversampling.
+- [Saturator]($MODULES.Saturator$): Applies waveshaping saturation with pre/post gain controls and wet/dry mix.
+- [Shape FX]($MODULES.ShapeFX$): Waveshaper effect with selectable shaping modes, bias, filters, and oversampling, suitable for distortion and tone shaping with optional autogain.
 
 ---
 
@@ -276,9 +272,9 @@ Effects that shape the amplitude or add distortion and saturation.
 
 Effects based on delayed signal copies, including chorus and phaser.
 
-- [Chorus](/v2/reference/audio-modules/effects/master/chorus): Stereo chorus effect with modulated delay lines for thickening and movement.
-- [Delay](/v2/reference/audio-modules/effects/master/delay): Stereo delay with independent left and right times, feedback, and filtering, with optional tempo sync for rhythmic echo effects.
-- [Phase FX](/v2/reference/audio-modules/effects/master/phasefx): Phaser effect using modulated allpass filters for sweeping frequency notches.
+- [Chorus]($MODULES.Chorus$): Stereo chorus effect with modulated delay lines for thickening and movement.
+- [Delay]($MODULES.Delay$): Stereo delay with independent left and right times, feedback, and filtering, with optional tempo sync for rhythmic echo effects.
+- [Phase FX]($MODULES.PhaseFX$): Phaser effect using modulated allpass filters for sweeping frequency notches.
 
 ---
 
@@ -286,8 +282,8 @@ Effects based on delayed signal copies, including chorus and phaser.
 
 Effects that simulate room acoustics and spatial reflections.
 
-- [Convolution Reverb](/v2/reference/audio-modules/effects/master/convolution): Zero-latency convolution reverb with adjustable dry/wet levels, predelay, damping, and high-cut filtering for shaping impulse responses.
-- [Simple Reverb](/v2/reference/audio-modules/effects/master/simplereverb): Algorithmic reverb based on Freeverb with controls for room size, damping, and stereo width.
+- [Convolution Reverb]($MODULES.Convolution$): Zero-latency convolution reverb with adjustable dry/wet levels, predelay, damping, and high-cut filtering for shaping impulse responses.
+- [Simple Reverb]($MODULES.SimpleReverb$): Algorithmic reverb based on Freeverb with controls for room size, damping, and stereo width.
 
 ---
 
@@ -295,25 +291,25 @@ Effects that simulate room acoustics and spatial reflections.
 
 Modules that forward, distribute, or proxy signals or events across the module tree. Contains sound generators, MIDI processors, effects, and modulators.
 
-- [MIDI CC to Note Generator](/v2/reference/audio-modules/midi-processors/cc2note): Turns a selected MIDI CC into a note trigger, useful for controller-driven drum or round-robin triggering.
-- [CC Swapper](/v2/reference/audio-modules/midi-processors/ccswapper): Swaps two MIDI CC numbers to remap controller data without changing the source device or automation.
-- [MIDI Channel Filter](/v2/reference/audio-modules/midi-processors/channelfilter): Filters incoming MIDI by channel, with optional MPE start and end channel ranges for MPE setups.
-- [MIDI Channel Setter](/v2/reference/audio-modules/midi-processors/channelsetter): Rewrites the MIDI channel for all incoming messages, useful for routing or consolidating controllers.
-- [EventData Envelope](/v2/reference/audio-modules/modulators/envelope/eventdataenvelope): An envelope modulator for time-varying event data slots, with smoothing for continuous modulation changes.
-- [Event Data Modulator](/v2/reference/audio-modules/modulators/voice-start/eventdatamodulator): Creates a modulation value based on event data written through the global routing manager, allowing external control data to modulate voices.
-- [Global Envelope Modulator](/v2/reference/audio-modules/modulators/envelope/globalenvelopemodulator): Connects to a global EnvelopeModulator in a GlobalModulatorContainer, allowing envelope modulation to be shared across multiple targets.
-- [Global Modulator Container](/v2/reference/audio-modules/sound-generators/globalmodulatorcontainer): A container that processes Modulator instances that can be used at different locations.
-- [Global Static Time Variant Modulator](/v2/reference/audio-modules/modulators/voice-start/globalstatictimevariantmodulator): Captures the current value of a global TimeVariantModulator at voice start, creating a constant per-voice modulation based on the LFO/envelope state at note-on.
-- [Global Time Variant Modulator](/v2/reference/audio-modules/modulators/time-variant/globaltimevariantmodulator): Shares a global TimeVariantModulator signal across multiple targets, allowing real-time continuous modulation from a single source.
-- [Global Voice Start Modulator](/v2/reference/audio-modules/modulators/voice-start/globalvoicestartmodulator): Connects to a global VoiceStartModulator in a GlobalModulatorContainer, allowing voice-start modulation to be shared across multiple targets.
-- [Macro Modulation Source](/v2/reference/audio-modules/sound-generators/macromodulationsource): A container that hosts modulator chains whose output drives the macro control system.
-- [Macro Modulator](/v2/reference/audio-modules/modulators/time-variant/macromodulator): A modulator controlled by a macro controller slot, allowing real-time automation and MIDI learn functionality.
-- [Matrix Modulator](/v2/reference/audio-modules/modulators/envelope/matrixmodulator): Combines multiple global modulators into a single modulation source with a base value and smoothed output.
-- [MidiMuter](/v2/reference/audio-modules/midi-processors/midimuter): Mutes incoming note-on events while allowing other MIDI messages, with optional stuck-note protection.
-- [Routing Matrix](/v2/reference/audio-modules/effects/master/routefx): Routing matrix for duplicating and distributing audio across channels, useful for building aux-style signal paths and complex channel layouts.
-- [Send Container](/v2/reference/audio-modules/sound-generators/sendcontainer): A signal chain tool that receives the signal from a Send FX and applies its own effect chain.
-- [Send Effect](/v2/reference/audio-modules/effects/master/sendfx): Routes audio to a send container with adjustable gain, channel offset, and optional smoothing for consistent send automation.
-- [Effect Slot](/v2/reference/audio-modules/effects/master/slotfx): A placeholder for another effect that can be swapped dynamically.
+- [MIDI CC to Note Generator]($MODULES.CC2Note$): Turns a selected MIDI CC into a note trigger, useful for controller-driven drum or round-robin triggering.
+- [CC Swapper]($MODULES.CCSwapper$): Swaps two MIDI CC numbers to remap controller data without changing the source device or automation.
+- [MIDI Channel Filter]($MODULES.ChannelFilter$): Filters incoming MIDI by channel, with optional MPE start and end channel ranges for MPE setups.
+- [MIDI Channel Setter]($MODULES.ChannelSetter$): Rewrites the MIDI channel for all incoming messages, useful for routing or consolidating controllers.
+- [EventData Envelope]($MODULES.EventDataEnvelope$): An envelope modulator for time-varying event data slots, with smoothing for continuous modulation changes.
+- [Event Data Modulator]($MODULES.EventDataModulator$): Creates a modulation value based on event data written through the global routing manager, allowing external control data to modulate voices.
+- [Global Envelope Modulator]($MODULES.GlobalEnvelopeModulator$): Connects to a global EnvelopeModulator in a GlobalModulatorContainer, allowing envelope modulation to be shared across multiple targets.
+- [Global Modulator Container]($MODULES.GlobalModulatorContainer$): A container that processes Modulator instances that can be used at different locations.
+- [Global Static Time Variant Modulator]($MODULES.GlobalStaticTimeVariantModulator$): Captures the current value of a global TimeVariantModulator at voice start, creating a constant per-voice modulation based on the LFO/envelope state at note-on.
+- [Global Time Variant Modulator]($MODULES.GlobalTimeVariantModulator$): Shares a global TimeVariantModulator signal across multiple targets, allowing real-time continuous modulation from a single source.
+- [Global Voice Start Modulator]($MODULES.GlobalVoiceStartModulator$): Connects to a global VoiceStartModulator in a GlobalModulatorContainer, allowing voice-start modulation to be shared across multiple targets.
+- [Macro Modulation Source]($MODULES.MacroModulationSource$): A container that hosts modulator chains whose output drives the macro control system.
+- [Macro Modulator]($MODULES.MacroModulator$): A modulator controlled by a macro controller slot, allowing real-time automation and MIDI learn functionality.
+- [Matrix Modulator]($MODULES.MatrixModulator$): Combines multiple global modulators into a single modulation source with a base value and smoothed output.
+- [MidiMuter]($MODULES.MidiMuter$): Mutes incoming note-on events while allowing other MIDI messages, with optional stuck-note protection.
+- [Routing Matrix]($MODULES.RouteFX$): Routing matrix for duplicating and distributing audio across channels, useful for building aux-style signal paths and complex channel layouts.
+- [Send Container]($MODULES.SendContainer$): A signal chain tool that receives the signal from a Send FX and applies its own effect chain.
+- [Send Effect]($MODULES.SendFX$): Routes audio to a send container with adjustable gain, channel offset, and optional smoothing for consistent send automation.
+- [Effect Slot]($MODULES.SlotFX$): A placeholder for another effect that can be swapped dynamically.
 
 ---
 
@@ -321,12 +317,12 @@ Modules that forward, distribute, or proxy signals or events across the module t
 
 Modules for analysis, placeholders, or structural purposes without audio processing.
 
-- [Analyser](/v2/reference/audio-modules/effects/master/analyser): Provides audio visualization tools including goniometer, oscilloscope, and spectrum analyzer.
-- [Empty](/v2/reference/audio-modules/effects/master/emptyfx): A placeholder effect that passes audio through unchanged, useful for routing or as a template.
-- [MidiMetronome](/v2/reference/audio-modules/effects/master/midimetronome): A metronome that produces click sounds synchronized to a connected MIDI player's tempo.
-- [Noise Grain Player](/v2/reference/audio-modules/effects/polyphonic/noisegrainplayer): A polyphonic granular noise player that blends an audio file with white noise at a configurable grain size.
-- [Simple Gain](/v2/reference/audio-modules/effects/master/simplegain): Utility gain processor with optional delay, stereo width, and balance control, useful for level automation, simple timing offsets, and mid-side shaping.
-- [Effect Slot](/v2/reference/audio-modules/effects/master/slotfx): A placeholder for another effect that can be swapped dynamically.
+- [Analyser]($MODULES.Analyser$): Provides audio visualization tools including goniometer, oscilloscope, and spectrum analyzer.
+- [Empty]($MODULES.EmptyFX$): A placeholder effect that passes audio through unchanged, useful for routing or as a template.
+- [MidiMetronome]($MODULES.MidiMetronome$): A metronome that produces click sounds synchronized to a connected MIDI player's tempo.
+- [Noise Grain Player]($MODULES.NoiseGrainPlayer$): A polyphonic granular noise player that blends an audio file with white noise at a configurable grain size.
+- [Simple Gain]($MODULES.SimpleGain$): Utility gain processor with optional delay, stereo width, and balance control, useful for level automation, simple timing offsets, and mid-side shaping.
+- [Effect Slot]($MODULES.SlotFX$): A placeholder for another effect that can be swapped dynamically.
 
 ---
 
@@ -334,9 +330,9 @@ Modules for analysis, placeholders, or structural purposes without audio process
 
 Effects that control volume, stereo width, or stereo balance. Contains effects and MIDI processors.
 
-- [Parametriq EQ](/v2/reference/audio-modules/effects/master/curveeq): A parametric equalizer with unlimited filter bands and an FFT spectrum display for visual feedback.
-- [Dynamics](/v2/reference/audio-modules/effects/master/dynamics): A dynamics processor combining gate, compressor, and limiter based on chunkware's SimpleCompressor algorithms.
-- [MidiMuter](/v2/reference/audio-modules/midi-processors/midimuter): Mutes incoming note-on events while allowing other MIDI messages, with optional stuck-note protection.
-- [Send Effect](/v2/reference/audio-modules/effects/master/sendfx): Routes audio to a send container with adjustable gain, channel offset, and optional smoothing for consistent send automation.
-- [Simple Gain](/v2/reference/audio-modules/effects/master/simplegain): Utility gain processor with optional delay, stereo width, and balance control, useful for level automation, simple timing offsets, and mid-side shaping.
-- [Stereo FX](/v2/reference/audio-modules/effects/polyphonic/stereofx): Polyphonic stereo panner with width control and modulatable pan position.
+- [Parametriq EQ]($MODULES.CurveEq$): A parametric equalizer with unlimited filter bands and an FFT spectrum display for visual feedback.
+- [Dynamics]($MODULES.Dynamics$): A dynamics processor combining gate, compressor, and limiter based on chunkware's SimpleCompressor algorithms.
+- [MidiMuter]($MODULES.MidiMuter$): Mutes incoming note-on events while allowing other MIDI messages, with optional stuck-note protection.
+- [Send Effect]($MODULES.SendFX$): Routes audio to a send container with adjustable gain, channel offset, and optional smoothing for consistent send automation.
+- [Simple Gain]($MODULES.SimpleGain$): Utility gain processor with optional delay, stereo width, and balance control, useful for level automation, simple timing offsets, and mid-side shaping.
+- [Stereo FX]($MODULES.StereoFX$): Polyphonic stereo panner with width control and modulatable pan position.

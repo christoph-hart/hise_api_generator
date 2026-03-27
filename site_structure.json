@@ -6,6 +6,10 @@
       "contentDir": "scripting-api",
       "description": "Scripting API class and method reference",
       "registrySource": "enrichment/base",
+      "sources": {
+        "pages": "enrichment/output/preview"
+      },
+      "mdcTransform": "api",
       "pattern": "{className}#{method}"
     },
     "MODULES": {
@@ -13,6 +17,11 @@
       "contentDir": "reference/audio-modules",
       "description": "Audio module reference (sound generators, effects, modulators, MIDI processors)",
       "registrySource": "module_enrichment/base/moduleList.json",
+      "sources": {
+        "pages": "module_enrichment/pages",
+        "static": "module_enrichment/resources/static"
+      },
+      "mdcTransform": "module",
       "typeMapping": {
         "SoundGenerator": "01.sound-generators",
         "MidiProcessor": "02.midi-processors",

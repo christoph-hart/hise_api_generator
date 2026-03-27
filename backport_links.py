@@ -34,7 +34,9 @@ PHASE4_AUTO_DIR = SCRIPT_DIR / "enrichment" / "phase4" / "auto"
 PHASE4_MANUAL_DIR = SCRIPT_DIR / "enrichment" / "phase4" / "manual"
 PHASE4B_DIR = SCRIPT_DIR / "enrichment" / "phase4b"
 MODULE_PAGES_DIR = SCRIPT_DIR / "module_enrichment" / "pages"
+MODULE_STATIC_DIR = SCRIPT_DIR / "module_enrichment" / "resources" / "static"
 MODULE_LIST_PATH = SCRIPT_DIR / "module_enrichment" / "base" / "moduleList.json"
+ENRICHMENT_BASE_DIR = SCRIPT_DIR / "enrichment" / "base"
 
 WARNING_PLACEHOLDER = "$WARNING_TO_BE_REPLACED$"
 TIP_PLACEHOLDER = "$TIP_TO_BE_REPLACED$"
@@ -255,6 +257,100 @@ def backport_module_see_also(dry_run: bool) -> int:
 
 
 # ---------------------------------------------------------------------------
+# API class lookup (for reverse-resolving /v2/scripting-api/ URLs)
+# ---------------------------------------------------------------------------
+
+def build_api_slug_to_class(base_dir: Path) -> dict:
+    """Build a reverse mapping from URL slugs to canonical API class names."""
+    if not base_dir.is_dir():
+        return {}
+
+    slug_to_class = {}
+    for json_path in sorted(base_dir.glob("*.json")):
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        class_name = data["className"]
+        slug_to_class[class_name.lower()] = class_name
+    return slug_to_class
+
+
+# ---------------------------------------------------------------------------
+# Static module files: hardcoded URL links
+# ---------------------------------------------------------------------------
+
+def backport_static_links(dry_run: bool) -> int:
+    """Convert hardcoded Nuxt URLs to $DOMAIN$ tokens in static module files.
+
+    Converts:
+      [Label](/v2/reference/audio-modules/.../slug)  ->  [Label]($MODULES.ModuleId$)
+      [Label](/v2/scripting-api/classname#method)     ->  [Label]($API.ClassName.method$)
+      [Label](/v2/scripting-api/classname)            ->  [Label]($API.ClassName$)
+    """
+    if not MODULE_STATIC_DIR.is_dir():
+        print("  Static module directory not found, skipping")
+        return 0
+
+    url_to_id = build_module_url_to_id(MODULE_LIST_PATH)
+    slug_to_class = build_api_slug_to_class(ENRICHMENT_BASE_DIR)
+    total_changes = 0
+
+    for md_file in sorted(MODULE_STATIC_DIR.rglob("*.md")):
+        with open(md_file, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        original = content
+
+        def replace_link(m):
+            label = m.group(1)
+            url = m.group(2)
+
+            # Module links: /v2/reference/audio-modules/.../slug
+            if "/v2/reference/audio-modules/" in url:
+                slug = url.rstrip("/").split("/")[-1]
+                module_id = url_to_id.get(slug)
+                if module_id:
+                    return f"[{label}]($MODULES.{module_id}$)"
+                # Unknown module slug, leave unchanged
+                return m.group(0)
+
+            # API links: /v2/scripting-api/classname#method or /v2/scripting-api/classname
+            if "/v2/scripting-api/" in url:
+                path_part = url.split("/v2/scripting-api/")[-1]
+                if "#" in path_part:
+                    class_slug, method = path_part.split("#", 1)
+                    class_name = slug_to_class.get(class_slug, class_slug)
+                    return f"[{label}]($API.{class_name}.{method}$)"
+                else:
+                    class_slug = path_part.rstrip("/")
+                    class_name = slug_to_class.get(class_slug, class_slug)
+                    return f"[{label}]($API.{class_name}$)"
+
+            # Other URLs, leave unchanged
+            return m.group(0)
+
+        # Match markdown links [text](url) but not image links ![text](url)
+        content = re.sub(
+            r'(?<!!)\[([^\]]+)\]\((/v2/[^)]+)\)',
+            replace_link,
+            content
+        )
+
+        if content != original:
+            changes = sum(1 for a, b in zip(
+                original.split('\n'), content.split('\n')
+            ) if a != b)
+            total_changes += changes
+            if dry_run:
+                print(f"  [DRY] {md_file.relative_to(SCRIPT_DIR)}: {changes} links converted")
+            else:
+                with open(md_file, "w", encoding="utf-8") as f:
+                    f.write(content)
+                print(f"  {md_file.relative_to(SCRIPT_DIR)}: {changes} links converted")
+
+    return total_changes
+
+
+# ---------------------------------------------------------------------------
 # Phase 4: Common Mistake Titles
 # ---------------------------------------------------------------------------
 
@@ -315,7 +411,7 @@ def main():
         help="Preview changes without writing files",
     )
     parser.add_argument(
-        "--target", choices=["phase1", "phase4", "modules", "mistakes", "all"],
+        "--target", choices=["phase1", "phase4", "modules", "mistakes", "static", "all"],
         default="all",
         help="Which source files to process (default: all)",
     )
@@ -341,6 +437,12 @@ def main():
         print("=== Phase 4: Common Mistake Titles ===")
         n = backport_phase4_common_mistakes(args.dry_run)
         print(f"  Total: {n} mistakes titled\n")
+        total += n
+
+    if args.target in ("all", "static"):
+        print("=== Static Module Files: URL Links ===")
+        n = backport_static_links(args.dry_run)
+        print(f"  Total: {n} lines converted\n")
         total += n
 
     if args.target in ("all", "modules"):

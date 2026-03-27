@@ -18,7 +18,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 | **Scripting API enrichment** | `enrichment/output/api_reference.json` | Active | [scripting-api-enrichment.md](doc_builders/scripting-api-enrichment.md) |
 | **LAF function extraction** | `laf_style_guide.json` | Active | [laf-extraction.md](doc_builders/laf-extraction.md) |
 | **Component properties** | TBD | Planned | [component-properties.md](doc_builders/component-properties.md) |
-| **Module enrichment** | `module_enrichment/output/moduleList.json` | Planned | [module-enrichment.md](doc_builders/module-enrichment.md) |
+| **Module enrichment** | `module_enrichment/pages/` + `module_enrichment/resources/static/` | Active | [module-enrichment.md](doc_builders/module-enrichment.md) |
 
 
 ## Directory Structure

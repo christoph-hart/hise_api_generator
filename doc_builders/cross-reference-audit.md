@@ -46,12 +46,30 @@ Each type of cross-reference has a specific source file where it must be written
 
 ## Audit Workflow
 
-### Step 1: Scan
+### Step 0: Generate Topology
 
-Read the source files for the scope the user specified. Build a mental index of:
+Before scanning content, generate the cross-reference topology JSON:
+
+```bash
+python publish.py --topology cross_references.json
+```
+
+This scans all source files and produces a compact JSON with:
+- Every page and its outgoing links (classified as `seeAlso` or `inlineLinks`)
+- Bidirectional gaps (A links to B but B doesn't link back)
+- Orphan pages (pages with no outgoing links)
+- Statistics (total links, gaps, orphans)
+
+Read this JSON first. It gives you the full graph without scanning hundreds of files. Focus your analysis on:
+- **Bidirectional gaps** - the most actionable findings
+- **Orphan pages** - pages that need outgoing links
+- **Pages with only see-also but no inline links** - opportunities for in-prose enrichment
+
+### Step 1: Scan Content
+
+For the scope the user specified, read the actual source files to understand:
 - What each page/method is about (its purpose and key concepts)
-- What it currently links to (existing `$DOMAIN$` tokens, `**Cross References:**`, `**See also:**`)
-- What concepts it mentions but doesn't link to
+- What concepts it mentions but doesn't link to (the topology JSON shows existing links; you look for missing ones)
 
 ### Step 2: Propose
 

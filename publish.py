@@ -916,37 +916,157 @@ def validate_images(content: str, filepath: str, output_dir: Path,
 # Source collection
 # ---------------------------------------------------------------------------
 
-def collect_sources(script_dir: Path) -> list:
-    """Collect all markdown files from pipeline outputs.
+def _slugify(title: str) -> str:
+    """Convert a title to a URL slug."""
+    slug = title.lower().strip()
+    slug = re.sub(r'[^a-z0-9\s-]', '', slug)
+    slug = re.sub(r'[\s]+', '-', slug)
+    return slug
+
+
+def _extract_frontmatter_field(content: str, field: str) -> str:
+    """Extract a field value from YAML frontmatter."""
+    m = re.search(rf'^{field}:\s*(.+)$', content, re.MULTILINE)
+    if m:
+        return m.group(1).strip().strip('"').strip("'")
+    return ""
+
+
+def _get_module_output_subdir(module_id: str, module_list_path: Path,
+                               type_mapping: dict) -> str:
+    """Look up a module's output subdirectory from moduleList.json + typeMapping."""
+    if not module_list_path.is_file():
+        return ""
+
+    with open(module_list_path, "r", encoding="utf-8") as f:
+        module_list = json.load(f)
+
+    for module in module_list.get("modules", []):
+        if module["id"] == module_id:
+            module_type = module.get("type", "")
+            module_subtype = module.get("subtype", "")
+            type_key = f"{module_type}.{module_subtype}" if module_subtype else module_type
+            dir_path = type_mapping.get(type_key) or type_mapping.get(module_type)
+            if dir_path:
+                return dir_path
+            break
+    return ""
+
+
+# Cache for module list lookups
+_module_list_cache = None
+
+
+def _get_module_list(module_list_path: Path) -> list:
+    """Load and cache moduleList.json modules array."""
+    global _module_list_cache
+    if _module_list_cache is not None:
+        return _module_list_cache
+
+    if not module_list_path.is_file():
+        _module_list_cache = []
+        return _module_list_cache
+
+    with open(module_list_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    _module_list_cache = data.get("modules", [])
+    return _module_list_cache
+
+
+def _resolve_module_subdir(module_id: str, module_list_path: Path,
+                            type_mapping: dict) -> str:
+    """Look up a module's output subdirectory using cached module list."""
+    modules = _get_module_list(module_list_path)
+    for module in modules:
+        if module["id"] == module_id:
+            module_type = module.get("type", "")
+            module_subtype = module.get("subtype", "")
+            type_key = f"{module_type}.{module_subtype}" if module_subtype else module_type
+            return type_mapping.get(type_key) or type_mapping.get(module_type, "")
+    return ""
+
+
+def collect_sources(script_dir: Path, site_structure: dict) -> list:
+    """Collect all markdown files from pipeline sources defined in site_structure.json.
 
     Returns list of (source_path, domain, relative_output_path) tuples.
     """
     sources = []
 
-    # API: enrichment/output/preview/*.md (raw markdown, before post-processing)
-    # We read from preview/ (not website/) because publish.py applies its own
-    # MDC transforms. Reading from website/ would double-apply transforms.
-    preview_dir = script_dir / "enrichment" / "output" / "preview"
-    if preview_dir.is_dir():
-        for md_file in sorted(preview_dir.glob("*.md")):
-            # Skip non-class files (review pages, LLM pages)
-            if "_review" in md_file.name or "_llm" in md_file.name:
-                continue
-            # Output goes to scripting-api/filename.md
-            out_rel = Path("scripting-api") / md_file.name.lower()
-            sources.append((md_file, "API", out_rel))
+    for domain_name, domain_config in site_structure.get("domains", {}).items():
+        domain_sources = domain_config.get("sources", {})
+        content_dir = domain_config.get("contentDir", "")
+        type_mapping = domain_config.get("typeMapping", {})
 
-    # Modules: module_enrichment/output/**/*.md
-    # We read from output/ (not pages/) because the output includes both
-    # authored pages and static index files merged together. Once the module
-    # pipeline is fully migrated to use $DOMAIN$ tokens, we could read from
-    # pages/ directly, but for now output/ is the complete set.
-    module_dir = script_dir / "module_enrichment" / "output"
-    if module_dir.is_dir():
-        for md_file in sorted(module_dir.rglob("*.md")):
-            rel = md_file.relative_to(module_dir)
-            out_rel = Path("reference") / "audio-modules" / rel
-            sources.append((md_file, "MODULES", out_rel))
+        # Pages: individual content files (API classes, module pages)
+        pages_path = domain_sources.get("pages")
+        if pages_path:
+            pages_dir = script_dir / pages_path
+            if pages_dir.is_dir():
+                for md_file in sorted(pages_dir.glob("*.md")):
+                    # Skip non-content files
+                    if "_review" in md_file.name or "_llm" in md_file.name:
+                        continue
+
+                    if domain_name == "API":
+                        # API: lowercase filename
+                        out_rel = Path(content_dir) / md_file.name.lower()
+                    elif type_mapping:
+                        # Modules: use typeMapping to determine subdirectory
+                        module_id = md_file.stem
+                        registry_source = domain_config.get("registrySource", "")
+                        module_list_path = script_dir / registry_source
+                        subdir = _resolve_module_subdir(
+                            module_id, module_list_path, type_mapping
+                        )
+                        if subdir:
+                            out_rel = Path(content_dir) / subdir / md_file.name
+                        else:
+                            # Unknown module type, place in root
+                            out_rel = Path(content_dir) / md_file.name
+                    else:
+                        # Default: preserve filename
+                        out_rel = Path(content_dir) / md_file.name.lower()
+
+                    sources.append((md_file, domain_name, out_rel, "pages"))
+
+        # Static: index/overview pages placed by title-based slug
+        static_path = domain_sources.get("static")
+        if static_path:
+            static_dir = script_dir / static_path
+            if static_dir.is_dir():
+                for md_file in sorted(static_dir.rglob("*.md")):
+                    with open(md_file, "r", encoding="utf-8") as f:
+                        file_content = f.read()
+
+                    # Check for explicit placement override
+                    placement = _extract_frontmatter_field(file_content, "placement")
+                    if placement:
+                        if placement == "/":
+                            out_rel = Path(content_dir) / "index.md"
+                        else:
+                            out_rel = Path(content_dir) / placement / "index.md"
+                    else:
+                        # Derive from title
+                        title = _extract_frontmatter_field(file_content, "title")
+                        if title:
+                            slug = _slugify(title)
+                            # Root index: if the file is named index.md at the
+                            # static root, it's the domain root
+                            rel = md_file.relative_to(static_dir)
+                            if rel == Path("index.md") or rel.name == "index.md" and len(rel.parts) == 1:
+                                out_rel = Path(content_dir) / "index.md"
+                            else:
+                                out_rel = Path(content_dir) / slug / "index.md"
+                        else:
+                            # No title, use filename
+                            stem = md_file.stem
+                            if stem == "index":
+                                out_rel = Path(content_dir) / "index.md"
+                            else:
+                                out_rel = Path(content_dir) / stem / "index.md"
+
+                    sources.append((md_file, domain_name, out_rel, "static"))
 
     return sources
 
@@ -954,6 +1074,177 @@ def collect_sources(script_dir: Path) -> list:
 # ---------------------------------------------------------------------------
 # Main pipeline
 # ---------------------------------------------------------------------------
+
+def collect_topology(content: str, registry: LinkRegistry, page_key: str,
+                     source_path: str) -> dict:
+    """Scan a file for all $DOMAIN$ tokens and classify as see-also or inline.
+
+    Returns a dict with seeAlso and inlineLinks lists of canonical refs.
+    """
+    see_also = []
+    inline_links = []
+
+    # Check if we're in a see-also line context
+    for line in content.split('\n'):
+        is_see_also_line = (
+            line.startswith("**See also:**") or
+            line.startswith("**Cross References:**")
+        )
+
+        for m in LINK_TOKEN_PATTERN.finditer(line):
+            domain = m.group(1)
+            target_str = m.group(2)
+            fragment = m.group(3)
+
+            parts = target_str.split(".")
+            url, canonical, match_type = registry.resolve_compound(
+                domain, parts, fragment
+            )
+
+            if canonical:
+                ref = f"{domain}.{canonical}"
+            else:
+                ref = f"{domain}.{target_str}"
+
+            if is_see_also_line:
+                if ref not in see_also:
+                    see_also.append(ref)
+            else:
+                if ref not in inline_links:
+                    inline_links.append(ref)
+
+    # Also check markdown links [text]($DOMAIN.Target$) on non-see-also lines
+    for line in content.split('\n'):
+        is_see_also_line = (
+            line.startswith("**See also:**") or
+            line.startswith("**Cross References:**")
+        )
+        if is_see_also_line:
+            continue
+
+        for m in re.finditer(r'\[[^\]]+\]\(\$([A-Z]+)\.([^$#]+?)(?:#[^$]+)?\$\)', line):
+            domain = m.group(1)
+            target_str = m.group(2)
+            parts = target_str.split(".")
+            url, canonical, match_type = registry.resolve_compound(domain, parts)
+            ref = f"{domain}.{canonical}" if canonical else f"{domain}.{target_str}"
+            if ref not in inline_links and ref not in see_also:
+                inline_links.append(ref)
+
+    return {
+        "source": source_path,
+        "seeAlso": see_also,
+        "inlineLinks": inline_links,
+    }
+
+
+def run_topology(topology_path: Path):
+    """Scan all sources and emit a cross-reference topology JSON."""
+
+    if not SITE_STRUCTURE_PATH.is_file():
+        print(f"ERROR: {SITE_STRUCTURE_PATH} not found.")
+        sys.exit(1)
+
+    with open(SITE_STRUCTURE_PATH, "r", encoding="utf-8") as f:
+        site_structure = json.load(f)
+
+    print("Building link registry...")
+    registry = LinkRegistry(site_structure, SCRIPT_DIR)
+    for domain, targets in registry.targets.items():
+        print(f"  {domain}: {len(targets)} targets")
+
+    sources = collect_sources(SCRIPT_DIR, site_structure)
+    if not sources:
+        print("No source files found.")
+        return
+
+    print(f"\nScanning {len(sources)} files for cross-references...")
+
+    pages = {}
+    all_refs = {}  # page_key -> set of outgoing refs
+    static_pages = set()  # pages from static sources (index/overview pages)
+
+    for source_path, domain, out_rel, source_type in sources:
+        with open(source_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Derive page key from domain + identifier
+        lines = content.split('\n')
+        if domain == "API":
+            name = get_class_name_from_heading(lines)
+            page_key = f"API.{name}" if name else f"API.{out_rel.stem}"
+        elif domain == "MODULES":
+            if source_type == "static":
+                # Static pages: use title for key
+                title = _extract_frontmatter_field(content, "title")
+                page_key = f"MODULES._static.{_slugify(title)}" if title else f"MODULES._static.{out_rel.stem}"
+            else:
+                # Module pages: use moduleId from frontmatter or filename
+                module_id = _extract_frontmatter_field(content, "moduleId")
+                if not module_id:
+                    module_id = out_rel.stem
+                page_key = f"MODULES.{module_id}"
+        else:
+            page_key = f"{domain}.{out_rel.stem}"
+
+        rel_source = str(source_path.relative_to(SCRIPT_DIR)).replace("\\", "/")
+        topo = collect_topology(content, registry, page_key, rel_source)
+        topo["sourceType"] = source_type
+        pages[page_key] = topo
+        all_refs[page_key] = set(topo["seeAlso"] + topo["inlineLinks"])
+        if source_type == "static":
+            static_pages.add(page_key)
+
+    # Detect bidirectional gaps (exclude static pages - they link to all
+    # modules in their category as a directory listing, modules don't
+    # need to link back to the index)
+    gaps = []
+    for page_key, outgoing in all_refs.items():
+        if page_key in static_pages:
+            continue  # Skip static -> content gaps
+        for ref in outgoing:
+            if ref in static_pages:
+                continue  # Skip content -> static gaps
+            # Check if the target page links back
+            if ref in all_refs and page_key not in all_refs[ref]:
+                gaps.append({
+                    "from": page_key,
+                    "to": ref,
+                    "reverseExists": False,
+                })
+
+    # Statistics
+    total_see_also = sum(len(p["seeAlso"]) for p in pages.values())
+    total_inline = sum(len(p["inlineLinks"]) for p in pages.values())
+    orphan_pages = [k for k, v in all_refs.items() if not v]
+
+    topology = {
+        "generated": __import__("datetime").datetime.now(
+            __import__("datetime").timezone.utc
+        ).isoformat(),
+        "stats": {
+            "totalPages": len(pages),
+            "totalSeeAlso": total_see_also,
+            "totalInlineLinks": total_inline,
+            "bidirectionalGaps": len(gaps),
+            "orphanPages": len(orphan_pages),
+        },
+        "pages": pages,
+        "bidirectionalGaps": gaps,
+        "orphanPages": orphan_pages,
+    }
+
+    with open(topology_path, "w", encoding="utf-8") as f:
+        json.dump(topology, f, indent=2, ensure_ascii=False)
+
+    print(f"\n{'=' * 60}")
+    print(f"Topology written to {topology_path}")
+    print(f"  Pages: {len(pages)}")
+    print(f"  See-also links: {total_see_also}")
+    print(f"  Inline links: {total_inline}")
+    print(f"  Bidirectional gaps: {len(gaps)}")
+    print(f"  Orphan pages (no outgoing links): {len(orphan_pages)}")
+
 
 def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
     """Main publish pipeline."""
@@ -973,7 +1264,7 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         print(f"  {domain}: {len(targets)} targets")
 
     # Collect source files
-    sources = collect_sources(SCRIPT_DIR)
+    sources = collect_sources(SCRIPT_DIR, site_structure)
     if not sources:
         print("No source files found.")
         return
@@ -983,7 +1274,7 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
     messages = []
     files_written = 0
 
-    for source_path, domain, out_rel in sources:
+    for source_path, domain, out_rel, source_type in sources:
         with open(source_path, "r", encoding="utf-8") as f:
             content = f.read()
 
@@ -994,11 +1285,12 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         # Step 1: Resolve $DOMAIN.Target$ tokens
         content = resolve_tokens(content, registry, str(source_path), messages)
 
-        # Step 2: Apply MDC transforms
-        if domain == "API":
+        # Step 2: Apply MDC transforms based on domain config
+        mdc_transform = site_structure.get("domains", {}).get(domain, {}).get("mdcTransform", "")
+        if mdc_transform == "api":
             content = apply_mdc_transforms(content, class_name, messages,
                                            str(source_path))
-        elif domain == "MODULES":
+        elif mdc_transform == "module":
             content = apply_module_mdc_transforms(content, messages,
                                                    str(source_path))
 
@@ -1072,11 +1364,18 @@ def main():
         "--dry-run", action="store_true",
         help="Resolve and validate only, do not write files",
     )
+    parser.add_argument(
+        "--topology", metavar="FILE",
+        help="Emit cross-reference topology JSON and exit (no publish)",
+    )
 
     args = parser.parse_args()
-    output_dir = Path(args.output_dir).resolve()
 
-    run(output_dir, strict=args.strict, dry_run=args.dry_run)
+    if args.topology:
+        run_topology(Path(args.topology).resolve())
+    else:
+        output_dir = Path(args.output_dir).resolve()
+        run(output_dir, strict=args.strict, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
