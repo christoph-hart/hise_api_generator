@@ -25,11 +25,11 @@ The namespace resolves **special folder locations** via constants that you pass 
 
 The typical workflow is to call `FileSystem.getFolder()` to obtain a `File` object, then navigate from there with `File.getChildFile()`. For file browser dialogs, all four browse methods run asynchronously and deliver results via a callback function - they never return a value directly.
 
-> Using any of the user's personal folders (`UserHome`, `Documents`, `Desktop`, `Downloads`) without a good reason is bad practice and should be avoided. Prefer `AppData` for persistent plugin data.
+> [!Tip:Prefer AppData over personal folders] Using any of the user's personal folders (`UserHome`, `Documents`, `Desktop`, `Downloads`) without a good reason is bad practice and should be avoided. Prefer `AppData` for persistent plugin data.
 
-> HISE-managed locations (`Samples`, `AudioFiles`, `Expansions`, `UserPresets`, `AppData`) resolve to different paths depending on whether you are running in the HISE IDE or an exported plugin. OS-mapped locations (`UserHome`, `Desktop`, `Documents`, etc.) resolve identically in all builds.
+> [!Tip:HISE locations resolve differently per build] HISE-managed locations (`Samples`, `AudioFiles`, `Expansions`, `UserPresets`, `AppData`) resolve to different paths depending on whether you are running in the HISE IDE or an exported plugin. OS-mapped locations (`UserHome`, `Desktop`, `Documents`, etc.) resolve identically in all builds.
 
-> To load audio files into a Convolution Reverb or Audio Loop Player in an exported project, use `Engine.loadAudioFilesIntoPool()` rather than accessing the AudioFiles folder directly with `getFolder()`.
+> [!Tip:Use loadAudioFilesIntoPool for exported projects] To load audio files into a Convolution Reverb or Audio Loop Player in an exported project, use `Engine.loadAudioFilesIntoPool()` rather than accessing the AudioFiles folder directly with `getFolder()`.
 
 ## Common Mistakes
 

@@ -22,7 +22,7 @@ A for-in loop always iterates over all elements (the full capacity), unlike `Fix
 
 Three methods depend on the factory's compare function: `indexOf()`, `contains()`, and `sort()`. Set the compare function on the factory via `FixObjectFactory.setCompareFunction()` before using any of these - the default byte-level comparator is rarely what you want.
 
-> The `length` constant is set at creation time and never changes. All elements are valid and iterable at all times - there is no concept of empty or unoccupied slots.
+> [!Tip:Fixed length, all slots always valid] The `length` constant is set at creation time and never changes. All elements are valid and iterable at all times - there is no concept of empty or unoccupied slots.
 
 ## Common Mistakes
 

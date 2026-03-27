@@ -19,7 +19,7 @@ In classic mode, the slot maintains a filtered list of allowed effect types - po
 const var slot = Synth.getSlotFX("MyEffectSlot");
 ```
 
-> `setBypassed()` is not available on SlotFX. To bypass the loaded effect, call `setBypassed()` on the `Effect` handle returned by `setEffect()` or `getCurrentEffect()`.
+> [!Tip:Bypass via loaded Effect handle instead] `setBypassed()` is not available on SlotFX. To bypass the loaded effect, call `setBypassed()` on the `Effect` handle returned by `setEffect()` or `getCurrentEffect()`.
 
 ## Common Mistakes
 

@@ -9,7 +9,7 @@ MidiList is a fixed-size 128-slot integer array created with `Engine.createMidiL
 
 Slots are indexed 0-127 (matching MIDI note numbers) and can hold any integer value, with `-1` serving as the sentinel for "empty". You can read and write individual slots or use bulk operations to fill, search, and count across all 128 values at once. The full array can be serialised to a compact Base64 string for storage in user presets or project data.
 
-> Bracket syntax is supported: `list[60]` is equivalent to `list.getValue(60)`.
+> [!Tip:Bracket syntax supported for access] Bracket syntax is supported: `list[60]` is equivalent to `list.getValue(60)`.
 
 ## Common Mistakes
 

@@ -21,7 +21,7 @@ pnl.set("width", 200);
 pnl.set("height", 100);
 ```
 
-> Set the `opaque` property to `true` on panels that fill their entire area with a solid background to avoid unnecessary alpha compositing. Use the minimum `allowCallbacks` level needed for your use case - `"All Callbacks"` fires on every mouse move, which adds overhead when only click handling is required.
+> [!Tip:Set opaque and minimal allowCallbacks level] Set the `opaque` property to `true` on panels that fill their entire area with a solid background to avoid unnecessary alpha compositing. Use the minimum `allowCallbacks` level needed for your use case - `"All Callbacks"` fires on every mouse move, which adds overhead when only click handling is required.
 
 ## Common Mistakes
 

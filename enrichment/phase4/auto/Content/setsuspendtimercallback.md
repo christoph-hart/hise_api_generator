@@ -4,4 +4,4 @@ The callback receives a single boolean: `true` when timers should be suspended (
 
 For complex projects, attach a Broadcaster to this callback slot and then register all timer objects as listeners at their definition, rather than managing them in a single callback function.
 
-> During development, use the moon icon tool in the Interface Designer to simulate the suspension process, since you cannot close and reopen plugin interfaces while working in the HISE IDE.
+> [!Tip:Use moon icon to simulate suspension in IDE] During development, use the moon icon tool in the Interface Designer to simulate the suspension process, since you cannot close and reopen plugin interfaces while working in the HISE IDE.

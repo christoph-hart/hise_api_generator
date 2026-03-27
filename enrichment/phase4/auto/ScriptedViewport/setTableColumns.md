@@ -33,7 +33,7 @@ Defines the columns of the table. Pass an array of column definition objects, ea
 | `showTextBox` | bool | true | Enables shift-click text input |
 | `style` | String | `"Knob"` | Knob, Horizontal, or Vertical |
 
-> The range property names (`MinValue`, `MaxValue`, `StepSize`, `SkewFactor`) follow the default `"scriptnode"` naming convention. You can change this with the `SliderRangeIdSet` property in `setTableMode()`.
+> [!Tip:Range property naming convention] The range property names (`MinValue`, `MaxValue`, `StepSize`, `SkewFactor`) follow the default `"scriptnode"` naming convention. You can change this with the `SliderRangeIdSet` property in `setTableMode()`.
 
 **ComboBox columns:**
 

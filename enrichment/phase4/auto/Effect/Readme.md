@@ -23,7 +23,7 @@ The class provides four main capability groups:
 
 Effect shares its core API surface (parameter access, bypass, state serialisation, modulator chain management) with `Modulator`, `ChildSynth`, and `MidiProcessor`. Effect adds output level metering and draggable filter configuration.
 
-> Effect references can only be obtained during `onInit` via `Synth.getEffect()`.
+> [!Tip:Get references in onInit, soft bypass for master effects] Effect references can only be obtained during `onInit` via `Synth.getEffect()`.
 > Dynamically created effects use `Synth.addEffect()` or `Builder.create()`.
 > Master effects use a soft bypass with fade-out to avoid clicks.
 

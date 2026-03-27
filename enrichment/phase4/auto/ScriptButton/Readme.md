@@ -25,7 +25,7 @@ Only 2 and 6 are valid strip counts. Other values silently fall back to the defa
 
 The `setValueOnClick` property controls whether the button responds on mouse-down (true) or mouse-up (false, the default), giving immediate response when needed.
 
-> ScriptButton inherits most of its methods from ScriptComponent. The button-specific methods are `setPopupData()` for popup attachment and the filmstrip/radio group/momentary properties. The `min` and `max` properties are deactivated since the value range is always 0 to 1. When a radio group button is exposed as a plugin parameter, it is automatically flagged as a meta parameter because toggling one button affects others in the group.
+> [!Tip:Inherits most methods from ScriptComponent] ScriptButton inherits most of its methods from ScriptComponent. The button-specific methods are `setPopupData()` for popup attachment and the filmstrip/radio group/momentary properties. The `min` and `max` properties are deactivated since the value range is always 0 to 1. When a radio group button is exposed as a plugin parameter, it is automatically flagged as a meta parameter because toggling one button affects others in the group.
 
 ## Common Mistakes
 

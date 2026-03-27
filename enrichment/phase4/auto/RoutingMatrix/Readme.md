@@ -23,9 +23,9 @@ For multi-output plugins that route audio to more than one stereo output pair, c
 
 The class exposes two constants, `RoutingMatrix.NumInputs` and `RoutingMatrix.NumOutputs`, but these are snapshot values captured at construction time. Use `getNumSourceChannels()` and `getNumDestinationChannels()` to read the live channel counts after resizing.
 
-> Multi-output routing requires a custom HISE build with increased channel limits. Set `NUM_MAX_CHANNELS` and `HISE_NUM_PLUGIN_CHANNELS` to the required channel count (must be a multiple of 2) in the Projucer preprocessor definitions, then rebuild HISE. Add the same definitions to your project settings when exporting the plugin.
+> [!Tip:Multi-output needs custom channel build] Multi-output routing requires a custom HISE build with increased channel limits. Set `NUM_MAX_CHANNELS` and `HISE_NUM_PLUGIN_CHANNELS` to the required channel count (must be a multiple of 2) in the Projucer preprocessor definitions, then rebuild HISE. Add the same definitions to your project settings when exporting the plugin.
 
-> Only synth modules, polyphonic effects, and hardcoded DSP modules have routing matrices. Modulators, MIDI processors, and monophonic effects do not.
+> [!Tip:Only synths and polyphonic effects have matrices] Only synth modules, polyphonic effects, and hardcoded DSP modules have routing matrices. Modulators, MIDI processors, and monophonic effects do not.
 
 ## Common Mistakes
 

@@ -30,7 +30,7 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while slider-pack binding uses `SliderPackIndex` instead.
 
-> The wrapper accepts any module that holds SliderPack data internally, not only modules whose name suggests slider pack functionality.
+> [!Tip:Accepts any module with SliderPack data] The wrapper accepts any module that holds SliderPack data internally, not only modules whose name suggests slider pack functionality.
 
 ## Common Mistakes
 

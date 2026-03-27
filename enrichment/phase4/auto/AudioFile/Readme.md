@@ -43,7 +43,7 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while audio-slot binding uses `sampleIndex` instead.
 
-> AudioFile handles are references to data slots, not file objects. Loading a file with `loadFile()` populates the slot with audio data from the pool. To work with actual files on disk, pass the reference string from `getCurrentlyLoadedFile()` to `FileSystem.fromReferenceString()` to obtain a File object.
+> [!Tip:Handles reference data slots, not files] AudioFile handles are references to data slots, not file objects. Loading a file with `loadFile()` populates the slot with audio data from the pool. To work with actual files on disk, pass the reference string from `getCurrentlyLoadedFile()` to `FileSystem.fromReferenceString()` to obtain a File object.
 
 ## Common Mistakes
 

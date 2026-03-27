@@ -38,7 +38,7 @@ Some methods operate on the full allocated capacity rather than just the used po
 | `fill`, `copy` | All allocated slots (full `length` capacity) |
 | `toBase64`, `fromBase64` | Full memory block including unused slots |
 
-> Duplicate detection and element lookup use the factory's compare function set via `FixObjectFactory.setCompareFunction()`. Set the compare function before creating the stack or immediately after. Removal does not preserve insertion order - call `sort()` after modifications if ordering matters.
+> [!Tip:Compare function controls duplicate detection] Duplicate detection and element lookup use the factory's compare function set via `FixObjectFactory.setCompareFunction()`. Set the compare function before creating the stack or immediately after. Removal does not preserve insertion order - call `sort()` after modifications if ordering matters.
 
 ## Common Mistakes
 

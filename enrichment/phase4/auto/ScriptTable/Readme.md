@@ -38,7 +38,7 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 `setSnapValues()` configures x-axis snap points for point dragging, while `setMouseHandlingProperties()` controls edit behaviour such as edge locking, swap rules, and grid stepping.
 
-> ScriptTable is a UI component. Do setup work once in `onInit` and reuse handles at runtime. Also note that `addToMacroControl()` is intentionally not active for ScriptTable, and `setPropertiesFromJSON()` should be done via `Content.setPropertiesFromJSON(componentId, jsonData)`.
+> [!Tip:Setup once in onInit, reuse handles] ScriptTable is a UI component. Do setup work once in `onInit` and reuse handles at runtime. Also note that `addToMacroControl()` is intentionally not active for ScriptTable, and `setPropertiesFromJSON()` should be done via `Content.setPropertiesFromJSON(componentId, jsonData)`.
 
 ## Common Mistakes
 

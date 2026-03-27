@@ -29,7 +29,7 @@ Each Modulator exposes its parameters as dynamic constants (e.g., `mod.Frequency
 const var mod = Synth.getModulator("LFO1");
 ```
 
-> `Synth.getModulator()` must be called in `onInit`. Store the reference as a `const var` at the top level - it cannot be called from other callbacks.
+> [!Tip:Get references in onInit only] `Synth.getModulator()` must be called in `onInit`. Store the reference as a `const var` at the top level - it cannot be called from other callbacks.
 
 ## Common Mistakes
 

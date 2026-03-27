@@ -41,7 +41,7 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while table-slot binding uses `tableIndex` instead.
 
-> `Synth.getTableProcessor()` can only be called during `onInit`. Store the reference in a `const var` at the top level of your script. For bulk point operations, retrieve the `Table` data object via `getTable()` and work with it directly - it avoids per-point UI update overhead.
+> [!Tip:Get reference in onInit, use Table for bulk ops] `Synth.getTableProcessor()` can only be called during `onInit`. Store the reference in a `const var` at the top level of your script. For bulk point operations, retrieve the `Table` data object via `getTable()` and work with it directly - it avoids per-point UI update overhead.
 
 ## Common Mistakes
 

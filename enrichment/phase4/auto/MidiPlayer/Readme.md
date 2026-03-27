@@ -9,7 +9,7 @@ MidiPlayer provides scripting control over a MIDI Player processor module in the
 
 Sequences and tracks use one-based indexing in the scripting API. Each player has its own undo manager by default, so `undo()` and `redo()` work without extra setup. Call `setUseGlobalUndoManager(true)` to switch to the global undo stack shared with `Engine.undo()`.
 
-> Event timestamps default to sample counts at the current sample rate and BPM. Call `setUseTimestampInTicks(true)` to switch to tick timestamps (960 per quarter note), which are stable across tempo changes and recommended for musical editing. The timestamp mode affects both reading (`getEventList()`) and writing (`flushMessageList()`), so use the same mode for both.
+> [!Tip:Use tick timestamps for stable editing] Event timestamps default to sample counts at the current sample rate and BPM. Call `setUseTimestampInTicks(true)` to switch to tick timestamps (960 per quarter note), which are stable across tempo changes and recommended for musical editing. The timestamp mode affects both reading (`getEventList()`) and writing (`flushMessageList()`), so use the same mode for both.
 
 ## Common Mistakes
 

@@ -14,7 +14,7 @@ The grid system provides sample-accurate timing events at a configurable musical
 
 The class also provides an internal clock with configurable sync modes - you can follow the DAW exclusively, run your own independent clock, or blend the two with fallback behaviour.
 
-> Most operations are global and affect the shared master clock across all TransportHandler instances. Callbacks and local grid settings are per-instance.
+> [!Tip:Most operations are global across instances] Most operations are global and affect the shared master clock across all TransportHandler instances. Callbacks and local grid settings are per-instance.
 
 | Mode | Index | External (DAW) | Internal (script) | Behaviour |
 |------|-------|----------------|-------------------|----------|

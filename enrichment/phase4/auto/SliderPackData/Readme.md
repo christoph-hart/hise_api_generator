@@ -39,7 +39,7 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while slider-pack binding uses `SliderPackIndex` instead.
 
-> New SliderPackData objects default to 16 sliders in the range [0.0, 1.0] with a step size of 0.01. New sliders are filled with a default value of **1.0**, not 0.0. Call `setAllValues(0.0)` explicitly if you need zero-initialised steps.
+> [!Tip:Default value is 1.0, not zero] New SliderPackData objects default to 16 sliders in the range [0.0, 1.0] with a step size of 0.01. New sliders are filled with a default value of **1.0**, not 0.0. Call `setAllValues(0.0)` explicitly if you need zero-initialised steps.
 
 ## Common Mistakes
 

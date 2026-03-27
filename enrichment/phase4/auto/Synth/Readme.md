@@ -20,7 +20,7 @@ const var fx = Synth.getEffect("Delay1");
 const var sampler = Synth.getSampler("MainSampler");
 ```
 
-> Most `get*()` methods can only be called in `onInit` because they allocate wrapper objects. Store the returned references in top-level variables and reuse them in callbacks. The module tree search is scoped to the parent synth's subtree unless noted otherwise on specific methods.
+> [!Tip:Cache get methods in onInit variables] Most `get*()` methods can only be called in `onInit` because they allocate wrapper objects. Store the returned references in top-level variables and reuse them in callbacks. The module tree search is scoped to the parent synth's subtree unless noted otherwise on specific methods.
 
 ## Common Mistakes
 

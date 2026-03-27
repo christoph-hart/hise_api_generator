@@ -30,7 +30,7 @@ The modulator chain methods (`addModulator`, `addGlobalModulator`, `addStaticGlo
 | 1 | GainModulation |
 | 2 | PitchModulation |
 
-> ChildSynth references must be obtained during `onInit` - calling
+> [!Tip:Cache references in onInit as const var] ChildSynth references must be obtained during `onInit` - calling
 > `Synth.getChildSynth()` or `Synth.getChildSynthByIndex()` at runtime
 > throws a script error. Store references as `const var` at the top level
 > and reuse them in callbacks.

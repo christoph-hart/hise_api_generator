@@ -54,7 +54,7 @@ Colour properties control the waveform appearance:
 
 For fully custom rendering, attach a look-and-feel object with `setLocalLookAndFeel()` and register the thumbnail draw functions (`drawThumbnailBackground`, `drawThumbnailPath`, `drawThumbnailRuler`, `drawThumbnailRange`, `drawThumbnailText`) and `getThumbnailRenderOptions`.
 
-> The remaining methods on this component are common to all UI components.
+> [!Tip:Remaining methods common to all components] The remaining methods on this component are common to all UI components.
 
 ## Common Mistakes
 

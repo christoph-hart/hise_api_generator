@@ -25,7 +25,7 @@ All setter methods modify the event in-place in the audio buffer, affecting ever
 | ProgramChange | `onController` | N/A (use `isProgramChange()`) |
 | AllNotesOff | `setAllNotesOffCallback` handler | N/A |
 
-> Setter methods require a mutable callback context (a `JavascriptMidiProcessor` callback). Voice start modulators receive events as read-only and cannot call setters. To persist event data beyond callback scope, use `Message.store()` to copy into a `MessageHolder`.
+> [!Tip:Setters need mutable callback context] Setter methods require a mutable callback context (a `JavascriptMidiProcessor` callback). Voice start modulators receive events as read-only and cannot call setters. To persist event data beyond callback scope, use `Message.store()` to copy into a `MessageHolder`.
 
 ## Common Mistakes
 

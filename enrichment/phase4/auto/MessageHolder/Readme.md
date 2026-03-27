@@ -30,7 +30,7 @@ const var mh = Engine.createMessageHolder();
 | `AllNotesOff` | 6 | Kills all active voices |
 | `ProgramChange` | 13 | MIDI program change |
 
-> MessageHolder performs no type guards on getters and setters. Calling `getNoteNumber()` on a Controller event returns whatever is in the number byte - the class is a raw data container, so ensure you read and write fields appropriate for the event type. The only validation is on `setType()`, which rejects values outside 0-13.
+> [!Tip:No type guards on getters and setters] MessageHolder performs no type guards on getters and setters. Calling `getNoteNumber()` on a Controller event returns whatever is in the number byte - the class is a raw data container, so ensure you read and write fields appropriate for the event type. The only validation is on `setType()`, which rejects values outside 0-13.
 
 ## Common Mistakes
 

@@ -60,15 +60,15 @@ The `SampleState` property accepts three values:
 | 1 | Disabled | Sample is excluded from playback |
 | 2 | Purged | Sample data is unloaded from memory |
 
-> Property values are automatically clipped to valid ranges on `set()`. Some
+> [!Tip:Property ranges auto-clipped and interdependent] Property values are automatically clipped to valid ranges on `set()`. Some
 > property ranges are interdependent - for example, `LoopEnd` cannot exceed
 > `SampleEnd`. Use `getRange()` to query the current valid bounds before
 > setting loop-related properties.
 >
-> `trace()` does not work on Sample objects. Use the Script Watch Table to
+> [!Tip:Use Script Watch Table to inspect samples] `trace()` does not work on Sample objects. Use the Script Watch Table to
 > inspect their contents.
 >
-> These property constants are also accessible via the `Sampler` class
+> [!Tip:Constants also accessible via Sampler class] These property constants are also accessible via the `Sampler` class
 > (e.g. `Sampler.SampleEnd`) for backwards compatibility.
 
 ## Common Mistakes

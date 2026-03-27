@@ -33,7 +33,7 @@ const var us = Engine.createUnorderedStack();
 us.setIsEventStack(true, us.EventId);
 ```
 
-> Bracket access (`stack[index]`) reads from the float array even when the stack is in event mode. Writing via bracket is not supported. Element order is not preserved - removal fills gaps by swapping in the last element.
+> [!Tip:Bracket reads float array, no write support] Bracket access (`stack[index]`) reads from the float array even when the stack is in event mode. Writing via bracket is not supported. Element order is not preserved - removal fills gaps by swapping in the last element.
 
 ## Common Mistakes
 

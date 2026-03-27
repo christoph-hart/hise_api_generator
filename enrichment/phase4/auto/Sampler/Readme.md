@@ -43,9 +43,9 @@ The class uses `Sampler.*` constants to identify sample properties when reading 
 | `Sampler.Reversed` | 23 | Play sample in reverse |
 | `Sampler.NumQuarters` | 24 | Length in quarter notes (tempo-synced stretching) |
 
-> Most functions that change samples (loading maps, clearing, purging) execute asynchronously - they kill active voices and schedule the operation. Use `ScriptPanel.setLoadingCallback()` to keep your UI updated during these operations.
+> [!Tip:Sample operations execute asynchronously] Most functions that change samples (loading maps, clearing, purging) execute asynchronously - they kill active voices and schedule the operation. Use `ScriptPanel.setLoadingCallback()` to keep your UI updated during these operations.
 >
-> All group management methods (`setActiveGroup`, `setMultiGroupIndex`, and their per-event variants) require `enableRoundRobin(false)` to be called first.
+> [!Tip:Disable round robin before group management] All group management methods (`setActiveGroup`, `setMultiGroupIndex`, and their per-event variants) require `enableRoundRobin(false)` to be called first.
 
 ## Common Mistakes
 

@@ -44,9 +44,9 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while table-slot binding uses `tableIndex` instead.
 
-> The first and last control points are always clamped to x=0.0 and x=1.0 respectively. You cannot move the edge points away from the table boundaries.
+> [!Tip:Edge points clamped to x boundaries] The first and last control points are always clamped to x=0.0 and x=1.0 respectively. You cannot move the edge points away from the table boundaries.
 
-> Calling `getTableValueNormalised()` updates the display ruler position as a side effect, which fires any registered display callback and updates connected ScriptTable components.
+> [!Tip:getTableValueNormalised updates display ruler] Calling `getTableValueNormalised()` updates the display ruler position as a side effect, which fires any registered display callback and updates connected ScriptTable components.
 
 ## Common Mistakes
 

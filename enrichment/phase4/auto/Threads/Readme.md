@@ -43,7 +43,7 @@ HiseScript provides several other scoped statement primitives that work alongsid
 
 When two threads contend for the same lock, the thread that cannot acquire it stalls until the holder releases it. In practice, a timer callback competing with a tight background-task loop may wait significantly longer than the background task, because the background task leaves almost no idle time between lock operations for the timer to acquire the lock.
 
-> Always use the `Threads` constants rather than raw integer values when identifying threads. The numeric values are an implementation detail and should not be hard-coded.
+> [!Tip:Use constants, not raw integer values] Always use the `Threads` constants rather than raw integer values when identifying threads. The numeric values are an implementation detail and should not be hard-coded.
 
 ## Common Mistakes
 

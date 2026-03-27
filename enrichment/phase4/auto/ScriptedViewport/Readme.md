@@ -27,7 +27,7 @@ Interactive cells fire specialised callbacks with an event object describing the
 
 ![Table Mode Setup Sequence](sequence_table-setup.svg)
 
-> All table setup must happen during `onInit`. Only row data can be updated after init completes. The remaining methods are common to all UI components.
+> [!Tip:Table setup in onInit only] All table setup must happen during `onInit`. Only row data can be updated after init completes. The remaining methods are common to all UI components.
 
 ## Common Mistakes
 

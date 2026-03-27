@@ -20,7 +20,7 @@ var dimmed = Colours.withAlpha(ACCENT, 0.4);
 
 All methods accept flexible colour input - an ARGB integer, a hex string, or a named constant such as `Colours.dodgerblue`. All methods return ARGB integer values.
 
-> Named constants use British spelling where applicable (`Colours.grey`, `Colours.darkgrey`, `Colours.lightgrey`). Note that `Colours.darkgrey` (`0xFF555555`) is darker than the CSS standard `darkgray` (`0xFFA9A9A9`).
+> [!Tip:British spelling for named constants] Named constants use British spelling where applicable (`Colours.grey`, `Colours.darkgrey`, `Colours.lightgrey`). Note that `Colours.darkgrey` (`0xFF555555`) is darker than the CSS standard `darkgray` (`0xFFA9A9A9`).
 
 ## Common Mistakes
 

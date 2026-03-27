@@ -13,7 +13,7 @@ Engine is the central namespace in HISEScript, providing the global `Engine` obj
 
 The typical initialisation sequence in `onInit` is: load fonts, load resource pools, configure macro names and preset tags, then create factory objects (timers, broadcasters, preset handlers) for the plugin's runtime behaviour.
 
-> Several methods are IDE-only and become no-ops in exported plugins: `clearMidiFilePool`, `clearSampleMapPool`, `rebuildCachedPools`, `loadImageIntoPool`, and `getSampleFilesFromDirectory`. These are safe to leave in production code but will have no effect. The deprecated methods `getZoomLevel`, `setZoomLevel`, `setDiskMode`, and `loadFont` have been replaced by the `Settings` class and `loadFontAs` respectively.
+> [!Tip:IDE-only methods become no-ops in exports] Several methods are IDE-only and become no-ops in exported plugins: `clearMidiFilePool`, `clearSampleMapPool`, `rebuildCachedPools`, `loadImageIntoPool`, and `getSampleFilesFromDirectory`. These are safe to leave in production code but will have no effect. The deprecated methods `getZoomLevel`, `setZoomLevel`, `setDiskMode`, and `loadFont` have been replaced by the `Settings` class and `loadFontAs` respectively.
 
 ## Common Mistakes
 

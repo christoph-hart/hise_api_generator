@@ -25,7 +25,7 @@ Properties are accessible by name (`rect.x`, `rect.width`) or by index (`rect[0]
 
 You can inspect rectangles visually using a sampling session: enable sampling for a scope with `.sample("id")`, add rectangles via `Console.sample()`, then click the inspect icon to open the rectangle viewer.
 
-> Most methods return new Rectangle objects, making Rectangle unsuitable for realtime thread operations. In practice this is not a limitation, as the vast majority of use cases are within paint routines and other UI functions.
+> [!Tip:Returns new objects, use in UI code only] Most methods return new Rectangle objects, making Rectangle unsuitable for realtime thread operations. In practice this is not a limitation, as the vast majority of use cases are within paint routines and other UI functions.
 
 By default, APIs like `ScriptComponent.getLocalBounds()` and LAF callback `obj.area` properties return plain `[x, y, w, h]` arrays. Existing projects depend on this array format, so it cannot be changed globally without breaking code. The recommended pattern is to wrap the return value in `Rectangle()` at the top of each paint routine or LAF callback:
 

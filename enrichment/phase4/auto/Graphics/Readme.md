@@ -33,7 +33,7 @@ Drawing operations fall into three tiers of complexity:
 
 All area parameters accept both `[x, y, width, height]` arrays and `Rectangle` objects. Use `Rectangle` to compute areas - wrap `obj.area` or `this.getLocalBounds(0)` at the top of a paint callback, then use `removeFromTop`, `removeFromLeft`, `reduced`, `withSizeKeepingCentre`, and other layout methods to divide the area into regions. Colours use `0xAARRGGBB` format (always include the alpha channel - `0xFF` for fully opaque). Most drawing methods require `setColour` or `setGradientFill` to be called first. Post-processing effects (`gaussianBlur`, `boxBlur`, `desaturate`, `applyHSL`, `applyMask`, and others) require an active layer created with `beginLayer()` and closed with `endLayer()`.
 
-> Graphics objects are never created by user code. They arrive as the first argument to paint callbacks and LAF drawing functions. All drawing is deferred - method calls record draw actions on the scripting thread, which are then replayed on the UI thread. This means you cannot read back pixel data or query the result of a draw call.
+> [!Tip:Drawing is deferred, no pixel readback] Graphics objects are never created by user code. They arrive as the first argument to paint callbacks and LAF drawing functions. All drawing is deferred - method calls record draw actions on the scripting thread, which are then replayed on the UI thread. This means you cannot read back pixel data or query the result of a draw call.
 
 ## Common Mistakes
 

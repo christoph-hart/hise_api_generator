@@ -15,7 +15,7 @@ Key ScriptLabel properties include:
 const var lb = Content.addLabel("Title", 10, 10);
 ```
 
-> Only string values are supported for value updates, and numeric helpers like normalised or undo-based setters are disabled for ScriptLabel.
+> [!Tip:String values only, numeric helpers disabled] Only string values are supported for value updates, and numeric helpers like normalised or undo-based setters are disabled for ScriptLabel.
 
 ## Common Mistakes
 

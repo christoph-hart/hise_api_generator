@@ -38,7 +38,7 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while audio-slot binding uses `sampleIndex` instead.
 
-> AudioSampleProcessor also provides the standard module control methods (`getAttribute`, `setAttribute`, `setBypassed`) shared with other module handle classes such as Effect, Modulator, and ChildSynth.
+> [!Tip:Standard module control methods available] AudioSampleProcessor also provides the standard module control methods (`getAttribute`, `setAttribute`, `setBypassed`) shared with other module handle classes such as Effect, Modulator, and ChildSynth.
 
 ## Common Mistakes
 

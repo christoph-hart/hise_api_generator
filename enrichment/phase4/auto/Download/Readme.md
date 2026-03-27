@@ -32,9 +32,9 @@ The `data` property object carries mutable state updated during the transfer:
 
 A stopped download can be resumed with `resume()`, which uses HTTP Range headers to continue from where it left off. An aborted download cannot be resumed - the target file is deleted and a new download must be started. If `Server.downloadFile()` is called with a URL that matches an already-pending download, the existing Download object is returned with its callback replaced.
 
-> The Server enforces a maximum number of concurrent downloads (default: 1, configurable via `Server.setNumAllowedDownloads()`). Excess downloads remain in `"Waiting"` state until a slot becomes available. All lifecycle methods (`stop()`, `resume()`, `abort()`) are asynchronous - they set flags that the background thread acts upon, so state changes may not be immediate.
+> [!Tip:Concurrent download limit and async lifecycle] The Server enforces a maximum number of concurrent downloads (default: 1, configurable via `Server.setNumAllowedDownloads()`). Excess downloads remain in `"Waiting"` state until a slot becomes available. All lifecycle methods (`stop()`, `resume()`, `abort()`) are asynchronous - they set flags that the background thread acts upon, so state changes may not be immediate.
 
-> During development, use the ServerController floating tile to inspect active downloads and their state in real time.
+> [!Tip:Use ServerController to inspect downloads] During development, use the ServerController floating tile to inspect active downloads and their state in real time.
 
 ## Common Mistakes
 

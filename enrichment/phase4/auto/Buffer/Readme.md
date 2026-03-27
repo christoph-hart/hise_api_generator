@@ -69,7 +69,7 @@ local partialPeak = copy.getMagnitude(2, 4);
 - Push fixed-size control/state arrays to shaders with `ScriptShader.setUniformData()` for visualisation pipelines.
 - Feed prepared mono or multi-channel buffers directly into `Engine.playBuffer()` for audition/playback.
 
-> Most Buffer operations mutate in place unless they explicitly return a new Buffer. For sparse serialisation, use an explicit sentinel such as `"EMPTY"`, decode only non-sentinel values, and reuse one scratch buffer in loops to avoid repeated allocations.
+> [!Tip:Most operations mutate in place] Most Buffer operations mutate in place unless they explicitly return a new Buffer. For sparse serialisation, use an explicit sentinel such as `"EMPTY"`, decode only non-sentinel values, and reuse one scratch buffer in loops to avoid repeated allocations.
 
 ## Common Mistakes
 

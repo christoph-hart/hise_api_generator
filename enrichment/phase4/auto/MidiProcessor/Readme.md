@@ -19,7 +19,7 @@ The class provides two levels of state serialisation:
 
 For modules that are MidiPlayer instances, use `asMidiPlayer()` to cast the handle and access MIDI file playback methods.
 
-> MidiProcessor references must be cached in `onInit`. `Synth.getMidiProcessor()` cannot be called from callbacks. If you need multiple references (e.g. an array of MidiMuter modules), build the array in a loop at init time and index into it at runtime.
+> [!Tip:Cache references in onInit] MidiProcessor references must be cached in `onInit`. `Synth.getMidiProcessor()` cannot be called from callbacks. If you need multiple references (e.g. an array of MidiMuter modules), build the array in a loop at init time and index into it at runtime.
 
 ## Common Mistakes
 

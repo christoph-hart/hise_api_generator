@@ -23,7 +23,7 @@ Images are loaded from the project's `Images/` folder using pool references with
 
 For static artwork that never changes at runtime, set the `fileName` property directly in the Interface Designer rather than through scripting. Use `ScriptPanel` instead when you need custom drawing, mouse interaction beyond popup menus, or animation.
 
-> The `saveInPreset` property defaults to `false` for ScriptImage, which is correct for most uses - background images and decorative elements should not be saved in user presets.
+> [!Tip:saveInPreset defaults to false] The `saveInPreset` property defaults to `false` for ScriptImage, which is correct for most uses - background images and decorative elements should not be saved in user presets.
 
 ## Common Mistakes
 

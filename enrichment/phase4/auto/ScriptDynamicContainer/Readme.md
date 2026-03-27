@@ -46,7 +46,7 @@ dc.setValueCallback(function(id, value)
 });
 ```
 
-> The container deactivates the usual preset, parameter, and macro properties because value handling goes through the internal data model instead. Calling `setData()` rebuilds the child tree and invalidates older `ContainerChild` references, so always fetch new references after rebuilding. Legacy type names (`ScriptButton`, `ScriptSlider`, etc.) are accepted and converted automatically.
+> [!Tip:Data model replaces preset and macro properties] The container deactivates the usual preset, parameter, and macro properties because value handling goes through the internal data model instead. Calling `setData()` rebuilds the child tree and invalidates older `ContainerChild` references, so always fetch new references after rebuilding. Legacy type names (`ScriptButton`, `ScriptSlider`, etc.) are accepted and converted automatically.
 
 ## Common Mistakes
 

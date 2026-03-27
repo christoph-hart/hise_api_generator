@@ -22,7 +22,7 @@ Progress reporting uses `setProgress()` and `setStatusMessage()`, which can opti
 const var bt = Engine.createBackgroundTask("MyTask");
 ```
 
-> BackgroundTask is highly experimental - test your use case thoroughly, as subtle multithreading issues can arise. Each instance is a dedicated OS thread that is automatically stopped on script recompilation.
+> [!Tip:Experimental API with dedicated OS thread] BackgroundTask is highly experimental - test your use case thoroughly, as subtle multithreading issues can arise. Each instance is a dedicated OS thread that is automatically stopped on script recompilation.
 
 ## Common Mistakes
 

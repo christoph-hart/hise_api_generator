@@ -34,9 +34,9 @@ The four colour properties map to specific visual roles:
 | `itemColour2` | Fill bottom gradient |
 | `textColour` | Text colour |
 
-> The `min` and `max` properties are managed automatically and deactivated in the property editor. Do not set them manually. The normalised value methods (`setValueNormalized` / `getValueNormalized`) use the base implementation, which stores the raw value without range mapping - use `setValue()` with explicit integer indices instead.
+> [!Tip:Min and max managed automatically] The `min` and `max` properties are managed automatically and deactivated in the property editor. Do not set them manually. The normalised value methods (`setValueNormalized` / `getValueNormalized`) use the base implementation, which stores the raw value without range mapping - use `setValue()` with explicit integer indices instead.
 
-> Several additional methods exist on this component that are not covered here: `createLocalLookAndFeel`, `getPopupMenuTarget`, `updateContentPropertyInternal`, `setColour`, and `getCurrentZLevel`. These are newer API additions; consult the latest HISE source for details.
+> [!Tip:Additional methods in latest API] Several additional methods exist on this component that are not covered here: `createLocalLookAndFeel`, `getPopupMenuTarget`, `updateContentPropertyInternal`, `setColour`, and `getCurrentZLevel`. These are newer API additions; consult the latest HISE source for details.
 
 ## Common Mistakes
 

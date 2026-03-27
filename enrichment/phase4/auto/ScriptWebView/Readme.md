@@ -34,9 +34,9 @@ The persistence system handles the common plugin lifecycle where the webview is 
 
 For WebSocket communication, the JavaScript side connects using the built-in `HiseWebSocketServer` helper. Include `<script src="hisewebsocket-min.js"></script>` in your HTML header, create a `HiseWebSocketServer` with the chosen port, then use `addEventListener()` and `send()` for message exchange. Random ports isolate each plugin instance; a fixed port can be shared across instances.
 
-> **Native handle limitation:** The webview uses a native OS browser handle placed on top of the plugin interface. Alpha blending, masking, and layering other UI components in front of or behind the webview are not supported. During development in the Interface Designer, the scale factor may appear incorrect and the webview may overlap editor components.
+> [!Tip:Native handle limits layering and blending] **Native handle limitation:** The webview uses a native OS browser handle placed on top of the plugin interface. Alpha blending, masking, and layering other UI components in front of or behind the webview are not supported. During development in the Interface Designer, the scale factor may appear incorrect and the webview may overlap editor components.
 
-> Keep `enableCache` off during development for live-reload behaviour, and enable it for export. When enabled and the root directory is inside the project folder, HISE automatically embeds the web resources into the exported plugin.
+> [!Tip:Disable cache for dev, enable for export] Keep `enableCache` off during development for live-reload behaviour, and enable it for export. When enabled and the root directory is inside the project folder, HISE automatically embeds the web resources into the exported plugin.
 
 ## Common Mistakes
 

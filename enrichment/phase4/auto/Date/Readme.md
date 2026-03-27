@@ -8,4 +8,4 @@ Date provides wall-clock time access and bidirectional conversion between millis
 
 All string representations use the local timezone. The `includeDividerCharacters` parameter on the formatting methods controls whether the output includes dashes, colons, and the `T` separator (e.g. `2026-03-09T14:30:00+0100`) or omits them for a compact form (e.g. `20260309T143000+0100`).
 
-> These methods return the operating system's wall-clock time, not the DAW transport position. For transport-relative timing, use `TransportHandler` instead.
+> [!Tip:Returns wall-clock time, not DAW transport] These methods return the operating system's wall-clock time, not the DAW transport position. For transport-relative timing, use `TransportHandler` instead.

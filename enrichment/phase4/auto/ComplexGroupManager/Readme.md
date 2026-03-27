@@ -27,7 +27,7 @@ Layers are configured through string property IDs via `getLayerProperty()` and `
 
 The constant `ComplexGroupManager.IgnoreFlag` (255) indicates that a layer does not apply to a given sample. Methods that accept a layer identifier take either a zero-based numeric index or a string layer ID.
 
-> All group indices in the scripting API are zero-based. The internal bitmask is one-based, but the conversion is automatic. Methods that modify voice start parameters (`delayGroupEvent`, `fadeInGroupEvent`, `addGroupEventStartOffset`, `setFixedGroupEventLength`) configure data for the next noteOn - they do not affect already-playing voices.
+> [!Tip:Zero-based group indices, next-noteOn configuration] All group indices in the scripting API are zero-based. The internal bitmask is one-based, but the conversion is automatic. Methods that modify voice start parameters (`delayGroupEvent`, `fadeInGroupEvent`, `addGroupEventStartOffset`, `setFixedGroupEventLength`) configure data for the next noteOn - they do not affect already-playing voices.
 
 ## Common Mistakes
 

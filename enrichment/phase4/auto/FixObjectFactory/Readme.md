@@ -29,7 +29,7 @@ The factory produces three kinds of output: individual objects for use as tempor
 
 The factory's comparison function controls how containers perform sorting and lookup. Setting a comparator propagates it retroactively to all containers previously created from that factory. The data layout integrates with IDE tooling: the ScriptWatchTable provides autocomplete for member names, and the StackViewer popup (right-click a stack entry in the ScriptWatchTable and choose **View in Popup**) displays a container's full contents in a table layout. Fix objects can also be passed into eventnode networks, where they are treated as a single data item across the signal graph.
 
-> All containers share the factory's layout and memory allocator. The schema
+> [!Tip:Shared layout, immutable schema, value copies] All containers share the factory's layout and memory allocator. The schema
 > is immutable after construction. Containers operate on value copies, not
 > references.
 

@@ -25,7 +25,7 @@ The custom automation system lets you define named parameter slots that the DAW 
 
 You can also pass a Broadcaster directly to `setPreCallback` or `setPostCallback` instead of a plain function. This turns the preset lifecycle into an event bus that multiple listeners can subscribe to independently.
 
-> Best practice is to have only one UserPresetHandler instance in your project. Call `setUseCustomUserPresetModel` before `setCustomAutomation` - the custom data model is a prerequisite for custom automation.
+> [!Tip:One instance, set custom model first] Best practice is to have only one UserPresetHandler instance in your project. Call `setUseCustomUserPresetModel` before `setCustomAutomation` - the custom data model is a prerequisite for custom automation.
 
 ## Common Mistakes
 

@@ -28,7 +28,7 @@ Response callbacks receive an integer status code and a parsed JSON response obj
 | `Server.StatusNotFound` | 404 | HTTP 404 not found |
 | `Server.StatusServerError` | 500 | HTTP 500 internal server error |
 
-> The server thread only starts when you call `Server.setBaseURL()`. Until then, no background resources are used. Status `0` (`StatusNoConnection`) means no response was received (timeout or no internet) - handle it separately from actual server error codes.
+> [!Tip:Thread starts on setBaseURL, handle status zero] The server thread only starts when you call `Server.setBaseURL()`. Until then, no background resources are used. Status `0` (`StatusNoConnection`) means no response was received (timeout or no internet) - handle it separately from actual server error codes.
 
 ## Common Mistakes
 

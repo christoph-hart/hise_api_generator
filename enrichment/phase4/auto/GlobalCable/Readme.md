@@ -22,7 +22,7 @@ Cables can deliver values through callbacks (synchronous or asynchronous) or be 
 
 ![Cable Value Dispatch Flow](topology_cable-dispatch.svg)
 
-> Cable IDs with a `/` prefix (e.g. `/some_osc_id`) automatically become OSC addresses when the global routing system runs as an OSC server.
+> [!Tip:Slash-prefixed IDs become OSC addresses] Cable IDs with a `/` prefix (e.g. `/some_osc_id`) automatically become OSC addresses when the global routing system runs as an OSC server.
 
 ## Common Mistakes
 

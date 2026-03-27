@@ -42,7 +42,7 @@ Use the binding properties separately:
 
 This is not the normal parameter binding path. `parameterId` targets processor parameters, while slider-pack binding uses `SliderPackIndex` instead.
 
-> This class edits slider-pack array data, not single scalar values. Inherited scalar helpers like `getValueNormalized`, `setValueNormalized`, `setValueWithUndo`, and `updateValueFromProcessorConnection` are intentionally not active here. For JSON property restore, use `Content.setPropertiesFromJSON(componentId, jsonData)`.
+> [!Tip:Array data class, scalar helpers inactive] This class edits slider-pack array data, not single scalar values. Inherited scalar helpers like `getValueNormalized`, `setValueNormalized`, `setValueWithUndo`, and `updateValueFromProcessorConnection` are intentionally not active here. For JSON property restore, use `Content.setPropertiesFromJSON(componentId, jsonData)`.
 
 ## Common Mistakes
 

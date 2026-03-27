@@ -45,7 +45,7 @@ When combining modifier flags, use bitwise OR for alternatives and an array for 
 
 The matrix target bridge is driven by the `matrixTargetId` property and connection helpers.
 
-> Modifier mappings are intended to be set once in `onInit`. They persist across recompiles and only reset when the UI is rebuilt.
+> [!Tip:Set modifier mappings once in onInit] Modifier mappings are intended to be set once in `onInit`. They persist across recompiles and only reset when the UI is rebuilt.
 
 ## Common Mistakes
 

@@ -29,7 +29,7 @@ The `toString` method accepts a format constant to extract different path compon
 | `Extension` | 2 | File extension only (including the dot) |
 | `Filename` | 3 | Filename with extension |
 
-> The underlying file path is immutable. After calling `rename`, `move`, or `deleteFileOrDirectory`, the File object still references the **original** path. To work with the new location, obtain a fresh File handle.
+> [!Tip:File path is immutable after creation] The underlying file path is immutable. After calling `rename`, `move`, or `deleteFileOrDirectory`, the File object still references the **original** path. To work with the new location, obtain a fresh File handle.
 
 ## Common Mistakes
 

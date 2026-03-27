@@ -28,7 +28,7 @@ Each connection object contains these properties:
 
 The active range (`Start`/`End`) sits within the full range (`FullStart`/`FullEnd`). If you only provide `Start`/`End`, they are used as both the full and active range.
 
-> The number of available macro slots defaults to 8 but can be configured up to 64 via the `HISE_NUM_MACROS` project preprocessor definition. Store one MacroHandler instance at init time and reuse it - each call to `Engine.createMacroHandler()` registers a new internal listener.
+> [!Tip:Up to 64 macro slots, create once at init] The number of available macro slots defaults to 8 but can be configured up to 64 via the `HISE_NUM_MACROS` project preprocessor definition. Store one MacroHandler instance at init time and reuse it - each call to `Engine.createMacroHandler()` registers a new internal listener.
 
 ## Common Mistakes
 

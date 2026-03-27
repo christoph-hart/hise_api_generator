@@ -22,7 +22,7 @@ The typical workflow has three tiers of complexity:
 2. **Themed rendering** - add `getStyleData()` / `setStyleData()` to customise fonts, colours, and table appearance.
 3. **Rich content with images** - add `setImageProvider()` with path or image entries for inline vector icons or pool images.
 
-> Create the MarkdownRenderer once in `onInit` and store it as a `const var`. Call `setText()` to update content and `repaint()` on the host panel to trigger a redraw - do not create a new renderer each paint cycle.
+> [!Tip:Create once in onInit, reuse per repaint] Create the MarkdownRenderer once in `onInit` and store it as a `const var`. Call `setText()` to update content and `repaint()` on the host panel to trigger a redraw - do not create a new renderer each paint cycle.
 
 ## Common Mistakes
 

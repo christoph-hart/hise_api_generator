@@ -8,7 +8,7 @@ Console provides debugging and diagnostic tools for HISEScript development in th
 
 Use assertions as guard clauses to surface programming errors immediately rather than letting bad state propagate silently. The profiling tools help you measure execution time and capture data snapshots for inspection in the code editor.
 
-> All Console methods become no-ops in exported plugins, so you can leave debugging calls in production code without performance cost. Console methods are safe to call from any thread, including the audio thread.
+> [!Tip:No-ops in exported plugins, thread-safe] All Console methods become no-ops in exported plugins, so you can leave debugging calls in production code without performance cost. Console methods are safe to call from any thread, including the audio thread.
 
 ## Common Mistakes
 

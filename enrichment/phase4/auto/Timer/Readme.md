@@ -27,7 +27,7 @@ Match the interval to the task:
 | UI state synchronisation (visibility, tooltips) | 100-150ms |
 | Status displays (CPU usage, preset state) | 300-500ms |
 
-> Unlike `ScriptPanel` timers, Timer callbacks are **not** suspended when the plugin interface is hidden. This means they keep running in the background, which creates significant overhead when using multiple plugin instances. To suspend them manually, call `Content.setSuspendTimerCallback()` with a Broadcaster, then attach a listener to each Timer that calls `stopTimer()` on suspend and `startTimer()` on resume. This co-locates the suspend logic with each timer definition rather than requiring a global timer registry.
+> [!Tip:Timer callbacks not suspended when hidden] Unlike `ScriptPanel` timers, Timer callbacks are **not** suspended when the plugin interface is hidden. This means they keep running in the background, which creates significant overhead when using multiple plugin instances. To suspend them manually, call `Content.setSuspendTimerCallback()` with a Broadcaster, then attach a listener to each Timer that calls `stopTimer()` on suspend and `startTimer()` on resume. This co-locates the suspend logic with each timer definition rather than requiring a global timer registry.
 
 ## Common Mistakes
 

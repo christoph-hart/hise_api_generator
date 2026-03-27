@@ -25,6 +25,6 @@ bc.addListener("", "logKeyChanges", function(eventType, samplerId, data)
 });
 ```
 
-> Using a broadcaster for sample map changes is the recommended approach going forward and replaces `ScriptPanel.setLoadingCallback()` for this task.
+> [!Tip:Preferred over setLoadingCallback for sample maps] Using a broadcaster for sample map changes is the recommended approach going forward and replaces `ScriptPanel.setLoadingCallback()` for this task.
 
 Queue mode is automatically enabled when monitoring multiple samplers or event types.

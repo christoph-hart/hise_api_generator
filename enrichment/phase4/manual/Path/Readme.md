@@ -39,7 +39,7 @@ strokeStyle.Thickness = 3.0;
 g.drawPath(p, area, strokeStyle);
 ```
 
-> All angle parameters (in `addArc`, `addPieSegment`) are measured in radians, clockwise from the 3 o'clock position. For a standard rotary knob arc with a gap at the bottom, use an angular half-range of roughly 2.3 to 2.7 radians from centre.
+> [!Tip:Angles in radians, clockwise from 3 o'clock] All angle parameters (in `addArc`, `addPieSegment`) are measured in radians, clockwise from the 3 o'clock position. For a standard rotary knob arc with a gap at the bottom, use an angular half-range of roughly 2.3 to 2.7 radians from centre.
 
 ### Icon Factory
 
