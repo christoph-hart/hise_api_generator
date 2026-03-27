@@ -1,0 +1,53 @@
+{
+  "contentRoot": "content/v2",
+  "domains": {
+    "API": {
+      "basePath": "/v2/scripting-api",
+      "contentDir": "scripting-api",
+      "description": "Scripting API class and method reference",
+      "registrySource": "enrichment/base",
+      "pattern": "{className}#{method}"
+    },
+    "MODULES": {
+      "basePath": "/v2/reference/audio-modules",
+      "contentDir": "reference/audio-modules",
+      "description": "Audio module reference (sound generators, effects, modulators, MIDI processors)",
+      "registrySource": "module_enrichment/base/moduleList.json",
+      "typeMapping": {
+        "SoundGenerator": "01.sound-generators",
+        "MidiProcessor": "02.midi-processors",
+        "Modulator.EnvelopeModulator": "03.modulators/envelope",
+        "Modulator.TimeVariantModulator": "03.modulators/time-variant",
+        "Modulator.VoiceStartModulator": "03.modulators/voice-start",
+        "Effect.MasterEffect": "04.effects/master",
+        "Effect.MonophonicEffect": "04.effects/monophonic",
+        "Effect.PolyphonicEffect": "04.effects/polyphonic"
+      }
+    },
+    "UI": {
+      "basePath": "/v2/reference/ui-components",
+      "contentDir": "reference/ui-components",
+      "description": "UI component reference (CSS selectors, LAF overrides, usage)",
+      "subdomains": {
+        "Components": "components",
+        "FloatingTiles": "floating-tiles"
+      }
+    },
+    "SN": {
+      "basePath": "/v2/reference/scriptnodes",
+      "contentDir": "reference/scriptnodes",
+      "description": "Scriptnode node reference",
+      "pattern": "{factory}/{node}"
+    },
+    "DOC": {
+      "basePath": "/v2",
+      "description": "Manual and architecture documentation",
+      "subdomains": {
+        "Architecture": "architecture",
+        "Guide": "guide",
+        "GettingStarted": "getting-started",
+        "Examples": "examples"
+      }
+    }
+  }
+}
