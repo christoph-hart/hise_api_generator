@@ -8,7 +8,7 @@ Phase 4a transforms the raw C++ analysis from Phases 1-3 into user-facing docume
 
 **ASCII-only rule:** All output files must use ASCII characters only. No em-dashes (use a regular dash or rewrite the sentence), no curly quotes.
 
-**British English:** Use British spelling throughout all output files (behaviour, normalised, serialised, specialised, colour, etc.). See `userdocs_style.md` for the full word list.
+**British English:** Use British spelling throughout all output files (behaviour, normalised, serialised, specialised, colour, etc.). See `style-guide/scripting-api/userdocs-style.md` for the full word list.
 
 **Pitfalls and common mistakes are authored here.** Phase 1 and Phase 2 produce structured pitfall and common mistake data in the JSON. Phase 4a is responsible for curating and integrating this content directly into the `.md` files (as blockquote warnings and a Common Mistakes section). The merge/preview pipeline does not inject them mechanically - what you write is what appears on the page.
 
@@ -108,16 +108,16 @@ The `## Common Mistakes` section is optional but recommended for classes with no
 [1-3 sentences describing what this method does and how to use it.
 No heading required - the method name is inferred from the filename.]
 
-> **Warning:** [non-obvious behavioral gotcha curated from the pitfalls array]
+> [!Warning:Concise problem title] non-obvious behavioral gotcha curated from the pitfalls array
 ```
 
-Bare prose, no heading, no structured fields. Optionally followed by `> **Warning:**` blockquotes for important pitfalls. See "Pitfall Integration" below for curation guidance.
+Bare prose, no heading, no structured fields. Optionally followed by titled warning blockquotes for important pitfalls (see `style-guide/canonical-links.md` for the format). See "Pitfall Integration" below for curation guidance.
 
 ---
 
 ## Authoring Guidelines
 
-See `enrichment/resources/guidelines/userdocs_style.md` for the complete prose writing rules, including what to include, what to strip (C++ internals, preprocessor guards, implementation details), tone, length, class-level deduplication, formatting conventions, and reference examples.
+See `style-guide/general.md` and `style-guide/scripting-api/userdocs-style.md` for the complete prose writing rules, including what to include, what to strip (C++ internals, preprocessor guards, implementation details), tone, length, class-level deduplication, formatting conventions, and reference examples.
 
 ---
 
@@ -128,7 +128,7 @@ Phase 1 and Phase 2 produce structured `pitfalls` data for methods. These remain
 ### Curation rules
 
 1. **Check each method's `pitfalls` array** before writing its `.md` file.
-2. **Integrate important pitfalls** as `> **Warning:** ...` blockquotes at the end of the method's prose.
+2. **Integrate important pitfalls** as `> [!Warning:Title] ...` blockquotes at the end of the method's prose (see `style-guide/canonical-links.md` for the full format).
 3. **Omit pitfalls that are:**
    - Too obvious from the signature (e.g., "throws an error if index is out of bounds")
    - Already caught by the API with an error message (the API handles it; no need to warn the reader)
@@ -143,17 +143,16 @@ Phase 1 and Phase 2 produce structured `pitfalls` data for methods. These remain
 Registers a callback that fires on each musical beat. The callback receives
 the beat index and a boolean for whether this is the first beat of a new bar.
 
-> **Warning:** Does not fire immediately upon registration (unlike `setOnTempoChange`
-> and `setOnTransportChange`). The first callback arrives at the next beat boundary.
+> [!Warning:No immediate callback on registration] Does not fire immediately upon registration (unlike `setOnTempoChange` and `setOnTransportChange`). The first callback arrives at the next beat boundary.
 ```
 
-The `> **Warning:**` format renders as a styled callout on the docs page. Use `**Warning:**` consistently (not "Note:", "Caution:", etc.).
+The `> [!Warning:Title]` format renders as a titled callout on the docs page. The title should be 3-8 words, action-oriented. See `style-guide/canonical-links.md` for the full specification.
 
 ---
 
 ## Common Mistakes Integration
 
-The `commonMistakes` array in the JSON contains wrong/right/explanation entries from Phase 1 (auto-detected) and Phase 2 (project-derived). Phase 4a curates these into a `## Common Mistakes` section in the class-level `Readme.md`.
+The `commonMistakes` array in the JSON contains wrong/right/explanation entries from Phase 1 (auto-detected) and Phase 2 (project-derived). Phase 4a curates these into a `## Common Mistakes` section in the class-level `Readme.md`. Each entry has a title, wrong pattern, right pattern, and explanation - see `style-guide/canonical-links.md` for the exact format.
 
 ### Curation rules
 
@@ -339,7 +338,7 @@ Then review `[ClassName].html` for user-facing quality. If any method's `userDoc
 
 ## Reference Examples
 
-See `enrichment/resources/guidelines/userdocs_style.md` for two completed reference examples (Console and ScriptedViewport) that illustrate the target style. Review both before authoring a new class.
+See `style-guide/scripting-api/userdocs-style.md` for two completed reference examples (Console and ScriptedViewport) that illustrate the target style. Review both before authoring a new class.
 
 ---
 
@@ -424,10 +423,10 @@ To lock a diagram (prevent re-generation), copy it from `phase4/auto/` to `phase
 
 ### Rendering guidelines
 
-See `enrichment/resources/guidelines/diagram_creation.md` for the full rendering conventions (colors, layout, fonts, diagram type patterns).
+See `style-guide/scripting-api/diagrams.md` for the full rendering conventions (colors, layout, fonts, diagram type patterns).
 
 ---
 
 ## Quality Checklist
 
-See `enrichment/resources/guidelines/userdocs_style.md` for the full pre-submission quality checklist.
+See `style-guide/scripting-api/userdocs-style.md` for the full pre-submission quality checklist.

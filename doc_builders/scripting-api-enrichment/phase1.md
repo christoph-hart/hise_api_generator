@@ -19,13 +19,13 @@ consult during Phase 1. These files are shared across all class enrichments.
 |------|---------|---------|
 | `resources/survey/class_survey.md` | Class survey: prerequisite table, enrichment groups, factory relationships | Step A1 (prerequisites) |
 | `resources/survey/class_survey_data.json` | Machine-readable survey data: features, cross-references, seeAlso pairs | Step A1 (prerequisites) |
-| `resources/guidelines/hisescript_example_rules.md` | HISEScript syntax, callback, and LAF rules for code examples | Step B |
+| `style-guide/scripting-api/hisescript-rules.md` | HISEScript syntax, callback, and LAF rules for code examples | Step B |
 | `resources/laf_style_guide.json` | LAF callback property definitions | Step B |
 | `resources/deprecated_methods.md` | Deprecated method registry with C++ macro status | Step B |
 | `resources/base_methods/*.md` | Pre-distilled method entries for base classes (e.g. ScriptComponent) | Step B |
 | `resources/explorations/*_base.md` | Raw exploration output for base classes | Step A1, Step B |
 | `resources/explorations/ClassName.md` | Raw exploration output for individual classes | Step B |
-| `resources/guidelines/*.md` | Style guidelines for userDocs, code examples, diagrams | Step B, Phase 4a |
+| `style-guide/scripting-api/*.md` | Style guidelines for userDocs, code examples, diagrams | Step B, Phase 4a |
 
 ---
 
@@ -225,7 +225,7 @@ At the start of Step B, load these files (in priority order):
 4. Relevant base class resources:
    - For `"component"` classes: `resources/explorations/ScriptComponent_base.md` and `resources/base_methods/ScriptComponent.md`
    - For complex data classes: the relevant base class exploration and base_methods file
-5. `enrichment/resources/guidelines/hisescript_example_rules.md` -- for code examples
+5. `style-guide/scripting-api/hisescript-rules.md` -- for code examples
 6. `enrichment/resources/laf_style_guide.json` -- for LAF code examples (component classes)
 
 Do NOT load `Readme.md` for Step B -- it is a downstream artifact for the merge script, not a context source.
@@ -281,7 +281,7 @@ For each unchecked method in `methods_todo.md`:
 
 ### HISEScript Syntax & Example Rules
 
-All code examples MUST follow `resources/guidelines/hisescript_example_rules.md` (loaded in Step B context). That file is authoritative -- do not write examples without consulting it.
+All code examples MUST follow `style-guide/scripting-api/hisescript-rules.md` (loaded in Step B context). That file is authoritative -- do not write examples without consulting it.
 
 ### VarTypes Vocabulary
 
@@ -368,11 +368,11 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 
 ### Test Metadata for Examples
 
-When synthesizing an example, also produce `testMetadata` following `resources/guidelines/test_metadata.md`. That file defines the full schema, verification types, and setup patterns.
+When synthesizing an example, also produce `testMetadata` following `style-guide/scripting-api/test-metadata.md`. That file defines the full schema, verification types, and setup patterns.
 
 ### Diagram Heuristic
 
-Writing a diagram description is cheap (2-3 sentences + type tag). Phase 4a decides which get rendered. **When in doubt, write the description. Do not self-censor.** See `resources/guidelines/diagram_creation.md` for type definitions, JSON schema, and conventions.
+Writing a diagram description is cheap (2-3 sentences + type tag). Phase 4a decides which get rendered. **When in doubt, write the description. Do not self-censor.** See `style-guide/scripting-api/diagrams.md` for type definitions, JSON schema, and conventions.
 
 ### Minimal Example Conventions
 
@@ -487,7 +487,7 @@ What this method does.
 - Something non-obvious about this method.
 
 **Cross References:**
-- `ClassName.relatedMethod`
+- `$API.ClassName.relatedMethod$`
 
 **Diagram:**
 - **Brief:** Short Human-Readable Label
@@ -582,10 +582,11 @@ Review class `details` in the Readme for content that overlaps with individual m
 
 ### 2. Cross-Reference Injection
 
-Add `crossReferences` between related methods:
+Add `crossReferences` between related methods using canonical `$DOMAIN$` link tokens (see `style-guide/canonical-links.md`):
 - Deprecated methods and their replacements
 - Symmetric pairs (e.g., `setBypassed` and `isBypassed`)
 - Related attach/add pairs (e.g., `attachToComponentValue` pairs with `addComponentValueListener`)
+- Cross-domain links to modules or docs (e.g., `$MODULES.Convolution$`, `$DOC.Architecture.ModuleTree$`)
 
 ### 3. Markdown to JSON Transformation
 

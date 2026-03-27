@@ -10,7 +10,3 @@ __pycache__/
 ApiValueTreeBuilder/Builds/
 ApiValueTreeBuilder/JuceLibraryCode/
 
-# SVG renderer
-svg_renderer/node_modules/
-svg_renderer/dist/
-svg_renderer/output/

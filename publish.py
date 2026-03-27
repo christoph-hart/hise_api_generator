@@ -467,8 +467,39 @@ def convert_h1_to_frontmatter(content):
     return frontmatter + content[m.end():]
 
 
-def convert_warning_blockquotes(content):
-    """Convert > **Warning:** blockquotes to ::warning components."""
+def convert_warning_blockquotes(content, messages=None, filepath=""):
+    """Convert warning blockquotes to ::warning components.
+
+    Supports two formats:
+    1. New titled format:  > [!Warning:Title here] text...
+    2. Legacy format:      > **Warning:** text...
+
+    The placeholder $WARNING_TO_BE_REPLACED$ is treated as "no title" and
+    emits an INFO message so untitled warnings can be found.
+    """
+    PLACEHOLDER = "$WARNING_TO_BE_REPLACED$"
+
+    # New format: > [!Warning:title] text
+    def replace_titled_warning(m):
+        title = m.group(1).strip()
+        text = m.group(2).strip()
+        if title == PLACEHOLDER:
+            if messages is not None:
+                messages.append({
+                    "level": "INFO",
+                    "file": filepath,
+                    "token": PLACEHOLDER,
+                    "message": f"Untitled warning (needs title): {text[:60]}..."
+                })
+            return f"::warning\n{text}\n::"
+        return f'::warning{{title="{title}"}}\n{text}\n::'
+
+    content = re.sub(
+        r'^> \[!Warning:([^\]]+)\]\s*(.+?)$',
+        replace_titled_warning, content, flags=re.MULTILINE
+    )
+
+    # Legacy format: > **Warning:** text
     pattern = r'^> \*\*Warning:\*\* (.+?)$'
 
     def replace_warning(m):
@@ -478,8 +509,38 @@ def convert_warning_blockquotes(content):
     return re.sub(pattern, replace_warning, content, flags=re.MULTILINE)
 
 
-def convert_tip_blockquotes(content):
-    """Convert general info blockquotes (before ## Methods) to ::tip."""
+def convert_tip_blockquotes(content, messages=None, filepath=""):
+    """Convert tip blockquotes (before ## Methods) to ::tip.
+
+    Supports two formats:
+    1. New titled format:  > [!Tip:Title here] text...
+    2. Legacy format:      > plain blockquote text (not a warning)
+
+    The placeholder $TIP_TO_BE_REPLACED$ is treated as "no title".
+    """
+    PLACEHOLDER = "$TIP_TO_BE_REPLACED$"
+
+    # First pass: handle new titled format anywhere in the document
+    def replace_titled_tip(m):
+        title = m.group(1).strip()
+        text = m.group(2).strip()
+        if title == PLACEHOLDER:
+            if messages is not None:
+                messages.append({
+                    "level": "INFO",
+                    "file": filepath,
+                    "token": PLACEHOLDER,
+                    "message": f"Untitled tip (needs title): {text[:60]}..."
+                })
+            return f"::tip\n{text}\n::"
+        return f'::tip{{title="{title}"}}\n{text}\n::'
+
+    content = re.sub(
+        r'^> \[!Tip:([^\]]+)\]\s*(.+?)$',
+        replace_titled_tip, content, flags=re.MULTILINE
+    )
+
+    # Second pass: legacy plain blockquotes (before ## Methods only)
     lines = content.split('\n')
     result = []
     in_methods = False
@@ -490,7 +551,9 @@ def convert_tip_blockquotes(content):
             in_methods = True
         if (not in_methods and line.startswith("> ")
                 and not line.startswith("> **Warning:")
-                and not line.startswith("> **Warning*")):
+                and not line.startswith("> **Warning*")
+                and not line.startswith("> [!Warning:")
+                and not line.startswith("> [!Tip:")):
             bq_lines = []
             while i < len(lines) and lines[i].startswith("> "):
                 bq_lines.append(lines[i][2:])
@@ -565,11 +628,80 @@ def convert_see_also(content, class_name):
     return re.sub(pattern, replace_see_also, content, flags=re.MULTILINE)
 
 
-def convert_common_mistakes(content):
-    """Convert ## Common Mistakes section to ::common-mistakes component."""
-    pattern = r'^## Common Mistakes\n\n((?:- \*\*Wrong:\*\*.*?\n(?:  .*?\n)*\n?)+)'
+def convert_common_mistakes(content, messages=None, filepath=""):
+    """Convert ## Common Mistakes section to ::common-mistakes component.
 
-    def replace_cm(m):
+    Supports two formats:
+    1. New titled format:
+       - **Title here**
+         **Wrong:** ...
+         **Right:** ...
+         *reason*
+
+    2. Legacy format (no title):
+       - **Wrong:** ...
+         **Right:** ...
+         *reason*
+    """
+    TITLE_PLACEHOLDER = "$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$"
+
+    # New format with title: - **Title**\n  **Wrong:** ...\n  **Right:** ...\n  *reason*
+    titled_pattern = r'^## Common Mistakes\n\n((?:- \*\*[^W].*?\n(?:  .*?\n)*\n?)+)'
+
+    def replace_titled_cm(m):
+        block = m.group(1)
+        entries = re.findall(
+            r'- \*\*(.+?)\*\*\n  \*\*Wrong:\*\* (.+?)\n  \*\*Right:\*\* (.+?)\n  \*(.+?)\*',
+            block
+        )
+        if not entries:
+            return None  # Signal to try legacy format
+
+        yaml_items = []
+        for title, wrong, right, reason in entries:
+            title = title.rstrip().replace('"', '\\"')
+            wrong = wrong.rstrip().replace('\\', '\\\\').replace('"', '\\"')
+            right = right.rstrip().replace('\\', '\\\\').replace('"', '\\"')
+            reason = reason.rstrip().replace('\\', '\\\\').replace('"', '\\"')
+
+            if title == TITLE_PLACEHOLDER:
+                if messages is not None:
+                    messages.append({
+                        "level": "INFO",
+                        "file": filepath,
+                        "token": TITLE_PLACEHOLDER,
+                        "message": f"Untitled common mistake (needs title): {wrong[:50]}..."
+                    })
+                yaml_items.append(
+                    f'  - wrong: "{wrong}"\n'
+                    f'    right: "{right}"\n'
+                    f'    reason: "{reason}"'
+                )
+            else:
+                yaml_items.append(
+                    f'  - title: "{title}"\n'
+                    f'    wrong: "{wrong}"\n'
+                    f'    right: "{right}"\n'
+                    f'    reason: "{reason}"'
+                )
+
+        return (
+            "::common-mistakes\n---\nmistakes:\n"
+            + "\n".join(yaml_items)
+            + "\n---\n::\n"
+        )
+
+    # Try titled format first
+    titled_match = re.search(titled_pattern, content, flags=re.MULTILINE)
+    if titled_match:
+        result = replace_titled_cm(titled_match)
+        if result is not None:
+            return content[:titled_match.start()] + result + content[titled_match.end():]
+
+    # Legacy format: - **Wrong:** ...\n  **Right:** ...\n  *reason*
+    legacy_pattern = r'^## Common Mistakes\n\n((?:- \*\*Wrong:\*\*.*?\n(?:  .*?\n)*\n?)+)'
+
+    def replace_legacy_cm(m):
         block = m.group(1)
         entries = re.findall(
             r'- \*\*Wrong:\*\* (.+?)\n  \*\*Right:\*\* (.+?)\n  \*(.+?)\*',
@@ -595,7 +727,7 @@ def convert_common_mistakes(content):
             + "\n---\n::\n"
         )
 
-    return re.sub(pattern, replace_cm, content, flags=re.MULTILINE)
+    return re.sub(legacy_pattern, replace_legacy_cm, content, flags=re.MULTILINE)
 
 
 def convert_method_headings(content):
@@ -707,15 +839,40 @@ def fix_blank_lines_after_code_blocks(content):
     return re.sub(r'(\n```)\n([^\n`])', r'\1\n\n\2', content)
 
 
-def apply_mdc_transforms(content: str, class_name: str) -> str:
-    """Apply all MDC transformations to markdown content."""
+def apply_mdc_transforms(content: str, class_name: str,
+                         messages: list = None, filepath: str = "") -> str:
+    """Apply all MDC transformations to API markdown content."""
     content = convert_h1_to_frontmatter(content)
     content = convert_method_headings(content)
-    content = convert_common_mistakes(content)
-    content = convert_warning_blockquotes(content)
-    content = convert_tip_blockquotes(content)
+    content = convert_common_mistakes(content, messages, filepath)
+    content = convert_warning_blockquotes(content, messages, filepath)
+    content = convert_tip_blockquotes(content, messages, filepath)
     content = convert_see_also(content, class_name)
     content = rewrite_svg_paths(content)
+    content = fix_blank_lines_after_code_blocks(content)
+    return content
+
+
+def apply_module_mdc_transforms(content: str, messages: list = None,
+                                filepath: str = "") -> str:
+    """Apply MDC transformations to module reference markdown.
+
+    Module pages already contain most MDC components (::signal-path,
+    ::parameter-table, ::modulation-table, ::category-tags) authored
+    directly. We only need to convert:
+    - **See also:** lines -> ::see-also
+    - Warning/tip blockquotes -> ::warning / ::tip
+    - Blank line fixes after code blocks
+    """
+    content = convert_warning_blockquotes(content, messages, filepath)
+    content = convert_tip_blockquotes(content, messages, filepath)
+    # Module see-also uses the same **See also:** format after backport
+    # Extract a pseudo class_name from frontmatter moduleId for same-module anchors
+    module_id = ""
+    id_match = re.search(r'^moduleId:\s*(\S+)', content, re.MULTILINE)
+    if id_match:
+        module_id = id_match.group(1)
+    content = convert_see_also(content, module_id)
     content = fix_blank_lines_after_code_blocks(content)
     return content
 
@@ -780,6 +937,10 @@ def collect_sources(script_dir: Path) -> list:
             sources.append((md_file, "API", out_rel))
 
     # Modules: module_enrichment/output/**/*.md
+    # We read from output/ (not pages/) because the output includes both
+    # authored pages and static index files merged together. Once the module
+    # pipeline is fully migrated to use $DOMAIN$ tokens, we could read from
+    # pages/ directly, but for now output/ is the complete set.
     module_dir = script_dir / "module_enrichment" / "output"
     if module_dir.is_dir():
         for md_file in sorted(module_dir.rglob("*.md")):
@@ -833,9 +994,13 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         # Step 1: Resolve $DOMAIN.Target$ tokens
         content = resolve_tokens(content, registry, str(source_path), messages)
 
-        # Step 2: Apply MDC transforms (for API markdown files)
+        # Step 2: Apply MDC transforms
         if domain == "API":
-            content = apply_mdc_transforms(content, class_name)
+            content = apply_mdc_transforms(content, class_name, messages,
+                                           str(source_path))
+        elif domain == "MODULES":
+            content = apply_module_mdc_transforms(content, messages,
+                                                   str(source_path))
 
         # Step 3: Validate images
         dest = output_dir / out_rel

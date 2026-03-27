@@ -1,6 +1,6 @@
-# userDocs Writing Style Guidelines
+# userDocs Writing Style Guidelines (Scripting API)
 
-Authoritative reference for all `userDocs` prose - class-level and method-level. This file is the single source of truth; `phase4.md` references it rather than duplicating these rules.
+Extends `style-guide/general.md` with scripting API-specific rules. For general writing style, tone, spelling, what to strip, and formatting conventions, see the general guide.
 
 ---
 
@@ -19,27 +19,6 @@ Do not duplicate content between them. If `description` already says something, 
 
 ---
 
-## Spelling
-
-Use **British English** throughout all userDocs prose. This matches the JUCE codebase conventions.
-
-Common words to watch:
-
-| British (correct) | American (wrong) |
-|---|---|
-| behaviour | behavior |
-| colour | color |
-| normalised | normalized |
-| serialised | serialized |
-| specialised | specialized |
-| favourite | favorite |
-| honour | honor |
-| initialise | initialize |
-| customise | customize |
-| recognise | recognize |
-
----
-
 ## What to Include
 
 - **What the method does** in practical terms
@@ -55,44 +34,26 @@ Common words to watch:
 
 ---
 
-## What to Strip
+## What to Strip (API-Specific)
 
-These elements must NEVER appear in userDocs. They are implementation details that mean nothing to a HISEScript developer.
+In addition to the general stripping rules in `style-guide/general.md`:
 
-- **C++ class names** - e.g. `AudioThreadGuard::Suspender`, `JavascriptThreadPool::ScopedSleeper`, `DynamicObject`, `MemoryOutputStream`
-- **Preprocessor guard names** - e.g. `USE_BACKEND`, `HISE_INCLUDE_PROFILING_TOOLKIT`, `HI_EXPORT_AS_PROJECT_DLL`
-- **Implementation details** - e.g. "uses `reportScriptError` internally", "casts to `bool` via JUCE `var` conversion", "delegates to the underlying `WeakReference`"
-- **Thread safety internals** - e.g. "dispatched asynchronously to the message thread via `MessageManager::callAsync`". Instead say "runs asynchronously on the UI thread" if the threading behaviour matters to the scripter.
-- **C++ type system references** - e.g. "`var`", "`const String&`", "`dynamic_cast`", "`static_cast`". Use HISEScript types instead: "String", "Number", "Array", "Object", "Function".
-- **Source code references** - e.g. "defined in `ScriptingApi.cpp` line 6693", "see `MainController::UserPresetHandler`"
 - **Negative guidance that duplicates pitfalls** - don't tell the user what values are *not* allowed when the API already reports a script error for invalid input. State what to do, not what to avoid. Mention restrictions only when they are non-obvious and the API won't catch them with an error message.
 - **Prose that restates a warning blockquote** - if you write a `> **Warning:**` blockquote for a pitfall, do not also state the same fact in the prose paragraph above it. The warning carries the detail; the prose should cover different ground.
 
-**Translation examples:**
-
-| Phase 1 description (C++ aware) | userDocs equivalent |
-|---|---|
-| "Calls `reportScriptError` if the index is out of bounds" | *(omit - the API handles it)* |
-| "Dispatched via `MessageManager::callAsync` to avoid blocking the audio thread" | "Runs asynchronously on the UI thread" |
-| "Returns a `var` containing the JSON object" | "Returns the configuration as a JSON object" |
-| "Guarded by `USE_BACKEND` - no-op in exported plugins" | "Only works in the HISE IDE" |
-| "Allocates a MemoryOutputStream on the heap" | "Performs a heap allocation internally" |
-
 ---
 
-## Tone
+## Tone (API-Specific)
 
-- **Direct and practical.** Write as if you are explaining the method to a colleague who knows HISEScript but hasn't used this particular method before.
-- **Concise.** Most methods need 1-2 sentences. Only use 3 sentences if there is genuinely more to say.
-- **Specific.** Avoid vague statements like "useful for debugging" - say what it actually does.
-- **No marketing language.** No "powerful", "flexible", "easy-to-use", "orders of magnitude faster", etc.
+In addition to the general tone rules in `style-guide/general.md`:
+
 - **Scale tone to class complexity.** Simple utility classes (Console, MidiList) should be approachable and purpose-driven - a beginner/intermediate scripter is the primary reader. Complex integration classes (GlobalCable, TransportHandler) can use more technical language since their audience is likely more advanced. A pro developer won't read much about the Console overview; they'll jump straight to the methods.
 
 ---
 
 ## Length
 
-- **Class-level `Readme.md`:** 4-8 sentences across one or two paragraphs of overview prose, plus optional lists, tables, and blockquotes (see Formatting below). Cover what the class is for, how you typically obtain/use it, and any important behavioural notes. For simple utility classes 4 sentences may suffice; for complex classes with multiple modes or subsystems, use the full 8.
+- **Class-level `Readme.md`:** 4-8 sentences across one or two paragraphs of overview prose, plus optional lists, tables, and blockquotes. Cover what the class is for, how you typically obtain/use it, and any important behavioural notes. For simple utility classes 4 sentences may suffice; for complex classes with multiple modes or subsystems, use the full 8.
 - **Method-level files:** 1-3 sentences. Most simple methods (getters, setters, assertions) need just 1 sentence. Methods with non-obvious behaviour or multi-step workflows may need 2-3.
 
 ---
@@ -110,24 +71,6 @@ Before writing method-level userDocs, identify behavioural patterns that apply a
 State these once in the class-level `Readme.md`. Then omit them from individual method files unless a method is a notable *exception* to the class-wide rule (e.g. one method that *does* work in exported plugins when the rest don't).
 
 This means an individual method's userDocs may be shorter and more focused than its Phase 1 description - that is intentional. The Phase 1 description remains the authoritative standalone reference; the Phase 4 userDocs is the page-context version.
-
----
-
-## Lead with the Concept, Not the Signature
-
-The reader can already see the method signature. userDocs should explain the *concept* or *use case* that motivates the method, not restate what the signature already says.
-
-**Good** - explains the concept that makes `clone()` necessary:
-> If you assign an array reference to another variable, you're only setting the reference. Changes to one will affect the other. Use `clone()` to create an independent copy.
-
-**Bad** - restates the signature:
-> The `clone` method creates a copy of the array and returns it.
-
-**Good** - explains the mental model behind the data flow:
-> There is not a data queue for the sender side - if you register a target after data has been sent, it will not receive the previously sent value.
-
-**Bad** - restates what the method does:
-> The `sendData` method sends data to the cable targets.
 
 ---
 
@@ -192,7 +135,9 @@ Weave cross-references into natural sentences. Do not use bulleted "Related Meth
 
 ---
 
-## Formatting
+## Formatting (API-Specific)
+
+In addition to the general formatting rules in `style-guide/general.md`:
 
 ### Preserved elements
 
@@ -201,7 +146,7 @@ The following formatting elements are preserved in `userDocs` output and should 
 - **Warning blockquotes** (`> **Warning:** ...`) - the standard format for surfaced pitfalls. Use for non-obvious behavioural gotchas that a reader would not expect from the method signature. These render as styled callout boxes on the docs page. One warning per method is typical; two is the practical maximum. Always use `**Warning:**` (not "Note:", "Caution:", etc.) for consistency.
 - **Informational blockquotes** (`> ...` without a **Warning:** prefix) - use for class-wide behavioural notes in the Readme (see "Class-Wide Behavioural Notes" below) and for useful tips that don't warrant a warning.
 - **Tables** (`| Column | ... |`) - use for enumerated options, mode lists, or value descriptions. Prefer tables over long comma-separated lists.
-- **Bulleted and numbered lists** - use when prose contains 3 or more items that would otherwise be comma-separated inline. Numbered lists for ordered/hierarchical items (capability groups, workflow steps), bulleted lists for unordered peers (callback types, use cases). See "Break Inline Enumerations into Lists" below.
+- **Bulleted and numbered lists** - use when prose contains 3 or more items that would otherwise be comma-separated inline. Numbered lists for ordered/hierarchical items (capability groups, workflow steps), bulleted lists for unordered peers (callback types, use cases).
 - **Fenced code blocks** (` ```js `) - use for construction/obtainment patterns in the class Readme (see "No Code Examples in Prose" above). Not for inline method examples.
 - **Bold/italic** - use sparingly for emphasis.
 - **Inline code** (`` `backticks` ``) - use for method names, property names, string values, and HISEScript keywords.
@@ -214,39 +159,6 @@ The following are **stripped** by the parser and should not be relied upon:
 - **Arbitrary images** (`![alt](/some/path.png)`) - removed entirely (SVG diagram references in Phase 4 files are the exception; they are handled before the parser runs).
 - **Non-API links** (`[text](/some/path)`) - link markup removed, link text preserved as plain text.
 - **`#### Example` headings** - removed (code blocks go to the `examples` array).
-
----
-
-## Break Inline Enumerations into Lists
-
-When prose contains **3 or more items** in a comma-separated enumeration, break them out into a bulleted or numbered list. This makes the overview scannable rather than a wall of text.
-
-- **Numbered list** when items form distinct groups, categories, or a natural ordering.
-- **Bulleted list** when items are peers without hierarchy.
-
-**Bad** - 5 items crammed inline:
-> TransportHandler registers callbacks that fire when the DAW transport state changes: tempo, playback, beats, time signature, high-precision grid events, and plugin bypass.
-
-**Good** - broken into a list:
-> TransportHandler registers callbacks that fire when the DAW transport state changes:
->
-> - Tempo changes
-> - Playback (transport start / stop)
-> - Beats and time signature
-> - High-precision grid events
-> - Plugin bypass
-
-**Bad** - 3 capability groups inline:
-> The class offers three main capabilities: output methods for logging values, assertion methods for validating conditions, and profiling tools for benchmarking.
-
-**Good** - numbered list for distinct groups:
-> The class offers three main capabilities:
->
-> 1. Output methods for logging values and clearing the console.
-> 2. Assertion methods for validating conditions and data types during development.
-> 3. Profiling tools for benchmarking code and sampling data.
-
-The threshold is 3 items. Two items inline is fine ("a value channel and a data channel").
 
 ---
 

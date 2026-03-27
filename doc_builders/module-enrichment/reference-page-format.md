@@ -117,16 +117,7 @@ chains:
 [Implementation observations in regular markdown. Vestigial parameters,
 non-obvious behaviours, practical tips. No C++ internals.]
 
-## See Also
-
-::see-also
----
-links:
-  - { label: "equivalent.node", to: "/v2/reference/audio-modules/folder/moduleid", desc: "Description of the scriptnode equivalent" }
-  - { label: "FloatingTileName", to: "/v2/reference/audio-modules/folder/moduleid", desc: "What the UI component displays" }
-  - { label: "Module Name", to: "/v2/reference/audio-modules/folder/moduleid", desc: "How the alternative differs" }
----
-::
+**See also:** $MODULES.EquivalentModule$ -- description, $API.Effect.setBypassed$ -- scripting API link
 ```
 
 ### Section Rules
@@ -144,57 +135,20 @@ links:
 
 ## Prose Authoring Rules
 
-### Audience
+For general writing style, tone, spelling, and what to strip, see `style-guide/general.md`. For cross-reference links, warnings, and tips format, see `style-guide/canonical-links.md`.
 
-HISEScript developers who have no knowledge of C++ internals. They want to understand what a module does, how its parameters interact, and what to watch out for.
-
-### What to Include
+### What to Include (Module-Specific)
 
 - What the module does in practical terms
 - How the signal flows through it (the pseudo-code covers this visually; the prose provides context)
 - Parameter interactions and non-obvious behaviours
 - When to use this module vs alternatives
 - Practical limitations
-
-### What to Strip
-
-These must NEVER appear in the reference page prose. They are C++ implementation details.
-
-- **C++ class names** - e.g. `HardcodedScriptProcessor`, `EnvelopeModulator`, `MasterEffectProcessor`
-- **C++ type names** - e.g. `juce::BigInteger`, `AudioSampleBuffer`, `DynamicObject`
-- **C++ method names** - e.g. `setInternalAttribute()`, `processBlock()`, `applyEffect()`
-- **Assertion macros** - e.g. `jassertfalse`, `JUCE_ASSERT`
-- **Source code references** - e.g. "defined in DelayEffect.cpp line 142"
-- **Implementation mechanisms** - e.g. "uses a 1024-sample crossfade in the DelayLine class"
-
-### Translation Table
-
-| Exploration finding (C++ aware) | Reference page prose |
-|---|---|
-| "Implemented as HardcodedScriptProcessor with scripting callbacks" | "A built-in MIDI processor" |
-| "Uses juce::BigInteger bitmask for channel range" | "Checks the message channel against the allowed range" |
-| "Message.ignoreEvent(true) flags the message" | "Non-matching messages are silently skipped by downstream processors" |
-| "overlap fader (scriptnode::faders::overlap)" | "Uses an overlap fader for dry/wet mixing" |
-| "1024-sample crossfade in DelayLine" | "Crossfades when delay time changes to prevent clicks" |
-| "expRamp uses exponential coefficients, not lookup tables" | "All curve shapes use exponential ramps" |
-| "VoiceData struct stores per-voice state" | "Each voice maintains its own envelope state" |
-| "Dispatched via MessageManager::callAsync" | *(omit - not relevant to module behaviour)* |
+- Scale to module complexity: simple modules (ChannelFilter) get brief prose, complex modules (AHDSR, WaveSynth) get fuller explanations
 
 ### Vestigial Parameters
 
-Vestigial parameters (defined but non-functional) should be noted factually in the parameter table description: "This parameter has no effect." Do not reference C++ line numbers, fix suggestions, or bug analysis. The Notes section may add a brief mention: "The `EcoMode` parameter is vestigial - downsampling is now controlled globally."
-
-### Tone
-
-- **Direct and practical.** Explain what the module does, not how it is implemented.
-- **Concise.** Avoid filler words and unnecessary qualifications.
-- **British English** throughout (behaviour, normalised, serialised, etc.).
-- **No marketing language.** No "powerful", "flexible", "easy-to-use".
-- **Scale to module complexity.** Simple modules (ChannelFilter) get brief prose. Complex modules (AHDSR, WaveSynth) get fuller explanations.
-
-### Bug Discovery Policy
-
-Implementation bugs must NOT appear in the reference page. See `exploration-guide.md` section "Bug Discovery Policy" for the full policy. Report bugs in `module_enrichment/issues.md` only.
+Vestigial parameters (defined but non-functional) should be noted factually in the parameter table description: "This parameter has no effect." The Notes section may add a brief mention: "The `EcoMode` parameter is vestigial - downsampling is now controlled globally."
 
 ---
 
@@ -314,54 +268,36 @@ Include all modulation chains from moduleList.json that are not disabled. For di
 
 ## See Also Section
 
-The See Also section uses the `::see-also` MDC component to render clickable cross-module links on the Nuxt.js docs site. It surfaces cross-module relationships discovered during C++ exploration.
+The See Also section uses canonical `$DOMAIN$` link tokens that the `publish.py` script resolves to correct URLs and converts to `::see-also` MDC components. This decouples the authored content from the Nuxt.js URL structure.
 
-### MDC format
+### Format
 
 ```markdown
-## See Also
-
-::see-also
----
-links:
-  - { label: "Display Name", to: "/v2/reference/audio-modules/folder/moduleid", desc: "Why this module is related" }
-  - { label: "Another Module", to: "/v2/reference/audio-modules/folder/sub/moduleid", desc: "Relationship description" }
----
-::
+**See also:** $MODULES.SendFX$ -- shares the send bus routing architecture, $MODULES.GlobalEnvelopeModulator$ -- reads per-voice envelope values from this container
 ```
 
-### Deriving the body component from frontmatter
+Cross-domain links work too:
 
-The `::see-also` body component is derived directly from the frontmatter `seeAlso` array. For each frontmatter entry `{ id: ModuleId, type: ..., reason: "..." }`:
+```markdown
+**See also:** $MODULES.SendFX$ -- related module, $API.Effect.setBypassed$ -- scripting API for bypass control
+```
 
-1. Take the `id` field (e.g., `SendFX`, `GlobalEnvelopeModulator`)
-2. Look up that ID in `moduleList.json` to get its `type` and `subtype`
-3. Map the type/subtype to a folder path using the table below
-4. Construct the URL: `/v2/reference/audio-modules/{folder}/{id-in-lowercase}`
-5. Use `reason` as the `desc` field
+### Link token syntax
 
-**Do NOT resolve URLs from display names** - always use the module ID from the frontmatter. This ensures links stay correct as new modules are added.
+Use `$DOMAIN.Target$` tokens. See `style-guide/canonical-links.md` for the complete reference of all domains, resolution cascade, and validation. You do NOT need to know the exact URL structure - just use the canonical ID and the publish script resolves it with fuzzy matching.
 
-### Type/subtype to folder mapping
+### Deriving from frontmatter
 
-| type / subtype | Folder path |
-|---|---|
-| `SoundGenerator/*` | `sound-generators` |
-| `MidiProcessor/*` | `midi-processors` |
-| `Modulator/EnvelopeModulator` | `modulators/envelope` |
-| `Modulator/TimeVariantModulator` | `modulators/time-variant` |
-| `Modulator/VoiceStartModulator` | `modulators/voice-start` |
-| `Effect/MasterEffect` | `effects/master` |
-| `Effect/MonophonicEffect` | `effects/monophonic` |
-| `Effect/VoiceEffect` | `effects/polyphonic` |
+The `**See also:**` line is derived from the frontmatter `seeAlso` array. For each entry `{ id: ModuleId, type: ..., reason: "..." }`, emit `$MODULES.{id}$ -- {reason}`.
 
-### Fields
+### In-prose links
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `label` | yes | Human-readable display name (can differ from module ID) |
-| `to` | yes | URL derived from the frontmatter `seeAlso[].id` using the scheme above |
-| `desc` | yes | Copied from the frontmatter `seeAlso[].reason` - the relationship reason, not the type label |
+For links within the body text, use standard markdown links with `$DOMAIN$` tokens:
+
+```markdown
+This module works together with the [Global Envelope Modulator]($MODULES.GlobalEnvelopeModulator$) to provide...
+
+Use [Effect.setBypassed]($API.Effect.setBypassed$) to toggle the effect from script.
 
 ### Relationship types to include
 

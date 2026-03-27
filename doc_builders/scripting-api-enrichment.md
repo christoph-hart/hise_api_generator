@@ -260,7 +260,7 @@ tools/api generator/
 - Class-level `diagrams` is an **array** (a class can have multiple diagrams, each with a unique `id`).
 - Method-level `diagram` is a **single object** (one diagram per method, no `id` needed).
 - A method can alternatively use `"diagramRef": "class-level-diagram-id"` instead of its own `diagram` when it participates in a class-level diagram. A method has `diagram`, `diagramRef`, or neither -- never both.
-- See `resources/guidelines/diagram_creation.md` for the full diagram authoring guide.
+- See `style-guide/scripting-api/diagrams.md` for the full diagram authoring guide.
 
 ---
 

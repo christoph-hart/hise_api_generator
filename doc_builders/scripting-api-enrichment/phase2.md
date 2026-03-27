@@ -24,7 +24,7 @@ Directory existence is the signal. If the directory exists (even empty), extract
 
 Once Phase 2 files exist, the pipeline agent enriches examples with test metadata so they can be validated. This is a **combined pass covering both Phase 1 and Phase 2 examples** for the target class -- not just Phase 2 files. Phase 1 examples in `phase1/ClassName/methods.md` and Phase 2 examples in `phase2/ClassName/*.md` all receive slugs, testMetadata blocks, and setup/test-only markers in one go, then are validated together.
 
-Follow `resources/guidelines/test_metadata.md` for the full schema, verification types, setup patterns, and CLI reference.
+Follow `style-guide/scripting-api/test-metadata.md` for the full schema, verification types, setup patterns, and CLI reference.
 
 ### Per-method workflow
 
@@ -101,7 +101,7 @@ obj.methodName(args);
 - A real-world gotcha discovered in project analysis.
 
 **Cross References:**
-- `OtherClass.relatedMethod`
+- `$API.OtherClass.relatedMethod$`
 ```
 
 All sections are optional except `**Examples:**`.
@@ -171,7 +171,7 @@ The `projectContext` field is Phase 2-exclusive. It does not exist in Phase 1 an
 
 ## Test Metadata Reference
 
-See `resources/guidelines/test_metadata.md` for:
+See `style-guide/scripting-api/test-metadata.md` for:
 - Full testMetadata schema (testable, skipReason, setupScript, verifyScript)
 - Verification types (log-output, REPL, expect-error)
 - Setup patterns (Builder API, saveInPreset, callback triggering)

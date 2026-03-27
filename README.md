@@ -19,7 +19,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 | **LAF function extraction** | `laf_style_guide.json` | Active | [laf-extraction.md](doc_builders/laf-extraction.md) |
 | **Component properties** | TBD | Planned | [component-properties.md](doc_builders/component-properties.md) |
 | **Module enrichment** | `module_enrichment/output/moduleList.json` | Planned | [module-enrichment.md](doc_builders/module-enrichment.md) |
-| **SVG signal flow diagrams** | `svg_renderer/output/*.svg` | Planned | [svg-signal-flow-renderer.md](doc_builders/module-enrichment/svg-signal-flow-renderer.md) |
+
 
 ## Directory Structure
 
@@ -32,6 +32,16 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 ├── ApiValueTreeBuilder/       # JUCE console app source for the above
 ├── xml.doxyfile               # Doxygen configuration
 ├── xml/                       # Doxygen XML output (gitignored, regenerated)
+├── style-guide/
+│   ├── general.md             # General writing style (all pipelines)
+│   ├── canonical-links.md     # Cross-reference link tokens, warnings, tips
+│   └── scripting-api/         # Scripting API-specific style guides
+│       ├── userdocs-style.md  # userDocs prose rules
+│       ├── code-examples.md   # Code example quality guidelines
+│       ├── hisescript-rules.md # HISEScript syntax rules
+│       ├── diagrams.md        # Diagram creation guidelines
+│       ├── test-metadata.md   # Test metadata authoring
+│       └── builder-reference.md # Builder API reference
 ├── enrichment/
 │   ├── base/                  # Phase 0 output (gitignored, regenerated)
 │   ├── phase1/                # Phase 1 agent output (tracked)
@@ -41,7 +51,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   │   ├── auto/              # Phase 4a LLM-generated userDocs (tracked)
 │   │   └── manual/            # Phase 4a human-edited overrides (tracked, wins over auto)
 │   ├── phase4b/               # Phase 4b LLM C++ reference entries (tracked)
-│   ├── resources/             # Supporting data: explorations, guidelines, survey
+│   ├── resources/             # Supporting data: explorations, survey
 │   ├── issues.md              # Bugs discovered during C++ source analysis
 │   ├── phase1_scanned.txt     # Diff manifest
 │   └── output/                # Final merged JSON (gitignored, regenerated)
@@ -57,7 +67,6 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   ├── module-enrichment.md               # Module enrichment orchestrator guide
 │   ├── module-enrichment/                 # Module enrichment sub-phase details
 │   │   ├── intermediate-format.md         # Signal flow JSON specification
-│   │   └── svg-signal-flow-renderer.md    # SVG rendering tool specification
 │   ├── laf-extraction.md
 │   ├── component-properties.md
 │   └── module-list.md
@@ -71,10 +80,6 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   ├── phase3/                            # Phase 3 enriched output (tracked)
 │   ├── resources/                         # Supporting data and guidelines
 │   └── output/                            # Final merged JSON (gitignored)
-├── svg_renderer/                          # SVG rendering tool (Node.js/TypeScript)
-│   ├── src/
-│   ├── test-data/
-│   └── output/                            # Generated SVGs (gitignored)
 ```
 
 ## Quick Start (Scripting API Enrichment)
