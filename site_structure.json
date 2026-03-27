@@ -30,7 +30,14 @@
         "Modulator.VoiceStartModulator": "03.modulators/voice-start",
         "Effect.MasterEffect": "04.effects/master",
         "Effect.MonophonicEffect": "04.effects/monophonic",
-        "Effect.PolyphonicEffect": "04.effects/polyphonic"
+        "Effect.VoiceEffect": "04.effects/polyphonic"
+      },
+      "staticPages": {
+        "Audio Modules": "",
+        "Sound Generators": "01.sound-generators",
+        "MIDI Processors": "02.midi-processors",
+        "Modulators": "03.modulators",
+        "Effects": "04.effects"
       }
     },
     "UI": {

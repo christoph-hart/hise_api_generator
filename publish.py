@@ -61,6 +61,8 @@ class LinkRegistry:
         self.lower_index = {}
         # domain -> { lowercase_key: canonical_key } (dash-stripped for DOC)
         self.normalized_index = {}
+        # module_id -> { prettyName, type, subtype }
+        self.module_info = {}
 
         self._build_api_registry()
         self._build_modules_registry()
@@ -122,6 +124,12 @@ class LinkRegistry:
             module_id = module["id"]
             module_type = module.get("type", "")
             module_subtype = module.get("subtype", "")
+
+            self.module_info[module_id] = {
+                "prettyName": module.get("prettyName", module_id),
+                "type": module_type,
+                "subtype": module_subtype,
+            }
 
             # Find the directory mapping
             # Try type.subtype first, then type alone
@@ -566,21 +574,23 @@ def convert_tip_blockquotes(content, messages=None, filepath=""):
     return "\n".join(result)
 
 
-def convert_see_also(content, class_name):
+def convert_see_also(content, class_name, registry=None):
     """Convert **See also:** lines to ::see-also MDC components.
 
-    Handles two formats:
-    - Plain: ClassName.methodName
-    - Annotated: ClassName.methodName` -- description text
+    Parses $API.Class.method$ and $MODULES.ModuleId$ tokens directly
+    (before link resolution).
     Same-class references become anchor-only links (#methodname).
     Cross-class references link to /v2/scripting-api/classname#methodname.
+    Module references use registry for URL and prettyName for label.
+    Annotated refs use: $DOMAIN.Target$ -- description text
     """
     slug = class_name.lower()
     pattern = r'^\*\*See also:\*\* (.+)$'
 
     def replace_see_also(m):
         line = m.group(1)
-        items = re.split(r',\s*(?=[A-Z]\w*\.)', line)
+        # Split on comma followed by whitespace and a $ token or ClassName
+        items = re.split(r',\s*(?=\$[A-Z]|\$[a-z]|[A-Z]\w*\.)', line)
         if not items:
             return m.group(0)
 
@@ -590,35 +600,99 @@ def convert_see_also(content, class_name):
             if not item:
                 continue
 
-            ann_match = re.match(r'([A-Z]\w*\.\w+)`?\s*--\s*(.+)', item, re.DOTALL)
-            if ann_match:
-                ref = ann_match.group(1).strip()
-                desc = ann_match.group(2).strip().replace('"', '\\"')
-                cls, method = ref.split('.', 1)
+            # Parse $API.Class.method$ tokens (with optional annotation)
+            token_ann = re.match(
+                r'\$API\.([A-Za-z]\w*)\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+            )
+            token_plain = re.match(
+                r'\$API\.([A-Za-z]\w*)\.(\w+)\$', item
+            )
+
+            if token_ann:
+                cls = token_ann.group(1)
+                method = token_ann.group(2)
+                desc = token_ann.group(3).strip().replace('"', '\\"')
                 if cls.lower() == slug:
                     yaml_links.append(
                         f'  - {{ label: "{method}", to: "#{method.lower()}", desc: "{desc}" }}'
                     )
                 else:
                     yaml_links.append(
-                        f'  - {{ label: "{ref}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}", desc: "{desc}" }}'
+                        f'  - {{ label: "{cls}.{method}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}", desc: "{desc}" }}'
+                    )
+            elif token_plain:
+                cls = token_plain.group(1)
+                method = token_plain.group(2)
+                if cls.lower() == slug:
+                    yaml_links.append(
+                        f'  - {{ label: "{method}", to: "#{method.lower()}" }}'
+                    )
+                else:
+                    yaml_links.append(
+                        f'  - {{ label: "{cls}.{method}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}" }}'
                     )
             else:
-                ref = item.strip('` ')
-                if '.' in ref:
+                # Parse $MODULES.ModuleId$ tokens (with optional annotation)
+                mod_ann = re.match(
+                    r'\$MODULES\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                mod_plain = re.match(r'\$MODULES\.(\w+)\$', item)
+
+                if mod_ann or mod_plain:
+                    mod_match = mod_ann or mod_plain
+                    mod_id = mod_match.group(1)
+                    desc = mod_ann.group(2).strip().replace('"', '\\"') if mod_ann else None
+
+                    # Look up URL and pretty name from registry
+                    url = None
+                    if registry:
+                        url, _, _ = registry.resolve("MODULES", mod_id)
+                    label = mod_id
+                    if registry and mod_id in registry.module_info:
+                        label = registry.module_info[mod_id]["prettyName"]
+
+                    if url:
+                        if desc:
+                            yaml_links.append(
+                                f'  - {{ label: "{label}", to: "{url}", desc: "{desc}" }}'
+                            )
+                        else:
+                            yaml_links.append(
+                                f'  - {{ label: "{label}", to: "{url}" }}'
+                            )
+                    continue
+                # Fallback: plain ClassName.method (legacy format)
+                ann_match = re.match(
+                    r'([A-Z]\w*\.\w+)`?\s*--\s*(.+)', item, re.DOTALL
+                )
+                if ann_match:
+                    ref = ann_match.group(1).strip()
+                    desc = ann_match.group(2).strip().replace('"', '\\"')
                     cls, method = ref.split('.', 1)
                     if cls.lower() == slug:
                         yaml_links.append(
-                            f'  - {{ label: "{method}", to: "#{method.lower()}" }}'
+                            f'  - {{ label: "{method}", to: "#{method.lower()}", desc: "{desc}" }}'
                         )
                     else:
                         yaml_links.append(
-                            f'  - {{ label: "{ref}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}" }}'
+                            f'  - {{ label: "{ref}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}", desc: "{desc}" }}'
                         )
                 else:
-                    yaml_links.append(
-                        f'  - {{ label: "{ref}", to: "#{ref.lower()}" }}'
-                    )
+                    ref = item.strip('`$ ')
+                    if '.' in ref:
+                        cls, method = ref.split('.', 1)
+                        if cls.lower() == slug:
+                            yaml_links.append(
+                                f'  - {{ label: "{method}", to: "#{method.lower()}" }}'
+                            )
+                        else:
+                            yaml_links.append(
+                                f'  - {{ label: "{ref}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}" }}'
+                            )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{ref}", to: "#{ref.lower()}" }}'
+                        )
 
         if not yaml_links:
             return m.group(0)
@@ -847,7 +921,6 @@ def apply_mdc_transforms(content: str, class_name: str,
     content = convert_common_mistakes(content, messages, filepath)
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
-    content = convert_see_also(content, class_name)
     content = rewrite_svg_paths(content)
     content = fix_blank_lines_after_code_blocks(content)
     return content
@@ -866,13 +939,6 @@ def apply_module_mdc_transforms(content: str, messages: list = None,
     """
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
-    # Module see-also uses the same **See also:** format after backport
-    # Extract a pseudo class_name from frontmatter moduleId for same-module anchors
-    module_id = ""
-    id_match = re.search(r'^moduleId:\s*(\S+)', content, re.MULTILINE)
-    if id_match:
-        module_id = id_match.group(1)
-    content = convert_see_also(content, module_id)
     content = fix_blank_lines_after_code_blocks(content)
     return content
 
@@ -1013,7 +1079,10 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
                         out_rel = Path(content_dir) / md_file.name.lower()
                     elif type_mapping:
                         # Modules: use typeMapping to determine subdirectory
-                        module_id = md_file.stem
+                        with open(md_file, "r", encoding="utf-8") as mf:
+                            module_id = _extract_frontmatter_field(
+                                mf.read(), "moduleId"
+                            ) or md_file.stem
                         registry_source = domain_config.get("registrySource", "")
                         module_list_path = script_dir / registry_source
                         subdir = _resolve_module_subdir(
@@ -1039,27 +1108,21 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
                     with open(md_file, "r", encoding="utf-8") as f:
                         file_content = f.read()
 
-                    # Check for explicit placement override
-                    placement = _extract_frontmatter_field(file_content, "placement")
-                    if placement:
-                        if placement == "/":
-                            out_rel = Path(content_dir) / "index.md"
+                    # Resolve placement from staticPages in site_structure
+                    static_pages_map = domain_config.get("staticPages", {})
+                    title = _extract_frontmatter_field(file_content, "title")
+                    if title and title in static_pages_map:
+                        subdir = static_pages_map[title]
+                        if subdir:
+                            out_rel = Path(content_dir) / subdir / "index.md"
                         else:
-                            out_rel = Path(content_dir) / placement / "index.md"
+                            out_rel = Path(content_dir) / "index.md"
                     else:
-                        # Derive from title
-                        title = _extract_frontmatter_field(file_content, "title")
+                        # Fallback: slug from title or filename
                         if title:
                             slug = _slugify(title)
-                            # Root index: if the file is named index.md at the
-                            # static root, it's the domain root
-                            rel = md_file.relative_to(static_dir)
-                            if rel == Path("index.md") or rel.name == "index.md" and len(rel.parts) == 1:
-                                out_rel = Path(content_dir) / "index.md"
-                            else:
-                                out_rel = Path(content_dir) / slug / "index.md"
+                            out_rel = Path(content_dir) / slug / "index.md"
                         else:
-                            # No title, use filename
                             stem = md_file.stem
                             if stem == "index":
                                 out_rel = Path(content_dir) / "index.md"
@@ -1282,11 +1345,21 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         lines = content.split('\n')
         class_name = get_class_name_from_heading(lines)
 
-        # Step 1: Resolve $DOMAIN.Target$ tokens
+        # Step 1: Convert see-also BEFORE token resolution (uses $API$/$MODULES$ tokens)
+        mdc_transform = site_structure.get("domains", {}).get(domain, {}).get("mdcTransform", "")
+        if mdc_transform == "api":
+            content = convert_see_also(content, class_name, registry)
+        elif mdc_transform == "module":
+            module_id = ""
+            id_match = re.search(r'^moduleId:\s*(\S+)', content, re.MULTILINE)
+            if id_match:
+                module_id = id_match.group(1)
+            content = convert_see_also(content, module_id, registry)
+
+        # Step 2: Resolve $DOMAIN.Target$ tokens
         content = resolve_tokens(content, registry, str(source_path), messages)
 
-        # Step 2: Apply MDC transforms based on domain config
-        mdc_transform = site_structure.get("domains", {}).get(domain, {}).get("mdcTransform", "")
+        # Step 3: Apply MDC transforms based on domain config
         if mdc_transform == "api":
             content = apply_mdc_transforms(content, class_name, messages,
                                            str(source_path))
