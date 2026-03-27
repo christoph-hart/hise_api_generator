@@ -14,4 +14,4 @@ Reads the audio file's header without loading sample data. Returns a JSON object
 
 Use this instead of `loadAsAudioFile` when you only need format information - it reads only the header, not the sample data.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Returns `undefined` silently if the file does not exist or is not a recognised audio format. Unlike `loadAsObject`, no script error is reported on failure. Always check with `isDefined()` before accessing properties.
+> [!Warning:Returns undefined on failure silently] Returns `undefined` silently if the file does not exist or is not a recognised audio format. Unlike `loadAsObject`, no script error is reported on failure. Always check with `isDefined()` before accessing properties.

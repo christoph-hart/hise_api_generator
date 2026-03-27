@@ -8,6 +8,6 @@ The key method is `setContentData()`, which accepts a JSON object with a `"Type"
 
 Common content types include `"PresetBrowser"`, `"Keyboard"`, `"PerformanceLabel"`, `"CustomSettings"`, `"AHDSRGraph"`, `"FilterDisplay"`, `"AudioAnalyser"`, and `"MarkdownPanel"`. See the `setContentData()` method documentation for the full list and JSON configuration format.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] All visual property changes (colours, font, content type, data) trigger a complete content reload where the panel is destroyed and recreated. Avoid changing these properties at high frequency.
+> [!Warning:Property changes trigger full reload] All visual property changes (colours, font, content type, data) trigger a complete content reload where the panel is destroyed and recreated. Avoid changing these properties at high frequency.
 
 ScriptFloatingTile deactivates several inherited properties that are irrelevant for display-only widgets, including `saveInPreset` (defaults to false), `macroControl`, `min`, `max`, `text`, and `tooltip`.

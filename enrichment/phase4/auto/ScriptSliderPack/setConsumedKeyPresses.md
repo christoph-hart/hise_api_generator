@@ -6,4 +6,4 @@ Defines which key presses this component captures when it has focus. Pass `"all"
 | `"all_nonexclusive"` | Catches all keys but parent still receives them |
 | Array of strings/objects | Catches only the specified key combinations |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Must be called before `setKeyPressCallback()`. Calling them in the wrong order reports a script error.
+> [!Warning:Call before setKeyPressCallback] Must be called before `setKeyPressCallback()`. Calling them in the wrong order reports a script error.

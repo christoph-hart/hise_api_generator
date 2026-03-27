@@ -33,27 +33,27 @@ The typical workflow is to call `FileSystem.getFolder()` to obtain a `File` obje
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Pass File object to findFiles**
   **Wrong:** `FileSystem.findFiles(FileSystem.Samples, "*.wav", true)`
   **Right:** `FileSystem.findFiles(FileSystem.getFolder(FileSystem.Samples), "*.wav", true)`
   *`findFiles` requires a `File` object, not a SpecialLocations constant. Use `getFolder()` first to convert the constant to a `File`.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Browse callback is asynchronous**
   **Wrong:** `FileSystem.browse(FileSystem.Desktop, false, "*.wav", function(f){ ... })` and expecting a return value
   **Right:** Use the callback parameter - the selected `File` is passed to the callback asynchronously.
   *All browse methods are async. They return immediately and deliver results via the callback. The callback is not called if the user cancels.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use correct location type constant**
   **Wrong:** `FileSystem.fromReferenceString("{PROJECT_FOLDER}sound.wav", FileSystem.Desktop)`
   **Right:** `FileSystem.fromReferenceString("{PROJECT_FOLDER}sound.wav", FileSystem.AudioFiles)`
   *Only `AudioFiles`, `Samples`, and `UserPresets` are valid location types for `fromReferenceString`. Other constants trigger a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Store relative paths in presets**
   **Wrong:** Storing absolute file paths in presets or saved state
   **Right:** Store relative paths using `File.toString(1)` and reconstruct with `fromAbsolutePath()` or `getFolder().getChildFile()`
   *Absolute paths break when the plugin is used on a different machine or when the sample folder is relocated.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Cache findFiles results**
   **Wrong:** Calling `findFiles()` on every UI refresh
   **Right:** Cache the file list in a variable or JSON file; rescan only on explicit user action.
   *Directory scanning is expensive, especially on network drives or large content libraries.*

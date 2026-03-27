@@ -49,22 +49,22 @@ The class uses `Sampler.*` constants to identify sample properties when reading 
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Disable RR before group management**
   **Wrong:** `Sampler.setActiveGroup(1);` without disabling RR
   **Right:** `Sampler.enableRoundRobin(false); Sampler.setActiveGroup(1);`
   *Group management methods require round-robin to be disabled first, otherwise a script error is thrown.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Defer loadSampleMap with a timer**
   **Wrong:** Calling `loadSampleMap()` directly from a ComboBox callback
   **Right:** Using a timer to defer the load (e.g. 50ms poll interval)
   *Direct loading from UI callbacks can cause audio glitches. A timer decouples the UI event from the asynchronous loading operation.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call refreshRRMap before querying groups**
   **Wrong:** `Sampler.getRRGroupsForMessage(60, 100);` without calling `refreshRRMap()` first
   **Right:** `Sampler.refreshRRMap();` in onInit, then `Sampler.getRRGroupsForMessage(60, 100);` in callbacks
   *The RR map must be rebuilt at compile time before querying group counts for note/velocity combinations.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use getSampleMapAsBase64 for persistence**
   **Wrong:** Saving the JSON array from `loadSampleMapFromJSON()` for preset persistence
   **Right:** Using `Sampler.getSampleMapAsBase64()` to capture the complete state
   *The base64 format includes post-load edits (e.g. sample range changes made via an AudioWaveform). Re-saving only the original JSON array loses those modifications.*

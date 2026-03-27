@@ -7,4 +7,4 @@ Reads a MIDI file and returns a JSON object containing time signature metadata a
 }
 ```
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Event timestamps are converted using a fixed sample rate of 44100 Hz and tempo of 120 BPM. If playback conditions differ, timestamps may not correspond directly to playback positions.
+> [!Warning:Fixed sample rate and tempo conversion] Event timestamps are converted using a fixed sample rate of 44100 Hz and tempo of 120 BPM. If playback conditions differ, timestamps may not correspond directly to playback positions.

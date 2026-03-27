@@ -19,17 +19,17 @@ const var lb = Content.addLabel("Title", 10, 10);
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use editable property at design time**
   **Wrong:** `lb.setEditable(false);` in `onControl`
   **Right:** `lb.setEditable(false);` in `onInit`
   *setEditable is onInit only and reports a script error after initialisation.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Label value is text not numeric**
   **Wrong:** `lb.setValue(1);`
   **Right:** `lb.setValue("1");`
   *ScriptLabel only accepts strings for setValue; non-string values are ignored.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use changed to trigger callback manually**
   **Wrong:** Set label text programmatically and expect callbacks to fire
   **Right:** Call `changed()` after updating the text
   *Programmatic updates do not trigger the control callback unless you call changed().*

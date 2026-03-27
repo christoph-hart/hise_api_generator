@@ -11,4 +11,4 @@ The easiest way to build the options object is to configure the profiling popup 
 
 Load the recorded data into the PerfettoWebViewer floating tile to visually inspect thread activity, lock contention, and callback timing.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] In compiled plugins, the profiling toolkit must be explicitly enabled by adding `HISE_INCLUDE_PROFILING_TOOLKIT=1` to the ExtraDefinitions field in your project settings. Without it, this method throws a script error.
+> [!Warning:Enable profiling toolkit in project settings] In compiled plugins, the profiling toolkit must be explicitly enabled by adding `HISE_INCLUDE_PROFILING_TOOLKIT=1` to the ExtraDefinitions field in your project settings. Without it, this method throws a script error.

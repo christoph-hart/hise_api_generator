@@ -27,12 +27,12 @@ For static artwork that never changes at runtime, set the `fileName` property di
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use ScriptImage not Panel for static images**
   **Wrong:** Creating a `ScriptPanel` with `loadImage()` and `setPaintRoutine()` just to display a static image.
   **Right:** Using `ScriptImage` with the `fileName` property set in the Interface Designer.
   *ScriptImage is purpose-built for static image display. ScriptPanel adds unnecessary overhead (paint callback, mouse handling infrastructure) when no custom drawing or interaction is needed.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **forceUseRealFile has no effect**
   **Wrong:** `img.setImageFile("myImage.png", true)` expecting disk reload via the second parameter.
   **Right:** `img.setImageFile("{PROJECT_FOLDER}myImage.png", 0)`
   *The `forceUseRealFile` parameter is ignored in the current implementation - images are always loaded through the pool. Use the standard `{PROJECT_FOLDER}` pool reference format.*

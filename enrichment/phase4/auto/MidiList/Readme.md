@@ -13,16 +13,16 @@ Slots are indexed 0-127 (matching MIDI note numbers) and can hold any integer va
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Empty slots contain -1 not zero**
   **Wrong:** Checking `getValue(index) == 0` to detect empty slots
   **Right:** Check `getValue(index) == -1`
   *Unset slots contain `-1`, not 0. A freshly created MidiList (or one after `clear()`) has all slots set to `-1`.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **clear fills with -1 not zero**
   **Wrong:** Assuming `clear()` zeros out the array
   **Right:** `clear()` fills all slots with `-1`. Use `fill(0)` if you need zeroes.
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Force counter refresh after restore**
   **Wrong:** Trusting `getNumSetValues()` or `isEmpty()` immediately after `restoreFromBase64String()`
   **Right:** Call `setValue()` on at least one slot after restoring to force a counter update
   *The deserialization overwrites the raw data but does not recalculate the internal counter that these methods rely on.*

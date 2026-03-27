@@ -44,22 +44,22 @@ By default, re-calling an `addXXX()` method with an existing component name upda
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Create components only in onInit**
   **Wrong:** `Content.addButton("Btn1", 10, 20)` in onControl
   **Right:** `Content.addButton("Btn1", 10, 20)` in onInit
   *Component creation is only allowed during onInit. Calling addXXX after initialisation throws a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Cache getComponent references at init**
   **Wrong:** `Content.getComponent("Knob1")` inside a timer callback
   **Right:** `const var knob1 = Content.getComponent("Knob1");` at init, use `knob1` in callback
   *`getComponent` performs a linear search through all components. Calling it repeatedly in callbacks wastes CPU. Cache the reference once at init time.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Create paths at init scope not in paint**
   **Wrong:** Creating paths inside paint routines
   **Right:** `const var icon = Content.createPath();` at init scope
   *`createPath` allocates a new object. Creating paths inside paint routines causes allocation on every repaint. Create once, reuse everywhere.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Organise LAFs by component type**
   **Wrong:** Scattering LAF objects across many files without structure
   **Right:** Organise LAFs in dedicated files by component type (e.g., `SliderLAF.js`, `ButtonLAF.js`)
   *As the number of LAF objects grows (20+), keeping them organised by visual component type makes maintenance practical.*

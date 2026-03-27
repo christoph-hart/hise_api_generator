@@ -26,27 +26,27 @@ Cables can deliver values through callbacks (synchronous or asynchronous) or be 
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use inline function for sync callbacks**
   **Wrong:** Using a non-realtime-safe function as a synchronous callback
   **Right:** Use `inline function` or pass `AsyncNotification`
   *Synchronous callbacks run on the calling thread which may be the audio thread. Non-realtime-safe functions are silently rejected - the callback never fires.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **sendData not safe on audio thread**
   **Wrong:** Calling `sendData()` from the audio thread
   **Right:** Move data sending to a timer or async context
   *`sendData()` performs a heap allocation internally, which is not audio-thread safe.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Apply smoothing to polled values**
   **Wrong:** Polling `getValue()` in `onTimer` at 30ms for visual feedback without smoothing
   **Right:** Apply exponential smoothing (`smoothed = smoothed * 0.6 + newValue * 0.4`) before rendering
   *Raw cable values from DSP networks can change abruptly between timer ticks. Smoothing produces visually stable animations without requiring faster polling.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Cache routing manager reference at init**
   **Wrong:** Creating many cables with separate `getGlobalRoutingManager()` calls
   **Right:** Call `Engine.getGlobalRoutingManager()` once, store in `const var rm`, then call `rm.getCable()` for each cable
   *The routing manager is a singleton; repeated `getGlobalRoutingManager()` calls work but are wasteful. Cache the reference at init time.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use AsyncNotification for UI callbacks**
   **Wrong:** Using `registerCallback` with `SyncNotification` for UI updates
   **Right:** Use `AsyncNotification` or timer-polled `getValue()` for anything that triggers repaints
   *Synchronous callbacks run on the calling thread (possibly the audio thread). UI operations like `repaint()` or `Console.print()` are not realtime-safe and will silently fail or cause audio glitches.*

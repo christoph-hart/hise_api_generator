@@ -17,4 +17,4 @@ The returned text is always a string. Convert it to a number with `parseInt()`, 
 | `fontStyle` | String | `"plain"` | Font style (bold, italic, plain) |
 | `fontSize` | float | `13.0` | Font size |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The callback captures its enclosing scope at definition time. If you need to reference the parent component inside the callback, store it in a local variable and pass it via the capture list: `function[panel](ok, text) { ... }`.
+> [!Warning:Capture scope variables explicitly] The callback captures its enclosing scope at definition time. If you need to reference the parent component inside the callback, store it in a local variable and pass it via the capture list: `function[panel](ok, text) { ... }`.

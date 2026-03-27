@@ -2,4 +2,4 @@ Adds a target that sets the value of the specified UI components whenever the br
 
 On registration, target components immediately receive their initial values.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] In callback mode, the function must return a value. Returning nothing (implicit `undefined`) triggers an error for each target component.
+> [!Warning:Callback must always return a value] In callback mode, the function must return a value. Returning nothing (implicit `undefined`) triggers an error for each target component.

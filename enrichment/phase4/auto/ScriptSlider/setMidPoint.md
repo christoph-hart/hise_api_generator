@@ -7,4 +7,4 @@ sl.setMidPoint(-12.0);      // Numeric midpoint route
 sl.setMidPoint("disabled"); // Explicit no-skew route
 ```
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Legacy `-1` midpoint values are treated as numeric now. If your range contains `-1`, skew will be applied. Use `"disabled"` for an explicit no-skew state.
+> [!Warning:Legacy -1 now treated as numeric value] Legacy `-1` midpoint values are treated as numeric now. If your range contains `-1`, skew will be applied. Use `"disabled"` for an explicit no-skew state.

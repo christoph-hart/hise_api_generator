@@ -12,22 +12,22 @@ Use assertions as guard clauses to surface programming errors immediately rather
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use assertions for programming errors**
   **Wrong:** `if (!isDefined(obj)) return;` in a function where `obj` must always exist  
   **Right:** `Console.assertIsDefined(obj);`  
   *Silent early returns hide bugs. If `obj` being undefined is a programming error (not a valid state), an assertion surfaces it immediately during development while being stripped in release builds.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Console methods are no-ops in exports**
   **Wrong:** Wrapping `Console.print()` calls in `if (Engine.isHISE())` guards  
   **Right:** Call `Console.print()` directly without guards  
   *Console methods are already no-ops in exported plugins. Manual guards add clutter with no benefit.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Start benchmark before stopping**
   **Wrong:** `Console.stopBenchmark()` without calling `Console.startBenchmark()` first  
   **Right:** Call `Console.startBenchmark()` before `Console.stopBenchmark()`  
   *`stopBenchmark` throws a script error if the benchmark was never started.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Start sampling session before sampling**
   **Wrong:** Calling `Console.sample()` without `Console.startSampling()`  
   **Right:** Call `Console.startSampling("id")` before `Console.sample()`  
   *Without an active session, `sample()` logs a warning and skips recording. The warning is only shown once.*

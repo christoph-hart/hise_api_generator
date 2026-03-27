@@ -31,22 +31,22 @@ Interactive cells fire specialised callbacks with an event object describing the
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call setTableMode in onInit only**
   **Wrong:** `Viewport1.setTableMode({});` called outside onInit
   **Right:** `// In onInit:\nViewport1.setTableMode({});`
   *setTableMode, setTableColumns, and setTableCallback must be called in onInit only.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call setTableMode before setTableColumns**
   **Wrong:** `Viewport1.setTableColumns([...]);` without calling setTableMode first
   **Right:** `Viewport1.setTableMode({});\nViewport1.setTableColumns([...]);`
   *setTableColumns requires setTableMode to be called first to create the internal table model.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use getOriginalRowIndex for sorted data**
   **Wrong:** Using `obj.rowIndex` directly to index into the data array when sorting is enabled
   **Right:** Using `viewport.getOriginalRowIndex(obj.rowIndex)` to map back to the original data index
   *When the table is sorted, display indices no longer match the original array positions. Mutations (favourites, deletion) applied to the wrong index corrupt data silently.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **viewPositionY uses row index not pixels**
   **Wrong:** Setting `viewPositionY` to a pixel value
   **Right:** Setting `viewPositionY` to a normalised 0.0-1.0 value
   *The scroll position properties are normalised, not pixel-based. Use `(targetRow + 1) / totalRows` to scroll to a specific row.*

@@ -2,4 +2,4 @@ Transforms the path geometry to fit within a target rectangle. All coordinates a
 
 This is the method to use when you want to resize a path into a target area. Unlike `setBounds` (which only expands the reported bounding box), `scaleToFit` actually transforms the geometry.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The transformation is permanent. If you need to query the path later (e.g. with `getYAt`) in pixel space, call `scaleToFit` first, then query. The path cannot be "unscaled" back to its original coordinates - rebuild it if you need the original space.
+> [!Warning:Transformation is permanent] The transformation is permanent. If you need to query the path later (e.g. with `getYAt`) in pixel space, call `scaleToFit` first, then query. The path cannot be "unscaled" back to its original coordinates - rebuild it if you need the original space.

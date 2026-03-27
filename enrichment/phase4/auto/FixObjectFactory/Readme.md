@@ -35,22 +35,22 @@ The factory's comparison function controls how containers perform sorting and lo
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Only numeric and boolean types allowed**
   **Wrong:** `Engine.createFixObjectFactory({ "name": "hello" })`
   **Right:** `Engine.createFixObjectFactory({ "id": 0, "value": 0.0 })`
   *String and object values are not valid member types. Only integers, floats, booleans, and arrays of these are supported.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Reuse temp object for insertions**
   **Wrong:** Creating a new `factory.create()` object for every note-on event
   **Right:** Create one temporary object at init time, overwrite its properties before each `insert()`
   *`create()` allocates heap memory. In a note-on handler or timer callback, repeated allocation causes memory pressure. Reuse a single object as an insertion template.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use createStack for dynamic collections**
   **Wrong:** Using `createArray()` for a dynamically-sized collection
   **Right:** Use `createStack()` for insert/remove workflows
   *FixObjectArray has a fixed element count with no insert or remove operations. FixObjectStack tracks active element count and supports `insert()`, `removeElement()`, and `size()`.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use function for complex comparisons**
   **Wrong:** `f.setCompareFunction("a,b,c,d,e")`
   **Right:** `f.setCompareFunction(function(a, b) { ... })`
   *Multi-property string comparison is limited to 2-4 properties. Use a custom function for more complex comparisons.*

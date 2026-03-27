@@ -32,17 +32,17 @@ The active range (`Start`/`End`) sits within the full range (`FullStart`/`FullEn
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Write back snapshot with setMacroDataFromObject**
   **Wrong:** Modifying the array returned by `getMacroDataObject()` and expecting the changes to take effect.
   **Right:** Call `setMacroDataFromObject(modifiedArray)` after modifying the array.
   *`getMacroDataObject()` returns a snapshot. Changes to the array have no effect until you write it back.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Create one MacroHandler instance at init**
   **Wrong:** Creating a new MacroHandler for each UI interaction.
   **Right:** Store one instance with `const var mh = Engine.createMacroHandler()` at init and reuse it.
   *Each call registers a new listener on the macro system. Multiple instances waste resources and produce duplicate notifications.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use Broadcaster for multi-consumer updates**
   **Wrong:** Passing an inline function to `setUpdateCallback()` and trying to reach multiple UI systems from it.
   **Right:** Pass a Broadcaster as the callback, then add independent listeners to the broadcaster.
   *A single callback function creates tight coupling. A broadcaster fans out notifications to multiple listeners without the callback needing to know about all consumers.*

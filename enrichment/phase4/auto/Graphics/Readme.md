@@ -37,32 +37,32 @@ All area parameters accept both `[x, y, width, height]` arrays and `Rectangle` o
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Pass area as single array argument**
   **Wrong:** `g.fillRect(10, 10, 100, 50)`
   **Right:** `g.fillRect([10, 10, 100, 50])`
   *Area must be a single `[x, y, w, h]` array, not four separate arguments.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Set colour before drawing**
   **Wrong:** `g.fillRect([10, 10, 100, 50])` without calling `setColour` first
   **Right:** `g.setColour(0xFFFF0000); g.fillRect([10, 10, 100, 50])`
   *Drawing methods require `setColour` or `setGradientFill` to be called first, otherwise the colour is undefined.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Post-processing requires beginLayer**
   **Wrong:** `g.gaussianBlur(5)` without a layer
   **Right:** `g.beginLayer(false); ...; g.gaussianBlur(5); g.endLayer()`
   *Post-processing effects require an active layer created with `beginLayer`.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use British spelling centred**
   **Wrong:** `g.drawAlignedText("Hi", [0, 0, 100, 30], "center")`
   **Right:** `g.drawAlignedText("Hi", [0, 0, 100, 30], "centred")`
   *Alignment uses British spelling `"centred"`, not American `"center"`.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **drawLine order is x1, x2, y1, y2**
   **Wrong:** `g.drawLine(x1, y1, x2, y2, thickness)`
   **Right:** `g.drawLine(x1, x2, y1, y2, thickness)`
   *The parameter order groups x-coordinates before y-coordinates, which is unusual. Getting this wrong produces diagonal lines where straight lines were intended.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use Rectangle methods for layout math**
   **Wrong:** `var textArea = [area[0] + 10, area[1], area[2] - 20, area[3]];`
   **Right:** `var textArea = Rectangle(area).reduced(10, 0);`
   *Use `Rectangle` methods (`reduced`, `removeFromTop`, `withSizeKeepingCentre`, etc.) for layout calculations instead of manual array index arithmetic. Rectangle objects are accepted by all Graphics area parameters.*

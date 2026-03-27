@@ -37,22 +37,22 @@ us.setIsEventStack(true, us.EventId);
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call setIsEventStack before insert**
   **Wrong:** `us.insert(messageHolder)` without calling `setIsEventStack` first
   **Right:** Call `us.setIsEventStack(true, us.EventId)` before inserting events
   *Float mode is the default. Inserting a MessageHolder into a float-mode stack silently returns false with no error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Reuse MessageHolder as temp object**
   **Wrong:** Creating a new MessageHolder in every note-on callback
   **Right:** Create one `const var holder = Engine.createMessageHolder()` in onInit and reuse it
   *MessageHolder creation allocates on the heap. Reuse a single holder and overwrite it with `Message.store(holder)` each time.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use asBuffer(true) for writeable copy**
   **Wrong:** Using `asBuffer(false)` for shader uniform data
   **Right:** Use `asBuffer(true)` for shaders
   *Shaders expect fixed-size arrays. `asBuffer(false)` changes size dynamically as elements are added or removed, causing shader indexing errors.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Drain from index 0 in while loop**
   **Wrong:** Iterating with an ascending index-based for loop while removing elements
   **Right:** Drain from index 0 in a `while (!stack.isEmpty())` loop using `storeEvent(0, holder)` + `removeElement(0)`
   *Removal swaps in the last element, so forward iteration skips the element that moves into the vacated slot.*

@@ -6,4 +6,4 @@ With `AsyncNotification`, the callback executes asynchronously on the UI thread 
 
 ![Sync vs Async Callback Threading](timing_callback-threading.svg)
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Synchronous callbacks with non-realtime-safe functions are silently ignored - the callback never fires, with no error message.
+> [!Warning:Non-realtime callbacks silently ignored] Synchronous callbacks with non-realtime-safe functions are silently ignored - the callback never fires, with no error message.

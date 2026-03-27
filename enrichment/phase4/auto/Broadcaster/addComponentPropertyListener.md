@@ -5,4 +5,4 @@ Adds a target that sets properties on the specified UI components whenever the b
 
 The `propertyList` parameter accepts a single string or an array of strings for multiple properties. On registration, target components immediately receive their initial property values. The BroadcasterMap renders property values contextually -- colours as colours, not hex strings -- giving a quick visual check that the correct values are flowing.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] In direct mode, the broadcaster must have exactly 3 arguments. Using a different argument count silently creates the target but produces incorrect property values at dispatch time.
+> [!Warning:Direct mode requires exactly three arguments] In direct mode, the broadcaster must have exactly 3 arguments. Using a different argument count silently creates the target but produces incorrect property values at dispatch time.

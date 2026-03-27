@@ -17,4 +17,4 @@ The `folderType` parameter accepts these identifiers:
 | `"AdditionalSourceCode"` | Additional C++ source code |
 | `"Documentation"` | Documentation files |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The method constructs the reference string regardless of whether the file actually resides inside the specified subdirectory. If the file is outside the folder, the returned string will not resolve correctly when used with `FileSystem.fromReferenceString`.
+> [!Warning:No validation of file location] The method constructs the reference string regardless of whether the file actually resides inside the specified subdirectory. If the file is outside the folder, the returned string will not resolve correctly when used with `FileSystem.fromReferenceString`.

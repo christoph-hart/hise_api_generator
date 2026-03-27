@@ -85,22 +85,22 @@ HeartButton.setLocalLookAndFeel(iconLaf);
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use scaleToFit not setBounds to resize**
   **Wrong:** `p.setBounds([0, 0, 100, 100]);` (expecting it to resize the path)
   **Right:** `p.scaleToFit(0, 0, 100, 100, true);`
   *`setBounds` only expands the reported bounding box by adding invisible anchor points. It does not transform geometry. Use `scaleToFit` to actually rescale a path into a target area.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Anchor bounds before adding arcs**
   **Wrong:** Using `addArc` on a path without anchoring bounds first
   **Right:** Call `p.setBounds([0, 0, 1, 1])` (or `startNewSubPath(0,0)` + `startNewSubPath(1,1)`) before `addArc([0,0,1,1], ...)`
   *An arc alone has a bounding box covering only the arc segment. When rendered with `g.drawPath(path, targetArea)`, the path scales from its bounds, producing skewed or misaligned output.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Create static paths at init scope**
   **Wrong:** Creating Path objects inside paint routines for static shapes
   **Right:** Create paths as `const var` at init scope, reuse across paint calls
   *Paint routines run on every repaint. Creating new objects each time is wasteful for shapes that do not change. Only build paths inside paint routines when the geometry depends on the current value.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Separate thickness from dash array parameter**
   **Wrong:** Passing the stroke thickness as the `dotData` parameter of `createStrokedPath`
   **Right:** `createStrokedPath(thickness, [])` - first parameter is thickness or stroke config, second is the dash array
   *The parameters are ordered `(strokeData, dotData)`. An empty array `[]` produces a solid stroke; a non-empty array like `[10, 5]` produces dashes.*

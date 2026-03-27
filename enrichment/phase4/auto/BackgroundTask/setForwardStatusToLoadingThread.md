@@ -6,4 +6,4 @@ Forwards `setProgress()` and `setStatusMessage()` calls to HISE's built-in loadi
 
 Call this before starting the task. The forwarding flag is set automatically when the background thread starts and cleared when it finishes.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] This captures the loading notification system but does not lock the actual loading thread. If a samplemap load or other loading-thread operation runs while your task is active, it causes glitches and inconsistent notifications.
+> [!Warning:Does not lock actual loading thread] This captures the loading notification system but does not lock the actual loading thread. If a samplemap load or other loading-thread operation runs while your task is active, it causes glitches and inconsistent notifications.

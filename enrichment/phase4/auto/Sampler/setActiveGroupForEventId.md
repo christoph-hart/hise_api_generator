@@ -2,4 +2,4 @@ Sets the active round-robin group for a specific event, guaranteeing that the vo
 
 Use this instead of `Sampler.setActiveGroup()` when playing multiple notes within a few milliseconds of each other - without per-event binding, the internal processing order can override the group index before voices start.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The internal event queue has a limited lifetime and is cleared after each audio render callback. This method does not work with events delayed via `Message.delayEvent()` after the call.
+> [!Warning:Event queue cleared after each callback] The internal event queue has a limited lifetime and is cleared after each audio render callback. This method does not work with events delayed via `Message.delayEvent()` after the call.

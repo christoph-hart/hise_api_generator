@@ -10,4 +10,4 @@ Converts a numeric value to a formatted display string using one of the built-in
 | `"Decibel"` | -6.0 | `"-6.0 dB"` |
 | `"Semitones"` | 2.0 | `"+2 st"` |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] An unrecognised mode string silently falls back to plain integer conversion with no error.
+> [!Warning:Invalid mode falls back silently] An unrecognised mode string silently falls back to plain integer conversion with no error.

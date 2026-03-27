@@ -2,4 +2,4 @@ Registers a callback that fires when an AllNotesOff MIDI event is received. AllN
 
 The callback takes zero parameters and must be declared as an `inline function` since it runs on the audio thread.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Using a regular `function` instead of `inline function` will be flagged as unsafe in the HISE IDE but may silently fail in exported plugins where the safety check is compiled out.
+> [!Warning:Use inline function for safety] Using a regular `function` instead of `inline function` will be flagged as unsafe in the HISE IDE but may silently fail in exported plugins where the safety check is compiled out.

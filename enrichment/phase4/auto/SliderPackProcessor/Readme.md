@@ -34,7 +34,7 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Cache processor reference in onInit**
   **Wrong:** `var spp = Synth.getSliderPackProcessor("MyModule");` called in `onNoteOn`
   **Right:** `const var spp = Synth.getSliderPackProcessor("MyModule");` in `onInit`
   *The factory method requires the object creation phase and will throw an error if called inside a callback.*

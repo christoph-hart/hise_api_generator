@@ -26,17 +26,17 @@ The typical workflow has three tiers of complexity:
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Start from getStyleData for changes**
   **Wrong:** Calling `setStyleData()` with only the properties you want to change.
   **Right:** Call `getStyleData()` first, modify the returned object, then pass it back to `setStyleData()`.
   *`setStyleData()` resets all unspecified properties to defaults. Passing a partial object loses your other customisations.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Re-call setTextBounds after setText**
   **Wrong:** Calling `setText()` after `setTextBounds()` and relying on the previously returned height.
   **Right:** Call `setTextBounds()` again after each `setText()` to get the correct height for the new content.
   *The height returned by `setTextBounds()` reflects the text at the time of that call. New text may require a different layout height.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call setTextBounds before drawing**
   **Wrong:** Calling `g.drawMarkdownText(md)` without calling `md.setTextBounds()` first.
   **Right:** Always call `setTextBounds()` before drawing.
   *A script error is thrown if bounds have not been set.*

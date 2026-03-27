@@ -1,3 +1,3 @@
 Fades out all currently playing voices that match the specified layer/group combination over the given duration in milliseconds.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Unlike `delayGroupEvent`, `fadeInGroupEvent`, and the other voice start methods, `fadeOutGroupEvent` acts on already-playing voices. Calling it before any matching voices are sounding has no effect.
+> [!Warning:Only affects already-playing voices] Unlike `delayGroupEvent`, `fadeInGroupEvent`, and the other voice start methods, `fadeOutGroupEvent` acts on already-playing voices. Calling it before any matching voices are sounding has no effect.

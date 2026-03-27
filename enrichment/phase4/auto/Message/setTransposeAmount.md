@@ -2,4 +2,4 @@ Sets the transpose amount in semitones on the current event. The transpose shift
 
 For timbre shifting (changing which sample plays without changing the audible pitch), pair this with `Message.setCoarseDetune()` using the opposite sign to cancel the pitch change.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Always pair `setTransposeAmount(-N)` with `setCoarseDetune(N)` for timbre shifting. If coarse detune is omitted, the note sounds at the transposed pitch rather than the original.
+> [!Warning:Pair with setCoarseDetune for timbre shift] Always pair `setTransposeAmount(-N)` with `setCoarseDetune(N)` for timbre shifting. If coarse detune is omitted, the note sounds at the transposed pitch rather than the original.

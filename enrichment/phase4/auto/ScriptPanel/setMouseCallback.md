@@ -11,4 +11,4 @@ The callback receives an event object with these properties:
 | `shiftDown`, `cmdDown`, `altDown`, `ctrlDown` | Modifier-key state during the event |
 | `result`, `itemText` | Popup menu result data after a popup menu selection |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The `hover` flag requires `allowCallbacks` set to `"Clicks & Hover"` or above. Setting `"Clicks Only"` silently suppresses hover events without error.
+> [!Warning:Enable Clicks and Hover for hover events] The `hover` flag requires `allowCallbacks` set to `"Clicks & Hover"` or above. Setting `"Clicks Only"` silently suppresses hover events without error.

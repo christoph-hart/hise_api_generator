@@ -31,22 +31,22 @@ Match the interval to the task:
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Minimum interval is 40ms**
   **Wrong:** `tm.startTimer(5)`
   **Right:** `tm.startTimer(30)`
   *The minimum interval is 11ms. Values of 10 or less throw a runtime error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Set callback before starting timer**
   **Wrong:** `tm.startTimer(30)` without calling `setTimerCallback` first
   **Right:** Call `setTimerCallback` before `startTimer`
   *Without a valid callback, the timer silently stops itself on the first tick.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Reuse one timer with state flag**
   **Wrong:** Creating a new Timer for each one-shot action
   **Right:** Reuse a single Timer and call `this.stopTimer()` in the callback
   *Accumulating abandoned Timer objects wastes resources and complicates debugging.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use Broadcaster instead of polling**
   **Wrong:** Using a Timer to poll a component value that changes infrequently
   **Right:** Attach a Broadcaster to the value source instead
   *Broadcasters fire only on change and are more efficient than periodic polling. Reserve Timers for values with no change notification (audio levels, CPU usage).*

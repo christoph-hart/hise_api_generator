@@ -29,27 +29,27 @@ All setter methods modify the event in-place in the audio buffer, affecting ever
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Match getter to event type**
   **Wrong:** Calling `Message.getNoteNumber()` inside `onController`.
   **Right:** Use `Message.getControllerNumber()` and `Message.getControllerValue()` for controller events.
   *Note getters require a NoteOn or NoteOff event. Calling them on controller events triggers a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Pair transpose with coarse detune**
   **Wrong:** `Message.setTransposeAmount(-5); Message.setCoarseDetune(0);`
   **Right:** `Message.setTransposeAmount(-5); Message.setCoarseDetune(5);`
   *Coarse detune must cancel the transpose to keep the audible pitch unchanged. Without it, the note sounds 5 semitones lower.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Store events with Message.store**
   **Wrong:** Reading `Message` properties outside a MIDI callback.
   **Right:** Use `Message.store()` to copy into a `MessageHolder` created via `Engine.createMessageHolder()`.
   *The Message object's internal pointer is only valid during callback execution. Accessing it outside callbacks returns errors.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Check event type before normalising**
   **Wrong:** Normalising `getControllerValue()` by dividing by 127 for all event types.
   **Right:** Check `getControllerNumber()` first - pitch bend returns 0-16383 (14-bit), not 0-127.
   *Dividing a pitch bend value by 127 produces values up to ~129 instead of the expected 0.0-1.0 range.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Only delay artificial notes**
   **Wrong:** Applying `delayEvent()` to all notes unconditionally for humanisation.
   **Right:** Guard with `if (Message.isArtificial())` to only delay sequencer-generated notes.
   *Delaying live MIDI input adds unwanted latency to the player's performance.*

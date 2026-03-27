@@ -24,27 +24,27 @@ const var sampler = Synth.getSampler("MainSampler");
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Cache module references in onInit**
   **Wrong:** `var mod = Synth.getModulator("LFO1");` in `onNoteOn`
   **Right:** `const var mod = Synth.getModulator("LFO1");` in `onInit`
   *Most `get*()` methods are restricted to `onInit`. Calling them in MIDI callbacks causes errors or audio-thread allocations.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Velocity zero may cause note-off**
   **Wrong:** `Synth.playNote(60, 0);`
   **Right:** `Synth.playNote(60, 1);`
   *`playNote` rejects velocity 0. Use `noteOffByEventId` to stop notes.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Macro indices are 1-based**
   **Wrong:** `Synth.setMacroControl(0, 64.0);`
   **Right:** `Synth.setMacroControl(1, 64.0);`
   *The macro index is 1-based (1-8), not 0-based.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use playNoteFromUI for on-screen keyboards**
   **Wrong:** Using `Synth.playNote` for a custom on-screen keyboard
   **Right:** Using `Synth.playNoteFromUI` / `Synth.noteOffFromUI`
   *`playNoteFromUI` routes through the real MIDI input pipeline, so `isKeyDown` and `getNumPressedKeys` reflect the note. `playNote` creates artificial events that bypass keyboard state tracking.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Disable retrigger kill for unison**
   **Wrong:** Forgetting `Synth.setShouldKillRetriggeredNote(false)` in a unison script
   **Right:** Call it in `onInit` before generating multiple voices per key
   *Without this, the synth kills existing voices when a new note arrives on the same pitch, defeating voice stacking.*

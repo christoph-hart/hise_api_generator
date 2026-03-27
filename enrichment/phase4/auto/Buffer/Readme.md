@@ -73,27 +73,27 @@ local partialPeak = copy.getMagnitude(2, 4);
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **getSlice returns aliasing view**
   **Wrong:** Assuming `getSlice()` returns a copy and editing it directly
   **Right:** Copy the slice into a new `Buffer.create(...)` target before editing
   *`getSlice()` is an aliasing view. Writing to the slice changes the same region in the source buffer.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use exact resample mode strings**
   **Wrong:** Passing unsupported interpolation text such as `"Spline"` to `resample()`
   **Right:** Use one of the supported mode names (`"WindowedSinc"`, `"Lagrange"`, `"CatmullRom"`, `"Linear"`, `"ZeroOrderHold"`)
   *Unknown mode names throw a runtime error, so validate or centralise mode strings.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use Treshold spelling in decompose config**
   **Wrong:** Using `SlowTransientThreshold` / `FastTransientThreshold` in `decompose()` config
   **Right:** Use the implemented keys `SlowTransientTreshold` and `FastTransientTreshold`
   *The parser expects the `Treshold` spelling exactly. The usual English spelling is ignored.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Check fromBase64 return value**
   **Wrong:** Calling `fromBase64()` on placeholders and ignoring the return value
   **Right:** Check for a sentinel first, then verify `fromBase64(...) == 1`
   *Sparse payloads often include placeholders. Guarding decode calls keeps restore paths predictable.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Check both getPeakRange values**
   **Wrong:** Checking only `range[1]` from `getPeakRange()` to decide whether a lane is empty
   **Right:** Check both `range[0]` and `range[1]`
   *A lane can contain valid negative-only values and still have no positive peak.*

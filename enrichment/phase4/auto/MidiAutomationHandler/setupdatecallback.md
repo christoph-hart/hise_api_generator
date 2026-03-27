@@ -2,4 +2,4 @@ Registers a callback that fires whenever MIDI automation mappings change - throu
 
 There is no mechanism to unregister the callback. Passing a non-function value is silently ignored and leaves the previous callback active.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Never call `setAutomationDataFromObject()` inside this callback. The write triggers the callback again, creating an infinite loop. Scoped recursion guards do not help because the notification is asynchronous - the guard is already reset by the time the next callback fires.
+> [!Warning:Never write automation data in callback] Never call `setAutomationDataFromObject()` inside this callback. The write triggers the callback again, creating an infinite loop. Scoped recursion guards do not help because the notification is asynchronous - the guard is already reset by the time the next callback fires.

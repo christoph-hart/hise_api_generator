@@ -49,32 +49,32 @@ The matrix target bridge is driven by the `matrixTargetId` property and connecti
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Range style required for min/max values**
   **Wrong:** `sl.setMinValue(0.2);` while style is `Knob`
   **Right:** `sl.setStyle("Range"); sl.setMinValue(0.2);`
   *Range helper methods only apply in `Range` style, so call them after switching style.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use Decibel not Db for mode name**
   **Wrong:** `sl.setMode("Db");`
   **Right:** `sl.setMode("Decibel");`
   *Mode names must match the supported strings exactly.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Pass JSON config not separate arguments**
   **Wrong:** `sl.setModifiers("Reset", [mods.altDown]);`
   **Right:** `sl.setModifiers("ResetToDefault", [mods.altDown]);`
   *Action keys are exact identifiers. Unknown keys are ignored by the runtime mapping logic.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Share modifier config across sliders**
   **Wrong:** Recreating modifier objects for every slider in a loop
   **Right:** Create one modifiers object, then reuse it across the slider group
   *Shared mappings keep interaction behaviour consistent and make remapping easier later.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **setValueNormalized does not trigger callback**
   **Wrong:** Calling `setValueNormalized()` and assuming callback-driven logic already ran
   **Right:** Call `setValueNormalized(...)`, then `changed()` when you need callback side effects
   *Value assignment updates state, but callback-based workflows still need an explicit trigger.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use disabled string to remove skew**
   **Wrong:** `sl.setMidPoint(-1);` to disable skew in every range
   **Right:** `sl.setMidPoint("disabled");`
   *Numeric `-1` is now treated like any other midpoint value and can apply skew when the range includes `-1`.*

@@ -22,4 +22,4 @@ You can control image size using non-standard syntax in the markdown link. Appen
 - `![](icon:80px)` - absolute size in pixels
 - `![](icon:50%)` - relative size as a percentage of the available width
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Calling this method replaces all existing image resolvers on the renderer, not just the scripted provider. Only the entries in the new array will resolve after this call.
+> [!Warning:Replaces all existing image resolvers] Calling this method replaces all existing image resolvers on the renderer, not just the scripted provider. Only the entries in the new array will resolve after this call.

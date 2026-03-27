@@ -9,4 +9,4 @@ Two special `attributeIndex` values provide shortcuts to common properties:
 
 Positive values address standard processor attributes.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The `chainId` does not start at 0. Passing 0 produces an error. Use 1 for GainModulation and 2 for PitchModulation.
+> [!Warning:Chain IDs are 1-based not 0-based] The `chainId` does not start at 0. Passing 0 produces an error. Use 1 for GainModulation and 2 for PitchModulation.

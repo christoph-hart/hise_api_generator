@@ -43,22 +43,22 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **linkTo requires same complex data type**
   **Wrong:** `spd.linkTo(tableData)`
   **Right:** `spd.linkTo(otherSpd)`
   *`linkTo()` requires another SliderPackData object. Passing a different complex data type (Table, AudioFile) causes a type mismatch error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use preallocation for fixed-size packs**
   **Wrong:** Creating SliderPackData objects without preallocation in a variable-length sequencer
   **Right:** Call `setUsePreallocatedLength(maxSteps)` immediately after creation
   *Without preallocation, every `setNumSliders()` call allocates a new buffer. With preallocation, resize adjusts a view into the fixed block with no allocation and no value loss.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use setValueWithUndo for user edits**
   **Wrong:** Using `setValue()` for user-initiated edits
   **Right:** Use `setValueWithUndo()` for interactive edits
   *`setValue()` cannot be undone. Users expect Ctrl+Z to work after editing steps, recording, or randomising patterns.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Default slider value is 1.0 not 0.0**
   **Wrong:** Assuming new sliders initialise to `0.0`
   **Right:** New sliders initialise to `1.0` (the internal default)
   *Call `setAllValues(0.0)` explicitly after `setNumSliders()` if zero-initialisation is needed (e.g. empty sequencer steps).*

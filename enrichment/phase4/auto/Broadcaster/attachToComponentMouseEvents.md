@@ -13,4 +13,4 @@ The `event` argument is a JSON object identical to the one from `ScriptPanel.set
 
 Change detection is automatically disabled for mouse events, so every event is dispatched even if its properties match a previous event. Existing listeners are not called on attachment since mouse events have no initial state.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The callback level string must match exactly, including spaces and the ampersand character. An invalid string produces the error "illegal callback level".
+> [!Warning:Callback level must match exactly] The callback level string must match exactly, including spaces and the ampersand character. An invalid string produces the error "illegal callback level".

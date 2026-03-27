@@ -12,6 +12,6 @@ The optional `stateFunction` controls menu item appearance. It receives `(type, 
 
 Pass `false` for the state function to skip state management.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] State function results are cached and only refreshed after a menu selection or an explicit `refreshContextMenuState()` call. If external state changes between menu openings, call `refreshContextMenuState()` to update tick marks and enabled states.
+> [!Warning:State function results are cached] State function results are cached and only refreshed after a menu selection or an explicit `refreshContextMenuState()` call. If external state changes between menu openings, call `refreshContextMenuState()` to update tick marks and enabled states.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] This attachment does not override existing right-click behaviour. Disable `enableMidiLearn` on attached components to prevent the MIDI learn popup from conflicting with the context menu.
+> [!Warning:Does not override right-click behaviour] This attachment does not override existing right-click behaviour. Disable `enableMidiLearn` on attached components to prevent the MIDI learn popup from conflicting with the context menu.

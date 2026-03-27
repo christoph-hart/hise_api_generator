@@ -58,22 +58,22 @@ For fully custom rendering, attach a look-and-feel object with `setLocalLookAndF
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Pass File object to setDefaultFolder**
   **Wrong:** `wf.setDefaultFolder("/path/to/folder");`
   **Right:** `wf.setDefaultFolder(FileSystem.getFolder(FileSystem.Documents));`
   *`setDefaultFolder` requires a File object, not a string path. Passing a string causes a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Reset cursor after changing processorId**
   **Wrong:** Calling `set("processorId", newId)` without resetting the playback cursor
   **Right:** `set("processorId", newId)` followed by `setPlaybackPosition(0)`
   *When rebinding to a different processor, the playback cursor retains its position from the previous audio file. Reset it to avoid a stale cursor position.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use setContentCallback not timer polling**
   **Wrong:** Polling for audio file changes with a Timer
   **Right:** Using `Broadcaster.attachToComplexData("AudioFile.Content", ...)` with `addComponentRefreshListener`
   *Broadcasters provide event-driven repaint triggers without the overhead and latency of timer-based polling.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Set all colour properties together**
   **Wrong:** Setting only `itemColour` when changing the waveform colour
   **Right:** Setting both `itemColour` (outline) and `itemColour2` (fill)
   *The waveform uses two colour properties for its appearance. Changing only one produces a mismatched look.*

@@ -46,22 +46,22 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Undo writes always notify callbacks**
   **Wrong:** Expecting `spk.setAllValuesWithUndo(...)` to stay callback-silent after `spk.setAllValueChangeCausesCallback(0)`
   **Right:** Treat `setAllValuesWithUndo(...)` as callback-producing and guard callback logic when needed
   *Undo bulk writes still emit change notification, so callback suppression assumptions do not apply to that path.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Value is slider index not slider value**
   **Wrong:** Treating the `value` argument in `setControlCallback` as the lane amplitude
   **Right:** Parse it as the edited index, then call `getSliderValueAt(index)`
   *Slider-pack callbacks are index-centric in common lane editors, so direct use as value can read the wrong data.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Disable callbacks during bulk import**
   **Wrong:** Importing large arrays with callbacks enabled
   **Right:** Disable callbacks for import, then trigger one explicit refresh after the write
   *This avoids repeated rebuild logic and unnecessary UI churn during setup operations.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Update sliderAmount and widths together**
   **Wrong:** Updating `setWidthArray(...)` without updating `sliderAmount` in the same code path
   **Right:** Set slider count and width map together from one grid/subdivision function
   *Width breakpoints and slider count must stay aligned for predictable drawing and hit-testing.*

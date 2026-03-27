@@ -10,4 +10,4 @@ Three special parameter IDs are supported:
 
 On attachment, existing listeners immediately receive the current value of each watched parameter. Queue mode is automatically enabled.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Pass module IDs as strings, not scripting references from `Synth.getEffect()` or similar. Passing an object reference produces an error.
+> [!Warning:Pass module IDs as strings] Pass module IDs as strings, not scripting references from `Synth.getEffect()` or similar. Passing an object reference produces an error.

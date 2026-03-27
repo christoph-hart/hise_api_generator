@@ -2,4 +2,4 @@ Adds a general-purpose callback listener that fires whenever the broadcaster sen
 
 Listeners are sorted by metadata priority (higher values execute first). Pass a JSON object with a `priority` field to control execution order.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The `object` parameter replaces `this` inside the callback by default. If you need the original `this` scope, call `setReplaceThisReference(false)` before adding listeners. Arrays and objects passed as `object` are held by reference - if modified after registration, the callback sees the modified version.
+> [!Warning:Object parameter replaces this reference] The `object` parameter replaces `this` inside the callback by default. If you need the original `this` scope, call `setReplaceThisReference(false)` before adding listeners. Arrays and objects passed as `object` are held by reference - if modified after registration, the callback sees the modified version.

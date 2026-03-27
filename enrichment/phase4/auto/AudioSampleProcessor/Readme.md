@@ -42,22 +42,22 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use pool references not absolute paths**
   **Wrong:** `asp.setFile("C:/audio/file.wav");`
   **Right:** `asp.setFile("{PROJECT_FOLDER}file.wav");`
   *`setFile` expects a pool reference string with wildcards, not an absolute filesystem path.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Load pool before setFile in IDE**
   **Wrong:** Calling `setFile` in the HISE IDE without loading the pool first
   **Right:** Call `Engine.loadAudioFilesIntoPool()` before `setFile`
   *In the HISE IDE, audio files must be loaded into the pool before they can be referenced. Exported plugins have embedded files and do not need this step.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Convert pool reference to file path**
   **Wrong:** Using `asp.getFilename()` directly as a file path
   **Right:** `FileSystem.fromReferenceString(asp.getFilename(), FileSystem.AudioFiles)`
   *`getFilename()` returns a pool reference string (e.g. `{PROJECT_FOLDER}loop.wav`), not a filesystem path. Convert it to a File object before any file system operations.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use absolute paths for imported files**
   **Wrong:** Using `{PROJECT_FOLDER}` for user-imported files
   **Right:** Use `file.toString(0)` (absolute path) from the browse callback
   *`{PROJECT_FOLDER}` resolves to the project's AudioFiles folder. User-imported files from arbitrary locations need absolute paths.*

@@ -47,12 +47,12 @@ When two threads contend for the same lock, the thread that cannot acquire it st
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use killVoicesAndCall for processor changes**
   **Wrong:** Calling `setBypassed()` on multiple processors from a UI callback without suspending audio.
   **Right:** Wrapping bulk processor reconfiguration in `Threads.killVoicesAndCall()`.
   *Changing bypass or attribute state on several processors without suspending audio can cause brief audio glitches as each change takes effect individually while voices are still active.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Capture this context in closure**
   **Wrong:** `Threads.killVoicesAndCall(function() { this.doSomething(); })`
   **Right:** `Threads.killVoicesAndCall(function() { doSomething(); })`
   *The callback takes zero arguments and executes on the Loading thread. The `this` context may not be valid in the deferred execution context.*

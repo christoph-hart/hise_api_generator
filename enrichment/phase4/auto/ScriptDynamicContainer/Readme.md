@@ -50,12 +50,12 @@ dc.setValueCallback(function(id, value)
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call setData before setValueCallback**
   **Wrong:** Calling `setValueCallback()` before `setData()`
   **Right:** Call `setData()` first, then register the value callback.
   *The value callback listens to the data model's internal value store, which does not exist until `setData()` creates it. Calling `setValueCallback()` first silently does nothing.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **ContainerChild invalid after setData**
   **Wrong:** Storing a ContainerChild reference and using it after a new `setData()` call
   **Right:** Re-obtain references after each `setData()` call, or check `ref.isValid()` before use.
   *Each `setData()` call rebuilds the component tree and invalidates all previous ContainerChild references. Using a stale reference throws a script error.*

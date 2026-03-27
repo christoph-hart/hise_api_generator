@@ -15,4 +15,4 @@ Panel1.setPaintRoutine(function(g)
 
 Alternatively, use a transparent overlay panel as a "shadow catcher" positioned behind the element that should cast the shadow.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] For shadows with a directional offset, use `drawDropShadowFromPath` instead - this method always casts the shadow equally in all directions.
+> [!Warning:Only casts omnidirectional shadow] For shadows with a directional offset, use `drawDropShadowFromPath` instead - this method always casts the shadow equally in all directions.

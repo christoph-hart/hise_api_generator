@@ -7,4 +7,4 @@ Returns a scripting reference to a complex data object (Table, SliderPack, Audio
 | `"AudioFile"` | ScriptAudioFile reference |
 | `"DisplayBuffer"` | ScriptRingBuffer reference |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] If the data slot index exceeds the number of slots the module provides, the method silently returns `undefined` with no error. Check the return value with `isDefined()` before use.
+> [!Warning:Invalid slot returns undefined silently] If the data slot index exceeds the number of slots the module provides, the method silently returns `undefined` with no error. Check the return value with `isDefined()` before use.

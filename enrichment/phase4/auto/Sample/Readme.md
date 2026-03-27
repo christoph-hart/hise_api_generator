@@ -73,27 +73,27 @@ The `SampleState` property accepts three values:
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **replaceAudioFile not for monolithic samples**
   **Wrong:** `s.replaceAudioFile(bufferArray)` on monolithic samples
   **Right:** Use `replaceAudioFile()` only with non-monolithic sample files.
   *Monolithic samples (.ch1 files) cannot be overwritten - the method throws a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Discard reference after deleteSample**
   **Wrong:** Using a Sample reference after calling `deleteSample()`
   **Right:** Discard the reference immediately after deletion.
   *The underlying sound is removed from the sample map. Any further method call on the deleted reference throws "Sound does not exist".*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Set velocity ranges twice for both bounds**
   **Wrong:** Setting `LoVel` once and assuming the value sticks
   **Right:** Set both `LoVel` and `HiVel` together, potentially twice in succession.
   *Auto-clipping is interdependent: setting `LoVel` higher than the current `HiVel` silently clamps it. When widening a range, set `HiVel` first; when narrowing, set `LoVel` first.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use custom properties not parallel arrays**
   **Wrong:** Storing analysis results in a parallel array alongside a sample selection
   **Right:** Attach computed data to `getCustomProperties()` on each Sample.
   *Parallel arrays break when the selection is sorted or filtered. Custom properties travel with the Sample object through any reordering.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Check getRange before setting loop points**
   **Wrong:** Setting loop points without checking `getRange()` first
   **Right:** Query `getRange(Sample.LoopEnd)` to get the current valid bounds before setting.
   *Loop property ranges are dynamic - `LoopEnd`'s maximum depends on `SampleEnd`, and `LoopStart`'s minimum depends on `SampleStart` plus `LoopXFade`. Values outside the valid range are silently clamped.*

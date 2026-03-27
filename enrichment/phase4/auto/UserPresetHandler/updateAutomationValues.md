@@ -5,4 +5,4 @@ Updates custom automation values in one of two modes depending on the first argu
 
 The second argument controls notification dispatch (`SyncNotification`, `AsyncNotification`, or `false` to suppress notifications). The third argument enables undo integration when true.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] The array mode expects an Array, not a single object. Passing `{"id": "Vol", "value": 0.5}` without wrapping it in `[...]` throws a script error.
+> [!Warning:Wrap single objects in array brackets] The array mode expects an Array, not a single object. Passing `{"id": "Vol", "value": 0.5}` without wrapping it in `[...]` throws a script error.

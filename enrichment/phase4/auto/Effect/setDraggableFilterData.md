@@ -37,4 +37,4 @@ The `DragActions` object controls which parameter each mouse gesture adjusts:
 | `DoubleClick` | `"Enabled"` | Double-click toggle |
 | `RightClick` | `""` | Right-click (empty string for none) |
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Filter data properties are not persistently stored in the module tree. You must call this method in `onInit` for each effect that needs a custom configuration - the settings are lost on recompile.
+> [!Warning:Settings lost on recompile] Filter data properties are not persistently stored in the module tree. You must call this method in `onInit` for each effect that needs a custom configuration - the settings are lost on recompile.

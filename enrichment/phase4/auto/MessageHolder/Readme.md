@@ -34,22 +34,22 @@ const var mh = Engine.createMessageHolder();
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Set type before adding to synth**
   **Wrong:** `Synth.addMessageFromHolder(mh)` without setting the type first.
   **Right:** `mh.setType(mh.NoteOn); mh.setNoteNumber(60); Synth.addMessageFromHolder(mh);`
   *A default MessageHolder has type Empty. Passing it to `Synth.addMessageFromHolder()` triggers an "Event is empty" error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Clone or create new holders per event**
   **Wrong:** Reusing a single MessageHolder in a loop and pushing it to an array.
   **Right:** Create a new `Engine.createMessageHolder()` for each event, or use `clone()`.
   *MessageHolder is a reference-counted object. Pushing the same reference multiple times means all array slots point to the same event - every modification affects all "copies".*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Verify stored event type before injection**
   **Wrong:** Calling `Synth.addMessageFromHolder(holder)` after `Message.store(holder)` in `onNoteOff` without checking the stored event type.
   **Right:** Use `Message.store(holder)` which captures the correct type from the callback context, and verify the stored type matches your intent before re-injection.
   *When `Message.store()` runs in `onNoteOff`, the stored type is NoteOff. Re-injecting a NoteOff without a matching NoteOn event ID can produce orphaned voice state.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use proper timestamps for MidiPlayer events**
   **Wrong:** Setting timestamp to 0 for all events in a MidiPlayer sequence.
   **Right:** Use `setTimestamp()` with proper tick or sample offsets based on `MidiPlayer.setUseTimestampInTicks()`.
   *MidiPlayer uses timestamps to position events. All events at timestamp 0 fire simultaneously on the first beat.*

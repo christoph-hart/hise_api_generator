@@ -21,4 +21,4 @@ laf.registerFunction("drawRotarySlider", function(g, obj)
 });
 ```
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Every `beginLayer()` must be matched with a corresponding `endLayer()`. Forgetting `endLayer()` causes all subsequent draw calls to target the orphaned layer, and its content is discarded at the end of the paint callback.
+> [!Warning:Every beginLayer needs matching endLayer] Every `beginLayer()` must be matched with a corresponding `endLayer()`. Forgetting `endLayer()` causes all subsequent draw calls to target the orphaned layer, and its content is discarded at the end of the paint callback.

@@ -2,4 +2,4 @@ Rebinds this component to another slider-pack data source, another compatible co
 
 Use this to let one UI surface edit different datasets without rebuilding the component.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] If multiple packs share one data handle, writes in either view update both immediately. Guard callback logic to avoid feedback loops.
+> [!Warning:Shared data updates both packs] If multiple packs share one data handle, writes in either view update both immediately. Guard callback logic to avoid feedback loops.

@@ -4,4 +4,4 @@ For key press events, the object contains `isFocusChange` (false), `character`, 
 
 This method works on all component types (labels, buttons, etc.), not just ScriptPanel. If an unconsumed key press is not handled, it propagates up the parent hierarchy until a component consumes it.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] You must call `setConsumedKeyPresses()` before this method. Calling them in the wrong order reports a script error.
+> [!Warning:Call setConsumedKeyPresses first] You must call `setConsumedKeyPresses()` before this method. Calling them in the wrong order reports a script error.

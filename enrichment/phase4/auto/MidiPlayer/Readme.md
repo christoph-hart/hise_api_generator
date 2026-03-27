@@ -13,32 +13,32 @@ Sequences and tracks use one-based indexing in the scripting API. Each player ha
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Disabling global undo destroys history**
   **Wrong:** Calling `setUseGlobalUndoManager(false)` after enabling it and expecting per-player undo to still work
   **Right:** Leave the default per-player undo alone, or commit to the global stack
   *Disabling the global undo manager destroys the per-player manager too. The previous undo history is lost.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Sequence indices are 1-based**
   **Wrong:** `mp.setSequence(0);`
   **Right:** `mp.setSequence(1);`
   *Sequence and track indices are one-based. Index 0 triggers a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Tempo property is read-only**
   **Wrong:** Modifying `Tempo` in the time signature object and calling `setTimeSignature()`
   **Right:** Set tempo via the module attribute instead
   *`setTimeSignature()` does not consume the `Tempo` property from the JSON object - it is read-only.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use TransportHandler when clock-synced**
   **Wrong:** Calling `play()` / `stop()` when synced to master clock
   **Right:** Use `TransportHandler.startInternalClock()` / `TransportHandler.stopInternalClock()`
   *When `setSyncToMasterClock(true)` is active, `play()` and `stop()` are no-ops that return false. Transport must be driven through the TransportHandler.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Clear sequences before creating new ones**
   **Wrong:** Creating sequences without clearing first
   **Right:** Call `clearAllSequences()` then `create()` in a loop
   *`create()` appends to the sequence list. Without clearing, repeated initialisation accumulates sequences.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use tick timestamps for stable editing**
   **Wrong:** Using sample timestamps for grid-aligned editing
   **Right:** Call `setUseTimestampInTicks(true)` before `getEventList()` / `flushMessageList()`
   *Sample timestamps shift with tempo changes. Tick timestamps (960 per quarter note) are stable musical positions.*

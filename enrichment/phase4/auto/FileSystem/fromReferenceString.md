@@ -8,4 +8,4 @@ Resolves a HISE resource reference string (e.g. `{PROJECT_FOLDER}impulse.wav`) o
 
 This is useful for converting the reference strings returned by `AudioSampleProcessor.getFilename()` back into `File` objects for display or navigation.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Returns `undefined` for embedded resources in exported plugins. Code that works in the HISE IDE - where files exist on disk - will fail silently in compiled plugins if the resource has been embedded into the binary. Check with `isDefined()`.
+> [!Warning:Returns undefined for embedded resources] Returns `undefined` for embedded resources in exported plugins. Code that works in the HISE IDE - where files exist on disk - will fail silently in compiled plugins if the resource has been embedded into the binary. Check with `isDefined()`.

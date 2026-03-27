@@ -10,4 +10,4 @@ g.drawAlignedText(obj.text, label.reduced(6, 0), "left");
 
 Supported alignment values: `"left"`, `"right"`, `"top"`, `"bottom"`, `"centred"`, `"centredTop"`, `"centredBottom"`, `"topLeft"`, `"topRight"`, `"bottomLeft"`, `"bottomRight"`.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] Uses British spelling `"centred"`, not American `"center"`. Passing `"center"`, `"centered"`, or `"Centre"` triggers a script error.
+> [!Warning:Use British spelling centred] Uses British spelling `"centred"`, not American `"center"`. Passing `"center"`, `"centered"`, or `"Centre"` triggers a script error.

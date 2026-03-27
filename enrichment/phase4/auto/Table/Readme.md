@@ -50,22 +50,22 @@ This is not the normal parameter binding path. `parameterId` targets processor p
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use setTablePointsFromArray for bulk builds**
   **Wrong:** Calling `addTablePoint()` in a loop to build a curve
   **Right:** Use `setTablePointsFromArray()` with the complete point array
   *Each `addTablePoint()` call triggers a full 512-element lookup table re-render. `setTablePointsFromArray()` renders only once after all points are set.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Include edge points at 0 and 1**
   **Wrong:** `setTablePointsFromArray([[0.5, 0.8, 0.5]])` with a single point
   **Right:** Always provide at least 2 points: `[[0.0, 0.0, 0.5], [1.0, 1.0, 0.5]]`
   *A table requires a minimum of 2 points. Passing fewer triggers a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Always include both edge points**
   **Wrong:** `setTablePointsFromArray([[0.3, 0.5, 0.5], [0.7, 1.0, 0.5]])` expecting x=0.3 as the start
   **Right:** The first point's x is always forced to 0.0, the last point's x to 1.0
   *Edge point x positions are silently clamped to the table boundaries regardless of the values you pass.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Normalise input to 0-1 before lookup**
   **Wrong:** `table.getTableValueNormalised(Message.getVelocity())` passing raw 0-127
   **Right:** `table.getTableValueNormalised(Message.getVelocity() / 127.0)` normalising to 0.0-1.0
   *The method expects normalised 0.0-1.0 input. Raw MIDI values exceed 1.0 and return the last table value for all velocities above 1.*

@@ -23,22 +23,22 @@ const var slot = Synth.getSlotFX("MyEffectSlot");
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use getCurrentEffect to bypass loaded effect**
   **Wrong:** `slot.setBypassed(true)`
   **Right:** `slot.getCurrentEffect().setBypassed(true)`
   *`setBypassed` is declared but not registered on SlotFX. Use the Effect handle returned by `getCurrentEffect()` or `setEffect()` instead.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use full C++ module type name**
   **Wrong:** `slot.setEffect("PolyFilter")`
   **Right:** `slot.setEffect("SimpleFilter")`
   *Polyphonic effects are excluded by the SlotFX constrainer. Only monophonic and master effect types can be loaded.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Get loaded effect via getCurrentEffect**
   **Wrong:** `Synth.getEffect("MySlot_SimpleReverb")` after loading
   **Right:** `const var fx = slot.setEffect("SimpleReverb");`
   *`setEffect()` returns the Effect handle directly. Looking up the child by its internal name is fragile and depends on an undocumented naming convention.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Share knob update logic across effects**
   **Wrong:** Separate switch/case per effect with duplicated knob binding code
   **Right:** A data-driven configuration object with a generic `setEffect()` and parameter binding loop
   *A config object mapping effect names to module IDs, parameter arrays, and ranges eliminates per-effect code duplication and scales to any number of effects.*

@@ -26,27 +26,27 @@ const var bt = Engine.createBackgroundTask("MyTask");
 
 ## Common Mistakes
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Call shouldAbort regularly in loops**
   **Wrong:** Long loop without `shouldAbort()`
   **Right:** Call `task.shouldAbort()` regularly in loops
   *Without `shouldAbort()` calls, the script engine timeout is not extended and the task cannot be cancelled. The HISE IDE warns if the gap between checks exceeds the timeout.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Avoid sendAbortSignal from background thread**
   **Wrong:** `task.sendAbortSignal(true)` from inside the background function
   **Right:** Use `task.sendAbortSignal(false)` or return from the function
   *Calling `sendAbortSignal` with blocking from the background thread causes a deadlock (the thread waits for itself to stop). This is detected and throws a script error.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Reuse task instance per subsystem**
   **Wrong:** Creating a new BackgroundTask for every operation
   **Right:** Reuse a single task instance per subsystem
   *Each BackgroundTask is a dedicated OS thread. Creating many wastes resources. Reuse one instance and let the abort-restart pattern handle cancellation of previous work.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Use killVoicesAndCall for processor changes**
   **Wrong:** Using `callOnBackgroundThread()` to change processor state (bypass, attributes, routing)
   **Right:** Use `killVoicesAndCall()` for processor reconfiguration
   *`callOnBackgroundThread()` runs on a generic background thread without voice protection. Modifying audio-thread-owned state causes glitches. `killVoicesAndCall()` suspends audio output first.*
 
-- **$COMMON_MISTAKE_TITLE_TO_BE_REPLACED$**
+- **Increase timeout for I/O operations**
   **Wrong:** Default 500ms timeout for I/O-heavy tasks
   **Right:** Use `setTimeOut(2000)` or higher for file scanning or process execution
   *File system operations and child processes naturally have longer gaps between `shouldAbort()` calls. A short timeout triggers spurious warnings and risks premature thread termination.*

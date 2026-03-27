@@ -2,4 +2,4 @@ Converts the current event into an artificial event and returns its new event ID
 
 For note-on events, a new sequential event ID is assigned. For note-off events, the method finds and assigns the matching note-on's event ID so the voice can be properly released.
 
-> [!Warning:$WARNING_TO_BE_REPLACED$] On note-off events, this method pops the matching note-on from the internal event tracker. If `makeArtificial()` was never called on the corresponding note-on, no match is found and the note-off is automatically ignored, preventing voice release.
+> [!Warning:Note-off pops matching note-on tracker] On note-off events, this method pops the matching note-on from the internal event tracker. If `makeArtificial()` was never called on the corresponding note-on, no match is found and the note-off is automatically ignored, preventing voice release.
