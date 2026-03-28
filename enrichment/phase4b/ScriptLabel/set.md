@@ -9,16 +9,16 @@ outside onInit, sends change notifications to update the UI.
 | `x`, `y`, `width`, `height` | Position and size in pixels, relative to parent |
 | `visible`, `enabled`, `locked` | Display and interaction state |
 | `text`, `tooltip` | Display text (the label's value) and hover tooltip |
-| *`FontName`*, *`FontSize`*, *`FontStyle`*, *`Alignment`* | Font family, size, style, and text alignment |
-| *`Editable`*, *`Multiline`*, *`SendValueEachKeyPress`* | Text editing: whether the label is editable, supports multiple lines, and fires callbacks on each keystroke |
+| *`fontName`*, *`fontSize`*, *`fontStyle`*, *`alignment`* | Font family, size, style, and text alignment |
+| *`editable`*, *`multiline`*, *`updateEachKey`* | Text editing: whether the label is editable, supports multiple lines, and fires callbacks on each keystroke |
 | `bgColour`, `itemColour`, `itemColour2`, `textColour` | Colour properties |
 | `parentComponent` | Parent component for layout nesting |
 | `saveInPreset`, `useUndoManager`, `deferControlCallback` | Preset persistence, undo, and callback deferral |
-| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup` | DAW automation (`automationId` is deactivated) |
+| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup` | DAW automation (`automationID` is deactivated) |
 | `macroControl`, `isMetaParameter`, `linkedTo` | Macro control and parameter linking |
 | `processorId`, `parameterId` | Module parameter connection |
 
-Deactivated properties: `defaultValue`, `min`, `max`, `automationId`.
+Deactivated properties: `defaultValue`, `min`, `max`, `automationID`.
 The label's value is a string (the displayed text), not a number.
 Dispatch/mechanics:
   setScriptObjectPropertyWithChangeMessage(id, value)

@@ -13,7 +13,7 @@ outside onInit, sends change notifications.
 | `parentComponent` | Parent component for layout nesting |
 | `useUndoManager` | Undo support for container-level value changes |
 
-Deactivated properties: `macroControl`, `isPluginParameter`, `min`, `max`, `defaultValue`, `pluginParameterName`, `text`, `tooltip`, `processorId`, `parameterId`, `isMetaParameter`, `linkedTo`, `automationId`, `deferControlCallback`, `pluginParameterGroup`, `saveInPreset`.
+Deactivated properties: `macroControl`, `isPluginParameter`, `min`, `max`, `defaultValue`, `pluginParameterName`, `text`, `tooltip`, `processorId`, `parameterId`, `isMetaParameter`, `linkedTo`, `automationID`, `deferControlCallback`, `pluginParameterGroup`, `saveInPreset`.
 
 Pair with:
   get -- read a property value

@@ -8,7 +8,7 @@ Sets a component property to the given value. During `onInit`, changes are appli
 | `bgColour`, `itemColour`, `itemColour2`, `textColour` | Colour properties |
 | `parentComponent` | Parent component for layout nesting |
 | `saveInPreset`, `useUndoManager`, `deferControlCallback`, *`setValueOnClick`* | Preset persistence, undo, callback deferral, and value behavior |
-| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `automationId`, *`enableMidiLearn`* | DAW automation and MIDI learn |
+| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `automationID`, *`enableMidiLearn`* | DAW automation and MIDI learn |
 | `macroControl`, `isMetaParameter`, `linkedTo` | Macro control and parameter linking |
 | `processorId`, `parameterId` | Module parameter connection |
 | *`filmstripImage`*, *`numStrips`*, *`isVertical`*, *`scaleFactor`* | Filmstrip rendering |

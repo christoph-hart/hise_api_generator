@@ -16,7 +16,7 @@ enableDebugMode), the value is forwarded to the underlying WebViewData.
 | *`enableCache`*, *`enablePersistence`* | WebView data caching and persistent call replay behavior |
 | *`scaleFactorToZoom`*, *`enableDebugMode`* | Browser zoom behavior and developer tools support |
 
-Deactivated properties: `saveInPreset`, `macroControl`, `isPluginParameter`, `min`, `max`, `defaultValue`, `pluginParameterName`, `text`, `tooltip`, `useUndoManager`, `processorId`, `parameterId`, `isMetaParameter`, `linkedTo`, `automationId`.
+Deactivated properties: `saveInPreset`, `macroControl`, `isPluginParameter`, `min`, `max`, `defaultValue`, `pluginParameterName`, `text`, `tooltip`, `useUndoManager`, `processorId`, `parameterId`, `isMetaParameter`, `linkedTo`, `automationID`.
 
 Dispatch/mechanics:
   Base ScriptComponent::set() + override in setScriptObjectPropertyWithChangeMessage
