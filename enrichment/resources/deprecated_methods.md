@@ -58,6 +58,12 @@ Reason: "use Settings.getZoomLevel() instead"
 
 Soft deprecated. The implementation calls `logSettingWarning("getZoomLevel")` which emits a console message, then proceeds to return the value from `GlobalSettingManager::getGlobalScaleFactor()`. The method still works but warns users to migrate to the Settings class.
 
+### ExpansionHandler.setEncryptionKey(1)
+Status: pending
+Reason: "Use the project settings to setup the project's blowfish key"
+
+Hard deprecated. The implementation calls `reportScriptError("This function is deprecated. Use the project settings to setup the project's blowfish key")` and performs no work. Does not use the `ADD_API_METHOD_N_DEPRECATED` macro.
+
 ### Content.setToolbarProperties(1)
 Status: pending
 Reason: "deprecated since 2017"

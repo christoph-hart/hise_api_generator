@@ -56,6 +56,22 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### Unlocker.writeExpansionKeyFile -- silently returns false for invalid header prefix
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~3460
+- **Observed:** When `keyData` does not start with `"Expansion List"`, the method silently returns `false` without reporting any error. The return value is indistinguishable from a legitimate write failure (e.g., disk error). The user has no indication that the input data was malformed.
+- **Expected:** Report a script error when `keyData` does not start with `"Expansion List"`, e.g., "keyData must start with 'Expansion List'".
+
+### Unlocker.contains -- returns true when unlocker reference is null
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~3445
+- **Observed:** When the weak unlocker reference is null, `contains()` returns `true` instead of `false`. In a copy protection context, a permissive default means that feature-gating checks silently pass when the licensing system is unavailable, potentially granting access to gated features.
+- **Expected:** Return `false` when the unlocker reference is null, consistent with other methods like `isUnlocked()` and `canExpire()` which return `false` on null.
+
 ### ChildSynth.setEffectChainOrder -- doPoly parameter is ignored
 
 - **Type:** inconsistency
@@ -864,7 +880,47 @@ Sorted by severity (critical first).
 - **Observed:** `getAssignedValue()` (the bracket-read operator implementation from AssignableObject) is hardcoded to `return 1.0; // Todo...` regardless of the parameter index. Reading a parameter via bracket syntax `var x = mod["Frequency"]` always returns 1.0 instead of the actual attribute value. The bracket-write operator correctly delegates to `setAttribute()`, so the asymmetry is unexpected.
 - **Expected:** Should delegate to `mod->getAttribute(index)` to return the actual attribute value, symmetric with the bracket-write operator.
 
+### ExpansionHandler.getMetaDataFromPackage -- silently returns undefined for non-File argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~1360-1368
+- **Observed:** If the `packageFile` argument is not a File object (e.g., a string path, number, or undefined), the `dynamic_cast<ScriptingObjects::ScriptFile*>` fails and the method silently returns `undefined` (`{}`). No error is reported. Other methods with the same pattern (`encodeWithCredentials`, `getExpansionForInstallPackage`, `installExpansionFromPackage`) correctly call `reportScriptError("argument is not a file")`.
+- **Expected:** Add `reportScriptError("argument is not a file")` in an `else` branch, consistent with the other File-parameter methods.
+
+### ExpansionHandler.getUninitialisedExpansions -- method not registered in constructor
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~1142-1178 (constructor), ~1278 (implementation)
+- **Observed:** `getUninitialisedExpansions()` is declared in the header (ScriptExpansion.h:247), has a C++ implementation (line 1278), and appears in the Doxygen API reference, but is NOT registered via `ADD_API_METHOD_0(getUninitialisedExpansions)` in the constructor and has no Wrapper entry (`API_METHOD_WRAPPER_0`). The method cannot be called from HiseScript.
+- **Expected:** Add `ADD_API_METHOD_0(getUninitialisedExpansions)` to the constructor and add the corresponding `API_METHOD_WRAPPER_0(ScriptExpansionHandler, getUninitialisedExpansions)` to the Wrapper struct.
+
+### Expansion.writeDataFile -- written file invisible to loadDataFile on non-FileBased expansions
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~1802 (writeDataFile), ~1768 (loadDataFile)
+- **Observed:** `writeDataFile` always writes to the filesystem AdditionalSourceCode directory regardless of expansion type. However, `loadDataFile` on Intermediate/Encrypted expansions reads from the embedded data pool using a wildcard reference, not from the filesystem. A write-then-read cycle does not roundtrip: `writeDataFile("config.json", data)` followed by `loadDataFile("config.json")` returns the old pool data, not the just-written data. The written file exists on disk but is invisible to the pool-based load path.
+- **Expected:** Either `writeDataFile` should update the pool data for non-FileBased expansions, or `loadDataFile` should check the filesystem first (falling back to the pool), or the asymmetry should be reported as a script error/warning.
+
+### Expansion.getSampleFolder / writeDataFile / setSampleFolder -- missing objectExists() null guard
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptExpansion.cpp:~1726 (getSampleFolder), ~1802 (writeDataFile), ~1733 (setSampleFolder)
+- **Observed:** Three methods access the `exp` WeakReference without checking `objectExists()` or `exp != nullptr` first. If the expansion has been unloaded (WeakReference becomes null), these methods dereference a null pointer instead of throwing a descriptive script error. All other methods in the class either check `objectExists()` (getSampleMapList, getImageList, getAudioFileList, getMidiFileList, getDataFileList, getUserPresetList, getProperties, getRootFolder, getExpansionType, getWildcardReference, loadDataFile) or check `exp != nullptr` (setAllowDuplicateSamples, unloadExpansion).
+- **Expected:** Add `if (!objectExists()) { reportScriptError("Expansion was deleted"); RETURN_IF_NO_THROW({}); }` at the top of getSampleFolder, writeDataFile, and setSampleFolder, matching the pattern used by getRootFolder and the list methods.
+
 ## Low
+
+### ExpansionHandler.setErrorFunction -- numExpectedArgs mismatch (1 vs 2)
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptExpansion.cpp:~1207-1213 (setter), ~1437-1446 (invocation)
+- **Observed:** `setErrorFunction` creates the `WeakCallbackHolder` with `numExpectedArgs=1` (line 1210), but `logMessage` calls the callback with 2 arguments (line 1445): `(message, isCritical)`. The `ADD_CALLBACK_DIAGNOSTIC(errorFunction, setErrorFunction, 0)` at line 1153 uses the WeakCallbackHolder's numExpectedArgs for the parse-time diagnostic check, so if the diagnostic were to enforce argument count, users would be told to write 1-parameter callbacks when 2 parameters are actually passed.
+- **Expected:** Change line 1210 to `WeakCallbackHolder(getScriptProcessor(), this, newErrorFunction, 2)` to match the 2 arguments passed in `logMessage`.
 
 ### ChildSynth.getRoutingMatrix -- missing checkValidObject guard
 
