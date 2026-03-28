@@ -53,7 +53,16 @@
       "basePath": "/v2/reference/scriptnodes",
       "contentDir": "reference/scriptnodes",
       "description": "Scriptnode node reference",
-      "pattern": "{factory}/{node}"
+      "registrySource": "scriptnode_enrichment/base/scriptnodeList.json",
+      "sources": {
+        "pages": "scriptnode_enrichment/output",
+        "static": "scriptnode_enrichment/resources/static"
+      },
+      "mdcTransform": "scriptnode",
+      "pattern": "{factory}/{node}",
+      "staticPages": {
+        "Scriptnode Reference": ""
+      }
     },
     "DOC": {
       "basePath": "/v2",

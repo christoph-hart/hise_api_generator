@@ -66,10 +66,11 @@ class LinkRegistry:
 
         self._build_api_registry()
         self._build_modules_registry()
+        self._build_sn_registry()
         self._build_doc_registry()
-        # UI and SN are future -- register empty domains so resolution
+        # UI is future -- register empty domain so resolution
         # produces warnings instead of crashes
-        for domain in ("UI", "SN"):
+        for domain in ("UI",):
             if domain not in self.targets:
                 self.targets[domain] = {}
                 self.lower_index[domain] = {}
@@ -160,6 +161,43 @@ class LinkRegistry:
 
         self.targets["MODULES"] = targets
         self._build_indexes("MODULES")
+
+    def _build_sn_registry(self):
+        """Build SN domain registry from scriptnodeList.json."""
+        targets = {}
+        if "SN" not in self.structure.get("domains", {}):
+            self.targets["SN"] = {}
+            self.lower_index["SN"] = {}
+            self.normalized_index["SN"] = {}
+            return
+
+        domain_config = self.structure["domains"]["SN"]
+        base_path = domain_config["basePath"]
+        registry_source = domain_config.get("registrySource", "")
+        sn_list_path = self.script_dir / registry_source
+
+        if not sn_list_path.is_file():
+            self.targets["SN"] = {}
+            self.lower_index["SN"] = {}
+            self.normalized_index["SN"] = {}
+            return
+
+        with open(sn_list_path, "r", encoding="utf-8") as f:
+            sn_data = json.load(f)
+
+        # scriptnodeList.json is a dict keyed by "factory.node"
+        for factory_path, node_data in sn_data.items():
+            if "." not in factory_path:
+                continue
+            factory, node_id = factory_path.split(".", 1)
+            # Node-level target: $SN.factory.node$
+            targets[factory_path] = f"{base_path}/{factory}/{node_id}"
+            # Factory-level target: $SN.factory$
+            if factory not in targets:
+                targets[factory] = f"{base_path}/{factory}"
+
+        self.targets["SN"] = targets
+        self._build_indexes("SN")
 
     def _build_doc_registry(self):
         """Build DOC domain registry by scanning the content directory.
@@ -661,6 +699,43 @@ def convert_see_also(content, class_name, registry=None):
                                 f'  - {{ label: "{label}", to: "{url}" }}'
                             )
                     continue
+
+                # Parse $SN.factory.node$ tokens (with optional annotation)
+                sn_ann = re.match(
+                    r'\$SN\.(\w+)\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                sn_plain = re.match(r'\$SN\.(\w+)\.(\w+)\$', item)
+
+                if sn_ann or sn_plain:
+                    sn_match = sn_ann or sn_plain
+                    sn_factory = sn_match.group(1)
+                    sn_node = sn_match.group(2)
+                    desc = sn_ann.group(3).strip().replace('"', '\\"') if sn_ann else None
+                    sn_key = f"{sn_factory}.{sn_node}"
+
+                    # Look up URL from registry
+                    url = None
+                    if registry:
+                        url, _, _ = registry.resolve("SN", sn_key)
+                    if not url:
+                        url = f"/v2/reference/scriptnodes/{sn_factory}/{sn_node}"
+
+                    # Same-factory -> short label, cross-factory -> full label
+                    if sn_factory == slug:
+                        label = sn_node
+                    else:
+                        label = sn_key
+
+                    if desc:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}", desc: "{desc}" }}'
+                        )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}" }}'
+                        )
+                    continue
+
                 # Fallback: plain ClassName.method (legacy format)
                 ann_match = re.match(
                     r'([A-Z]\w*\.\w+)`?\s*--\s*(.+)', item, re.DOTALL
@@ -943,6 +1018,106 @@ def apply_module_mdc_transforms(content: str, messages: list = None,
     return content
 
 
+def _extract_sn_frontmatter_sections(content: str) -> str:
+    """Extract commonMistakes and cpuProfile from YAML frontmatter and
+    append them as MDC body content.
+
+    commonMistakes -> ::common-mistakes component (with titles)
+    cpuProfile -> simple text block
+    """
+    # Find frontmatter boundaries
+    fm_match = re.match(r'^---\n(.*?)\n---\n', content, re.DOTALL)
+    if not fm_match:
+        return content
+
+    fm_text = fm_match.group(1)
+    body = content[fm_match.end():]
+
+    # --- Extract commonMistakes ---
+    cm_block = re.search(
+        r'^commonMistakes:\n((?:  .+\n)+)', fm_text, re.MULTILINE
+    )
+    if cm_block:
+        entries = re.findall(
+            r'  - title:\s*"(.+?)"\n\s+wrong:\s*"(.+?)"\n\s+right:\s*"(.+?)"\n\s+explanation:\s*"(.+?)"',
+            cm_block.group(0)
+        )
+        if entries:
+            yaml_items = []
+            for title, wrong, right, explanation in entries:
+                wrong = wrong.replace('\\', '\\\\').replace('"', '\\"')
+                right = right.replace('\\', '\\\\').replace('"', '\\"')
+                explanation = explanation.replace('\\', '\\\\').replace('"', '\\"')
+                title = title.replace('"', '\\"')
+                yaml_items.append(
+                    f'  - title: "{title}"\n'
+                    f'    wrong: "{wrong}"\n'
+                    f'    right: "{right}"\n'
+                    f'    reason: "{explanation}"'
+                )
+            cm_component = (
+                "\n## Common Mistakes\n\n"
+                "::common-mistakes\n---\nmistakes:\n"
+                + "\n".join(yaml_items)
+                + "\n---\n::\n"
+            )
+            # Insert before See Also or at end of body
+            see_also_pos = body.find("::see-also")
+            if see_also_pos != -1:
+                body = body[:see_also_pos] + cm_component + "\n" + body[see_also_pos:]
+            else:
+                body = body.rstrip() + "\n" + cm_component
+
+    # --- Extract cpuProfile ---
+    cpu_match = re.search(
+        r'^cpuProfile:\n\s+baseline:\s*(\S+)\n\s+polyphonic:\s*(\S+)',
+        fm_text, re.MULTILINE
+    )
+    if cpu_match:
+        baseline = cpu_match.group(1)
+        poly = "polyphonic" if cpu_match.group(2) == "true" else "monophonic"
+
+        # Check for scaling factors
+        sf_match = re.search(
+            r'scalingFactors:\n((?:\s+- .+\n)+)', fm_text
+        )
+        scaling_note = ""
+        if sf_match:
+            factors = re.findall(r'parameter:\s*"?([^",]+)"?', sf_match.group(1))
+            if factors:
+                scaling_note = f" Scales with {', '.join(factors)}."
+
+        cpu_text = f"\n**CPU:** {baseline}, {poly}.{scaling_note}\n"
+
+        # Insert after first paragraph (after screenshot if present)
+        # Find the ## Signal Path or first ## heading
+        heading_match = re.search(r'^## ', body, re.MULTILINE)
+        if heading_match:
+            body = body[:heading_match.start()] + cpu_text + "\n" + body[heading_match.start():]
+        else:
+            body = cpu_text + "\n" + body
+
+    return content[:fm_match.end()] + body
+
+
+def apply_scriptnode_mdc_transforms(content: str, messages: list = None,
+                                     filepath: str = "") -> str:
+    """Apply MDC transformations to scriptnode node reference markdown.
+
+    Scriptnode pages have YAML frontmatter with structured data that needs
+    to be extracted into body content:
+    - commonMistakes -> ::common-mistakes MDC component
+    - cpuProfile -> simple text block
+    - Warning/tip blockquotes -> ::warning / ::tip
+    - Blank line fixes after code blocks
+    """
+    content = _extract_sn_frontmatter_sections(content)
+    content = convert_warning_blockquotes(content, messages, filepath)
+    content = convert_tip_blockquotes(content, messages, filepath)
+    content = fix_blank_lines_after_code_blocks(content)
+    return content
+
+
 # ---------------------------------------------------------------------------
 # Image validation
 # ---------------------------------------------------------------------------
@@ -1064,12 +1239,18 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
         content_dir = domain_config.get("contentDir", "")
         type_mapping = domain_config.get("typeMapping", {})
 
-        # Pages: individual content files (API classes, module pages)
+        # Pages: individual content files (API classes, module pages, SN nodes)
         pages_path = domain_sources.get("pages")
         if pages_path:
             pages_dir = script_dir / pages_path
             if pages_dir.is_dir():
-                for md_file in sorted(pages_dir.glob("*.md")):
+                # SN uses nested {factory}/{node}.md structure
+                if domain_name == "SN":
+                    glob_pattern = "**/*.md"
+                else:
+                    glob_pattern = "*.md"
+
+                for md_file in sorted(pages_dir.glob(glob_pattern)):
                     # Skip non-content files
                     if "_review" in md_file.name or "_llm" in md_file.name:
                         continue
@@ -1077,6 +1258,17 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
                     if domain_name == "API":
                         # API: lowercase filename
                         out_rel = Path(content_dir) / md_file.name.lower()
+                    elif domain_name == "SN":
+                        # SN: preserve factory/node structure
+                        rel = md_file.relative_to(pages_dir)
+                        if rel.name.lower() == "readme.md":
+                            # Factory Readme -> factory/index.md
+                            out_rel = Path(content_dir) / rel.parent / "index.md"
+                        else:
+                            out_rel = Path(content_dir) / rel
+                        source_type = "static" if rel.name.lower() == "readme.md" else "pages"
+                        sources.append((md_file, domain_name, out_rel, source_type))
+                        continue
                     elif type_mapping:
                         # Modules: use typeMapping to determine subdirectory
                         with open(md_file, "r", encoding="utf-8") as mf:
@@ -1355,6 +1547,9 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
             if id_match:
                 module_id = id_match.group(1)
             content = convert_see_also(content, module_id, registry)
+        elif mdc_transform == "scriptnode":
+            factory = _extract_frontmatter_field(content, "factory") or ""
+            content = convert_see_also(content, factory, registry)
 
         # Step 2: Resolve $DOMAIN.Target$ tokens
         content = resolve_tokens(content, registry, str(source_path), messages)
@@ -1365,7 +1560,10 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
                                            str(source_path))
         elif mdc_transform == "module":
             content = apply_module_mdc_transforms(content, messages,
-                                                   str(source_path))
+                                                    str(source_path))
+        elif mdc_transform == "scriptnode":
+            content = apply_scriptnode_mdc_transforms(content, messages,
+                                                       str(source_path))
 
         # Step 3: Validate images
         dest = output_dir / out_rel
