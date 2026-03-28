@@ -15,7 +15,7 @@ outside onInit, sends change notifications to update the UI.
 | `saveInPreset`, `useUndoManager`, `deferControlCallback` | Preset persistence, undo, and callback deferral |
 | `processorId`, *`tableIndex`* | Complex data source: the connected processor and the table slot to use from that processor or external data holder |
 
-Deactivated properties: `min`, `max`, `defaultValue`, `textColour`, `parameterId`, `macroControl`, `linkedTo`, `isMetaParameter`, `isPluginParameter`, `pluginParameterName`, `automationId`.
+Deactivated properties: `min`, `max`, `defaultValue`, `textColour`, `parameterId`, `macroControl`, `linkedTo`, `isMetaParameter`, `isPluginParameter`, `pluginParameterName`, `automationID`.
 
 Pair with:
   get -- read back one property

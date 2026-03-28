@@ -13,10 +13,10 @@ outside onInit, sends change notifications to update the UI.
 | `bgColour`, `itemColour`, `itemColour2`, `textColour` | Colour properties |
 | `parentComponent` | Parent component for layout nesting |
 | `saveInPreset`, `useUndoManager`, `deferControlCallback` | Preset persistence, undo, and callback deferral |
-| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `automationId`, `isMetaParameter`, `linkedTo` | Automation and parameter-linking support |
+| `isPluginParameter`, `pluginParameterName`, `pluginParameterGroup`, `automationID`, `isMetaParameter`, `linkedTo` | Automation and parameter-linking support |
 | `processorId`, `parameterId` | Standard parameter connection |
-| `defaultValue`, *`Items`* | Default selection value and newline-separated item list |
-| *`FontName`*, *`FontSize`*, *`FontStyle`*, *`Alignment`* | Font family, size, style, and text alignment |
+| `defaultValue`, *`items`* | Default selection value and newline-separated item list |
+| *`fontName`*, *`fontSize`*, *`fontStyle`*, *`alignment`* | Font family, size, style, and text alignment |
 | *`scrollBarThickness`*, *`autoHide`* | Scrollbar size and auto-hide behavior |
 | *`viewPositionX`*, *`viewPositionY`* | Current scroll position |
 | *`useList`* | Enables list mode instead of plain viewport mode |

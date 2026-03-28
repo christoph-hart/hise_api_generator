@@ -16,7 +16,7 @@ outside onInit, sends change notifications to update the UI.
 | `processorId`, *`sampleIndex`* | Complex data source: the connected processor and the audio-file slot to use from that processor or external data holder |
 | *`showLines`*, *`showFileName`*, *`enableRange`*, *`loadWithLeftClick`* | Waveform display and interaction behavior |
 
-Deactivated properties: `macroControl`, `parameterId`, `linkedTo`, `isMetaParameter`, `isPluginParameter`, `pluginParameterName`, `automationId`, `text`, `min`, `max`, `defaultValue`.
+Deactivated properties: `macroControl`, `parameterId`, `linkedTo`, `isMetaParameter`, `isPluginParameter`, `pluginParameterName`, `automationID`, `text`, `min`, `max`, `defaultValue`.
 
 Pair with:
   get -- to read the property value

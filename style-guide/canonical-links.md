@@ -134,6 +134,72 @@ The publish script converts this to `::common-mistakes` MDC with a `title` field
 
 ---
 
+## 5. Forum Community Insights
+
+Forum community insights enrich documentation pages with real-world usage patterns, recurring gotchas, and best practices gathered from the HISE forum. This step converts collective community knowledge into Warning and Tip blocks scattered throughout reference pages.
+
+### When to use
+
+As a post-authoring enrichment pass after the initial reference page is written and source completeness has been verified. Applicable to any documentation pipeline (UI components, modules, scripting API), not just UI component enrichment.
+
+### Forum API
+
+The HISE forum (NodeBB) exposes a REST API for searching posts:
+
+```
+https://forum.hise.audio/api/search?term={query}&in=titlesposts&sortBy=relevance
+```
+
+Returns JSON with `posts[]` containing `content` (HTML), `tid` (topic ID), `topic.title`, `topic.postcount`, and `user.username`. High reply counts indicate widespread confusion or active discussion.
+
+### Query strategy
+
+Run 2-3 searches per component/module/class:
+
+1. **Exact name** — e.g., `ScriptSliderPack`, `AHDSR`
+2. **Natural description** — e.g., `table curve editor`, `knob filmstrip`, `preset browser`
+3. **Feature-specific** — e.g., `sliderpack callback value index`, `table mouse wheel curve`
+
+### Signal detection
+
+Focus on:
+- **Threads with many replies** (10+ posts) — indicates widespread confusion or a nuanced topic
+- **Bug reports** revealing non-obvious but intended behaviour
+- **Repeated questions** across multiple threads about the same topic
+- **Best practices** and clever patterns shared by experienced users (David Healey, Christoph Hart, etc.)
+
+### Output format
+
+| Block type | Use for | Syntax |
+|-----------|---------|--------|
+| `> [!Warning:title]` | Pitfalls, gotchas, non-obvious behaviour that causes bugs | See § 2 above |
+| `> [!Tip:title]` | Best practices, recommended patterns, useful shortcuts | See § 3 above |
+| `commonMistakes` (YAML) | Clear wrong/right patterns with explanation | See § 4 above |
+
+### Balance and tone
+
+**Aim for a roughly even mix of Warnings and Tips.** A page with only warnings reads as a minefield — every pitfall has a positive angle that can be framed as a Tip instead. Ask yourself:
+
+- "Users keep making this mistake" → **Warning** (if the consequence is a hard-to-debug issue)
+- "Users keep asking how to do this" → **Tip** (the answer is a best practice worth highlighting)
+- "This pattern works really well" → **Tip** (a recommended approach from community experience)
+- "This silent failure wastes debugging time" → **Warning** (non-obvious gotcha)
+
+### Placement rules
+
+1. **Scatter throughout the page** — place each block adjacent to the property, section, or code example it relates to
+2. **Maximum one styled block per page section** — avoid clustering multiple warnings/tips together, which trains readers to skip them
+3. **Target 3-5 new blocks per page** — enough to add real value without overwhelming the reference content
+
+### Filtering
+
+- **Skip** content already documented in Notes, commonMistakes, or property descriptions
+- **Skip** historical bugs that have been fixed in current HISE versions
+- **Skip** feature requests and wishlists — only document current behaviour
+- **Focus** on behaviour that is still current and non-obvious from the API surface alone
+
+---
+
 ## Validation
 
 Run the publish script to validate all tokens:

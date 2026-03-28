@@ -12,11 +12,11 @@ outside onInit, sends change notifications to update the UI.
 | `text`, `tooltip` | Display text and hover tooltip |
 | `bgColour`, `itemColour`, `itemColour2`, `textColour` | Colour properties |
 | `parentComponent` | Parent component for layout nesting |
-| `saveInPreset`, `useUndoManager`, `deferControlCallback`, *`CallbackOnMouseUpOnly`* | Preset persistence, undo, callback deferral, and callback timing |
+| `saveInPreset`, `useUndoManager`, `deferControlCallback`, *`mouseUpCallback`* | Preset persistence, undo, callback deferral, and callback timing |
 | `processorId`, *`SliderPackIndex`* | Complex data source: the connected processor and the slider pack slot to use from that processor or external data holder |
-| `min`, `max`, `defaultValue`, *`StepSize`*, *`SliderAmount`* | Slider range, default values, step size, and number of sliders |
-| *`FlashActive`*, *`ShowValueOverlay`* | Visual feedback for active sliders and value display |
-| *`StepSequencerMode`* | Enables the step-sequencer interaction mode |
+| `min`, `max`, `defaultValue`, *`stepSize`*, *`sliderAmount`* | Slider range, default values, step size, and number of sliders |
+| *`flashActive`*, *`showValueOverlay`* | Visual feedback for active sliders and value display |
+| *`stepSequencerMode`* | Enables the step-sequencer interaction mode |
 
 Dispatch/mechanics:
   sliderAmount/defaultValue/min/max/stepSize/flashActive/showValueOverlay map into SliderPackData setters.
