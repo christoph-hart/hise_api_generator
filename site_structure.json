@@ -44,6 +44,13 @@
       "basePath": "/v2/reference/ui-components",
       "contentDir": "reference/ui-components",
       "description": "UI component reference (CSS selectors, LAF overrides, usage)",
+      "sources": {
+        "pages": {
+          "components": "ui_enrichment/pages/components",
+          "floating-tiles": "ui_enrichment/pages/floating-tiles"
+        }
+      },
+      "mdcTransform": "ui",
       "subdomains": {
         "Components": "components",
         "FloatingTiles": "floating-tiles"

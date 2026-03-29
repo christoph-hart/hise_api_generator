@@ -68,13 +68,7 @@ class LinkRegistry:
         self._build_modules_registry()
         self._build_sn_registry()
         self._build_doc_registry()
-        # UI is future -- register empty domain so resolution
-        # produces warnings instead of crashes
-        for domain in ("UI",):
-            if domain not in self.targets:
-                self.targets[domain] = {}
-                self.lower_index[domain] = {}
-                self.normalized_index[domain] = {}
+        self._build_ui_registry()
 
     def _build_api_registry(self):
         """Build API domain registry from enrichment/base/*.json."""
@@ -265,6 +259,38 @@ class LinkRegistry:
 
         self.targets["DOC"] = targets
         self._build_indexes("DOC")
+
+    def _build_ui_registry(self):
+        """Build UI domain registry from ui_enrichment/pages/ subdirectories."""
+        targets = {}
+        domain_config = self.structure.get("domains", {}).get("UI", {})
+        base_path = domain_config.get("basePath", "/v2/reference/ui-components")
+        pages_config = domain_config.get("sources", {}).get("pages", {})
+
+        if not isinstance(pages_config, dict):
+            self.targets["UI"] = {}
+            self.lower_index["UI"] = {}
+            self.normalized_index["UI"] = {}
+            return
+
+        for subdir_name, subdir_path in pages_config.items():
+            pages_dir = self.script_dir / subdir_path
+            if not pages_dir.is_dir():
+                continue
+            for md_file in sorted(pages_dir.glob("*.md")):
+                if md_file.name.lower() == "readme.md":
+                    continue
+                # Read componentId or contentType from frontmatter
+                with open(md_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                key = (_extract_frontmatter_field(content, "componentId") or
+                       _extract_frontmatter_field(content, "contentType") or
+                       md_file.stem)
+                slug = md_file.stem.lower()
+                targets[key] = f"{base_path}/{subdir_name}/{slug}"
+
+        self.targets["UI"] = targets
+        self._build_indexes("UI")
 
     def _build_indexes(self, domain: str):
         """Build case-insensitive and normalized indexes for a domain."""
@@ -1118,6 +1144,20 @@ def apply_scriptnode_mdc_transforms(content: str, messages: list = None,
     return content
 
 
+def apply_ui_mdc_transforms(content: str, messages: list = None,
+                             filepath: str = "") -> str:
+    """Apply MDC transformations to UI component reference markdown.
+
+    UI pages have YAML frontmatter with commonMistakes (same format as
+    scriptnode) and use warning/tip blockquotes in the body.
+    """
+    content = _extract_sn_frontmatter_sections(content)
+    content = convert_warning_blockquotes(content, messages, filepath)
+    content = convert_tip_blockquotes(content, messages, filepath)
+    content = fix_blank_lines_after_code_blocks(content)
+    return content
+
+
 # ---------------------------------------------------------------------------
 # Image validation
 # ---------------------------------------------------------------------------
@@ -1241,6 +1281,20 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
 
         # Pages: individual content files (API classes, module pages, SN nodes)
         pages_path = domain_sources.get("pages")
+
+        # UI domain uses a dict of subdirectory -> source path mappings
+        if isinstance(pages_path, dict):
+            for subdir_name, subdir_path in pages_path.items():
+                subdir_dir = script_dir / subdir_path
+                if not subdir_dir.is_dir():
+                    continue
+                for md_file in sorted(subdir_dir.glob("*.md")):
+                    if md_file.name.lower() == "readme.md":
+                        continue
+                    out_rel = Path(content_dir) / subdir_name / md_file.name.lower()
+                    sources.append((md_file, domain_name, out_rel, "pages"))
+            pages_path = None  # Skip the standard pages processing below
+
         if pages_path:
             pages_dir = script_dir / pages_path
             if pages_dir.is_dir():
@@ -1550,6 +1604,10 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         elif mdc_transform == "scriptnode":
             factory = _extract_frontmatter_field(content, "factory") or ""
             content = convert_see_also(content, factory, registry)
+        elif mdc_transform == "ui":
+            component_id = _extract_frontmatter_field(content, "componentId") or \
+                           _extract_frontmatter_field(content, "contentType") or ""
+            content = convert_see_also(content, component_id, registry)
 
         # Step 2: Resolve $DOMAIN.Target$ tokens
         content = resolve_tokens(content, registry, str(source_path), messages)
@@ -1564,6 +1622,9 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         elif mdc_transform == "scriptnode":
             content = apply_scriptnode_mdc_transforms(content, messages,
                                                        str(source_path))
+        elif mdc_transform == "ui":
+            content = apply_ui_mdc_transforms(content, messages,
+                                               str(source_path))
 
         # Step 3: Validate images
         dest = output_dir / out_rel
