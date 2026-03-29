@@ -912,6 +912,14 @@ Sorted by severity (critical first).
 - **Observed:** Three methods access the `exp` WeakReference without checking `objectExists()` or `exp != nullptr` first. If the expansion has been unloaded (WeakReference becomes null), these methods dereference a null pointer instead of throwing a descriptive script error. All other methods in the class either check `objectExists()` (getSampleMapList, getImageList, getAudioFileList, getMidiFileList, getDataFileList, getUserPresetList, getProperties, getRootFolder, getExpansionType, getWildcardReference, loadDataFile) or check `exp != nullptr` (setAllowDuplicateSamples, unloadExpansion).
 - **Expected:** Add `if (!objectExists()) { reportScriptError("Expansion was deleted"); RETURN_IF_NO_THROW({}); }` at the top of getSampleFolder, writeDataFile, and setSampleFolder, matching the pattern used by getRootFolder and the list methods.
 
+### Array scoped functions -- incorrect return values on empty arrays
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** JavascriptEngineObjects.cpp:~636 (callForEach totalReturnValue initialization)
+- **Observed:** `every`, `some`, `findIndex`, `map`, and `filter` return `undefined` on empty arrays. The root cause is that `callForEach` initializes `totalReturnValue` as `var()` (undefined), and the per-method lambdas only set it during iteration -- which never executes on empty arrays. This causes: `every` returns `undefined` instead of `true` (vacuous truth); `some` returns `undefined` instead of `false`; `findIndex` returns `undefined` instead of `-1`; `map` and `filter` return `undefined` instead of an empty array. For `map`/`filter`, chaining on the result (e.g. `.length`) throws because undefined has no properties.
+- **Expected:** Each scoped function should initialize its return value before the iteration loop: `every` -> `true`, `some` -> `false`, `findIndex` -> `-1`, `map`/`filter` -> empty array. Alternatively, `callForEach` could accept an initial value parameter.
+
 ## Low
 
 ### ExpansionHandler.setErrorFunction -- numExpectedArgs mismatch (1 vs 2)
