@@ -29,6 +29,10 @@ commonMistakes:
     wrong: "Leaving UseBackgroundThread off with a long impulse response"
     right: "Enable UseBackgroundThread for long IRs to reduce audio thread load"
     explanation: "Without background threading, the entire convolution runs on the audio thread, which can cause dropouts with long impulse responses."
+  - title: "IR list order differs between IDE and plugin"
+    wrong: "Using loadAudioFilesIntoPool() index positions to recall IRs, assuming the order is stable"
+    right: "Store and recall IRs by filename, not by array index"
+    explanation: "The file list returned by loadAudioFilesIntoPool() can have a different order in the exported plugin compared to the HISE IDE. Saving a default user preset can also shuffle the order. Always match IRs by name."
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -54,17 +58,24 @@ llmRef: |
     HiCut (20-20000 Hz, default 20000 Hz) - low-pass filtering applied to IR (offline, triggers reload)
     ProcessInput (On/Off, default On) - enables convolution with 60ms fade
     UseBackgroundThread (On/Off, default Off) - moves tail to background thread
-    FFTType (0-4, default 0 BestAvailable) - FFT implementation: BestAvailable, IPP, AppleAccelerate, Ooura, FFTW3
+    FFTType (0-4, default 0 BestAvailable) - FFT implementation: BestAvailable, IPP, AppleAccelerate, Ooura, FFTW3. BestAvailable auto-selects: IPP (Windows), Accelerate (macOS), Ooura (fallback).
     Latency (default 0) - this parameter has no effect
     ImpulseLength (default 1) - deprecated, has no effect
 
   When to use:
     High-quality reverb using real acoustic spaces or designed impulse responses. Best for static reverb characters. For lightweight algorithmic reverb, use Simple Reverb instead.
 
+  Scripting usage:
+    Access via Synth.getAudioSampleProcessor("id"), not Synth.getEffect().
+    setFile() requires {PROJECT_FOLDER} prefix, case-sensitive in compiled plugins.
+    IR selection must be bound to a control for preset recall.
+    Call Engine.loadAudioFilesIntoPool() in onInit for IR embedding in exports.
+
   Common mistakes:
     Default DryGain is -100 dB (silent) - raise to 0 dB for wet/dry blend.
     Damping and HiCut reshape the IR offline, triggering a reload on change.
     Enable UseBackgroundThread for long IRs to avoid audio thread overload.
+    IR list from loadAudioFilesIntoPool() may differ in order between IDE and plugin - match by name, not index.
 
   Custom equivalent:
     scriptnode HardcodedFX: fx.convolution node (same engine).
@@ -177,7 +188,7 @@ groups:
     params:
       - { name: ProcessInput, desc: "Enables convolution processing. Toggling fades the wet signal in or out over 60ms to prevent clicks. When off, only the dry gain is applied.", range: "Off / On", default: "On" }
       - { name: UseBackgroundThread, desc: "Moves the tail convolution to a background thread, reducing audio thread load. The head convolution always runs on the audio thread. Automatically disabled during offline rendering.", range: "Off / On", default: "Off" }
-      - { name: FFTType, desc: "Selects the FFT implementation for convolution. BestAvailable auto-selects the fastest option for the current platform. Changing this triggers an IR reload.", range: "BestAvailable, IPP, AppleAccelerate, Ooura, FFTW3", default: "BestAvailable" }
+      - { name: FFTType, desc: "Selects the FFT implementation for convolution. BestAvailable auto-selects the fastest option for the current platform. Changing this triggers an IR reload.", range: "BestAvailable, IPP, AppleAccelerate, Ooura, FFTW3", default: "BestAvailable", hints: [{ type: tip, text: "BestAvailable selects the fastest FFT for the current platform: IPP on Windows (if available), Accelerate on macOS, Ooura as fallback." }] }
   - label: Vestigial
     params:
       - { name: Latency, desc: "This parameter has no effect. It is stored for serialisation but does not influence the convolution engine.", range: "0.0 - 1.0", default: "0" }
@@ -191,12 +202,20 @@ The default mix is 100% wet (DryGain = -100 dB, WetGain = 0 dB). This differs fr
 
 A fixed 0.5x gain compensation is applied to the wet signal after the wet gain stage. At WetGain = 0 dB, the effective wet level is -6 dB. This compensates for the tendency of convolution to increase overall signal level.
 
+When the host sample rate is higher than the IR's native rate, the internal resampling step can introduce a gain increase (roughly +3 dB per octave of rate difference). There is no automatic compensation for this - adjust WetGain manually if needed.
+
 Damping and HiCut are not real-time filters on the wet output. They modify the impulse response itself during an offline preparation step. Changing either parameter triggers a full IR reload with a ~20ms crossfade between the old and new convolver engines to prevent clicks.
 
 The convolution engine uses a two-stage partitioned FFT architecture. The head convolver processes the first portion of the IR at the audio block size for zero-latency output. The tail convolver handles the remainder using a larger FFT size (up to 8192 samples). When UseBackgroundThread is enabled, the tail convolution runs on a dedicated background thread, freeing the audio thread for other processing.
 
 When a new impulse response is loaded or the IR is modified, the module crossfades between the old and new convolver engines over approximately 20ms using a squared fade curve.
 
+Starting DAW playback from the very beginning of the timeline (position 0:0:0) may produce a brief audible glitch in the reverb output.
+
 The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes.
 
-**See also:** $MODULES.SimpleReverb$ -- Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading, $MODULES.Convolution$ -- The scriptnode node shares the same two-stage FFT convolution engine with additional routing flexibility
+IR file selection via `setFile()` is not automatically saved in user presets. To make IR selection recallable, bind the selection index to a UI slider (hidden if needed) whose control callback calls `setFile()` with the corresponding filename. The slider value is then persisted by the preset system.
+
+For products with many impulse responses, use the Expansion system to package IRs separately rather than embedding all of them. Alternatively, uncheck 'Embed Audio Files' in the project settings and distribute the AudioResources.dat file to the user's AppData folder.
+
+**See also:** $MODULES.SimpleReverb$ -- Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading, $MODULES.Convolution$ -- The scriptnode node shares the same two-stage FFT convolution engine with additional routing flexibility | `Engine.loadAudioFilesIntoPool` -- Required in `onInit` for IR embedding in exported plugins | `AudioSampleProcessor.setFile` -- Load IRs by pool reference string with `{PROJECT_FOLDER}` prefix

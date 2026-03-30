@@ -20,6 +20,10 @@ Anti-patterns:
     format with {PROJECT_FOLDER} or {EXP::name} wildcards.
   - Do NOT call in HISE IDE without Engine.loadAudioFilesIntoPool() first -- reports
     script error for {PROJECT_FOLDER} refs. Not needed in exported plugins.
+  - Do NOT use Synth.getEffect() to access setFile() -- use Synth.getAudioSampleProcessor("id").
+Convolution Reverb notes:
+  File paths are case-sensitive in compiled plugins. Match exact casing.
+  IR switches include a ~20ms crossfade (click-free).
 Source:
   ScriptingApiObjects.cpp:4887  setFile()
     -> #if USE_BACKEND: pool loaded check + {EXP::} bypass

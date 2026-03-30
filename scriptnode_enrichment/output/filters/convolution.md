@@ -134,4 +134,8 @@ The wet/dry mix is fixed at approximately 50% and cannot be adjusted. To control
 
 The AudioFile slot accepts audio files directly. SampleMap and SFZ references are not supported.
 
+When using a convolution node inside a ScriptFX module, load impulse responses via `Synth.getEffect('ScriptFXId').getAudioFile(0)` rather than `getAudioSampleProcessor()`, since scriptnode nodes expose their audio slots through the `getAudioFile()` interface.
+
+The Range parameter on the AudioFile slot can be used to select a portion of a longer audio file as the impulse response, allowing multiple IRs to be packed into a single file.
+
 **See also:** $SN.fx.reverb$ -- algorithmic reverb with lower CPU cost
