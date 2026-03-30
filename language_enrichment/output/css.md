@@ -445,7 +445,7 @@ Stylesheets can also import other CSS files:
 | `component.setStyleSheetPseudoState(state)` | Manually set pseudo-class state |
 | `component.setStyleSheetProperty(id, value, type)` | Set a CSS variable on a specific component |
 
-CSS styling is applied through the look-and-feel system. The CSS selector, supported pseudo-classes, and available pseudo-elements for each component type are documented in the $UI.Components$ reference — each component's page includes its CSS integration details.
+CSS styling is applied through the look-and-feel system. The CSS selector, supported pseudo-classes, and available pseudo-elements for each component type are documented in the [UI Components](/v2/reference/ui-components/components) reference — each component's page includes its CSS integration details.
 
 > [!Tip:Independent CSS scopes] Each `ScriptLookAndFeel` instance has its own independent CSS scope. The universal selector `*` only applies to components assigned to that specific LAF — not all components in the interface.
 
@@ -509,4 +509,4 @@ These additions improve integration with existing HISE concepts — the JUCE col
 
 ## What's Next
 
-**See also:** $UI.Components$ -- per-component CSS selectors and states, $API.ScriptLookAndFeel.setStyleSheet$ -- apply CSS from file, $API.ScriptLookAndFeel.setInlineStyleSheet$ -- apply CSS from string, $LANG.hisescript$ -- the scripting language used alongside CSS
+**See also:** [UI Components](/v2/reference/ui-components/components) -- per-component CSS selectors and states, $API.ScriptLookAndFeel.setStyleSheet$ -- apply CSS from file, $API.ScriptLookAndFeel.setInlineStyleSheet$ -- apply CSS from string, $LANG.hisescript$ -- the scripting language used alongside CSS

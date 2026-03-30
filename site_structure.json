@@ -7,10 +7,14 @@
       "description": "Scripting API class and method reference",
       "registrySource": "enrichment/base",
       "sources": {
-        "pages": "enrichment/output/preview"
+        "pages": "enrichment/output/preview",
+        "static": "enrichment/resources/static"
       },
       "mdcTransform": "api",
-      "pattern": "{className}#{method}"
+      "pattern": "{className}#{method}",
+      "staticPages": {
+        "Scripting API": ""
+      }
     },
     "MODULES": {
       "basePath": "/v2/reference/audio-modules",
@@ -70,6 +74,16 @@
       "staticPages": {
         "Scriptnode Reference": ""
       }
+    },
+    "LANG": {
+      "basePath": "/v2/reference/languages",
+      "contentDir": "reference/languages",
+      "description": "Language reference pages (HiseScript, SNEX, CSS, Faust, RNBO, etc.)",
+      "sources": {
+        "pages": "language_enrichment/output"
+      },
+      "mdcTransform": "language",
+      "pattern": "{language}"
     },
     "DOC": {
       "basePath": "/v2",

@@ -21,6 +21,7 @@ Use `$DOMAIN.Target#fragment$` tokens. These are resolved by `publish.py` to fin
 | `$UI.Components.Name$` | UI component reference | `$UI.Components.ScriptSlider$` |
 | `$UI.FloatingTiles.Name$` | FloatingTile reference | `$UI.FloatingTiles.PresetBrowser$` |
 | `$SN.factory.node$` | Scriptnode node | `$SN.math.add$` |
+| `$LANG.language$` | Language reference page | `$LANG.snex$`, `$LANG.hisescript$` |
 | `$DOC.Section.Page$` | Manual/architecture docs | `$DOC.Architecture.ModuleTree$` |
 
 ### Resolution cascade

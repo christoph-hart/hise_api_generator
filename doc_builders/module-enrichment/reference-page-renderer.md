@@ -545,6 +545,23 @@ Each category has a dedicated colour. Define these as CSS custom properties alon
   --hise-cat-routing:          #60a5fa;
   --hise-cat-utility:          #737373;
   --hise-cat-custom:           #f472b6;
+
+  /* Scripting API domain groups */
+  --hise-cat-module-tree:      #60a5fa;
+  --hise-cat-ui:               #f59e0b;
+  --hise-cat-data:             #14b8a6;
+  --hise-cat-event:            #a78bfa;
+  --hise-cat-scriptnode:        #f472b6;
+  --hise-cat-services:         #4ade80;
+
+  /* Scripting API roles (utility already defined above) */
+  --hise-cat-handle:           #38bdf8;
+  --hise-cat-factory:          #34d399;
+  --hise-cat-component:        #d97706;
+  --hise-cat-service:          #ef4444;
+  --hise-cat-processor:        #22d3ee;
+  /* --hise-cat-event: reuses the event group colour above */
+  /* --hise-cat-container: reuses the module container colour above */
 }
 ```
 
@@ -571,24 +588,44 @@ Category keys use snake_case internally. The component converts them to title-ca
 | `routing` | Routing |
 | `utility` | Utility |
 | `custom` | Custom |
+| `module-tree` | Module Tree |
+| `ui` | UI |
+| `data` | Data |
+| `event` | Event |
+| `scriptnode` | Scriptnode |
+| `services` | Services |
+| `handle` | Handle |
+| `factory` | Factory |
+| `component` | Component |
+| `service` | Service |
+| `processor` | Processor |
 
-Conversion rule: split on `_`, capitalise each word, join with space.
+Conversion rule: split on `_` or `-`, capitalise each word, join with space. Exception: `ui` renders as `UI`.
 
 ### Link Destination
 
-Each tag links to the categories index page with a kebab-case anchor derived from the display name:
+Each tag links to the categories index page with a kebab-case anchor derived from the display name. The base URL depends on the page's domain:
+
+| Domain | Base URL |
+|--------|----------|
+| Audio Modules | `/v2/reference/audio-modules/categories` |
+| Scripting API | `/v2/scripting-api/` |
+
+The component should detect which domain it is in from the current route prefix and use the appropriate base URL.
 
 ```
-/v2/reference/audio-modules/categories#{kebab-display-name}
+{base-url}#{kebab-display-name}
 ```
 
-Conversion rule: take the display name (split `name` on `_`, capitalise each word, join with space), then lowercase and replace spaces with hyphens. Examples:
+Conversion rule: take the display name (split `name` on `_` or `-`, capitalise each word, join with space), then lowercase and replace spaces with hyphens. Examples:
 
 | `name` | Display Name | Anchor |
 |--------|-------------|--------|
 | `routing` | Routing | `#routing` |
 | `sample_playback` | Sample Playback | `#sample-playback` |
 | `note_processing` | Note Processing | `#note-processing` |
+| `module-tree` | Module Tree | `#module-tree` |
+| `ui` | UI | `#ui` |
 
 ### Rendered Structure
 

@@ -920,6 +920,38 @@ Sorted by severity (critical first).
 - **Observed:** `every`, `some`, `findIndex`, `map`, and `filter` return `undefined` on empty arrays. The root cause is that `callForEach` initializes `totalReturnValue` as `var()` (undefined), and the per-method lambdas only set it during iteration -- which never executes on empty arrays. This causes: `every` returns `undefined` instead of `true` (vacuous truth); `some` returns `undefined` instead of `false`; `findIndex` returns `undefined` instead of `-1`; `map` and `filter` return `undefined` instead of an empty array. For `map`/`filter`, chaining on the result (e.g. `.length`) throws because undefined has no properties.
 - **Expected:** Each scoped function should initialize its return value before the iteration loop: `every` -> `true`, `some` -> `false`, `findIndex` -> `-1`, `map`/`filter` -> empty array. Alternatively, `callForEach` could accept an initial value parameter.
 
+### Builder.get -- silent failure for invalid buildIndex and type mismatch
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~10401-10424
+- **Observed:** `get()` returns undefined without error if `buildIndex` is out of range, the module reference has been released, or if `interfaceType` does not match the module's actual C++ type. Other Builder methods (`clearChildren`, `getExisting`, `setAttributes`) report script errors for invalid build indexes via `reportScriptError`.
+- **Expected:** Should report a script error for invalid buildIndex (consistent with other Builder methods) and report an error for unrecognized or mismatched interfaceType.
+
+### Builder.clearChildren -- no self-preservation check for calling script processor
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (Builder::clearChildren implementation)
+- **Observed:** Unlike `clear()`, which explicitly preserves the calling script processor during demolition, `clearChildren()` has no self-preservation check. If the calling script processor is in the targeted chain (e.g., clearing the MIDI chain that contains the calling script), it will be removed, potentially causing undefined behavior or a silent crash.
+- **Expected:** Add a self-preservation check matching `clear()`'s pattern -- skip the calling script processor when iterating the chain's children for removal, or report a script error if the target chain contains the caller.
+
+### Builder.connectToScript -- silent failure on non-JavascriptProcessor target
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (Builder::connectToScript implementation)
+- **Observed:** If the module at `buildIndex` is not a JavascriptProcessor (e.g., it is a synth or effect without scripting capability), the method silently does nothing. The C++ `dynamic_cast<JavascriptProcessor*>` returns null, the internal `setConnectedFile` call is skipped, the bool return value (false) is discarded by the void wrapper, and no error is reported.
+- **Expected:** Report a script error when the target module is not a JavascriptProcessor, e.g., "Module at buildIndex N is not a script processor".
+
+### Builder.setAttributes -- non-numeric values silently become 0.0
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (Builder::setAttributes implementation)
+- **Observed:** All attribute values in the JSON object are cast to `float` via the C++ `(float)` cast. Non-numeric values (strings, objects, arrays, booleans) silently become 0.0 with no validation or warning. The user has no indication that their attribute value was discarded.
+- **Expected:** Validate that each value is numeric before casting. Report a script error for non-numeric values, e.g., "Attribute 'Name' must be a numeric value, got [type]".
+
 ## Low
 
 ### ExpansionHandler.setErrorFunction -- numExpectedArgs mismatch (1 vs 2)
@@ -1305,3 +1337,19 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiObjects.h:~2120
 - **Observed:** `setBypassed(bool)` is declared in the ScriptingSlotFX class header with a Doxygen comment, but has no implementation in any .cpp file, no Wrapper struct entry, and no ADD_API_METHOD registration. The Doxygen parser picks it up and includes it in auto-generated API docs, but it cannot be called from HiseScript. Users attempting `slot.setBypassed(true)` get a confusing "method not found" error.
 - **Expected:** Either remove the dead declaration from the header, or implement and register it (delegating to the wrapped effect's `setSoftBypass`).
+
+### Builder.connectToScript -- silent failure for non-script modules
+
+- **Type:** silent-fail
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~10390-10399
+- **Observed:** If the module at `buildIndex` is not a JavascriptProcessor, `connectToScript` silently does nothing. The C++ returns `false` to indicate failure, but the `API_VOID_METHOD_WRAPPER_2` discards the return value, so the user has no way to detect that the connection was not made.
+- **Expected:** Should report a script error when the target module is not a JavascriptProcessor (e.g., "Module at index N is not a script processor"), or at minimum use `API_METHOD_WRAPPER_2` to return the bool to the script.
+
+### Math.wrap -- returns negative values for deeply negative inputs despite "always positive" docstring
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** JavascriptEngineMathObject.cpp:~300
+- **Observed:** The C++ docstring says "always positive" but the implementation `fmod(value + limit, limit)` only adds `limit` once. For values more negative than `-limit`, the result is still negative. E.g., `wrap(-5.0, 3.0)` computes `fmod(-2.0, 3.0)` which returns -2.0 on most platforms.
+- **Expected:** Either use a negative-safe wrap formula (e.g., `fmod(fmod(value, limit) + limit, limit)`) or update the docstring to document the single-offset limitation.

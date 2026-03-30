@@ -69,6 +69,7 @@ class LinkRegistry:
         self._build_sn_registry()
         self._build_doc_registry()
         self._build_ui_registry()
+        self._build_lang_registry()
 
     def _build_api_registry(self):
         """Build API domain registry from enrichment/base/*.json."""
@@ -291,6 +292,35 @@ class LinkRegistry:
 
         self.targets["UI"] = targets
         self._build_indexes("UI")
+
+    def _build_lang_registry(self):
+        """Build LANG domain registry from language_enrichment/output/*.md."""
+        targets = {}
+        domain_config = self.structure.get("domains", {}).get("LANG", {})
+        if not domain_config:
+            self.targets["LANG"] = {}
+            self.lower_index["LANG"] = {}
+            self.normalized_index["LANG"] = {}
+            return
+
+        base_path = domain_config["basePath"]
+        pages_path = domain_config.get("sources", {}).get("pages", "")
+        pages_dir = self.script_dir / pages_path
+
+        if not pages_dir.is_dir():
+            self.targets["LANG"] = {}
+            self.lower_index["LANG"] = {}
+            self.normalized_index["LANG"] = {}
+            return
+
+        for md_file in sorted(pages_dir.glob("*.md")):
+            if md_file.name.lower() == "readme.md":
+                continue
+            stem = md_file.stem
+            targets[stem] = f"{base_path}/{stem}"
+
+        self.targets["LANG"] = targets
+        self._build_indexes("LANG")
 
     def _build_indexes(self, domain: str):
         """Build case-insensitive and normalized indexes for a domain."""
@@ -1000,10 +1030,10 @@ def convert_method_headings(content):
     return "\n".join(result)
 
 
-def rewrite_svg_paths(content):
-    """Rewrite relative SVG image links to absolute Nuxt paths."""
+def rewrite_image_paths(content):
+    """Rewrite relative image links (SVG, PNG) to absolute Nuxt paths."""
     return re.sub(
-        r'!\[([^\]]*)\]\(([^)]*\.svg)\)',
+        r'!\[([^\]]*)\]\(([^)]*\.(?:svg|png))\)',
         r'![\1](/images/v2/scripting-api/\2)',
         content
     )
@@ -1014,15 +1044,187 @@ def fix_blank_lines_after_code_blocks(content):
     return re.sub(r'(\n```)\n([^\n`])', r'\1\n\n\2', content)
 
 
+# ---------------------------------------------------------------------------
+# API category tags
+# ---------------------------------------------------------------------------
+
+_CLASS_TAGS_CACHE = None
+
+
+def _load_class_tags() -> dict:
+    """Load class_tags.json (cached after first call)."""
+    global _CLASS_TAGS_CACHE
+    if _CLASS_TAGS_CACHE is None:
+        tags_path = SCRIPT_DIR / "enrichment" / "resources" / "survey" / "class_tags.json"
+        if tags_path.is_file():
+            with open(tags_path, "r", encoding="utf-8") as f:
+                _CLASS_TAGS_CACHE = json.load(f)
+        else:
+            _CLASS_TAGS_CACHE = {}
+    return _CLASS_TAGS_CACHE
+
+
+def inject_api_category_tags(content: str, class_name: str) -> str:
+    """Insert a ::category-tags MDC block after YAML frontmatter for API pages.
+
+    Looks up the class in class_tags.json and generates tags for its domain
+    group and role (skipping the role tag when it matches the group name).
+    """
+    tags_data = _load_class_tags()
+    if not tags_data or not class_name:
+        return content
+
+    class_entry = tags_data.get("classes", {}).get(class_name)
+    if not class_entry:
+        return content
+
+    groups = tags_data.get("groups", {})
+    roles = tags_data.get("roles", {})
+
+    group_key = class_entry.get("group", "")
+    role_key = class_entry.get("role", "")
+
+    tags = []
+    if group_key and group_key in groups:
+        tags.append(f'  - {{ name: {group_key}, desc: "{groups[group_key]}" }}')
+    if role_key and role_key in roles and role_key != group_key:
+        tags.append(f'  - {{ name: {role_key}, desc: "{roles[role_key]}" }}')
+
+    if not tags:
+        return content
+
+    tag_block = "::category-tags\n---\ntags:\n" + "\n".join(tags) + "\n---\n::\n"
+
+    # Insert after frontmatter closing ---
+    fm_match = re.match(r'^(---\n.*?\n---\n)', content, re.DOTALL)
+    if fm_match:
+        insert_pos = fm_match.end()
+        content = content[:insert_pos] + "\n" + tag_block + "\n" + content[insert_pos:]
+
+    return content
+
+
+# ---------------------------------------------------------------------------
+# API class-level see-also
+# ---------------------------------------------------------------------------
+
+_CLASS_SURVEY_CACHE = None
+
+
+def _load_class_survey() -> dict:
+    """Load class_survey_data.json (cached after first call)."""
+    global _CLASS_SURVEY_CACHE
+    if _CLASS_SURVEY_CACHE is None:
+        survey_path = SCRIPT_DIR / "enrichment" / "resources" / "survey" / "class_survey_data.json"
+        if survey_path.is_file():
+            with open(survey_path, "r", encoding="utf-8") as f:
+                _CLASS_SURVEY_CACHE = json.load(f)
+        else:
+            _CLASS_SURVEY_CACHE = {}
+    return _CLASS_SURVEY_CACHE
+
+
+def inject_api_class_see_also(content: str, class_name: str) -> str:
+    """Insert a class-level ::see-also MDC block and seeAlso frontmatter field.
+
+    Reads the seeAlso array from class_survey_data.json and:
+    1. Adds a seeAlso field to YAML frontmatter (class names + distinctions)
+    2. Inserts a ::see-also MDC block after ::category-tags (or after frontmatter)
+    3. For component-role classes with UI pages, prepends a cross-link to the UI reference
+    """
+    survey = _load_class_survey()
+    if not survey:
+        return content
+
+    class_data = survey.get("classes", {}).get(class_name)
+    if not class_data:
+        return content
+
+    see_also = list(class_data.get("seeAlso", []))
+
+    # Prepend UI component cross-link for classes with role "component"
+    tags_data = _load_class_tags()
+    class_tags = tags_data.get("classes", {}).get(class_name, {})
+    if class_tags.get("role") == "component":
+        # Check if a UI component page exists for this class
+        ui_pages_dir = SCRIPT_DIR / "ui_enrichment" / "pages" / "components"
+        if ui_pages_dir.is_dir() and any(
+            f.stem == class_name for f in ui_pages_dir.glob("*.md")
+        ):
+            see_also.insert(0, {
+                "class": f"$UI.{class_name}$",
+                "distinction": "CSS styling, properties reference, and visual customization",
+                "_token": True
+            })
+
+    if not see_also:
+        return content
+
+    # Build ::see-also MDC block
+    yaml_links = []
+    for entry in see_also:
+        cls = entry.get("class", "")
+        distinction = entry.get("distinction", "").replace('"', '\\"')
+        if not cls:
+            continue
+        if entry.get("_token"):
+            # Token-based link (resolved by resolve_tokens later)
+            yaml_links.append(
+                f'  - {{ label: "{class_name} (UI Reference)", to: "{cls}", desc: "{distinction}" }}'
+            )
+        else:
+            yaml_links.append(
+                f'  - {{ label: "{cls}", to: "$API.{cls}$", desc: "{distinction}" }}'
+            )
+
+    if not yaml_links:
+        return content
+
+    see_also_block = "::see-also\n---\nlinks:\n" + "\n".join(yaml_links) + "\n---\n::\n"
+
+    # Insert after ::category-tags block (if present), otherwise after frontmatter
+    ct_end = content.find("::category-tags")
+    if ct_end != -1:
+        # Find the closing :: of the category-tags block
+        closing = content.find("\n::\n", ct_end)
+        if closing != -1:
+            insert_pos = closing + 4  # after \n::\n
+            content = content[:insert_pos] + "\n" + see_also_block + "\n" + content[insert_pos:]
+    else:
+        fm_match = re.match(r'^(---\n.*?\n---\n)', content, re.DOTALL)
+        if fm_match:
+            insert_pos = fm_match.end()
+            content = content[:insert_pos] + "\n" + see_also_block + "\n" + content[insert_pos:]
+
+    # Add seeAlso to frontmatter
+    fm_match = re.match(r'^(---\n)(.*?)(\n---\n)', content, re.DOTALL)
+    if fm_match:
+        fm_body = fm_match.group(2)
+        fm_lines = []
+        fm_lines.append("seeAlso:")
+        for entry in see_also:
+            cls = entry.get("class", "")
+            distinction = entry.get("distinction", "").replace('"', '\\"')
+            if cls:
+                fm_lines.append(f'  - class: "{cls}"')
+                fm_lines.append(f'    distinction: "{distinction}"')
+        fm_addition = "\n".join(fm_lines)
+        content = fm_match.group(1) + fm_body + "\n" + fm_addition + fm_match.group(3) + content[fm_match.end():]
+
+    return content
+
+
 def apply_mdc_transforms(content: str, class_name: str,
                          messages: list = None, filepath: str = "") -> str:
     """Apply all MDC transformations to API markdown content."""
     content = convert_h1_to_frontmatter(content)
+    content = inject_api_category_tags(content, class_name)
+    content = inject_api_class_see_also(content, class_name)
     content = convert_method_headings(content)
     content = convert_common_mistakes(content, messages, filepath)
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
-    content = rewrite_svg_paths(content)
+    content = rewrite_image_paths(content)
     content = fix_blank_lines_after_code_blocks(content)
     return content
 
@@ -1040,11 +1242,13 @@ def apply_module_mdc_transforms(content: str, messages: list = None,
     """
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
+    content = _extract_frontmatter_components(content, messages, filepath)
     content = fix_blank_lines_after_code_blocks(content)
     return content
 
 
-def _extract_sn_frontmatter_sections(content: str) -> str:
+def _extract_frontmatter_components(content: str, messages: list = None,
+                                    filepath: str = "") -> str:
     """Extract commonMistakes and cpuProfile from YAML frontmatter and
     append them as MDC body content.
 
@@ -1064,6 +1268,18 @@ def _extract_sn_frontmatter_sections(content: str) -> str:
         r'^commonMistakes:\n((?:  .+\n)+)', fm_text, re.MULTILINE
     )
     if cm_block:
+        # Note: entries without 'title' field are handled by the title-less regex below
+        # Validate: every entry must have a title field
+        #entries_without_title = re.findall(r'  - wrong:', cm_block.group(0))
+        #if entries_without_title:
+        #    if messages is not None:
+        #        messages.append({
+        #            "level": "ERROR",
+        #            "file": filepath,
+        #            "message": f"commonMistakes: {len(entries_without_title)} entries missing 'title' field. "
+        #                       f"Every entry must have a title for the ::common-mistakes component to render."
+        #        })
+
         entries = re.findall(
             r'  - title:\s*"(.+?)"\n\s+wrong:\s*"(.+?)"\n\s+right:\s*"(.+?)"\n\s+explanation:\s*"(.+?)"',
             cm_block.group(0)
@@ -1137,10 +1353,36 @@ def apply_scriptnode_mdc_transforms(content: str, messages: list = None,
     - Warning/tip blockquotes -> ::warning / ::tip
     - Blank line fixes after code blocks
     """
-    content = _extract_sn_frontmatter_sections(content)
+    content = _extract_frontmatter_components(content, messages, filepath)
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
     content = fix_blank_lines_after_code_blocks(content)
+    return content
+
+
+def inject_ui_api_cross_link(content: str) -> str:
+    """Inject a ::see-also block on UI component pages linking to the scripting API.
+
+    Reads componentId from frontmatter and adds a see-also link using $API$ tokens.
+    """
+    component_id = _extract_frontmatter_field(content, "componentId")
+    if not component_id:
+        return content
+
+    see_also_block = (
+        '::see-also\n---\nlinks:\n'
+        f'  - {{ label: "{component_id} (Scripting API)", '
+        f'to: "$API.{component_id}$", '
+        f'desc: "Methods for creating and controlling this component" }}\n'
+        '---\n::\n'
+    )
+
+    # Insert after frontmatter
+    fm_match = re.match(r'^(---\n.*?\n---\n)', content, re.DOTALL)
+    if fm_match:
+        insert_pos = fm_match.end()
+        content = content[:insert_pos] + "\n" + see_also_block + "\n" + content[insert_pos:]
+
     return content
 
 
@@ -1151,7 +1393,21 @@ def apply_ui_mdc_transforms(content: str, messages: list = None,
     UI pages have YAML frontmatter with commonMistakes (same format as
     scriptnode) and use warning/tip blockquotes in the body.
     """
-    content = _extract_sn_frontmatter_sections(content)
+    content = _extract_frontmatter_components(content, messages, filepath)
+    content = inject_ui_api_cross_link(content)
+    content = convert_warning_blockquotes(content, messages, filepath)
+    content = convert_tip_blockquotes(content, messages, filepath)
+    content = fix_blank_lines_after_code_blocks(content)
+    return content
+
+
+def apply_language_mdc_transforms(content: str, messages: list = None,
+                                   filepath: str = "") -> str:
+    """Apply MDC transformations to language reference markdown.
+
+    Language pages use warning/tip blockquotes and see-also lines.
+    No method headings, common mistakes, or h1-to-frontmatter conversion.
+    """
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
     content = fix_blank_lines_after_code_blocks(content)
@@ -1608,11 +1864,11 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
             component_id = _extract_frontmatter_field(content, "componentId") or \
                            _extract_frontmatter_field(content, "contentType") or ""
             content = convert_see_also(content, component_id, registry)
+        elif mdc_transform == "language":
+            lang_title = _extract_frontmatter_field(content, "title") or ""
+            content = convert_see_also(content, lang_title, registry)
 
-        # Step 2: Resolve $DOMAIN.Target$ tokens
-        content = resolve_tokens(content, registry, str(source_path), messages)
-
-        # Step 3: Apply MDC transforms based on domain config
+        # Step 2: Apply MDC transforms (may inject $DOMAIN$ tokens)
         if mdc_transform == "api":
             content = apply_mdc_transforms(content, class_name, messages,
                                            str(source_path))
@@ -1625,6 +1881,12 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         elif mdc_transform == "ui":
             content = apply_ui_mdc_transforms(content, messages,
                                                str(source_path))
+        elif mdc_transform == "language":
+            content = apply_language_mdc_transforms(content, messages,
+                                                     str(source_path))
+
+        # Step 3: Resolve $DOMAIN.Target$ tokens (after MDC transforms)
+        content = resolve_tokens(content, registry, str(source_path), messages)
 
         # Step 3: Validate images
         dest = output_dir / out_rel
