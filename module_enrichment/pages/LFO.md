@@ -12,18 +12,26 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Setting LoopEnabled to Off and expecting Sine/Triangle/Saw/Square to play once"
+  - title: "LoopEnabled has no effect on standard waveforms"
+    wrong: "Setting LoopEnabled to Off and expecting Sine/Triangle/Saw/Square to play once"
     right: "LoopEnabled only affects Custom and Steps modes; standard waveforms always loop"
     explanation: "Use the Custom waveform with a drawn shape and LoopEnabled Off for one-shot LFO behaviour with standard shapes."
-  - wrong: "Enabling SyncToMasterClock without also enabling TempoSync"
+  - title: "SyncToMasterClock requires TempoSync"
+    wrong: "Enabling SyncToMasterClock without also enabling TempoSync"
     right: "SyncToMasterClock requires TempoSync to be on; it has no effect when the LFO runs in free Hz mode"
     explanation: "Master clock sync aligns the LFO phase to the host transport, which only makes sense when the LFO rate is defined as a tempo division."
-  - wrong: "Expecting per-sample accuracy from frequency modulation via the FrequencyChain"
+  - title: "FrequencyChain is heavily downsampled"
+    wrong: "Expecting per-sample accuracy from frequency modulation via the FrequencyChain"
     right: "The frequency chain is heavily downsampled and only updates the LFO rate every ~4096 audio samples"
     explanation: "For precise FM-style modulation, use scriptnode instead. The LFO's frequency modulation is designed for slow, smooth rate changes."
-  - wrong: "Using high SmoothingTime values with the Steps waveform and expecting sharp step transitions"
+  - title: "SmoothingTime blurs step transitions"
+    wrong: "Using high SmoothingTime values with the Steps waveform and expecting sharp step transitions"
     right: "Reduce SmoothingTime to 0 for crisp step transitions"
     explanation: "The smoothing filter softens all waveform output including steps. High values blur the step boundaries."
+  - title: "FadeIn fails in Container modulation chains"
+    wrong: "Placing an LFO in a Container's modulation chain and expecting FadeIn to work"
+    right: "Place the LFO inside the sound generator's modulation chain or use a Global LFO Modulator"
+    explanation: "Containers do not process note-on messages, so the LFO never resets and FadeIn never triggers."
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedTimeVariantModulator
@@ -64,6 +72,10 @@ llmRef: |
     SyncToMasterClock requires TempoSync to be enabled.
     FrequencyChain is heavily downsampled - not suitable for precise FM.
     High SmoothingTime blurs step transitions in Steps mode.
+    FadeIn has no effect when LFO is in a Container's modulation chain - use Global LFO or place inside the sound generator.
+    getCurrentLevel() returns 0 in compiled plugins unless ENABLE_ALL_PEAK_METERS=1 is set.
+    LFO accuracy degrades above ~30 Hz due to control rate (adjustable via HISE_EVENT_RASTER).
+    Only SVF and Ladder filters handle LFO modulation smoothly - biquad types produce zipper noise.
 
   Custom equivalent:
     scriptnode via HardcodedTimeVariantModulator: oscillator + envelope + tempo sync nodes.
@@ -179,20 +191,38 @@ phase += rate    // advance phase
 groups:
   - label: Oscillator
     params:
-      - { name: Frequency, desc: "LFO rate. In free mode, sets the frequency in Hz. With TempoSync enabled, selects a tempo-synced note division. Modulatable via the Frequency modulation chain.", range: "0.01 - 40 Hz", default: "(dynamic)" }
+      - name: Frequency
+        desc: "LFO rate. In free mode, sets the frequency in Hz. With TempoSync enabled, selects a tempo-synced note division. Modulatable via the Frequency modulation chain."
+        range: "0.01 - 40 Hz"
+        default: "(dynamic)"
+        hints:
+          - type: warning
+            text: "Accuracy degrades above ~30 Hz due to control-rate processing (`HISE_EVENT_RASTER`). Set to `4`, `2`, or `1` in **Extra Definitions** to improve."
       - { name: WaveformType, desc: "Selects the waveform shape. See the waveform table below for visual reference. Sine, Triangle, Saw, and Square use pre-computed lookup tables. Random generates a new value each cycle. Custom uses a user-drawn table curve. Steps reads from a slider pack step sequencer.", range: "Sine, Triangle, Saw, Square, Random, Custom, Steps", default: "Sine" }
       - { name: PhaseOffset, desc: "Initial phase offset applied when the LFO resets on note trigger. Does not affect the waveform shape, only the starting position.", range: "0 - 100%", default: "0%" }
   - label: Tempo & Sync
     params:
       - { name: TempoSync, desc: "Switches the Frequency parameter from Hz to tempo-synced note divisions (e.g. Quarter, Eighth, Sixteenth)", range: "Off / On", default: "Off" }
-      - { name: SyncToMasterClock, desc: "Aligns the LFO phase to the host transport position on play start and resync events. Only active when TempoSync is also enabled.", range: "Off / On", default: "Off" }
+      - name: SyncToMasterClock
+        desc: "Aligns the LFO phase to the host transport position on play start and resync events. Only active when TempoSync is also enabled."
+        range: "Off / On"
+        default: "Off"
+        hints:
+          - type: tip
+            text: "For precise beat-grid alignment including mid-bar starts, combine with `Engine.createTransportHandler()` using `setEnableGrid(true, 8)` and `setSyncMode(PreferExternal)`."
   - label: Triggering
     params:
       - { name: Legato, desc: "When enabled, the LFO does not reset its phase when a new note is played while other notes are held. Only the first note triggers a reset.", range: "Off / On", default: "On" }
       - { name: IgnoreNoteOn, desc: "Free-run mode. The LFO runs continuously without resetting on note events. Useful for global modulation effects that should not be tied to note timing.", range: "Off / On", default: "Off" }
   - label: Envelope
     params:
-      - { name: FadeIn, desc: "Fade-in time after each note trigger. The LFO output ramps from zero to full depth over this period using an exponential curve. Set to 0 for instant full depth.", range: "0 - 3000 ms", default: "1000 ms" }
+      - name: FadeIn
+        desc: "Fade-in time after each note trigger. The LFO output ramps from zero to full depth over this period using an exponential curve. Set to 0 for instant full depth."
+        range: "0 - 3000 ms"
+        default: "1000 ms"
+        hints:
+          - type: warning
+            text: "Has no effect when the LFO is in a Container's modulation chain. Place inside the sound generator or use a Global LFO."
   - label: Output
     params:
       - { name: SmoothingTime, desc: "Smoothing time applied to the output signal. Reduces discontinuities in waveforms like Random and Steps. Set to 0 for unsmoothed output.", range: "0 - 1000 ms", default: "5 ms" }
@@ -220,7 +250,13 @@ groups:
 ::modulation-table
 ---
 chains:
-  - { name: "LFO Intensity Mod", desc: "Scales the LFO output depth. Applied as a post-multiply after all per-sample processing.", scope: "monophonic", constrainer: "Any" }
+  - name: "LFO Intensity Mod"
+    desc: "Scales the LFO output depth. Applied as a post-multiply after all per-sample processing."
+    scope: "monophonic"
+    constrainer: "Any"
+    hints:
+      - type: warning
+        text: "In **pitch mode**, reducing intensity shifts the pitch center asymmetrically. Add a `Constant` modulator to offset, or use a scriptnode LFO with explicit bipolar output."
   - { name: "LFO Frequency Mod", desc: "Scales the LFO frequency. Multiplies the base rate (Hz or tempo-derived). Updated approximately every 4096 audio samples, not per-sample.", scope: "monophonic", constrainer: "Any" }
 ---
 ::
@@ -234,5 +270,11 @@ The Custom waveform mode uses the table editor to draw an arbitrary shape. When 
 The Steps waveform mode reads values from a slider pack. Slider values are inverted so that sliders pushed up produce high modulation values. There is a brief crossfade at each step transition to avoid clicks.
 
 The frequency modulation chain is heavily downsampled (approximately every 4096 audio samples). It is designed for slow, smooth rate changes rather than precise FM-style modulation.
+
+The built-in TempoSync parameter supports divisions from 1/32T up to 1/1 bar. Slower rates (2/1, 4/1, etc.) are not available without modifying the HISE source code. For slower tempo-synced modulation, use a scriptnode-based LFO with a tempo node that supports a multiplier parameter.
+
+When using the Custom waveform, `Synth.getTableProcessor("LFO1")` and `Synth.getModulator("LFO1")` return different typed references to the same module. Create both if you need to control the table shape and the modulator parameters from script.
+
+When routing the LFO to filter cutoff, only SVF and Ladder filter types handle smooth modulation. Biquad-based filters (Low/High Shelf EQ, Moog LP) produce zipper noise when their frequency is modulated.
 
 
