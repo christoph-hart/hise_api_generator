@@ -12,7 +12,8 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Setting FirstCC and SecondCC to the same value expecting it to block that CC"
+  - title: "Identical CC values perform no swap"
+    wrong: "Setting FirstCC and SecondCC to the same value expecting it to block that CC"
     right: "Use different values for FirstCC and SecondCC to perform a meaningful swap"
     explanation: "When both parameters are the same, matching CC events are 'swapped' to the same number - effectively a no-op. The module does not filter or block any events."
 customEquivalent:

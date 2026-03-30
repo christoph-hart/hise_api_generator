@@ -14,13 +14,16 @@ cpuProfile:
 seeAlso:
   - { id: SimpleGain, type: alternative, reason: "Simpler gain control without gate, compressor, or limiter stages" }
 commonMistakes:
-  - wrong: "Enabling a stage but leaving its threshold at 0 dB and expecting an effect"
+  - title: "0 dB threshold disables all stages"
+    wrong: "Enabling a stage but leaving its threshold at 0 dB and expecting an effect"
     right: "Lower the threshold below 0 dB to hear the gate, compressor, or limiter working"
     explanation: "All thresholds default to 0 dB. At 0 dB, the gate never closes, the compressor never engages, and the limiter never limits because the signal is always below the threshold."
-  - wrong: "Enabling the compressor with ratio 1:1 and expecting compression"
+  - title: "Ratio 1:1 means no compression"
+    wrong: "Enabling the compressor with ratio 1:1 and expecting compression"
     right: "Increase the ratio above 1:1 to apply compression"
     explanation: "A ratio of 1:1 means no gain reduction. The default ratio is 1:1, so the compressor does nothing until the ratio is increased."
-  - wrong: "Toggling the gate or compressor rapidly and hearing clicks"
+  - title: "Only limiter prevents toggle clicks"
+    wrong: "Toggling the gate or compressor rapidly and hearing clicks"
     right: "Only the limiter has a crossfade on toggle. Gate and compressor switch instantly."
     explanation: "The limiter uses a one-block crossfade when enabled or disabled to prevent clicks. The gate and compressor do not have this mechanism, so toggling them during playback may produce audible artefacts."
 customEquivalent:

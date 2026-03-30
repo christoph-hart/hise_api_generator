@@ -17,13 +17,16 @@ seeAlso:
   - { id: SimpleReverb, type: alternative, reason: "Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading" }
   - { id: Convolution, type: scriptnode, reason: "The fx.convolution scriptnode node shares the same DSP engine with additional routing flexibility" }
 commonMistakes:
-  - wrong: "Adding a Convolution Reverb and expecting to hear dry signal"
+  - title: "Default convolution is 100% wet"
+    wrong: "Adding a Convolution Reverb and expecting to hear dry signal"
     right: "Raise DryGain from -100 dB to 0 dB for a standard wet/dry blend"
     explanation: "The default DryGain is -100 dB (silent) and WetGain is 0 dB, so the output is 100% wet with no dry signal. This is unusual for a reverb - most users will want to raise DryGain."
-  - wrong: "Adjusting Damping or HiCut and expecting real-time filtering of the wet output"
+  - title: "Damping and HiCut reshape IR offline"
+    wrong: "Adjusting Damping or HiCut and expecting real-time filtering of the wet output"
     right: "These parameters reshape the impulse response itself, which triggers a full IR reload"
     explanation: "Damping and HiCut are applied to the impulse response offline during preparation, not as real-time filters. Changing them causes a brief reload with a crossfade."
-  - wrong: "Leaving UseBackgroundThread off with a long impulse response"
+  - title: "Long IRs need background threading"
+    wrong: "Leaving UseBackgroundThread off with a long impulse response"
     right: "Enable UseBackgroundThread for long IRs to reduce audio thread load"
     explanation: "Without background threading, the entire convolution runs on the audio thread, which can cause dropouts with long impulse responses."
 customEquivalent:

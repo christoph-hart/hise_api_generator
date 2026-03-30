@@ -12,10 +12,12 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Playing three or more notes in legato and expecting all previous notes to retrigger in sequence"
+  - title: "Only most recent note retriggered"
+    wrong: "Playing three or more notes in legato and expecting all previous notes to retrigger in sequence"
     right: "Only the single most recent previous note is stored for retrigger"
     explanation: "The retrigger stack is one note deep. In a legato sequence A-B-C, releasing C retriggers B, but releasing B then produces silence because A was never stored."
-  - wrong: "Expecting a retriggered note to sound at its original velocity"
+  - title: "Retriggered notes use last velocity"
+    wrong: "Expecting a retriggered note to sound at its original velocity"
     right: "The retriggered note always uses the velocity of the most recently played note"
     explanation: "If you play A at velocity 100 then B at velocity 50, releasing B retriggers A at velocity 50, not 100."
 customEquivalent:

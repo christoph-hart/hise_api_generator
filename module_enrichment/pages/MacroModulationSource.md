@@ -13,10 +13,12 @@ cpuProfile:
 seeAlso:
   - { id: MacroModulator, type: alternative, reason: "The receive side of the macro system - reads macro slot values and converts them to modulation signals with smoothing and table support" }
 commonMistakes:
-  - wrong: "Expecting the Macro Modulation Source to produce audio output"
+  - title: "Macro Source produces no audio"
+    wrong: "Expecting the Macro Modulation Source to produce audio output"
     right: "This module produces no audio. It only drives macro control slots from its modulation chains."
     explanation: "Despite being classified as a SoundGenerator, this module does not generate sound. The SoundGenerator infrastructure is used to host the macro modulation chains within the rendering pipeline."
-  - wrong: "Adjusting the Gain or Balance knobs and expecting them to affect the macro output"
+  - title: "Gain and Balance have no effect"
+    wrong: "Adjusting the Gain or Balance knobs and expecting them to affect the macro output"
     right: "Control the macro values by adding modulators to the Macro 1-8 chains"
     explanation: "The Gain and Balance parameters are inherited from the base class but are not applied in this module's processing. The macro chain outputs are read directly."
 customEquivalent:

@@ -16,13 +16,16 @@ seeAlso:
   - { id: CurveEq, type: alternative, reason: "Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering" }
   - { id: HarmonicFilter, type: alternative, reason: "Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency" }
 commonMistakes:
-  - wrong: "Setting Gain and expecting it to affect a low-pass or high-pass filter mode"
+  - title: "Gain only affects shelves and peaks"
+    wrong: "Setting Gain and expecting it to affect a low-pass or high-pass filter mode"
     right: "The Gain parameter only affects LowShelf, HighShelf, and Peak modes"
     explanation: "For all other filter types, the Gain parameter has no audible effect. Switch to a shelf or peak mode before adjusting Gain."
-  - wrong: "Adding the module to shape the master output signal"
+  - title: "Use CurveEq for master bus"
+    wrong: "Adding the module to shape the master output signal"
     right: "Use CurveEq or a monophonic effect for master bus filtering"
     explanation: "PolyphonicFilter is a per-voice effect. When no polyphonic modulators are connected it falls back to monophonic processing, but CurveEq is designed for that purpose and offers multiple bands."
-  - wrong: "Selecting StateVariablePeak or LadderFourPoleHP mode and expecting the filter to change"
+  - title: "StateVariablePeak and LadderFourPoleHP broken"
+    wrong: "Selecting StateVariablePeak or LadderFourPoleHP mode and expecting the filter to change"
     right: "These two modes are non-functional - the previously selected filter type remains active"
     explanation: "StateVariablePeak (index 11) and LadderFourPoleHP (index 16) are listed in the mode selector but do not switch the filter. Avoid these modes."
 customEquivalent:

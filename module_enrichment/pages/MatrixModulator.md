@@ -15,10 +15,12 @@ seeAlso:
   - { id: GlobalEnvelopeModulator, type: alternative, reason: "Reads a single envelope source. Matrix Modulator can combine multiple sources with per-connection modes." }
   - { id: GlobalTimeVariantModulator, type: alternative, reason: "Reads a single time-variant source. Matrix Modulator can combine multiple sources." }
 commonMistakes:
-  - wrong: "Expecting the Matrix Modulator to work without a Global Modulator Container in the module tree"
+  - title: "Requires Global Modulator Container"
+    wrong: "Expecting the Matrix Modulator to work without a Global Modulator Container in the module tree"
     right: "Add a Global Modulator Container with source modulators first"
     explanation: "The Matrix Modulator reads from modulators hosted in a Global Modulator Container. Without one, there are no sources to connect to and the modulator outputs only its base value."
-  - wrong: "Mixing up Scale and Add connection modes"
+  - title: "Scale multiplies, Add offsets"
+    wrong: "Mixing up Scale and Add connection modes"
     right: "Scale multiplies against the base value, Add offsets from it"
     explanation: "The combination formula is: output = (baseValue * scaleMod1 * scaleMod2 * ...) + addMod1 + addMod2 + ... Scale connections are applied first (multiplicative), then Add connections (additive)."
 customEquivalent:

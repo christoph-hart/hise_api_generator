@@ -17,10 +17,12 @@ seeAlso:
   - { id: GlobalStaticTimeVariantModulator, type: target, reason: "Consumer that snapshots time-variant values at note-on from this container" }
   - { id: MatrixModulator, type: target, reason: "Matrix-based consumer that combines multiple modulators from this container" }
 commonMistakes:
-  - wrong: "Expecting the Global Modulator Container to produce audio output"
+  - title: "Global Modulator Container is silent"
+    wrong: "Expecting the Global Modulator Container to produce audio output"
     right: "The container produces silence - it exists solely to host modulators for sharing"
     explanation: "Despite being a Sound Generator, the container outputs no audio. Its only purpose is to host modulators whose values are read by Global Modulator consumers elsewhere in the module tree."
-  - wrong: "Adding a Global Envelope or Global Voice Start consumer inside the container's own chain"
+  - title: "Container blocks consumer modules"
+    wrong: "Adding a Global Envelope or Global Voice Start consumer inside the container's own chain"
     right: "Place consumers in other Sound Generators' modulation chains"
     explanation: "The container's chain excludes all Global*Modulator consumer types to prevent circular references. Consumers must be placed in other Sound Generators."
 customEquivalent:

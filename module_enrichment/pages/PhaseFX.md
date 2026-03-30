@@ -13,10 +13,12 @@ cpuProfile:
 seeAlso:
   - { id: Chorus, type: alternative, reason: "Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep" }
 commonMistakes:
-  - wrong: "Adding a Phase FX and expecting it to sweep automatically"
+  - title: "Requires external modulation"
+    wrong: "Adding a Phase FX and expecting it to sweep automatically"
     right: "Add an LFO or other modulator to the Phase Modulation chain to create sweep movement"
     explanation: "Phase FX has no internal LFO. Without a modulator in the Phase Modulation chain, the phaser produces a static frequency notch pattern with no sweep."
-  - wrong: "Setting Mix to 0.5 expecting a subtle effect"
+  - title: "Mix defaults to 100% wet"
+    wrong: "Setting Mix to 0.5 expecting a subtle effect"
     right: "Mix defaults to 1.0 (fully wet). The phaser output already contains the dry signal summed with the allpass output, so Mix controls the blend between unprocessed and phased signal."
     explanation: "At Mix=1.0 the output is the full phaser signal (input + allpass output). Reducing Mix blends toward the unprocessed input."
 customEquivalent:

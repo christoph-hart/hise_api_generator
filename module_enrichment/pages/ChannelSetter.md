@@ -12,7 +12,8 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Changing the channel number while notes are held"
+  - title: "Channel changes create stuck notes"
+    wrong: "Changing the channel number while notes are held"
     right: "Change the channel only when no notes are sounding, or handle stuck notes with an All Notes Off message"
     explanation: "If the channel changes between a note-on and its corresponding note-off, the note-off is sent on the new channel. The synth listening on the original channel never receives a note-off, causing a stuck note."
 customEquivalent:

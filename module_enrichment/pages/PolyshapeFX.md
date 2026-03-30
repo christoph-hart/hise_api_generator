@@ -16,11 +16,13 @@ seeAlso:
   - { id: ShapeFX, type: alternative, reason: "Monophonic variant with pre-shaper filtering, autogain, dry/wet mix, bit reduction, and configurable oversampling factors" }
   - { id: Saturator, type: alternative, reason: "Simpler monophonic saturation effect without table-based modes or per-voice processing" }
 commonMistakes:
-  - wrong: "Selecting Tanh, Saturate, Square, or SquareRoot modes and expecting distortion"
-    right: "Use one of the registered modes: Linear, Atan, Sin, Asinh, TanCos, Chebyshev 1-3, Curve, or Asymmetrical Curve"
+   - title: "Unregistered modes silently give linear"
+     wrong: "Selecting Tanh, Saturate, Square, or SquareRoot modes and expecting distortion"
+     right: "Use one of the registered modes: Linear, Atan, Sin, Asinh, TanCos, Chebyshev 1-3, Curve, or Asymmetrical Curve"
     explanation: "These modes are valid in ShapeFX but are not registered in Polyshape FX. Selecting them silently gives Linear passthrough with no audible effect."
-  - wrong: "Enabling oversampling with high polyphony and wondering about CPU spikes"
-    right: "Reserve oversampling for patches with moderate voice counts, or reduce polyphony when oversampling is on"
+   - title: "Oversampling scales CPU per voice"
+     wrong: "Enabling oversampling with high polyphony and wondering about CPU spikes"
+     right: "Reserve oversampling for patches with moderate voice counts, or reduce polyphony when oversampling is on"
     explanation: "Each voice has its own oversampler instance. At 4x oversampling with 16 voices, the shaping function runs 64x more than a single non-oversampled voice."
 customEquivalent:
   approach: scriptnode

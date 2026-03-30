@@ -13,8 +13,9 @@ cpuProfile:
 seeAlso:
   - { id: SendFX, type: alternative, reason: "Routes signal to a separate Send Container with gain control, rather than duplicating within the same buffer" }
 commonMistakes:
-  - wrong: "Expecting the Routing Matrix to move signal from one channel to another"
-    right: "The Routing Matrix copies signal additively - the source channel keeps its signal"
+   - title: "Routing matrix copies, not moves"
+     wrong: "Expecting the Routing Matrix to move signal from one channel to another"
+     right: "The Routing Matrix copies signal additively - the source channel keeps its signal"
     explanation: "Each send route adds the source channel's signal to the target channel. The source is never zeroed. To move signal, you would need to mute the source channel separately."
 customEquivalent:
   approach: scriptnode

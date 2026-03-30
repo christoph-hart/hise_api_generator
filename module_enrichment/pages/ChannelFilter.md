@@ -12,10 +12,12 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Setting MPE Start higher than MPE End to invert the range"
+  - title: "Inverted MPE range allows only channel 1"
+    wrong: "Setting MPE Start higher than MPE End to invert the range"
     right: "Ensure MPE Start is less than or equal to MPE End"
     explanation: "When MPE Start exceeds MPE End, the range is empty and only channel 1 (the MPE master channel) passes through."
-  - wrong: "Expecting the Channel Filter to block transport and internal events"
+  - title: "Transport events bypass channel filtering"
+    wrong: "Expecting the Channel Filter to block transport and internal events"
     right: "Use the Channel Filter only for note, CC, pitch bend, and aftertouch filtering"
     explanation: "Transport events (song position, MIDI start/stop) and internal events pass through unconditionally regardless of the channel setting."
 customEquivalent:

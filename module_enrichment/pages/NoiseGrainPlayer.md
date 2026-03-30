@@ -15,10 +15,12 @@ seeAlso:
   - { id: PolyshapeFX, type: alternative, reason: "Another polyphonic effect with per-voice processing, but applies waveshaping rather than granular synthesis" }
   - { id: Convolution, type: disambiguation, reason: "Also loads an audio file for processing, but applies it as an impulse response rather than decomposing it into noise grains" }
 commonMistakes:
-  - wrong: "Expecting the WhiteNoise parameter to mix audio-domain white noise into the output"
+  - title: "WhiteNoise modulates grain position"
+    wrong: "Expecting the WhiteNoise parameter to mix audio-domain white noise into the output"
     right: "WhiteNoise randomises the read position within each grain, producing a noisier texture through phase scrambling"
     explanation: "Despite the name, WhiteNoise does not add white noise to the audio signal. It applies a random offset to the per-sample read position inside each grain. Higher values create a rougher, more diffuse texture."
-  - wrong: "Changing GrainSize during playback and expecting an instant update"
+  - title: "GrainSize change triggers reanalysis"
+    wrong: "Changing GrainSize during playback and expecting an instant update"
     right: "GrainSize triggers a full offline reanalysis of the audio file, which runs asynchronously"
     explanation: "When GrainSize changes, the module re-runs the FFT-based noise decomposition on the loaded audio file. Active voices are killed during this process. Avoid automating GrainSize during performance."
 customEquivalent:

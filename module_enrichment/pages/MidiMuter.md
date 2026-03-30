@@ -12,10 +12,12 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Enabling the mute with fixStuckNotes off while notes are sounding"
+  - title: "fixStuckNotes required while playing"
+    wrong: "Enabling the mute with fixStuckNotes off while notes are sounding"
     right: "Enable fixStuckNotes before engaging the mute, or release all notes first"
     explanation: "With fixStuckNotes off, note-off events are also blocked during mute. Notes that were sounding when the mute engaged will never receive their note-off and remain stuck."
-  - wrong: "Expecting held keys to start sounding immediately when the mute is disengaged"
+  - title: "Held keys don't retrigger on unmute"
+    wrong: "Expecting held keys to start sounding immediately when the mute is disengaged"
     right: "Held keys whose note-on was blocked during mute will not sound after unmuting - the key must be released and pressed again"
     explanation: "The module does not send artificial note-on events when the mute is disengaged. Keys held during the muted period are invisible to downstream processors."
 customEquivalent:

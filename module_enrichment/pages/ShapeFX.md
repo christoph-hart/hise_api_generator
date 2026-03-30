@@ -14,14 +14,17 @@ cpuProfile:
 seeAlso:
   - { id: PolyshapeFX, type: alternative, reason: "Polyphonic variant with per-voice processing and a drive modulation chain" }
 commonMistakes:
-  - wrong: "Increasing Gain and wondering why the output level stays the same"
-    right: "Disable Autogain to hear the full effect of the Gain parameter on output level"
+   - title: "Autogain compensates for gain changes"
+     wrong: "Increasing Gain and wondering why the output level stays the same"
+     right: "Disable Autogain to hear the full effect of the Gain parameter on output level"
     explanation: "Autogain compensates for the increased output caused by higher gain, keeping the perceived level roughly constant. Disable it when you want gain to affect the output level directly."
-  - wrong: "Setting BypassFilters to On and using bias, then getting DC offset in the output"
-    right: "Keep BypassFilters off when using non-zero bias values"
+   - title: "BypassFilters also bypasses DC removal"
+     wrong: "Setting BypassFilters to On and using bias, then getting DC offset in the output"
+     right: "Keep BypassFilters off when using non-zero bias values"
     explanation: "The DC removal filter is tied to BypassFilters. When filters are bypassed, the DC offset introduced by BiasLeft/BiasRight persists in the output, which can cause headroom issues downstream."
-  - wrong: "Using high Oversampling values on multiple instances"
-    right: "Use 2x or 4x oversampling, or apply higher factors to a single critical instance"
+   - title: "High oversampling is CPU expensive"
+     wrong: "Using high Oversampling values on multiple instances"
+     right: "Use 2x or 4x oversampling, or apply higher factors to a single critical instance"
     explanation: "16x oversampling processes the shaping function at 16 times the sample rate, significantly increasing CPU usage. The quality improvement diminishes above 4x for most shaping modes."
 customEquivalent:
   approach: scriptnode

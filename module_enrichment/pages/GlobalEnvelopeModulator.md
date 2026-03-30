@@ -14,10 +14,12 @@ seeAlso:
   - { id: GlobalModulatorContainer, type: source, reason: "Hosts the source envelope that this modulator reads from" }
   - { id: MatrixModulator, type: alternative, reason: "Combines multiple global modulators into one output with per-connection modes, rather than reading a single source" }
 commonMistakes:
-  - wrong: "Adding a Global Envelope without selecting a source in the dropdown"
+  - title: "Disconnected modulator outputs constant value"
+    wrong: "Adding a Global Envelope without selecting a source in the dropdown"
     right: "Select a source envelope from the Connection dropdown"
     explanation: "When disconnected, the modulator outputs a constant 1.0 (gain mode) or 0.0 (pitch mode) and does not track any envelope."
-  - wrong: "Expecting the Inverted toggle to invert the envelope signal"
+  - title: "Inverted toggle has no effect"
+    wrong: "Expecting the Inverted toggle to invert the envelope signal"
     right: "The Inverted parameter has no effect"
     explanation: "The Inverted toggle is visible in the editor but has no effect on the output. Use a table with an inverted curve as a workaround."
 customEquivalent:

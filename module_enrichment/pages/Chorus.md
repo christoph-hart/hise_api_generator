@@ -13,10 +13,12 @@ cpuProfile:
 seeAlso:
   - { id: PhaseFX, type: alternative, reason: "Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation" }
 commonMistakes:
-  - wrong: "Expecting stereo widening from the chorus"
+  - title: "Chorus lacks stereo LFO offset"
+    wrong: "Expecting stereo widening from the chorus"
     right: "Both channels share the same internal LFO phase, so there is no inherent stereo widening from phase differences"
     explanation: "The stereo effect comes only from different feedback histories in each channel's delay buffer. For stronger stereo widening, consider using two instances with different settings or a scriptnode alternative."
-  - wrong: "Setting Feedback to 0.5 expecting moderate feedback"
+  - title: "Feedback 0.5 equals zero feedback"
+    wrong: "Setting Feedback to 0.5 expecting moderate feedback"
     right: "At Feedback=0.5 the internal feedback is actually zero. Values below 0.5 produce negative feedback, values above 0.5 produce positive feedback."
     explanation: "The Feedback parameter maps 0-1 to an internal range of -0.95 to +0.95. The crossover point at 0.5 means zero feedback."
 customEquivalent:

@@ -15,11 +15,13 @@ cpuProfile:
 seeAlso:
   - { id: Delay, type: alternative, reason: "Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment" }
 commonMistakes:
-  - wrong: "Using SimpleGain's Delay parameter for echo effects"
-    right: "SimpleGain's delay is a static offset with no feedback. Use the Delay module for echo repeats."
+   - title: "SimpleGain delay has no feedback"
+     wrong: "Using SimpleGain's Delay parameter for echo effects"
+     right: "SimpleGain's delay is a static offset with no feedback. Use the Delay module for echo repeats."
     explanation: "The delay in SimpleGain is designed for timing alignment (e.g. compensating for latency), not for creating audible echo effects. It has no feedback path."
-  - wrong: "Setting Width to 0 expecting silence"
-    right: "Width=0 produces a mono signal (mid only), not silence. Width=100 is unchanged stereo."
+   - title: "Width=0 produces mono, not silence"
+     wrong: "Setting Width to 0 expecting silence"
+     right: "Width=0 produces a mono signal (mid only), not silence. Width=100 is unchanged stereo."
     explanation: "The Width parameter works on the mid/side balance. At 0% only the mid (mono) signal remains. At 200% the side signal is exaggerated."
 customEquivalent:
   approach: scriptnode

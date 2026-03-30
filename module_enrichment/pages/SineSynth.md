@@ -12,14 +12,17 @@ cpuProfile:
   scalingFactors: [voice count, saturation]
 seeAlso: []
 commonMistakes:
-  - wrong: "Using multiple SineSynth modules for additive synthesis"
-    right: "Write a custom scriptnode network for additive synthesis"
+   - title: "Use scriptnode for additive synthesis"
+     wrong: "Using multiple SineSynth modules for additive synthesis"
+     right: "Write a custom scriptnode network for additive synthesis"
     explanation: "Each SineSynth instance carries its own pitch modulation and event handling overhead. For additive synthesis with many partials, a single scriptnode network with multiple oscillator nodes is far more efficient."
-  - wrong: "Setting SaturationAmount to exactly 1.0 and expecting maximum distortion"
-    right: "Use values up to 0.99 for maximum saturation"
+   - title: "SaturationAmount clamped to 99% maximum"
+     wrong: "Setting SaturationAmount to exactly 1.0 and expecting maximum distortion"
+     right: "Use values up to 0.99 for maximum saturation"
     explanation: "A value of 1.0 is internally clamped to 0.99 because the waveshaping formula would produce silence at exactly 1.0."
-  - wrong: "Adjusting OctaveTranspose or SemiTones while UseFreqRatio is enabled"
-    right: "Disable UseFreqRatio first, then adjust OctaveTranspose and SemiTones"
+   - title: "Tuning modes are mutually exclusive"
+     wrong: "Adjusting OctaveTranspose or SemiTones while UseFreqRatio is enabled"
+     right: "Disable UseFreqRatio first, then adjust OctaveTranspose and SemiTones"
     explanation: "The two tuning modes are mutually exclusive. When UseFreqRatio is On, only CoarseFreqRatio and FineFreqRatio affect the pitch."
 customEquivalent:
   approach: scriptnode

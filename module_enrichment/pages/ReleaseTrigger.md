@@ -12,11 +12,13 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Expecting the original noteOn to reach downstream processors"
-    right: "Both the original noteOn and noteOff are consumed - only the release-triggered noteOn passes through"
+   - title: "Original events are always consumed"
+     wrong: "Expecting the original noteOn to reach downstream processors"
+     right: "Both the original noteOn and noteOff are consumed - only the release-triggered noteOn passes through"
     explanation: "The module silently consumes all incoming note events and only generates new noteOn events on key release. Pair it with a dedicated release sample group, not with a sustain layer."
-  - wrong: "Setting Time to 0 s with TimeAttenuate enabled and expecting no attenuation"
-    right: "Set TimeAttenuate to Off to disable attenuation entirely, or set Time to a value that covers the expected hold duration"
+   - title: "Time=0 with TimeAttenuate maximizes attenuation"
+     wrong: "Setting Time to 0 s with TimeAttenuate enabled and expecting no attenuation"
+     right: "Set TimeAttenuate to Off to disable attenuation entirely, or set Time to a value that covers the expected hold duration"
     explanation: "With Time at 0, even the briefest key press maps to the far right of the attenuation curve, making attenuation maximally aggressive. Most release notes will be heavily attenuated or silent."
 customEquivalent:
   approach: hisescript

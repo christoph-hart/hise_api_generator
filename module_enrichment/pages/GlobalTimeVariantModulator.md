@@ -14,10 +14,12 @@ seeAlso:
   - { id: GlobalModulatorContainer, type: source, reason: "Hosts the source time-variant modulator that this consumer reads from" }
   - { id: GlobalStaticTimeVariantModulator, type: disambiguation, reason: "Also reads from a TimeVariant source, but snapshots the value at note-on instead of continuously tracking" }
 commonMistakes:
-  - wrong: "Using the Inverted toggle with UseTable enabled and expecting inversion to work"
+  - title: "Inverted doesn't work with UseTable"
+    wrong: "Using the Inverted toggle with UseTable enabled and expecting inversion to work"
     right: "When UseTable is enabled, inversion has no effect. Use a table with an inverted curve instead."
     explanation: "Due to an internal issue, inversion is not applied when the table is active. Draw an inverted curve in the table as a workaround."
-  - wrong: "Adding a Global Time Variant consumer without selecting a source"
+  - title: "Disconnected modulator outputs constant 1.0"
+    wrong: "Adding a Global Time Variant consumer without selecting a source"
     right: "Select a source from the Connection dropdown"
     explanation: "When disconnected, the modulator outputs a constant 1.0 and does not track any source."
 customEquivalent:

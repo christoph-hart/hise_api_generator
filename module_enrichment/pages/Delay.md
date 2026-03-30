@@ -15,10 +15,12 @@ seeAlso:
   - { id: Chorus, type: alternative, reason: "Short modulated delay for chorus/thickening rather than rhythmic echoes" }
   - { id: SimpleGain, type: companion, reason: "SimpleGain includes a static delay feature useful for timing alignment without feedback" }
 commonMistakes:
-  - wrong: "Adjusting the Low-Pass or High-Pass filter parameters expecting them to shape the delay feedback tone"
+  - title: "Filter parameters have no effect"
+    wrong: "Adjusting the Low-Pass or High-Pass filter parameters expecting them to shape the delay feedback tone"
     right: "These parameters have no effect on the audio output"
     explanation: "The LowPassFreq and HiPassFreq parameters are defined in the interface but are not connected to any filtering. They appear in the metadata but do not affect processing."
-  - wrong: "Setting FeedbackLeft or FeedbackRight to 1.0 expecting infinite sustain"
+  - title: "1.0 feedback causes infinite accumulation"
+    wrong: "Setting FeedbackLeft or FeedbackRight to 1.0 expecting infinite sustain"
     right: "A feedback of 1.0 produces infinite repeats that never decay. The signal will accumulate and eventually clip."
     explanation: "Unlike some delay plugins that limit feedback below unity, this delay allows true 1.0 feedback. Use values below 0.95 for repeats that decay naturally."
 customEquivalent:

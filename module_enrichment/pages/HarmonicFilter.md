@@ -16,13 +16,16 @@ seeAlso:
   - { id: HarmonicFilterMono, type: alternative, reason: "Monophonic variant that tracks the last played note instead of maintaining independent filter state per voice. Lower CPU cost but no per-voice harmonic separation." }
   - { id: PolyshapeFX, type: companion, reason: "Polyphonic waveshaper that can be placed before the Harmonic Filter to add harmonics for the filter to shape." }
 commonMistakes:
-  - wrong: "Expecting the filter frequencies to follow pitch bend or pitch modulation after the note starts"
+  - title: "Filter frequencies are fixed at note-on"
+    wrong: "Expecting the filter frequencies to follow pitch bend or pitch modulation after the note starts"
     right: "The harmonic frequencies are fixed at note-on and do not update during the voice's lifetime"
     explanation: "The filter bank tuning is set once from the MIDI note frequency (plus SemitoneTranspose). Pitch bend, glide, or pitch modulation applied after note-on will not retune the filters."
-  - wrong: "Setting NumFilterBands to 16 on a high-polyphony patch and wondering about CPU spikes"
+  - title: "Band count scales CPU with voices"
+    wrong: "Setting NumFilterBands to 16 on a high-polyphony patch and wondering about CPU spikes"
     right: "Start with fewer bands and increase only as needed. High notes automatically use fewer bands due to Nyquist clamping."
     explanation: "Each band adds a peak filter per sample per voice. With 16 bands and 16 voices, that is 256 filters running simultaneously. The automatic Nyquist clamping helps for high notes but low notes will use all requested bands."
-  - wrong: "Changing NumFilterBands during playback and expecting a smooth transition"
+  - title: "Changing bands causes transient"
+    wrong: "Changing NumFilterBands during playback and expecting a smooth transition"
     right: "Changing the band count resets all filter states, which may cause a brief transient"
     explanation: "The filter states are cleared when the band count changes. Avoid automating this parameter during sustained notes."
 customEquivalent:

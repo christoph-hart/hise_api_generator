@@ -14,7 +14,8 @@ seeAlso:
   - { id: GlobalModulatorContainer, type: source, reason: "Hosts the source voice-start modulator that this consumer reads from" }
   - { id: GlobalStaticTimeVariantModulator, type: disambiguation, reason: "Also a VoiceStartModulator consumer, but reads from a TimeVariant source rather than a VoiceStart source" }
 commonMistakes:
-  - wrong: "Expecting different values for multiple voices playing the same note"
+  - title: "Same note gets same value"
+    wrong: "Expecting different values for multiple voices playing the same note"
     right: "All voices on the same MIDI note number receive the same value"
     explanation: "Voice-start values are indexed by MIDI note number (0-127), not by voice. Retriggering the same note returns the same value from the source."
 customEquivalent:

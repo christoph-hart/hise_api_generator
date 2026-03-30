@@ -12,13 +12,16 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Assuming Stride and Direction control the same thing"
+  - title: "Stride and Direction control different things"
+    wrong: "Assuming Stride and Direction control the same thing"
     right: "Stride advances the slider pack step position; Direction selects which note from the held-key list is played"
     explanation: "These two controls advance independently. Stride determines which slider pack step provides the semitone offset, velocity, and length. Direction determines which note from the expanded sequence is played. Setting them to different values creates polyrhythmic patterns."
-  - wrong: "Setting note length to 100% and expecting tied notes without enabling EnableTieNotes"
+  - title: "100% length requires EnableTieNotes enabled"
+    wrong: "Setting note length to 100% and expecting tied notes without enabling EnableTieNotes"
     right: "Turn EnableTieNotes on for 100% length steps to tie into the next step"
     explanation: "A length of 100% without EnableTieNotes simply plays a note for the full step duration. Tie behaviour requires both EnableTieNotes on and the step's length at exactly 100%."
-  - wrong: "Expecting Hold to release notes when new notes are played"
+  - title: "Hold persists until manually disabled"
+    wrong: "Expecting Hold to release notes when new notes are played"
     right: "Hold keeps all notes until the Hold toggle is switched off"
     explanation: "Activating Hold latches all held notes. Releasing keys does not remove them from the sequence. Deactivating Hold removes all latched notes at once; if no physical keys remain held, the arpeggiator stops."
 customEquivalent:

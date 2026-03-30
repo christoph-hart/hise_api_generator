@@ -12,13 +12,16 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Expecting notes to play without holding a key on the controller"
+  - title: "CC messages require a held note"
+    wrong: "Expecting notes to play without holding a key on the controller"
     right: "Hold a note on the keyboard/controller before sending CC messages"
     explanation: "The module captures the last held note number. Without a held note, all CC messages are ignored and no sound is triggered."
-  - wrong: "Assuming the Bypass parameter stops note generation"
+  - title: "Bypass does not stop note generation"
+    wrong: "Assuming the Bypass parameter stops note generation"
     right: "Bypass only switches between the module's custom round-robin group cycling and the Sampler's built-in round-robin"
     explanation: "Notes are always generated from matching CC messages regardless of Bypass state. To stop note generation, remove or deactivate the module."
-  - wrong: "Using CC2Note with a non-Sampler sound generator"
+  - title: "CC2Note requires a Sampler module"
+    wrong: "Using CC2Note with a non-Sampler sound generator"
     right: "Place CC2Note in the MIDI chain of a Sampler module"
     explanation: "The module calls Sampler-specific functions for round-robin group selection. It will produce errors when used with other sound generator types."
 customEquivalent:

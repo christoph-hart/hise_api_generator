@@ -12,7 +12,8 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Adding a MidiMetronome without connecting it to a MIDI Player"
+  - title: "Requires MIDI Player connection"
+    wrong: "Adding a MidiMetronome without connecting it to a MIDI Player"
     right: "Select a MIDI Player from the dropdown in the module editor before enabling the metronome"
     explanation: "The metronome requires a connected MIDI Player to read playback position and time signature. Without one, no clicks are produced even when enabled."
 llmRef: |

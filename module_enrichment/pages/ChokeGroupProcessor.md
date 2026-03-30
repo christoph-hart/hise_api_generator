@@ -12,13 +12,16 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-  - wrong: "Expecting ChokeGroup 0 to pass all MIDI through unchanged"
+  - title: "ChokeGroup 0 still filters by key range"
+    wrong: "Expecting ChokeGroup 0 to pass all MIDI through unchanged"
     right: "Set both LoKey to 0 and HiKey to 127 alongside ChokeGroup 0 for full passthrough"
     explanation: "Key range filtering is always active regardless of the ChokeGroup setting. Notes outside the LoKey-HiKey range are blocked even when the choke group is disabled."
-  - wrong: "Placing two ChokeGroupProcessors in separate synth chains and expecting them to be independent"
+  - title: "Choke groups match globally across chains"
+    wrong: "Placing two ChokeGroupProcessors in separate synth chains and expecting them to be independent"
     right: "Assign different ChokeGroup numbers to processors that should not choke each other"
     explanation: "Choke group matching is global across the entire module tree. Any two processors with the same group number will choke each other, even if they are in unrelated synth chains."
-  - wrong: "Setting KillVoice to On for instruments that need a natural release tail when choked"
+  - title: "KillVoice On prevents envelope release"
+    wrong: "Setting KillVoice to On for instruments that need a natural release tail when choked"
     right: "Set KillVoice to Off to allow envelope release stages to play out"
     explanation: "KillVoice On instantly silences voices with no release phase. KillVoice Off sends a note-off instead, allowing envelopes to complete their release stage naturally."
 customEquivalent:

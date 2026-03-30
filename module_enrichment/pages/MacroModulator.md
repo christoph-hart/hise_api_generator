@@ -13,10 +13,12 @@ cpuProfile:
 seeAlso:
   - { id: MacroModulationSource, type: alternative, reason: "The source side of the macro system - hosts modulation chains that drive macro slots, which this modulator then reads" }
 commonMistakes:
-  - wrong: "Adding a Macro Modulator and expecting it to produce output without assigning a macro slot"
+  - title: "Macro slot must be assigned"
+    wrong: "Adding a Macro Modulator and expecting it to produce output without assigning a macro slot"
     right: "Set MacroIndex to the desired macro slot (1-8) before using"
     explanation: "The default MacroIndex is -1 (disconnected). When disconnected, the modulator outputs a constant 1.0 and does not respond to any macro changes."
-  - wrong: "Expecting the response curve table to update in real-time when the macro value changes continuously"
+  - title: "Table lookup happens before smoothing"
+    wrong: "Expecting the response curve table to update in real-time when the macro value changes continuously"
     right: "The table is applied once when the macro value changes, before smoothing"
     explanation: "The table lookup transforms the incoming macro value into a target value. The smoother then interpolates towards that target. The table is not re-evaluated during the smoothing ramp."
 customEquivalent:

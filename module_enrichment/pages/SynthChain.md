@@ -14,14 +14,17 @@ seeAlso:
   - { id: SynthGroup, type: alternative, reason: "Advanced container with shared modulation, FM synthesis, and unison. Use when children need common envelopes or pitch modulation." }
   - { id: GlobalModulatorContainer, type: companion, reason: "Hosts global modulators accessible from anywhere in the module tree. Must be placed as a child of a Container." }
 commonMistakes:
-  - wrong: "Adding per-voice modulators (envelopes, velocity) to the Container's Gain Modulation chain"
-    right: "Add per-voice modulators to each child synth's own Gain Modulation chain"
+   - title: "Only monophonic modulators on container"
+     wrong: "Adding per-voice modulators (envelopes, velocity) to the Container's Gain Modulation chain"
+     right: "Add per-voice modulators to each child synth's own Gain Modulation chain"
     explanation: "The Container's Gain Modulation only accepts monophonic (time-variant) modulators because it applies after all children are summed. For per-voice dynamics, modulate each child individually."
-  - wrong: "Setting Gain to control volume in decibels"
-    right: "Use a SimpleGain effect in the FX chain for decibel-scaled volume"
+   - title: "Gain is linear, not decibels"
+     wrong: "Setting Gain to control volume in decibels"
+     right: "Use a SimpleGain effect in the FX chain for decibel-scaled volume"
     explanation: "The Gain parameter is normalised linear gain (0.0 to 1.0), not decibels. A SimpleGain effect provides a proper dB-scaled volume control."
-  - wrong: "Expecting VoiceLimit to enforce a global voice limit across all children"
-    right: "Set VoiceLimit on each child synth individually"
+   - title: "VoiceLimit per child, not global"
+     wrong: "Expecting VoiceLimit to enforce a global voice limit across all children"
+     right: "Set VoiceLimit on each child synth individually"
     explanation: "Each child manages its own voice pool independently. The Container's VoiceLimit affects the initial voice allocation when children are created but does not enforce a shared limit at runtime."
 customEquivalent:
   approach: scriptnode

@@ -13,13 +13,16 @@ cpuProfile:
 seeAlso:
   - { id: MidiMetronome, type: companion, reason: "Generates metronome clicks synchronised to this player's position and time signature" }
 commonMistakes:
-  - wrong: "Pressing play without loading a MIDI file first"
+  - title: "Must load MIDI file first"
+    wrong: "Pressing play without loading a MIDI file first"
     right: "Load a MIDI file via the scripting API or drag-and-drop overlay, then call play()"
     explanation: "With no sequence loaded, CurrentSequence is 0 (no selection) and playback produces no output."
-  - wrong: "Setting LoopStart to create a play region in one-shot mode"
+  - title: "One-shot mode ignores LoopStart"
+    wrong: "Setting LoopStart to create a play region in one-shot mode"
     right: "Enable looping if you need the playback region to start at LoopStart"
     explanation: "In one-shot mode, playback always starts from the beginning and stops at LoopEnd. LoopStart only takes effect when LoopEnabled is on."
-  - wrong: "Expecting the MIDI file to play at its embedded tempo"
+  - title: "MIDI files use host tempo"
+    wrong: "Expecting the MIDI file to play at its embedded tempo"
     right: "Set the host tempo to match the desired playback speed"
     explanation: "Playback is always synchronised to the host tempo. The MIDI file's embedded tempo is discarded on load. Use PlaybackSpeed to scale relative to the host."
 customEquivalent:

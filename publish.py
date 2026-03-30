@@ -1270,15 +1270,15 @@ def _extract_frontmatter_components(content: str, messages: list = None,
     if cm_block:
         # Note: entries without 'title' field are handled by the title-less regex below
         # Validate: every entry must have a title field
-        #entries_without_title = re.findall(r'  - wrong:', cm_block.group(0))
-        #if entries_without_title:
-        #    if messages is not None:
-        #        messages.append({
-        #            "level": "ERROR",
-        #            "file": filepath,
-        #            "message": f"commonMistakes: {len(entries_without_title)} entries missing 'title' field. "
-        #                       f"Every entry must have a title for the ::common-mistakes component to render."
-        #        })
+        entries_without_title = re.findall(r'  - wrong:', cm_block.group(0))
+        if entries_without_title:
+            if messages is not None:
+                messages.append({
+                    "level": "ERROR",
+                    "file": filepath,
+                    "message": f"commonMistakes: {len(entries_without_title)} entries missing 'title' field. "
+                               f"Every entry must have a title for the ::common-mistakes component to render."
+                })
 
         entries = re.findall(
             r'  - title:\s*"(.+?)"\n\s+wrong:\s*"(.+?)"\n\s+right:\s*"(.+?)"\n\s+explanation:\s*"(.+?)"',

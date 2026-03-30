@@ -15,11 +15,13 @@ seeAlso:
   - { id: ArrayModulator, type: alternative, reason: "Per-note modulation via a 128-entry slider pack instead of the velocity value" }
   - { id: Constant, type: disambiguation, reason: "Also a VoiceStartModulator but outputs a fixed value rather than reading from MIDI" }
 commonMistakes:
-  - wrong: "Enabling DecibelMode and expecting the table to operate in dB domain"
-    right: "The table always operates in linear 0-1 domain; DecibelMode converts after the table lookup"
+   - title: "DecibelMode applies after table lookup"
+     wrong: "Enabling DecibelMode and expecting the table to operate in dB domain"
+     right: "The table always operates in linear 0-1 domain; DecibelMode converts after the table lookup"
     explanation: "The processing order is fixed: invert, then table, then dB conversion. The table input and output are always linear regardless of DecibelMode."
-  - wrong: "Leaving UseTable off but expecting a custom velocity curve"
-    right: "Enable UseTable to activate the curve editor"
+   - title: "UseTable must be enabled to work"
+     wrong: "Leaving UseTable off but expecting a custom velocity curve"
+     right: "Enable UseTable to activate the curve editor"
     explanation: "The table is bypassed by default. Without UseTable enabled, the velocity mapping is linear (or inverted linear)."
 customEquivalent:
   approach: hisescript

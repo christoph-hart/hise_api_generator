@@ -15,10 +15,12 @@ seeAlso:
   - { id: GlobalTimeVariantModulator, type: disambiguation, reason: "Continuously tracks the same source type, rather than snapshotting at note-on" }
   - { id: GlobalVoiceStartModulator, type: disambiguation, reason: "Also a VoiceStartModulator consumer, but reads from VoiceStart sources rather than TimeVariant sources" }
 commonMistakes:
-  - wrong: "Expecting sample-accurate capture of a fast-moving LFO at the exact note-on moment"
+  - title: "Snapshot is block-quantised only"
+    wrong: "Expecting sample-accurate capture of a fast-moving LFO at the exact note-on moment"
     right: "The captured value is the source's last computed block value, quantised to audio block boundaries"
     explanation: "The snapshot is taken from the source's most recent block output, not interpolated to the exact note-on timestamp. For fast-moving sources, the captured value depends on timing relative to block boundaries."
-  - wrong: "Confusing this with Global Time Variant Modulator"
+  - title: "Freezes value at note-on"
+    wrong: "Confusing this with Global Time Variant Modulator"
     right: "This module freezes the value at note-on (per-voice). Global Time Variant Modulator tracks continuously (monophonic)."
     explanation: "Despite both connecting to TimeVariant sources, they serve completely different purposes. This one creates per-voice variation based on note timing; the other provides continuous monophonic modulation."
 customEquivalent:

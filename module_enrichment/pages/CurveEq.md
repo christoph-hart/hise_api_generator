@@ -15,10 +15,12 @@ seeAlso:
   - { id: PolyphonicFilter, type: alternative, reason: "Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed" }
   - { id: HarmonicFilter, type: alternative, reason: "Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping" }
 commonMistakes:
-  - wrong: "Setting the Gain parameter on a Low Pass or High Pass band and expecting it to change the sound"
+  - title: "Low Pass/High Pass bands ignore gain"
+    wrong: "Setting the Gain parameter on a Low Pass or High Pass band and expecting it to change the sound"
     right: "Use Gain only with Low Shelf, High Shelf, and Peak band types"
     explanation: "Low Pass and High Pass filters have no gain parameter in their transfer function. The Gain value is stored but has no effect on these filter types."
-  - wrong: "Adding many bands without considering CPU cost"
+  - title: "Band count scales CPU linearly"
+    wrong: "Adding many bands without considering CPU cost"
     right: "Keep band count reasonable for the target platform"
     explanation: "Each band adds a stereo biquad filter processed per sample. CPU cost scales linearly with band count. 3-8 bands is typical; 20+ bands may be expensive on constrained platforms."
 customEquivalent:
