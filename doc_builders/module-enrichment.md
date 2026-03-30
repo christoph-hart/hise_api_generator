@@ -46,6 +46,13 @@ moduleList.json (base data, 79 modules)
         |    - Written into preliminary JSON's gaps field
         |    - Gate: Are gaps specific enough?
         |
+  [Step 2b] Forum gap enrichment (optional)
+        |    - /update-forum --modules {ModuleId}
+        |    - Extracts user confusion points from forum posts
+        |    - New gaps merged into exploration input
+        |    - Also produces forum insights for Step 4
+        |    - Output: forum/gaps/{ModuleId}.json, forum/insights/{ModuleId}.json
+        |
   [Step 3] Agent explores C++ source
         |    - Answers gap questions from processBlock/renderNextBlock
         |    - Writes exploration markdown + graph JSON topology
@@ -55,12 +62,21 @@ moduleList.json (base data, 79 modules)
   [Step 4] Agent authors MDC reference page
         |    - Interactive pseudo-code derived from graph JSON
         |    - Parameter tables, modulation tables, prose, notes
+        |    - Incorporates forum insights (Warning/Tip blocks) if available
         |    - See Also with scriptnode equivalents, UI components
         |    - Gate: ALL parameters accounted for?
         |           ALL exploration answers incorporated?
         |           No C++ leakage in prose?
         v
   module_enrichment/pages/{ModuleId}.md
+
+  [Step 4b] Forum page triage (backport-only, for already-enriched modules)
+        |    - Reads existing pages/{ModuleId}.md + forum/gaps/ + forum/insights/
+        |    - Triages: what's already covered vs what needs additions
+        |    - For unanswered VERIFY=yes insights: uses verify-forum-claim
+        |    - Outputs targeted edit instructions (no full rewrite)
+        v
+  module_enrichment/pages/{ModuleId}.md (updated)
 ```
 
 ### Step summary
@@ -68,8 +84,10 @@ moduleList.json (base data, 79 modules)
 | Step | Agent type | Input | Output | Guide |
 |------|-----------|-------|--------|-------|
 | 1-2 | General | moduleList.json entry | `module_enrichment/preliminary/{ModuleId}.json` | `preliminary-format.md` |
-| 3 | Explorer | Preliminary JSON + C++ source | `module_enrichment/exploration/{ModuleId}.md` + `.json` | `exploration-guide.md` |
-| 4 | General | Graph JSON + exploration markdown + moduleList.json | `module_enrichment/pages/{ModuleId}.md` | `reference-page-format.md` |
+| 2b | /update-forum | Module name | `module_enrichment/forum/gaps/{ModuleId}.json` + `forum/insights/{ModuleId}.json` | `forum-insights-guide.md` |
+| 3 | Explorer | Preliminary JSON + forum gaps + C++ source | `module_enrichment/exploration/{ModuleId}.md` + `.json` | `exploration-guide.md` |
+| 4 | General | Graph JSON + exploration markdown + forum insights + moduleList.json | `module_enrichment/pages/{ModuleId}.md` | `reference-page-format.md` |
+| 4b | Sonnet triage | Existing page + forum gaps + forum insights | Targeted edits to `pages/{ModuleId}.md` | `forum-insights-guide.md` |
 
 ---
 
@@ -90,6 +108,11 @@ tools/api generator/
       moduleList.json                         # Phase 0 output: 79 modules, read-only
     preliminary/                              # Step 1-2 output
       {ModuleId}.json                         # One per module
+    forum/                                    # Step 2b output
+      gaps/
+        {ModuleId}.json                       # Forum-derived gap questions
+      insights/
+        {ModuleId}.json                       # Forum-derived Warning/Tip candidates
     exploration/                              # Step 3 output
       {ModuleId}.md                           # Exploration findings
       {ModuleId}.json                         # Graph JSON topology
@@ -419,6 +442,22 @@ Output: module_enrichment/preliminary/{ModuleId}.json
 Follow the gate checklists at the end of each step.
 ```
 
+### Step 2b: Forum Gap Enrichment (optional)
+
+```
+/update-forum --modules {ModuleId}
+```
+
+This invokes the `/update-forum` agent which:
+1. Generates search queries for the module
+2. Searches the HISE forum and fetches relevant topics
+3. Extracts gap questions to `module_enrichment/forum/gaps/{ModuleId}.json`
+4. Extracts insight candidates to `module_enrichment/forum/insights/{ModuleId}.json`
+
+For unenriched modules, new gaps (those with `maps_to_existing_gap: null`) are added
+to the preliminary JSON's gaps array before Step 3. Forum insights with `verify: true`
+are verified during the Step 3 C++ exploration (no separate verification needed).
+
 ### Step 3: C++ Exploration
 
 ```
@@ -451,6 +490,32 @@ Output: module_enrichment/pages/{ModuleId}.md
 
 Follow the gate checklist. Account for ALL parameters. No C++ leakage.
 ```
+
+### Step 4b: Forum Page Triage (backport-only)
+
+```
+Triage forum content for already-enriched module "{ModuleId}".
+
+Read the existing page: module_enrichment/pages/{ModuleId}.md
+Read forum gaps: module_enrichment/forum/gaps/{ModuleId}.json
+Read forum insights: module_enrichment/forum/insights/{ModuleId}.json
+Read exploration output: module_enrichment/exploration/{ModuleId}.md
+
+For each forum gap:
+  - Check if the existing page already answers it. If yes, mark as "covered".
+  - If not, check if the exploration output answers it. If yes, note the answer.
+  - If neither covers it, flag for targeted C++ verification using verify-forum-claim.
+
+For each forum insight:
+  - Check if the existing page already covers it. If yes, mark as "covered".
+  - If VERIFY=yes and not covered, verify via verify-forum-claim or exploration output.
+  - If verified, draft a Warning/Tip block with placement recommendation.
+
+Output: targeted edit instructions for the existing page (not a full rewrite).
+```
+
+Use this step only for modules that already have a completed reference page.
+Do NOT use this for modules going through the normal Steps 1-4 pipeline.
 
 ### Batch processing
 

@@ -45,29 +45,14 @@ Focus on: interaction quirks, precedence rules, practical code patterns for comp
 
 ### Step 3b: Forum community insights
 
-After the source completeness check, search the HISE forum for real-world usage patterns, recurring confusion, and best practices related to this component. See `style-guide/canonical-links.md` § 5 for the full methodology reference.
+Follow the three-phase workflow in `style-guide/forum-insights-guide.md`:
 
-1. **Query the forum API** — run 2-3 searches:
-   - `https://forum.hise.audio/api/search?term={ComponentName}&in=titlesposts&sortBy=relevance`
-   - Use natural descriptions too (e.g., `table` not just `ScriptTable`, `knob` not just `ScriptSlider`)
-   - Add feature-specific terms for targeted results (e.g., `sliderpack callback value index`)
+1. `forum-search.py search "{ComponentName}" --also "{natural name}" "{feature term}"`
+2. Triage and fetch high-signal topics
+3. `@extract-forum-insights` for structured insight extraction
+4. `@verify-forum-claim` for bug/behaviour claims
 
-2. **Scan top 10-20 results** for:
-   - Threads with many replies (indicates widespread confusion)
-   - Bug reports revealing non-obvious but intended behaviour
-   - Repeated questions across multiple threads about the same topic
-   - Best practices and clever patterns shared by experienced users
-
-3. **Filter against existing content** — skip anything already in Notes, commonMistakes, or property descriptions. Skip historical bugs that have been fixed.
-
-4. **Add insights** using the canonical format:
-   - `> [!Warning:title]` blocks for pitfalls and gotchas
-   - `> [!Tip:title]` blocks for best practices and recommended patterns
-   - `commonMistakes` entries in frontmatter for clear wrong/right patterns
-
-5. **Scatter blocks throughout the page** at contextually relevant locations — place each warning/tip adjacent to the property, section, or code example it relates to. Maximum one styled block per section to avoid noise.
-
-**Target:** 3-5 new blocks per page (mix of warnings and tips). Aim for a roughly even balance — avoid warning-heavy output that reads negatively. For every pitfall, consider whether a positive best-practice Tip would serve the reader better.
+**Target:** 3-5 new blocks per page (mix of warnings and tips).
 
 ### Step 4: Verify against gate checklist
 

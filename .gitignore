@@ -14,3 +14,4 @@ ApiValueTreeBuilder/Builds/
 ApiValueTreeBuilder/JuceLibraryCode/
 
 publish/
+forum-search/forum_cache/
