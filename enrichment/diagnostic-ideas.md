@@ -41,6 +41,14 @@ Sorted by priority (high first).
 - **Rationale:** `setMode` accepts a fixed mode set. Invalid strings silently force internal Linear behavior in current implementation, which is difficult to diagnose from script.
 - **Sketch:** When `setMode` is called with a string literal, validate against {"Frequency", "Decibel", "Time", "TempoSync", "Linear", "Discrete", "Pan", "NormalizedPercentage"}. Emit a warning for mismatches.
 
+### ScriptLookAndFeel.registerFunction -- invalid function name string literal
+
+- **Category:** value-check
+- **Priority:** medium
+- **Methods involved:** registerFunction
+- **Rationale:** `registerFunction` accepts any string as the function name and silently stores the function, but only 62 predefined names are ever looked up by the rendering system. A typo means the custom rendering is never invoked and the default rendering appears with no error or warning. The user sees default styling and has no indication that the function name was wrong.
+- **Sketch:** When `registerFunction` is called with a string literal as the first argument, validate it against the 62 known function names from `getAllFunctionNames()`. Emit a warning if no match.
+
 ## Low
 
 ### Buffer.resample -- invalid interpolationType string literal
@@ -218,6 +226,14 @@ Sorted by priority (high first).
 - **Methods involved:** startTimer, setTimerCallback
 - **Rationale:** Calling `startTimer` without a prior `setTimerCallback` causes the timer to auto-stop on the first tick with no warning. The internal `timerCallback()` checks the WeakCallbackHolder validity and calls `stopTimer()` if invalid. The user sees no error -- the timer just silently stops.
 - **Sketch:** When `startTimer` is called on a Timer variable, scan earlier statements in the same scope for `setTimerCallback` on the same variable. Warn if no prior call is found.
+
+### ScriptShader.setUniformData -- reserved uniform name overwrite
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** setUniformData
+- **Rationale:** When `setUniformData` is called with a string literal matching one of the engine-managed uniform names (`iTime`, `uOffset`, `iResolution`, `uScale`), the value is overwritten by the engine on every render frame. The user's value has no effect and no warning is produced. A parse-time check for these known reserved names would prevent confusion.
+- **Sketch:** When `setUniformData` is called with a first argument that is a string literal, check if it matches any of the reserved uniform names. If so, emit a warning that this uniform is managed by the engine and user-set values will be overwritten every frame.
 
 ---
 

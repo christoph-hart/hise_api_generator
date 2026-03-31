@@ -56,6 +56,22 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### ContainerChild.getValue -- missing validity check returns stale data
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~6538
+- **Observed:** `getValue()` does not call `isValidOrThrow()` before accessing the Values tree. On an invalid reference, it returns stale data without warning. The sibling method `get()` (line ~6320) does check validity via `isValidOrThrow()`.
+- **Expected:** Add `isValidOrThrow()` check consistent with `get()` and other accessor methods.
+
+### ContainerChild.setPaintRoutine -- uses isValid instead of isValidOrThrow
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp:~6589
+- **Observed:** `setPaintRoutine()` uses `isValid()` instead of `isValidOrThrow()`. On an invalid reference, the call silently does nothing. `setControlCallback()` (line ~6549) and `setChildCallback()` (line ~6603) both use `isValidOrThrow()` and throw a script error on invalid references.
+- **Expected:** Use `isValidOrThrow()` for consistency with the other callback registration methods.
+
 ### ScriptTable -- crash on save when switching processorId at runtime
 
 - **Type:** ux-issue
@@ -959,6 +975,46 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiObjects.cpp (Builder::setAttributes implementation)
 - **Observed:** All attribute values in the JSON object are cast to `float` via the C++ `(float)` cast. Non-numeric values (strings, objects, arrays, booleans) silently become 0.0 with no validation or warning. The user has no indication that their attribute value was discarded.
 - **Expected:** Validate that each value is numeric before casting. Report a script error for non-numeric values, e.g., "Attribute 'Name' must be a numeric value, got [type]".
+
+### ScriptLookAndFeel.registerFunction -- invalid function names silently accepted
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp (ScriptedLookAndFeel::registerFunction)
+- **Observed:** `registerFunction` accepts any string as the function name and stores the callback internally, but only 62 predefined names are ever looked up by the rendering code. Invalid names are silently ignored -- the function is stored but never invoked. No error or warning is produced.
+- **Expected:** Validate the function name against the 62 predefined names from `getAllFunctionNames()` and report a script error for unrecognized names, e.g., "Unknown LAF function name: [name]".
+
+### ScriptLookAndFeel.registerFunction -- non-function second argument silently ignored
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiContent.cpp (ScriptedLookAndFeel::registerFunction)
+- **Observed:** If the second argument is not a valid JavaScript function, the call silently does nothing. No error is thrown and no callback is registered.
+- **Expected:** Report a script error when the second argument is not a function, e.g., "paintFunction must be a function".
+
+### ScriptShader.fromBase64 -- silently ignores invalid base64 input
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptShader::fromBase64)
+- **Observed:** If the base64 string is invalid or cannot be decoded, the method silently does nothing -- no shader is compiled and no error is reported. The user has no indication that the load failed.
+- **Expected:** Report a script error when the base64 string cannot be decoded, e.g., "Invalid base64 shader data".
+
+### ScriptShader.setFragmentShader -- silently fails in frontend builds for missing shader file
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptShader::setFragmentShader)
+- **Observed:** In frontend (exported plugin) builds, if the shader file name does not match an embedded file in the script collection, the shader silently fails to compile with no error message. The shader area renders blank with no feedback.
+- **Expected:** Report a script error or console warning when the shader file is not found in the embedded script collection.
+
+### ScriptShader.setUniformData -- arrays with 1 or more than 4 elements silently ignored
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptShader::setUniformData)
+- **Observed:** Arrays with 1 element or more than 4 elements are silently ignored -- only sizes 2, 3, and 4 are mapped to vec2/vec3/vec4. No error or warning is reported for unsupported array sizes.
+- **Expected:** Report a script error when the array size is not 2, 3, or 4, e.g., "Uniform array must have 2-4 elements for vec2/vec3/vec4".
 
 ## Low
 
