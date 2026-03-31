@@ -25,6 +25,10 @@ commonMistakes:
     wrong: "Adding a Global Envelope or Global Voice Start consumer inside the container's own chain"
     right: "Place consumers in other Sound Generators' modulation chains"
     explanation: "The container's chain excludes all Global*Modulator consumer types to prevent circular references. Consumers must be placed in other Sound Generators."
+  - title: "Note remapping breaks global voice-start lookup"
+    wrong: "Using `Message.setNoteNumber()` in a script before the container to remap notes"
+    right: "Use `Message.setTransposeAmount()` instead, which preserves the original note number"
+    explanation: "Global voice-start modulators store values indexed by the original MIDI note number. `setNoteNumber()` changes the note number before the container sees it, so the consumer looks up the wrong index and the modulation value is silently lost."
 customEquivalent:
   approach: scriptnode
   moduleType: SoundGenerator
@@ -58,9 +62,16 @@ llmRef: |
   When to use:
     When the same modulation source (LFO, envelope, velocity, etc.) needs to drive parameters across multiple Sound Generators. Place the source modulator here once, then add lightweight consumer modules wherever needed.
 
+  Placement: must be above all consumers in the module tree. Place as the first Sound Generator in the top-level container.
+
+  Chain limit: 64 modulators per chain (HISE_NUM_MODULATORS_PER_CHAIN). Configurable via Extra Definitions.
+
+  LFO retriggering: hosted LFOs retrigger on every note-on. For free-running, use Message.ignoreEvent(true) in a Script Processor before the container.
+
   Common mistakes:
     Expecting audio output - it produces silence.
     Adding consumers inside the container's own chain - they are blocked by the constrainer.
+    Using Message.setNoteNumber() before the container - breaks voice-start modulator lookup by note index. Use Message.setTransposeAmount() instead.
 
   See also:
     target GlobalEnvelopeModulator, GlobalVoiceStartModulator, GlobalTimeVariantModulator, GlobalStaticTimeVariantModulator, MatrixModulator - consumer types that read from this container
@@ -78,7 +89,19 @@ tags:
 
 The Global Modulator Container is a silent Sound Generator that hosts modulators for sharing across the module tree. Add any standard modulator (LFO, envelope, velocity, random, etc.) to its Global Modulators chain, then place lightweight consumer modules in other Sound Generators' modulation chains to read from the shared source.
 
-This is the producer half of HISE's global modulation system. It allocates phantom voices internally so that polyphonic modulators (envelopes, voice-start modulators) have the per-voice context they need, but it produces no audio output. The real CPU savings come from computing a modulation source once here instead of duplicating it across multiple targets.
+This is the producer half of HISE's global modulation system. It allocates phantom voices internally so that polyphonic modulators (envelopes, voice-start modulators) have the per-voice context they need, but it produces no audio output. The Pitch Modulation chain is disabled and cannot be used. The real CPU savings come from computing a modulation source once here instead of duplicating it across multiple targets.
+
+### Placement
+
+The container must be placed above all consumer modules in the module tree. Consumer modules search upward through the tree for containers, so a container placed below or beside a consumer will not be found and the connection silently fails. Place the Global Modulator Container as the first Sound Generator in the top-level container.
+
+### Polyphonic Behaviour
+
+Polyphonic envelope synchronisation between the container and consumers uses event IDs rather than voice indices. Consumers work correctly even when the consumer's parent Sound Generator has a different voice allocation than the container. A two-phase release mechanism prevents envelope tails from being cut off prematurely when voices are reused.
+
+### LFO Retriggering
+
+Hosted LFOs retrigger their phase on every incoming note-on event. To achieve a free-running global LFO unaffected by new notes, place a Script Processor before the container that calls `Message.ignoreEvent(true)` in its `onNoteOn` callback.
 
 ## Signal Path
 
@@ -144,16 +167,14 @@ groups:
 ::modulation-table
 ---
 chains:
-  - { name: Global Modulators, desc: "Hosts modulators whose values are shared with consumer modules elsewhere in the module tree. Any standard modulator type can be added except Global*Modulator consumers (to prevent circular references).", scope: "mixed (per-voice for envelopes, monophonic for time-variant, per-note for voice-start)", constrainer: "!Global*Modulator" }
+  - name: Global Modulators
+    desc: "Hosts modulators whose values are shared with consumer modules elsewhere in the module tree. Any standard modulator type can be added except Global*Modulator consumers (to prevent circular references)."
+    scope: "mixed (per-voice for envelopes, monophonic for time-variant, per-note for voice-start)"
+    constrainer: "!Global*Modulator"
+    hints:
+      - type: tip
+        text: "The chain supports up to 64 modulators (set by `HISE_NUM_MODULATORS_PER_CHAIN`). This limit can be raised in Extra Definitions if needed."
 ---
 ::
-
-## Notes
-
-The Gain and Balance parameters are inherited from the Sound Generator base but have no audible effect. The modulation chain operates in a special mode where values are copied to shared buffers rather than applied as gain multiplication.
-
-The Pitch Modulation chain is disabled and cannot be used.
-
-Polyphonic envelope synchronisation between the container and consumers uses event IDs rather than voice indices. This means consumers work correctly even when the consumer's parent Sound Generator has a different voice allocation than the container. A two-phase release mechanism prevents envelope tails from being cut off prematurely when voices are reused.
 
 **See also:** $MODULES.GlobalEnvelopeModulator$ -- reads per-voice envelope values from this container, $MODULES.GlobalVoiceStartModulator$ -- reads per-note voice-start values from this container, $MODULES.GlobalTimeVariantModulator$ -- continuously reads monophonic time-variant values from this container, $MODULES.GlobalStaticTimeVariantModulator$ -- snapshots a time-variant value at note-on from this container, $MODULES.MatrixModulator$ -- combines multiple modulators from this container via a connection matrix

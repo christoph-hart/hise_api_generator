@@ -15,30 +15,30 @@ cpuProfile:
 seeAlso:
   - { id: SynthChain, type: alternative, reason: "Simple container that sums children independently. Use when children do not need shared modulation, FM, or unison." }
 commonMistakes:
-   - title: "Unison multiplies CPU cost per note"
-     wrong: "Setting UnisonoVoiceAmount to 16 with high polyphony and wondering why CPU spikes"
-     right: "Keep unison count low (2-4) for polyphonic patches, or reduce VoiceLimit proportionally"
+  - title: "Unison multiplies CPU cost per note"
+    wrong: "Setting UnisonoVoiceAmount to 16 with high polyphony and wondering why CPU spikes"
+    right: "Keep unison count low (2-4) for polyphonic patches, or reduce VoiceLimit proportionally"
     explanation: "Unison multiplies the actual voice count. 16 unison voices with 16-note polyphony means 256 voice renders per block. The maximum polyphony is automatically reduced to 256 / unison count."
-   - title: "Children can't host master effects"
-     wrong: "Adding reverb or delay to a child synth inside the group"
-     right: "Add master effects to the group's own FX chain, not to children"
+  - title: "Children can't host master effects"
+    wrong: "Adding reverb or delay to a child synth inside the group"
+    right: "Add master effects to the group's own FX chain, not to children"
     explanation: "Children inside a Synthesiser Group can only use polyphonic (voice-level) effects. Master effects are automatically removed when a child is added to the group because children render at the voice level."
-   - title: "FM requires both indices set"
-     wrong: "Enabling FM but leaving CarrierIndex or ModulatorIndex at -1"
-     right: "Set both CarrierIndex and ModulatorIndex to valid child indices before enabling FM"
+  - title: "FM requires both indices set"
+    wrong: "Enabling FM but leaving CarrierIndex or ModulatorIndex at -1"
+    right: "Set both CarrierIndex and ModulatorIndex to valid child indices before enabling FM"
     explanation: "FM synthesis requires both a carrier and modulator to be specified. With either index at -1, the FM setup is invalid and no sound is produced."
-   - title: "Non-carrier/modulator children silent in FM"
-     wrong: "Expecting all children to produce sound when FM is enabled"
-     right: "Only the carrier and modulator children produce sound in FM mode"
+  - title: "Non-carrier/modulator children silent in FM"
+    wrong: "Expecting all children to produce sound when FM is enabled"
+    right: "Only the carrier and modulator children produce sound in FM mode"
     explanation: "When FM is enabled with valid indices, all children except the designated carrier and modulator are silenced. Add other sound layers in a separate Container outside the group."
-   - title: "Can't nest containers in group"
-      wrong: "Nesting a Container or another Synthesiser Group as a child"
-      right: "Only add simple sound generators (SineSynth, StreamingSampler, etc.) as children"
-     explanation: "Containers, other groups, Global Modulator Containers, and Macro Modulation Sources cannot be children of a Synthesiser Group because they have their own voice management that conflicts with the group's shared rendering model."
-   - title: "Bypassing children still allocates voices"
-      wrong: "Using `Synth.setBypassed()` or setting gain to -100 dB to silence a child synth"
-      right: "Use a MidiMuter on the child to prevent voice allocation entirely"
-     explanation: "A bypassed or silent child still allocates voices on note-on, consuming the voice pool. A MidiMuter blocks MIDI events before voice allocation, keeping voices available for other children."
+  - title: "Can't nest containers in group"
+    wrong: "Nesting a Container or another Synthesiser Group as a child"
+    right: "Only add simple sound generators (SineSynth, StreamingSampler, etc.) as children"
+    explanation: "Containers, other groups, Global Modulator Containers, and Macro Modulation Sources cannot be children of a Synthesiser Group because they have their own voice management that conflicts with the group's shared rendering model."
+  - title: "Bypassing children still allocates voices"
+    wrong: "Using `Synth.setBypassed()` or setting gain to -100 dB to silence a child synth"
+    right: "Use a MidiMuter on the child to prevent voice allocation entirely"
+    explanation: "A bypassed or silent child still allocates voices on note-on, consuming the voice pool. A MidiMuter blocks MIDI events before voice allocation, keeping voices available for other children."
 customEquivalent:
   approach: scriptnode
   moduleType: SoundGenerator
@@ -114,9 +114,33 @@ tags:
 
 ![Synthesiser Group screenshot](/images/v2/reference/audio-modules/synthgroup.png)
 
-The Synthesiser Group is an advanced container for sound generators that share common modulation. Unlike a Container, which sums children independently, the group applies its own gain and pitch modulation chains to all children collectively. This means a single envelope on the group controls the volume shape for the combined output, and a single LFO on the group modulates the pitch of all children simultaneously.
+The Synthesiser Group is an advanced container for sound generators that share common modulation. Unlike a Container, which sums children independently, the group applies its own gain and pitch modulation chains to all children collectively. This means a single envelope on the group controls the volume shape for the combined output, and a single LFO on the group modulates the pitch of all children simultaneously. When a synth is added as a child, its own pitch modulation chain is bypassed and hidden in the UI - all pitch modulation is driven exclusively by the group's shared Pitch Modulation chain.
 
 The group also provides FM synthesis between two designated child synths and unison voice stacking with configurable detune and stereo spread. Children inside a group can only use polyphonic (voice-level) effects - master effects such as reverb or delay must be placed on the group's own FX chain.
+
+### Child Restrictions
+
+The following module types cannot be added as children: Containers, other Synthesiser Groups, Global Modulator Containers, and Macro Modulation Sources. These have their own voice management that conflicts with the group's shared rendering model.
+
+### FM Synthesis
+
+The FM modulator always renders as a single voice without unison detune. Only the carrier receives unison detune and spread. The modulator's audio output is centred around 1.0 (silence = no pitch change), so the modulator's amplitude directly controls the FM depth while its frequency determines the modulation rate.
+
+When FM is disabled but CarrierIndex is set to a valid child index, that child is soloed - only it produces sound. This can be useful for quickly auditioning individual children within the group.
+
+### Unison Behaviour
+
+Unison voices receive randomised start offsets (up to ~10 ms) to prevent phase cancellation when multiple copies of the same waveform play simultaneously. The gain of each unison voice is compensated using equal-power scaling (divided by the square root of the voice count) to maintain consistent overall volume.
+
+### Controlling Children
+
+To control the volume of individual children dynamically, use a gain modulator rather than setting the child's Gain parameter directly. The Gain parameter does not apply smoothing, so rapid changes cause audible zipper noise. Gain modulators operate in the 0-1 range and are interpolated smoothly.
+
+To achieve monophonic behaviour with unison voices, add the built-in "Legato with Retrigger" MIDI script to the Synthesiser Group. There is no built-in mono mode for the group.
+
+### Scriptnode Interaction
+
+When using a scriptnode network as a child of a Synthesiser Group, the `core.pitch_mod` node reads pitch modulation values before the group applies its per-voice unison detune offsets. This means unison detune is not visible inside scriptnode. For fully scriptnode-based unison with per-voice detune, use a scriptnode clone container instead.
 
 ## Signal Path
 
@@ -274,25 +298,5 @@ chains:
   - { name: "Spread Modulation", desc: "Scales the UnisonoSpread parameter value. Automatically bypassed when unison voice count is 1.", scope: "per-voice", constrainer: "Any" }
 ---
 ::
-
-## Notes
-
-Children inside a Synthesiser Group can only use polyphonic (voice-level) effects in their FX chains. Allowed types include polyphonic filters, harmonic filters, stereo effects, and scripted polyphonic effects. Master effects (reverb, delay, convolution) are automatically removed when a child is added to the group. Place master effects on the group's own FX chain instead.
-
-The following module types cannot be added as children: Containers, other Synthesiser Groups, Global Modulator Containers, and Macro Modulation Sources. These have their own voice management that conflicts with the group's shared rendering model.
-
-The FM modulator always renders as a single voice without unison detune. Only the carrier receives unison detune and spread. The modulator's audio output is centred around 1.0 (silence = no pitch change), so the modulator's amplitude directly controls the FM depth while its frequency determines the modulation rate.
-
-When FM is disabled but CarrierIndex is set to a valid child index, that child is soloed - only it produces sound. This can be useful for quickly auditioning individual children within the group.
-
-Unison voices receive randomised start offsets (up to ~10 ms) to prevent phase cancellation when multiple copies of the same waveform play simultaneously. The gain of each unison voice is compensated using equal-power scaling (divided by the square root of the voice count) to maintain consistent overall volume.
-
-When a synth is added as a child of a Synthesiser Group, its own pitch modulation chain is bypassed and hidden in the UI. All pitch modulation for children is driven exclusively by the group's shared Pitch Modulation chain. Independent per-child pitch modulation is not possible.
-
-To control the volume of individual children dynamically, use a gain modulator rather than setting the child's Gain parameter directly. The Gain parameter does not apply smoothing, so rapid changes cause audible zipper noise. Gain modulators operate in the 0-1 range and are interpolated smoothly.
-
-To achieve monophonic behaviour with unison voices, add the built-in "Legato with Retrigger" MIDI script to the Synthesiser Group. There is no built-in mono mode for the group.
-
-When using a scriptnode network as a child of a Synthesiser Group, the `core.pitch_mod` node reads pitch modulation values before the group applies its per-voice unison detune offsets. This means unison detune is not visible inside scriptnode. For fully scriptnode-based unison with per-voice detune, use a scriptnode clone container instead.
 
 **See also:** $MODULES.SynthChain$ -- Simple container that sums children independently. Use when children do not need shared modulation, FM, or unison.

@@ -120,6 +120,22 @@ Sorted by severity (critical first).
 - **Observed:** In `onNoteOff()`, Block 1 (line 226) checks both note number and channel (`Message.getNoteNumber() == lastNote && Message.getChannel() == lastChannel`) to identify the currently sounding note. However, Block 3 (line 242) only checks note number (`number == lastNote`) without a channel check. In multi-channel scenarios (e.g., MPE), a noteOff for the correct note number on a different channel would skip Block 1 (no event suppression or artificial noteOff) but enter Block 3 (triggering retrigger or clearing `lastNote`). This causes state desync: the active note's artificial event is not killed, but `lastNote` is either overwritten by a retrigger or set to -1.
 - **Expected:** Block 3's condition should also check channel: `if(number == lastNote && channel == lastChannel)` to match Block 1's behavior.
 
+### CurveEq -- setAttribute has no bounds check on band index
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/CurveEq.cpp (setInternalAttribute)
+- **Observed:** `setAttribute(bandIndex * BandOffset + param, value)` does not validate the band index against the current band count. Addressing a non-existent band triggers an assertion failure in debug builds and undefined behaviour in release builds.
+- **Expected:** Add a bounds check: if `bandIndex >= numBands`, return early or call `reportScriptError`.
+
+### CurveEq -- Q parameter below 0.3 causes assertion failure
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/CurveEq.cpp (setInternalAttribute for Q)
+- **Observed:** The Q parameter range is 0.3-8.0 in the UI, but scripted `setAttribute` calls can set values below 0.3, bypassing the UI range limit and triggering an assertion failure.
+- **Expected:** Clamp Q to the valid range (0.3-8.0) in `setInternalAttribute` before applying.
+
 ## Low
 
 ### Convolution -- ImpulseLength parameter is vestigial

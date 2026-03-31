@@ -73,9 +73,15 @@ tags:
 
 ![Delay screenshot](/images/v2/reference/audio-modules/delay.png)
 
-A stereo delay effect with independent left and right delay times, feedback controls, and optional tempo synchronisation. Each channel has its own delay line with adjustable feedback for controlling the number of repeats. The dry/wet mix uses an overlap fader that keeps the combined level more consistent than a linear crossfade.
+A zero-latency stereo delay effect with independent left and right delay times, feedback controls, and optional tempo synchronisation. Each channel has its own delay line with adjustable feedback for controlling the number of repeats. The dry/wet mix uses an overlap fader that keeps the combined level more consistent than a linear crossfade. The first audio buffer after initialisation is skipped to avoid outputting uninitialised delay buffer contents.
 
-When tempo sync is enabled (the default), the delay times snap to musical note values from whole notes down to 1/64th triplets. The delay crossfades internally when the time changes to prevent clicks.
+When tempo sync is enabled (the default), the delay times snap to musical note values from whole notes down to 1/64th triplets. The delay crossfades between old and new read positions when the time changes, preventing clicks during automation or tempo changes.
+
+### Timing Limitations
+
+Delay times are rounded to whole milliseconds (1ms granularity). For sub-millisecond or sample-accurate delays, use a scriptnode delay node instead.
+
+The internal delay buffer has a fixed size of 131072 samples, which limits the achievable maximum delay time depending on the host sample rate. At 48kHz, the maximum is approximately 2730ms rather than the 3000ms shown in the parameter range. At 96kHz, the maximum drops to approximately 1365ms.
 
 ## Signal Path
 
@@ -175,17 +181,5 @@ groups:
       - { name: Mix, desc: "Dry/wet balance using an overlap fader. At 0% the output is fully dry. At 100% the output is fully wet. The overlap fader keeps the combined level more consistent than a simple linear crossfade.", range: "0 - 100%", default: "50%" }
 ---
 ::
-
-## Notes
-
-The LowPassFreq and HiPassFreq parameters are defined in the interface and visible in the editor but have no effect on audio processing. No filter is applied to the delay feedback or output.
-
-The delay crossfades between old and new read positions when the delay time changes, preventing clicks during automation or tempo changes.
-
-The Delay effect is zero-latency from the host's perspective - it does not introduce any processing latency that needs to be reported to the DAW.
-
-The internal delay buffer has a fixed size of 131072 samples, which limits the achievable maximum delay time depending on the host sample rate. At 48kHz, the maximum is approximately 2730ms rather than the 3000ms shown in the parameter range. At 96kHz, the maximum drops to approximately 1365ms. Delay times are rounded to whole milliseconds; for sub-millisecond precision use a scriptnode delay node.
-
-The first audio buffer after the module is initialised is skipped to avoid outputting uninitialised delay buffer contents.
 
 **See also:** $MODULES.PhaseFX$ -- Allpass-based phaser for notch sweeps rather than echo repeats, $MODULES.Chorus$ -- Short modulated delay for chorus/thickening rather than rhythmic echoes, $MODULES.SimpleGain$ -- Includes a static delay feature useful for timing alignment without feedback

@@ -237,6 +237,17 @@ def clean_post_content(html_content, max_words=500):
     # Decode HTML entities
     text = html.unescape(text)
 
+    # Strip URLs (keep link text from markdown-style links, drop the URL)
+    text = re.sub(r'\[([^\]]*)\]\(https?://[^\)]+\)', r'\1', text)  # [text](url) -> text
+    text = re.sub(r'\(https?://[^\)]+\)', '', text)  # (url) -> empty
+    text = re.sub(r'https?://\S+', '', text)  # bare urls -> empty
+
+    # Strip @mentions
+    text = re.sub(r'@[\w-]+', '', text)
+
+    # Strip NodeBB quote autotext: "said in TITLE (/post/NNN):\n[Quoting: ...]"
+    text = re.sub(r'said in .+? \(/post/\d+\):\s*\n\[Quoting:[^\]]*\.\.\.\]\s*', '', text, flags=re.DOTALL)
+
     # Collapse whitespace
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r' {2,}', ' ', text)
@@ -384,14 +395,19 @@ def fetch_and_clean_topic(tid, config):
         )
     cleaned_posts.sort(key=post_sort_key)
 
+    # Slim down posts for token efficiency
+    slim_posts = []
+    for p in cleaned_posts:
+        sp = {"header": p["header"], "content": p["content"]}
+        if p["upvotes"] > 0:
+            sp["upvotes"] = p["upvotes"]
+        slim_posts.append(sp)
+
     topic_title = topic_data.get("title", f"Topic {tid}")
     topic_output = {
         "tid": tid,
         "title": topic_title,
-        "url": f"{FORUM_BASE}/topic/{tid}",
-        "post_count_total": topic_data.get("postcount", len(cleaned_posts)),
-        "post_count_fetched": len(cleaned_posts),
-        "posts": cleaned_posts
+        "posts": slim_posts
     }
 
     cache_topic(tid, topic_output)
@@ -621,8 +637,11 @@ def cmd_fetch(args, config):
     for topic in all_output:
         print(f"{'=' * 70}")
         print(f"TOPIC: {topic['title']}")
-        print(f"URL: {topic['url']}")
-        print(f"Posts: {topic['post_count_fetched']}/{topic['post_count_total']} fetched")
+        tid = topic.get('tid', '?')
+        url = topic.get('url', f'{FORUM_BASE}/topic/{tid}')
+        print(f"URL: {url}")
+        post_count = len(topic.get("posts", []))
+        print(f"Posts: {topic.get('post_count_fetched', post_count)}/{topic.get('post_count_total', post_count)} fetched")
         print(f"{'=' * 70}")
         print()
         for post in topic["posts"]:
@@ -984,8 +1003,18 @@ def cmd_rebuild(args, config):
         filtered = [p for p in posts if is_signal_post(p)]
         total_after += len(filtered)
 
-        topic["posts"] = filtered
-        topic["post_count_fetched"] = len(filtered)
+        # Slim down posts: keep header + content + upvotes (if > 0)
+        slim = []
+        for p in filtered:
+            sp = {"header": p.get("header", ""), "content": p.get("content", "")}
+            if p.get("upvotes", 0) > 0:
+                sp["upvotes"] = p["upvotes"]
+            slim.append(sp)
+
+        topic["posts"] = slim
+        # Remove unnecessary topic-level fields
+        for key in ("url", "post_count_total", "post_count_fetched"):
+            topic.pop(key, None)
 
         # Write filtered version back to per-topic cache
         cache_topic(tid, topic)
