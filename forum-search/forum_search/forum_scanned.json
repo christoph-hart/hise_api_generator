@@ -425,5 +425,67 @@
       7375,
       10491
     ]
+  },
+  "ui:ScriptedViewport": {
+    "lastRun": "2026-03-31",
+    "queries": [
+      "ScriptedViewport",
+      "Viewport",
+      "scrollbar",
+      "scroll view",
+      "scrollable",
+      "ScriptedViewport"
+    ],
+    "topicIds": [
+      1146,
+      1174,
+      1371,
+      1682,
+      2535,
+      2867,
+      6011,
+      6026,
+      6054,
+      6672,
+      7505,
+      7785,
+      7790,
+      7833,
+      8427,
+      8454,
+      8820,
+      9511,
+      9923,
+      10128,
+      10148,
+      11757,
+      11852,
+      12000,
+      12154,
+      12167,
+      12391,
+      12511,
+      12837,
+      13380
+    ]
+  },
+  "scriptnode:fx.bitcrush": {
+    "lastRun": "2026-03-31",
+    "queries": [
+      "bitcrush",
+      "bit crush",
+      "bit depth reduction",
+      "lo-fi",
+      "lofi",
+      "quantisation noise"
+    ],
+    "topicIds": [
+      3544,
+      5928,
+      6280,
+      6904,
+      11336,
+      12711
+    ]
   }
 }

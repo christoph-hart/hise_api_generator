@@ -24,7 +24,7 @@ commonMistakes:
 llmRef: |
   fx.bitcrush
 
-  Reduces the bit depth of the audio signal by quantising each sample to a stepped curve. Produces the characteristic lo-fi, gritty sound of low bit-depth digital audio.
+  Reduces the bit depth of the audio signal by quantising each sample to a stepped curve. Produces the characteristic lo-fi, gritty sound of low bit-depth digital audio. Each voice maintains its own bit depth value; Mode is shared across all voices.
 
   Signal flow:
     audio in -> quantise to 2^BitDepth levels (rounding depends on Mode) -> audio out
@@ -32,8 +32,11 @@ llmRef: |
   CPU: low, polyphonic
 
   Parameters:
-    BitDepth (4.0 - 16.0, step 0.1, default 16.0) - number of quantisation bits. Fractional values are supported for smooth modulation. 16 = transparent, 4 = heavy distortion.
-    Mode (DC / Bipolar, default DC) - rounding behaviour. DC Offset rounds up (introduces small DC bias). Bipolar rounds toward zero (symmetric, no DC bias).
+    BitDepth (4.0 - 16.0, step 0.1, default 16.0) - number of quantisation bits. Fractional values supported. 16 = transparent, 4 = heavy distortion. Not smoothed - rapid audio-rate modulation can alias; use dynamic_blocksize for frame processing.
+    Mode (DC / Bipolar, default DC) - rounding behaviour. DC Offset rounds up (introduces DC bias). Bipolar rounds toward zero (symmetric, no DC bias). Use Bipolar when modulating BitDepth to avoid time-varying DC drift.
+
+  Vintage DAC emulation:
+    Wrap with mu-law compression before and expansion after to distribute quantisation logarithmically (more resolution for quiet signals). Models vintage drum machines and 8-bit samplers more accurately than linear bit reduction.
 
   When to use:
     Lo-fi effects, digital distortion, retro character. Pair with fx.sampleandhold for combined bit-depth and sample-rate reduction.
@@ -49,6 +52,8 @@ llmRef: |
 Reduces the bit depth of the audio signal by quantising each sample to a stepped curve. Lower bit depths produce fewer quantisation levels and more pronounced digital distortion, creating the characteristic gritty sound of low bit-depth audio. Fractional bit depth values are supported, allowing smooth modulation of the distortion intensity.
 
 Two modes control how the quantisation rounds values. **DC Offset** mode rounds upward and shifts by half a step, which introduces a small DC bias but produces one extra quantisation step. **Bipolar** mode rounds toward zero for both positive and negative samples, producing symmetric distortion with no DC offset. Bipolar mode is generally preferred unless the DC offset behaviour is specifically desired.
+
+Each voice maintains its own bit depth value, so BitDepth can be modulated independently per voice. The Mode setting is shared across all voices - changing it affects every active voice simultaneously.
 
 ## Signal Path
 
@@ -92,17 +97,15 @@ process(input) {
 groups:
   - label: Signal
     params:
-      - { name: BitDepth, desc: "Number of quantisation bits. Lower values produce heavier distortion. Fractional values are supported for smooth modulation between quantisation levels. At 16.0 the quantisation noise is below the audible threshold.", range: "4.0 - 16.0", default: "16.0" }
+      - { name: BitDepth, desc: "Number of quantisation bits. Lower values produce heavier distortion. Fractional values are supported for smooth modulation between quantisation levels. At 16.0 the quantisation noise is below the audible threshold.", range: "4.0 - 16.0", default: "16.0", hints: [{ type: warning, text: "Not smoothed internally. Rapid modulation at audio rates can produce aliasing artefacts. Insert a `dynamic_blocksize` node to switch to frame processing if high-rate modulation is needed." }] }
   - label: Configuration
     params:
-      - { name: Mode, desc: "Rounding behaviour for the quantisation. DC Offset mode rounds upward with a half-step shift (introduces DC bias). Bipolar mode rounds toward zero (symmetric, no DC bias).", range: "DC / Bipolar", default: "DC" }
+      - { name: Mode, desc: "Rounding behaviour for the quantisation. DC Offset mode rounds upward with a half-step shift (introduces DC bias). Bipolar mode rounds toward zero (symmetric, no DC bias).", range: "DC / Bipolar", default: "DC", hints: [{ type: tip, text: "Use **Bipolar** when modulating BitDepth. DC mode injects a time-varying DC component as the bit depth changes, which can cause audible low-frequency drift." }] }
 ---
 ::
 
-## Notes
+### Vintage DAC Emulation
 
-Each voice maintains its own bit depth value, so BitDepth can be modulated independently per voice. The Mode setting is shared across all voices - changing it affects every active voice simultaneously.
-
-The BitDepth parameter is not smoothed. Rapid changes to BitDepth via modulation may produce zipper artefacts. If smooth modulation is needed, place a smoothing node before the modulation connection.
+For a more authentic vintage DAC character (drum machines, 8-bit samplers), place a mu-law compression node before fx.bitcrush and a mu-law expansion node after it. This distributes quantisation steps logarithmically - more resolution for quiet signals, less for loud ones - which improves the signal-to-noise ratio at low bit depths compared to linear bit reduction alone.
 
 **See also:** $SN.fx.sampleandhold$ -- sample rate reduction counterpart, often paired for combined lo-fi effects
