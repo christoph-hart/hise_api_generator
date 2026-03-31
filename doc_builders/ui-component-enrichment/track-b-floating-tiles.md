@@ -99,6 +99,7 @@ Run through the gate checklist from `ui-component-enrichment.md`. Fix any gaps.
 ```markdown
 ---
 title: "{ContentType}"
+description: "{1-2 sentence description for SEO and page metadata}"
 contentType: "{ContentType}"
 componentType: "floating-tile"
 screenshot: "/images/v2/reference/ui-components/floating-tiles/{lowercase-contenttype}.png"

@@ -792,6 +792,64 @@ def convert_see_also(content, class_name, registry=None):
                         )
                     continue
 
+                # Parse $UI.Components.Name$ tokens (with optional annotation)
+                ui_comp_ann = re.match(
+                    r'\$UI\.Components\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                ui_comp_plain = re.match(r'\$UI\.Components\.(\w+)\$', item)
+
+                if ui_comp_ann or ui_comp_plain:
+                    ui_match = ui_comp_ann or ui_comp_plain
+                    comp_name = ui_match.group(1)
+                    desc = ui_comp_ann.group(2).strip().replace('"', '\\"') if ui_comp_ann else None
+
+                    # Look up URL from registry
+                    url = None
+                    if registry:
+                        url, _, _ = registry.resolve("UI", f"Components.{comp_name}")
+                    if not url:
+                        url = f"/v2/reference/ui-components/{comp_name.lower()}"
+
+                    label = comp_name
+                    if desc:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}", desc: "{desc}" }}'
+                        )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}" }}'
+                        )
+                    continue
+
+                # Parse $UI.FloatingTiles.Name$ tokens (with optional annotation)
+                ui_ft_ann = re.match(
+                    r'\$UI\.FloatingTiles\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                ui_ft_plain = re.match(r'\$UI\.FloatingTiles\.(\w+)\$', item)
+
+                if ui_ft_ann or ui_ft_plain:
+                    ft_match = ui_ft_ann or ui_ft_plain
+                    ft_name = ft_match.group(1)
+                    desc = ui_ft_ann.group(2).strip().replace('"', '\\"') if ui_ft_ann else None
+
+                    # Look up URL from registry
+                    url = None
+                    if registry:
+                        url, _, _ = registry.resolve("UI", f"FloatingTiles.{ft_name}")
+                    if not url:
+                        url = f"/v2/reference/ui-components/floating-tiles/{ft_name.lower()}"
+
+                    label = ft_name
+                    if desc:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}", desc: "{desc}" }}'
+                        )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}" }}'
+                        )
+                    continue
+
                 # Fallback: plain ClassName.method (legacy format)
                 ann_match = re.match(
                     r'([A-Z]\w*\.\w+)`?\s*--\s*(.+)', item, re.DOTALL
@@ -1303,8 +1361,8 @@ def _extract_frontmatter_components(content: str, messages: list = None,
                 + "\n".join(yaml_items)
                 + "\n---\n::\n"
             )
-            # Insert before See Also or at end of body
-            see_also_pos = body.find("::see-also")
+            # Insert before last See Also or at end of body
+            see_also_pos = body.rfind("::see-also")
             if see_also_pos != -1:
                 body = body[:see_also_pos] + cm_component + "\n" + body[see_also_pos:]
             else:

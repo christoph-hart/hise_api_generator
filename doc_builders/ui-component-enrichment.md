@@ -194,6 +194,7 @@ Both tracks produce pages following this structure. The full template with all s
 ```markdown
 ---
 title: Component Display Name
+description: 1-2 sentence description for SEO and page metadata
 componentId: ScriptSlider
 componentType: plugin-component | floating-tile
 category: plugin-component | floating-tile

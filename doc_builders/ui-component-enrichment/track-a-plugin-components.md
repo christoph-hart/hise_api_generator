@@ -65,6 +65,7 @@ Run through the gate checklist from `ui-component-enrichment.md`. Fix any gaps b
 ```markdown
 ---
 title: "{DisplayName}"
+description: "{1-2 sentence description for SEO and page metadata}"
 componentId: "{ScriptClassName}"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/{lowercase-name}.png"
