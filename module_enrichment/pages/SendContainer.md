@@ -13,13 +13,13 @@ cpuProfile:
 seeAlso:
   - { id: SendFX, type: alternative, reason: "The send side of the send/return pair - routes audio into this container with adjustable gain and channel offset" }
 commonMistakes:
-   - title: "Container Gain and Balance are unused"
-     wrong: "Expecting the Gain or Balance knobs on the Send Container to affect the output level"
-     right: "Control the output level using a SimpleGain effect in the container's FX chain, or adjust the Send Effect gain"
+  - title: "Container Gain and Balance are unused"
+    wrong: "Expecting the Gain or Balance knobs on the Send Container to affect the output level"
+    right: "Control the output level using a SimpleGain effect in the container's FX chain, or adjust the Send Effect gain"
     explanation: "The Gain and Balance parameters are inherited from the base class but are not applied in the Send Container's render path. The output level is determined entirely by the Send Effect gain and the effects in the FX chain."
-   - title: "Polyphonic effects forced to monophonic"
-     wrong: "Adding polyphonic effects to the Send Container's FX chain and expecting per-voice processing"
-     right: "All effects in the Send Container run monophonically"
+  - title: "Polyphonic effects forced to monophonic"
+    wrong: "Adding polyphonic effects to the Send Container's FX chain and expecting per-voice processing"
+    right: "All effects in the Send Container run monophonically"
     explanation: "The Send Container forces monophonic processing for all effects in its chain, regardless of whether the effect supports polyphonic mode."
 customEquivalent:
   approach: scriptnode

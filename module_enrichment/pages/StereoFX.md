@@ -14,13 +14,13 @@ seeAlso:
   - { id: PolyshapeFX, type: alternative, reason: "Another polyphonic effect - applies waveshaping per-voice rather than stereo processing" }
   - { id: SimpleGain, type: disambiguation, reason: "Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning" }
 commonMistakes:
-   - title: "Pan needs modulators to work"
-     wrong: "Setting the Pan parameter and expecting a static pan position"
-     right: "Add modulators to the Pan Modulation chain to hear the Pan parameter's effect"
+  - title: "Pan needs modulators to work"
+    wrong: "Setting the Pan parameter and expecting a static pan position"
+    right: "Add modulators to the Pan Modulation chain to hear the Pan parameter's effect"
     explanation: "The Pan parameter defines the maximum modulation range, not a static pan position. Without modulators in the Pan Modulation chain, the Pan parameter has no audible effect."
-   - title: "Width has no effect on mono"
-     wrong: "Using Width to add stereo spread to a mono signal"
-     right: "Width only affects signals that already have stereo content"
+  - title: "Width has no effect on mono"
+    wrong: "Using Width to add stereo spread to a mono signal"
+    right: "Width only affects signals that already have stereo content"
     explanation: "Width uses mid/side processing. If left and right channels are identical (mono), the side signal is zero and Width has no effect regardless of its setting."
 customEquivalent:
   approach: scriptnode

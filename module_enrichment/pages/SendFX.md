@@ -13,17 +13,17 @@ cpuProfile:
 seeAlso:
   - { id: SendContainer, type: alternative, reason: "The receive side of the send/return pair - accumulates signals from Send Effects and processes them through its FX chain" }
 commonMistakes:
-   - title: "Send copies signal, doesn't remove it"
-     wrong: "Expecting the Send Effect to remove the signal from the original chain"
-     right: "The Send Effect copies the signal to the target container while the original passes through unmodified"
+  - title: "Send copies signal, doesn't remove it"
+    wrong: "Expecting the Send Effect to remove the signal from the original chain"
+    right: "The Send Effect copies the signal to the target container while the original passes through unmodified"
     explanation: "This is a send, not an insert. The dry signal continues through the effect chain as if the Send Effect were not there. Only a copy is routed to the Send Container."
-   - title: "Default Gain is effectively silent"
-     wrong: "Adding a Send Effect but leaving Gain at the default and wondering why nothing happens"
-     right: "Raise the Gain from -100 dB to the desired send level"
+  - title: "Default Gain is effectively silent"
+    wrong: "Adding a Send Effect but leaving Gain at the default and wondering why nothing happens"
+    right: "Raise the Gain from -100 dB to the desired send level"
     explanation: "The default gain is -100 dB (effectively silent). You must increase it before any signal reaches the Send Container."
-   - title: "Smoothing prevents clicks on automation"
-     wrong: "Disabling Smoothing and automating the Gain parameter during playback"
-     right: "Keep Smoothing enabled when automating Gain to avoid clicks"
+  - title: "Smoothing prevents clicks on automation"
+    wrong: "Disabling Smoothing and automating the Gain parameter during playback"
+    right: "Keep Smoothing enabled when automating Gain to avoid clicks"
     explanation: "With Smoothing off, gain changes take effect immediately with no crossfade, which produces audible clicks on sudden value changes."
 customEquivalent:
   approach: scriptnode

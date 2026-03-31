@@ -12,13 +12,13 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-   - title: "Saturation needs PreGain to be audible"
-     wrong: "Adding saturation without adjusting PreGain and expecting a noticeable effect"
-     right: "Use PreGain to drive the signal into the waveshaper and PostGain to compensate the output level"
+  - title: "Saturation needs PreGain to be audible"
+    wrong: "Adding saturation without adjusting PreGain and expecting a noticeable effect"
+    right: "Use PreGain to drive the signal into the waveshaper and PostGain to compensate the output level"
     explanation: "The waveshaping curve is amplitude-dependent. Quiet signals pass through almost unchanged regardless of the Saturation setting. Boost with PreGain to push the signal into the nonlinear range, then reduce with PostGain to restore the original level."
-   - title: "Saturation=0 still applies gain staging"
-     wrong: "Setting Saturation to 0 and expecting the module to be a transparent bypass"
-     right: "At Saturation=0 the waveshaper is linear, but PreGain and PostGain still apply"
+  - title: "Saturation=0 still applies gain staging"
+    wrong: "Setting Saturation to 0 and expecting the module to be a transparent bypass"
+    right: "At Saturation=0 the waveshaper is linear, but PreGain and PostGain still apply"
     explanation: "Even with no saturation, the gain staging parameters are active. Set PreGain to 0 dB and PostGain to 0 dB for true passthrough."
 customEquivalent:
   approach: scriptnode

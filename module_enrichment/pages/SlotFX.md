@@ -13,13 +13,13 @@ cpuProfile:
 seeAlso:
   - { id: EmptyFX, type: companion, reason: "The default placeholder loaded when the slot is empty or cleared" }
 commonMistakes:
-   - title: "No crossfade on effect swap"
-     wrong: "Expecting a crossfade when swapping effects in the slot during playback"
-     right: "The swap is instantaneous with no crossfade - plan for a brief audio interruption"
+  - title: "No crossfade on effect swap"
+    wrong: "Expecting a crossfade when swapping effects in the slot during playback"
+    right: "The swap is instantaneous with no crossfade - plan for a brief audio interruption"
     explanation: "Effect swapping happens at the next processing boundary. There is no built-in crossfade between the old and new effects."
-   - title: "Can't nest slots or load polyphonic"
-     wrong: "Trying to load a polyphonic effect or another Effect Slot into the slot"
-     right: "Only master effects and monophonic effects are allowed, excluding Route Effect and nested Effect Slots"
+  - title: "Can't nest slots or load polyphonic"
+    wrong: "Trying to load a polyphonic effect or another Effect Slot into the slot"
+    right: "Only master effects and monophonic effects are allowed, excluding Route Effect and nested Effect Slots"
     explanation: "The slot restricts child types to prevent incompatible or recursive configurations."
 llmRef: |
   Effect Slot (MasterEffect)

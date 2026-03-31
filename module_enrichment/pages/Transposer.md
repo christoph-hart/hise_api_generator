@@ -12,13 +12,13 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-   - title: "Held notes unaffected by transpose changes"
-     wrong: "Changing TransposeAmount while notes are held and expecting them to shift immediately"
-     right: "Set TransposeAmount before playing new notes"
+  - title: "Held notes unaffected by transpose changes"
+    wrong: "Changing TransposeAmount while notes are held and expecting them to shift immediately"
+    right: "Set TransposeAmount before playing new notes"
     explanation: "The transpose offset is written to each note-on event at the moment it arrives. Already-sounding notes are not affected by subsequent parameter changes."
-   - title: "No clamping at MIDI extremes"
-     wrong: "Transposing notes near the top or bottom of the keyboard by large amounts"
-     right: "Keep transposed note numbers within the 0-127 MIDI range"
+  - title: "No clamping at MIDI extremes"
+    wrong: "Transposing notes near the top or bottom of the keyboard by large amounts"
+    right: "Keep transposed note numbers within the 0-127 MIDI range"
     explanation: "No clamping is applied. Notes pushed outside 0-127 may cause unexpected behaviour in downstream modules such as samplers."
 customEquivalent:
   approach: hisescript

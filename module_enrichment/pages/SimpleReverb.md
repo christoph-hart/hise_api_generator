@@ -12,13 +12,13 @@ cpuProfile:
   scalingFactors: []
 seeAlso: []
 commonMistakes:
-   - title: "Dry Level is automatically controlled"
-     wrong: "Adjusting the Dry Level slider expecting it to independently control the dry signal"
-     right: "Only the Wet Level slider controls the mix. Dry Level is automatically set to 1 minus Wet Level."
+  - title: "Dry Level is automatically controlled"
+    wrong: "Adjusting the Dry Level slider expecting it to independently control the dry signal"
+    right: "Only the Wet Level slider controls the mix. Dry Level is automatically set to 1 minus Wet Level."
     explanation: "The Dry Level parameter appears in the interface but has no independent effect. Changing Wet Level sets both wet and dry levels."
-   - title: "FreezeMode is threshold toggle at 50%"
-     wrong: "Setting Freeze Mode to a value like 0.3 expecting partial freezing"
-     right: "Freeze Mode acts as a threshold toggle at 0.5. Below 0.5 it has no effect; at 0.5 or above it fully freezes the reverb tail."
+  - title: "FreezeMode is threshold toggle at 50%"
+    wrong: "Setting Freeze Mode to a value like 0.3 expecting partial freezing"
+    right: "Freeze Mode acts as a threshold toggle at 0.5. Below 0.5 it has no effect; at 0.5 or above it fully freezes the reverb tail."
     explanation: "Despite the continuous 0-1 range, the parameter behaves as an on/off switch with the threshold at 0.5."
 customEquivalent:
   approach: scriptnode
