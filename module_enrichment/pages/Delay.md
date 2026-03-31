@@ -39,8 +39,8 @@ llmRef: |
   CPU: medium, monophonic (MasterEffect).
 
   Parameters:
-    DelayTimeLeft (0-3000 ms or tempo-synced, default QuarterTriplet synced) - left channel delay time
-    DelayTimeRight (0-3000 ms or tempo-synced, default Quarter synced) - right channel delay time
+    DelayTimeLeft (0-3000 ms or tempo-synced, default QuarterTriplet synced) - left channel delay time. 1ms granularity; max depends on sample rate (~2730ms at 48kHz, ~1365ms at 96kHz).
+    DelayTimeRight (0-3000 ms or tempo-synced, default Quarter synced) - right channel delay time. Same limitations as left.
     FeedbackLeft (0-100%, default 30%) - left channel feedback
     FeedbackRight (0-100%, default 30%) - right channel feedback
     LowPassFreq (20-20000 Hz, default 20000 Hz) - has no effect (vestigial)
@@ -145,8 +145,22 @@ process(left, right) {
 groups:
   - label: Delay Time
     params:
-      - { name: DelayTimeLeft, desc: "Left channel delay time. In milliseconds when Tempo Sync is off, or a musical note value when on. Default sync value is quarter-note triplet.", range: "0 - 3000 ms", default: "(synced)" }
-      - { name: DelayTimeRight, desc: "Right channel delay time. In milliseconds when Tempo Sync is off, or a musical note value when on. Default sync value is quarter note.", range: "0 - 3000 ms", default: "(synced)" }
+      - name: DelayTimeLeft
+        desc: "Left channel delay time. In milliseconds when Tempo Sync is off, or a musical note value when on. Default sync value is quarter-note triplet."
+        range: "0 - 3000 ms"
+        default: "(synced)"
+        hints:
+          - type: warning
+            text: "Values are rounded to whole milliseconds (1ms granularity). For sub-millisecond or sample-accurate delays, use a scriptnode delay node instead."
+          - type: warning
+            text: "The actual maximum depends on sample rate: ~2970ms at 44.1kHz, ~2730ms at 48kHz, ~1365ms at 96kHz. Values above the limit are silently clamped."
+      - name: DelayTimeRight
+        desc: "Right channel delay time. In milliseconds when Tempo Sync is off, or a musical note value when on. Default sync value is quarter note."
+        range: "0 - 3000 ms"
+        default: "(synced)"
+        hints:
+          - type: warning
+            text: "Same limitations as DelayTimeLeft: 1ms granularity, sample-rate-dependent maximum."
       - { name: TempoSync, desc: "When enabled, delay times are interpreted as musical note values synchronised to the host tempo. Available values range from whole notes to 1/64th triplets, including dotted and triplet variants.", range: "Off / On", default: "On" }
   - label: Feedback
     params:
@@ -167,6 +181,10 @@ groups:
 The LowPassFreq and HiPassFreq parameters are defined in the interface and visible in the editor but have no effect on audio processing. No filter is applied to the delay feedback or output.
 
 The delay crossfades between old and new read positions when the delay time changes, preventing clicks during automation or tempo changes.
+
+The Delay effect is zero-latency from the host's perspective - it does not introduce any processing latency that needs to be reported to the DAW.
+
+The internal delay buffer has a fixed size of 131072 samples, which limits the achievable maximum delay time depending on the host sample rate. At 48kHz, the maximum is approximately 2730ms rather than the 3000ms shown in the parameter range. At 96kHz, the maximum drops to approximately 1365ms. Delay times are rounded to whole milliseconds; for sub-millisecond precision use a scriptnode delay node.
 
 The first audio buffer after the module is initialised is skipped to avoid outputting uninitialised delay buffer contents.
 

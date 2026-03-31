@@ -330,12 +330,23 @@ def fetch_and_clean_topic(tid, config):
     topic_data = fetch_topic_posts(tid, max_posts, trusted)
 
     cleaned_posts = []
+    skipped_posts = 0
     for post in topic_data["posts"]:
         uid = str(post.get("uid", ""))
         username = post.get("user", {}).get("username", "Unknown")
         ts_iso = post.get("timestampISO", "")[:10]
         upvotes = post.get("upvotes", 0)
         is_trusted = uid in trusted
+        is_op = bool(post.get("isMainPost"))
+        # For signal filtering, only author/expert roles auto-keep;
+        # other trusted posters still need upvotes to be included
+        trusted_role = trusted.get(uid, {}).get("role", "") if is_trusted else ""
+        is_authority = trusted_role in ("author", "expert")
+
+        # Signal filter: OP, author/expert replies, and upvoted posts
+        if not (is_op or is_authority or upvotes > 0):
+            skipped_posts += 1
+            continue
 
         content = clean_post_content(post.get("content", ""), max_words)
         if not content.strip():
@@ -349,7 +360,7 @@ def fetch_and_clean_topic(tid, config):
             meta_parts.append(ts_iso)
         if upvotes > 0:
             meta_parts.append(f"+{upvotes}")
-        if post.get("isMainPost"):
+        if is_op:
             meta_parts.append("OP")
 
         header = " | ".join(meta_parts)
@@ -358,7 +369,7 @@ def fetch_and_clean_topic(tid, config):
             "uid": uid,
             "username": username,
             "is_trusted": is_trusted,
-            "is_op": bool(post.get("isMainPost")),
+            "is_op": is_op,
             "upvotes": upvotes,
             "header": header,
             "content": content
@@ -649,8 +660,27 @@ def cmd_update(args, config):
         args.term, args.also, config,
         include_features=getattr(args, 'include_features', False)
     )
-    all_tids = [t["tid"] for t in search_result["topics"]]
-    print(f"      Found {len(all_tids)} topics", file=sys.stderr)
+    all_topics = search_result["topics"]
+    before_count = len(all_topics)
+
+    # Filter 1: minimum signal score
+    min_score = getattr(args, 'min_score', None) or 0.15
+    all_topics = [t for t in all_topics if t["signal_score"] >= min_score]
+    score_dropped = before_count - len(all_topics)
+
+    # Filter 2: title relevance - require any search term (primary or --also) in the title
+    # Uses stem matching: "Delay" also matches "Delaying", "Delayed", etc.
+    all_terms = [args.term] + (args.also or [])
+    term_patterns = [re.compile(r'\b' + re.escape(t), re.IGNORECASE) for t in all_terms]
+    before_relevance = len(all_topics)
+    all_topics = [t for t in all_topics
+                  if any(p.search(t.get("title", "")) for p in term_patterns)]
+    relevance_dropped = before_relevance - len(all_topics)
+
+    all_tids = [t["tid"] for t in all_topics]
+    print(f"      Found {before_count} topics, kept {len(all_tids)} "
+          f"(score dropped {score_dropped}, title relevance dropped {relevance_dropped})",
+          file=sys.stderr)
 
     # Step 2: Diff against scanned tracker
     scanned = load_scanned()
@@ -704,6 +734,13 @@ def cmd_update(args, config):
 
     total_posts = sum(len(t.get("posts", [])) for t in combined)
     file_size = output_path.stat().st_size
+
+    # File size sanity check
+    MAX_COMBINED_SIZE = 400_000  # 400KB ~ 100k tokens
+    if file_size > MAX_COMBINED_SIZE:
+        print(f"      WARNING: Combined output is {file_size // 1024}KB "
+              f"(>{MAX_COMBINED_SIZE // 1024}KB). Search terms may be too broad.",
+              file=sys.stderr)
 
     # Step 5: Update scanned tracker
     print(f"[5/5] Updating scanned tracker...", file=sys.stderr)
@@ -894,6 +931,100 @@ def cmd_refresh_users(args, config):
 
 
 # ---------------------------------------------------------------------------
+# REBUILD command (re-filter cached topics without re-fetching)
+# ---------------------------------------------------------------------------
+
+def cmd_rebuild(args, config):
+    """Re-filter per-topic cache files and rebuild the combined output.
+
+    Applies the current signal filter (OP + trusted + upvoted) to existing
+    cached topics without hitting the forum API. Use after changing the
+    post filter logic.
+    """
+    scope = args.scope
+    if not scope or ":" not in scope:
+        print(f"Error: scope must be 'domain:target', got '{scope}'", file=sys.stderr)
+        sys.exit(1)
+
+    scanned = load_scanned()
+    scope_data = scanned.get(scope, {})
+    topic_ids = scope_data.get("topicIds", [])
+    if not topic_ids:
+        print(f"No scanned topics for scope '{scope}'", file=sys.stderr)
+        sys.exit(1)
+
+    trusted = config.get("trusted_posters", {})
+    trusted_uids = set(trusted.keys())
+
+    print(f"[1/2] Re-filtering {len(topic_ids)} cached topics for '{scope}'...",
+          file=sys.stderr)
+    combined = []
+    total_before = 0
+    total_after = 0
+
+    for tid in topic_ids:
+        topic = load_cached_topic(tid)
+        if not topic:
+            print(f"      Topic {tid}: not in cache, skipping", file=sys.stderr)
+            continue
+
+        posts = topic.get("posts", [])
+        total_before += len(posts)
+
+        # Apply signal filter: OP + author/expert + upvoted only
+        def is_signal_post(p):
+            if p.get("is_op"):
+                return True
+            if p.get("upvotes", 0) > 0:
+                return True
+            # Only auto-keep author/expert roles, not all trusted
+            uid = str(p.get("uid", ""))
+            role = trusted.get(uid, {}).get("role", "")
+            return role in ("author", "expert")
+        filtered = [p for p in posts if is_signal_post(p)]
+        total_after += len(filtered)
+
+        topic["posts"] = filtered
+        topic["post_count_fetched"] = len(filtered)
+
+        # Write filtered version back to per-topic cache
+        cache_topic(tid, topic)
+        combined.append(topic)
+
+    # Write combined output
+    safe_scope = scope.replace(":", "_")
+    output_path = CACHE_DIR / f"{safe_scope}.json"
+    ensure_cache_dir()
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(combined, f, indent=2, ensure_ascii=False)
+
+    file_size = output_path.stat().st_size
+    reduction = (1 - total_after / max(total_before, 1)) * 100
+
+    print(f"[2/2] Rebuilt {len(combined)} topics", file=sys.stderr)
+    print(f"      Posts: {total_before} -> {total_after} "
+          f"({reduction:.0f}% reduction)", file=sys.stderr)
+    print(f"      File: {file_size // 1024}KB", file=sys.stderr)
+
+    MAX_COMBINED_SIZE = 400_000
+    if file_size > MAX_COMBINED_SIZE:
+        print(f"      WARNING: Still >{MAX_COMBINED_SIZE // 1024}KB. "
+              f"Search terms may be too broad.", file=sys.stderr)
+
+    summary = {
+        "scope": scope,
+        "status": "ok",
+        "topics": len(combined),
+        "posts_before": total_before,
+        "posts_after": total_after,
+        "reduction_pct": round(reduction, 1),
+        "file_size_bytes": file_size,
+        "approx_tokens": file_size // 4
+    }
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -923,8 +1054,16 @@ def main():
     sp_update.add_argument("--also", nargs="*", help="Additional search terms")
     sp_update.add_argument("--scope", required=True,
                            help="Scope identifier (e.g., 'modules:LFO', 'api:ScriptPanel')")
+    sp_update.add_argument("--min-score", type=float, default=0.15,
+                            help="Minimum signal score to include a topic (default: 0.15)")
     sp_update.add_argument("--include-features", action="store_true",
-                           help="Include Feature Requests category")
+                            help="Include Feature Requests category")
+
+    # rebuild
+    sp_rebuild = subparsers.add_parser("rebuild",
+        help="Re-filter cached topics and rebuild combined output (no API calls)")
+    sp_rebuild.add_argument("--scope", required=True,
+                            help="Scope identifier (must match a previous update run)")
 
     # extract-code
     sp_code = subparsers.add_parser("extract-code",
@@ -947,6 +1086,8 @@ def main():
         cmd_fetch(args, config)
     elif args.command == "update":
         cmd_update(args, config)
+    elif args.command == "rebuild":
+        cmd_rebuild(args, config)
     elif args.command == "extract-code":
         cmd_extract_code(args, config)
     elif args.command == "refresh-users":
