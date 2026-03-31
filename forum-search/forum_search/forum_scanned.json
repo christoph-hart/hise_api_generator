@@ -403,5 +403,27 @@
       13153,
       13424
     ]
+  },
+  "api:ScriptTable": {
+    "lastRun": "2026-03-31",
+    "queries": [
+      "ScriptTable",
+      "table component",
+      "curve editor",
+      "getTableValue",
+      "setTablePoint",
+      "registerAtParent",
+      "table lookup",
+      "velocity curve"
+    ],
+    "topicIds": [
+      596,
+      3268,
+      5178,
+      6072,
+      6539,
+      7375,
+      10491
+    ]
   }
 }

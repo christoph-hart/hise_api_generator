@@ -56,6 +56,14 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### ScriptTable -- crash on save when switching processorId at runtime
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Source:** Forum topic 10491
+- **Observed:** Binding multiple TableProcessors to a single ScriptTable by switching `processorId` at runtime can cause a crash when saving the project. The crash does not occur during MIDI playback but triggers on save.
+- **Expected:** Switching `processorId` at runtime should not destabilise the save path. Either support dynamic rebinding safely or report a script error at the point of the second binding.
+
 ### Unlocker.writeExpansionKeyFile -- silently returns false for invalid header prefix
 
 - **Type:** missing-validation

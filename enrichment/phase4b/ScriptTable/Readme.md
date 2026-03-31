@@ -16,6 +16,13 @@ Practical defaults:
   - When styling tables, register drawTableBackground, drawTablePath, drawTablePoint, and drawTableRuler on one LAF object.
   - Use setTablePopupFunction(false) or an empty formatter when drag popups obscure dense editor layouts.
 
+Interaction:
+  - Hold Ctrl and scroll the mouse wheel over a line segment to adjust its curve between two points.
+  - Dragging table points does NOT trigger the control callback. Call changed() explicitly to fire it from script.
+
+Styling:
+  - Set customColours to true to enable flat-style rendering with standard colour properties (bgColour, itemColour, etc.).
+
 Complex data chain:
 
 ![Table Data Chain](topology_complex-table-data-chain.svg)

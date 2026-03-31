@@ -52,12 +52,18 @@
         "pages": {
           "components": "ui_enrichment/pages/components",
           "floating-tiles": "ui_enrichment/pages/floating-tiles"
-        }
+        },
+        "static": "ui_enrichment/resources/static"
       },
       "mdcTransform": "ui",
       "subdomains": {
         "Components": "components",
         "FloatingTiles": "floating-tiles"
+      },
+      "staticPages": {
+        "UI Components": "",
+        "Plugin Components": "components",
+        "Floating Tiles": "floating-tiles"
       }
     },
     "SN": {

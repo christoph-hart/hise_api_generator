@@ -19,6 +19,16 @@ Typical ScriptTable workflows are:
 2. Register the table once with `registerAtParent()` and reuse the returned data handle in runtime code.
 3. Apply a shared local look-and-feel created with `Content.createLocalLookAndFeel()`, then attach it with `setLocalLookAndFeel()` to keep multiple tables visually consistent.
 
+### Interaction
+
+Hold Ctrl and scroll the mouse wheel over a line segment to adjust its curve. This works for all table editors in HISE, including envelope displays.
+
+Dragging table points does not trigger the control callback (`onControl` or `setControlCallback`). To run callback logic after a user edits the curve, call `changed()` explicitly from script or use the table data directly via `getTableValue()`.
+
+### Styling
+
+Set the `customColours` property to `true` to switch to flat-style rendering. This enables the standard colour properties (`bgColour`, `itemColour`, etc.) for table styling. Without this flag, colour properties have no effect on the table appearance.
+
 ## Complex Data Chain
 
 Table workflows use a three-part complex-data chain:
