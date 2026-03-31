@@ -32,9 +32,13 @@ commonMistakes:
      right: "Only the carrier and modulator children produce sound in FM mode"
     explanation: "When FM is enabled with valid indices, all children except the designated carrier and modulator are silenced. Add other sound layers in a separate Container outside the group."
    - title: "Can't nest containers in group"
-     wrong: "Nesting a Container or another Synthesiser Group as a child"
-     right: "Only add simple sound generators (SineSynth, StreamingSampler, etc.) as children"
-    explanation: "Containers, other groups, Global Modulator Containers, and Macro Modulation Sources cannot be children of a Synthesiser Group because they have their own voice management that conflicts with the group's shared rendering model."
+      wrong: "Nesting a Container or another Synthesiser Group as a child"
+      right: "Only add simple sound generators (SineSynth, StreamingSampler, etc.) as children"
+     explanation: "Containers, other groups, Global Modulator Containers, and Macro Modulation Sources cannot be children of a Synthesiser Group because they have their own voice management that conflicts with the group's shared rendering model."
+   - title: "Bypassing children still allocates voices"
+      wrong: "Using `Synth.setBypassed()` or setting gain to -100 dB to silence a child synth"
+      right: "Use a MidiMuter on the child to prevent voice allocation entirely"
+     explanation: "A bypassed or silent child still allocates voices on note-on, consuming the voice pool. A MidiMuter blocks MIDI events before voice allocation, keeping voices available for other children."
 customEquivalent:
   approach: scriptnode
   moduleType: SoundGenerator
@@ -64,15 +68,15 @@ llmRef: |
     EnableFM (Off/On, default Off) - enables FM synthesis
     CarrierIndex (-1 to 16, default -1) - FM carrier child index (-1 = not set)
     ModulatorIndex (-1 to 16, default -1) - FM modulator child index (-1 = not set)
-    UnisonoVoiceAmount (1-16, default 1) - unison voices per note
-    UnisonoDetune (0-24 st, default 0) - detune spread in semitones, modulatable
-    UnisonoSpread (0-100%, default 100%) - stereo spread of unison voices, modulatable
+    UnisonoVoiceAmount (1-16, default 1) - unison voices per note. WARNING: causes clicks without ~5ms attack envelope. Changes do not apply to held notes.
+    UnisonoDetune (0-24 st, default 0) - detune spread in semitones. Read at note-on only; use Detune Modulation chain for real-time control.
+    UnisonoSpread (0-100%, default 100%) - stereo spread. Read at note-on only; use Spread Modulation chain for real-time control.
     ForceMono (Off/On, default Off) - collapses child stereo to mono before unison spread
     KillSecondVoices (Off/On, default On) - kills older voice when same note retriggered
 
   Modulation chains:
     Gain Modulation - per-voice, scales combined output (all modulator types)
-    Pitch Modulation - per-voice, multiplied onto each child's pitch (shared)
+    Pitch Modulation - per-voice, multiplied onto each child's pitch (shared). Children's own pitch chains are bypassed and hidden.
     Detune Modulation - scales UnisonoDetune (auto-bypassed when unison = 1)
     Spread Modulation - scales UnisonoSpread (auto-bypassed when unison = 1)
 
@@ -84,6 +88,14 @@ llmRef: |
     Master effects on children are removed (only voice-level FX allowed).
     FM with index -1 produces no sound.
     All non-carrier/modulator children silenced when FM is on.
+    Bypassing a child still allocates voices - use MidiMuter to silence children instead.
+    Changing child Gain directly causes zipper noise - use a gain modulator instead.
+
+  Scriptnode interaction:
+    core.pitch_mod does not receive unison detune offsets (modulation chains run before detune is applied). Use a clone container for scriptnode-based unison with per-voice detune.
+
+  Monophonic mode:
+    No built-in mono mode. Add the "Legato with Retrigger" MIDI script for monophonic unison.
 
   Custom equivalent:
     scriptnode SoundGenerator (complex) with parallel oscillators and shared modulation routing.
@@ -222,9 +234,29 @@ groups:
       - { name: ModulatorIndex, desc: "Index of the child synth used as FM modulator. The modulator's audio output scales the carrier's pitch. Set to -1 to disable.", range: "-1 - 16", default: "-1" }
   - label: Unison
     params:
-      - { name: UnisonoVoiceAmount, desc: "Number of unison voices per note. Each unison voice is a separate render of all active children with a pitch offset and stereo position. Directly multiplies CPU cost and reduces maximum polyphony.", range: "1 - 16", default: "1" }
-      - { name: UnisonoDetune, desc: "Detune spread in semitones distributed linearly across unison voices. The first voice gets maximum negative detune, the last gets maximum positive. Modulatable via the Detune Modulation chain.", range: "0 - 24 st", default: "0" }
-      - { name: UnisonoSpread, desc: "Stereo spread of unison voices. At 0% all voices are centred; at 100% negatively-detuned voices are panned fully left, positively-detuned fully right. Modulatable via the Spread Modulation chain.", range: "0 - 100%", default: "100%" }
+      - name: UnisonoVoiceAmount
+        desc: "Number of unison voices per note. Each unison voice is a separate render of all active children with a pitch offset and stereo position. Directly multiplies CPU cost and reduces maximum polyphony."
+        range: "1 - 16"
+        default: "1"
+        hints:
+          - type: warning
+            text: "With unison > 1, each voice gets a random start offset (~10 ms) that causes audible clicks without an amplitude envelope. Add at least ~5 ms attack time to the group's gain envelope."
+          - type: warning
+            text: "Changes to the voice count do not apply to held notes. Only new note-on events use the updated count."
+      - name: UnisonoDetune
+        desc: "Detune spread in semitones distributed linearly across unison voices. The first voice gets maximum negative detune, the last gets maximum positive. Modulatable via the Detune Modulation chain."
+        range: "0 - 24 st"
+        default: "0"
+        hints:
+          - type: warning
+            text: "Read at note-on time only. Changing the parameter value does not affect held notes. Drive the **Detune Modulation** chain instead for real-time control."
+      - name: UnisonoSpread
+        desc: "Stereo spread of unison voices. At 0% all voices are centred; at 100% negatively-detuned voices are panned fully left, positively-detuned fully right. Modulatable via the Spread Modulation chain."
+        range: "0 - 100%"
+        default: "100%"
+        hints:
+          - type: warning
+            text: "Read at note-on time only. Changing the parameter value does not affect held notes. Drive the **Spread Modulation** chain instead for real-time control."
   - label: Output Mode
     params:
       - { name: ForceMono, desc: "Collapses each child's stereo output to mono before the unison stereo spread is applied. The unison spread still creates a stereo image.", range: "Off / On", default: "Off" }
@@ -254,5 +286,13 @@ The FM modulator always renders as a single voice without unison detune. Only th
 When FM is disabled but CarrierIndex is set to a valid child index, that child is soloed - only it produces sound. This can be useful for quickly auditioning individual children within the group.
 
 Unison voices receive randomised start offsets (up to ~10 ms) to prevent phase cancellation when multiple copies of the same waveform play simultaneously. The gain of each unison voice is compensated using equal-power scaling (divided by the square root of the voice count) to maintain consistent overall volume.
+
+When a synth is added as a child of a Synthesiser Group, its own pitch modulation chain is bypassed and hidden in the UI. All pitch modulation for children is driven exclusively by the group's shared Pitch Modulation chain. Independent per-child pitch modulation is not possible.
+
+To control the volume of individual children dynamically, use a gain modulator rather than setting the child's Gain parameter directly. The Gain parameter does not apply smoothing, so rapid changes cause audible zipper noise. Gain modulators operate in the 0-1 range and are interpolated smoothly.
+
+To achieve monophonic behaviour with unison voices, add the built-in "Legato with Retrigger" MIDI script to the Synthesiser Group. There is no built-in mono mode for the group.
+
+When using a scriptnode network as a child of a Synthesiser Group, the `core.pitch_mod` node reads pitch modulation values before the group applies its per-voice unison detune offsets. This means unison detune is not visible inside scriptnode. For fully scriptnode-based unison with per-voice detune, use a scriptnode clone container instead.
 
 **See also:** $MODULES.SynthChain$ -- Simple container that sums children independently. Use when children do not need shared modulation, FM, or unison.

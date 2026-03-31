@@ -240,5 +240,80 @@
       13818,
       14150
     ]
+  },
+  "modules:SynthGroup": {
+    "lastRun": "2026-03-31",
+    "queries": [
+      "SynthGroup",
+      "Synthesiser Group",
+      "unison",
+      "FM synthesis"
+    ],
+    "topicIds": [
+      452,
+      539,
+      669,
+      1415,
+      1937,
+      2871,
+      3340,
+      3508,
+      3512,
+      3523,
+      5146,
+      5479,
+      5770,
+      6135,
+      7162,
+      13030,
+      13134,
+      14141
+    ]
+  },
+  "modules:GlobalModulatorContainer": {
+    "lastRun": "2026-03-31",
+    "queries": [
+      "GlobalModulatorContainer",
+      "Global Modulator Container",
+      "global modulation",
+      "global modulator",
+      "global cable"
+    ],
+    "topicIds": [
+      617,
+      1015,
+      1583,
+      2150,
+      4440,
+      4889,
+      5255,
+      5782,
+      6390,
+      6813,
+      7925,
+      8929,
+      9370,
+      9641,
+      9778,
+      10633,
+      10709,
+      10724,
+      11721,
+      11824,
+      11919,
+      12107,
+      12543,
+      12633,
+      12851,
+      12854,
+      12872,
+      12895,
+      12904,
+      13318,
+      13523,
+      13600,
+      13637,
+      14031
+    ]
   }
 }
