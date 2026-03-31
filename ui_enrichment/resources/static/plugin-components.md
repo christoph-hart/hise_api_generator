@@ -110,6 +110,7 @@ Components that host child content - embedded web views, dynamically generated c
 | [Panel]($UI.ScriptPanel$) | [ScriptPanel]($API.ScriptPanel$) | Can host child components via `parentComponent` for layout grouping |
 | [Floating Tile]($UI.ScriptFloatingTile$) | [ScriptFloatingTile]($API.ScriptFloatingTile$) | Hosts a pre-built [Floating Tile](/v2/reference/ui-components/floating-tiles/) panel configured via JSON |
 | [Viewport]($UI.ScriptedViewport$) | [ScriptedViewport]($API.ScriptedViewport$) | Scrollable list with custom item rendering |
+| [Dynamic Container]($UI.ScriptDynamicContainer$) | [ScriptDynamicContainer]($API.ScriptDynamicContainer$) | Data-driven container that creates child components from JSON at runtime |
 | WebView | [ScriptWebView]($API.ScriptWebView$) | Embedded web browser for HTML/CSS/JS-based UI |
 
 ### Complex Data Components

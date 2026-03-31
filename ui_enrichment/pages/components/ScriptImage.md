@@ -1,5 +1,6 @@
 ---
 title: "Image"
+description: "Lightweight static image display with alpha blending, filmstrip offset, and blend modes from the project image pool."
 componentId: "ScriptImage"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/image.png"

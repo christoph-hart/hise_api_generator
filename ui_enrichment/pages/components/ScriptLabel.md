@@ -1,5 +1,6 @@
 ---
 title: "Label"
+description: "Text display and input component with editable, multiline, and per-keystroke callback support."
 componentId: "ScriptLabel"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/label.png"

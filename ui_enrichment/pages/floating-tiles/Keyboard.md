@@ -1,5 +1,6 @@
 ---
 title: "Keyboard"
+description: "Virtual MIDI keyboard with multiple rendering modes, per-key colouring, and configurable key range."
 contentType: "Keyboard"
 componentType: "floating-tile"
 screenshot: "/images/v2/reference/ui-components/floating-tiles/keyboard.png"

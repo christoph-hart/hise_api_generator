@@ -1,5 +1,6 @@
 ---
 title: "AHDSRGraph"
+description: "Real-time AHDSR envelope visualisation with animated playback position and stage highlighting."
 contentType: "AHDSRGraph"
 componentType: "floating-tile"
 screenshot: "/images/v2/reference/ui-components/floating-tiles/ahdsrgraph.png"

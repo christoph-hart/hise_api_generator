@@ -65,44 +65,7 @@ UI components, rendering, and visual tools.
 - [ScriptTable]($API.ScriptTable$): Curve editor component
 - [ScriptWebView]($API.ScriptWebView$): Embedded web browser component
 - [ScriptedViewport]($API.ScriptedViewport$): Scrollable viewport and data table component
-
----
-
-### Data
-
-Containers, complex data references, and DSP utilities.
-
-- [Array]($API.Array$): Dynamic-size general-purpose container
-- [AudioFile]($API.AudioFile$): Scriptable reference to an audio file slot
-- [Buffer]($API.Buffer$): Fixed-size float array for audio sample data
-- [DisplayBuffer]($API.DisplayBuffer$): Scriptable reference to a processor's ring buffer
-- [FFT]($API.FFT$): Fast Fourier Transform processor
-- [FixObjectArray]($API.FixObjectArray$): Fixed-size array of typed objects
-- [FixObjectFactory]($API.FixObjectFactory$): Factory that defines typed memory layouts
-- [FixObjectStack]($API.FixObjectStack$): Variable-occupancy stack of typed objects
-- [LorisManager]($API.LorisManager$): Loris partial-tracking library interface
-- [MidiList]($API.MidiList$): 128-slot integer array for per-note values
-- [NeuralNetwork]($API.NeuralNetwork$): Machine-learning inference engine
-- [SliderPackData]($API.SliderPackData$): Scriptable reference to a slider pack's data array
-- [String]($API.String$): Built-in string type with text manipulation methods
-- [Table]($API.Table$): Scriptable reference to a lookup table
-- [ThreadSafeStorage]($API.ThreadSafeStorage$): Lock-based container for cross-thread data passing
-- [UnorderedStack]($API.UnorderedStack$): Fast insert/remove container for floats or events
-
----
-
-### Event
-
-Asynchronous events, callbacks, timing, and routing.
-
-- [BackgroundTask]($API.BackgroundTask$): Task handle for background operations
-- [Broadcaster]($API.Broadcaster$): Flexible event router for multi-source, multi-target messaging
-- [ErrorHandler]($API.ErrorHandler$): System-level error event interceptor
-- [GlobalCable]($API.GlobalCable$): Named value bus for routing values between scripts and modules
-- [GlobalRoutingManager]($API.GlobalRoutingManager$): Singleton manager for the global cable system
-- [Threads]($API.Threads$): Thread-awareness utilities
-- [Timer]($API.Timer$): Periodic timer with message-thread callback
-- [TransportHandler]($API.TransportHandler$): Host transport event callback registration
+- [ContainerChild]($API.ContainerChild$): Reference to a child component inside a ScriptDynamicContainer
 
 ---
 
@@ -111,7 +74,6 @@ Asynchronous events, callbacks, timing, and routing.
 ScriptNode DSP graph system.
 
 - [Connection]($API.Connection$): Modulation or signal connection between nodes
-- [ContainerChild]($API.ContainerChild$): Reference to a child inside a ScriptDynamicContainer
 - [DspModule]($API.DspModule$): Legacy API for external DSP module instances
 - [DspNetwork]($API.DspNetwork$): Top-level container for a ScriptNode DSP graph
 - [NetworkTest]($API.NetworkTest$): Test harness for verifying DSP network output

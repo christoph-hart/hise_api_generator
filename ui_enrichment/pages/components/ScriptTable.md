@@ -1,5 +1,6 @@
 ---
 title: "Table"
+description: "Interactive curve editor for velocity curves, CC response curves, waveshaping functions, and other transfer function mappings."
 componentId: "ScriptTable"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/table.png"

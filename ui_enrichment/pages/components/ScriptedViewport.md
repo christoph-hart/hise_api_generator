@@ -1,5 +1,6 @@
 ---
 title: "Viewport"
+description: "Multi-mode viewport for scrollable child components, selectable lists, and sortable data tables with configurable columns."
 componentId: "ScriptedViewport"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/viewport.png"

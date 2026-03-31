@@ -1,5 +1,6 @@
 ---
 title: "Audio Waveform"
+description: "Audio waveform display with interactive playback position and range selection, connected to AudioSampleProcessor modules."
 componentId: "ScriptAudioWaveform"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/audio-waveform.png"

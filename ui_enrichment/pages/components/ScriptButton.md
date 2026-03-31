@@ -1,5 +1,6 @@
 ---
 title: "Button"
+description: "Toggle or momentary button with filmstrip skins, radio group exclusion, and FloatingTile popup attachment."
 componentId: "ScriptButton"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/button.png"

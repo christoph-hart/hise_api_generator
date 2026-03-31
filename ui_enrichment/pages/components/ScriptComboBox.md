@@ -1,5 +1,6 @@
 ---
 title: "ComboBox"
+description: "Drop-down selector with a newline-separated items list, custom popup rendering, and 1-based index value."
 componentId: "ScriptComboBox"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/combobox.png"

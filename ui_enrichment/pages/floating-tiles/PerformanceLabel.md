@@ -1,5 +1,6 @@
 ---
 title: "PerformanceLabel"
+description: "Real-time display of CPU usage, memory consumption, and active voice count."
 contentType: "PerformanceLabel"
 componentType: "floating-tile"
 screenshot: "/images/v2/reference/ui-components/floating-tiles/performancelabel.png"

@@ -19,7 +19,7 @@ documentation needs to reference.
 | 4 | **Synth** | Builder | Builder constructs what Synth.get*() looks up -- same module tree, different access pattern |
 | 5 | **Sampler** | Sample, ComplexGroupManager | Sample map structure, region model, RR groups |
 | 6 | **ExpansionHandler** | Expansion | Pack lifecycle, installation, credential model |
-| 7 | **DspNetwork** | Node, Parameter, Connection, ContainerChild | Graph model, node creation/lookup, processing chain |
+| 7 | **DspNetwork** | Node, Parameter, Connection | Graph model, node creation/lookup, processing chain |
 | 8 | **ScriptPanel** | Graphics, ScriptShader | Graphics only exists inside paint callback; ScriptShader is set on a panel |
 | 9 | **UserPresetHandler** | MacroHandler, MidiAutomationHandler | Preset save/load lifecycle -- macros and MIDI automation are preset state components |
 | 10 | **FixObjectFactory** | FixObjectArray, FixObjectStack | Layout definition model -- factory defines the typed schema |
@@ -61,12 +61,13 @@ Audio engine, module tree navigation, and processor handles
 | TableProcessor | handle | ConstScriptingObject | Script handle to any module that contains lookup tables (table envelopes, table modulators, etc.), p |
 | WavetableController | handle | ConstScriptingObject, ControlledObject, WeakErrorHandler | Script handle to a WavetableSynth module that provides wavetable loading from audio files or buffers |
 
-### ui (22 classes)
+### ui (23 classes)
 UI components, rendering, and visual tools
 
 | Class | Role | Base Class | Brief |
 |-------|------|-----------|-------|
 | Colours | utility | ApiClass | Static utility namespace for colour manipulation -- converting between ARGB/HSL/vec4 formats, mixing |
+| ContainerChild | component | ConstScriptingObject | A reference to a child component inside a ScriptDynamicContainer, providing property access, hierarc |
 | Content | factory | ScriptingObject | Top-level factory for creating and managing all UI components on the script interface, including lay |
 | Graphics | utility | ConstScriptingObject | 2D drawing context passed to paint routines for rendering shapes, text, images, paths, gradients, la |
 | MarkdownRenderer | utility | ConstScriptingObject | Markdown text renderer that parses markdown syntax into styled text with headings, lists, and inline |
@@ -125,13 +126,12 @@ Asynchronous events, callbacks, timing, and routing
 | Timer | utility | ConstScriptingObject | A periodic timer that fires a callback on the message thread at a configurable millisecond interval, |
 | TransportHandler | event | ConstScriptingObject | Registers callbacks for host transport events including tempo changes, play/stop state, time signatu |
 
-### scriptnode (7 classes)
+### scriptnode (6 classes)
 ScriptNode DSP graph system
 
 | Class | Role | Base Class | Brief |
 |-------|------|-----------|-------|
 | Connection | handle | ConstScriptingObject | A modulation or signal connection between a source node and a target parameter within a ScriptNode g |
-| ContainerChild | component | ConstScriptingObject | A reference to a child component inside a ScriptDynamicContainer, providing property access, hierarc |
 | DspModule | processor | ConstScriptingObject | Legacy API for loading and controlling an external DSP module instance from a DspFactory, predating  |
 | DspNetwork | container | ConstScriptingObject | The top-level container that manages a ScriptNode DSP graph, providing methods to create, retrieve,  |
 | NetworkTest | utility | ConstScriptingObject | A test harness for verifying ScriptNode DSP network output by running processing with configurable s |

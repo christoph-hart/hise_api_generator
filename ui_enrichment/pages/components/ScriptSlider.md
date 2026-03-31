@@ -1,5 +1,6 @@
 ---
 title: "Slider"
+description: "Numeric control displayed as rotary knob, horizontal slider, vertical slider, or range slider with configurable range and display modes."
 componentId: "ScriptSlider"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/knob.png"

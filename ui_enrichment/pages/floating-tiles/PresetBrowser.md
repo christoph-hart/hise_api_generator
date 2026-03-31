@@ -1,5 +1,6 @@
 ---
 title: "PresetBrowser"
+description: "Multi-column user preset browser with search, favourites, tagging, and save/load/rename/delete functionality."
 contentType: "PresetBrowser"
 componentType: "floating-tile"
 screenshot: "/images/v2/reference/ui-components/floating-tiles/presetbrowser.png"

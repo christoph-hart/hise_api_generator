@@ -1,5 +1,6 @@
 ---
 title: "MidiOverlayPanel"
+description: "MIDI file drag-and-drop area connected to a MIDI Player module for loading and exporting MIDI content."
 contentType: "MidiOverlayPanel"
 componentType: "floating-tile"
 llmRef: |

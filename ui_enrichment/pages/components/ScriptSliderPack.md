@@ -1,5 +1,6 @@
 ---
 title: "SliderPack"
+description: "Multi-slider array editor for step sequencer lanes, multi-band parameters, and other array-valued controls."
 componentId: "ScriptSliderPack"
 componentType: "plugin-component"
 screenshot: "/images/v2/reference/ui-components/sliderpack.png"
