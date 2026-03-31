@@ -44,7 +44,7 @@ llmRef: |
   Parameters:
     Gain (0-100%, default 100%) - output volume as linear gain (not dB), modulatable via monophonic Gain Modulation chain
     Balance (-1 to 1, default 0) - stereo balance applied at output
-    VoiceLimit (1-256, default 256) - initial voice allocation for children
+    VoiceLimit (1-256, default 256) - runtime soft limit on voices per child. The actual pool size is set at compile time via NUM_POLYPHONIC_VOICES (default 256).
     KillFadeTime (0-20000 ms, default 20 ms) - fade-out when voices are killed
 
   Modulation chains:
@@ -52,6 +52,12 @@ llmRef: |
 
   When to use:
     Organising sound generators into layers. The root Container is always present. Nested Containers group children for shared FX processing or separate output routing.
+
+  FX plugin mode:
+    When exported as an FX plugin, only the master Container's FX chain is active. Child sound generators are ignored entirely.
+
+  GlobalModulatorContainer placement:
+    Must sit as a child of a Container. Only processors below it in the tree can reference its global modulators. Place sound generators in a nested Container below the GlobalModulatorContainer.
 
   Common mistakes:
     Per-voice modulators on Container's gain chain - only monophonic modulators allowed.
@@ -75,7 +81,7 @@ tags:
 
 ![Container screenshot](/images/v2/reference/audio-modules/synthchain.png)
 
-The Container is the fundamental organising module in HISE. It holds any number of child sound generators and sums their audio output into a single stereo bus. A monophonic gain modulation chain scales the combined output, and a master effect chain processes the result before it reaches the parent or the audio output.
+The Container is the fundamental organising module in HISE. It holds any number of child sound generators and sums their audio output into a single stereo bus. A monophonic gain modulation chain scales the combined output, and a master effect chain processes the result before it reaches the parent or the audio output. The Pitch Modulation chain is intentionally disabled - child sound generators have their own pitch modulation chains for per-voice pitch control.
 
 Every HISE project has a root Container (the "Master Chain") that serves as the top-level module. The root Container handles MIDI channel filtering, host transport information, macro controls, and preset serialisation. Nested Containers behave as simple mixers without these global responsibilities. Any sound generator type can be added as a child, including other Containers for hierarchical organisation.
 
@@ -90,7 +96,13 @@ groups:
       - { name: Balance, desc: "Stereo balance applied when copying the processed signal to the output.", range: "-1 - 1", default: "0" }
   - label: Voice Management
     params:
-      - { name: VoiceLimit, desc: "Initial voice allocation for child sound generators. Each child manages its own voice pool independently - this is not a shared global limit.", range: "1 - 256", default: "256" }
+      - name: VoiceLimit
+        desc: "Initial voice allocation for child sound generators. Each child manages its own voice pool independently - this is not a shared global limit."
+        range: "1 - 256"
+        default: "256"
+        hints:
+          - type: tip
+            text: "This is a runtime soft limit on the pre-allocated voice pool. The pool size itself is set at compile time via **NUM_POLYPHONIC_VOICES** in Extra Definitions (default 256). Setting VoiceLimit below this value wastes the unused voice slots but does not reduce memory."
       - { name: KillFadeTime, desc: "Fade-out time when voices are killed by exceeding the voice limit or by a voice killer.", range: "0 - 20000 ms", default: "20 ms" }
 ---
 ::
@@ -104,14 +116,29 @@ chains:
 ---
 ::
 
-## Notes
-
-The Pitch Modulation chain is intentionally disabled on the Container. Child sound generators have their own pitch modulation chains for per-voice pitch control.
+### Effect Chain
 
 The FX chain accepts master effects only (reverb, delay, convolution, etc.). Voice-level effects added to the chain are forced into monophonic processing mode. For per-voice effects, add them to the individual child synth FX chains.
 
-The root Container provides additional functionality not available on nested Containers: MIDI channel filtering (enabling/disabling specific MIDI channels), macro control hosting (up to 8 macros mappable to any parameter in the tree), host transport forwarding, and multi-channel output routing.
+### Root Container vs Nested Containers
+
+The root Container provides additional functionality not available on nested Containers:
+
+- MIDI channel filtering (enabling/disabling specific MIDI channels)
+- Macro control hosting (up to 8 macros mappable to any parameter in the tree)
+- Host transport forwarding
+- Multi-channel output routing
+
+### Rendering Order
 
 Children render in tree order (top to bottom). Each child adds its output to the shared buffer, so the mixing is purely additive with no inter-child modulation. For shared modulation across children (common envelopes, shared pitch), use a Synthesiser Group instead.
+
+### FX Plugin Mode
+
+When exporting as an FX plugin, only the master Container's effect chain is active. All child sound generators are ignored - the plugin receives host audio directly into the master FX chain. Design FX plugins with effects only in the root Container.
+
+### Global Modulator Placement
+
+A GlobalModulatorContainer must be placed as a child of a Container, and only processors that sit below the GlobalModulatorContainer in the module tree can reference its global modulators. Placing a global modulator reference above the GlobalModulatorContainer (for example, directly in the root Container's gain modulation) will have no effect. If you need global modulation on all sound generators, add a nested Container below the GlobalModulatorContainer and place your sound generators inside it.
 
 **See also:** $MODULES.SynthGroup$ -- Advanced container with shared modulation, FM synthesis, and unison. Use when children need common envelopes or pitch modulation., $MODULES.GlobalModulatorContainer$ -- Hosts global modulators accessible from anywhere in the module tree. Must be placed as a child of a Container.
