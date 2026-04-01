@@ -268,3 +268,51 @@ rather than these static callbacks, the bug may be masked at runtime.
 - **Location:** `phase3/fx/sampleandhold.md`
 - **Observed:** The existing phase3 documentation lists "Position: The position in the stereo field" as the parameter for fx.sampleandhold. The actual parameter is "Counter" (range 1-64, integer). This is a copy-paste error from the fx.haas documentation.
 - **Expected:** Parameter should be documented as "Counter" with its correct description (decimation factor for sample rate reduction).
+
+## Issue 16: container.dynamic_blocksize double prepare() call
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_scripting/scripting/scriptnode/nodes/NodeContainerTypes.cpp`:1563-1576
+- **Observed:** `DynamicBlockSizeNode::prepare()` calls `obj.prepare(ps)` twice. Lines 1570-1573 call it conditionally (bypassed vs active), then line 1575 calls it unconditionally. The second call always runs with the original PrepareSpecs regardless of bypass state, overriding the conditional logic.
+- **Expected:** The unconditional `obj.prepare(ps)` on line 1575 should be removed. The conditional block on lines 1570-1573 already handles both cases correctly.
+
+## Issue 17: container.dynamic_blocksize vestigial fix_block members
+
+- **Type:** vestigial
+- **Severity:** low
+- **Location:** `hi_dsp_library/node_api/nodes/processors.h`:1395-1401
+- **Observed:** `wrap::dynamic_blocksize<T>` declares seven `static_functions::fix_block<N>` members (b8, b16, b32, b64, b128, b256, b512) that are never referenced. The `BLOCKSIZE_CASE` macro on lines 1339-1362 calls `static_functions::fix_block<N>::process()` as static functions, not through these members.
+- **Expected:** These members can be removed with no behavioral change.
+
+## Issue 18: container.fix_blockx validation allows values with no switch case
+
+- **Type:** silent-fail
+- **Severity:** low
+- **Location:** `hi_scripting/scripting/scriptnode/nodes/NodeContainerTypes.h`:665-677
+- **Observed:** `DynamicBlockProperty::updateBlockSize()` validates `blockSize > 7 && isPowerOfTwo(blockSize)`, which accepts values like 1024, 2048, etc. However, the process dispatch switch (lines 688-698) only has cases for 8-512. Values >= 1024 fall through the switch without processing any audio.
+- **Expected:** Either add an upper bound to the validation (`blockSize <= 512`) or add a default case to the switch. In practice, the UI combobox only offers 8-256, so this is only reachable via direct ValueTree manipulation.
+
+## Issue 19: container.framex_block description missing channel flexibility
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** scriptnodeList.json entry for `framex_block`
+- **Observed:** The description "Enables per sample processing for the child nodes." does not distinguish framex_block from frame1_block/frame2_block. The key feature -- dynamic channel count adaptation -- is not mentioned.
+- **Expected:** Description should note the dynamic channel count, e.g., "Per sample processing that adapts to the current channel count."
+
+## Issue 20: container.sidechain description grammar error
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** scriptnodeList.json entry for `sidechain`
+- **Observed:** Description reads "Creates a empty audio by duplicating the channel amount for sidechain routing." -- "a empty" should be "an empty". The phrasing is also unclear about what is actually created.
+- **Expected:** "Doubles the channel count by adding empty sidechain channels."
+
+## Issue 21: container.offline has empty description
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** scriptnodeList.json entry for `offline`
+- **Observed:** The description field is an empty string. No description at all for this container node.
+- **Expected:** "A container for offline (non-realtime) processing that skips the realtime audio callback."
