@@ -6,14 +6,7 @@ Parameter represents a single named parameter on a scriptnode node. Each paramet
 
 `Parameter` belongs to a `Node` and can be wired to other parameters via `Connection` objects.
 
-Parameter provides two distinct value-setting paths:
-
-| Path | Method | DSP update | Undo | Use case |
-|------|--------|------------|------|----------|
-| Async | `setValueAsync()` | Immediate | No | Runtime automation, modulation |
-| Sync | `setValueSync()` | Deferred (via ValueTree) | Yes | UI interaction, preset recall |
-
-`setValueSync()` stores the value to the ValueTree, which triggers an internal listener that calls `setValueAsync()` - so both paths eventually reach the DSP callback.
+Use `setValue()` to change a parameter's value and `getValue()` to read it. See the `setValue()` and `setUseExternalConnection()` method pages for details on the two value-setting modes.
 
 You can read and configure the parameter's range properties (minimum, maximum, skew, step size) and create or remove modulation connections from other nodes.
 
@@ -32,7 +25,7 @@ The range system uses four constant identifiers defined on the Parameter object:
 
 Use these constants with `setRangeProperty()` to modify individual range properties.
 
-> Parameter objects are obtained from a [Node]($API.Node$) via `Node.getOrCreateParameter()`. If the node's DSP callback is not yet initialised, value-setting calls are silently ignored until the node is fully connected.
+> [!Tip:Obtaining a Parameter reference] Parameter objects are obtained from a [Node]($API.Node$) via `Node.getOrCreateParameter()`. If the node is not yet fully connected in the network, value-setting calls are silently ignored.
 
 ## Common Mistakes
 

@@ -1899,6 +1899,8 @@ Parameter.setRangeProperty
 Parameter.setValueAsync
 Parameter.setValueSync
 Parameter.addConnectionFrom
+Parameter.setValue
+Parameter.setUseExternalConnection
 
 Connection.disconnect
 Connection.getConnectionType

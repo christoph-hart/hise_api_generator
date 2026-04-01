@@ -58,10 +58,32 @@
         }
       ]
     },
+    "setUseExternalConnection": {
+      "signature": "void setUseExternalConnection(bool usesExternalConnection)",
+      "returnType": "void",
+      "description": "Enables \"external connection mode\" that disables the internal data model.",
+      "parameters": [
+        {
+          "name": "usesExternalConnection",
+          "type": "bool"
+        }
+      ]
+    },
+    "setValue": {
+      "signature": "void setValue(double newValue)",
+      "returnType": "void",
+      "description": "Changes the internal value and optionally stores it in the ValueTree.",
+      "parameters": [
+        {
+          "name": "newValue",
+          "type": "double"
+        }
+      ]
+    },
     "setValueAsync": {
       "signature": "void setValueAsync(double newValue)",
       "returnType": "void",
-      "description": "Sets the value immediately and stores it asynchronously.",
+      "description": "Sets the value immediately and stores it asynchronously (deprecated).",
       "parameters": [
         {
           "name": "newValue",
@@ -72,7 +94,7 @@
     "setValueSync": {
       "signature": "void setValueSync(double newValue)",
       "returnType": "void",
-      "description": "Stores the value synchronously and calls the callback.",
+      "description": "Stores the value synchronously and calls the callback (deprecated).",
       "parameters": [
         {
           "name": "newValue",

@@ -1,1 +1,1 @@
-Returns the current parameter value. If the parameter has an active DSP callback, this returns the last value set through that callback. Otherwise it falls back to the stored ValueTree value.
+Returns the current parameter value. If the parameter is actively connected (either externally or via a modulation source), this returns the last value applied to the node. Otherwise it returns the stored persistent value.

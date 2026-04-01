@@ -1,7 +1,9 @@
+DEPRECATED: Use setValue() + setUseExternalConnection(true).
+
 Parameter::setValueAsync(Double newValue) -> undefined
 
 Thread safety: SAFE
-Sets the parameter value immediately by calling the DSP callback directly. Applies
+Sets the parameter value immediately via dynamicParameter->call(). Applies
 to all voices in polyphonic networks via NoVoiceSetter. Does not update the
 parameter's ValueTree and does not support undo.
 

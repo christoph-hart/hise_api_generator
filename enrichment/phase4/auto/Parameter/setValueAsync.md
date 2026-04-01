@@ -1,3 +1,5 @@
-Sets the parameter value immediately by calling the DSP callback directly. The value is applied to all voices in polyphonic networks. Does not update the ValueTree and does not support undo - use `setValueSync()` when undo is needed.
+> **Deprecated.** Use `setValue()` after calling `setUseExternalConnection(true)` for the same behaviour (immediate DSP update, no undo).
 
-> [!Warning:Silently ignored before node initialisation] If the node's DSP callback is not yet initialised (the node has not been fully connected in the network), the call is silently ignored without error.
+Applies the value directly to the node without storing it. The value is applied to all voices in polyphonic networks. Does not support undo.
+
+> [!Warning:Silently ignored before node initialisation] If the node has not been fully connected in the network, the call is silently ignored without error.

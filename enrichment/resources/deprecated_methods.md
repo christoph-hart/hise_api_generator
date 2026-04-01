@@ -58,6 +58,18 @@ Reason: "use Settings.getZoomLevel() instead"
 
 Soft deprecated. The implementation calls `logSettingWarning("getZoomLevel")` which emits a console message, then proceeds to return the value from `GlobalSettingManager::getGlobalScaleFactor()`. The method still works but warns users to migrate to the Settings class.
 
+### Parameter.setValueAsync(1)
+Status: applied
+Reason: "Use setUseExternalConnection(), then setValue() instead."
+
+Superseded by the unified `setValue()` + `setUseExternalConnection()` pair. Marked via `DIAGNOSTIC_MARK_DEPRECATED` macro in the constructor.
+
+### Parameter.setValueSync(1)
+Status: applied
+Reason: "Use setUseExternalConnection(), then setValue() instead."
+
+Superseded by the unified `setValue()` + `setUseExternalConnection()` pair. Marked via `DIAGNOSTIC_MARK_DEPRECATED` macro in the constructor.
+
 ### ExpansionHandler.setEncryptionKey(1)
 Status: pending
 Reason: "Use the project settings to setup the project's blowfish key"

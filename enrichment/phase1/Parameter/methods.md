@@ -15,6 +15,7 @@ None.
 None.
 
 **Cross References:**
+- `$API.Parameter.setValue$`
 - `$API.Parameter.setValueAsync$`
 - `$API.Parameter.setValueSync$`
 
@@ -169,6 +170,8 @@ Sets a single range property by ID string. Valid property IDs are `MinValue`, `M
 **Call Scope:** safe
 **Minimal Example:** `{obj}.setValueAsync(0.5);`
 
+**Deprecated:** Use `setValue()` after configuring the mode with `setUseExternalConnection()`. Marked deprecated via `DIAGNOSTIC_MARK_DEPRECATED`.
+
 **Description:**
 Sets the parameter value immediately by calling the DSP callback directly. The value is applied to all voices in polyphonic networks. Does not update the parameter's ValueTree and does not support undo. Use this for runtime automation and modulation where low latency is critical.
 
@@ -182,6 +185,8 @@ Sets the parameter value immediately by calling the DSP callback directly. The v
 - If the parameter's internal DSP callback is not yet initialized (the node has not been fully connected), the call is silently ignored without error.
 
 **Cross References:**
+- `$API.Parameter.setValue$`
+- `$API.Parameter.setUseExternalConnection$`
 - `$API.Parameter.setValueSync$`
 - `$API.Parameter.getValue$`
 
@@ -194,6 +199,8 @@ Sets the parameter value immediately by calling the DSP callback directly. The v
 **Call Scope:** unsafe
 **Call Scope Note:** Modifies ValueTree property with undo manager; triggers synchronous listener chain.
 **Minimal Example:** `{obj}.setValueSync(0.75);`
+
+**Deprecated:** Use `setValue()` after configuring the mode with `setUseExternalConnection()`. Marked deprecated via `DIAGNOSTIC_MARK_DEPRECATED`.
 
 **Description:**
 Stores the value to the parameter's ValueTree with undo support. The ValueTree change triggers an internal listener that calls `setValueAsync()`, so the DSP callback is eventually invoked. Use this for UI-driven value changes and preset recall where undo support is needed.
@@ -208,6 +215,8 @@ Stores the value to the parameter's ValueTree with undo support. The ValueTree c
 None.
 
 **Cross References:**
+- `$API.Parameter.setValue$`
+- `$API.Parameter.setUseExternalConnection$`
 - `$API.Parameter.setValueAsync$`
 - `$API.Parameter.getValue$`
 
@@ -272,3 +281,58 @@ p.addConnectionFrom(0);
   "skipReason": "Requires active scriptnode DspNetwork with connected nodes"
 }
 ```
+
+---
+
+## setValue
+
+**Signature:** `void setValue(double newValue)`
+**Return Type:** `undefined`
+**Call Scope:** warning
+**Call Scope Note:** Context-dependent. When `externalConnection` is true, dispatches to `setValueAsync()` (safe, direct DSP update). When false, dispatches to `setValueSync()` (unsafe, ValueTree with undo). In backend builds, throws a script error if called from the audio thread without external connection enabled.
+**Minimal Example:** `{obj}.setValue(0.5);`
+
+**Description:**
+Unified value-setting method that dispatches to the appropriate path based on the parameter's connection mode. When `externalConnection` is enabled (via `setUseExternalConnection(true)`), calls `setValueAsync()` for immediate DSP update without undo. When disabled, calls `setValueSync()` for ValueTree-based update with undo support. This replaces the need to choose between `setValueAsync()` and `setValueSync()` manually -- configure the mode once with `setUseExternalConnection()`, then use `setValue()` throughout.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| newValue | Double | no | The new parameter value | Should be within the parameter's range |
+
+**Pitfalls:**
+- In backend builds, calling `setValue()` from the audio thread without first enabling external connection via `setUseExternalConnection(true)` throws a script error. In exported plugins this check is compiled out, and the call silently falls through to `setValueSync()` which performs unsafe ValueTree operations on the audio thread.
+
+**Cross References:**
+- `$API.Parameter.setUseExternalConnection$`
+- `$API.Parameter.setValueAsync$`
+- `$API.Parameter.setValueSync$`
+- `$API.Parameter.getValue$`
+
+---
+
+## setUseExternalConnection
+
+**Signature:** `void setUseExternalConnection(bool usesExternalConnection)`
+**Return Type:** `undefined`
+**Call Scope:** unsafe
+**Call Scope Note:** Modifies CachedValue and ValueTree properties with undo manager.
+**Minimal Example:** `{obj}.setUseExternalConnection(true);`
+
+**Description:**
+Configures whether `setValue()` dispatches to the async (direct DSP) or sync (ValueTree with undo) path. When set to `true`, removes the `Value` property from the parameter's ValueTree -- the parameter value lives only in the DSP callback and is not persisted. When set to `false`, restores the `Value` property using the current DSP value (if available) or the parameter's default value. Changes are recorded in the UndoManager. Call this once during setup, then use `setValue()` for all value changes.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| usesExternalConnection | Integer | no | `true` for direct DSP path (audio-thread safe), `false` for ValueTree path (with undo) | Boolean value |
+
+**Pitfalls:**
+- When switching from external connection to non-external (`false`), the restored `Value` property uses the current DSP display value if the dynamic parameter is initialized, otherwise falls back to the `DefaultValue` property. If neither is meaningful, the parameter may reset to an unexpected value.
+
+**Cross References:**
+- `$API.Parameter.setValue$`
+- `$API.Parameter.setValueAsync$`
+- `$API.Parameter.setValueSync$`

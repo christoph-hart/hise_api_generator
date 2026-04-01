@@ -3,8 +3,9 @@ Obtain via: Node.getOrCreateParameter(indexOrId)
 
 Scriptnode node parameter with value, range properties, and modulation connection
 support. Holds a double value within a configurable range and can receive modulation
-connections from other nodes or container macro parameters. Provides async (immediate
-DSP, no undo) and sync (ValueTree with undo, deferred DSP) value-setting paths.
+connections from other nodes or container macro parameters. Use setValue() with
+setUseExternalConnection() to select between direct DSP (async) and ValueTree with
+undo (sync) paths. The old setValueAsync/setValueSync methods are deprecated.
 
 Constants:
   Range:
@@ -19,8 +20,8 @@ Common mistakes:
   - Using p.MidPoint with setRangeProperty() -- silently ignored because MidPoint
     is not a recognized range property ID. Only MinValue, MaxValue, StepSize, and
     SkewFactor are accepted.
-  - Calling setValueAsync() before the node's DSP callback is initialized --
-    silently ignored with no error.
+  - Calling setValueAsync() before dynamicParameter is initialized (node not
+    connected) -- silently ignored with no error.
 
 Example:
   // Get a parameter from a node
@@ -30,17 +31,18 @@ Example:
   var val = p.getValue();
   var range = p.getRangeObject();
 
-  // Set value (immediate DSP update, no undo)
-  p.setValueAsync(0.5);
+  // Configure for direct DSP updates (audio-thread safe)
+  p.setUseExternalConnection(true);
 
-  // Set value (with undo, deferred DSP update)
-  p.setValueSync(0.75);
+  // Set value (dispatches based on connection mode)
+  p.setValue(0.5);
 
   // Modify range
   p.setRangeProperty(p.MinValue, 0.0);
   p.setRangeProperty(p.MaxValue, 100.0);
 
-Methods (8):
+Methods (10):
   addConnectionFrom      getId                getRangeObject
   getValue               setRangeFromObject   setRangeProperty
+  setUseExternalConnection                     setValue
   setValueAsync          setValueSync

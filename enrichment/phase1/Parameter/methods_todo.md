@@ -9,6 +9,8 @@
 - [x] setRangeProperty
 - [x] setValueAsync
 - [x] setValueSync
+- [x] setValue
+- [x] setUseExternalConnection
 
 ## Forced Parameter Types
 
