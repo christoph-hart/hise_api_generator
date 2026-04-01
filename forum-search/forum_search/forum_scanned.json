@@ -487,5 +487,155 @@
       11336,
       12711
     ]
+  },
+  "scriptnode:container.split": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "split",
+      "container split",
+      "scriptnode split"
+    ],
+    "topicIds": [
+      721,
+      1649,
+      2060,
+      3008,
+      4145,
+      4392,
+      4779,
+      5421,
+      6284,
+      6338,
+      10433,
+      10705,
+      11383,
+      13053,
+      13228,
+      13350,
+      13539,
+      13906,
+      13976,
+      14250
+    ]
+  },
+  "scriptnode:container.oversample": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "oversample",
+      "oversampling scriptnode",
+      "aliasing scriptnode",
+      "anti-aliasing"
+    ],
+    "topicIds": [
+      2652,
+      2856,
+      4890,
+      11022,
+      12808,
+      14475
+    ]
+  },
+  "scriptnode:container.fix32_block": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "block size",
+      "fix_block",
+      "fixed block",
+      "modulation rate",
+      "block processing scriptnode"
+    ],
+    "topicIds": [
+      10367,
+      10420,
+      12861,
+      13557
+    ]
+  },
+  "scriptnode:container.sidechain": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "sidechain",
+      "sidechain scriptnode",
+      "sidechain compression",
+      "sidechain routing"
+    ],
+    "topicIds": [
+      2002,
+      2033,
+      2072,
+      4054,
+      6632,
+      8165,
+      10519,
+      10870,
+      13577,
+      13675,
+      14276
+    ]
+  },
+  "scriptnode:container.repitch": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "repitch",
+      "scriptnode repitch",
+      "resampling scriptnode",
+      "pitch shifting scriptnode"
+    ],
+    "topicIds": [
+      3920,
+      8722,
+      13966
+    ]
+  },
+  "scriptnode:container.midichain": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "midichain",
+      "midi chain scriptnode",
+      "sample accurate midi",
+      "no_midi",
+      "midi processing scriptnode"
+    ],
+    "topicIds": [
+      13807
+    ]
+  },
+  "scriptnode:container.branch": {
+    "lastRun": "2026-04-01",
+    "queries": [
+      "branch",
+      "container.branch",
+      "scriptnode branch",
+      "algorithm switching",
+      "switch processing"
+    ],
+    "topicIds": [
+      831,
+      894,
+      901,
+      1277,
+      2830,
+      3042,
+      4306,
+      4378,
+      4425,
+      4447,
+      4505,
+      4784,
+      4835,
+      4954,
+      4973,
+      4996,
+      5188,
+      5352,
+      5702,
+      5756,
+      7221,
+      10515,
+      12395,
+      12680,
+      12946,
+      14505
+    ]
   }
 }

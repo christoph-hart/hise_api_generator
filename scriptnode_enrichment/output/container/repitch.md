@@ -37,6 +37,11 @@ llmRef: |
   When to use:
     Change the frequency response of static nodes (convolution, neural networks), alter time-based effects, or introduce resampling artifacts. Stack multiple repitch containers for a range beyond one octave.
 
+  Key details:
+    Primary use case: shift frequency response of SR-dependent effects (filters, convolution, neural nets) without changing coefficients.
+    SR-independent nodes (gain, waveshapers) are unaffected by the repitch factor.
+    Frequency response shift may appear inverted when only effects (no generator) are inside.
+
   Common mistakes:
     Only works with 1 or 2 channels. Multichannel audio passes through unmodified.
 
@@ -96,7 +101,13 @@ dispatch(input) {
 groups:
   - label: Configuration
     params:
-      - { name: RepitchFactor, desc: "Resampling ratio. Above 1.0 lowers effective pitch; below 1.0 raises it. Logarithmic skew centred at 1.0.", range: "0.5 - 2.0", default: "1.0" }
+      - name: RepitchFactor
+        desc: "Resampling ratio. Above 1.0 lowers effective pitch; below 1.0 raises it. Logarithmic skew centred at 1.0."
+        range: "0.5 - 2.0"
+        default: "1.0"
+        hints:
+          - type: tip
+            text: "The primary use case is shifting the frequency response of sample-rate-dependent effects (filters, convolution reverbs, neural network models) without modifying their coefficients. A factor of 0.5 shifts the response one octave down; 2.0 shifts it one octave up."
       - { name: Interpolation, desc: "Resampling quality. Cubic is highest quality; None produces aliasing artifacts.", range: "Cubic / Linear / None", default: "Cubic" }
 ---
 ::
@@ -106,4 +117,6 @@ groups:
 - Repitch only processes mono or stereo signals. Audio with more than 2 channels passes through unmodified.
 - Repitch containers cannot be nested inside frame-based containers.
 - The one-octave range can be extended by stacking repitch containers.
+- When the repitch container holds only effects (no sound generator), the frequency response shift may appear inverted relative to the factor. Placing a sound generator inside the container normalises the shift direction.
+- Nodes that do not depend on sample rate - such as gain stages, waveshapers, or static lookup tables - produce identical output regardless of the repitch factor. Only algorithms whose behaviour is tied to sample rate (filters, convolution reverbs, neural network models) are affected.
 

@@ -51,6 +51,10 @@ llmRef: |
   When to use:
     Additive synthesis, unison voices, cascading filters, feedback delay networks, multistage effects (phasers). Any application requiring duplicated processing paths with per-clone parameter control.
 
+  Key details:
+    NumClones is a compile-time max. The parameter only caps the active count at runtime.
+    For complex payloads, build the DSP chain as a separate compiled network first.
+
   Common mistakes:
     Clone parameters are synced. Use control.clone_cable or control.clone_pack for per-clone values.
     Clone does not support frame-based processing. Keep it outside frame containers.
@@ -109,7 +113,13 @@ dispatch(input) {
 groups:
   - label: Configuration
     params:
-      - { name: NumClones, desc: "Number of active clones. Inactive clones are bypassed but remain prepared.", range: "1 - N (dynamic)", default: "1" }
+      - name: NumClones
+        desc: "Number of active clones. Inactive clones are bypassed but remain prepared."
+        range: "1 - N (dynamic)"
+        default: "1"
+        hints:
+          - type: tip
+            text: "The total number of clone slots is fixed at compile time. This parameter only selects how many of the pre-allocated clones are active - it cannot exceed the number of clones configured in the network."
       - { name: SplitSignal, desc: "Processing mode. Serial chains clones sequentially; Parallel adds clone output to the original; Copy sums copies.", range: "Serial / Parallel / Copy", default: "Copy" }
 ---
 ::
@@ -121,5 +131,6 @@ groups:
 - Clones cannot have modulation or parameter connections to nodes outside the clone or to each other.
 - Resizing clones causes a brief audio gap (one buffer) while the internal state is updated.
 - When bypassed, only the first clone processes audio.
+- For complex clone payloads, build the DSP chain as a separate compiled network first, then load it into the clone container. This reduces compile errors and simplifies debugging. Make `NumClones` the first macro control with matching parameter ranges for every connected node.
 
 **See also:** $SN.container.split$ -- parallel processing with different children instead of identical clones

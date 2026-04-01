@@ -35,6 +35,9 @@ llmRef: |
   When to use:
     Sidechain compression, ducking, or any effect that uses a secondary signal to control processing. Combine with dynamics nodes that have a Sidechain parameter and routing nodes to fill the extra channels.
 
+  Key details:
+    Internal routing only. External DAW sidechain input requires HISE source modification (HISE_NUM_FX_PLUGIN_CHANNELS).
+
   Common mistakes:
     Sidechain channels are zeroed by default. Route a signal into them using routing nodes.
 
@@ -79,5 +82,6 @@ dispatch(input) {
 
 - Sidechain channels are zeroed at the start of each block. Signal routed into them does not carry over between blocks.
 - Sidechain containers cannot be nested inside frame-based containers.
+- The sidechain container handles signal routing within the scriptnode network only. Accepting an external sidechain input from a DAW requires modifying HISE source files and setting `HISE_NUM_FX_PLUGIN_CHANNELS` to the total of main plus sidechain channels.
 
 **See also:** $SN.container.multi$ -- channel splitting without doubling

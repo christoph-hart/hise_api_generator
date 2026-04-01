@@ -27,6 +27,9 @@ llmRef: |
   When to use:
     Good general-purpose choice for modulation precision. Handles most filter and pitch modulation without audible stepping while keeping chunk overhead low (16 iterations for a 512-sample buffer).
 
+  Key details:
+    In send/receive feedback loops, routing delay equals one processing chunk (32 samples). Use frame processing to reduce to 1 sample.
+
   See also:
     [alternative] container.fix_blockx - adjustable block size via property
     [disambiguation] container.frame2_block - per-sample processing instead of block chunking
@@ -61,6 +64,8 @@ process(input) {
 ## Notes
 
 The block size of 32 is a maximum. The last chunk may be smaller if the host buffer size is not a multiple of 32. MIDI events are distributed across chunks by timestamp for sub-block timing accuracy.
+
+In feedback loops using send/receive nodes, the routing delay is exactly one processing chunk. With a 32-sample block size, this means 32 samples of latency in the feedback path. To minimise feedback delay, use a frame-based container instead, which reduces the routing delay to a single sample.
 
 When bypassed, children process the full host buffer without chunking, equivalent to a [container.chain]($SN.container.chain$). Toggling bypass triggers a full re-preparation of all children. If the network is already in frame mode, this container becomes a no-op.
 

@@ -28,6 +28,9 @@ llmRef: |
   When to use:
     Standard frame container for stereo networks. Use when per-sample accuracy is needed for stereo DSP such as filters, waveshapers, or feedback algorithms. The most commonly used frame container.
 
+  Key details:
+    SNEX templated processFrame generates overloads for all channel counts. Use explicit per-channel overloads to avoid mono compile errors.
+
   See also:
     [disambiguation] container.frame1_block - mono per-sample processing
     [alternative] container.framex_block - dynamic channel count
@@ -64,6 +67,8 @@ process(input) {
 ## Notes
 
 Unlike [frame1_block]($SN.container.frame1_block$) which only processes channel 0, this node processes both stereo channels. Channels beyond the first two are zeroed, not passed through. If the network has more than two channels, use [framex_block]($SN.container.framex_block$) to process all of them.
+
+When writing SNEX nodes with a templated `processFrame` function, the compiler generates overloads for every channel count (mono and stereo). If the template body accesses `data[1]`, the mono overload triggers a compile error. To fix this, replace the template with explicit overloads: a no-op `processFrame(span<float, 1>&)` and the real logic in `processFrame(span<float, 2>&)`.
 
 When bypassed, children revert to block processing with the original block size and process the full host buffer. This allows A/B comparison of per-sample vs block processing.
 

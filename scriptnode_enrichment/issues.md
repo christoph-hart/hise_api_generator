@@ -316,3 +316,48 @@ rather than these static callbacks, the bug may be masked at runtime.
 - **Location:** scriptnodeList.json entry for `offline`
 - **Observed:** The description field is an empty string. No description at all for this container node.
 - **Expected:** "A container for offline (non-realtime) processing that skips the realtime audio callback."
+
+## Issue 22: container.clone polyphonic compilation failure
+
+- **Type:** compile-error
+- **Severity:** high
+- **Location:** `Containers.h:116` (compiled path)
+- **Observed:** Compiling a polyphonic clone container triggers `clone_base has no member named isPolyphonic()`. Reported by multiple users (Feb 2025) on both Windows and macOS. One workaround: ensure the clone container holds at least one non-trivial processing node and that NumClones is set as the first macro control.
+- **Expected:** The compiled clone container should support polyphonic contexts or produce a clear error at the network level.
+- **Source:** Forum topic 12012
+
+## Issue 23: container.clone with Linkwitz-Riley filters produces silence
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** Clone container + filter node interaction
+- **Observed:** Placing Linkwitz-Riley filter nodes inside a clone container compiles successfully but produces silence at runtime. Removing the clone wrapper and using the filters directly restores audio. May be a per-clone filter state initialisation issue.
+- **Expected:** Filter nodes should produce output when placed inside a clone container.
+- **Source:** Forum topic 12012
+
+## Issue 24: container.soft_bypass inside container.clone causes crash
+
+- **Type:** crash
+- **Severity:** high
+- **Location:** Clone iteration + SoftBypass::process interaction
+- **Observed:** Placing a `container.soft_bypass` node around an oscillator inside a `container.clone` crashes HISE. Reported in 2024. The interaction between the clone container's per-clone processing and the soft_bypass state management is the likely cause.
+- **Expected:** soft_bypass should work safely inside clone containers.
+- **Source:** Forum topic 9277
+
+## Issue 25: Delay time not recalculated on block size or oversampling change
+
+- **Type:** stale-state
+- **Severity:** medium
+- **Location:** Delay node prepareToPlay / sampleRateChanged callback
+- **Observed:** Changing the host block size or oversampling factor does not trigger a recalculation of delay node timing. The delay time parameter retains its previously computed internal value, making the actual delay incorrect relative to the displayed millisecond value. The output shifts permanently after an oversampling round-trip (none -> 2x -> none does not return to original). Moving the delay time parameter manually forces recalculation.
+- **Expected:** Delay time should recalculate automatically when block size or sample rate changes.
+- **Source:** Forum topic 10420
+
+## Issue 26: Stale modulation connection after deleting source node in modchain
+
+- **Type:** stale-state
+- **Severity:** medium
+- **Location:** Modulation connection cleanup (IDE behaviour)
+- **Observed:** When a node inside a modchain is deleted, its modulation connection can persist on the destination node. The target parameter behaves as if still modulated - it ignores manual input. Fix: manually remove the connection on the target node.
+- **Expected:** Deleting a modulation source should automatically clean up all its outgoing connections.
+- **Source:** Forum topic 4978

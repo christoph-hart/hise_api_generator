@@ -39,6 +39,9 @@ llmRef: |
   Common mistakes:
     Modchain does not modify parent audio. Use container.chain for audio processing.
 
+  Key details:
+    To combine multiple mod signals, use a split inside the modchain with a core.peak after it.
+
   See also:
     [disambiguation] container.chain -- audio-rate serial chain that modifies the signal
 ---
@@ -78,5 +81,6 @@ dispatch(parentAudio) {
 - The modchain itself is not a modulation source. Nodes inside it (such as [core.peak]($SN.core.peak$)) produce the actual modulation output.
 - When nested inside a frame-based container, the control-rate downsampling is disabled and children run at full audio rate.
 - Modchain should not be nested inside a resampled container.
+- To combine multiple modulation signals into a single output, place a [container.split]($SN.container.split$) inside the modchain with each signal as a child, then add a [core.peak]($SN.core.peak$) after the split to capture the summed result. This is more efficient than using send/receive nodes for linear signal combining.
 
 **See also:** $SN.container.chain$ -- audio-rate serial chain that modifies the signal

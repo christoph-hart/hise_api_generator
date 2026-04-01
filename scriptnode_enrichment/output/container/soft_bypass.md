@@ -17,6 +17,10 @@ commonMistakes:
     wrong: "Expecting modulation outputs from children to fade smoothly when bypassed"
     right: "Be aware that modulation output is suppressed immediately when bypassed, even though the audio crossfade takes time."
     explanation: "The audio crossfade uses a linear ramp, but modulation output is cut instantly when bypass is engaged. If downstream nodes depend on modulation from inside the soft_bypass, they will see an abrupt change."
+  - title: "Series chaining produces clicks instead of smooth transitions"
+    wrong: "Placing two soft_bypass containers in series and expecting both to crossfade smoothly"
+    right: "Use soft_bypass containers in parallel (e.g. inside a split or via the `template.softbypass_switchN` templates). For series switching, use `container.branch` instead."
+    explanation: "The double-ramp crossfade pre-multiplies the input by the ramp before processing. When two soft_bypass nodes are in series, the second node receives an already-ramped signal from the first, causing nested ramp interactions that produce clicks rather than smooth transitions."
 llmRef: |
   container.soft_bypass
 
@@ -39,8 +43,13 @@ llmRef: |
   When to use:
     Click-free bypass toggling for effect chains. The only container that accepts dynamic bypass parameter connections. Used internally by template.softbypass_switchN for click-free N-way switching.
 
+  Key details:
+    Use math.compare upstream for threshold-based bypass control.
+    Series chaining two soft_bypass nodes produces clicks - use parallel arrangement instead.
+
   Common mistakes:
     Modulation output is suppressed immediately on bypass, not smoothed.
+    Series chaining produces clicks due to nested double-ramp interactions.
 
   See also:
     [disambiguation] container.chain -- hard bypass with no crossfade
@@ -85,5 +94,6 @@ dispatch(input) {
 - MIDI events are always forwarded to children regardless of bypass state, keeping their internal state (note tracking, CC values) up to date.
 - Bypass state is shared across all voices in polyphonic contexts. There is no per-voice bypass.
 - Changing `SmoothingTime` during a crossfade cancels the transition and snaps to the current bypass state.
+- To derive bypass state from a continuous parameter (e.g. bypass a filter when its gain reaches zero), connect a `math.compare` node between the parameter and the soft_bypass. This gives precise threshold control rather than relying on the default 0.5 cutoff.
 
 **See also:** $SN.container.chain$ -- hard bypass with no crossfade, $SN.container.branch$ -- index-based switching that benefits from soft bypass wrappers

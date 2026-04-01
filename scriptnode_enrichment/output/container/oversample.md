@@ -54,10 +54,15 @@ llmRef: |
   When to use:
     When child nodes produce harmonics that fold back as aliasing (waveshaping, saturation, FM synthesis). Choose this dynamic variant when the factor needs to be configurable. Use the fixed variants (oversample2x, oversample4x, etc.) when the factor is known at design time.
 
+  Key details:
+    Bypassing only removes upsampling/downsampling - children still process at original rate (no CPU saving).
+    For gap-free runtime factor switching, use ScriptNode.setParent() to reparent the signal chain.
+
   Common mistakes:
     Changing the factor during playback causes a brief audio gap.
     Cannot nest oversample containers - use a single higher factor instead.
     Cannot be used in polyphonic networks.
+    Bypassing does not reduce CPU - children still run.
 
   See also:
     disambiguation container.oversample2x - fixed 2x variant
@@ -125,7 +130,8 @@ groups:
 
 When the Oversampling parameter is set to None (1x), the up- and downsampling stages still execute as a trivial passthrough. This adds negligible overhead compared to not using the container at all, but is not zero-cost.
 
-When bypassed, child nodes revert to the original sample rate and block size. The container re-prepares the entire child chain on bypass state changes, so toggling bypass is not instantaneous.
+When bypassed, child nodes revert to the original sample rate and block size but continue to process audio normally. Bypassing only removes the upsampling/downsampling step - it does not reduce CPU usage. The container re-prepares the entire child chain on bypass state changes, so toggling bypass is not instantaneous.
+
 
 The anti-aliasing filter introduces a small amount of latency that is not reported to the host or the surrounding network. For most use cases this is inaudible, but it may be relevant in parallel signal paths where phase alignment matters.
 
