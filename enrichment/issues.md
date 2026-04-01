@@ -56,6 +56,30 @@ Sorted by severity (critical first).
 
 ## Medium
 
+### Node.setParent -- node detached from graph before target validation
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** DspNetwork.cpp (ScriptingObjects::ScriptNode::setParent implementation)
+- **Observed:** `setParent()` removes the node from its current parent before validating the target container. If the target name is not found or does not resolve to a valid container, the node has already been detached from the graph. In backend builds with undo enabled, this can be reversed, but in frontend builds the node is orphaned with no recovery path.
+- **Expected:** Validate the target container before removing the node from its current parent, or make the operation atomic (remove + add in a single undoable action that rolls back on failure).
+
+### DspNetwork.setParameterDataFromJSON -- always returns true instead of ok flag
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** DspNetwork.cpp:~991-1020
+- **Observed:** The method computes a local `ok` flag that is set to `true` when at least one parameter is matched and updated. However, the method returns `true` unconditionally (line ~1019) instead of returning `ok`. If no node IDs or parameter IDs match, the caller receives `true` despite no parameters being set.
+- **Expected:** Return `ok` instead of `true` so the caller can detect when no parameters were matched.
+
+### DspNetwork.undo -- nullptr dereference when undo is disabled
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** DspNetwork.cpp:~943-946
+- **Observed:** `undo()` calls `getUndoManager(true)->undo()` without null-checking the return value. `getUndoManager()` returns nullptr when `enableUndo` is false (the default in frontend/exported plugin builds). Calling `undo()` in a frontend build dereferences nullptr.
+- **Expected:** Check the return value: `if (auto* um = getUndoManager(true)) return um->undo(); return false;`
+
 ### ContainerChild.getValue -- missing validity check returns stale data
 
 - **Type:** inconsistency
@@ -1016,6 +1040,22 @@ Sorted by severity (critical first).
 - **Observed:** Arrays with 1 element or more than 4 elements are silently ignored -- only sizes 2, 3, and 4 are mapped to vec2/vec3/vec4. No error or warning is reported for unsupported array sizes.
 - **Expected:** Report a script error when the array size is not 2, 3, or 4, e.g., "Uniform array must have 2-4 elements for vec2/vec3/vec4".
 
+### Parameter.setRangeProperty -- MidPoint constant silently ignored as range property ID
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptNode::Parameter::setRangeProperty)
+- **Observed:** The Parameter class registers `MidPoint` as a constant via `addConstant()`, but `setRangeProperty()` only accepts `MinValue`, `MaxValue`, `StepSize`, and `SkewFactor` as valid IDs (validated by `RangeHelpers::isRangeId`). Passing `p.MidPoint` silently does nothing -- no error, no effect. The constant's existence implies it should be usable with `setRangeProperty()`.
+- **Expected:** Either accept `MidPoint` as a valid range property ID in `setRangeProperty()` (converting it to the appropriate skew factor internally), or remove the `MidPoint` constant from Parameter to prevent confusion, or report a script error when `MidPoint` is passed: "MidPoint is not a valid range property ID; use SkewFactor instead".
+
+### Connection.getConnectionType -- returns uninitialized data
+
+- **Type:** code-smell
+- **Severity:** medium
+- **Location:** NodeBase.h:~713 (class declaration), NodeBase.cpp:~1632 (constructor), NodeBase.cpp:~1795 (method)
+- **Observed:** The `ConnectionSource type` member is declared but never assigned anywhere -- not in the constructor, not in any method, and not by any external code that creates ConnectionBase objects. `getConnectionType()` returns `(int)type`, which is indeterminate. The `ConnectionSource` enum (MacroParameter=0, SingleOutputModulation=1, MultiOutputModulation=2) exists but is never used at runtime.
+- **Expected:** Determine the connection source type in the constructor based on the ValueTree hierarchy (e.g., parent is `Connections` under a Parameter = MacroParameter, parent is `ModulationTargets` = SingleOutputModulation, parent is under `SwitchTargets` = MultiOutputModulation) and assign `type` accordingly.
+
 ## Low
 
 ### ExpansionHandler.setErrorFunction -- numExpectedArgs mismatch (1 vs 2)
@@ -1417,3 +1457,11 @@ Sorted by severity (critical first).
 - **Location:** JavascriptEngineMathObject.cpp:~300
 - **Observed:** The C++ docstring says "always positive" but the implementation `fmod(value + limit, limit)` only adds `limit` once. For values more negative than `-limit`, the result is still negative. E.g., `wrap(-5.0, 3.0)` computes `fmod(-2.0, 3.0)` which returns -2.0 on most platforms.
 - **Expected:** Either use a negative-safe wrap formula (e.g., `fmod(fmod(value, limit) + limit, limit)`) or update the docstring to document the single-offset limitation.
+
+### Parameter.setRangeProperty -- MidPoint constant accepted but silently ignored
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** NodeBase.cpp:~1102-1110 (setRangeProperty), NodeBase.cpp:~775-790 (constructor constants), ParameterData.cpp:~74-78 (isRangeId)
+- **Observed:** The Parameter constructor registers `MidPoint` as a constant via `ADD_PROPERTY_ID_CONSTANT(PropertyIds::MidPoint)`, but `setRangeProperty()` validates the ID against `RangeHelpers::isRangeId()` which only accepts `MinValue`, `MaxValue`, `StepSize`, and `SkewFactor`. Passing `p.MidPoint` to `setRangeProperty()` silently does nothing. Conversely, `SkewFactor` is a valid range property ID but has no constant on Parameter, requiring users to pass the string literal `"SkewFactor"`.
+- **Expected:** Either replace the `MidPoint` constant with `SkewFactor` in the constructor, or extend `isRangeId()` to also accept `MidPoint`.

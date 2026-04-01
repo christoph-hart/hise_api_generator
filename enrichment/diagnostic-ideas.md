@@ -237,6 +237,14 @@ Sorted by priority (high first).
 
 ---
 
+### Parameter.setRangeProperty -- invalid range property ID string
+
+- **Category:** value-check
+- **Priority:** low
+- **Methods involved:** setRangeProperty
+- **Rationale:** `setRangeProperty` silently ignores invalid property ID strings. The Parameter object registers `MidPoint` as a constant, but `MidPoint` is not accepted by the validation check (`RangeHelpers::isRangeId`). Users who write `p.setRangeProperty(p.MidPoint, 0.5)` get no error and no effect. A parse-time check on string literals or known constants would catch this.
+- **Sketch:** When `setRangeProperty` is called with a string literal or a Parameter constant as the first argument, validate against {"MinValue", "MaxValue", "StepSize", "SkewFactor"}. Specifically flag `p.MidPoint` usage since the constant exists but is not a valid range property ID.
+
 ## Entry Template (do not delete)
 
 ```

@@ -642,12 +642,12 @@
       "references": [],
       "seeAlso": [
         {
-          "class": "Builder",
-          "distinction": "DspNetwork manages the ScriptNode DSP graph (create/connect nodes); Builder programmatically creates the HISE module tree (synths, effects, modulators) -- different systems entirely."
+          "class": "Node",
+          "distinction": "DspNetwork is the top-level graph container; Node is a single processing element inside the network."
         },
         {
-          "class": "DspModule",
-          "distinction": "DspNetwork is the modern ScriptNode graph container; DspModule is the legacy API for loading external DSP libraries."
+          "class": "Builder",
+          "distinction": "DspNetwork manages the ScriptNode DSP graph (create/connect nodes); Builder programmatically creates the HISE module tree (synths, effects, modulators) -- different systems entirely."
         }
       ],
       "callbackDensity": 0.0,
@@ -1545,12 +1545,12 @@
       ],
       "seeAlso": [
         {
-          "class": "DspModule",
-          "distinction": "Node is a unit in the modern ScriptNode graph with automatic signal routing; DspModule is the legacy API requiring manual processBlock calls on external libraries."
-        },
-        {
           "class": "DspNetwork",
           "distinction": "Node is a single processing element; DspNetwork is the container that holds and manages all nodes."
+        },
+        {
+          "class": "Parameter",
+          "distinction": "Node is the processing unit; Parameter controls a single value on that node."
         }
       ],
       "callbackDensity": 0.0,

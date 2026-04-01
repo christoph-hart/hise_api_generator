@@ -299,7 +299,7 @@ bc.sendSyncMessage([42, "knob"]);
 **Minimal Example:** `var network = Engine.createDspNetwork("MyNetwork");`
 
 **Description:**
-Creates or retrieves a scriptnode DSP network with the given ID. The script processor must be a `DspNetwork::Holder` (i.e., a Script FX or Script Synth with scriptnode enabled) -- if it is not, the method reports a script error. If a network with the same ID already exists on this processor, it is returned and set as the active network (no duplicate is created). In the backend, the method checks for existing `.xml` network files in the DspNetworks folder and loads from file if found. A new network starts with an empty `container.chain` root node.
+Creates or retrieves a scriptnode DSP network with the given ID. The script processor must be a `DspNetwork::Holder` (ScriptFX, PolyScriptFX, ScriptSynth, ScriptTimeVariantModulator, or ScriptEnvelopeModulator) -- if it is not, the method reports a script error. If a network with the same ID already exists on this processor, it is returned and set as the active network (no duplicate is created). In the backend, the method checks for existing `.xml` network files in the DspNetworks folder and loads from file if found. A new network starts with an empty `container.chain` root node.
 
 **Parameters:**
 
@@ -308,7 +308,7 @@ Creates or retrieves a scriptnode DSP network with the given ID. The script proc
 | id | String | no | The unique identifier for the DSP network. | Must be unique per processor. In backend, matches against `.xml` filenames in the DspNetworks folder. |
 
 **Pitfalls:**
-- Calling this on a script processor that is not a `DspNetwork::Holder` (e.g., a plain Script Processor without scriptnode support) produces a script error "Not available on this script processor". Only Script FX and Script Synth modules that implement the `DspNetwork::Holder` interface can create DSP networks.
+- Calling this on a script processor that is not a `DspNetwork::Holder` (e.g., a plain Script Processor or Script Voice Start Modulator) produces a script error "Not available on this script processor". Only ScriptFX, PolyScriptFX, ScriptSynth, ScriptTimeVariantModulator, and ScriptEnvelopeModulator can create DSP networks.
 
 **Cross References:**
 - `$API.Engine.getDspNetworkReference$`
