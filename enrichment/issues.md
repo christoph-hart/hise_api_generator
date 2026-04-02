@@ -1056,6 +1056,54 @@ Sorted by severity (critical first).
 - **Observed:** The `ConnectionSource type` member is declared but never assigned anywhere -- not in the constructor, not in any method, and not by any external code that creates ConnectionBase objects. `getConnectionType()` returns `(int)type`, which is indeterminate. The `ConnectionSource` enum (MacroParameter=0, SingleOutputModulation=1, MultiOutputModulation=2) exists but is never used at runtime.
 - **Expected:** Determine the connection source type in the constructor based on the ValueTree hierarchy (e.g., parent is `Connections` under a Parameter = MacroParameter, parent is `ModulationTargets` = SingleOutputModulation, parent is under `SwitchTargets` = MultiOutputModulation) and assign `type` accordingly.
 
+### ThreadSafeStorage.storeWithCopy -- string values stored as empty string
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~8248
+- **Observed:** The string-copy branch calls `copy.toString()` on a default-constructed (undefined) local variable instead of `dataToStore.toString()`. This produces an empty string regardless of input, so `storeWithCopy("hello")` silently stores `""`.
+- **Expected:** The line should read `copy = var(dataToStore.toString());` to correctly copy the input string.
+
+### Settings.stopPerfettoTracing -- file extension validated after trace session ends
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~2827-2852
+- **Observed:** `stopPerfettoTracing` calls `mp.endSession(true)` (writing the trace data to the file) before checking whether the file has a `.pftrace` extension. If the extension is wrong, the trace data has already been written to the misnamed file, and then a `reportScriptError` fires. The data is not lost but Perfetto tools may not recognize a file without the `.pftrace` extension.
+- **Expected:** Validate the file extension before calling `mp.endSession(true)`, so no trace data is written to an incorrectly named file.
+
+### Settings.setDiskMode -- no range validation on mode parameter
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~2890-2894
+- **Observed:** The `mode` parameter is stored directly in `driver->diskMode` and cast to `MainController::SampleManager::DiskMode` without validation. The DiskMode enum only defines values 0 (SSD) and 1 (HDD). Values >= 2 are cast to an out-of-range enum value and passed to `setDiskMode()`, producing undefined streaming behavior.
+- **Expected:** Validate that `mode` is 0 or 1 before applying. Report a script error for out-of-range values, e.g., "Invalid disk mode. Use 0 (SSD) or 1 (HDD)".
+
+### Settings.setSampleFolder -- silently does nothing for non-File arguments
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~2870
+- **Observed:** If the argument is not a `File` object or if the path is not a directory, the method silently does nothing. No error is reported. The user has no indication that the sample folder was not changed.
+- **Expected:** Report a script error when the argument is not a valid File object pointing to a directory, e.g., "setSampleFolder expects a File object pointing to an existing directory".
+
+### Settings.setVoiceMultiplier -- no validation on voice multiplier value
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~2900
+- **Observed:** The `newVoiceAmount` parameter is stored directly without range checking. Negative or zero values are accepted silently, potentially producing zero or negative voice counts when multiplied with the base voice count.
+- **Expected:** Validate that `newVoiceAmount` is a positive integer (>= 1) and report a script error for invalid values, e.g., "Voice multiplier must be a positive integer".
+
+### Settings.getAvailableSampleRates -- returns strings instead of numbers
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApi.cpp:~2810
+- **Observed:** `getAvailableSampleRates` returns an array of strings (e.g., `"44100"`, `"48000"`), while `getAvailableBufferSizes` returns an array of integers. This inconsistency means users must call `parseInt()` on sample rates but not on buffer sizes. The difference comes from how the underlying JUCE API is wrapped -- buffer sizes are added as integers while sample rates are added as strings.
+- **Expected:** Return integers (or doubles) for consistency with `getAvailableBufferSizes`, or document the string return type prominently.
+
 ## Low
 
 ### ExpansionHandler.setErrorFunction -- numExpectedArgs mismatch (1 vs 2)
