@@ -1054,6 +1054,937 @@ def cmd_rebuild(args, config):
 
 
 # ---------------------------------------------------------------------------
+# CRAWL-CODE command (category-based code extraction for vector DB)
+# ---------------------------------------------------------------------------
+
+CODE_KEYWORDS_RE = re.compile(
+    r'\b(Content|Engine|Synth|Graphics|Server|Math|Array|Buffer|Message|Timer|'
+    r'ScriptPanel|FileSystem|Sampler|MidiPlayer|ScriptSlider|ScriptButton|'
+    r'ScriptComboBox|ScriptTable|Broadcaster|UserPresetHandler|'
+    r'inline\s+function|reg\s+\w|local\s+\w|include\(")\b'
+)
+
+# Patterns that indicate non-HISE code (PHP, Python, C++, etc.)
+NON_HISE_RE = re.compile(
+    r'\b(add_filter|add_action|def\s+\w+\(|#include\s*<|import\s+\w+|'
+    r'class\s+\w+\s*:|pip\s+install|npm\s+install|require\(|from\s+\w+\s+import)\b'
+)
+
+
+# ---------------------------------------------------------------------------
+# HiseSnippet decoding (JUCE custom base64 + zlib)
+# ---------------------------------------------------------------------------
+
+_JUCE_B64_DECODE_TABLE = [
+    63, 0, 0, 0, 0, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 0, 0, 0, 0, 0, 0, 0,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+    23, 24, 25, 26, 0, 0, 0, 0, 0, 0, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
+    38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
+]
+
+_HISE_SNIPPET_RE = re.compile(r'HiseSnippet \d+\.[A-Za-z0-9.+]+')
+
+
+def decode_juce_base64(s):
+    """Decode a JUCE MemoryBlock base64 string (format: <size>.<data>).
+
+    JUCE uses a non-standard base64 alphabet:
+      .ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+
+    The first '.' after the decimal size is a separator; subsequent '.' are
+    index-0 in the alphabet.
+    """
+    dot = s.index('.')
+    num_bytes = int(s[:dot])
+    data = bytearray(num_bytes)
+    src = s[dot + 1:]
+    pos = 0
+    for ch in src:
+        c = ord(ch) - 43
+        if 0 <= c < len(_JUCE_B64_DECODE_TABLE):
+            bits_to_set = _JUCE_B64_DECODE_TABLE[c]
+            byte_idx = pos >> 3
+            offset_in_byte = pos & 7
+            num_bits = 6
+            while num_bits > 0 and byte_idx < num_bytes:
+                bits_this_time = min(num_bits, 8 - offset_in_byte)
+                bit_mask = (1 << bits_this_time) - 1
+                clear_mask = ~(bit_mask << offset_in_byte) & 0xFF
+                set_bits = (bits_to_set & bit_mask) << offset_in_byte
+                data[byte_idx] = (data[byte_idx] & clear_mask) | set_bits
+                byte_idx += 1
+                num_bits -= bits_this_time
+                bits_to_set >>= bits_this_time
+                offset_in_byte = 0
+            pos += 6
+    return bytes(data)
+
+
+def decode_hise_snippet(snippet_string):
+    """Decode a HiseSnippet string → decompressed JUCE ValueTree bytes."""
+    import zlib as _zlib
+    data = snippet_string.strip()
+    if data.startswith("HiseSnippet "):
+        data = data[len("HiseSnippet "):]
+    raw = decode_juce_base64(data)
+    return _zlib.decompress(raw)
+
+
+def extract_script_from_snippet(snippet_string):
+    """Extract the Interface script code from a HiseSnippet string.
+
+    Decodes the base64, decompresses, and finds the script content in the
+    JUCE binary ValueTree. Returns the script string or None.
+    """
+    try:
+        vt_bytes = decode_hise_snippet(snippet_string)
+    except Exception:
+        return None
+
+    # The script is stored as readable text in the binary ValueTree.
+    # Find runs of printable ASCII (including tabs/newlines) that contain
+    # HISE API markers.
+    strings = re.findall(rb'[\x09\x0a\x0d\x20-\x7e]{20,}', vt_bytes)
+    for s in strings:
+        text = s.decode('ascii', errors='replace')
+        if any(marker in text for marker in
+               ('Content.make', 'function onNoteOn', 'inline function',
+                'const var', 'namespace ')):
+            return text.strip()
+    return None
+
+
+def find_snippets_in_html(html_content):
+    """Find all HiseSnippet strings in raw HTML post content."""
+    return _HISE_SNIPPET_RE.findall(html_content)
+
+
+_CALLBACK_RE = re.compile(
+    r'\s*function\s+on(NoteOn|NoteOff|Controller|Timer|Control)\s*\([^)]*\)\s*\{([^}]*)\}',
+    re.DOTALL
+)
+
+
+def strip_callbacks_from_script(script):
+    """Strip HISE callback functions from an extracted script.
+
+    Returns (cleaned_script, has_code_in_callbacks).
+    If any callback contains actual code, has_code_in_callbacks is True
+    and the snippet should be rejected (not copy-pasteable).
+    """
+    has_code = False
+    def replacer(m):
+        nonlocal has_code
+        body = m.group(2).strip()
+        if body:
+            has_code = True
+        return ''
+    cleaned = _CALLBACK_RE.sub(replacer, script).strip()
+    return cleaned, has_code
+
+
+def extract_snippets_from_post(post_html, config):
+    """Find HiseSnippets in raw HTML, decode, and extract scripts.
+
+    Returns list of dicts: {code, context, had_callback_code}
+    """
+    snippets = find_snippets_in_html(post_html)
+    if not snippets:
+        return []
+
+    # Get cleaned text for context (strip the snippets themselves)
+    context_text = re.sub(
+        r'HiseSnippet \d+\.[A-Za-z0-9.+]+', '', post_html
+    )
+    context_text = strip_html(context_text)
+    sentences = re.split(r'[.!?\n]', context_text)
+    sentences = [s.strip() for s in sentences if s.strip()]
+    context = '. '.join(sentences[-3:]) if sentences else ""
+    if len(context) > 300:
+        context = context[:300] + "..."
+
+    results = []
+    for snippet_str in snippets:
+        script = extract_script_from_snippet(snippet_str)
+        if not script:
+            continue
+
+        cleaned, had_callback_code = strip_callbacks_from_script(script)
+        if not cleaned or len(cleaned.split('\n')) < 3:
+            continue
+
+        results.append({
+            "code": cleaned,
+            "context": context,
+            "had_callback_code": had_callback_code
+        })
+
+    return results
+
+
+CRAWL_STATE_PATH = SCRIPT_DIR / "forum_search" / "crawl_state.json"
+
+
+def load_crawl_state():
+    if CRAWL_STATE_PATH.exists():
+        with open(CRAWL_STATE_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"last_crawl": None, "categories": {}, "processed_tids": []}
+
+
+def save_crawl_state(state):
+    CRAWL_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(CRAWL_STATE_PATH, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2, ensure_ascii=False)
+
+
+def crawl_category_topics(cid, config, max_topics=2000, start_page=1):
+    """Walk a category via /api/category/{cid}?page=N and return topic metadata."""
+    excluded = set(config.get("excluded_categories", []))
+    if cid in excluded:
+        print(f"      Category {cid}: excluded, skipping", file=sys.stderr)
+        return [], 0
+
+    topics = []
+    page = start_page
+    while len(topics) < max_topics:
+        try:
+            data = api_get(f"category/{cid}", {"page": page})
+        except Exception as e:
+            print(f"[warn] Failed to fetch category {cid} page {page}: {e}",
+                  file=sys.stderr)
+            break
+
+        topic_list = data.get("topics", [])
+        if not topic_list:
+            break
+
+        for t in topic_list:
+            topics.append({
+                "tid": t.get("tid"),
+                "title": strip_html(t.get("titleRaw", t.get("title", ""))),
+                "postcount": t.get("postcount", 0),
+                "isSolved": bool(t.get("isSolved")),
+                "cid": cid,
+                "category": data.get("name", f"Category {cid}")
+            })
+
+        page_count = data.get("pagination", {}).get("pageCount", 1)
+        if page >= page_count:
+            page = page_count  # signal: reached the end
+            break
+        page += 1
+        time.sleep(0.3)
+
+    return topics[:max_topics], page
+
+
+def fetch_topic_for_code(tid, config):
+    """Fetch a topic from the API with minimal filtering — keeps all upvoted posts.
+
+    Unlike fetch_and_clean_topic (which aggressively filters for LLM context),
+    this keeps any post with upvotes > 0 to maximize code extraction coverage.
+    """
+    defaults = config["defaults"]
+    max_posts = defaults["max_posts_per_topic"]
+    max_words = defaults.get("max_post_words", 500)
+    trusted = config.get("trusted_posters", {})
+
+    topic_data = fetch_topic_posts(tid, max_posts, trusted)
+
+    cleaned_posts = []
+    for post in topic_data["posts"]:
+        uid = str(post.get("uid", ""))
+        username = post.get("user", {}).get("username", "Unknown")
+        upvotes = post.get("upvotes", 0)
+        is_trusted = uid in trusted
+        trusted_role = trusted.get(uid, {}).get("role", "") if is_trusted else ""
+
+        content = clean_post_content(post.get("content", ""), max_words)
+        if not content.strip():
+            continue
+
+        cleaned_posts.append({
+            "uid": uid,
+            "username": username,
+            "role": trusted_role,
+            "is_trusted": is_trusted,
+            "upvotes": upvotes,
+            "content": content
+        })
+
+    return {
+        "tid": tid,
+        "title": topic_data.get("title", f"Topic {tid}"),
+        "posts": cleaned_posts
+    }
+
+
+def extract_code_blocks_from_posts(topic_data, config, min_upvotes_author=1,
+                                   min_upvotes_other=2, min_lines=3):
+    """Extract qualifying code blocks from a fetched topic.
+
+    Returns list of dicts with code, context, username, upvotes, etc.
+    """
+    blocks = []
+    tid = topic_data.get("tid")
+    title = topic_data.get("title", f"Topic {tid}")
+
+    for post in topic_data.get("posts", []):
+        content = post.get("content", "")
+        upvotes = post.get("upvotes", 0)
+        username = post.get("username", "Unknown")
+        role = post.get("role", "")
+        is_authority = role in ("author", "expert")
+
+        # Post-level filter: author/expert need upvotes >= 1, others need >= 2
+        if is_authority:
+            if upvotes < min_upvotes_author:
+                continue
+        else:
+            if upvotes < min_upvotes_other:
+                continue
+
+        # Find code fences (with optional language hint)
+        fences = list(re.finditer(
+            r'```(\w*)\n?(.*?)\n?```', content, re.DOTALL
+        ))
+        if not fences:
+            continue
+
+        for fence in fences:
+            lang_hint = fence.group(1).lower()
+            code = fence.group(2).strip()
+            lines = code.split('\n')
+
+            # Code-block-level filters
+            if len(lines) < min_lines:
+                continue
+            if code.startswith('HiseSnippet') or '[HiseSnippet' in code:
+                continue
+            if len(code) > 5000:
+                continue
+
+            # If language hint says javascript/js, trust it as HISE code
+            is_js_hint = lang_hint in ('javascript', 'js')
+
+            if not is_js_hint:
+                if not CODE_KEYWORDS_RE.search(code):
+                    continue
+                if NON_HISE_RE.search(code):
+                    continue
+
+            # Extract surrounding context
+            pre_text = content[:fence.start()].strip()
+            sentences = re.split(r'[.!?\n]', pre_text)
+            sentences = [s.strip() for s in sentences if s.strip()]
+            context = '. '.join(sentences[-3:]) if sentences else ""
+            if len(context) > 300:
+                context = context[:300] + "..."
+
+            blocks.append({
+                "tid": tid,
+                "topic_title": title,
+                "username": username,
+                "role": role,
+                "upvotes": upvotes,
+                "context": context,
+                "code": code
+            })
+
+    return blocks
+
+
+def cmd_crawl_code(args, config):
+    """Crawl forum categories and extract qualifying code blocks."""
+    # Determine categories to crawl
+    if args.categories:
+        categories = [int(c.strip()) for c in args.categories.split(",")]
+    else:
+        # Default: all known categories except excluded
+        excluded = set(config.get("excluded_categories", []))
+        cat_weights = config.get("category_weights", {})
+        categories = [int(c) for c in cat_weights.keys() if int(c) not in excluded]
+        if not categories:
+            categories = [2, 3, 5, 7, 8, 15, 17]
+
+    max_topics = args.max_topics
+    min_lines = args.min_lines
+    output_path = Path(args.output)
+    trusted = config.get("trusted_posters", {})
+    resume = getattr(args, 'resume', False)
+
+    # Load crawl state for resume / incremental support
+    state = load_crawl_state()
+    already_processed = set(state.get("processed_tids", []))
+
+    if resume:
+        print(f"Resuming crawl. {len(already_processed)} topics already processed.",
+              file=sys.stderr)
+
+    print(f"Crawling categories: {categories}", file=sys.stderr)
+    print(f"Max topics: {max_topics}, min code lines: {min_lines}", file=sys.stderr)
+
+    # Step 1: Collect topic IDs from all categories
+    all_topic_meta = []
+    for cid in categories:
+        # Resume from last page if available
+        start_page = 1
+        if resume:
+            start_page = state.get("categories", {}).get(str(cid), {}).get("next_page", 1)
+            if start_page > 1:
+                print(f"[1/4] Resuming category {cid} from page {start_page}...",
+                      file=sys.stderr)
+
+        print(f"[1/4] Listing topics in category {cid}...", file=sys.stderr)
+        topics, last_page = crawl_category_topics(
+            cid, config, max_topics=max_topics, start_page=start_page
+        )
+        print(f"      Found {len(topics)} topics (ended at page {last_page})",
+              file=sys.stderr)
+        all_topic_meta.extend(topics)
+
+        # Save page progress
+        if str(cid) not in state["categories"]:
+            state["categories"][str(cid)] = {}
+        state["categories"][str(cid)]["last_page"] = last_page
+        state["categories"][str(cid)]["next_page"] = last_page + 1
+
+    # Deduplicate by tid (topics can appear in subcategories)
+    seen_tids = set()
+    unique_topics = []
+    for t in all_topic_meta:
+        if t["tid"] not in seen_tids:
+            seen_tids.add(t["tid"])
+            unique_topics.append(t)
+
+    # Skip already-processed topics when resuming
+    if resume and already_processed:
+        before = len(unique_topics)
+        unique_topics = [t for t in unique_topics if t["tid"] not in already_processed]
+        skipped = before - len(unique_topics)
+        if skipped:
+            print(f"      Skipped {skipped} already-processed topics", file=sys.stderr)
+
+    # Cap total topics
+    if len(unique_topics) > max_topics:
+        unique_topics = unique_topics[:max_topics]
+
+    print(f"      Total unique topics to process: {len(unique_topics)}", file=sys.stderr)
+
+    # Step 2+3: Fetch topics and extract code blocks
+    print(f"[2/4] Fetching {len(unique_topics)} topics and extracting code...",
+          file=sys.stderr)
+    all_code_blocks = []
+    code_hashes = set()
+    fetched = 0
+    failed = 0
+
+    for i, t_meta in enumerate(unique_topics):
+        tid = t_meta["tid"]
+        try:
+            topic = fetch_topic_for_code(tid, config)
+            fetched += 1
+            if fetched % 20 == 0:
+                print(f"      Processed {fetched} topics...", file=sys.stderr)
+        except Exception as e:
+            print(f"      Topic {tid}: FAILED - {e}", file=sys.stderr)
+            failed += 1
+            continue
+
+        blocks = extract_code_blocks_from_posts(
+            topic, config,
+            min_upvotes_author=1,
+            min_upvotes_other=2,
+            min_lines=min_lines
+        )
+
+        for block in blocks:
+            # Deduplicate by normalized code hash
+            normalized = re.sub(r'\s+', ' ', block["code"]).strip()
+            code_hash = hash(normalized)
+            if code_hash in code_hashes:
+                continue
+            code_hashes.add(code_hash)
+
+            # Build tags
+            tags = ["forum"]
+            if t_meta.get("category"):
+                tags.append(t_meta["category"])
+            if block["role"]:
+                tags.append(block["role"])
+            if t_meta.get("isSolved"):
+                tags.append("solved")
+
+            all_code_blocks.append({
+                "title": block["topic_title"],  # placeholder, LLM replaces later
+                "category": "Forum",
+                "tags": tags,
+                "description": block["context"],  # placeholder, LLM replaces later
+                "code": block["code"],
+                "url": f"{FORUM_BASE}/topic/{block['tid']}",
+                "_meta": {
+                    "username": block["username"],
+                    "upvotes": block["upvotes"],
+                    "needs_llm": True
+                }
+            })
+
+    print(f"      Done: {fetched} fetched, {failed} failed", file=sys.stderr)
+    print(f"[3/4] Extracted {len(all_code_blocks)} code blocks", file=sys.stderr)
+
+    # Step 4: Write output
+    print(f"[4/4] Writing output...", file=sys.stderr)
+    ensure_cache_dir()
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(all_code_blocks, f, indent=2, ensure_ascii=False)
+
+    # Update crawl state
+    new_tids = [t["tid"] for t in unique_topics]
+    state["processed_tids"] = sorted(set(state.get("processed_tids", []) + new_tids))
+    state["last_crawl"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    save_crawl_state(state)
+
+    file_size = output_path.stat().st_size
+    total_lines = sum(len(b["code"].split('\n')) for b in all_code_blocks)
+
+    summary = {
+        "status": "ok",
+        "categories_crawled": len(categories),
+        "topics_processed": len(unique_topics),
+        "total_processed_all_time": len(state["processed_tids"]),
+        "code_blocks": len(all_code_blocks),
+        "total_code_lines": total_lines,
+        "output_file": str(output_path),
+        "file_size_bytes": file_size,
+        "approx_tokens": file_size // 4,
+        "needs_describe": True
+    }
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------------------
+# CRAWL-SNIPPETS command (HiseSnippet extraction for vector DB)
+# ---------------------------------------------------------------------------
+
+def cmd_crawl_snippets(args, config):
+    """Crawl forum categories and extract scripts from HiseSnippets."""
+    if args.categories:
+        categories = [int(c.strip()) for c in args.categories.split(",")]
+    else:
+        excluded = set(config.get("excluded_categories", []))
+        cat_weights = config.get("category_weights", {})
+        categories = [int(c) for c in cat_weights.keys() if int(c) not in excluded]
+        if not categories:
+            categories = [2, 3, 5, 7, 8, 15, 17]
+
+    max_topics = args.max_topics
+    output_path = Path(args.output)
+    trusted = config.get("trusted_posters", {})
+    resume = getattr(args, 'resume', False)
+
+    state = load_crawl_state()
+    already_processed = set(state.get("snippet_processed_tids", []))
+
+    if resume:
+        print(f"Resuming snippet crawl. {len(already_processed)} topics already processed.",
+              file=sys.stderr)
+
+    print(f"Crawling categories for HiseSnippets: {categories}", file=sys.stderr)
+    print(f"Max topics: {max_topics}", file=sys.stderr)
+
+    # Step 1: Collect topic IDs
+    all_topic_meta = []
+    for cid in categories:
+        start_page = 1
+        if resume:
+            start_page = state.get("categories", {}).get(
+                f"snip_{cid}", {}
+            ).get("next_page", 1)
+            if start_page > 1:
+                print(f"[1/4] Resuming category {cid} from page {start_page}...",
+                      file=sys.stderr)
+
+        print(f"[1/4] Listing topics in category {cid}...", file=sys.stderr)
+        topics, last_page = crawl_category_topics(
+            cid, config, max_topics=max_topics, start_page=start_page
+        )
+        print(f"      Found {len(topics)} topics (ended at page {last_page})",
+              file=sys.stderr)
+        all_topic_meta.extend(topics)
+
+        if f"snip_{cid}" not in state.get("categories", {}):
+            state.setdefault("categories", {})[f"snip_{cid}"] = {}
+        state["categories"][f"snip_{cid}"]["last_page"] = last_page
+        state["categories"][f"snip_{cid}"]["next_page"] = last_page + 1
+
+    # Deduplicate
+    seen_tids = set()
+    unique_topics = []
+    for t in all_topic_meta:
+        if t["tid"] not in seen_tids:
+            seen_tids.add(t["tid"])
+            unique_topics.append(t)
+
+    if resume and already_processed:
+        before = len(unique_topics)
+        unique_topics = [t for t in unique_topics if t["tid"] not in already_processed]
+        skipped = before - len(unique_topics)
+        if skipped:
+            print(f"      Skipped {skipped} already-processed topics", file=sys.stderr)
+
+    if len(unique_topics) > max_topics:
+        unique_topics = unique_topics[:max_topics]
+
+    print(f"      Total unique topics to process: {len(unique_topics)}", file=sys.stderr)
+
+    # Step 2+3: Fetch topics and extract snippets
+    print(f"[2/4] Fetching {len(unique_topics)} topics and extracting snippets...",
+          file=sys.stderr)
+    all_blocks = []
+    code_hashes = set()
+    fetched = 0
+    failed = 0
+    rejected_callbacks = 0
+
+    defaults = config["defaults"]
+    max_posts = defaults["max_posts_per_topic"]
+
+    for i, t_meta in enumerate(unique_topics):
+        tid = t_meta["tid"]
+        try:
+            # Fetch raw posts (not cleaned — need HTML for snippet detection)
+            topic_data = fetch_topic_posts(tid, max_posts, trusted)
+            fetched += 1
+            if fetched % 20 == 0:
+                print(f"      Processed {fetched} topics...", file=sys.stderr)
+        except Exception as e:
+            print(f"      Topic {tid}: FAILED - {e}", file=sys.stderr)
+            failed += 1
+            continue
+
+        title = topic_data.get("title", f"Topic {tid}")
+
+        for post in topic_data.get("posts", []):
+            uid = str(post.get("uid", ""))
+            username = post.get("user", {}).get("username", "Unknown")
+            upvotes = post.get("upvotes", 0)
+            is_trusted = uid in trusted
+            trusted_role = trusted.get(uid, {}).get("role", "") if is_trusted else ""
+            is_authority = trusted_role in ("author", "expert")
+
+            # Post-level quality filter
+            if is_authority:
+                if upvotes < 1:
+                    continue
+            else:
+                if upvotes < 2:
+                    continue
+
+            raw_html = post.get("content", "")
+            extracted = extract_snippets_from_post(raw_html, config)
+
+            for item in extracted:
+                if item["had_callback_code"]:
+                    rejected_callbacks += 1
+                    continue
+
+                # Deduplicate
+                normalized = re.sub(r'\s+', ' ', item["code"]).strip()
+                code_hash = hash(normalized)
+                if code_hash in code_hashes:
+                    continue
+                code_hashes.add(code_hash)
+
+                tags = ["forum"]
+                if t_meta.get("category"):
+                    tags.append(t_meta["category"])
+                if trusted_role:
+                    tags.append(trusted_role)
+                if t_meta.get("isSolved"):
+                    tags.append("solved")
+
+                all_blocks.append({
+                    "title": title,
+                    "category": "Forum",
+                    "tags": tags,
+                    "description": item["context"],
+                    "code": item["code"],
+                    "url": f"{FORUM_BASE}/topic/{tid}",
+                    "_meta": {
+                        "username": username,
+                        "upvotes": upvotes,
+                        "needs_llm": True
+                    }
+                })
+
+    print(f"      Done: {fetched} fetched, {failed} failed", file=sys.stderr)
+    print(f"      Rejected (callback code): {rejected_callbacks}", file=sys.stderr)
+    print(f"[3/4] Extracted {len(all_blocks)} snippet scripts", file=sys.stderr)
+
+    # Step 4: Write output
+    print(f"[4/4] Writing output...", file=sys.stderr)
+    ensure_cache_dir()
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(all_blocks, f, indent=2, ensure_ascii=False)
+
+    # Update crawl state
+    new_tids = [t["tid"] for t in unique_topics]
+    state["snippet_processed_tids"] = sorted(
+        set(state.get("snippet_processed_tids", []) + new_tids)
+    )
+    state["last_snippet_crawl"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    save_crawl_state(state)
+
+    file_size = output_path.stat().st_size
+    total_lines = sum(len(b["code"].split('\n')) for b in all_blocks)
+
+    summary = {
+        "status": "ok",
+        "categories_crawled": len(categories),
+        "topics_processed": len(unique_topics),
+        "total_processed_all_time": len(state["snippet_processed_tids"]),
+        "snippet_scripts": len(all_blocks),
+        "rejected_callback_code": rejected_callbacks,
+        "total_code_lines": total_lines,
+        "output_file": str(output_path),
+        "file_size_bytes": file_size,
+        "needs_describe": True
+    }
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------------------
+# DESCRIBE-CODE command (LLM post-processing for title & description)
+# ---------------------------------------------------------------------------
+
+def cmd_describe_code(args, config):
+    """Export raw code blocks as JSONL for LLM triage and description.
+
+    Reads the raw output from crawl-code and writes a JSONL file where each
+    line contains the code, context, and metadata needed for triage.
+    The LLM processing follows the rules in style-guide/forum-code-scraper.md.
+    """
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"Error: Input file not found: {input_path}", file=sys.stderr)
+        sys.exit(1)
+
+    with open(input_path, "r", encoding="utf-8") as f:
+        blocks = json.load(f)
+
+    output_path = Path(args.output) if args.output else input_path.with_name(
+        input_path.stem + "_described.json"
+    )
+
+    # Filter to blocks that still need LLM processing
+    needs_llm = [b for b in blocks if b.get("_meta", {}).get("needs_llm", False)]
+    already_done = len(blocks) - len(needs_llm)
+
+    if not needs_llm:
+        print("All blocks already have descriptions. Nothing to do.", file=sys.stderr)
+        return
+
+    print(f"Blocks to process: {len(needs_llm)} ({already_done} already done)",
+          file=sys.stderr)
+
+    # Apply offset and batch size
+    offset = getattr(args, 'offset', 0) or 0
+    batch_size = getattr(args, 'batch_size', 0) or 0
+
+    if offset >= len(needs_llm):
+        print(f"Offset {offset} >= total blocks {len(needs_llm)}. Nothing to do.",
+              file=sys.stderr)
+        return
+
+    if batch_size > 0:
+        batch = needs_llm[offset:offset + batch_size]
+    else:
+        batch = needs_llm[offset:]
+
+    # Build output filename with batch suffix
+    if batch_size > 0:
+        batch_suffix = f"_batch_{offset}_{offset + len(batch)}"
+        prompts_path = output_path.with_name(output_path.stem + batch_suffix + ".jsonl")
+    else:
+        prompts_path = output_path.with_name(output_path.stem + "_prompts.jsonl")
+
+    # Write raw blocks as JSONL for external LLM processing
+    with open(prompts_path, "w", encoding="utf-8") as pf:
+        for i, block in enumerate(batch):
+            global_index = offset + i
+            pf.write(json.dumps({
+                "index": global_index,
+                "topic_title": block.get("title", ""),
+                "context": block.get("description", "")[:300],
+                "code": block["code"][:3000],
+                "username": block.get("_meta", {}).get("username", ""),
+                "upvotes": block.get("_meta", {}).get("upvotes", 0),
+                "tags": block.get("tags", []),
+                "url": block.get("url", "")
+            }, ensure_ascii=False) + "\n")
+
+    print(f"Wrote {len(batch)} blocks (offset {offset}) to: {prompts_path}",
+          file=sys.stderr)
+
+    if batch_size > 0:
+        remaining = len(needs_llm) - offset - len(batch)
+        if remaining > 0:
+            print(f"{remaining} blocks remaining. Next batch:",
+                  file=sys.stderr)
+            print(f"  python forum-search.py describe-code --input {input_path} "
+                  f"--batch-size {batch_size} --offset {offset + len(batch)}",
+                  file=sys.stderr)
+
+    print(f"Process with LLM following style-guide/forum-code-scraper.md, then run:",
+          file=sys.stderr)
+    print(f"  python forum-search.py apply-descriptions "
+          f"--input {input_path} --responses <responses.jsonl> --output {output_path}",
+          file=sys.stderr)
+
+    summary = {
+        "status": "blocks_exported",
+        "total_blocks": len(blocks),
+        "needs_llm": len(needs_llm),
+        "batch_offset": offset,
+        "batch_size": len(batch),
+        "prompts_file": str(prompts_path),
+        "next_step": "Process with LLM per style-guide/forum-code-scraper.md, then run apply-descriptions"
+    }
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------------------
+# APPLY-DESCRIPTIONS command (merge LLM responses back into dataset)
+# ---------------------------------------------------------------------------
+
+CODE_EXAMPLES_DIR = SCRIPT_DIR / "code_examples"
+
+
+def next_batch_path(prefix="batch"):
+    """Find the next batch number in code_examples/."""
+    CODE_EXAMPLES_DIR.mkdir(parents=True, exist_ok=True)
+    existing = sorted(CODE_EXAMPLES_DIR.glob(f"{prefix}_*.json"))
+    if not existing:
+        return CODE_EXAMPLES_DIR / f"{prefix}_001.json"
+    last_num = int(existing[-1].stem.split("_")[-1])
+    return CODE_EXAMPLES_DIR / f"{prefix}_{last_num + 1:03d}.json"
+
+
+def cmd_apply_descriptions(args, config):
+    """Merge LLM triage results back into the code dataset.
+
+    Handles three verdicts:
+    - KEEP: update title and description, keep original code
+    - FIX: update title, description, AND replace code with fixed version
+    - REJECT: drop the block entirely
+
+    Output goes to forum-search/code_examples/batch_NNN.json by default.
+    """
+    input_path = Path(args.input)
+    responses_path = Path(args.responses)
+    prefix = "snippet_batch" if getattr(args, 'snippet', False) else "batch"
+    output_path = Path(args.output) if args.output else next_batch_path(prefix)
+
+    with open(input_path, "r", encoding="utf-8") as f:
+        blocks = json.load(f)
+
+    # Parse responses
+    responses = {}
+    with open(responses_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            resp = json.loads(line)
+            responses[resp["index"]] = resp.get("response", "")
+
+    needs_llm = [i for i, b in enumerate(blocks) if b.get("_meta", {}).get("needs_llm")]
+    kept = 0
+    fixed = 0
+    rejected = 0
+    failed = 0
+    reject_indices = set()
+
+    for seq, block_idx in enumerate(needs_llm):
+        resp_text = responses.get(seq, "")
+        if not resp_text:
+            failed += 1
+            continue
+
+        # Parse VERDICT
+        verdict_match = re.search(r'VERDICT:\s*(\w+)', resp_text)
+        verdict = verdict_match.group(1).upper() if verdict_match else ""
+
+        if verdict == "REJECT":
+            reject_indices.add(block_idx)
+            reason_match = re.search(r'REASON:\s*(.+)', resp_text)
+            reason = reason_match.group(1).strip() if reason_match else "no reason given"
+            print(f"  REJECT [{block_idx}]: {reason}", file=sys.stderr)
+            rejected += 1
+            continue
+
+        # Parse TITLE and DESCRIPTION (required for KEEP and FIX)
+        title_match = re.search(r'TITLE:\s*(.+)', resp_text)
+        desc_match = re.search(r'DESCRIPTION:\s*(.+?)(?:\nCODE:|\Z)', resp_text, re.DOTALL)
+
+        if not (title_match and desc_match):
+            failed += 1
+            print(f"[warn] Could not parse response for block {block_idx}: {resp_text[:100]}",
+                  file=sys.stderr)
+            continue
+
+        blocks[block_idx]["title"] = title_match.group(1).strip()
+        blocks[block_idx]["description"] = desc_match.group(1).strip()
+
+        # Parse FEATURED flag
+        featured_match = re.search(r'FEATURED:\s*(\w+)', resp_text)
+        if featured_match:
+            blocks[block_idx]["featured"] = featured_match.group(1).strip().lower() == "yes"
+
+        if verdict == "FIX":
+            # Extract fixed code after CODE: marker
+            code_match = re.search(r'CODE:\s*\n(.*)', resp_text, re.DOTALL)
+            if code_match:
+                blocks[block_idx]["code"] = code_match.group(1).strip()
+                fixed += 1
+            else:
+                # CODE block missing — treat as KEEP with warning
+                print(f"[warn] FIX verdict but no CODE block for [{block_idx}], keeping original",
+                      file=sys.stderr)
+                kept += 1
+        else:
+            kept += 1
+
+        blocks[block_idx].pop("_meta", None)
+
+    # Build final output — drop rejected blocks and strip _meta
+    final_blocks = []
+    for i, b in enumerate(blocks):
+        if i in reject_indices:
+            continue
+        clean = {k: v for k, v in b.items() if k != "_meta"}
+        final_blocks.append(clean)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(final_blocks, f, indent=2, ensure_ascii=False)
+
+    featured_count = sum(1 for b in final_blocks if b.get("featured"))
+
+    summary = {
+        "status": "ok",
+        "total_blocks": len(blocks),
+        "kept": kept,
+        "fixed": fixed,
+        "rejected": rejected,
+        "failed": failed,
+        "output_blocks": len(final_blocks),
+        "featured": featured_count,
+        "output_file": str(output_path)
+    }
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -1106,6 +2037,56 @@ def main():
     sp_refresh.add_argument("--min-reputation", type=int, default=100,
                            help="Minimum reputation threshold (default: 100)")
 
+    # crawl-code
+    sp_crawl = subparsers.add_parser("crawl-code",
+        help="Crawl forum categories and extract qualifying code blocks for vector DB")
+    sp_crawl.add_argument("--categories",
+        help="Comma-separated category IDs to crawl (default: all non-excluded)")
+    sp_crawl.add_argument("--min-lines", type=int, default=3,
+        help="Minimum code block lines (default: 3)")
+    sp_crawl.add_argument("--max-topics", type=int, default=2000,
+        help="Safety cap on total topics to process (default: 2000)")
+    sp_crawl.add_argument("--output", default=str(CACHE_DIR / "forum_code_dataset.json"),
+        help="Output file path")
+    sp_crawl.add_argument("--resume", action="store_true",
+        help="Resume from last crawl position, skip already-processed topics")
+
+    # describe-code
+    sp_describe = subparsers.add_parser("describe-code",
+        help="Export raw code blocks as JSONL for LLM triage")
+    sp_describe.add_argument("--input", required=True,
+        help="Input file from crawl-code")
+    sp_describe.add_argument("--output",
+        help="Output file path (default: <input>_described.json)")
+    sp_describe.add_argument("--batch-size", type=int, default=0,
+        help="Number of blocks per batch (0 = all at once)")
+    sp_describe.add_argument("--offset", type=int, default=0,
+        help="Start from this block index (for resuming)")
+
+    # apply-descriptions
+    sp_apply = subparsers.add_parser("apply-descriptions",
+        help="Merge LLM-generated titles/descriptions back into code dataset")
+    sp_apply.add_argument("--input", required=True,
+        help="Original input file from crawl-code")
+    sp_apply.add_argument("--responses", required=True,
+        help="JSONL file with LLM responses")
+    sp_apply.add_argument("--output",
+        help="Output file path (default: <input>_final.json)")
+    sp_apply.add_argument("--snippet", action="store_true",
+        help="Output as snippet_batch_NNN.json instead of batch_NNN.json")
+
+    # crawl-snippets
+    sp_crawl_snip = subparsers.add_parser("crawl-snippets",
+        help="Crawl forum categories and extract scripts from HiseSnippets")
+    sp_crawl_snip.add_argument("--categories",
+        help="Comma-separated category IDs to crawl (default: all non-excluded)")
+    sp_crawl_snip.add_argument("--max-topics", type=int, default=2000,
+        help="Safety cap on total topics to process (default: 2000)")
+    sp_crawl_snip.add_argument("--output", default=str(CACHE_DIR / "snippet_dataset_raw.json"),
+        help="Output file path")
+    sp_crawl_snip.add_argument("--resume", action="store_true",
+        help="Resume from last crawl position, skip already-processed topics")
+
     args = parser.parse_args()
     config = load_config()
 
@@ -1121,6 +2102,14 @@ def main():
         cmd_extract_code(args, config)
     elif args.command == "refresh-users":
         cmd_refresh_users(args, config)
+    elif args.command == "crawl-code":
+        cmd_crawl_code(args, config)
+    elif args.command == "describe-code":
+        cmd_describe_code(args, config)
+    elif args.command == "apply-descriptions":
+        cmd_apply_descriptions(args, config)
+    elif args.command == "crawl-snippets":
+        cmd_crawl_snippets(args, config)
 
 
 if __name__ == "__main__":
