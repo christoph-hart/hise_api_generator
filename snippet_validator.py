@@ -133,6 +133,31 @@ class HISEAPIClient:
 			"expression": expression
 		})
 
+	def builder_reset(self):
+		"""POST /api/builder/reset — Reset module tree to empty state."""
+		return self._request("post", "/api/builder/reset")
+
+	def builder_apply(self, operations: list):
+		"""POST /api/builder/apply — Add/remove/configure modules in batch."""
+		return self._request("post", "/api/builder/apply", json={
+			"operations": operations
+		})
+
+	def ui_apply(self, module_id: str, operations: list):
+		"""POST /api/ui/apply — Add/remove/configure UI components in batch."""
+		return self._request("post", "/api/ui/apply", json={
+			"moduleId": module_id,
+			"operations": operations
+		})
+
+	def set_component_value(self, module_id: str, component_id: str, value):
+		"""POST /api/set_component_value — Set value and trigger callback."""
+		return self._request("post", "/api/set_component_value", json={
+			"moduleId": module_id,
+			"id": component_id,
+			"value": value
+		})
+
 
 # ---------------------------------------------------------------------------
 # HISE Launcher

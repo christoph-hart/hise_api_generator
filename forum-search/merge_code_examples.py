@@ -28,10 +28,11 @@ ASTYLE_RC = Path.home() / "HISE" / "tools" / "astyle" / "astylerc.sh"
 
 
 def collect_batches(from_validated=False):
-    """Collect all batch and snippet_batch JSON files."""
+    """Collect all batch and snippet_batch JSON files (exclude metadata/fix files)."""
     source_dir = VALIDATED_DIR if from_validated else CODE_EXAMPLES_DIR
-    files = sorted(source_dir.glob("batch_*.json")) + \
-            sorted(source_dir.glob("snippet_batch_*.json"))
+    import re
+    pattern = re.compile(r'^(batch_\d+|snippet_batch_\d+)\.json$')
+    files = sorted(f for f in source_dir.glob("*.json") if pattern.match(f.name))
     return files
 
 

@@ -87,8 +87,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:12.756135Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:31.235395Z",
+        "attempts": 11
       }
     }
   },
@@ -171,8 +171,8 @@
             "actual": -6.0
           }
         ],
-        "timestamp": "2026-04-04T23:00:13.657547Z",
-        "attempts": 6
+        "timestamp": "2026-04-07T13:52:32.098160Z",
+        "attempts": 9
       }
     }
   },
@@ -228,8 +228,8 @@
             "actual": 6
           }
         ],
-        "timestamp": "2026-04-04T23:00:14.146024Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:32.692356Z",
+        "attempts": 9
       }
     }
   },
@@ -330,8 +330,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:14.640961Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:33.923468Z",
+        "attempts": 9
       }
     }
   },
@@ -360,8 +360,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:15.070494Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:34.680596Z",
+        "attempts": 9
       }
     }
   },
@@ -452,8 +452,8 @@
             "actual": 2
           }
         ],
-        "timestamp": "2026-04-04T23:00:15.565367Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:35.384771Z",
+        "attempts": 9
       }
     }
   },
@@ -531,8 +531,8 @@
             "actual": 5
           }
         ],
-        "timestamp": "2026-04-04T23:00:16.055470Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:35.981338Z",
+        "attempts": 9
       }
     }
   },
@@ -588,8 +588,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:16.546288Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:36.691771Z",
+        "attempts": 9
       }
     }
   },
@@ -684,8 +684,8 @@
             "actual": 135.0
           }
         ],
-        "timestamp": "2026-04-04T23:00:17.200988Z",
-        "attempts": 6
+        "timestamp": "2026-04-07T13:52:37.556816Z",
+        "attempts": 8
       }
     }
   },
@@ -755,8 +755,8 @@
             "actual": 38
           }
         ],
-        "timestamp": "2026-04-04T23:00:17.688831Z",
-        "attempts": 7
+        "timestamp": "2026-04-07T13:52:38.206789Z",
+        "attempts": 9
       }
     }
   },
@@ -883,8 +883,8 @@
             "actual": "MySlider3"
           }
         ],
-        "timestamp": "2026-04-04T23:00:18.182279Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:38.862603Z",
+        "attempts": 7
       }
     }
   },
@@ -918,17 +918,29 @@
       "Scripting"
     ],
     "description": "UserPresetHandler.setPostCallback updates a label with Engine.getCurrentUserPresetName after each preset load. Simple pattern for displaying the active user preset name in a custom UI element.",
-    "code": "//PresetDisplay\nconst var PresetNameLabel = Content.getComponent(\"PresetNameLabel\");\nUserPresetHandler.setPostCallback(function()\n{\n\tPresetNameLabel.set(\"text\", Engine.getCurrentUserPresetName());\n});",
+    "code": "//PresetDisplay\nconst var PresetNameLabel = Content.getComponent(\"PresetNameLabel\");\nconst var uph = Engine.createUserPresetHandler();\nuph.setPostCallback(function()\n{\n\tPresetNameLabel.set(\"text\", Engine.getCurrentUserPresetName());\n});",
     "url": "https://forum.hise.audio/topic/12873",
     "featured": false,
     "validation": {
-      "tier": 4,
-      "testable": false,
-      "skipReason": "UserPresetHandler.setPostCallback is not available in this HISE runtime version",
-      "setupCode": null,
-      "testOnlyCode": null,
+      "tier": 2,
+      "testable": true,
+      "skipReason": null,
+      "modules": [],
+      "components": [
+        {
+          "type": "ScriptLabel",
+          "id": "PresetNameLabel"
+        }
+      ],
       "verifyScript": null,
-      "notes": "setPostCallback may be deprecated or version-specific."
+      "notes": "Fixed: added Engine.createUserPresetHandler() — original called setPostCallback as static method",
+      "result": {
+        "tested": true,
+        "passed": true,
+        "verifications": [],
+        "timestamp": "2026-04-07T15:23:24.193563Z",
+        "attempts": 1
+      }
     }
   },
   {
@@ -970,8 +982,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:18.668951Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:39.454321Z",
+        "attempts": 7
       }
     }
   },
@@ -1014,8 +1026,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:19.101240Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:40.131147Z",
+        "attempts": 7
       }
     }
   },
@@ -1043,8 +1055,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:19.530156Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:40.721241Z",
+        "attempts": 7
       }
     }
   },
@@ -1101,8 +1113,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:20.167369Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:41.374342Z",
+        "attempts": 7
       }
     }
   },
@@ -1119,13 +1131,25 @@
     "url": "https://forum.hise.audio/topic/11966",
     "featured": false,
     "validation": {
-      "tier": 4,
-      "testable": false,
-      "skipReason": "Requires a Sampler module in the module tree which cannot be dynamically added via script",
-      "setupCode": null,
-      "testOnlyCode": null,
+      "tier": 3,
+      "testable": true,
+      "skipReason": null,
+      "modules": [
+        {
+          "type": "StreamingSampler",
+          "name": "Sampler1"
+        }
+      ],
+      "components": [],
       "verifyScript": null,
-      "notes": "Synth.getSampler needs a pre-existing Sampler module. Samplers are child synths, not effects."
+      "notes": "Sampler timestretch config - StreamingSampler via Builder API",
+      "result": {
+        "tested": true,
+        "passed": true,
+        "verifications": [],
+        "timestamp": "2026-04-07T15:21:36.758595Z",
+        "attempts": 2
+      }
     }
   },
   {
@@ -1144,11 +1168,11 @@
     "validation": {
       "tier": 4,
       "testable": false,
-      "skipReason": "CSS popup styling on ComboBox triggers CSS resolution error without proper runtime context",
-      "setupCode": null,
-      "testOnlyCode": null,
+      "skipReason": "CSS resolution error on ComboBox without proper FloatingTile context",
+      "modules": [],
+      "components": [],
       "verifyScript": null,
-      "notes": "CSS .popup/.popup-item selectors require a fully configured ComboBox context."
+      "notes": null
     }
   },
   {
@@ -1175,8 +1199,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:20.597592Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:42.010718Z",
+        "attempts": 7
       }
     }
   },
@@ -1204,8 +1228,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:21.026523Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:42.601088Z",
+        "attempts": 7
       }
     }
   },
@@ -1271,8 +1295,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:21.456592Z",
-        "attempts": 5
+        "timestamp": "2026-04-07T13:52:43.249733Z",
+        "attempts": 7
       }
     }
   },
@@ -1315,8 +1339,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:21.886038Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:43.899283Z",
+        "attempts": 6
       }
     }
   },
@@ -1333,13 +1357,18 @@
     "url": "https://forum.hise.audio/topic/11921",
     "featured": false,
     "validation": {
-      "tier": 4,
-      "testable": false,
-      "skipReason": "Requires a Sampler module in the module tree which cannot be dynamically added via script",
-      "setupCode": null,
-      "testOnlyCode": null,
+      "tier": 3,
+      "testable": true,
+      "skipReason": null,
+      "modules": [
+        {
+          "type": "StreamingSampler",
+          "name": "Sampler1"
+        }
+      ],
+      "components": [],
       "verifyScript": null,
-      "notes": "Synth.getSampler with createSelectionWithFilter. Samplers are child synths, not addable effects."
+      "notes": "createSelectionWithFilter returns empty list (no samples loaded) — compiles but list[0].get() fails at runtime. Compile-only would pass if HISE didn't eagerly evaluate."
     }
   },
   {
@@ -1381,8 +1410,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:22.317265Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:44.492147Z",
+        "attempts": 6
       }
     }
   },
@@ -1417,17 +1446,24 @@
       "expert"
     ],
     "description": "Recursive stack-based component builder that processes a JSON tree of component definitions. Uses Content.addKnob/addButton/addPanel etc. to create components dynamically and applies all properties from the JSON, enabling portable UI layouts between projects.",
-    "code": "/*\n* Author: David Healey\n* License: CC0\n* Last updated: 08/12/2024\n*/\n\nnamespace LayoutBuilder\n{\n\tconst data = [];\n\n\tinline function add(arr: Array)\n\t{\n data.concat(arr);\n\t}\n\n\tinline function process()\n\t{\n\t\tlocal stack = data.clone();\n\t\t\n\t\twhile (stack.length > 0)\n\t\t{\n\t\t\t//local node = stack.shift();\n\t\t\tlocal node = stack.pop();\n\t\t\t\n\t\t\tif (!isDefined(node.type) || !isDefined(node.id))\n\t\t\t\tcontinue;\n\n\t\t\taddComponent(node.id, node);\n\n\t\t\tif (!isDefined(node.childComponents))\n\t\t\t\tcontinue;\n\n\t\t\tfor (x in node.childComponents)\n\t\t\t\tx.parentComponent = node.id;\n\n\t\t\tfor (i = node.childComponents.length - 1; i >= 0; i--)\n\t\t\t{\n\t\t\t\tstack.push(node.childComponents[i]);\n\t\t\t}\n\n\t\t\t//stack.concat(node.childComponents);\n\t\t}\n\t}\n\t\n\tinline function: object addComponent(id: string, properties: JSON)\n\t{\n\t\tlocal c = Content.getComponent(id);\n\n\t\tif (!isDefined(c))\n\t\t{\n\t\t\tlocal type = properties.type.replace(\"Scripted\").replace(\"Script\");\n\n\t\t\tswitch (type)\n\t\t\t{\n\t\t\t\tcase \"Slider\": c = Content.addKnob(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Button\": c = Content.addButton(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Table\": c = Content.addTable(id, properties.x, properties.y); break;\n\t\t\t\tcase \"ComboBox\": c = Content.addComboBox(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Label\": c = Content.addLabel(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Image\": c = Content.addImage(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Viewport\": c = Content.addViewport(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Panel\": c = Content.addPanel(id, properties.x, properties.y); break;\n\t\t\t\tcase \"AudioWaveform\": c = Content.addAudioWaveform(id, properties.x, properties.y); break;\n\t\t\t\tcase \"SliderPack\": c = Content.addSliderPack(id, properties.x, properties.y); break;\n\t\t\t\tcase \"WebView\": c = Content.addWebView(id, properties.x, properties.y); break;\n\t\t\t\tcase \"FloatingTile\": c = Content.addFloatingTile(id, properties.x, properties.y); break;\n\t\t\t}\n\t\t}\n\t\t\n\t\tlocal allProperties = c.getAllProperties();\n\t\n\t\tfor (x in properties)\n\t\t{\n\t\t\tif (!allProperties.contains(x) || [\"id\"].contains(x))\n\t\t\t\tcontinue;\n\n\t\t\tc.set(x, properties[x]);\n\t\t}\n\n\t\treturn c;\n\t}",
+    "code": "/*\n* Author: David Healey\n* License: CC0\n* Last updated: 08/12/2024\n*/\n\nnamespace LayoutBuilder\n{\n\tconst data = [];\n\n\tinline function add(arr: Array)\n\t{\n data.concat(arr);\n\t}\n\n\tinline function process()\n\t{\n\t\tlocal stack = data.clone();\n\t\t\n\t\twhile (stack.length > 0)\n\t\t{\n\t\t\t//local node = stack.shift();\n\t\t\tlocal node = stack.pop();\n\t\t\t\n\t\t\tif (!isDefined(node.type) || !isDefined(node.id))\n\t\t\t\tcontinue;\n\n\t\t\taddComponent(node.id, node);\n\n\t\t\tif (!isDefined(node.childComponents))\n\t\t\t\tcontinue;\n\n\t\t\tfor (x in node.childComponents)\n\t\t\t\tx.parentComponent = node.id;\n\n\t\t\tfor (i = node.childComponents.length - 1; i >= 0; i--)\n\t\t\t{\n\t\t\t\tstack.push(node.childComponents[i]);\n\t\t\t}\n\n\t\t\t//stack.concat(node.childComponents);\n\t\t}\n\t}\n\t\n\tinline function: object addComponent(id: string, properties: JSON)\n\t{\n\t\tlocal c = Content.getComponent(id);\n\n\t\tif (!isDefined(c))\n\t\t{\n\t\t\tlocal type = properties.type.replace(\"Scripted\").replace(\"Script\");\n\n\t\t\tswitch (type)\n\t\t\t{\n\t\t\t\tcase \"Slider\": c = Content.addKnob(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Button\": c = Content.addButton(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Table\": c = Content.addTable(id, properties.x, properties.y); break;\n\t\t\t\tcase \"ComboBox\": c = Content.addComboBox(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Label\": c = Content.addLabel(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Image\": c = Content.addImage(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Viewport\": c = Content.addViewport(id, properties.x, properties.y); break;\n\t\t\t\tcase \"Panel\": c = Content.addPanel(id, properties.x, properties.y); break;\n\t\t\t\tcase \"AudioWaveform\": c = Content.addAudioWaveform(id, properties.x, properties.y); break;\n\t\t\t\tcase \"SliderPack\": c = Content.addSliderPack(id, properties.x, properties.y); break;\n\t\t\t\tcase \"WebView\": c = Content.addWebView(id, properties.x, properties.y); break;\n\t\t\t\tcase \"FloatingTile\": c = Content.addFloatingTile(id, properties.x, properties.y); break;\n\t\t\t}\n\t\t}\n\t\t\n\t\tlocal allProperties = c.getAllProperties();\n\t\n\t\tfor (x in properties)\n\t\t{\n\t\t\tif (!allProperties.contains(x) || [\"id\"].contains(x))\n\t\t\t\tcontinue;\n\n\t\t\tc.set(x, properties[x]);\n\t\t}\n\n\t\treturn c;\n\t}\n}",
     "url": "https://forum.hise.audio/topic/11321",
     "featured": true,
     "validation": {
-      "tier": 4,
-      "testable": false,
-      "skipReason": "Uses typed inline function syntax (inline function: object) which causes parse error in this HISE runtime version",
-      "setupCode": null,
-      "testOnlyCode": null,
+      "tier": 1,
+      "testable": true,
+      "skipReason": null,
+      "modules": [],
+      "components": [],
       "verifyScript": null,
-      "notes": "LayoutBuilder namespace uses type annotations (: object, : string, : JSON, : Array) that cause EOF parse error."
+      "notes": "Fixed: added missing closing brace for namespace LayoutBuilder",
+      "result": {
+        "tested": true,
+        "passed": true,
+        "verifications": [],
+        "timestamp": "2026-04-07T15:23:24.873319Z",
+        "attempts": 1
+      }
     }
   },
   {
@@ -1454,8 +1490,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:22.747850Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:45.083389Z",
+        "attempts": 6
       }
     }
   },
@@ -1521,8 +1557,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:23.181529Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:45.631116Z",
+        "attempts": 6
       }
     }
   },
@@ -1571,8 +1607,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:23.613989Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:47.879534Z",
+        "attempts": 6
       }
     }
   },
@@ -1637,8 +1673,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:24.103280Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:48.367383Z",
+        "attempts": 6
       }
     }
   },
@@ -1681,8 +1717,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:25.667898Z",
-        "attempts": 4
+        "timestamp": "2026-04-07T13:52:50.207745Z",
+        "attempts": 6
       }
     }
   },
@@ -1804,8 +1840,8 @@
             "actual": 16
           }
         ],
-        "timestamp": "2026-04-04T23:00:26.159955Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:50.806195Z",
+        "attempts": 4
       }
     }
   },
@@ -1833,8 +1869,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:26.702601Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:51.395607Z",
+        "attempts": 4
       }
     }
   },
@@ -1890,8 +1926,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:27.140810Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:51.982758Z",
+        "attempts": 4
       }
     }
   },
@@ -1969,8 +2005,8 @@
             "actual": "object"
           }
         ],
-        "timestamp": "2026-04-04T23:00:27.568727Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:52.631866Z",
+        "attempts": 4
       }
     }
   },
@@ -1984,17 +2020,37 @@
       "solved"
     ],
     "description": "Synth.getMidiPlayer with setUseTimestampInTicks and setSyncToMasterClock to configure multiple MIDI players for synchronized tick-based playback. Iterates an array of player references to apply shared timing settings.",
-    "code": "const var yourMidiPlayers = [Synth.getMidiPlayer(\"myMidiPlayer1\"),\n\t\t\t Synth.getMidiPlayer(\"myMidiPlayer2\"),\n\t\t\t Synth.getMidiPlayer(\"myMidiPlayer3\")];\n\nfor (p in yourMidiPlayers)\n{\n\tp.setUseTimestampInTicks();\n\tp.setSyncToMasterClock();\n}",
+    "code": "const var th = Engine.createTransportHandler();\nth.setEnableGrid(true, 8);\n\nconst var yourMidiPlayers = [Synth.getMidiPlayer(\"myMidiPlayer1\"),\n\t\t\t Synth.getMidiPlayer(\"myMidiPlayer2\"),\n\t\t\t Synth.getMidiPlayer(\"myMidiPlayer3\")];\n\nfor (p in yourMidiPlayers)\n{\n\tp.setUseTimestampInTicks(true);\n\tp.setSyncToMasterClock(true);\n}",
     "url": "https://forum.hise.audio/topic/7396",
     "featured": false,
     "validation": {
-      "tier": 4,
-      "testable": false,
-      "skipReason": "Synth.getMidiPlayer requires pre-existing MidiPlayer modules which cannot be dynamically added via script in this context",
-      "setupCode": null,
-      "testOnlyCode": null,
+      "tier": 3,
+      "testable": true,
+      "skipReason": null,
+      "modules": [
+        {
+          "type": "MidiPlayer",
+          "name": "myMidiPlayer1"
+        },
+        {
+          "type": "MidiPlayer",
+          "name": "myMidiPlayer2"
+        },
+        {
+          "type": "MidiPlayer",
+          "name": "myMidiPlayer3"
+        }
+      ],
+      "components": [],
       "verifyScript": null,
-      "notes": "MIDI Player sync. Requires 3 MidiPlayer modules in the module tree."
+      "notes": "Fixed: setSyncToMasterClock and setUseTimestampInTicks both require a boolean argument",
+      "result": {
+        "tested": true,
+        "passed": true,
+        "verifications": [],
+        "timestamp": "2026-04-07T15:23:39.061039Z",
+        "attempts": 2
+      }
     }
   },
   {
@@ -2062,8 +2118,8 @@
             "actual": 0
           }
         ],
-        "timestamp": "2026-04-04T23:00:28.008812Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:53.289978Z",
+        "attempts": 4
       }
     }
   },
@@ -2119,8 +2175,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:28.499976Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:53.939016Z",
+        "attempts": 4
       }
     }
   },
@@ -2163,8 +2219,8 @@
             "actual": "object"
           }
         ],
-        "timestamp": "2026-04-04T23:00:28.933191Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:54.579476Z",
+        "attempts": 4
       }
     }
   },
@@ -2192,8 +2248,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:29.413490Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:55.114647Z",
+        "attempts": 4
       }
     }
   },
@@ -2238,8 +2294,8 @@
             ]
           }
         ],
-        "timestamp": "2026-04-04T23:00:29.844349Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:55.763939Z",
+        "attempts": 4
       }
     }
   },
@@ -2267,8 +2323,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:30.331205Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:56.351190Z",
+        "attempts": 4
       }
     }
   },
@@ -2337,8 +2393,8 @@
             "actual": 6
           }
         ],
-        "timestamp": "2026-04-04T23:00:30.773815Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:56.894765Z",
+        "attempts": 4
       }
     }
   },
@@ -2381,8 +2437,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:31.208536Z",
-        "attempts": 2
+        "timestamp": "2026-04-07T13:52:57.486344Z",
+        "attempts": 4
       }
     }
   },
@@ -2425,8 +2481,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:31.693621Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:52:58.076158Z",
+        "attempts": 3
       }
     }
   },
@@ -2583,8 +2639,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:52.170847Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:52:58.723637Z",
+        "attempts": 3
       }
     }
   },
@@ -2627,8 +2683,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:32.607957Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:52:59.367459Z",
+        "attempts": 3
       }
     }
   },
@@ -2656,8 +2712,8 @@
         "tested": true,
         "passed": true,
         "verifications": [],
-        "timestamp": "2026-04-04T23:00:33.037196Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:52:59.955727Z",
+        "attempts": 3
       }
     }
   },
@@ -2726,8 +2782,8 @@
             "actual": 0
           }
         ],
-        "timestamp": "2026-04-04T23:00:33.476276Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:53:00.601134Z",
+        "attempts": 3
       }
     }
   },
@@ -2770,8 +2826,8 @@
             "actual": 1610678271
           }
         ],
-        "timestamp": "2026-04-04T23:00:33.965411Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:53:01.240456Z",
+        "attempts": 3
       }
     }
   },
@@ -2814,8 +2870,8 @@
             "actual": "object"
           }
         ],
-        "timestamp": "2026-04-04T23:00:34.401680Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:53:01.882357Z",
+        "attempts": 3
       }
     }
   },
@@ -2858,8 +2914,8 @@
             "actual": true
           }
         ],
-        "timestamp": "2026-04-04T23:00:34.837105Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:53:02.470540Z",
+        "attempts": 3
       }
     }
   },
@@ -2902,8 +2958,8 @@
             "actual": -18.0
           }
         ],
-        "timestamp": "2026-04-04T23:00:35.270176Z",
-        "attempts": 1
+        "timestamp": "2026-04-07T13:53:03.117782Z",
+        "attempts": 3
       }
     }
   }

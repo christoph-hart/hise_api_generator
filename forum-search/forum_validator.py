@@ -35,7 +35,7 @@ SCRIPT_DIR = Path(__file__).parent
 PARENT_DIR = SCRIPT_DIR.parent
 sys.path.insert(0, str(PARENT_DIR))
 
-from snippet_validator import HISEAPIClient, HISELauncher, SnippetValidator, Colors
+from snippet_validator import HISEAPIClient, HISELauncher, HISEConnectionError, SnippetValidator, Colors
 
 CODE_EXAMPLES_DIR = SCRIPT_DIR / "code_examples"
 VALIDATED_DIR = CODE_EXAMPLES_DIR / "validated"
@@ -140,111 +140,86 @@ For each code example, produce a JSON object with these fields:
   "tier": <int 1-4>,
   "testable": <bool>,
   "skipReason": <string or null>,
-  "setupCode": <string or null>,
-  "testOnlyCode": <string or null>,
+  "modules": [{"type": "SimpleGain", "name": "Simple Gain1"}],
+  "components": [{"type": "ScriptSlider", "id": "Knob1"}],
   "verifyScript": <array of verification objects or null>,
   "notes": <string or null>
 }
 ```
 
+The validator creates modules and components via REST API before compiling \
+the example code. The example code is compiled exactly as-is — no prepending.
+
 ## Tier Classification
 
-- **Tier 1**: No setup needed. Self-contained code (pure functions, LAF definitions, \
-code that creates its own components via Content.add*).
-- **Tier 2**: Needs UI component creation. Code calls Content.getComponent("name") \
-for components that don't exist. Setup must create them.
-- **Tier 3**: Needs audio module creation AND possibly components. Code calls \
-Synth.getEffect, Synth.getSampler, etc. for modules that don't exist.
-- **Tier 4**: Depends on external resources (images, server, sample maps, expansions). \
-Mark testable: false.
+- **Tier 1**: Self-contained (pure functions, LAF, code that creates its own components).
+- **Tier 2**: Needs UI components. Code calls Content.getComponent("name").
+- **Tier 3**: Needs audio modules + possibly components. Code calls Synth.getEffect etc.
+- **Tier 4**: Truly untestable. Mark testable: false.
 
-## Setup Code Rules
+## Skip Policy — Default to Testable
 
-Setup code is **prepended** to the example code before compilation. It must:
+Only skip for truly impossible cases:
+- FileSystem.browse / browseForDirectory (modal dialogs)
+- loadImage / loadFontAs with {PROJECT_FOLDER} paths (files missing)
+- Server.* API calls (needs network)
+- Non-HiseScript code (C++, FAUST)
+- References to undefined project-specific variables (e.g. TBLLaf, ErrorHandler.errorLabel)
 
-1. Include `Content.makeFrontInterface(600, 400);` if the example doesn't already have it
-2. Create any UI components the example references via Content.getComponent:
-   - Knobs/Sliders: `Content.addKnob("name", x, y);`
-   - Buttons: `Content.addButton("name", x, y);`
-   - Panels: `Content.addPanel("name", x, y);`
-   - Labels: `Content.addLabel("name", x, y);`
-   - ComboBoxes: `Content.addComboBox("name", x, y);`
-   - Tables: `Content.addTable("name", x, y);`
-   - SliderPacks: `Content.addSliderPack("name", x, y);`
-   - Viewports: `Content.addViewport("name", x, y);`
-   - AudioWaveforms: `Content.addAudioWaveform("name", x, y);`
-   - FloatingTiles: `Content.addFloatingTile("name", x, y);`
-3. Infer component type from:
-   - Name prefix (Knob*, knb* -> addKnob; Button*, btn* -> addButton; Panel*, pnl* -> addPanel)
-   - Method usage (.setPaintRoutine -> Panel; .addItem -> ComboBox; .setRange -> Knob)
-   - Default to addKnob if ambiguous
+DO NOT skip: UserPresetHandler, Engine.saveUserPreset, CSS styling, \
+typed inline functions, Synth.getSampler (use StreamingSampler type), \
+MIDI callbacks, LAF paint routines. When in doubt, mark testable: true \
+with verifyScript: null. Let the HISE runtime decide.
 
-For Tier 3, modules must be created SEPARATELY before the example compiles \
-(they persist across recompilations). Use this pattern in setupCode, \
-but prefix module creation lines with `// MODULE_SETUP: ` so the validator \
-can split them into a separate compilation step:
-```
-// MODULE_SETUP: Synth.addEffect("SimpleGain", "Simple Gain1", -1);
-// MODULE_SETUP: Synth.addEffect("SimpleGain", "Simple Gain2", -1);
-Content.makeFrontInterface(600, 400);
-Content.addKnob("Knob1", 0, 0);
-```
+## Modules Array
 
-## Test-Only Code
+Each entry: {"type": "<ModuleTypeID>", "name": "<instance name>"}.
+Common types: SimpleGain, SimpleReverb, Delay, Dynamics, PolyphonicFilter, \
+Chorus, Saturator, StereoFX, ShapeFX, Convolution, CurveEq, \
+SineSynth, StreamingSampler, SynthGroup, Noise, \
+Arpeggiator, Transposer, MidiPlayer, LFO, AHDSR, Velocity.
 
-Code appended after the example that compiles with it but is hidden from end users. \
-Use this for additional declarations or setup that must share scope with the example. \
-Do NOT put callback triggers here — they won't work because callbacks aren't active \
-during compilation. Instead, trigger callbacks via REPL verification steps (see below).
+For Synth.getSampler("Sampler1") use: {"type": "StreamingSampler", "name": "Sampler1"}
+For Synth.getMidiPlayer("MIDI Player1") use: {"type": "MidiPlayer", "name": "MIDI Player1"}
+
+## Components Array
+
+Each entry: {"type": "<ComponentType>", "id": "<component ID>"}.
+Types: ScriptSlider, ScriptButton, ScriptPanel, ScriptLabel, ScriptComboBox, \
+ScriptFloatingTile, ScriptTable, ScriptSliderPack, ScriptedViewport, \
+ScriptAudioWaveform, ScriptImage.
+
+Infer from name prefix (Knob* -> ScriptSlider, Button* -> ScriptButton, \
+Panel* -> ScriptPanel) or method usage (.setPaintRoutine -> ScriptPanel, \
+.addItem -> ScriptComboBox). Default to ScriptSlider if ambiguous.
+
+Don't add components the example creates itself via Content.addKnob etc.
 
 ## Verification Script
 
-Array of verification steps. Each step is one of:
+### REPL
+{"type": "REPL", "expression": "expr", "value": expected, "delay": 0}
 
-### REPL verification
-```json
-{"type": "REPL", "expression": "variableName", "value": expectedValue, "delay": 0}
-```
-- `expression`: any valid HiseScript expression accessible in onInit scope
-- `value`: expected result (number, string, bool, or "undefined")
-- `delay`: milliseconds to wait before checking (use 100-300 for async, 0 for sync)
+### Callback trigger via set_component_value
+{"type": "set_value", "component": "Knob1", "value": 0.5, "delay": 0}
+This directly triggers the control callback. Place before REPL checks that \
+verify callback side effects. Use 200ms delay on the subsequent REPL check.
 
-**IMPORTANT: Triggering callbacks via REPL.** Control callbacks set up with \
-`setControlCallback` are NOT active during compilation. To test them, use a REPL \
-step to trigger, then a subsequent REPL step to check the result:
-```json
-{"type": "REPL", "expression": "MyKnob.setValue(-6.0) || MyKnob.changed()", "value": 0, "delay": 0},
-{"type": "REPL", "expression": "someVariable", "value": expectedAfterCallback, "delay": 200}
-```
-The `||` trick works because `setValue` and `changed` return undefined/0, so the \
-expression evaluates to 0. The 200ms delay on the next step gives the callback time to fire.
-
-### Log output verification
-```json
-{"type": "log-output", "values": ["expected", "log", "lines"]}
-```
-- Matches Console.print output in order
+### Log output
+{"type": "log-output", "values": ["line1", "line2"]}
 
 ### Error expectation
-```json
-{"type": "expect-error", "errorMessage": "substring of expected error"}
-```
+{"type": "expect-error", "errorMessage": "substring"}
 
-## Important Guidelines
+## Guidelines
 
-1. Only mark testable: false if truly untestable (external resources, modal dialogs like FileSystem.browse)
-2. For LAF/paint routines: testable via compilation only. Set verifyScript to null — \
-   successful compilation is sufficient.
-3. For callback-only code (function onNoteOn, function onController): these are MIDI \
-   callbacks that can't be triggered via REPL. Compilation test only.
-4. Variables declared with `const var` in onInit scope are accessible via REPL.
-5. Inline functions can be called from testOnlyCode.
-6. REPL expressions must reference variables that exist after compilation.
-7. `reg` variables persist globally. `var`/`const var` are script-scoped.
-8. If the example uses Content.addKnob etc. to create its own components, \
-   don't duplicate them in setup.
-9. When computing expected REPL values, trace through the code carefully. \
-   If the result depends on runtime state you can't predict, skip REPL verification.
+1. Default to testable. Only skip for truly impossible cases.
+2. LAF/paint routines: testable compile-only, verifyScript: null.
+3. MIDI callbacks (onNoteOn, onController): compile-only.
+4. const var and reg variables are accessible via REPL.
+5. Don't duplicate components the example creates itself.
+6. Trace code carefully for expected REPL values. Skip REPL if unpredictable.
+7. Default knob range is 0.0-1.0 — integer indexing won't work without reconfiguring.
 """
 
 
@@ -472,9 +447,47 @@ def retry_with_claude(entries: list, batch_name: str,
 # HISE Validation runner
 # ---------------------------------------------------------------------------
 
+# Module chain index mapping for builder/apply
+CHAIN_FX = 3
+CHAIN_CHILDREN = -1
+CHAIN_MIDI = 0
+
+# Module categories that determine which chain to use
+EFFECT_TYPES = {
+    "SimpleGain", "SimpleReverb", "Convolution", "Delay", "Dynamics",
+    "Saturator", "StereoFX", "ShapeFX", "PolyshapeFX", "PhaseFX",
+    "PolyphonicFilter", "HarmonicFilter", "CurveEq", "Chorus",
+    "HardcodedMasterFX", "SendFX", "SlotFX", "RouteFX", "EmptyFX",
+    "Analyser",
+}
+
+MIDI_PROCESSOR_TYPES = {
+    "Arpeggiator", "Transposer", "MidiPlayer", "MidiMuter",
+    "ReleaseTrigger", "CC2Note", "CCSwapper", "ChannelFilter",
+    "ChannelSetter", "ChokeGroupProcessor", "MidiMetronome",
+}
+
+
+def _chain_for_module_type(module_type: str) -> int:
+    """Determine the chain index for a module type."""
+    if module_type in EFFECT_TYPES:
+        return CHAIN_FX
+    if module_type in MIDI_PROCESSOR_TYPES:
+        return CHAIN_MIDI
+    # Default to children (sound generators, containers)
+    return CHAIN_CHILDREN
+
+
 def run_validation(entries: list, launcher: HISELauncher, api: HISEAPIClient,
                    index_filter=None, verbose=True):
     """Run HISE validation on entries that have validation metadata.
+
+    Uses the new REST API flow:
+    1. builder/reset — clean module tree
+    2. builder/apply — add required modules
+    3. ui/apply — add required UI components
+    4. set_script — compile the example code
+    5. set_component_value + repl — verify behavior
 
     Modifies entries in-place, adding/updating validation.result.
     Returns (passed, failed, skipped) counts.
@@ -492,7 +505,6 @@ def run_validation(entries: list, launcher: HISELauncher, api: HISEAPIClient,
             continue
 
         title = entry.get("title", f"Example {i}")
-        slug = topic_slug(entry.get("url", ""))
 
         if not v.get("testable", False):
             if verbose:
@@ -500,70 +512,321 @@ def run_validation(entries: list, launcher: HISELauncher, api: HISEAPIClient,
             skipped += 1
             continue
 
-        # Build the test dict for SnippetValidator
-        setup_code = v.get("setupCode", "") or ""
+        timestamp = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
         code = entry.get("code", "")
 
-        # Split module setup lines (run as separate compilation) from component setup
-        module_setup_lines = []
-        component_setup_lines = []
+        # --- Step 1: Reset module tree for clean state ---
+        try:
+            time.sleep(0.5)  # let async UI ops from previous example settle
+            reset_result = api.builder_reset()
+            if not reset_result.get("success"):
+                result = {"tested": True, "passed": False, "stage": "setup",
+                          "error": "builder/reset failed", "timestamp": timestamp}
+                _store_result(v, result)
+                failed += 1
+                if verbose:
+                    print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] builder/reset failed")
+                continue
+            time.sleep(0.5)  # let module tree teardown complete before next step
+        except HISEConnectionError as e:
+            result = {"tested": True, "passed": False, "stage": "setup",
+                      "error": str(e), "timestamp": timestamp}
+            _store_result(v, result)
+            failed += 1
+            if verbose:
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] {e}")
+            # Check if HISE is still alive
+            time.sleep(2)
+            try:
+                api.status()
+            except Exception:
+                if verbose:
+                    print(f"  {Colors.yellow('WARNING')}: HISE unresponsive after builder/reset, stopping")
+                break
+            continue
+
+        # --- Step 2: Add modules via builder/apply ---
+        # Modules with a "parent" field referencing another module in the list
+        # must be added in a separate call after the parent exists.
+        modules = v.get("modules", [])
+        if modules:
+            # Split into batches: first batch = modules with default parent,
+            # subsequent batches = modules whose parent was just created.
+            master_ops = []
+            child_ops = []  # list of (parent, op) for modules needing a non-Master parent
+            for mod in modules:
+                chain = mod.get("chain", _chain_for_module_type(mod["type"]))
+                parent = mod.get("parent", "Master Chain")
+                op = {
+                    "op": "add",
+                    "type": mod["type"],
+                    "parent": parent,
+                    "chain": chain,
+                    "name": mod["name"]
+                }
+                if parent == "Master Chain":
+                    master_ops.append(op)
+                else:
+                    child_ops.append(op)
+
+            setup_failed = False
+            for batch in ([master_ops] if not child_ops else [master_ops, child_ops]):
+                if not batch:
+                    continue
+                try:
+                    builder_result = api.builder_apply(batch)
+                    if not builder_result.get("success"):
+                        errors = builder_result.get("errors", [])
+                        err_msg = errors[0].get("errorMessage", "unknown") if errors else "unknown"
+                        result = {"tested": True, "passed": False, "stage": "setup",
+                                  "error": f"builder/apply: {err_msg}", "timestamp": timestamp}
+                        _store_result(v, result)
+                        failed += 1
+                        if verbose:
+                            print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] builder/apply: {err_msg[:100]}")
+                        setup_failed = True
+                        break
+                    time.sleep(0.3)  # let module init settle before adding children
+                except Exception as e:
+                    result = {"tested": True, "passed": False, "stage": "setup",
+                              "error": str(e), "timestamp": timestamp}
+                    _store_result(v, result)
+                    failed += 1
+                    if verbose:
+                        print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] {e}")
+                    setup_failed = True
+                    break
+            if setup_failed:
+                continue
+
+        # --- Step 3: Add UI components via ui/apply ---
+        components = v.get("components", [])
+        if components:
+            ops = []
+            for comp in components:
+                ops.append({
+                    "op": "add",
+                    "componentType": comp["type"],
+                    "id": comp["id"]
+                })
+            try:
+                ui_result = api.ui_apply("Interface", ops)
+                if not ui_result.get("success"):
+                    errors = ui_result.get("errors", [])
+                    err_msg = errors[0].get("errorMessage", "unknown") if errors else "unknown"
+                    result = {"tested": True, "passed": False, "stage": "setup",
+                              "error": f"ui/apply: {err_msg}", "timestamp": timestamp}
+                    _store_result(v, result)
+                    failed += 1
+                    if verbose:
+                        print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] ui/apply: {err_msg[:100]}")
+                    continue
+            except Exception as e:
+                result = {"tested": True, "passed": False, "stage": "setup",
+                          "error": str(e), "timestamp": timestamp}
+                _store_result(v, result)
+                failed += 1
+                if verbose:
+                    print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] {e}")
+                continue
+
+        # --- Steps 4-5: Compile + verify (wrapped in connection error handler) ---
+        try:
+            p, f, s = _run_example_test(api, validator, v, entry, i, title, timestamp, verbose)
+            passed += p
+            failed += f
+            skipped += s
+        except HISEConnectionError as e:
+            result = {"tested": True, "passed": False, "stage": "execute",
+                      "error": f"HISE connection lost: {e}", "timestamp": timestamp}
+            _store_result(v, result)
+            failed += 1
+            if verbose:
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [execute] HISE connection lost")
+            # Try to wait for HISE to recover
+            time.sleep(2)
+            try:
+                api.status()
+            except Exception:
+                if verbose:
+                    print(f"  {Colors.yellow('WARNING')}: HISE unresponsive, skipping remaining examples")
+                break
+
+    return passed, failed, skipped
+
+
+def _run_example_test(api, validator, v, entry, i, title, timestamp, verbose):
+    """Run compile + verify for a single example. Returns (passed, failed, skipped) tuple."""
+    code = entry.get("code", "")
+    modules = v.get("modules", [])
+
+    # --- Handle legacy setupCode (backward compat with batch_001) ---
+    setup_code = v.get("setupCode")
+    if setup_code:
+        module_ops = []
+        component_lines = []
         for line in setup_code.split("\n"):
             stripped = line.strip()
             if stripped.startswith("// MODULE_SETUP: "):
-                module_setup_lines.append(stripped.replace("// MODULE_SETUP: ", "", 1))
+                m = re.search(r'Synth\.addEffect\(\s*"([^"]+)"\s*,\s*"([^"]+)"', stripped)
+                if m:
+                    mod_type, mod_name = m.group(1), m.group(2)
+                    chain = _chain_for_module_type(mod_type)
+                    module_ops.append({
+                        "op": "add", "type": mod_type,
+                        "parent": "Master Chain", "chain": chain,
+                        "name": mod_name
+                    })
             else:
-                component_setup_lines.append(line)
+                component_lines.append(line)
 
-        module_setup = "\n".join(module_setup_lines).strip()
-        component_setup = "\n".join(component_setup_lines).strip()
+        if module_ops and not modules:
+            builder_result = api.builder_apply(module_ops)
+            if not builder_result.get("success"):
+                errors = builder_result.get("errors", [])
+                err_msg = errors[0].get("errorMessage", "unknown") if errors else "unknown"
+                result = {"tested": True, "passed": False, "stage": "setup",
+                          "error": f"legacy builder/apply: {err_msg}", "timestamp": timestamp}
+                _store_result(v, result)
+                if verbose:
+                    print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [setup] legacy builder: {err_msg[:100]}")
+                return 0, 1, 0
 
-        # Build the full code: component setup + example code
-        parts = []
-        if component_setup:
-            parts.append(component_setup)
-        parts.append(code)
-        full_code = "\n\n".join(parts)
+        clean_setup = "\n".join(component_lines).strip()
+        if clean_setup:
+            code = clean_setup + "\n\n" + code
 
+    test_only = v.get("testOnlyCode")
+    verify_scripts = v.get("verifyScript")
+
+    # Separate set_value steps from REPL/log steps
+    set_value_steps = []
+    repl_verify_steps = []
+    if verify_scripts:
+        for vs in (verify_scripts if isinstance(verify_scripts, list) else [verify_scripts]):
+            if vs.get("type") == "set_value":
+                set_value_steps.append(vs)
+            else:
+                repl_verify_steps.append(vs)
+
+    if set_value_steps:
+        # --- Path A: Has set_value triggers (compile, trigger, verify separately) ---
+        compile_result = api.set_script("Interface", {"onInit": code})
+        if not compile_result.get("success") or compile_result.get("errors"):
+            err = compile_result.get("errors", ["unknown"])
+            err_str = err[0] if isinstance(err, list) and err else str(err)
+            if isinstance(err_str, dict):
+                err_str = err_str.get("errorMessage", str(err_str))
+            result = {"tested": True, "passed": False, "stage": "execute",
+                      "error": compile_result.get("errors", []), "timestamp": timestamp}
+            _store_result(v, result)
+            if verbose:
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [execute] {str(err_str)[:120]}")
+            return 0, 1, 0
+
+        time.sleep(0.2)
+
+        # Fire set_value triggers
+        for sv in set_value_steps:
+            delay_ms = sv.get("delay", 0)
+            if delay_ms > 0:
+                time.sleep(delay_ms / 1000.0)
+            api.set_component_value("Interface", sv["component"], sv["value"])
+
+        # Run REPL verification
+        if repl_verify_steps:
+            verifications = []
+            for j, vs in enumerate(repl_verify_steps):
+                delay_ms = vs.get("delay", 100 if j > 0 else 0)
+                delay_ms = min(delay_ms, 1000)
+                if delay_ms > 0:
+                    time.sleep(delay_ms / 1000.0)
+
+                if vs.get("type") == "REPL":
+                    expr = vs.get("expression", "")
+                    expected = vs.get("value")
+                    repl_result = api.repl("Interface", expr)
+                    actual = repl_result.get("value")
+                    verifications.append({"type": "REPL", "expression": expr,
+                                          "expected": expected, "actual": actual, "delay": delay_ms})
+                    if not validator._values_match(expected, actual):
+                        result = {"tested": True, "passed": False, "stage": "verify",
+                                  "error": f"Expected {expr} -> {expected}, got {actual}",
+                                  "verifications": verifications, "timestamp": timestamp}
+                        _store_result(v, result)
+                        if verbose:
+                            print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [verify] {expr}: expected {expected}, got {actual}")
+                        return 0, 1, 0
+
+                elif vs.get("type") == "log-output":
+                    expected_logs = vs.get("values", [])
+                    actual_logs = validator._filter_test_noise(compile_result.get("logs", []))
+                    verifications.append({"type": "log-output",
+                                          "expected": expected_logs, "actual": list(actual_logs), "delay": delay_ms})
+                    if not validator._logs_match(expected_logs, actual_logs):
+                        result = {"tested": True, "passed": False, "stage": "verify",
+                                  "error": f"Log mismatch", "verifications": verifications, "timestamp": timestamp}
+                        _store_result(v, result)
+                        if verbose:
+                            print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [verify] log mismatch")
+                        return 0, 1, 0
+
+            result = {"tested": True, "passed": True,
+                      "verifications": verifications, "timestamp": timestamp}
+            _store_result(v, result)
+            if verbose:
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.green('PASS')} {title} ({len(verifications)} checks)")
+            return 1, 0, 0
+        else:
+            result = {"tested": True, "passed": True, "verifications": [], "timestamp": timestamp}
+            _store_result(v, result)
+            if verbose:
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.green('PASS')} {title}")
+            return 1, 0, 0
+
+    else:
+        # --- Path B: No set_value steps — use SnippetValidator directly ---
         test_dict = {
-            "code": full_code,
+            "code": code,
             "testMetadata": {
                 "testable": True,
-                "setupScript": module_setup if module_setup else None,
-                "testOnly": v.get("testOnlyCode"),
-                "verifyScript": v.get("verifyScript"),
+                "verifyScript": repl_verify_steps if repl_verify_steps else None,
             }
         }
-        # Remove None values from testMetadata
+        if test_only:
+            test_dict["testMetadata"]["testOnly"] = test_only
         test_dict["testMetadata"] = {k: val for k, val in test_dict["testMetadata"].items() if val is not None}
 
-        # Run the test
         result = validator.test_example(test_dict)
-
-        # Store result
-        attempts = v.get("result", {}).get("attempts", 0) + 1
-        result["attempts"] = attempts
-        v["result"] = result
+        _store_result(v, result)
 
         if result.get("passed"):
-            passed += 1
             if verbose:
-                verify_count = len(result.get("verifications", []))
-                verify_str = f" ({verify_count} checks)" if verify_count else ""
-                print(f"  {Colors.dim(f'[{i}]')} {Colors.green('PASS')} {title}{verify_str}")
+                vc = len(result.get("verifications", []))
+                vs = f" ({vc} checks)" if vc else ""
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.green('PASS')} {title}{vs}")
+            return 1, 0, 0
         elif result.get("skipped"):
-            skipped += 1
             if verbose:
                 print(f"  {Colors.dim(f'[{i}]')} {Colors.yellow('SKIP')} {title} — {result.get('reason', '')}")
+            return 0, 0, 1
         else:
-            failed += 1
             if verbose:
                 stage = result.get("stage", "?")
                 error = result.get("error", "")
                 if isinstance(error, list):
                     error = "; ".join(str(e) for e in error[:2])
-                print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [{stage}] {error[:120]}")
+                print(f"  {Colors.dim(f'[{i}]')} {Colors.red('FAIL')} {title} [{stage}] {str(error)[:120]}")
+            return 0, 1, 0
 
     return passed, failed, skipped
+
+
+def _store_result(validation: dict, result: dict):
+    """Store test result, preserving attempt count."""
+    attempts = validation.get("result", {}).get("attempts", 0) + 1
+    result["attempts"] = attempts
+    validation["result"] = result
 
 
 # ---------------------------------------------------------------------------
