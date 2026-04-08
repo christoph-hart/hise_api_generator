@@ -136,6 +136,22 @@ Sorted by severity (critical first).
 - **Observed:** The Q parameter range is 0.3-8.0 in the UI, but scripted `setAttribute` calls can set values below 0.3, bypassing the UI range limit and triggering an assertion failure.
 - **Expected:** Clamp Q to the valid range (0.3-8.0) in `setInternalAttribute` before applying.
 
+### Arpeggiator -- Timer does not stop when DAW transport stops
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/hardcoded_modules/Arpeggiator.cpp:602-612
+- **Observed:** The Arpeggiator timer continues running when the DAW transport is stopped. The `onTimer` function only checks if keys are held (`keys_are_held()`), with no DAW transport state check. `Synth.startTimer()` starts without verifying playback state. Users expect tempo-synced modules to stop with transport.
+- **Expected:** Check DAW transport state in the timer logic. When transport stops, either pause the timer or stop the arpeggiator. A `TransportHandler` workaround exists but should not be necessary for a built-in tempo-synced module.
+
+### Arpeggiator -- OctaveRange expansion can overflow int8 note numbers
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/hardcoded_modules/Arpeggiator.cpp:632
+- **Observed:** The octave expansion adds `(int8)(octaveSign * i * 12)` to held note numbers. The `NoteWithChannel` struct uses `int8` for `noteNumber` (max 127). When a high note (e.g., C7 = 96) is expanded by +3 octaves (+36), the result (132) overflows `int8`, wrapping to a negative value. No bounds check exists before the note is passed to `Synth.addNoteOn()`.
+- **Expected:** Clamp expanded note numbers to the 0-127 range, or skip notes that would exceed the valid MIDI range.
+
 ## Low
 
 ### Convolution -- ImpulseLength parameter is vestigial

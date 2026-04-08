@@ -65,6 +65,13 @@ llmRef: |
   When to use:
     Standard arpeggiation, sequenced patterns, chord strumming. Use Direction modes for traversal variety. Combine Stride with NumSteps to create polyrhythmic step patterns where the note selection and slider pack position cycle at different rates.
 
+  Gotchas:
+    Arp-generated notes are artificial events, invisible to sibling MIDI processors in the same chain. Place the arp in a parent container so child processors can see its output.
+    Preset loading sends allNotesOff and stops the arp. Store/retrigger notes manually to maintain a pattern across preset changes.
+    The arp timer does not stop when DAW transport stops; it runs as long as notes are held.
+    Tempo parameter has extended divisions when compiled with HISE_USE_EXTENDED_TEMPO_VALUES=1.
+    Hold can be driven by sustain pedal via setAttribute in onController callback (CC64).
+
   Common mistakes:
     Stride vs Direction confusion: they advance independently (Stride = slider pack position, Direction = note selection).
     Tie notes require both EnableTieNotes on AND length at exactly 100%.
@@ -196,7 +203,13 @@ onTimerTick() {
 groups:
   - label: Timing
     params:
-      - { name: Tempo, desc: "Step rate as a musical note value, synchronised to host tempo. The timer interval is recalculated each step from the current host BPM.", range: "1/1, 1/2D, 1/2, 1/2T, 1/4D, 1/4, 1/4T, 1/8D, 1/8, 1/8T, 1/16D, 1/16, 1/16T, 1/32D, 1/32, 1/32T, 1/64D, 1/64, 1/64T", default: "1/16" }
+      - name: Tempo
+        desc: "Step rate as a musical note value, synchronised to host tempo. The timer interval is recalculated each step from the current host BPM."
+        range: "1/1, 1/2D, 1/2, 1/2T, 1/4D, 1/4, 1/4T, 1/8D, 1/8, 1/8T, 1/16D, 1/16, 1/16T, 1/32D, 1/32, 1/32T, 1/64D, 1/64, 1/64T"
+        default: "1/16"
+        hints:
+          - type: tip
+            text: "Additional tempo divisions are available when HISE is compiled with `HISE_USE_EXTENDED_TEMPO_VALUES=1` in Extra Preprocessor Definitions."
       - { name: Shuffle, desc: "Swing amount. Alternates step timing: even steps (downbeats) are lengthened, odd steps (upbeats) are shortened. At 0 there is no swing; at 0.66 the timing approximates a triplet feel.", range: "0.0 - 1.0", default: "0.0" }
   - label: Sequence
     params:
@@ -209,7 +222,13 @@ groups:
   - label: Playback
     params:
       - { name: Bypass, desc: "Bypasses the arpeggiator. When bypassed, incoming notes pass through unchanged. On deactivation, held keys are cleared and all generated notes are stopped.", range: "On / Off", default: "Off" }
-      - { name: Hold, desc: "Latches notes after key release. When activated, releasing a key no longer removes it from the sequence. Deactivating Hold removes all latched notes; if no physical keys remain held, the arpeggiator stops.", range: "On / Off", default: "Off" }
+      - name: Hold
+        desc: "Latches notes after key release. When activated, releasing a key no longer removes it from the sequence. Deactivating Hold removes all latched notes; if no physical keys remain held, the arpeggiator stops."
+        range: "On / Off"
+        default: "Off"
+        hints:
+          - type: tip
+            text: "To use a sustain pedal for hold, set `Arpeggiator.Hold` via `setAttribute` in the `onController` callback when CC64 crosses the midpoint. Avoid sending artificial sustain pedal messages as they may interfere with other processors."
       - { name: EnableTieNotes, desc: "Enables note tying for steps whose length is set to 100%. With a single held note, the note sustains continuously across tied steps. With multiple notes, a brief overlap is used for a legato effect.", range: "On / Off", default: "Off" }
   - label: Channel Routing
     params:
@@ -223,14 +242,30 @@ groups:
 ---
 ::
 
-## Notes
+### Polyrhythmic Patterns
 
 The note traversal index and the slider pack step position are independent counters. The note index advances by the Direction mode increment, while the step position advances by Stride. When the held-key count and NumSteps differ, or when Stride is not 1, these two counters cycle at different rates, producing polyrhythmic patterns.
 
+### Slider Packs
+
 The three slider packs (semitone offset, velocity, and note length) are accessed through the SliderPackProcessor interface as complex data indices 0, 1, and 2. The semitone pack offsets the selected note by -24 to +24 semitones per step. The velocity pack sets the output velocity (1 to 127) per step. The length pack controls note duration as a percentage of the step interval, with two special values: 0% skips the step entirely, and 100% ties into the next step when EnableTieNotes is on.
+
+### Chord Mode
 
 In Chord mode, all notes in the expanded sequence are played simultaneously each step. Notes arriving within a short window of the chord onset are added to the current chord in real time. Chord mode always uses pitch-sorted order regardless of the SortKeys setting.
 
+### Placement
+
+Notes generated by the Arpeggiator are marked as artificial events and are not visible to sibling MIDI processors in the same chain. To process arp-generated notes in a downstream script, place the Arpeggiator in a parent container's MIDI chain so that child sound generators' MIDI processors can see the output.
+
+### Limitations
+
 The maximum step rate is limited to approximately 25 steps per second (40 ms minimum timer interval), regardless of host tempo.
+
+The arpeggiator timer does not respond to DAW transport - it continues running as long as notes are held, even when the host is stopped. Use a TransportHandler to detect stop events and release held notes if transport-aware behaviour is needed.
+
+Loading a user preset sends an all-notes-off message that stops the arpeggiator. To maintain a running pattern across preset changes, store the held note state before loading and retrigger the notes after the preset has loaded.
+
+### MPE
 
 In MPE mode, generated notes carry the per-channel gesture data (pressure, slide, glide) captured from the original input, preserving expressive control through the arpeggiator.
