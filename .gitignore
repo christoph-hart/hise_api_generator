@@ -16,5 +16,4 @@ ApiValueTreeBuilder/JuceLibraryCode/
 publish/
 forum-search/forum_cache/
 
-# Claude Code
-.claude/
+

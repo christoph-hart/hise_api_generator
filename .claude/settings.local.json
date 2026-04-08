@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(m['id']\\) for m in data]\")",
+      "Bash(node -e \"const d=require\\('./module_enrichment/base/moduleList.json'\\); d.forEach\\(m=>console.log\\(m.id\\)\\)\")",
+      "Skill(update-config)",
+      "Skill(extract-forum-insights)",
+      "Skill(update-forum)"
+    ]
+  }
+}
