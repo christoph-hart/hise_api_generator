@@ -799,5 +799,158 @@
       13164,
       13402
     ]
+  },
+  "modules:KeyNumber": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "KeyNumber",
+      "key number",
+      "note number modulator",
+      "keyboard tracking"
+    ],
+    "topicIds": [
+      398,
+      12781
+    ]
+  },
+  "modules:Constant": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "Constant",
+      "Constant modulator",
+      "fixed modulation"
+    ],
+    "topicIds": [
+      47,
+      1111,
+      1217,
+      2960,
+      3127,
+      3190,
+      3598,
+      4374,
+      4930,
+      6555,
+      6854,
+      10514,
+      10886,
+      11265,
+      11913,
+      14292
+    ]
+  },
+  "modules:Random": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "Random",
+      "Random modulator",
+      "random modulation",
+      "randomise velocity"
+    ],
+    "topicIds": [
+      149,
+      537,
+      1377,
+      1500,
+      1525,
+      1899,
+      2210,
+      2897,
+      3290,
+      3707,
+      3901,
+      4403,
+      4666,
+      5154,
+      5554,
+      6106,
+      6854,
+      9040,
+      9064,
+      9383,
+      9484,
+      9494,
+      9526,
+      9588,
+      9866,
+      10012,
+      10141,
+      12333,
+      12730,
+      12821,
+      13720,
+      13783,
+      13793,
+      14118
+    ]
+  },
+  "modules:PitchWheel": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "PitchWheel",
+      "pitch wheel",
+      "pitch bend",
+      "pitchbend modulator"
+    ],
+    "topicIds": [
+      445,
+      1578,
+      1665,
+      1922,
+      2304,
+      3585,
+      4150,
+      6205,
+      6288,
+      8406,
+      11256,
+      11642,
+      12365,
+      12608,
+      13828,
+      13830,
+      13837,
+      13991
+    ]
+  },
+  "modules:MidiController": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "MidiController",
+      "Midi Controller modulator",
+      "CC modulator",
+      "MIDI CC"
+    ],
+    "topicIds": [
+      933,
+      1847,
+      2392,
+      3076,
+      3179,
+      5268,
+      7122,
+      10095,
+      11531,
+      12335,
+      12615,
+      12919,
+      13641,
+      14278
+    ]
+  },
+  "modules:MPEModulator": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "MPEModulator",
+      "MPE modulator",
+      "MPE pressure",
+      "MPE slide",
+      "MPE glide"
+    ],
+    "topicIds": [
+      1245,
+      6132,
+      11871
+    ]
   }
 }

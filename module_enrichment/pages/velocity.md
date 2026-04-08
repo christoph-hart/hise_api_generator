@@ -129,15 +129,21 @@ groups:
   - label: Velocity Response
     params:
       - { name: Inverted, desc: "Flips the velocity curve so loud notes produce low modulation values and soft notes produce high values", range: "Off / On", default: "Off" }
-      - { name: UseTable, desc: "Enables a lookup table with a curve editor for custom velocity response shapes", range: "Off / On", default: "Off" }
-      - { name: DecibelMode, desc: "Maps the value through a -100 to 0 dB range then converts to linear gain, providing a logarithmic response curve", range: "Off / On", default: "Off" }
+      - name: UseTable
+        desc: "Enables a lookup table with a curve editor for custom velocity response shapes"
+        range: "Off / On"
+        default: "Off"
+        hints:
+          - type: info
+            text: "The table always operates in the linear 0-1 domain. When both Inverted and UseTable are active, the table receives the already-inverted value - design your curve with this in mind."
+      - name: DecibelMode
+        desc: "Maps the value through a -100 to 0 dB range then converts to linear gain, providing a logarithmic response curve"
+        range: "Off / On"
+        default: "Off"
+        hints:
+          - type: info
+            text: "Applied after the table lookup. The processing order is fixed: inversion, then table, then dB conversion."
 ---
 ::
-
-## Notes
-
-The three processing stages are applied in fixed order: inversion first, table lookup second, decibel conversion last. The table always operates in the linear 0-1 domain regardless of whether DecibelMode is enabled - the dB conversion happens after the table output.
-
-When both Inverted and UseTable are active, the table receives the inverted value. Design your table curve with this in mind - the X axis represents the already-inverted velocity.
 
 **See also:** $MODULES.KeyNumber$ -- similar voice-start modulator that reads MIDI note number instead of velocity, $MODULES.ArrayModulator$ -- per-note modulation values from a 128-entry slider pack, offering individual control per key, $MODULES.Constant$ -- also a VoiceStartModulator but outputs a fixed value (1.0) with no MIDI input

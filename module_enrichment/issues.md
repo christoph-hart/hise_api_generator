@@ -162,6 +162,14 @@ Sorted by severity (critical first).
 
 ## Low
 
+### ArrayModulator -- Doxygen class comment is copy-pasted from ConstantModulator
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/ArrayModulator.h:37
+- **Observed:** The Doxygen class comment reads "This modulator simply returns a constant value that can be used to change the gain or something else" which describes ConstantModulator, not ArrayModulator. The metadata description in ArrayModulator.cpp:39 is correct: "Creates a modulation signal from a slider pack array indexed by MIDI note number, allowing per-note modulation values."
+- **Expected:** Update the class comment to match the metadata description or describe the slider-pack-indexed lookup behavior.
+
 ### Convolution -- ImpulseLength parameter is vestigial
 
 - **Type:** vestigial
@@ -226,6 +234,14 @@ Sorted by severity (critical first).
 - **Observed:** In `onInit()`, the `mpeRange` bitmask is set to `mpeRange.setRange(1, 15, true)` which enables bits 1-15 (channels 2-16) but does not set bit 0 (channel 1, the MPE master channel). The `onControl()` handler (line 723) always force-enables bit 0 with `mpeRange.setBit(0, true)` after any MPE parameter change. This means on initial load (before the user changes any MPE parameter), if MPE mode is enabled globally, channel 1 events would be filtered out. After any MPE parameter change, channel 1 is correctly allowed. The MPE spec designates channel 1 as the manager channel which should always pass through.
 - **Expected:** Add `mpeRange.setBit(0, true)` after line 644 in `onInit()` to match the behavior in `onControl()`, ensuring channel 1 is allowed from initial load.
 
+### KeyNumber -- Doxygen class comment is copy-pasted from RandomModulator
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/KeyModulator.h:37
+- **Observed:** The Doxygen comment reads "A constant Modulator which calculates a random value at the voice start" which describes RandomModulator, not KeyModulator. The class actually maps MIDI note numbers to modulation values through a lookup table.
+- **Expected:** Update the Doxygen comment to describe the actual behavior, e.g., "A VoiceStartModulator which maps MIDI note numbers to modulation values through a lookup table."
+
 ### ReleaseTrigger -- Time parameter uses HiSlider::Time mode but operates in seconds
 
 - **Type:** inconsistency
@@ -234,6 +250,46 @@ Sorted by severity (critical first).
 - **Observed:** The Time parameter metadata uses `HiSlider::Time` mode which displays with "ms" suffix (per MacroControlledComponents.h:751). However, the parameter range is 0-20 with step 0.1, and the code in `onNoteOff()` (HardcodedScriptProcessor.h:407-410) divides the elapsed time from `Engine.getUptime()` (which returns seconds) directly by `timeKnob->getValue()`. The parameter value is treated as seconds in the signal path, but displayed as milliseconds in the UI. A Time value of 5 would display as "5 ms" but actually represent a 5-second attenuation window.
 - **Expected:** Either change the slider mode from `HiSlider::Time` to `HiSlider::Linear` with a custom suffix "s", or multiply the parameter value by 0.001 in the code to convert from the displayed milliseconds to seconds. The former is simpler and matches actual usage.
 
+### Constant -- Metadata description says "1.0" but GainMode returns 0.0
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/ConstantModulator.cpp:39; ConstantModulator.h:79
+- **Observed:** The `createMetadata()` description reads "Creates a constant modulation signal (1.0)..." but `calculateVoiceStartValue()` returns `0.0f` in GainMode (the most common use case). The code comment says "Returns 0.0f and let the intensity do its job." The effective output with default intensity (1.0) is indeed unity gain, so the end result matches the description, but the raw modulator output is 0.0, not 1.0.
+- **Expected:** Update the metadata description to say "Creates a constant modulation signal that can be controlled via setIntensity()" or similar wording that does not claim a specific numeric output.
+
+### Random -- Vestigial currentValue member variable
+
+- **Type:** vestigial
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/RandomModulator.h:74
+- **Observed:** The `currentValue` member is declared as `volatile float` in the class but is never read or written in the implementation (constructor, calculateVoiceStartValue, setInternalAttribute, getAttribute). It appears to be a leftover from an earlier implementation where the last generated value was cached.
+- **Expected:** Remove the unused member variable.
+
+### Random -- Header comment claims 7-bit quantisation that does not exist
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/RandomModulator.h:42
+- **Observed:** The Doxygen class comment states "the values are limited to 7bit for MIDI feeling" when the table is used. The actual implementation uses `getInterpolatedValue()` on a 512-entry table with full float precision linear interpolation. No 7-bit quantisation exists in the code.
+- **Expected:** Update the comment to reflect the actual behavior (512-point interpolated lookup with full float precision).
+
+### MidiController -- DefaultValue parameter is broken due to uint8 cast on 0-1 float
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** hi_core/hi_modules/modulators/mods/ControlModulator.cpp:196
+- **Observed:** In `setInternalAttribute(DefaultValue)`, the code synthesizes a fake CC event: `handleHiseEvent(HiseEvent(HiseEvent::Type::Controller, (uint8)controllerNumber, (uint8)defaultValue, 1))`. The `defaultValue` member is a float in range 0.0-1.0 (NormalizedPercentage slider mode). Casting a 0.0-1.0 float to `uint8` always produces 0 (for values < 1.0) or 1 (for exactly 1.0). This value is then divided by 127.0 in `handleHiseEvent`, yielding either 0.0 or 0.0079 as the effective modulation value. The DefaultValue slider appears functional in the UI but has no meaningful effect for any setting other than 0%.
+- **Expected:** The cast should scale the 0-1 value to 0-127 before truncating: `(uint8)(defaultValue * 127.0f)`. Alternatively, bypass the HiseEvent synthesis and set `inputValue`/`targetValue` directly from `defaultValue`.
+
+### MidiController -- Preliminary JSON has aftertouch and pitch wheel CC numbers swapped
+
+- **Type:** inconsistency
+- **Severity:** high
+- **Location:** module_enrichment/preliminary/MidiController.json (ControllerNumber description)
+- **Observed:** The preliminary JSON ControllerNumber description says "128 for aftertouch, 129 for pitch wheel". The actual C++ constants are `HiseEvent::PitchWheelCCNumber = 128` and `HiseEvent::AfterTouchCCNumber = 129` (defined in hi_tools/hi_tools/HiseEventBuffer.h:87-88). The metadata description in `createMetadata()` also has them swapped, stating "128 for aftertouch, 129 for pitch wheel".
+- **Expected:** Both the preliminary JSON and the C++ metadata description should read "128 for pitch wheel, 129 for aftertouch" to match the actual constant definitions.
+
 ### FlexAHDSR -- Preliminary JSON incorrectly lists VoiceStartModulator constrainer for SustainLevelModulation
 
 - **Type:** inconsistency
@@ -241,3 +297,51 @@ Sorted by severity (critical first).
 - **Location:** module_enrichment/preliminary/FlexAHDSR.json (SustainLevelModulation chain entry)
 - **Observed:** The preliminary JSON lists `"constrainer": "VoiceStartModulator"` for the SustainLevelModulation chain. However, the C++ metadata registration at FlexAhdsrEnvelope.cpp:113-116 does NOT call `.withConstrainer<VoiceStartModulatorFactoryType::Constrainer>()` for this chain (unlike all other four chains). The chain is created with `ModulationType::Normal` (not `VoiceStartOnly`) and `calculateBlock()` has a dedicated per-sample code path for time-variant sustain modulation. The chain intentionally accepts all modulator types.
 - **Expected:** Remove or correct the constrainer field for SustainLevelModulation in the preliminary JSON and downstream documentation. The chain should be documented as accepting both voice-start and time-variant modulators.
+
+### EventDataModulator -- SlotIndex parameter allows index 16, which silently aliases to slot 0
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/EventDataModulator.h:91
+- **Observed:** `setInternalAttribute` uses `jlimit<uint8>(0, AdditionalEventStorage::NumDataSlots, ...)` where `NumDataSlots = 16`, allowing index 16. The slider range also goes to 16.0. However, `AdditionalEventStorage::getValue()` masks the index with `(NumDataSlots - 1)` = 15, so index 16 (0b10000) silently maps to slot 0. Users setting slot 16 unknowingly read slot 0.
+- **Expected:** The `jlimit` upper bound should be `NumDataSlots - 1` (15), and the slider range max should be 15.0. The same issue exists in EventDataEnvelope at the same file line 239.
+
+### EventDataEnvelope -- SmoothingTime slider tooltip is copy-pasted from DefaultValue
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/EventDataModulator.cpp:130
+- **Observed:** The `smoothingSlider->setTooltip()` text reads "The value if the event data hasn't been written", which is the DefaultValue tooltip. The SmoothingTime tooltip should describe the smoothing time parameter.
+- **Expected:** Change the tooltip to something like "Smoothing time for value changes in milliseconds" to match the parameter's actual function.
+
+### EventDataModulator -- Doxygen class comment is copy-pasted from RandomModulator
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/EventDataModulator.h:38-43
+- **Observed:** The class Doxygen comment reads "A constant Modulator which calculates a random value at the voice start" and mentions a "look up table to massage the outcome." EventDataModulator has no randomness and no table. This is a copy-paste artifact from RandomModulator.
+- **Expected:** Update the comment to describe actual behavior: reads a value from an event data slot written via the GlobalRoutingManager.
+
+### EventDataModulator -- Cached additionalEventStorage pointer is unused
+
+- **Type:** code-smell
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/EventDataModulator.h:107, EventDataModulator.cpp:188-206
+- **Observed:** The constructor caches `additionalEventStorage` from the GlobalRoutingManager (line 85 of .cpp). However, `calculateVoiceStartValue()` ignores this cached pointer and instead re-fetches the GlobalRoutingManager from MainController on every call (lines 190-193). By contrast, EventDataEnvelope correctly uses its cached pointer. The member variable is dead code in EventDataModulator.
+- **Expected:** Either use the cached pointer in `calculateVoiceStartValue()` (consistent with EventDataEnvelope) or remove the member variable.
+
+### MPEModulator -- Glide gesture normalization is asymmetric (upward range truncated)
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/MPEModulators.cpp:519-522
+- **Observed:** The Glide gesture normalization formula is `((pitchWheelValue - 8192) / 2048) * 0.5 + 0.5`. The divisor is 2048 instead of 8192. This maps the 14-bit pitch bend range (0-16383, center 8192) to approximately -2.0 to +2.0 before the 0.5 scale and offset, resulting in a range of approximately -0.5 to +1.5. After `jlimit(0, 1, midiValue)`, downward pitch bend saturates at 0.0 at about 25% of full range, and upward pitch bend saturates at 1.0 at about 25% of full range. Only the central ~50% of pitch bend travel produces useful modulation variation. If the divisor were 8192, the full pitch bend range would map symmetrically to 0.0-1.0.
+- **Expected:** Use 8192 as the divisor for symmetric full-range mapping: `((pitchWheelValue - 8192.0f) / 8192.0f) * 0.5f + 0.5f`. Alternatively, if the reduced range is intentional for finer control, document this behavior.
+
+### MPEModulator -- SmoothedIntensity parameter name is misleading
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** hi_core/hi_modules/modulators/mods/MPEModulators.cpp:209-221
+- **Observed:** The parameter named "SmoothedIntensity" with description "The intensity of the modulation with smoothing applied" actually sets the modulator's overall intensity via `setIntensity()`. It has no relationship to the smoothing process. Users may expect it controls how much smoothing is applied or blends between smoothed and raw values. It is functionally identical to a standard "Intensity" or "Depth" parameter.
+- **Expected:** Consider renaming to "Intensity" or "Depth" in the metadata, or update the description to clarify it controls overall modulation amplitude, not smoothing behavior.
