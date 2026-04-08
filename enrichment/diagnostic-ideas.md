@@ -13,7 +13,13 @@ Sorted by priority (high first).
 
 ## High
 
-(No ideas yet.)
+### ErrorHandler -- createErrorHandler without setErrorCallback
+
+- **Category:** timeline-dependency
+- **Priority:** high
+- **Methods involved:** Engine.createErrorHandler, setErrorCallback
+- **Rationale:** Creating an ErrorHandler disables HISE's built-in error overlay (`setUseDefaultOverlay(false)`). If `setErrorCallback()` is never called on the result, system errors become invisible to the user -- no overlay, no callback, no feedback. This is a severe usability trap because the side effect (disabling the default overlay) is immediate and permanent for the session.
+- **Sketch:** When `Engine.createErrorHandler()` is called and the result is assigned to a variable, scan subsequent statements in the same scope for `setErrorCallback` called on that variable. If no call is found by end of `onInit`, emit a warning: "ErrorHandler disables the default error overlay. Call setErrorCallback() to handle errors, or errors will be invisible."
 
 ## Medium
 
@@ -48,6 +54,38 @@ Sorted by priority (high first).
 - **Methods involved:** registerFunction
 - **Rationale:** `registerFunction` accepts any string as the function name and silently stores the function, but only 62 predefined names are ever looked up by the rendering system. A typo means the custom rendering is never invoked and the default rendering appears with no error or warning. The user sees default styling and has no indication that the function name was wrong.
 - **Sketch:** When `registerFunction` is called with a string literal as the first argument, validate it against the 62 known function names from `getAllFunctionNames()`. Emit a warning if no match.
+
+### ScriptModulationMatrix.setCurrentlySelectedSource -- requires selectable sources enabled
+
+- **Category:** precondition
+- **Priority:** medium
+- **Methods involved:** setCurrentlySelectedSource, setSourceSelectionCallback, setMatrixModulationProperties
+- **Rationale:** Calling setCurrentlySelectedSource without first enabling selectable sources (via setSourceSelectionCallback or setMatrixModulationProperties with SelectableSources: true) throws a runtime script error. This precondition could be caught at parse time by tracking whether either enabling method was called on the same variable.
+- **Sketch:** Track setSourceSelectionCallback and setMatrixModulationProperties calls on ScriptModulationMatrix variables. When setCurrentlySelectedSource is called without either having been called first, emit a warning about the required precondition.
+
+### NeuralNetwork.processFFTSpectrum -- requires loadOnnxModel first
+
+- **Category:** timeline-dependency
+- **Priority:** medium
+- **Methods involved:** processFFTSpectrum, loadOnnxModel
+- **Rationale:** Calling `processFFTSpectrum` without first calling `loadOnnxModel` produces a runtime error ("ONNX model is not loaded. use loadOnnxModel() before calling this method"). This timeline dependency could be caught at parse time by tracking whether `loadOnnxModel` was called on the same NeuralNetwork variable.
+- **Sketch:** When `processFFTSpectrum` is called on a NeuralNetwork variable, check if `loadOnnxModel` was previously called on the same variable. Emit a warning if not found.
+
+### NeuralNetwork.loadWeights -- requires build first
+
+- **Category:** timeline-dependency
+- **Priority:** medium
+- **Methods involved:** loadWeights, build
+- **Rationale:** Calling `loadWeights` without first calling `build` (or `loadPytorchModel` which calls build internally) silently fails because the EmptyModel returns `Result::fail("network is not initialised")`, but the scripting wrapper discards the Result. Even once the Result-ignoring bug is fixed, a parse-time check would catch this earlier.
+- **Sketch:** When `loadWeights` is called on a NeuralNetwork variable, check if `build` was previously called on the same variable. Emit a warning if not found. Note: `loadPytorchModel`, `loadTensorFlowModel`, and `loadNAMModel` load weights internally, so `loadWeights` after those is also suspicious (redundant for TF/NAM, valid only for Pytorch two-step).
+
+### LorisManager -- analyse before synthesise/process/createEnvelopes/createEnvelopePaths/createSnapshot
+
+- **Category:** timeline-dependency
+- **Priority:** medium
+- **Methods involved:** analyse, synthesise, process, processCustom, createEnvelopes, createEnvelopePaths, createSnapshot
+- **Rationale:** All LorisManager methods except `set` and `get` require a prior `analyse()` call on the same file. Without analysis, these methods either silently return empty results or operate on stale/missing partial data. There is no runtime error message indicating the missing analysis step. A parse-time check could detect when any of these methods is called on a LorisManager variable without a preceding `analyse()` call.
+- **Sketch:** When `synthesise`, `process`, `processCustom`, `createEnvelopes`, `createEnvelopePaths`, or `createSnapshot` is called on a LorisManager variable, scan preceding statements in the same scope for an `analyse()` call on the same variable. If none found, emit a warning: "This method requires a prior analyse() call on the same file."
 
 ## Low
 

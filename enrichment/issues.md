@@ -54,7 +54,119 @@ Sorted by severity (critical first).
 - **Observed:** The `NoteNumberAndChannel` compare mode uses `e1.getNoteNumber() && e2.getNoteNumber() && e1.getChannel() == e2.getChannel()`. The `&&` checks note number truthiness (non-zero) rather than equality. Note number 0 (C-2) never matches because `0` is falsy. Any two events with non-zero note numbers on the same channel match regardless of actual pitch.
 - **Expected:** Change to `e1.getNoteNumber() == e2.getNoteNumber() && e1.getChannel() == e2.getChannel()` for correct note-number equality comparison.
 
+### NeuralNetwork.process -- off-by-one in multi-input size validation
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** ScriptingApiObjects.cpp:~5795 (Array path), ~5806 (Buffer path)
+- **Observed:** The input size validation uses `isPositiveAndBelow(inputBuffer->size, input.size())` which requires `input.size() > inputBuffer->size` (strict greater-than). For a model with N inputs, passing an array or buffer with exactly N elements fails the check silently -- no processing occurs and 0.0 is returned. The user must provide N+1 elements for the check to pass, but the copy loop then writes all N+1 elements to an N-element buffer, causing a buffer overrun.
+- **Expected:** Change the check to `input.size() >= inputBuffer->size` (or equivalently `!isPositiveAndBelow(input.size(), inputBuffer->size)`). Also clamp the copy loop to `inputBuffer->size` iterations to prevent overrun when extra elements are provided.
+
+### WavetableController.loadData -- uninitialized channel pointers in array-of-buffers path
+
+- **Type:** missing-validation
+- **Severity:** high
+- **Location:** ScriptingApiObjects.cpp:~5341-5354
+- **Observed:** When loading from an array of Buffers, `float* ptrs[NUM_MAX_CHANNELS]` is stack-allocated without initialization. If any element in the input array is not a valid Buffer (`getBuffer()` returns null), the corresponding `ptrs[i]` entry remains uninitialized. The `AudioSampleBuffer` constructor then reads these garbage pointers, causing undefined behavior.
+- **Expected:** Zero-initialize the `ptrs` array (e.g., `float* ptrs[NUM_MAX_CHANNELS] = {};`) or validate all elements before constructing the AudioSampleBuffer.
+
+### WavetableController.loadData -- loopRange silently ignored for invalid format
+
+- **Type:** missing-validation
+- **Severity:** high
+- **Location:** ScriptingApiObjects.cpp:~5341-5354
+- **Observed:** The `loopRange` parameter is silently ignored if it is not an array with exactly 2 elements. No error or warning is produced. Passing a single-element array, an object, or a string results in the loop range being quietly discarded, making it difficult to diagnose incorrect resynthesis behavior.
+- **Expected:** Validate that `loopRange` is an array with exactly 2 integer elements and report a script error for invalid formats.
+
 ## Medium
+
+### WavetableController.setResynthesisOptions -- RemoveNoise defaults to ReverseOrder value
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** WavetableTools.cpp:~85 (fromVar)
+- **Observed:** `ResynthesisOptions::fromVar` uses `reverseOrder` as the default value for `RemoveNoise`: `removeNoise = o.getProperty("RemoveNoise", reverseOrder);`. When the user omits `RemoveNoise` from the options JSON, it inherits the current value of `reverseOrder` (default false) instead of the intended default (true).
+- **Expected:** Should use `removeNoise` as the default: `removeNoise = o.getProperty("RemoveNoise", removeNoise);`
+
+### WavetableController.saveAsAudioFile -- missing null-synth error check
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5370
+- **Observed:** `saveAsAudioFile` does not check whether the wavetable synth reference is valid before proceeding. All other methods in this class call `reportScriptError("No wavetable synth")` when the synth reference is null, but `saveAsAudioFile` silently returns without error.
+- **Expected:** Add the standard `if (synth == nullptr) { reportScriptError("No wavetable synth"); return; }` guard at the top, consistent with the other methods.
+
+### WavetableController.saveAsHwt -- silently ignores empty wavetable data
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5385
+- **Observed:** `saveAsHwt` silently does nothing when no wavetable data is currently loaded in the synth. No error message is produced. Other save/export methods typically report an error when there is no data to export.
+- **Expected:** Report a script error when the wavetable data is empty, e.g., "No wavetable data loaded -- call resynthesise() first".
+
+### WavetableController.saveAsHwt -- silently ignores non-ScriptFile parameter
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5385
+- **Observed:** If the parameter is not a ScriptFile object, the method silently does nothing. Unlike `saveAsAudioFile` which uses `getFileFromVar` (accepting both ScriptFile and string paths), `saveAsHwt` only checks for ScriptFile via `dynamic_cast` and silently ignores all other input types.
+- **Expected:** Report a script error when the parameter is not a ScriptFile, e.g., "saveAsHwt expects a File object".
+
+### NeuralNetwork.connectToGlobalCables -- method not registered for scripting API
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5756-5775 (constructor), ~5948-5967 (implementation)
+- **Observed:** `connectToGlobalCables` has a full C++ implementation with `String inputId, String outputId` parameters, but is not registered via `ADD_API_METHOD_2` in the constructor and has no `Wrapper` entry. The method cannot be called from HISEScript. The related `CableInputCallback` struct is also implemented but unreachable.
+- **Expected:** Add `ADD_API_METHOD_2(connectToGlobalCables)` to the constructor and `API_VOID_METHOD_WRAPPER_2(ScriptNeuralNetwork, connectToGlobalCables)` to the Wrapper struct.
+
+### NeuralNetwork model loaders -- scripting wrappers ignore Result from core methods
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5870-5999 (build, loadWeights, loadTensorFlowModel, loadPytorchModel, loadNAMModel)
+- **Observed:** Five scripting wrappers call core methods that return `Result` but discard the return value. If model building, weight loading, or format parsing fails, the error message from the core (e.g., "network is not initialised", "Can't create layer with ID X") is silently lost. The user sees no error and the model silently remains in a broken state.
+- **Expected:** Check the `Result` and call `reportScriptError(result.getErrorMessage())` on failure, consistent with how `loadOnnxModel` already handles its error path.
+
+### NeuralNetwork.createModelJSONFromTextFile -- silently returns empty object for invalid argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~5860 (createModelJSONFromTextFile wrapper)
+- **Observed:** If the argument is not a valid ScriptFile, the method silently returns an empty object. No error message is shown. The user has no indication that the file was not parsed.
+- **Expected:** Report a script error when the argument is not a valid ScriptFile, e.g., "createModelJSONFromTextFile expects a File object".
+
+### NeuralNetwork.loadTensorFlowModel -- missing try-catch around constructor
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** hi_neural.cpp:~759-775 (loadTensorFlowModel)
+- **Observed:** `NeuralNetwork::loadTensorFlowModel` directly calls `new TensorFlowModel(jsonData)` without a try-catch block. The TensorFlowModel constructor parses JSON via `nlohmann::json::parse` which can throw `std::exception`. In contrast, `build()` and `loadNAMModel()` both wrap their model construction in try-catch blocks that convert exceptions to `Result::fail`.
+- **Expected:** Wrap the TensorFlowModel construction in a try-catch block consistent with `build()` and `loadNAMModel()`.
+
+### ScriptModulationMatrix.connect -- always returns false
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptModulationMatrix.cpp:~643-661
+- **Observed:** The method signature returns `bool` but the actual connection operation is deferred via `callSuspended()`, which takes a `std::function<void(...)>`. The lambda's bool return value is silently discarded by the implicit conversion. The outer function always returns `false` regardless of whether the connection was successfully added or removed.
+- **Expected:** Either change the return type to `void` (since the deferred execution makes the result unavailable at the call site), or restructure to communicate the result back synchronously.
+
+### ScriptModulationMatrix.connect -- silently ignores invalid sourceId
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptModulationMatrix.cpp:~643-661
+- **Observed:** When `sourceId` does not match any entry in the source list, the method silently does nothing. No script error is thrown and the return value is always false (see above), so the caller cannot distinguish "invalid source" from "connection failed." Other HISE methods that accept processor/source IDs (e.g., `setCurrentlySelectedSource`) validate the ID and throw a script error when not found.
+- **Expected:** Report a script error when `sourceId` is not found in the source list, e.g., "sourceId 'X' was not found in the source list."
+
+### GlobalRoutingManager.connectToOSC -- always returns false
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~9048
+- **Observed:** The method unconditionally returns `false` at line 9048. The internal connection success (`ok` variable from `m->connectToOSC(data)` at line 9027) is used to decide whether to register the OSC listener, but is not propagated as the return value.
+- **Expected:** Return the `ok` variable to indicate whether the OSC connection was successfully established.
 
 ### Node.setParent -- node detached from graph before target validation
 
@@ -1104,6 +1216,54 @@ Sorted by severity (critical first).
 - **Observed:** `getAvailableSampleRates` returns an array of strings (e.g., `"44100"`, `"48000"`), while `getAvailableBufferSizes` returns an array of integers. This inconsistency means users must call `parseInt()` on sample rates but not on buffer sizes. The difference comes from how the underlying JUCE API is wrapped -- buffer sizes are added as integers while sample rates are added as strings.
 - **Expected:** Return integers (or doubles) for consistency with `getAvailableBufferSizes`, or document the string return type prominently.
 
+### ErrorHandler.setErrorCallback -- silently ignores non-function argument
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptErrorHandler::setErrorCallback)
+- **Observed:** If the argument is not a valid JavaScript function (e.g., `false`, a number, a string, or `undefined`), the method silently does nothing. No error is reported and the previous callback (if any) remains active. The user has no indication that the callback registration failed.
+- **Expected:** Report a script error when the argument is not a function, e.g., "errorCallback must be a function".
+
+### ErrorHandler.setErrorCallback -- no way to clear the callback
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptErrorHandler::setErrorCallback)
+- **Observed:** There is no mechanism to unregister the error callback. Passing a non-function value is silently ignored (see above), so the previous callback remains active. The callback persists until the ErrorHandler object is garbage collected.
+- **Expected:** Either accept `false` to clear the callback, or provide a separate `clearErrorCallback()` method.
+
+### DisplayBufferSource.getDisplayBuffer -- expired weak reference silently returns invalid object
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp (ScriptDisplayBufferSource::getDisplayBuffer)
+- **Observed:** If the source processor has been deleted (weak reference expired), the method silently returns an invalid DisplayBuffer object without reporting an error. Subsequent calls on the returned object will fail with unrelated errors.
+- **Expected:** Check the weak reference before constructing the DisplayBuffer wrapper. If expired, call `reportScriptError("Source processor was deleted")` or return `undefined`.
+
+### DisplayBuffer.createPath -- sourceRange endSample parameter ignored
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~1913
+- **Observed:** Line 1913 reads `auto maxSize = hToUse = getRingBuffer()->getReadBuffer().getNumSamples();` which overwrites `hToUse` (previously set from `src.getHeight()` on line 1907). The subsequent `if (hToUse == -1)` check is dead code. The sample range always spans `[startSample, bufferSize]` regardless of the endSample value passed in sourceRange.
+- **Expected:** Separate the assignments: `auto maxSize = getRingBuffer()->getReadBuffer().getNumSamples();` without overwriting `hToUse`, so the user-provided endSample from `src.getHeight()` is respected (with -1 as the sentinel for "use full buffer").
+
+### DisplayBuffer.getResizedBuffer -- resampleMode parameter is unused
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~1848-1891
+- **Observed:** The `resampleMode` parameter is declared in the method signature but never referenced in the implementation. Both resampling branches (point sampling for stride < 2.0, min/max midpoint for stride >= 2.0) execute based solely on the computed stride value. The parameter has no effect on behavior.
+- **Expected:** Either implement resample mode selection (e.g., switching between point sampling, linear interpolation, min/max) based on the parameter value, or remove the parameter from the API.
+
+### DisplayBuffer.getResizedBuffer -- exact size match returns shared reference instead of copy
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** ScriptingApiObjects.cpp:~1848-1891
+- **Observed:** When `numDestSamples` matches the read buffer size exactly, the method delegates to `getReadBuffer()`, which returns a direct memory reference to the ring buffer's internal read buffer. For all other sizes, an independent buffer is allocated and returned. The caller cannot predict whether the returned buffer is safe to modify without knowing the exact size relationship.
+- **Expected:** Always return an independent copy regardless of size match, or document the shared-reference behavior and provide a separate method for callers who want a copy at the same size.
+
 ## Low
 
 ### ExpansionHandler.setErrorFunction -- numExpectedArgs mismatch (1 vs 2)
@@ -1513,3 +1673,19 @@ Sorted by severity (critical first).
 - **Location:** NodeBase.cpp:~1102-1110 (setRangeProperty), NodeBase.cpp:~775-790 (constructor constants), ParameterData.cpp:~74-78 (isRangeId)
 - **Observed:** The Parameter constructor registers `MidPoint` as a constant via `ADD_PROPERTY_ID_CONSTANT(PropertyIds::MidPoint)`, but `setRangeProperty()` validates the ID against `RangeHelpers::isRangeId()` which only accepts `MinValue`, `MaxValue`, `StepSize`, and `SkewFactor`. Passing `p.MidPoint` to `setRangeProperty()` silently does nothing. Conversely, `SkewFactor` is a valid range property ID but has no constant on Parameter, requiring users to pass the string literal `"SkewFactor"`.
 - **Expected:** Either replace the `MidPoint` constant with `SkewFactor` in the constructor, or extend `isRangeId()` to also accept `MidPoint`.
+
+### WavetableController.saveAsAudioFile -- missing error report for null synth
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~5278-5305
+- **Observed:** When the wavetable synth reference is invalid, the method silently returns. All other methods in this class call `reportScriptError("No wavetable synth")` on failure.
+- **Expected:** Add `else { reportScriptError("No wavetable synth"); }` for consistency with the other 7 methods.
+
+### WavetableController.saveAsHwt -- silent failure without error feedback
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** ScriptingApiObjects.cpp:~5255-5276
+- **Observed:** Two failure paths produce no error message: (1) when no wavetable data is loaded (`!v.isValid()`), and (2) when the parameter is not a ScriptFile object (`dynamic_cast` fails). The user has no way to diagnose why the file was not written.
+- **Expected:** Call `reportScriptError` on both failure paths with descriptive messages.
