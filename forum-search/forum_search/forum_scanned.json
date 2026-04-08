@@ -695,5 +695,109 @@
       14050,
       14133
     ]
+  },
+  "modules:AHDSR": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "AHDSR",
+      "envelope",
+      "attack decay sustain release",
+      "AHDSR envelope"
+    ],
+    "topicIds": [
+      89,
+      197,
+      200,
+      377,
+      1241,
+      1546,
+      1790,
+      2392,
+      3582,
+      4351,
+      4626,
+      5106,
+      5492,
+      5662,
+      6359,
+      6769,
+      7183,
+      7336,
+      7892,
+      8112,
+      8270,
+      8306,
+      8677,
+      8724,
+      8757,
+      9608,
+      9615,
+      10072,
+      10567,
+      10818,
+      11244,
+      11318,
+      11319,
+      11356,
+      11510,
+      11664,
+      13164,
+      13481,
+      13735,
+      13782,
+      14119,
+      14311,
+      14434
+    ]
+  },
+  "modules:FlexAHDSR": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "FlexAHDSR",
+      "Flex AHDSR",
+      "flex envelope",
+      "draggable envelope"
+    ],
+    "topicIds": [
+      8685,
+      12641,
+      13133,
+      13481,
+      14211
+    ]
+  },
+  "modules:SimpleEnvelope": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "SimpleEnvelope",
+      "Simple Envelope",
+      "attack release envelope"
+    ],
+    "topicIds": [
+      1241,
+      9290
+    ]
+  },
+  "modules:TableEnvelope": {
+    "lastRun": "2026-04-08",
+    "queries": [
+      "TableEnvelope",
+      "Table Envelope",
+      "lookup table envelope",
+      "custom envelope shape"
+    ],
+    "topicIds": [
+      89,
+      200,
+      3596,
+      4076,
+      7042,
+      7183,
+      8372,
+      9920,
+      9922,
+      13164,
+      13402
+    ]
   }
 }

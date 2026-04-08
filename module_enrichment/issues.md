@@ -14,6 +14,14 @@ Sorted by severity (critical first).
 
 ## High
 
+### TableEnvelope -- Monophonic releaseModValue reads from attackChain instead of releaseChain
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** hi_core/hi_modules/modulators/mods/TableEnvelope.cpp:158
+- **Observed:** In `startVoice()`, the monophonic path sets `monoState->releaseModValue = 1.0f / jmax<float>(0.001f, attackChain->getConstantVoiceValue(voiceIndex))`. This reads from `attackChain` instead of `releaseChain`. The polyphonic path at line 184 correctly uses `releaseChain->getConstantVoiceValue(voiceIndex)`. As a result, in monophonic mode, the release time modulation is driven by the attack modulation chain's value, not the release modulation chain.
+- **Expected:** Line 158 should read `monoState->releaseModValue = 1.0f / jmax<float>(0.001f, releaseChain->getConstantVoiceValue(voiceIndex));` to match the polyphonic path.
+
 ### CC2Note -- Bypass parameter description is misleading
 
 - **Type:** inconsistency
@@ -225,3 +233,11 @@ Sorted by severity (critical first).
 - **Location:** hi_scripting/scripting/HardcodedScriptProcessor.cpp:78
 - **Observed:** The Time parameter metadata uses `HiSlider::Time` mode which displays with "ms" suffix (per MacroControlledComponents.h:751). However, the parameter range is 0-20 with step 0.1, and the code in `onNoteOff()` (HardcodedScriptProcessor.h:407-410) divides the elapsed time from `Engine.getUptime()` (which returns seconds) directly by `timeKnob->getValue()`. The parameter value is treated as seconds in the signal path, but displayed as milliseconds in the UI. A Time value of 5 would display as "5 ms" but actually represent a 5-second attenuation window.
 - **Expected:** Either change the slider mode from `HiSlider::Time` to `HiSlider::Linear` with a custom suffix "s", or multiply the parameter value by 0.001 in the code to convert from the displayed milliseconds to seconds. The former is simpler and matches actual usage.
+
+### FlexAHDSR -- Preliminary JSON incorrectly lists VoiceStartModulator constrainer for SustainLevelModulation
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** module_enrichment/preliminary/FlexAHDSR.json (SustainLevelModulation chain entry)
+- **Observed:** The preliminary JSON lists `"constrainer": "VoiceStartModulator"` for the SustainLevelModulation chain. However, the C++ metadata registration at FlexAhdsrEnvelope.cpp:113-116 does NOT call `.withConstrainer<VoiceStartModulatorFactoryType::Constrainer>()` for this chain (unlike all other four chains). The chain is created with `ModulationType::Normal` (not `VoiceStartOnly`) and `calculateBlock()` has a dedicated per-sample code path for time-variant sustain modulation. The chain intentionally accepts all modulator types.
+- **Expected:** Remove or correct the constrainer field for SustainLevelModulation in the preliminary JSON and downstream documentation. The chain should be documented as accepting both voice-start and time-variant modulators.

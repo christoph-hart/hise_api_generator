@@ -112,10 +112,13 @@ chains:
 ---
 ::
 
-## Notes
+### Monophonic Behaviour          <-- thematic subsection
 
-[Implementation observations in regular markdown. Vestigial parameters,
-non-obvious behaviours, practical tips. No C++ internals.]
+[Substantial behavioural detail that deserves its own heading.]
+
+### Visualisation with AHDSRGraph   <-- thematic subsection
+
+[FloatingTile, LAF callbacks, setup tips.]
 
 **See also:** $MODULES.EquivalentModule$ -- description, $API.Effect.setBypassed$ -- scripting API link
 ```
@@ -128,7 +131,7 @@ non-obvious behaviours, practical tips. No C++ internals.]
 - **Signal Path** is required for all modules except containers and custom-category modules.
 - **Parameters** is required if the module has parameters.
 - **Modulation Chains** is required if the module has modulation chains. Omit the section entirely if there are none.
-- **Notes** is optional. Include only if there are non-obvious behaviours worth documenting.
+- **Thematic subsections** (`###`) are placed after the Modulation Chains section. Each covers a distinct behavioural topic (e.g. "Monophonic Behaviour", "Playback Modes", "Visualisation with AHDSRGraph", "Scripting with Tables"). Do not use a catch-all `## Notes` section - see "Content Distribution" below.
 - **See Also** is optional. Uses the `::see-also` MDC component in the body (not plain markdown). Only include entries that are closely related but non-obvious to someone unfamiliar with the HISE architecture. Do not force a minimum number of entries - omit the section entirely rather than padding with loosely related modules.
 
 ---
@@ -148,7 +151,7 @@ For general writing style, tone, spelling, and what to strip, see `style-guide/g
 
 ### Vestigial Parameters
 
-Vestigial parameters (defined but non-functional) should be noted factually in the parameter table description: "This parameter has no effect." The Notes section may add a brief mention: "The `EcoMode` parameter is vestigial - downsampling is now controlled globally."
+Vestigial parameters (defined but non-functional) should be noted factually in the parameter table description: "This parameter has no effect." No separate mention elsewhere is needed.
 
 ---
 
@@ -262,7 +265,53 @@ Parameter metadata comes from `moduleList.json`. The agent resolves ranges, defa
 
 The `::modulation-table` component renders a table with columns: Chain, Description, Scope, Constrainer.
 
-Include all modulation chains from moduleList.json that are not disabled. For disabled chains, omit them or note in the Notes section why they are disabled.
+Include all modulation chains from moduleList.json that are not disabled. For disabled chains, omit them or add a brief `hints` entry on the relevant parameter explaining why the chain is inactive.
+
+---
+
+## Content Distribution
+
+Do NOT create a `## Notes` section. Every piece of information from the exploration findings should be triaged to the most specific location available. Use this decision table:
+
+| Content type | Target location | Example |
+|---|---|---|
+| **Parameter warning/gotcha** | `hints` array on the parameter in `::parameter-table` | "If AttackLevel is below Sustain, Hold and Decay are skipped" -> hint on AttackLevel |
+| **Parameter edge case** | `hints` array (type: `info`) on the parameter | "Exponential release cuts off at -80 dB" -> hint on LinearMode |
+| **Module identity** (what it is/isn't, voice killer role) | Merge into overview prose | "The exclamation mark icon indicates voice killer role" -> intro paragraph |
+| **CPU comparison / alternative guidance** | Merge into overview prose | "Lighter than AHDSR" -> intro paragraph |
+| **Vestigial parameter** | Parameter table `desc` field | "This parameter has no effect." |
+| **Already in commonMistakes** | Remove (no duplication) | |
+| **Already in parameter/modulation table descriptions** | Remove (no duplication) | "Mod chains are evaluated once at note-on" -> already in modulation table desc |
+| **Substantial behavioural detail** (modes, monophonic, scripting patterns) | Named `###` subsection after Modulation Chains | `### Playback Modes`, `### Monophonic Behaviour`, `### Scripting with Tables` |
+| **FloatingTile / LAF callbacks** | Named `###` subsection | `### Visualisation with AHDSRGraph` |
+| **Warning/Tip block** | Place within the most relevant `###` subsection, or inline after the relevant parameter table if no subsection exists | |
+| **Bug/issue** | `module_enrichment/issues.md` only (never in user-facing docs) | |
+
+### Parameter Hints Format
+
+The `hints` array on a parameter adds contextual warnings, tips, or info directly below the parameter row:
+
+```yaml
+params:
+  - name: Attack
+    desc: "Time to sweep through the attack table"
+    range: "1 - 20000 ms"
+    default: "20 ms"
+    hints:
+      - type: warning
+        text: "If a note is released before the attack completes, the table freezes at its current position."
+      - type: info
+        text: "Modulating below 1 ms can cause silence."
+```
+
+Hint types: `warning` (orange), `info` (blue), `tip` (green). Use sparingly - 0-2 hints per parameter is typical. Reserve warnings for gotchas that waste debugging time.
+
+### Subsection Naming
+
+Use descriptive `###` headings that name the topic, not generic labels:
+
+- **Good:** `### Playback Modes`, `### Monophonic Behaviour`, `### Visualisation with AHDSRGraph`, `### Scripting with Tables`, `### One-Shot Mode`
+- **Bad:** `### Notes`, `### Additional Information`, `### Other Details`
 
 ---
 
@@ -363,13 +412,13 @@ Pre-synthesised text blob for the MCP server. Written as a separate field in the
 
 6. **Build modulation chains table.** List all non-disabled modulation chains with descriptions, scope, and constrainer type.
 
-7. **Write notes.** Include any non-obvious behaviours from the exploration findings. Note vestigial parameters factually. No C++ internals.
+7. **Distribute remaining content.** For each non-obvious behaviour from the exploration findings, triage it to the best location using the Content Distribution table below. Do NOT create a `## Notes` section - every piece of information should land in a specific, appropriate place.
 
 8. **Write See Also.** Surface scriptnode equivalents, UI components, alternatives, and other relationships from the exploration.
 
 9. **Build cross-cutting fields.** Write cpuProfile, commonMistakes, customEquivalent, llmRef into the frontmatter.
 
-10. **Editorial review.** Re-read the entire page. Check for C++ leakage, redundancy between prose and pseudo-code, missing parameters, broken glossary references.
+10. **Editorial review.** Re-read the entire page. Check for C++ leakage, redundancy between prose and pseudo-code, missing parameters, broken glossary references. Verify there is no `## Notes` section.
 
 ### Step 4 Gate Checklist
 
@@ -383,7 +432,8 @@ Before declaring the reference page complete:
 - [ ] **No C++ leakage:** No C++ class names, method names, type names, assertions, or source references in prose, pseudo-code, or table descriptions.
 - [ ] **See Also relevance:** Entries are closely related and non-obvious. No padding with loosely related modules. Scriptnode equivalent included if one exists. UI component included if a FloatingTile exists. Empty list is acceptable.
 - [ ] **Prose quality:** British English. No marketing language. No filler. Descriptions lead with what the module does, not how it is implemented.
-- [ ] **Exploration incorporation:** All relevant findings from the exploration markdown are reflected in the page (prose, pseudo-code, notes, or see-also).
+- [ ] **No Notes section:** The page has no `## Notes` heading. All content is distributed to parameter hints, overview prose, named `###` subsections, or commonMistakes per the Content Distribution table.
+- [ ] **Exploration incorporation:** All relevant findings from the exploration markdown are reflected in the page (prose, pseudo-code, parameter hints, subsections, or see-also).
 
 ---
 
@@ -418,7 +468,7 @@ Different module categories produce characteristic reference pages. These are gu
 - Pseudo-code uses `onMidiEvent(message)` framing or flat flow
 - No audio path, no modulation output
 - Parameters are typically simple (channel numbers, transpose amounts)
-- Notes section may explain event handling (ignore vs destroy)
+- Event handling details (ignore vs destroy) go in a `### Event Handling` subsection or overview prose
 
 ### Time-Variant Modulators
 
