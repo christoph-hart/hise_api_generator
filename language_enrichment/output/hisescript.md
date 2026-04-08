@@ -910,13 +910,4 @@ Features HiseScript adds that do not exist in JavaScript.
 | `reg` and `local` keywords | Variable storage classes with specific allocation semantics for realtime use |
 
 
-## What's Next
-
-You now have the full language at your disposal. The next steps are applying it:
-
-- [Events and Messaging]($DOC.Guide.EventsAndMessaging$) — Broadcasters, reactive patterns, and scaling beyond simple callbacks
-- [Custom UI Design]($DOC.Guide.CustomUI$) — the Graphics API in depth, Look and Feel functions, and advanced panel techniques
-- [Building a Sampler]($DOC.Guide.BuildingASampler$) — apply these patterns to a real instrument
-- Back to the [Scripting Model]($DOC.Architecture.ScriptingModel$) — the mental model this guide builds on
-
 **See also:** $LANG.css$ -- CSS styling for UI components, $LANG.snex$ -- JIT-compiled DSP language for scriptnode, $LANG.regex$ -- regular expressions in HISE API calls

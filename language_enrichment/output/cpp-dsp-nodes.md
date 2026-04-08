@@ -922,6 +922,4 @@ These restrictions apply only to code that runs on the audio thread (inside `pro
 - **128-byte inline buffer** - nodes smaller than 128 bytes are stored inline (no heap allocation). Larger nodes are heap-allocated, which is fine but slightly slower to create
 
 
-## What's Next
-
 **See also:** $LANG.snex$ -- HISE's JIT-compiled C++ subset (near-identical API, instant compilation), $LANG.faust$ -- functional DSP language integration, $LANG.cpp-raw$ -- the C++ Raw API for building full plugin architectures without scriptnode

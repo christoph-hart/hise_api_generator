@@ -86,10 +86,14 @@
       "contentDir": "reference/languages",
       "description": "Language reference pages (HiseScript, SNEX, CSS, Faust, RNBO, etc.)",
       "sources": {
-        "pages": "language_enrichment/output"
+        "pages": "language_enrichment/output",
+        "static": "language_enrichment/resources/static"
       },
       "mdcTransform": "language",
-      "pattern": "{language}"
+      "pattern": "{language}",
+      "staticPages": {
+        "Language Reference": ""
+      }
     },
     "DOC": {
       "basePath": "/v2",

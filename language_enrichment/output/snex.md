@@ -793,6 +793,4 @@ The `Console` object is the only SNEX-specific language addition that does not e
 - **JIT compilation time** - initial compilation takes a moment (typically under a second). Subsequent edits recompile incrementally.
 
 
-## What's Next
-
 **See also:** $LANG.cpp-dsp-nodes$ -- full C++ with existing node reuse, IDE debugging, and hardcoded module loading (same callback API - easy to port), $LANG.faust$ -- functional DSP language with a different paradigm
