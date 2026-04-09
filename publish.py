@@ -1294,10 +1294,17 @@ def apply_module_mdc_transforms(content: str, messages: list = None,
     Module pages already contain most MDC components (::signal-path,
     ::parameter-table, ::modulation-table, ::category-tags) authored
     directly. We only need to convert:
+    - $FORUM_REF.tid$ tokens -> forum topic URLs
     - **See also:** lines -> ::see-also
     - Warning/tip blockquotes -> ::warning / ::tip
     - Blank line fixes after code blocks
     """
+    # Resolve $FORUM_REF.tid$ -> https://forum.hise.audio/topic/tid
+    content = re.sub(
+        r'\$FORUM_REF\.(\d+)\$',
+        r'https://forum.hise.audio/topic/\1',
+        content
+    )
     content = convert_warning_blockquotes(content, messages, filepath)
     content = convert_tip_blockquotes(content, messages, filepath)
     content = _extract_frontmatter_components(content, messages, filepath)

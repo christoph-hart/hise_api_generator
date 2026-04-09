@@ -91,12 +91,45 @@ def extract_parameters_from_body(body: str) -> dict:
 # Module enrichment -> processors.json
 # ---------------------------------------------------------------------------
 
+def load_module_base_params(pipeline_dir: Path) -> dict:
+    """Load numeric parameter data from moduleList.json, keyed by module id."""
+    path = pipeline_dir / "module_enrichment" / "base" / "moduleList.json"
+    if not path.is_file():
+        print(f"  [warn] {path} not found, parameters will lack numeric ranges", file=sys.stderr)
+        return {}
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Build {moduleId: {paramId: {min, max, step, defaultValue, ...}}}
+    index = {}
+    for mod in data.get("modules", []):
+        mod_id = mod.get("id", "")
+        params = {}
+        for p in mod.get("parameters", []):
+            pid = p.get("id", "")
+            r = p.get("range", {})
+            dv = p.get("defaultValue", 0)
+            params[pid] = {
+                "min": r.get("min", 0),
+                "max": r.get("max", 0),
+                "step": r.get("stepSize", 0),
+                "defaultValue": dv if isinstance(dv, (int, float)) else 0,
+            }
+            if p.get("items"):
+                params[pid]["items"] = p["items"]
+        index[mod_id] = params
+    return index
+
+
 def collect_modules(pipeline_dir: Path) -> dict:
-    """Parse module_enrichment/pages/*.md -> processors dict."""
+    """Parse module_enrichment/pages/*.md + base moduleList.json -> processors dict."""
     pages_dir = pipeline_dir / "module_enrichment" / "pages"
     if not pages_dir.is_dir():
         print(f"  [skip] {pages_dir} not found", file=sys.stderr)
         return {}
+
+    base_params = load_module_base_params(pipeline_dir)
 
     modules = {}
     for md_file in sorted(pages_dir.glob("*.md")):
@@ -106,7 +139,25 @@ def collect_modules(pipeline_dir: Path) -> dict:
             continue
 
         module_id = fm.get("moduleId", md_file.stem)
-        params = extract_parameters_from_body(body)
+        enriched_params = extract_parameters_from_body(body)
+        base = base_params.get(module_id, {})
+
+        # Merge: enriched description + base numeric values
+        params = {}
+        all_param_ids = set(list(enriched_params.keys()) + list(base.keys()))
+        for pid in all_param_ids:
+            ep = enriched_params.get(pid, {})
+            bp = base.get(pid, {})
+            param = {
+                "description": ep.get("description", ""),
+                "min": bp.get("min", 0),
+                "max": bp.get("max", 0),
+                "step": bp.get("step", 0),
+                "defaultValue": bp.get("defaultValue", 0),
+            }
+            if bp.get("items"):
+                param["items"] = bp["items"]
+            params[pid] = param
 
         entry = {
             "id": module_id,
@@ -276,7 +327,7 @@ def main():
 
     args = parser.parse_args()
     pipeline_dir = SCRIPT_DIR
-    output_dir = Path(args.output_dir) if args.output_dir else None
+    output_dir = Path(args.output_dir).expanduser() if args.output_dir else None
 
     if not args.dry_run and output_dir is None:
         parser.error("output_dir is required unless --dry-run is set")

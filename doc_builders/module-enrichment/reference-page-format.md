@@ -384,6 +384,35 @@ Array of `{wrong, right, explanation}` entries. Curate from exploration findings
 
 How to rebuild the module using custom modules. See `module-enrichment.md` section "customEquivalent".
 
+### forumReferences
+
+Array of 0-3 citation entries linking page claims back to forum discussions. Each entry:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | number | Citation number (1-based, matches `[N]` in prose) |
+| `title` | string | Short title of the forum finding (from the insight's `title`) |
+| `summary` | string | One-sentence summary of the finding (from the insight's `summary`) |
+| `topic` | number | Forum topic ID (resolves to `https://forum.hise.audio/topic/{topic}`) |
+
+Inline citations use the canonical link pattern: `[1]($FORUM_REF.2054$)` where the token contains the forum topic ID directly. The `$FORUM_REF.tid$` token is resolved by `publish.py` to `https://forum.hise.audio/topic/{tid}` — no frontmatter lookup needed. The Nuxt.js renderer auto-injects a `::forum-references` component from the frontmatter data — do not write this component in the MDC body.
+
+**Selection criteria:** Pick the 2-3 most citation-worthy insights — non-obvious gotchas, confirmed bugs, and practical workarounds sourced from real user experience. Do not cite generic API facts or information already confirmed via C++ exploration.
+
+Example:
+```yaml
+forumReferences:
+  - id: 1
+    title: "IR resampling causes gain increase at non-native sample rates"
+    summary: "When the host sample rate differs from the IR's native sample rate, resampling introduces a gain increase (~6dB at 96kHz vs 44.1kHz). No built-in compensation."
+    topic: 2054
+```
+
+With inline citation in prose:
+```markdown
+adjust WetGain manually if needed. [1]($FORUM_REF.2054$)
+```
+
 ### llmRef
 
 Pre-synthesised text blob for the MCP server. Written as a separate field in the frontmatter with fixed section order. See `module-enrichment.md` section "llmRef".

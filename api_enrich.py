@@ -4022,14 +4022,14 @@ def run_filter_mcp(output_path=None, fallback_path=None):
     if output_path is None:
         output_path = OUTPUT_DIR / "scripting_api_mcp.json"
     else:
-        output_path = Path(output_path)
+        output_path = Path(output_path).expanduser()
 
     # Load fallback RAG dump for unenriched method examples
     fallback_examples = {}  # {ClassName: {methodName: exampleCode}}
     if fallback_path is None:
         fallback_path = RESOURCES_DIR / "rag_dump.json"
     else:
-        fallback_path = Path(fallback_path)
+        fallback_path = Path(fallback_path).expanduser()
 
     if fallback_path.is_file():
         with open(fallback_path, "r", encoding="utf-8") as f:
