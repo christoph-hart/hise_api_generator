@@ -225,14 +225,18 @@ groups:
 ---
 ::
 
-## Notes
+### Oversampling
 
-The Drive parameter is vestigial - it is visible in the interface but has no effect on audio processing. Use Gain to control the input level into the shaper.
+When oversampling is enabled (2x or 4x), the module introduces latency proportional to the oversampling factor. The dry signal path is automatically delayed to stay aligned with the wet signal for correct mix behaviour. The overall plugin latency reported to the host increases accordingly.
 
-When using oversampling, the module introduces latency proportional to the oversampling factor. The dry signal path is automatically delayed to stay aligned with the wet signal for correct mix behaviour.
+### Autogain
 
-The DC removal filter (30 Hz high-pass) runs after the shaper but is tied to the BypassFilters toggle. If you need bias-driven asymmetric distortion with BypassFilters enabled, be aware that DC offset will remain in the output.
+The autogain compensation is calculated statically by probing 128 input values through the current shaper whenever Mode or Gain changes. It is not a dynamic loudness measurement. Switching modes mid-playback triggers a recalculation with a 40 ms smoothing ramp to avoid clicks.
 
-Modes 32 (Curve) and 33 (Asymmetrical Curve) use the lookup table edited in the module's panel. The table maps input amplitude to output amplitude. All other modes use fixed mathematical functions.
+### Custom Curves
+
+Modes 32 (Curve) and 33 (Asymmetrical Curve) use the lookup table edited in the module's panel. When scripting, use attribute value 32 for Curve and 33 for Asymmetrical Curve - the values are not sequential from the mathematical modes (1-12). [1]($FORUM_REF.1763$) User-drawn curves can be serialised with `exportAsBase64()` and restored later for preset saving. [2]($FORUM_REF.5099$)
+
+The DC removal filter (30 Hz high-pass) runs after the shaper but is tied to the BypassFilters toggle. If you need bias-driven asymmetric distortion with BypassFilters enabled, DC offset will remain in the output.
 
 **See also:** $MODULES.PolyshapeFX$ -- Polyphonic variant with per-voice processing and a drive modulation chain

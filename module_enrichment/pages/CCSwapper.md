@@ -103,8 +103,10 @@ groups:
 ---
 ::
 
-## Notes
+### Bidirectional Swap
 
 The swap is bidirectional: if FirstCC is 1 (Mod Wheel) and SecondCC is 11 (Expression), then CC#1 messages become CC#11 and CC#11 messages become CC#1.
+
+### Unaffected Event Types
 
 Pitch bend and aftertouch events are not affected, even though they are a type of controller message internally. Their controller numbers fall outside the 0-127 parameter range and can never match.

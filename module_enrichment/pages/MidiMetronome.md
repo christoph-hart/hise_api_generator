@@ -116,10 +116,14 @@ groups:
 ---
 ::
 
-## Notes
+### MIDI Player Connection
 
 The MidiMetronome requires a connected MIDI Player to function. The connection is established through a dropdown in the module editor, not through a standard parameter. The selected MIDI Player's ID is saved with the preset.
 
+### Click Characteristics
+
 The click envelope decays exponentially over approximately 130 ms. Each click is a mono signal added equally to both channels.
+
+### Playback Requirement
 
 The metronome only produces clicks while the connected MIDI Player is playing. When the player is stopped, no clicks are generated and the audio passes through unchanged.

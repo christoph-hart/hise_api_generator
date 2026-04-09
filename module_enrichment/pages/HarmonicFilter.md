@@ -173,12 +173,16 @@ chains:
 ---
 ::
 
-## Notes
+### Frequency Tracking
 
 The harmonic filter frequencies are set once at note-on and remain fixed for the voice's lifetime. Pitch bend, glide, and pitch modulation do not retune the filter bank after the initial calculation.
 
 Bands whose frequency would exceed a safety limit below the Nyquist frequency are automatically excluded. For high notes, the actual number of active bands may be fewer than the NumFilterBands setting. For example, a note at 4000 Hz at a 44100 Hz sample rate will only use approximately 4 bands regardless of the setting.
 
-The module uses three slider packs internally: pack A and pack B hold the editable per-band gain values in dB (-24 to +24), and a third read-only pack displays the interpolated mix result. The crossfade interpolates gain values before filtering - it does not run two separate filter banks, so there is no additional CPU cost from using intermediate crossfade positions.
+### Slider Pack Data
+
+The module uses three slider packs internally: pack A and pack B hold the editable per-band gain values in dB (-24 to +24), and a third read-only pack displays the interpolated mix result. The crossfade interpolates gain values before filtering - it does not run two separate filter banks. The three slider pack components (A, B, Mix) can be promoted to the plugin interface for custom layout and colouring. [1]($FORUM_REF.671$)
+
+The FilterDisplay FloatingTile does not support this module. Build the filter UI manually using promoted slider pack components. [2]($FORUM_REF.671$)
 
 **See also:** $MODULES.PolyphonicFilter$ -- General-purpose polyphonic filter with standard filter modes. Use when you need a conventional LP/HP/BP filter per voice rather than harmonic resonance shaping., $MODULES.HarmonicFilterMono$ -- Monophonic variant that tracks the last played note instead of maintaining independent filter state per voice. Lower CPU cost but no per-voice harmonic separation., $MODULES.PolyshapeFX$ -- Polyphonic waveshaper that can be placed before the Harmonic Filter to add harmonics for the filter to shape.

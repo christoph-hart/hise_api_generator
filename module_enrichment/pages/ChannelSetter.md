@@ -95,8 +95,10 @@ groups:
 ---
 ::
 
-## Notes
+### Stuck Notes
 
 Changing the channel number while notes are held can produce stuck notes. If a note-on was sent on the old channel and the corresponding note-off is sent on the new channel, the receiving instrument never sees the note-off. Send an All Notes Off message after changing the channel to clear any stuck notes.
+
+### Channel Range
 
 The standard MIDI channel range of 1-16 is enforced by the parameter. HISE internally supports an extended channel range for advanced routing, but this module only exposes channels 1-16.

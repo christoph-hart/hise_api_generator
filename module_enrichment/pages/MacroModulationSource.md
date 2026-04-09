@@ -74,7 +74,7 @@ tags:
 
 The Macro Modulation Source hosts modulation chains that drive the global macro control slots. Each of its Macro chains (1 through 8 by default) feeds its output value into the corresponding macro control slot, allowing LFOs, envelopes, and other modulators to automate macro knobs from within the module tree.
 
-This module does not generate audio. It is classified as a SoundGenerator to participate in the rendering pipeline and host its modulation chains, but its voices produce no output. The only user-facing features are the Macro modulation chain slots.
+This module does not generate audio. It is classified as a SoundGenerator to participate in the rendering pipeline and host its modulation chains, but its voices produce no output. The only user-facing features are the Macro modulation chain slots. The number of macro chains defaults to 8 but is configurable per-project (up to a maximum of 64).
 
 ## Signal Path
 
@@ -130,7 +130,13 @@ groups:
 ::modulation-table
 ---
 chains:
-  - { name: "Macro 1", desc: "Drives macro control slot 1. Output value (0-1) is scaled to 0-127 and sent to the macro system per block.", scope: "monophonic", constrainer: "Any" }
+  - name: "Macro 1"
+    desc: "Drives macro control slot 1. Output value (0-1) is scaled to 0-127 and sent to the macro system per block."
+    scope: "monophonic"
+    constrainer: "Any"
+    hints:
+      - type: info
+        text: "Each chain is sampled once per audio block (first sample position). For per-sample resolution on the receiving end, use a $MODULES.MacroModulator$ with smoothing enabled. [1]($FORUM_REF.4333$)"
   - { name: "Macro 2", desc: "Drives macro control slot 2.", scope: "monophonic", constrainer: "Any" }
   - { name: "Macro 3", desc: "Drives macro control slot 3.", scope: "monophonic", constrainer: "Any" }
   - { name: "Macro 4", desc: "Drives macro control slot 4.", scope: "monophonic", constrainer: "Any" }
@@ -142,15 +148,5 @@ chains:
   - { name: "Pitch Modulation", desc: "Inherited from the base class. Disabled. Not applicable - this module has no oscillator.", scope: "monophonic", constrainer: "Any" }
 ---
 ::
-
-## Notes
-
-The number of macro chains defaults to 8 but is configurable per-project via the HISE_NUM_MACROS setting (up to a maximum of 64). The module automatically creates the correct number of chains to match the project configuration.
-
-Each macro chain's output is sampled once per audio block (at the first sample position). This means the update rate for macro values is the block rate, not per-sample. For most use cases this provides sufficiently smooth control. If you need per-sample resolution on the receiving end, use a Macro Modulator with smoothing enabled.
-
-Only changed values trigger macro system updates. If a chain's output is the same as the previous block, no update is sent. This prevents unnecessary processing in the macro distribution system.
-
-Empty chains are skipped entirely - they do not send a zero value or reset the macro slot. A macro chain with no modulators simply has no effect on its corresponding slot.
 
 **See also:** $MODULES.MacroModulator$ -- the receive side of the macro system, reads macro slot values and converts them to modulation signals with smoothing and table-based response curves

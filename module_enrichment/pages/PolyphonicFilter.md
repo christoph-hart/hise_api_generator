@@ -193,14 +193,16 @@ chains:
 ---
 ::
 
-## Notes
+### Frequency Modulation
 
-The two frequency modulation paths interact in a specific order: the Frequency value is normalised to a 0-1 range, the bipolar offset (BipolarIntensity multiplied by the Bipolar Freq Modulation chain output) is added, and then the Frequency Modulation chain multiplies the result. This means the bipolar offset shifts the frequency before the standard modulation scales it.
+The two frequency modulation paths interact in a specific order: the Frequency value is normalised to a 0-1 range, the bipolar offset is added, and then the Frequency Modulation chain multiplies the result. The standard Frequency Modulation chain scales from ~20 Hz up to the Frequency knob value - it does not modulate around the set frequency. To modulate around a centre frequency, use the Bipolar Frequency chain instead. [1]($FORUM_REF.2749$)
 
-The `Quality` parameter is vestigial - it is stored and appears in the interface but does not affect processing. The monophonic path updates coefficients every 64 samples and the polyphonic path updates once per voice buffer, regardless of the Quality setting.
+### CPU and Polyphonic Processing
 
-Two filter modes are non-functional: **StateVariablePeak** (index 11) and **LadderFourPoleHP** (index 16). Selecting either of these modes does not change the active filter - the previously selected topology remains in place. Use Peak (index 4) for a parametric peak filter instead, and HighPass (index 1) or StateVariableHP (index 7) as alternatives to the broken ladder high-pass.
+The module automatically detects whether polyphonic processing is needed based on the modulator types in its chains. Adding even a single polyphonic modulator (e.g., velocity) to any chain forces all voices to be processed independently, significantly increasing CPU cost. [2]($FORUM_REF.404$)
 
-The module automatically detects whether polyphonic processing is needed based on the modulator types in its chains. When a polyphonic modulator is added or removed, the module switches between per-voice and monophonic paths without manual configuration.
+### Non-Functional Elements
+
+The `Quality` parameter is vestigial - it is stored and appears in the interface but does not affect processing. Two filter modes are non-functional: **StateVariablePeak** (index 11) and **LadderFourPoleHP** (index 16). Selecting either does not change the active filter. Use Peak (index 4) or StateVariableHP (index 7) as alternatives.
 
 **See also:** $MODULES.CurveEq$ -- Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering, $MODULES.HarmonicFilter$ -- Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency

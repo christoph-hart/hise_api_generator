@@ -12,7 +12,11 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: AudioAnalyser, type: ui_component, reason: "FloatingTile that displays the Analyser's goniometer, oscilloscope, or spectrum visualisation" }
-commonMistakes: []
+commonMistakes:
+  - title: "AudioAnalyser FloatingTile ignores standard colour properties"
+    wrong: "Setting colour properties directly on the AudioAnalyser component"
+    right: "Use a LookAndFeel override to style the AudioAnalyser display"
+    explanation: "Standard colour properties have no effect on the AudioAnalyser component. The display must be styled through a custom LookAndFeel."
 llmRef: |
   Analyser (MasterEffect)
 
@@ -25,7 +29,16 @@ llmRef: |
 
   Parameters:
     PreviewType (Nothing, Goniometer, Oscilloscope, Spectral Analyser, default Nothing) - selects the visualisation mode
-    BufferSize (0-32768 samples, default 8192) - ring buffer size, affects frequency resolution and display latency
+    BufferSize (0-32768 samples, default 8192) - ring buffer size, affects frequency resolution and display latency. setAttribute() expects the actual sample count, not a combo-box index.
+
+  Tips:
+    - FFT display properties (WindowType, DecibelRange, Decay, etc.) must be applied from script via DisplayBuffer.setRingBufferProperties() each time - they are not persisted by the editor.
+    - getDisplayBuffer() argument is an arbitrary ID, not a channel index.
+    - Use showControl(false) on the FloatingTile to toggle the display; there is no bypass API on the ring buffer.
+    - For offline spectrum analysis, use Engine.createFFT() instead of this module.
+
+  Common mistakes:
+    - Setting colour properties on AudioAnalyser directly has no effect; use a LookAndFeel override.
 
   When to use:
     Monitoring stereo phase, waveform shape, or frequency content at any point in the effect chain. Insert wherever you need visual feedback.
@@ -55,16 +68,24 @@ groups:
   - label: Visualisation
     params:
       - { name: PreviewType, desc: "Selects the visualisation mode. Each mode configures the display buffer for a different analysis type.", range: "Nothing, Goniometer, Oscilloscope, Spectral Analyser", default: "Nothing" }
-      - { name: BufferSize, desc: "Size of the analysis ring buffer in samples. Larger values give better frequency resolution for the spectrum analyser but increase display latency.", range: "0 - 32768", default: "8192" }
+      - { name: BufferSize, desc: "Size of the analysis ring buffer in samples. Larger values give better frequency resolution for the spectrum analyser but increase display latency.", range: "0 - 32768", default: "8192", hints: ["When setting via setAttribute(), pass the actual sample count (e.g. 8192, 16384), not a combo-box index [1](https://forum.hise.audio/topic/5320)."] }
 ---
 ::
 
-## Notes
+### Configuring FFT Display Properties
 
-The ring buffer write only occurs when a UI component (the AudioAnalyser FloatingTile) is connected and actively consuming the data. Without a connected display, the module has zero processing overhead beyond the standard effect chain traversal.
+Properties such as BufferLength, WindowType, DecibelRange, Decay, and UseLogarithmicFreqAxis are not persisted when set in the HISE editor. They must be applied each time from script using `DisplayBuffer.setRingBufferProperties()` with a JSON object [1](https://forum.hise.audio/topic/6666) [2](https://forum.hise.audio/topic/11056). The same property set works for the `analyse.fft` scriptnode node.
 
-Setting PreviewType to Nothing does not explicitly disable the buffer write - the ring buffer may still be written to if a UI component is connected. To minimise overhead when visualisation is not needed, disconnect or hide the display component.
+### Toggling the Display
 
-The BufferSize parameter can be changed at runtime. For the spectrum analyser, larger buffers provide finer frequency resolution at the cost of higher display latency. For the oscilloscope and goniometer, the default of 8192 samples is typically sufficient.
+There is no scripting API to bypass or disable the ring buffer from script. To hide the visualisation at runtime, call `showControl(false)` on the AudioAnalyser FloatingTile panel or toggle its visibility [1](https://forum.hise.audio/topic/1951) [2](https://forum.hise.audio/topic/10897). Without a connected display component, the module has zero processing overhead beyond the standard effect chain traversal.
+
+### Display Buffer Index
+
+The numeric argument passed to `getDisplayBuffer()` is an arbitrary ID used to distinguish multiple display buffers on the same source -- it is not a channel index [1](https://forum.hise.audio/topic/12442). Any numbering scheme (0-9 or otherwise) is valid.
+
+### Offline Spectrum Analysis
+
+The Analyser module is designed for real-time visualisation. For offline spectrum analysis of audio files or buffers (e.g. generating a 2D spectrogram), use `Engine.createFFT()` with `fft.setEnableSpectrum2D(true)` and `g.drawFFTSpectrum()` in a paint routine instead [1](https://forum.hise.audio/topic/13231).
 
 **See also:** [AudioAnalyser](/v2/reference/floating-tiles/audioanalyser) -- FloatingTile that renders the goniometer, oscilloscope, or spectrum analyser visualisation from this module's display buffer

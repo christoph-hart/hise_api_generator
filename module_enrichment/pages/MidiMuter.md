@@ -120,10 +120,14 @@ groups:
 ---
 ::
 
-## Notes
+### Stuck Note Prevention
 
 With ignoreButton on and fixStuckNotes off, both note-on and note-off events are blocked. This will cause stuck notes if any notes were sounding when the mute was engaged. Enable fixStuckNotes to avoid this.
 
+### Mute Toggle Behaviour
+
 The module does not send artificial note-off or note-on events when the mute is toggled. When the mute is engaged, currently sounding notes continue until their note-offs arrive (handled by fixStuckNotes). When the mute is disengaged, keys that were held during the muted period do not retroactively trigger - the key must be released and pressed again.
+
+### Note Tracking
 
 The note tracker uses one bit per note number (0-127), not one bit per voice. If the same note number is triggered multiple times, only one bit is tracked. This is consistent with standard MIDI note-off matching by note number.

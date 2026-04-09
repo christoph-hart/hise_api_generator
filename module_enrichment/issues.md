@@ -96,6 +96,14 @@ Sorted by severity (critical first).
 - **Observed:** In `PeakFilterBand::State::process(FloatType& left, FloatType& right)` (the non-SSE path), line 119 sets `right = left` after processing, meaning the right channel always receives a copy of the left channel's filtered output. The SSE path (`process(SSEType& input)`) processes both channels independently via SIMD. On non-SSE builds, the HarmonicFilter produces mono output even when given stereo input. The `processSamples()` method passes separate left and right pointers, but the scalar `process()` ignores the right channel's input and overwrites it.
 - **Expected:** The non-SSE path should process each channel independently (duplicate the SVF state for L/R or process them in separate calls), matching the SSE path's behavior.
 
+### HarmonicFilter -- Monophonic version produces silence with more than 1 band
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/HarmonicFilter.cpp (monophonic / MasterEffect path)
+- **Observed:** Using the monophonic (MasterEffect) version of the HarmonicFilter with NumFilterBands set to more than 1 results in complete silence. The polyphonic (VoiceEffect) version works correctly with any band count. Multiple users confirmed independently (tid 1213, tid 1150). On Linux with JACK, this can silence the entire audio system, not just the HISE output.
+- **Expected:** The monophonic path should process multiple filter bands correctly, matching the polyphonic path's behaviour.
+
 ### PolyshapeFX -- Mode parameter range includes unregistered modes that silently fall back to Linear
 
 - **Type:** inconsistency
@@ -167,6 +175,166 @@ Sorted by severity (critical first).
 - **Location:** hi_core/hi_sampler/sampler/ModulatorSampler.cpp:1446
 - **Observed:** The `RepeatMode` enum defines `KillThirdOldestNote` (index 4, exposed as "Kill Third" in the UI), but `handleRetriggeredNote()` has no `case` for it. It falls through to `default: jassertfalse; break;`, meaning selecting this mode triggers an assertion in debug builds and does nothing in release builds. Only `KillSecondOldestNote` (Kill Duplicate) is implemented among the advanced repeat modes.
 - **Expected:** Either implement KillThirdOldestNote (kill oldest voice when 3+ voices overlap on the same key) or remove it from the enum and UI to avoid user confusion.
+
+### MatrixModulator -- Envelope sources do not update UI when no voice is active
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/MatrixModulator.cpp (render callback)
+- **Observed:** Envelope-based sources in the MatrixModulator do not send UI updates (e.g. filter display) when no voice is active, because envelope render callbacks only fire during voice rendering. The filter display and any linked UI stay stale until a new note triggers. Acknowledged by Christoph Hart on the forum (tid 13409), planned fix for HISE 5.
+- **Expected:** Envelope sources should send idle/default values to UI when voice count drops to zero.
+
+### MatrixModulator -- extra_mod nodes non-functional in compiled FX plugins
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** scriptnode extra_mod integration path for monophonic FX context
+- **Observed:** Parameters connected via `extra_mod` nodes and MatrixModulators work correctly in the HISE IDE but produce no modulation in compiled FX plugins (with AllowPolyphonic disabled). Direct parameter connections bypassing `extra_mod` work in both contexts. Christoph Hart noted this is an untested FX-context code path (tid 14354). Multiple users confirmed independently.
+- **Expected:** `extra_mod` nodes should update `lastModValue` during compiled FX plugin rendering, matching IDE behaviour.
+
+### HardcodedEnvelopeModulator -- MIDI CC events not forwarded into scriptnode envelope network
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/HardcodedModules.cpp (handleHiseEvent / voiceStack)
+- **Observed:** MIDI CC messages (e.g. sustain pedal CC64) are not forwarded into the scriptnode envelope modulator's network. A FlexAHDSR envelope outside scriptnode responds correctly to sustain pedal; the same envelope inside a HardcodedEnvelopeModulator does not. Reported by a trusted user (tid 13641).
+- **Expected:** CC events should be forwarded through `voiceStack.handleHiseEvent()` so that sustain pedal and other CC-dependent behaviour works inside compiled envelope networks.
+
+### GlobalTimeVariantModulator -- Crash on quit when used with global_mod scriptnode node
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/GlobalModulators.cpp / scriptnode global_mod node destructor
+- **Observed:** A crash-on-quit was reported when combining a GlobalModulator with a `global_mod` scriptnode node. The issue was filed but not confirmed resolved at time of reporting (tid 13523). Likely a teardown order issue between the GlobalModulator and the scriptnode node.
+- **Expected:** GlobalModulator and global_mod node destructors should handle disconnection gracefully during shutdown.
+
+### GlobalVoiceStartModulator -- Returns wrong value when MIDI note number is remapped by a script
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/modulators/mods/GlobalModulators.cpp (calculateVoiceStartValue)
+- **Observed:** When a MIDI script blocks the incoming note and plays a different note number via `Synth.playNote()`, the global voice-start modulator looks up the value using the redirected note number rather than the original. The container pre-processes the event before the script remaps it, so the stored value corresponds to the original note number, but the consumer looks up by the new note number. This causes a mismatch - the wrong velocity/key value is returned. Reported by David Healey (tid 9158).
+- **Expected:** The lookup should use a consistent note number. Either the container should store by event ID (not note number) or the consumer should look up using the original note number from the event.
+
+### SimpleGain -- Pan/Balance modulation persistently broken across multiple versions
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/GainEffect.cpp (balance modulation path)
+- **Observed:** Multiple reports spanning 2018-2024 confirm pan/balance modulation does not work reliably (tid 941, 1361, 6062). A related UI bug shows the bipolar pan table reporting 300L-100R instead of 100L-100R (tid 6062). The balance parameter range has also been reported as displaying 10000 instead of -100 to 100 (tid 10845).
+- **Expected:** Balance modulation should work correctly and the parameter range should display the correct -100 to 100 range.
+
+### Dynamics -- Limiter attack time change causes pops during playback
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/Dynamics.cpp (limiterPending / setInternalAttribute)
+- **Observed:** Christoph Hart confirmed that changing the limiter attack parameter during audio playback switches internal processing at a random point in the buffer and introduces a delay, causing clicks and pops (tid 2857, 3490). The attack time should not be automated.
+- **Expected:** Limiter attack changes should use a crossfade or be deferred to a block boundary to prevent artefacts.
+
+### SendFX -- Renaming a SendContainer breaks connected SendFX references
+
+- **Type:** ux-issue
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/RouteFX.h (connect / container ID resolution)
+- **Observed:** If a Send Container is renamed after Send Effects have been connected to it, the connection breaks and the SendFX dropdown shows 'no choices'. The fix is to remove and re-add the Send Container (tid 12586).
+- **Expected:** Container references should update when the container is renamed, or use an ID-based reference rather than name-based.
+
+### Analyser -- Changing BufferSize at runtime may break the display until project reload
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_dsp_library/node_api/helpers/RingBuffer.h (setRingBufferSize / DisplayBufferSource reconnection)
+- **Observed:** Changing BufferSize at runtime caused the Analyser to stop displaying until the project was reopened (tid 5320). The ring buffer is resized at runtime but the display may not reconnect cleanly after a resize.
+- **Expected:** The display should reconnect automatically after a runtime buffer resize without requiring a project reload.
+
+### Analyser -- Audio mutes after recompiling script when DisplayBuffer references are reassigned
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/fx/Analyser.h (DisplayBufferSource / getDisplayBufferSource lifecycle)
+- **Observed:** Audio was completely muted after the second script compile when using Synth.getDisplayBufferSource() and assigning display buffers to panel data properties. Restarting HISE restored audio (tid 12128). This may be a dangling reference issue when the ring buffer is reassigned on recompile.
+- **Expected:** Display buffer references should survive script recompilation without affecting audio output.
+
+### HardcodedMasterFX -- Peak meter shows identical values for both channels in compiled FX plugin
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_modules/effects/MasterEffectProcessor peak meter read path
+- **Observed:** In a compiled effect plugin, peak meter tiles show the same value for left and right channels regardless of actual stereo content. Adding ENABLE_ALL_PEAK_METERS=1 to Extra Definitions resolves the issue (tid 8652).
+- **Expected:** Peak meters should show independent left/right values by default in compiled plugins without requiring extra preprocessor definitions.
+
+### ReleaseTrigger -- Editing the TimeTable curve editor crashes HISE
+
+- **Type:** crash
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/HardcodedScriptProcessor.h (ReleaseTrigger table access)
+- **Observed:** Editing the TimeTable curve editor in the built-in ReleaseTrigger caused an instant crash. The fix was confirmed by the HISE author (tid 10531). Users on older builds should update.
+- **Expected:** The table curve editor should be editable without crashing.
+
+### ReleaseTrigger -- Time attenuation inconsistent when table curve is fully maxed
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/HardcodedScriptProcessor.h (ReleaseTrigger table lookup / timeIndex normalisation)
+- **Observed:** The time attenuation gave inconsistent velocity values when the table curve reached its maximum, appearing to report the value at position 0 instead of 0.5 at mid-hold times (tid 1956). A scripted implementation avoided the issue.
+- **Expected:** The table lookup should return consistent interpolated values at all normalised time positions.
+
+### MidiPlayer -- LoopEnabled toggle had no effect (loop always active)
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_dsp/modules/MidiPlayer.cpp (preprocessBuffer, LoopEnabled handling)
+- **Observed:** Christoph Hart confirmed a regression where the LoopEnabled toggle had no effect and the player would always loop. Additionally, disabling the loop caused the first beat to be missed on each iteration (tid 7311). Workaround: use the sequence callback with `Math.ceil` on NumBars to normalise the loop boundary.
+- **Expected:** The LoopEnabled parameter should correctly toggle between looping and one-shot playback modes.
+
+### ScriptProcessor -- Components in secondary ScriptProcessor panels lose cross-script connections after restart
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/ScriptProcessorModules (ScriptComponent save/load path)
+- **Observed:** If a UI component in a secondary ScriptProcessor is inside a panel and is connected to a UI component on the Interface script via processorId/parameterId, the connection is silently lost on project reload. Removing and remaking the connection restores it temporarily. No fix was confirmed at the time of the report (tid 11430).
+- **Expected:** Cross-script processorId/parameterId connections should persist across project reload.
+
+### ScriptProcessor -- Timer inside a Synth Group may not fire correctly
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/ScriptProcessorModules.cpp (processHiseEvent, timer channel matching)
+- **Observed:** Timers in a ScriptProcessor nested inside a Synth Group have edge-case issues with visual updates. An expert confirmed the bug and recommended placing the timer ScriptProcessor outside the Synth Group or using setAttribute to update UI instead (tid 8290).
+- **Expected:** Timer callbacks should fire correctly regardless of whether the ScriptProcessor is inside a Synth Group.
+
+### ScriptFX -- Global cables non-functional for C++ nodes inside interpreted ScriptFX networks
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting scriptnode (GlobalCable dispatch, interpreted vs compiled network mode)
+- **Observed:** When a C++ custom node is used inside a ScriptFX DSP network (interpreted mode), global cable connections from that node back to HISE do not function. The feature works correctly when the network is compiled and loaded into a HardcodedMasterFX module instead (tid 10657).
+- **Expected:** Global cable connections should work for C++ nodes in both interpreted and compiled network modes.
+
+### ScriptFX -- wet/dry template introduces attack artefact in polyphonic ScriptFX network
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** scriptnode wet/dry template (gain node resetValue)
+- **Observed:** Using the built-in wet/dry template inside a polyphonic ScriptFX network produces an unwanted attack artefact. The fix is to adjust the resetValue parameter of the gain nodes inside the template (tid 12943).
+- **Expected:** The wet/dry template should not introduce artefacts when used in a polyphonic network.
+
+### SlotFX -- setBypassed() is not functional
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/api/ScriptingApiObjects.cpp (SlotFX scripting class)
+- **Observed:** Calling setBypassed() on a SlotFX reference throws a 'function not found' error. The function appears in the API browser but is not implemented on the SlotFX scripting object (tid 5947). Workaround: obtain a second reference to the same module using Synth.getEffect() and call setBypassed() on that.
+- **Expected:** setBypassed() should be implemented on the SlotFX scripting object.
+
+### SlotFX -- getParameterProperties() returns undefined
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_scripting/scripting/api/ScriptingApiObjects.cpp (~line 3937)
+- **Observed:** Calling getParameterProperties() on a SlotFX reference returns undefined. This function only works with HardcodedMasterFX scriptnode effects, not with SlotFX itself (tid 13671).
+- **Expected:** getParameterProperties() should either work on SlotFX or be excluded from the SlotFX scripting API.
 
 ## Low
 

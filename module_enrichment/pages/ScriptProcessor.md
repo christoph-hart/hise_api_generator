@@ -26,6 +26,14 @@ commonMistakes:
     wrong: "Expecting onControl to fire for a knob that has its processorId and parameterId properties set"
     right: "Connected components bypass onControl entirely - remove the connection if you need the callback"
     explanation: "When a UI component is connected to a processor parameter, macro control, or global cable, value changes are routed directly to the target without triggering onControl."
+  - title: "Preset recall does not restore secondary script controls"
+    wrong: "Expecting controls on a secondary ScriptProcessor to be saved and recalled with presets"
+    right: "Link secondary controls to the Interface script via processorId/parameterId or setAttribute()"
+    explanation: "HISE presets only save the UI component state of the main interface script. Controls in secondary ScriptProcessors are not included in preset data."
+  - title: "Using local keyword in onInit"
+    wrong: "Declaring variables with local in onInit or at script scope"
+    right: "Use const or reg in onInit; reserve local for inside callbacks and inline functions"
+    explanation: "The local keyword outside a callback or inline function triggers a warning and is silently treated as var."
 llmRef: |
   Script Processor (MidiProcessor/MidiProcessor)
 
@@ -61,6 +69,14 @@ llmRef: |
     Blocking audio thread with heavy operations in MIDI callbacks.
     Expecting onController to fire only for CC (it also handles pitch bend, aftertouch, program change).
     Expecting onControl to fire for processor-connected components.
+    Preset recall only restores Interface script controls, not secondary ScriptProcessor controls.
+    Using local keyword in onInit - it is silently treated as var; use const or reg instead.
+
+  Tips:
+    Keep UI logic in the deferred Interface script; real-time MIDI logic in a separate non-deferred ScriptProcessor.
+    Secondary scripts should be self-contained with their own controls, linked from the Interface script.
+    External scripts are embedded into the compiled binary at export time.
+    Avoid globals for cross-processor communication - use linked controls or setAttribute().
 
   See also:
     companion ScriptVoiceStartModulator - per-voice modulation via HiseScript
@@ -189,5 +205,19 @@ The following scripting API objects are available in all callbacks:
 - **Server** - HTTP client/server functionality
 - **FileSystem** - file read/write operations
 - **Settings** - project settings access
+
+### Multi-Script Architecture
+
+The recommended architecture is to keep the Interface script deferred (`Synth.deferCallbacks(true)`) and responsible only for UI logic. Real-time MIDI processing should go in a separate non-deferred Script Processor. The two communicate through linked controls (processorId/parameterId) or `setAttribute()`, not global variables [1](https://forum.hise.audio/topic/10735) [2](https://forum.hise.audio/topic/12580) [3](https://forum.hise.audio/topic/4527).
+
+A secondary processing script should declare its own controls and operate independently, without relying on the Interface script's variables or global state [4](https://forum.hise.audio/topic/8937) [5](https://forum.hise.audio/topic/12580). This makes the secondary script portable and reusable across projects. For secondary scripts, create UI components entirely through code (`Content.addKnob()`, etc.) rather than using the visual Interface Designer [6](https://forum.hise.audio/topic/4672). Use `Content.setHeight()` and `Content.setWidth()` to size the content area -- `Content.makeFrontInterface()` should only be called once, in the main interface script [7](https://forum.hise.audio/topic/4993).
+
+:::{.warning}
+Using the `global` keyword to share data between Script Processors creates hidden coupling. A script that relies on globals from another processor will silently break when used in a different project or module arrangement [8](https://forum.hise.audio/topic/8937) [9](https://forum.hise.audio/topic/5692). Use linked controls or `setAttribute()` instead.
+:::
+
+### External Script Files
+
+When a Script Processor is connected to an external `.js` file via the "Connect to external script" option, the file is embedded into the compiled plugin binary at export time, just like `include()` files [10](https://forum.hise.audio/topic/171). Once connected, the callback editor tabs disappear and the processor enters read-only mode in the module view [11](https://forum.hise.audio/topic/12052). The script can still be edited via the main Code Editor. To make local modifications, use "Disconnect from external script" first.
 
 **See also:** $MODULES.ScriptVoiceStartModulator$ -- per-voice modulation via HiseScript callbacks

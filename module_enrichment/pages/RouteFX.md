@@ -84,12 +84,8 @@ for each channel:
 
 ::
 
-## Notes
+### Limitations
 
-The Routing Matrix cannot be soft-bypassed. Bypass has no effect because the routing may be depended upon by downstream modules. The module is always active.
-
-All routing is configured through the editor panel's matrix grid. There are no scriptable parameters to control routing at runtime.
-
-For gain-controlled routing to a separate effect chain (aux send/return), use a Send Effect targeting a Send Container instead. The Routing Matrix operates within a single processing buffer, while the Send Effect routes signal to a completely separate module's buffer.
+The Routing Matrix cannot be soft-bypassed - it is always active because downstream modules may depend on the routing. All routing is configured through the editor panel's matrix grid with no scriptable parameters for runtime control. For gain-controlled routing to a separate effect chain (aux send/return), use a $MODULES.SendFX$ targeting a $MODULES.SendContainer$ instead.
 
 **See also:** $MODULES.SendFX$ -- Gain-controlled send to a separate Send Container, for aux send/return workflows

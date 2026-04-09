@@ -33,6 +33,22 @@ commonMistakes:
     wrong: "Updating HISE and expecting existing compiled DLLs to continue working"
     right: "Recompile your DSP networks after every HISE update"
     explanation: "The internal API between HISE and the compiled DLL can change between HISE versions. A stale DLL will fail to load or cause undefined behaviour."
+  - title: "Using Synth.getEffect() instead of Synth.getSlotFX()"
+    wrong: "Calling setEffect() or getModuleList() on a reference obtained via Synth.getEffect()"
+    right: "Use Synth.getSlotFX() for setEffect() and getModuleList(); use Synth.getEffect() only for exportState()/restoreState()"
+    explanation: "Synth.getEffect() does not expose the slot-swapping API. Only Synth.getSlotFX() provides setEffect() and getModuleList()."
+  - title: "getCurrentEffectId() returns the module ID, not the loaded network"
+    wrong: "Expecting getCurrentEffectId() to return the name of the currently loaded scriptnode network"
+    right: "Track the loaded network name externally or use exportState() to capture the full module state"
+    explanation: "getCurrentEffectId() returns the module's own ID string, not the name of the compiled network currently loaded into it."
+  - title: "Nesting inside a SlotFX"
+    wrong: "Placing a Hardcoded Master FX inside a SlotFX module"
+    right: "Use the Hardcoded Master FX directly - it already has built-in slot-swapping functionality"
+    explanation: "Hardcoded Master FX is itself a slot-type module. Wrapping it in a SlotFX creates a double-slot arrangement that causes unexpected behaviour."
+  - title: "UI knob range does not match network parameter range"
+    wrong: "Setting a custom filmstrip knob range that differs from the parameter range declared in the scriptnode network"
+    right: "Ensure the UI knob's min/max range exactly matches the parameter range in the compiled network"
+    explanation: "A range mismatch causes the filmstrip to display incorrect positions even though the underlying value is set correctly."
 llmRef: |
   Hardcoded Master FX (Effect/MasterEffect)
 
@@ -54,6 +70,10 @@ llmRef: |
     Channel count between routing matrix and network must match.
     Avoid reserved parameter names (Bypassed, Type, ID, Network).
     Must recompile DLL after HISE updates.
+    Use Synth.getSlotFX() for setEffect()/getModuleList(); Synth.getEffect() does not expose slot API.
+    getCurrentEffectId() returns the module ID, not the loaded network name.
+    Do not nest inside a SlotFX - the module already has built-in slot-swapping.
+    UI knob ranges must exactly match network parameter ranges for correct filmstrip display.
 
   See also:
     alternative ScriptFX - loads interpreted XML scriptnode networks
@@ -157,5 +177,13 @@ There are two workflows depending on what you are loading:
 **Custom C++ node**: Write your `.h` file in `DspNetworks/ThirdParty/`. Compile the DLL — the node auto-loads in HISE and appears in the module dropdown. On plugin export, the C++ code is compiled directly into the binary alongside the rest of the plugin.
 
 In both cases, the exported plugin contains no DLL and no XML — everything runs as native compiled code.
+
+### Restoring State in a Single Call
+
+Rather than calling `setEffect()` followed by individual parameter assignments, you can capture the entire module state with `exportState()` (or via **Edit > Create Base64 encoded state**) and restore it in one call with `restoreState()`. The Base64 string encodes both the loaded network name and all parameter values [1](https://forum.hise.audio/topic/7701) [2](https://forum.hise.audio/topic/12498).
+
+### Enabling Networks for Compilation
+
+Each scriptnode network that should appear in the Hardcoded Master FX dropdown must have **AllowCompilation** enabled individually before the DLL build step [1](https://forum.hise.audio/topic/5911). After building and restarting HISE, use **Tools > Show DLL info** to verify the compiled networks are registered. The build configuration (Debug/Release) must also match the HISE build -- a mismatch results in 'No DLL loaded' [2](https://forum.hise.audio/topic/5911).
 
 **See also:** $MODULES.ScriptFX$ -- loads interpreted XML scriptnode networks instead of compiled C++ code, $MODULES.HardcodedPolyphonicFX$ -- per-voice compiled effect for polyphonic processing, $MODULES.SlotFX$ -- swaps between existing HISE effects rather than compiled networks, [C++ DSP Nodes]($LANG.cpp-dsp-nodes$) -- complete callback interface and worked examples for writing custom C++ DSP nodes

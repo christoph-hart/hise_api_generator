@@ -148,12 +148,12 @@ chains:
 ---
 ::
 
-## Notes
+### Pan Behaviour
 
-The Pan parameter is a modulation range scaler, not a static pan control. This is by design - StereoFX is intended for modulation-driven per-voice panning. For static stereo balance, use SimpleGain instead.
+The Pan parameter is a modulation range scaler, not a static pan control. Without a modulator in the Pan Modulation chain, the Pan knob has no audible effect. [1]($FORUM_REF.1081$) For static stereo balance, use $MODULES.SimpleGain$ instead. Pan uses an equal-power pan law that maintains unity gain at centre.
 
-Width is applied to the combined output buffer after all voices are summed, not per-voice. All voices share the same stereo width setting.
+### Width Behaviour
 
-Pan uses an equal-power pan law that maintains unity gain at centre. At full left or right, the active channel is boosted by approximately 3 dB to preserve perceived loudness.
+Width is applied to the combined output buffer after all voices are summed, not per-voice. Width has no effect on a mono source (where L equals R) because the side signal is zero. [2]($FORUM_REF.7956$) The Width parameter has no modulation chain - for dynamic width control, build a mid/side network in scriptnode. [3]($FORUM_REF.6144$)
 
 **See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect - applies waveshaping per-voice rather than stereo processing, $MODULES.SimpleGain$ -- Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning

@@ -22,6 +22,14 @@ commonMistakes:
     wrong: "Expecting the Inverted toggle to invert the envelope signal"
     right: "The Inverted parameter has no effect"
     explanation: "The Inverted toggle is visible in the editor but has no effect on the output. Use a table with an inverted curve as a workaround."
+  - title: "Requires Uniform Voice Handler"
+    wrong: "Using a Global Envelope Modulator without enabling the Uniform Voice Handler"
+    right: "Call `Synth.setUseUniformVoiceHandler()` at the root level"
+    explanation: "Global envelopes match voices via event IDs. Without the Uniform Voice Handler, event IDs are inconsistent across sound generators and the envelope assignment silently fails. [1]($FORUM_REF.9499$)"
+  - title: "Do not use inside a Synth Group"
+    wrong: "Placing a Global Envelope consumer inside a Synth Group"
+    right: "Use a Synth Chain as the host container instead"
+    explanation: "Synth Group starts multiple voices per event, violating the one-voice-per-event constraint that the Uniform Voice Handler depends on. [2]($FORUM_REF.9499$)"
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator
@@ -50,6 +58,10 @@ llmRef: |
   Common mistakes:
     No source selected - outputs constant 1.0.
     Inverted toggle has no effect.
+    Requires Uniform Voice Handler (Synth.setUseUniformVoiceHandler()) or voice sync fails silently.
+    Do not use inside a Synth Group (starts multiple voices per event, breaking voice sync).
+    Arpeggiator must be in the Master Chain to trigger global envelope voices.
+    Setting intensity to zero silences output but does not kill the voice.
 
   See also:
     source GlobalModulatorContainer - hosts the source envelope
@@ -127,14 +139,12 @@ groups:
 ---
 ::
 
-## Notes
+### Arpeggiator Placement
 
-The `Inverted` parameter is visible in the editor but has no effect on the modulation output. To invert the envelope, use a table with an inverted curve (draw a line from top-left to bottom-right).
+When using an arpeggiator with global envelopes, the arpeggiator must be placed in the Master Chain's MIDI processor list. An arpeggiator placed inside a child synth (e.g., in a Sine Generator's MIDI chain) produces notes that are never seen by the Global Modulator Container, so those notes cannot trigger a new envelope voice. [3]($FORUM_REF.13000$)
 
-Voice synchronisation between the container and this consumer uses event IDs rather than voice indices. This means the system works correctly even when the consumer's parent Sound Generator has a different voice count or allocation order than the container. For monophonic source envelopes, all consumer voices read from the same buffer.
+### Voice Lifetime and Intensity
 
-When disconnected (no source selected), the modulator outputs a constant 1.0 in gain mode or 0.0 in pitch mode.
-
-The Monophonic and Retrigger parameters affect the local voice management framework but do not influence the envelope shape, which is always determined by the source envelope in the container.
+Setting the modulation intensity to zero silences the output but does not kill the voice. Voice lifetime is determined by the source envelope in the container - the voice keeps running until the source envelope finishes its release phase. [4]($FORUM_REF.14176$)
 
 **See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source envelope that this modulator reads from, $MODULES.MatrixModulator$ -- combines multiple global modulators into one output with per-connection modes

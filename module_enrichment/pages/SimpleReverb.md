@@ -139,13 +139,11 @@ groups:
 ---
 ::
 
-## Notes
+### Wet/Dry Balance
 
-The Dry Level parameter appears in the interface but changing it has no effect. The Wet Level parameter controls both the wet and dry signal levels: setting Wet Level to X automatically sets Dry Level to 1 minus X.
+The Wet Level parameter controls both the wet and dry signal levels: setting Wet Level to X automatically sets Dry Level to 1 minus X. The Dry Level parameter appears in the interface but changing it has no effect.
 
-A fixed 0.5x gain reduction is applied to the output after the reverb algorithm. This compensates for the Freeverb algorithm's tendency to increase overall signal level, particularly at high room sizes.
-
-The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes.
+A fixed 0.5x gain reduction is applied to the output after the reverb algorithm. This compensates for the Freeverb algorithm's tendency to increase overall signal level, particularly at high room sizes. The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes.
 
 ## See Also
 

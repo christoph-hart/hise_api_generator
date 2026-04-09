@@ -190,12 +190,12 @@ chains:
 ---
 ::
 
-## Notes
+### Smoothing
 
-All four modulation chains use a single value per block (not per-sample). This is the lightest modulation resolution, keeping CPU usage minimal.
+The gain smoothing ramp is 50 ms, while the balance smoothing is 1000 ms. Sound generators' own Gain parameter has no smoothing, so use SimpleGain for click-free automated gain changes on samplers and other sound generators. [1]($FORUM_REF.8822$)
 
-The gain smoothing ramp is 50ms, while the balance smoothing is 1000ms. The slow balance smoothing is designed for gradual panning transitions without audible steps.
+### Width Behaviour
 
-When Width is exactly 100% (the default), mid/side processing is skipped entirely. Similarly, when Delay is 0ms, the delay line is bypassed. This means the module at default settings is essentially just a smoothed gain multiply.
+When Width is exactly 100% (the default), mid/side processing is skipped entirely. Width has no effect on a mono source (where L equals R) because mid/side encoding produces zero side signal. To widen a mono source, create stereo differences first using a short delay (Haas effect) or chorus, then apply Width. [2]($FORUM_REF.7956$) Width above 100% amplifies the side signal only, which can introduce out-of-phase content that cancels when summed to mono.
 
 **See also:** $MODULES.Delay$ -- Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment

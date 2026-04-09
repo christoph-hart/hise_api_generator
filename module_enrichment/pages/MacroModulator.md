@@ -43,7 +43,7 @@ llmRef: |
     MacroValue (0-1, default 1.0) - internal write-only parameter driven by the macro system
 
   When to use:
-    When you need sample-accurate macro control with smoothing or custom response curves. The standard macro control protocol operates at block rate; this modulator provides per-sample interpolation and table-based reshaping.
+    When you need smoothed macro control with custom response curves. The macro system is designed for slow control movements, not precision modulation. This modulator adds per-sample interpolation and table-based reshaping on top of the block-rate macro protocol.
 
   Common mistakes:
     Default MacroIndex is -1 (disconnected) - must assign a slot.
@@ -67,7 +67,7 @@ tags:
 
 The Macro Modulator listens to a macro control slot and converts its value into a time-variant modulation signal. It provides two features beyond what the standard macro control protocol offers: per-sample smoothing to prevent zipper noise on fast value changes, and an optional lookup table for custom response curves.
 
-Place this modulator in any modulation chain where you want a macro knob to control a parameter with smooth, click-free transitions. The table allows non-linear mappings - for example, an exponential curve for volume fades or a stepped curve for discrete value jumps.
+Place this modulator in any modulation chain where you want a macro knob to control a parameter with smooth, click-free transitions. The table allows non-linear mappings - for example, an exponential curve for volume fades or a stepped curve for discrete value jumps. The macro control system is designed for slow control movements (pad filter sweeps, randomised jitter), not precision sample-accurate modulation - use dedicated modulators for fast or exact modulation tasks. [2]($FORUM_REF.4333$)
 
 ## Signal Path
 
@@ -126,25 +126,27 @@ else:
 groups:
   - label: Macro Connection
     params:
-      - { name: MacroIndex, desc: "Which macro control slot to listen to. Values 0-7 correspond to Macro 1-8. A value of -1 means disconnected - the modulator outputs a constant 1.0.", range: "-1 - 7", default: "-1" }
+      - name: MacroIndex
+        desc: "Which macro control slot to listen to. Values 0-7 correspond to Macro 1-8. A value of -1 means disconnected - the modulator outputs a constant 1.0."
+        range: "-1 - 7"
+        default: "-1"
+        hints:
+          - type: info
+            text: "After disconnecting from a macro slot, the modulator retains whatever value it had at the moment of disconnection. Only a newly created instance starts at 1.0."
   - label: Value Processing
     params:
       - { name: UseTable, desc: "Enables a lookup table for custom response curves. The table maps the incoming macro value (0-1) to an output value (0-1) before smoothing is applied.", range: "Off / On", default: "Off" }
-      - { name: SmoothTime, desc: "Time in milliseconds for the output to reach a new target value. Higher values produce smoother but slower transitions. At 0 ms the output changes instantly.", range: "0 - 1000 ms", default: "200 ms" }
+      - name: SmoothTime
+        desc: "Time in milliseconds for the output to reach a new target value. Higher values produce smoother but slower transitions. At 0 ms the output changes instantly."
+        range: "0 - 1000 ms"
+        default: "200 ms"
+        hints:
+          - type: tip
+            text: "For fast automation, a small smoothing time (10-50 ms) prevents audible artefacts without adding noticeable latency. [1]($FORUM_REF.4333$)"
   - label: Internal
     params:
       - { name: MacroValue, desc: "The current macro value. This is a system-driven parameter used internally by the macro control system. Not user-editable.", range: "0 - 100%", default: "100%" }
 ---
 ::
-
-## Notes
-
-The Macro Modulator does not respond to MIDI events. It receives values exclusively from the macro control system. When disconnected (MacroIndex = -1), a fresh instance outputs a constant 1.0, which acts as a pass-through in gain modulation mode.
-
-The table lookup is applied before smoothing. This means the smoother operates on the post-table value, not the raw macro value. If the table produces a stepped output, the smoother will still interpolate between the steps, softening the transitions.
-
-When the smoothing time is 0, value changes take effect immediately with no interpolation. For fast automation, a small smoothing time (10-50 ms) prevents audible artifacts without adding noticeable latency.
-
-After disconnecting from a macro slot, the modulator retains whatever value it had at the moment of disconnection. It does not reset to 1.0 - only a newly created instance starts at the default.
 
 **See also:** $MODULES.MacroModulationSource$ -- the source side of the macro system, hosts modulation chains that drive the macro slots this modulator reads from

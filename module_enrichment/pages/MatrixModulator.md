@@ -23,6 +23,14 @@ commonMistakes:
     wrong: "Mixing up Scale and Add connection modes"
     right: "Scale multiplies against the base value, Add offsets from it"
     explanation: "The combination formula is: output = (baseValue * scaleMod1 * scaleMod2 * ...) + addMod1 + addMod2 + ... Scale connections are applied first (multiplicative), then Add connections (additive)."
+  - title: "matrixTargetId without MatrixModulator loses polyphonic modulation"
+    wrong: "Using `matrixTargetId` to connect a knob directly to a parameter without a Matrix Modulator in the modulation chain"
+    right: "Place a Matrix Modulator in the target's modulation chain and connect the knob to its Value parameter via `matrixTargetId`"
+    explanation: "Without a Matrix Modulator in the chain, the value is sent only once per buffer in monophonic mode. The Matrix Modulator provides polyphonic, sample-accurate modulation. [1]($FORUM_REF.13203$)"
+  - title: "Call setMatrixModulationProperties at init"
+    wrong: "Creating connections without calling `setMatrixModulationProperties` first"
+    right: "Call `setMatrixModulationProperties` once in `onInit` before creating connections"
+    explanation: "Without this call, mode comboboxes in the matrix table remain empty after drag-and-drop connections are created. [2]($FORUM_REF.13379$)"
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator
@@ -56,9 +64,16 @@ llmRef: |
 
   UI: ModulationMatrixPanel and ModulationMatrixControlPanel FloatingTiles.
 
+  Macro controls:
+    Assign the same matrixTargetId to multiple MatrixModulators and a UI knob to build unified macro controls.
+    Without a MatrixModulator in the chain, matrixTargetId sends values only once per buffer (monophonic).
+    Call setMatrixModulationProperties once in onInit before creating connections.
+
   Common mistakes:
     Requires a GlobalModulatorContainer with source modulators.
     Scale and Add modes have different combination order.
+    matrixTargetId without a MatrixModulator in the chain loses polyphonic modulation.
+    Mode comboboxes stay empty without calling setMatrixModulationProperties at init.
 
   See also:
     source GlobalModulatorContainer - hosts the source modulators
@@ -142,20 +157,28 @@ groups:
 ---
 ::
 
-## Notes
-
-The combination formula is: `output = (baseValue * scaleMod1 * scaleMod2 * ...) + addMod1 + addMod2 + ...`. Scale connections are always processed before Add connections, regardless of the order they appear in the connection table.
+### Connection Properties
 
 Each connection in the matrix has:
-- A source modulator (selected from the container's chain)
+- A source modulator (selected from the container's gain chain)
 - A mode: Scale (multiplicative), Add (additive), or Bipolar (additive with bipolar range display)
 - An intensity slider (-1 to 1)
 - An optional auxiliary source with its own intensity
 - A per-connection inversion toggle
 
-When all connections are removed, the modulator automatically bypasses itself and outputs the smoothed base value. This prevents unnecessary CPU usage when the matrix is not in use.
+Connections are created via the matrix table editor, drag-and-drop from the container, or the right-click popup menu. Scale connections are always processed before Add connections, regardless of the order they appear in the connection table.
 
-Connections are created via the matrix table editor, drag-and-drop from the container, or the right-click popup menu.
+### Macro Controls with matrixTargetId
 
-**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source modulators that this matrix reads from, $MODULES.GlobalEnvelopeModulator$ -- reads a single envelope source (simpler, lower CPU), $MODULES.GlobalTimeVariantModulator$ -- reads a single time-variant source (simpler, lower CPU)- **UI Component:** `ModulationMatrixPanel` - displays the connection matrix
+Assigning the same `matrixTargetId` to several Matrix Modulators and to a UI control (such as a knob) causes that control to drive the Value parameter of all matching modulators simultaneously. This is the recommended way to build unified macro controls across multiple modulation targets. [3]($FORUM_REF.13203$)
+
+When driving filter cutoff from a Matrix Modulator, use the FilterFreq or FilterFreq Logarithmic edit-range preset. Set the filter's frequency parameter to 20 kHz, then connect the UI knob to the Matrix Modulator's Value parameter. The connection wizard sets the knob range and suffixes automatically. [4]($FORUM_REF.13240$)
+
+### CSS Styling
+
+The matrix table columns can be styled using CSS ID selectors: `#sourceindex`, `#targetid`, `#mode`, `#inverted`, and `#plotter`. Each selector applies to both the header cell and every data cell in that column. The plotter column does not support `background` or `color` CSS properties to avoid the CPU overhead of real-time path rendering at 30 fps. [5]($FORUM_REF.13369$)
+
+**See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source modulators that this matrix reads from, $MODULES.GlobalEnvelopeModulator$ -- reads a single envelope source (simpler, lower CPU), $MODULES.GlobalTimeVariantModulator$ -- reads a single time-variant source (simpler, lower CPU)
+
+- **UI Component:** `ModulationMatrixPanel` - displays the connection matrix
 - **UI Component:** `ModulationMatrixControlPanel` - provides drag buttons for creating connections

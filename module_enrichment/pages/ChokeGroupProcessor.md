@@ -24,6 +24,10 @@ commonMistakes:
     wrong: "Setting KillVoice to On for instruments that need a natural release tail when choked"
     right: "Set KillVoice to Off to allow envelope release stages to play out"
     explanation: "KillVoice On instantly silences voices with no release phase. KillVoice Off sends a note-off instead, allowing envelopes to complete their release stage naturally."
+  - title: "Expecting dynamic per-note group assignment"
+    wrong: "Trying to assign individual MIDI notes to different choke groups at runtime using the built-in processor"
+    right: "Implement choke logic in a ScriptProcessor using event IDs for dynamic group membership"
+    explanation: "The ChokeGroup parameter applies to the whole processor, not individual notes. For drum machines that need to reassign notes to groups at runtime, use a script-based approach with Message.makeArtificial() and Synth.noteOffByEventId()."
 customEquivalent:
   approach: hisescript
   moduleType: ScriptProcessor
@@ -58,6 +62,12 @@ llmRef: |
     - ChokeGroup 0 still filters by key range; set 0-127 for true passthrough
     - Groups are global, not container-scoped; use distinct numbers for independent groups
     - KillVoice On gives no release tail; use Off for natural fade-out
+    - Built-in processor does not support dynamic per-note group assignment; use a ScriptProcessor for that
+
+  Tips:
+    - Choke fires across processors, not within one -- multiple notes in the same processor can play simultaneously.
+    - Each drum type needs its own sampler with a ChokeGroupProcessor.
+    - For script-based choke, call Message.makeArtificial() before storing event IDs; only artificial events can be killed via noteOffByEventId().
 
   See also: (none)
 ---
@@ -150,7 +160,7 @@ onMidiEvent(message) {
 groups:
   - label: Choke Group
     params:
-      - { name: ChokeGroup, desc: "Group number for choke matching. Processors with the same non-zero group number choke each other's voices. Set to 0 to disable choke behaviour (key range filtering still applies).", range: "0 - 16", default: "0" }
+      - { name: ChokeGroup, desc: "Group number for choke matching. Processors with the same non-zero group number choke each other's voices. Set to 0 to disable choke behaviour (key range filtering still applies).", range: "0 - 16", default: "0", hints: ["Triggering a note in group N kills voices from other processors in group N, but multiple notes within the same processor can play simultaneously -- the choke only fires across processors, not within one [1](https://forum.hise.audio/topic/6609)."] }
       - { name: KillVoice, desc: "Controls how choked voices are stopped. On: voices are killed instantly with no release phase. Off: a note-off is sent, allowing envelope release stages to play out naturally.", range: "Off / On", default: "On" }
   - label: Key Range
     params:
@@ -159,12 +169,18 @@ groups:
 ---
 ::
 
-## Notes
+### Recommended Setup for Drum Kits
 
-Choke group matching is global across the entire module tree. There is no way to scope groups to a specific container or synth chain. Two Choke Group Processors in completely separate synth chains with the same group number will choke each other. Use distinct group numbers for groups that should be independent.
+Each drum type (e.g. open hi-hat, closed hi-hat, kick) needs its own Sampler module with a Choke Group Processor set to the appropriate group number. Processors on different samplers with the same group number choke each other globally across the module tree [1](https://forum.hise.audio/topic/13857) [2](https://forum.hise.audio/topic/6609). There is no way to scope groups to a specific container or synth chain, so use distinct group numbers for groups that should be independent.
 
-The key range check respects upstream transposition. If a Transposer processor shifts incoming notes before they reach the Choke Group Processor, the transposed note number is used for the range check.
+### Partial Choke with Key Ranges
 
-Sustain pedal behaviour is tracked: voices held by the sustain pedal (CC#64) are still choked when a choke message arrives. This is correct for drum instruments where a choke should silence all ringing voices regardless of pedal state.
+The key range filter and the choke system are independent. Two processors in the same group can have different key ranges to create partial choke behaviour -- for example, processor A filtering to note 36 (kick) and processor B filtering to note 42 (closed hi-hat) in the same group. Playing note 42 chokes any active note 36 voices on processor A's synth, and vice versa. The key range check respects upstream transposition: if a Transposer shifts incoming notes, the transposed note number is used.
 
-The key range filter and the choke system are independent. Two processors in the same group can have different key ranges to create partial choke behaviour - for example, processor A filtering to note 36 (kick) and processor B filtering to note 42 (closed hi-hat) in the same group. Playing note 42 chokes any active note 36 voices on processor A's synth, and vice versa.
+### Sustain Pedal Tracking
+
+Voices held by the sustain pedal (CC#64) are still choked when a choke message arrives. This is correct for drum instruments where a choke should silence all ringing voices regardless of pedal state.
+
+### Script-Based Choke for Dynamic Groups
+
+When implementing choke logic in a ScriptProcessor (for dynamic per-note group assignment), you must call `Message.makeArtificial()` on note-ons before storing their event IDs [1](https://forum.hise.audio/topic/437). HISE can only kill artificial events via `Synth.noteOffByEventId()` for stability reasons. Maintain one array per choke group and call `Synth.noteOffByEventId()` for all stored IDs when a new note arrives in that group.

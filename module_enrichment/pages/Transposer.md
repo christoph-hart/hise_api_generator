@@ -108,8 +108,10 @@ groups:
 ---
 ::
 
-## Notes
+### Transpose Mechanism
 
 The Transposer uses the transpose mechanism rather than changing note numbers directly. This means the original note number is preserved for event matching, and the effective pitch is calculated by adding the transpose offset at the point of playback. Downstream modules read the combined value when determining pitch.
+
+### Out-of-Range Behaviour
 
 When transposition pushes a note outside the valid MIDI range (0-127), no clamping or discarding occurs. The out-of-range value is passed through, which may cause unexpected behaviour in downstream modules. With the parameter range limited to -24 to +24 semitones, this only affects notes near the extremes of the keyboard.

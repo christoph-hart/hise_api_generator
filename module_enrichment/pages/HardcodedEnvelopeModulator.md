@@ -33,6 +33,14 @@ commonMistakes:
     wrong: "Updating HISE and expecting existing compiled DLLs to continue working"
     right: "Recompile your DSP networks after every HISE update"
     explanation: "The internal API between HISE and the compiled DLL can change between HISE versions. A stale DLL will fail to load or cause undefined behaviour."
+  - title: "Network must output exactly one channel"
+    wrong: "Compiling the network with a multi-channel output configuration"
+    right: "Set the network's channel count to 1 before compiling"
+    explanation: "Envelope modulators produce a single modulation signal. A channel count other than 1 causes initialisation failure. [1]($FORUM_REF.13185$)"
+  - title: "Cannot modulate container-level parameters"
+    wrong: "Placing this envelope in a container's modulation chain to modulate a filter or parameter at container level"
+    right: "Place the envelope inside a sound generator's modulation chain"
+    explanation: "Containers have no voice concept, so per-voice envelope modulation does not apply there. [2]($FORUM_REF.7890$)"
 llmRef: |
   Hardcoded Envelope Modulator (Modulator/EnvelopeModulator)
 
@@ -51,8 +59,11 @@ llmRef: |
   Common mistakes:
     Must compile DSP networks before loading.
     Network must signal voice death or voices accumulate.
+    Network must output exactly one channel.
     Cannot use Monophonic/Retrigger/Intensity as network parameter names.
+    Cannot modulate container-level parameters (containers have no voice concept).
     Must recompile DLL after HISE updates.
+    For global envelope usage, enable Uniform Voice Handler.
 
   See also:
     alternative ScriptEnvelopeModulator - interpreted XML or HiseScript envelope
@@ -178,5 +189,11 @@ There are two workflows depending on what you are loading:
 **Custom C++ node**: Write your `.h` file in `DspNetworks/ThirdParty/`. Compile the DLL — the node auto-loads in HISE and appears in the module dropdown. On plugin export, the C++ code is compiled directly into the binary alongside the rest of the plugin.
 
 In both cases, the exported plugin contains no DLL and no XML — everything runs as native compiled code.
+
+### Global Envelope Usage
+
+To use a compiled envelope as a global modulator across multiple sound generators, enable the Uniform Voice Handler at the root level with `Synth.setUseUniformVoiceHandler()`. This ensures all sound generators allocate voices synchronously, which is required for envelope-based global modulation. [3]($FORUM_REF.7890$)
+
+When connecting envelope modulation within a scriptnode network, ensure both the modulation source node and the target node are placed inside the `midichain` container. Placing the target outside the `midichain` loses sample-accurate timing — the modulation value is applied from the last incoming MIDI message to the entire buffer rather than per-sample. [4]($FORUM_REF.7890$)
 
 **See also:** $MODULES.ScriptEnvelopeModulator$ -- loads interpreted XML scriptnode networks or HiseScript callbacks, $MODULES.AHDSR$ -- built-in five-stage envelope for standard use cases, $MODULES.HardcodedSynth$ -- compiled synthesiser that pairs well with a compiled envelope, [C++ DSP Nodes]($LANG.cpp-dsp-nodes$) -- complete callback interface and worked examples for writing custom C++ DSP nodes

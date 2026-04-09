@@ -121,12 +121,18 @@ groups:
 ---
 ::
 
-## Notes
+### Mode Selection
 
 The active mode is determined by the global MPE enabled state, not by a parameter on the module itself. When MPE is enabled system-wide, the Channel Filter switches to range mode automatically.
 
+### MPE Master Channel
+
 In MPE range mode, channel 1 (the MPE master channel) is always allowed through the filter.
 
+### Filtered Event Types
+
 The filter applies to note-on, note-off, CC, pitch bend, and aftertouch events. Transport events (song position, MIDI start, MIDI stop) and internal events pass through unconditionally.
+
+### Invalid MPE Range
 
 If `mpeStart` is set higher than `mpeEnd`, the range is empty and only channel 1 passes through in MPE mode.

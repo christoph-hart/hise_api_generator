@@ -173,15 +173,21 @@ chains:
 ---
 ::
 
-## Notes
+### WhiteNoise Behaviour
 
 The WhiteNoise parameter name is misleading - it does not add audio-domain white noise. It randomises the read position within each grain on a per-sample basis, which scrambles phase relationships and produces a noise-like effect. The intensity scales by a factor of 10 internally, so even moderate values create noticeable texture changes.
 
 The WhiteNoise amount is captured when a voice starts. Changes to the WhiteNoise parameter after a voice has already begun do not affect that voice's noise amount.
 
+### Mix Scaling
+
 The overlap fader used by the Mix parameter is linear, not equal-power. Around Mix = 50%, both the dry and wet signals are at full volume, so the combined output can exceed unity gain.
 
+### Minimum File Length
+
 If the loaded audio file is shorter than one FFT frame at the current GrainSize, no grains are produced and the module outputs silence on the wet path.
+
+### Grain Playback Speed
 
 Grain playback speed is determined by the ratio between the host sample rate and the file's sample rate. It is not affected by voice pitch - all voices play grains at the same rate regardless of note number.
 

@@ -25,6 +25,14 @@ commonMistakes:
     wrong: "Expecting the MIDI file to play at its embedded tempo"
     right: "Set the host tempo to match the desired playback speed"
     explanation: "Playback is always synchronised to the host tempo. The MIDI file's embedded tempo is discarded on load. Use PlaybackSpeed to scale relative to the host."
+  - title: "NoteOff events invisible to sibling scripts"
+    wrong: "Placing a script processor as a sibling of the MIDI Player and expecting it to receive noteOff callbacks"
+    right: "Place the script processor inside a child container beneath the MIDI Player"
+    explanation: "NoteOff events are pushed to the future-event buffer and are not processed by sibling MIDI processors in the same chain."
+  - title: "MIDI files missing from compiled plugin"
+    wrong: "Compiling without exporting pooled MIDI files first"
+    right: "Run Export > Export Pooled Files To Binary Resource before compiling"
+    explanation: "MIDI files must be explicitly exported to the binary resource pool. If skipped, the compiled plugin contains an empty MIDI pool and no sequences will play."
 customEquivalent:
   approach: hisescript
   moduleType: "ScriptProcessor"
@@ -59,6 +67,15 @@ llmRef: |
     Must load a MIDI file before playback - CurrentSequence defaults to 0 (no selection).
     LoopStart has no effect in one-shot mode.
     MIDI files play at host tempo, not their embedded tempo.
+    NoteOff events are invisible to sibling script processors - place scripts in a child container.
+    MIDI files must be exported to binary resource pool before compiling or they will be missing.
+
+  Tips:
+    All MidiPlayer events are artificial - use Message.isArtificial() to distinguish from live input.
+    Sequence length defaults to last note-off, not bar boundary - use setSequenceCallback with Math.ceil to normalise.
+    Only one TimeSignature per sequence is supported.
+    Pass empty string to setFile() to clear all sequences.
+    The built-in keyboard FloatingTile does not animate from MidiPlayer output - use a custom panel with getNoteRectangleList().
 
   See also: MidiMetronome (companion - generates clicks from this player's position).
 ---
@@ -180,17 +197,43 @@ groups:
 ---
 ::
 
-## Notes
+### Tempo Synchronisation
 
-Playback is always synchronised to the host tempo. The embedded tempo in MIDI files is discarded on load; all timing is recalculated relative to the host BPM. The internal tick resolution is 960 ticks per quarter note.
+Playback is always synchronised to the host tempo. The embedded tempo in MIDI files is discarded on load; all timing is recalculated relative to the host BPM. The internal tick resolution is 960 ticks per quarter note. Tempo map events such as ritardando or accelerando embedded in a MIDI file are ignored entirely [1](https://forum.hise.audio/topic/1425) [2](https://forum.hise.audio/topic/7411). Use `Engine.setHostBpm()` or the PlaybackSpeed parameter for tempo adjustments in standalone mode.
 
-CurrentPosition is not saved with presets - it is purely runtime state. When playback starts, the position resets to the beginning of the sequence (or the loop region).
+### Sequence Length and Time Signatures
 
-LoopStart and LoopEnd define the playback region. In one-shot mode (LoopEnabled off), LoopStart is ignored - playback runs from the beginning to LoopEnd and stops. In loop mode, the event fetcher handles wrap-around transparently, splitting the tick range at the loop boundary so events near the loop point are not dropped. Note-off events at the wrap boundary are skipped to prevent orphaned releases.
+When a MIDI file is loaded, its length is set to the timestamp of the last note-off event rather than the last bar boundary. If the file has no end-of-track marker or no notes reaching the final bar, the reported length may be fractional [3](https://forum.hise.audio/topic/7311) [4](https://forum.hise.audio/topic/5595). Call `setSequenceCallback` with a function that reads the TimeSignature, rounds NumBars up with `Math.ceil`, and writes it back via `setTimeSignature` to ensure the loop boundary falls on a bar line [5](https://forum.hise.audio/topic/7311).
+
+Each sequence supports exactly one TimeSignature. Files with internal time signature changes will have those changes ignored [6](https://forum.hise.audio/topic/11082). Split content into multiple sequences and switch between them if mixed metres are needed.
+
+### Loop Region Behaviour
+
+LoopStart and LoopEnd define the playback region. In one-shot mode (LoopEnabled off), LoopStart is ignored -- playback runs from the beginning to LoopEnd and stops. In loop mode, the event fetcher handles wrap-around transparently, splitting the tick range at the loop boundary so events near the loop point are not dropped. Note-off events at the wrap boundary are skipped to prevent orphaned releases.
+
+### Artificial Events
+
+All events injected by the MIDI Player are marked as artificial. In a script processor that receives both player output and live keyboard input, use `Message.isArtificial()` to distinguish them [7](https://forum.hise.audio/topic/13471). Alternatively, assign the MIDI Player to a different MIDI channel via the CurrentTrack parameter.
+
+The built-in keyboard FloatingTile responds only to incoming MIDI events, not to the artificial events from the MIDI Player. To visualise playback on a keyboard, create a custom panel and use the event callbacks or `getNoteRectangleList` [8](https://forum.hise.audio/topic/13704).
+
+### NoteRectangleList Indexing
+
+`getNoteRectangleList()` returns one rectangle per note, following note-on order. If the EventList contains CC or other non-note events, the indices diverge. Filter the EventList to note-on events only before using EventId to index into the rectangle list [9](https://forum.hise.audio/topic/7724).
+
+### Clearing Sequences
+
+There is no dedicated method to clear all loaded sequences. Pass an empty string as the first argument to `setFile()` -- for example `MidiPlayer.setFile("", true, true)` -- to effectively clear all sequences [10](https://forum.hise.audio/topic/4228).
+
+### Event Limit and Bypass Behaviour
 
 The player generates a maximum of 16 events per audio block. Very dense sequences may have events silently dropped if more than 16 fall within a single block.
 
 When bypassed, note-on events are suppressed but CC and pitch wheel events still pass through.
+
+CurrentPosition is not saved with presets -- it is purely runtime state. When playback starts, the position resets to the beginning of the sequence (or the loop region).
+
+### Editor Overlays
 
 The MidiOverlayPanel FloatingTile hosts several editor overlays for the MIDI Player: a note viewer, CC viewer, loop-based editor, and drag-and-drop file loader. Overlays connect to any MidiPlayer in the module tree and support real-time editing with undo/redo.
 

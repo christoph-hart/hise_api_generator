@@ -115,10 +115,14 @@ onNoteOff(message) {
 
 ::
 
-## Notes
+### Velocity Behaviour
 
 The retrigger stack stores only the note number and channel of the candidate - not its original velocity. When a candidate is retriggered, it uses the velocity of the most recently played note. For example, playing A at velocity 100 then B at velocity 50 in legato means releasing B retriggers A at velocity 50.
 
+### Event ID Pairing
+
 All incoming noteOn events are assigned new artificial event IDs. NoteOff events for the active note are handled through these artificial IDs rather than note number matching, which ensures correct pairing even when the same pitch is replayed.
+
+### Multi-Channel Support
 
 The module processes all MIDI channels. Both the active note and the retrigger candidate track their original channel, so cross-channel legato works correctly for noteOn transitions.

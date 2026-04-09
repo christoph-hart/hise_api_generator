@@ -151,10 +151,10 @@ chains:
 ---
 ::
 
-## Notes
+### Sweep Setup
 
-Phase FX has no internal LFO. Without modulators in the Phase Modulation chain, the phaser produces a static notch pattern at whatever position the constant modulation value sets. To create the classic phaser sweep, add an LFO modulator to the Phase Modulation chain.
+Phase FX has no internal LFO. Without modulators in the Phase Modulation chain, the phaser produces a static notch pattern. To create the classic phaser sweep, add an LFO modulator to the Phase Modulation chain. Frequency1 and Frequency2 define the lower and upper bounds of the sweep range that the modulation interpolates between - all 6 allpass stages share the same frequency at any given sample. [1]($FORUM_REF.12772$)
 
-Frequency1 and Frequency2 are smoothed with a 50ms ramp to prevent clicks when changed via automation or scripting.
+Frequency1 and Frequency2 are smoothed with a 50 ms ramp to prevent clicks when changed via automation or scripting.
 
 **See also:** $MODULES.Chorus$ -- Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep

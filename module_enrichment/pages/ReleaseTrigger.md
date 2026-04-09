@@ -57,6 +57,12 @@ llmRef: |
     - Expecting originals to pass through: both noteOn and noteOff are consumed.
     - Time = 0 with TimeAttenuate on makes attenuation maximally aggressive - use Off to disable.
 
+  Tips:
+    - Release samples need a dedicated second sampler; they cannot share a sampler with sustain layers.
+    - The Time parameter is in seconds despite the slider showing 'ms'.
+    - The built-in module does not handle sustain pedal (CC64); use a custom ScriptProcessor for pedal-aware release behaviour.
+    - MPE mode switches velocity source to noteOff velocity and can disrupt normal release triggering.
+
   See also: (none)
 ---
 
@@ -132,17 +138,27 @@ groups:
   - label: Time Attenuation
     params:
       - { name: TimeAttenuate, desc: "Enables time-based velocity attenuation. When off, release velocity equals the original noteOn velocity. The Time and TimeTable controls are hidden in the UI when this is off.", range: "Off / On", default: "Off" }
-      - { name: Time, desc: "Normalisation window for hold-time attenuation. The elapsed hold time is divided by this value and clamped to 0-1 before the table lookup. Longer values spread the attenuation curve over a wider time range.", range: "0 - 20 s", default: "0 s" }
+      - { name: Time, desc: "Normalisation window for hold-time attenuation. The elapsed hold time is divided by this value and clamped to 0-1 before the table lookup. Longer values spread the attenuation curve over a wider time range.", range: "0 - 20 s", default: "0 s", hints: ["Despite the slider label showing 'ms', the underlying value is in seconds. Custom scripted variants should use Engine.getUptime() (which returns seconds) for consistency [1](https://forum.hise.audio/topic/6214)."] }
       - { name: TimeTable, desc: "Attenuation curve that maps normalised hold time to a velocity multiplier. The horizontal axis represents normalised time (0 = key just pressed, 1 = held for the duration set by Time or longer). The vertical axis is the velocity scale factor (0 = silent, 1 = full velocity).", range: "Table curve (0.0 - 1.0)", default: "Linear (identity)" }
 ---
 ::
 
-## Notes
+### Dedicated Sampler Requirement
 
-Both the original noteOn and noteOff events are consumed by this module - nothing passes through unchanged. Only the artificially generated release noteOn events reach downstream processors. This means the ReleaseTrigger should be placed in a dedicated sound generator's MIDI chain, separate from any sustain layers.
+Release-triggered sample layers cannot share a single Sampler with normal sustain samples. Use two separate Sampler modules: one for normal notes and one for release-triggered notes, with the ReleaseTrigger on the second sampler's MIDI chain [1](https://forum.hise.audio/topic/4225). Both the original noteOn and noteOff events are consumed by this module -- nothing passes through unchanged -- so it must not be placed on a sustain layer's chain.
 
-With Time set to 0 s and TimeAttenuate enabled, even the briefest key press maps to the far-right position of the attenuation curve. This makes the attenuation maximally aggressive. To disable attenuation entirely, set TimeAttenuate to Off rather than relying on a Time value.
+### Sustain Pedal Behaviour
 
-When the attenuated velocity rounds down to 0, no release noteOn is generated. This is expected behaviour - the table curve can be shaped to intentionally silence releases beyond a certain hold duration.
+The built-in ReleaseTrigger does not handle MIDI CC64 (sustain pedal): release samples fire immediately on key-up even when the pedal is held [1](https://forum.hise.audio/topic/13205). For instruments that need pedal-aware release behaviour, a custom ScriptProcessor implementation that tracks pedal state and defers release sample playback until pedal release is the recommended approach.
 
-The module supports full polyphonic note tracking across all 128 MIDI note numbers. However, overlapping notes on the same note number will overwrite the stored data - only the most recent noteOn for a given note number is retained.
+### MPE Mode
+
+In MPE mode, the velocity source switches from the original noteOn velocity to the noteOff velocity. Enabling MPE can disrupt release trigger behaviour in some configurations; if problems occur, keep MPE disabled by default and only enable it when explicitly needed [1](https://forum.hise.audio/topic/11871).
+
+### Overlapping Notes
+
+The module tracks incoming noteOn events per MIDI note number using a 128-slot array. If the same note number fires a second noteOn before the first noteOff (e.g. from MPE or layered instruments), the first noteOn's velocity and timestamp are silently overwritten -- only the most recent noteOn for a given note number is retained.
+
+### Velocity Gate
+
+When the attenuated velocity rounds down to 0, no release noteOn is generated. This is expected behaviour -- the table curve can be shaped to intentionally silence releases beyond a certain hold duration.

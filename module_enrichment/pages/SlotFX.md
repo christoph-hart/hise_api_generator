@@ -21,6 +21,18 @@ commonMistakes:
     wrong: "Trying to load a polyphonic effect or another Effect Slot into the slot"
     right: "Only master effects and monophonic effects are allowed, excluding Route Effect and nested Effect Slots"
     explanation: "The slot restricts child types to prevent incompatible or recursive configurations."
+  - title: "setEffect() requires the type name, not the instance name"
+    wrong: "Passing the module's instance name from the module tree to setEffect()"
+    right: "Pass the effect type name as it appears in the slot dropdown (e.g. 'SimpleReverb', 'PhaseFX')"
+    explanation: "setEffect() expects the module type name, not the instance name you set in the module tree. Passing an instance name silently fails."
+  - title: "Multi-channel effects cannot be loaded"
+    wrong: "Loading a HardcodedMasterFX with more than 2 channels into an Effect Slot"
+    right: "Only 2-channel effects are supported in the Effect Slot"
+    explanation: "Effect Slots only support 2-channel processing. A HardcodedMasterFX built on a scriptnode graph with more than 2 channels will crash on load."
+  - title: "Controls not updated after slot swap"
+    wrong: "Expecting UI controls to automatically show the new effect's parameter values after calling setEffect()"
+    right: "Re-read attribute values after the swap, using a short delay or a broadcaster callback"
+    explanation: "After setEffect(), the newly loaded effect's parameters are not automatically pushed to connected UI controls. A timing issue means the effect may not be fully loaded when the callback fires."
 llmRef: |
   Effect Slot (MasterEffect)
 
@@ -42,6 +54,14 @@ llmRef: |
   Common mistakes:
     No crossfade on swap - the transition is instantaneous.
     Only master/monophonic effects allowed, no polyphonic effects or nested slots.
+    setEffect() requires the type name (e.g. "SimpleReverb"), not the instance name from the module tree.
+    HardcodedMasterFX with more than 2 channels cannot be loaded into an Effect Slot.
+    UI controls are not automatically updated after a slot swap - re-read attribute values manually.
+
+  Tips:
+    Use Engine.addModuleStateToUserPreset() to persist the loaded effect and its parameters across user presets.
+    setBypassed() does not work on SlotFX references - use Synth.getEffect() to get a second reference.
+    The Filter effect type is excluded from the Effect Slot dropdown and cannot be loaded via setEffect().
 
   See also:
     companion Empty - default placeholder when slot is empty
@@ -61,14 +81,30 @@ The Effect Slot hosts a single child effect that can be swapped at runtime. It i
 
 The slot accepts all master effects and monophonic effects, excluding Route Effect and other Effect Slots (no nesting). MIDI events, bypass state, and monophonic voice lifecycle are all forwarded to the hosted effect. The slot itself has no parameters - all controls belong to the child.
 
-## Notes
+### Effect Swapping
 
 When an effect is swapped, the transition is instantaneous at the next processing boundary. There is no crossfade between the old and new effects, which may produce a brief audio discontinuity if the swap occurs during playback.
 
-An empty slot always contains an Empty effect internally rather than being truly null. Clearing the slot replaces the current effect with a fresh Empty instance.
-
 Two Effect Slots can exchange their hosted effects atomically using the swap operation, which is useful for reordering effects in a dynamic chain.
 
+### Empty State
+
+An empty slot always contains an Empty effect internally rather than being truly null. Clearing the slot replaces the current effect with a fresh Empty instance.
+
+### Bypass Delegation
+
 Bypass is fully delegated to the hosted effect. Bypassing the Effect Slot forwards the bypass state to whatever effect is currently loaded.
+
+:::{.warning}
+`setBypassed()` does not work when called on a SlotFX scripting reference [1](https://forum.hise.audio/topic/5947). As a workaround, obtain a second reference to the same module using `Synth.getEffect()` and call `setBypassed()` on that reference instead.
+:::
+
+### Persisting State Across Presets
+
+By default, user presets do not save which effect is loaded in an Effect Slot or its parameter values. Call `Engine.addModuleStateToUserPreset(moduleId)` in onInit for each Effect Slot to include its full state in user preset data [2](https://forum.hise.audio/topic/13353) [3](https://forum.hise.audio/topic/13661).
+
+### Excluded Effect Types
+
+The built-in Filter module is excluded from the Effect Slot type list and cannot be loaded via `setEffect()` [4](https://forum.hise.audio/topic/2536). Use a Script FX wrapping the desired filter behaviour as a workaround.
 
 **See also:** $MODULES.EmptyFX$ -- The default placeholder loaded when the slot is empty or cleared

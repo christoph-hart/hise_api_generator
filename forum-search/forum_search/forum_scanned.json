@@ -1156,5 +1156,869 @@
       14523,
       14553
     ]
+  },
+  "modules:Velocity": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "Velocity",
+      "velocity modulator",
+      "velocity curve",
+      "velocity sensitivity"
+    ],
+    "topicIds": [
+      200,
+      333,
+      624,
+      670,
+      687,
+      824,
+      885,
+      888,
+      1023,
+      1534,
+      2259,
+      4134,
+      6259,
+      6271,
+      8933,
+      10415,
+      10714,
+      10815,
+      13050,
+      13517,
+      13798
+    ]
+  },
+  "modules:MatrixModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "MatrixModulator",
+      "matrix modulator",
+      "modulation matrix",
+      "routing matrix modulator"
+    ],
+    "topicIds": [
+      13203,
+      13240,
+      13365,
+      13369,
+      13379,
+      13409,
+      13638,
+      13759,
+      13907,
+      13977,
+      14088,
+      14348,
+      14354,
+      14476
+    ]
+  },
+  "modules:MacroModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "MacroModulator",
+      "macro modulator",
+      "macro control",
+      "macro knob"
+    ],
+    "topicIds": [
+      2949,
+      4333,
+      5086,
+      8405,
+      8407,
+      12911,
+      13348,
+      13389,
+      13838
+    ]
+  },
+  "modules:HardcodedEnvelopeModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "HardcodedEnvelopeModulator",
+      "hardcoded envelope",
+      "scriptnode envelope"
+    ],
+    "topicIds": [
+      2926,
+      7890,
+      7964,
+      7975,
+      8144,
+      13185,
+      13641
+    ]
+  },
+  "modules:ScriptEnvelopeModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ScriptEnvelopeModulator",
+      "script envelope modulator",
+      "scripted envelope"
+    ],
+    "topicIds": [
+      3548
+    ]
+  },
+  "modules:GlobalEnvelopeModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "GlobalEnvelopeModulator",
+      "global envelope modulator",
+      "global envelope"
+    ],
+    "topicIds": [
+      8386,
+      9499,
+      9644,
+      13000,
+      13652,
+      13849,
+      14174,
+      14176
+    ]
+  },
+  "modules:GlobalTimeVariantModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "GlobalTimeVariantModulator",
+      "global time variant",
+      "global LFO",
+      "global modulator"
+    ],
+    "topicIds": [
+      378,
+      617,
+      1015,
+      1558,
+      1583,
+      2150,
+      4440,
+      5255,
+      5298,
+      6390,
+      6813,
+      7177,
+      7693,
+      7925,
+      8542,
+      9370,
+      9641,
+      10191,
+      10304,
+      11824,
+      11851,
+      13523,
+      14031
+    ]
+  },
+  "modules:GlobalVoiceStartModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "GlobalVoiceStartModulator",
+      "global voice start",
+      "global velocity"
+    ],
+    "topicIds": [
+      624,
+      2259,
+      6271,
+      9158,
+      10815
+    ]
+  },
+  "modules:PolyphonicFilter": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "PolyphonicFilter",
+      "polyphonic filter",
+      "filter modulation",
+      "filter cutoff"
+    ],
+    "topicIds": [
+      377,
+      404,
+      978,
+      2749,
+      2797,
+      7996,
+      9113,
+      9615,
+      13240
+    ]
+  },
+  "modules:HarmonicFilter": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "HarmonicFilter",
+      "harmonic filter",
+      "harmonic eq"
+    ],
+    "topicIds": [
+      671,
+      1150,
+      1213,
+      1494,
+      13836
+    ]
+  },
+  "modules:Chorus": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "Chorus",
+      "chorus effect",
+      "chorus module"
+    ],
+    "topicIds": [
+      980,
+      1607,
+      4525,
+      5107,
+      12406,
+      13017,
+      14072
+    ]
+  },
+  "modules:PhaseFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "PhaseFX",
+      "phaser",
+      "phase effect"
+    ],
+    "topicIds": [
+      3019,
+      8682,
+      12772,
+      13076
+    ]
+  },
+  "modules:ShapeFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ShapeFX",
+      "waveshaper",
+      "shaper",
+      "saturation"
+    ],
+    "topicIds": [
+      1763,
+      1979,
+      4921,
+      5099,
+      5549,
+      5978,
+      6309,
+      6559,
+      8037,
+      8359,
+      9236,
+      9590,
+      9685,
+      9942,
+      10634,
+      11058,
+      11213,
+      11523,
+      11869,
+      12496,
+      12526,
+      12599,
+      12811,
+      13051,
+      13137,
+      13803
+    ]
+  },
+  "modules:Saturator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "Saturator",
+      "saturator",
+      "saturation effect"
+    ],
+    "topicIds": [
+      8037,
+      12121
+    ]
+  },
+  "modules:Dynamics": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "Dynamics",
+      "dynamics effect",
+      "compressor",
+      "limiter"
+    ],
+    "topicIds": [
+      407,
+      443,
+      655,
+      817,
+      1717,
+      1745,
+      1904,
+      1929,
+      1965,
+      2015,
+      2072,
+      2329,
+      2701,
+      2857,
+      3466,
+      3490,
+      3499,
+      3559,
+      3626,
+      3960,
+      4705,
+      4969,
+      6324,
+      6382,
+      6972,
+      7102,
+      7143,
+      7236,
+      8165,
+      8515,
+      9182,
+      10460,
+      11869,
+      11926,
+      12215,
+      12229,
+      12480,
+      12538,
+      12725,
+      12740,
+      12884,
+      12992,
+      13179,
+      13192,
+      13300,
+      13368,
+      13755
+    ]
+  },
+  "modules:SimpleGain": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SimpleGain",
+      "simple gain",
+      "gain module"
+    ],
+    "topicIds": [
+      734,
+      941,
+      1252,
+      1361,
+      1524,
+      1845,
+      6062,
+      7321,
+      7804,
+      8822,
+      9574,
+      10845,
+      12040,
+      13149
+    ]
+  },
+  "modules:SendContainer": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SendContainer",
+      "send container",
+      "send bus"
+    ],
+    "topicIds": [
+      1223,
+      5558,
+      5673,
+      6353,
+      6388,
+      7315,
+      8682,
+      9104,
+      9393,
+      10182,
+      13113
+    ]
+  },
+  "modules:SendFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SendFX",
+      "send fx",
+      "send effect"
+    ],
+    "topicIds": [
+      76,
+      5032,
+      5673,
+      6236,
+      6444,
+      7659,
+      9463,
+      12398,
+      12586,
+      13113
+    ]
+  },
+  "modules:StereoFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "StereoFX",
+      "stereo effect",
+      "stereo width",
+      "mid side"
+    ],
+    "topicIds": [
+      1081,
+      1176,
+      2142,
+      6144,
+      7956,
+      8718
+    ]
+  },
+  "modules:SimpleReverb": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SimpleReverb",
+      "simple reverb",
+      "reverb module"
+    ],
+    "topicIds": [
+      825,
+      4465,
+      13264,
+      13887
+    ]
+  },
+  "modules:CCSwapper": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "CCSwapper",
+      "cc swapper",
+      "cc swap"
+    ],
+    "topicIds": [
+      10855
+    ]
+  },
+  "modules:ChokeGroupProcessor": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ChokeGroupProcessor",
+      "choke group",
+      "mute group"
+    ],
+    "topicIds": [
+      437,
+      6609,
+      8197,
+      11473,
+      11814,
+      13857
+    ]
+  },
+  "modules:MidiMuter": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "MidiMuter",
+      "midi muter",
+      "mute midi"
+    ],
+    "topicIds": [
+      13821
+    ]
+  },
+  "modules:MidiPlayer": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "MidiPlayer",
+      "midi player",
+      "midi file",
+      "midi sequence"
+    ],
+    "topicIds": [
+      969,
+      1286,
+      1425,
+      1903,
+      1955,
+      1961,
+      2032,
+      2639,
+      2650,
+      2850,
+      3135,
+      3397,
+      4228,
+      4575,
+      4699,
+      4732,
+      5584,
+      5595,
+      6037,
+      6354,
+      7311,
+      7411,
+      7530,
+      7724,
+      9002,
+      9646,
+      9678,
+      10841,
+      10948,
+      11082,
+      12123,
+      12253,
+      12489,
+      12590,
+      12956,
+      13081,
+      13170,
+      13184,
+      13199,
+      13345,
+      13471,
+      13704,
+      13768,
+      13949,
+      14050,
+      14080,
+      14164
+    ]
+  },
+  "modules:ReleaseTrigger": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ReleaseTrigger",
+      "release trigger",
+      "note off trigger"
+    ],
+    "topicIds": [
+      143,
+      1411,
+      1956,
+      4225,
+      6214,
+      10531,
+      11217,
+      11871,
+      13205
+    ]
+  },
+  "modules:Transposer": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "Transposer",
+      "transposer",
+      "transpose midi"
+    ],
+    "topicIds": [
+      7568,
+      10402,
+      10523,
+      13993
+    ]
+  },
+  "modules:SineSynth": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SineSynth",
+      "sine synth",
+      "sine generator"
+    ],
+    "topicIds": [
+      2853
+    ]
+  },
+  "modules:SilentSynth": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SilentSynth",
+      "silent synth",
+      "dummy synth"
+    ],
+    "topicIds": [
+      8386,
+      11688
+    ]
+  },
+  "modules:NoiseGrainPlayer": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "NoiseGrainPlayer",
+      "noise grain",
+      "granular"
+    ],
+    "topicIds": [
+      3667,
+      4610,
+      6700,
+      7946,
+      11435,
+      13220
+    ]
+  },
+  "modules:ScriptProcessor": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ScriptProcessor",
+      "script processor",
+      "midi script"
+    ],
+    "topicIds": [
+      171,
+      651,
+      1294,
+      1529,
+      1634,
+      3333,
+      4527,
+      4672,
+      4993,
+      5097,
+      5315,
+      5425,
+      5692,
+      7279,
+      7399,
+      8290,
+      8937,
+      10735,
+      11310,
+      11430,
+      11505,
+      12052,
+      12580,
+      12800,
+      12914,
+      13042,
+      13789,
+      13846,
+      14503
+    ]
+  },
+  "modules:ScriptSynth": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ScriptSynth",
+      "script synth",
+      "scripted synth"
+    ],
+    "topicIds": [
+      9649,
+      11498
+    ]
+  },
+  "modules:ScriptFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ScriptFX",
+      "script fx",
+      "script effect"
+    ],
+    "topicIds": [
+      1182,
+      2175,
+      2368,
+      3673,
+      3776,
+      4146,
+      4573,
+      4582,
+      5388,
+      5813,
+      5938,
+      6471,
+      6757,
+      8307,
+      8519,
+      8672,
+      9826,
+      10657,
+      10725,
+      11201,
+      11432,
+      11538,
+      11776,
+      11824,
+      12743,
+      12794,
+      12802,
+      12943,
+      13032,
+      13186,
+      13351,
+      13585,
+      13587,
+      13721,
+      13749,
+      13760,
+      13779,
+      13795,
+      13803,
+      13807,
+      13814,
+      13826,
+      13835,
+      13922,
+      13934,
+      14343,
+      14573
+    ]
+  },
+  "modules:PolyScriptFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "PolyScriptFX",
+      "polyphonic script fx",
+      "poly script effect"
+    ],
+    "topicIds": [
+      5522,
+      9936
+    ]
+  },
+  "modules:ScriptTimeVariantModulator": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ScriptTimeVariantModulator",
+      "script time variant",
+      "scripted LFO"
+    ],
+    "topicIds": [
+      8175,
+      9542,
+      11683
+    ]
+  },
+  "modules:ScriptnodeVoiceKiller": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "ScriptnodeVoiceKiller",
+      "scriptnode voice killer",
+      "voice kill"
+    ],
+    "topicIds": [
+      8176,
+      9655
+    ]
+  },
+  "modules:HardcodedMasterFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "HardcodedMasterFX",
+      "hardcoded master fx",
+      "compiled effect"
+    ],
+    "topicIds": [
+      5911,
+      5935,
+      6569,
+      6645,
+      7701,
+      8643,
+      8652,
+      10192,
+      11860,
+      11975,
+      12190,
+      12498,
+      13907,
+      14452
+    ]
+  },
+  "modules:HardcodedPolyphonicFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "HardcodedPolyphonicFX",
+      "hardcoded polyphonic fx",
+      "compiled polyphonic effect"
+    ],
+    "topicIds": [
+      8386,
+      8883,
+      14471
+    ]
+  },
+  "modules:HardcodedSynth": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "HardcodedSynth",
+      "hardcoded synth",
+      "compiled synth"
+    ],
+    "topicIds": [
+      13122,
+      13270
+    ]
+  },
+  "modules:SlotFX": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "SlotFX",
+      "slot fx",
+      "effect slot",
+      "swap effect"
+    ],
+    "topicIds": [
+      1222,
+      1816,
+      2243,
+      2536,
+      3700,
+      3776,
+      4691,
+      5947,
+      9732,
+      10260,
+      11005,
+      12292,
+      12467,
+      12563,
+      13353,
+      13661,
+      13671,
+      13907
+    ]
+  },
+  "modules:Analyser": {
+    "lastRun": "2026-04-09",
+    "queries": [
+      "Analyser",
+      "analyser",
+      "spectrum analyser",
+      "FFT display"
+    ],
+    "topicIds": [
+      714,
+      1951,
+      5017,
+      5320,
+      5800,
+      6666,
+      6863,
+      8272,
+      8698,
+      10883,
+      10897,
+      11056,
+      12128,
+      12441,
+      12442,
+      12626,
+      12968,
+      13231,
+      13512,
+      13660,
+      13674
+    ]
   }
 }

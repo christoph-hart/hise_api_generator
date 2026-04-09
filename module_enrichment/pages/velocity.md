@@ -50,6 +50,9 @@ llmRef: |
     DecibelMode applies after the table, not before - the table always works in linear domain.
     UseTable must be enabled for the curve editor to have any effect.
 
+  Tips:
+    To share the same velocity curve across multiple sound generators, use a Global Voice Start Modulator instead of duplicating the table in each module.
+
   Custom equivalent:
     hisescript via ScriptVoiceStartModulator: read Message.getVelocity() and apply transforms in onVoiceStart.
 
@@ -136,6 +139,8 @@ groups:
         hints:
           - type: info
             text: "The table always operates in the linear 0-1 domain. When both Inverted and UseTable are active, the table receives the already-inverted value - design your curve with this in mind."
+          - type: tip
+            text: "To share the same velocity curve across multiple sound generators, use a $MODULES.GlobalVoiceStartModulator$ instead of duplicating the table in each module. [1]($FORUM_REF.687$)"
       - name: DecibelMode
         desc: "Maps the value through a -100 to 0 dB range then converts to linear gain, providing a logarithmic response curve"
         range: "Off / On"

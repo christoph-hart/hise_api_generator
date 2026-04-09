@@ -129,7 +129,13 @@ process(left, right) {
 groups:
   - label: Saturation
     params:
-      - { name: Saturation, desc: "Controls the intensity of the waveshaping. At 0% the signal passes through linearly. As the value increases, the transfer function progressively limits signal peaks, adding odd harmonics. Near 100% the curve approaches hard clipping.", range: "0 - 100%", default: "0%" }
+      - name: Saturation
+        desc: "Controls the intensity of the waveshaping. At 0% the signal passes through linearly. As the value increases, the transfer function progressively limits signal peaks, adding odd harmonics. Near 100% the curve approaches hard clipping."
+        range: "0 - 100%"
+        default: "0%"
+        hints:
+          - type: warning
+            text: "No oversampling is applied. At high saturation with high-frequency content, aliasing may be audible. For critical applications, use $MODULES.ShapeFX$ which offers oversampling options."
   - label: Gain Staging
     params:
       - { name: PreGain, desc: "Boost-only input gain applied before the waveshaper. Use this to drive the signal into the nonlinear range. At 0 dB the signal is unchanged.", range: "0 - 24 dB", default: "0 dB" }
@@ -148,12 +154,6 @@ chains:
   - { name: "Saturation Modulation", desc: "Scales the Saturation parameter value. The modulation output multiplies the parameter value rather than replacing it. When audio-rate modulators are used, the saturation amount is updated every 8 samples.", scope: "monophonic", constrainer: "TimeVariantModulator" }
 ---
 ::
-
-## Notes
-
-The waveshaper does not use oversampling. At high saturation levels with high-frequency content, aliasing may be audible. For critical applications, consider using the ShapeFX module which offers oversampling options.
-
-The PreGain range is 0-24 dB (boost only) and PostGain is -24 to 0 dB (cut only). This enforces a workflow where you drive the signal in and compensate on the way out.
 
 ## See Also
 

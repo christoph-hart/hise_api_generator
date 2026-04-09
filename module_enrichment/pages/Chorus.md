@@ -20,7 +20,11 @@ commonMistakes:
   - title: "Feedback 0.5 equals zero feedback"
     wrong: "Setting Feedback to 0.5 expecting moderate feedback"
     right: "At Feedback=0.5 the internal feedback is actually zero. Values below 0.5 produce negative feedback, values above 0.5 produce positive feedback."
-    explanation: "The Feedback parameter maps 0-1 to an internal range of -0.95 to +0.95. The crossover point at 0.5 means zero feedback."
+    explanation: "The Feedback parameter maps 0-1 to an internal range of -0.95 to +0.95. The crossover point at 0.5 means zero feedback. [5]($FORUM_REF.980$)"
+  - title: "No Mix parameter"
+    wrong: "Looking for a wet/dry mix control"
+    right: "The wet/dry mix is hardcoded at approximately 47% wet"
+    explanation: "There is no Mix parameter. To blend the effect, use send/return routing or bypass the module programmatically. [6]($FORUM_REF.4525$)"
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -138,14 +142,14 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
-The wet/dry mix is fixed at approximately 53% dry and 47% wet. There is no Mix parameter to adjust this ratio.
+The wet/dry mix is hardcoded at approximately 47% wet. There is no Mix parameter to adjust this ratio. To blend the effect, use a send/return routing. [1]($FORUM_REF.4525$)
 
-Both channels share the same internal LFO phase. The stereo effect comes only from the different feedback histories accumulated in each channel's delay buffer, not from LFO phase offset.
+Both channels share the same internal LFO phase. Any stereo effect comes only from different feedback histories accumulating in each channel's delay buffer, not from LFO phase offset. For wider stereo, build a custom chorus in scriptnode with independent L/R LFO phases. [2]($FORUM_REF.4525$)
 
-The delay buffer holds 2048 samples. At 44.1kHz, the maximum modulation depth is approximately 45ms.
+The wet signal is subtracted from the dry signal, not added. This creates a comb-filter cancellation pattern characteristic of the mda chorus algorithm on which this module is based. [3]($FORUM_REF.980$)
 
-When Rate is set below approximately 1%, the LFO is frozen and the phase is reset, producing a static delay effect.
+The delay buffer holds 2048 samples. At 44.1 kHz, the maximum modulation depth is approximately 45 ms. For more flexible chorus effects, the scriptnode `jchorus` node is recommended. [4]($FORUM_REF.12406$)
 
 **See also:** $MODULES.PhaseFX$ -- Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation

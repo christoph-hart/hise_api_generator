@@ -201,12 +201,18 @@ chains:
 ---
 ::
 
-## Notes
+### Tuning Modes
 
 The two tuning modes are mutually exclusive. When UseFreqRatio is Off, OctaveTranspose and SemiTones set the pitch offset using the formula `2^(octaves + semitones/12)`. When UseFreqRatio is On, CoarseFreqRatio and FineFreqRatio define a harmonic multiplier. Changing the inactive mode's parameters has no effect until that mode is selected.
 
+### Ratio Mode Harmonics
+
 In ratio mode, the coarse ratio maps directly to harmonic numbers: 1 = fundamental, 2 = second harmonic (octave), 3 = third harmonic (octave + fifth), and so on. For sub-harmonics, negative coarse values use exponential division. The fine ratio is always added as a linear offset for detuning.
 
+### Saturation Character
+
 The saturation waveshaper uses a soft-clipping transfer function that progressively adds odd harmonics to the sine wave. At low values it produces a subtle warmth; at high values the waveform approaches a clipped shape with audible overtones. This is useful for thickening a sine bass without needing a separate effect.
+
+### Output Routing
 
 The sine output is generated in mono and copied to both channels. The Balance parameter is applied by the base class after the voice buffer is complete. An effect chain slot is available for per-voice effects.

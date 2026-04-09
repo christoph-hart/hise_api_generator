@@ -66,7 +66,7 @@ tags:
 
 The Global Static Time Variant Modulator captures the current value of a time-variant modulator (such as an LFO) from a Global Modulator Container at the moment a note starts. Despite connecting to a continuous source, it behaves as a voice-start modulator - each voice receives a fixed value frozen at note-on time.
 
-This creates per-voice variation based on when each note is triggered. For example, connecting to a shared LFO means each note captures a different phase of the LFO cycle, producing timing-dependent differences between voices. An optional lookup table and inversion toggle allow local transformation of the captured value.
+This creates per-voice variation based on when each note is triggered. For example, connecting to a shared LFO means each note captures a different phase of the LFO cycle, producing timing-dependent differences between voices. An optional lookup table and inversion toggle allow local transformation of the captured value. When disconnected (no source selected), the modulator returns 1.0 (pass-through in gain mode).
 
 ## Signal Path
 
@@ -122,13 +122,5 @@ groups:
       - { name: Inverted, desc: "Inverts the modulation output by computing 1 minus the value. Applied after the table lookup.", range: "Off / On", default: "Off" }
 ---
 ::
-
-## Notes
-
-The captured value is the source modulator's last computed block output, not an interpolated value at the exact note-on timestamp. For fast-moving sources like LFOs, this means the captured value is quantised to audio block boundaries. This is sufficient for most musical applications but should be understood when precise timing matters.
-
-When disconnected (no source selected), the modulator returns 1.0 (pass-through in gain mode).
-
-This module is often confused with the Global Time Variant Modulator. The key difference: this module freezes the source value at note-on (per-voice, constant), while the Global Time Variant Modulator continuously tracks the source (monophonic, changing). Choose this module when you want each note to capture a different snapshot of a shared modulation source.
 
 **See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source time-variant modulator, $MODULES.GlobalTimeVariantModulator$ -- continuously tracks the same source type in real time (monophonic), $MODULES.GlobalVoiceStartModulator$ -- also a voice-start consumer, but reads from voice-start sources (velocity, key number) rather than time-variant sources (LFO)

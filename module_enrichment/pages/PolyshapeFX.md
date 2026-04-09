@@ -155,7 +155,15 @@ groups:
   - label: Shaping
     params:
       - { name: Drive, desc: "Distortion drive amount in decibels. Controls how hard the signal is driven into the shaping function. Modulatable at audio rate via the Drive Modulation chain. At 0 dB the signal passes through the shaper at unity level.", range: "0 - 60 dB", default: "0 dB" }
-      - { name: Mode, desc: "Selects the waveshaping function. Available modes: Linear (1), Atan (2), Sin (4), Asinh (5), TanCos (9), Chebyshev 1 (10), Chebyshev 2 (11), Chebyshev 3 (12), Curve (32), Asymmetrical Curve (33). All other indices give Linear passthrough.", range: "0 - 33 (discrete)", default: "1 (Linear)" }
+      - name: Mode
+        desc: "Selects the waveshaping function. Available modes: Linear (1), Atan (2), Sin (4), Asinh (5), TanCos (9), Chebyshev 1 (10), Chebyshev 2 (11), Chebyshev 3 (12), Curve (32), Asymmetrical Curve (33). All other indices give Linear passthrough."
+        range: "0 - 33 (discrete)"
+        default: "1 (Linear)"
+        hints:
+          - type: warning
+            text: "Modes 3 (Tanh), 6 (Saturate), 7 (Square), and 8 (SquareRoot) are visible in the range but not registered in this module. Selecting them gives silent Linear passthrough. These modes are functional in $MODULES.ShapeFX$ only."
+          - type: info
+            text: "Curve (32) uses Table 0, mapping absolute input amplitude to output (symmetric around zero). Asymmetrical Curve (33) uses Table 1, mapping the full -1 to +1 range for different positive/negative shaping."
       - { name: Oversampling, desc: "Enables 4x oversampling to reduce aliasing artefacts from the shaping function. Each voice has its own oversampler, so CPU cost scales with voice count.", range: "Off / On", default: "Off" }
   - label: Bias
     params:
@@ -172,14 +180,10 @@ chains:
 ---
 ::
 
-## Notes
+### Drive and Bias Interaction
 
 The drive and bias application order differs by mode. Sin and TanCos apply drive first then add bias, while all other modes add bias first then multiply by drive. This means the same Drive and Bias settings produce different tonal results depending on the selected mode.
 
-The post-shaping output compensation is not the same as Shape FX's autogain. Polyshape FX uses a simple drive-dependent divisor that provides mild level reduction at high drive values, rather than computing a static inverse from the transfer function.
-
-Modes 3 (Tanh), 6 (Saturate), 7 (Square), and 8 (SquareRoot) are visible in the Mode range but are not registered in this module. Selecting them gives Linear passthrough with no audible shaping. These modes are functional in Shape FX but not in Polyshape FX.
-
-The Curve mode (32) uses Table 0, which maps absolute input amplitude to output (symmetric around zero). The Asymmetrical Curve mode (33) uses Table 1, which maps the full -1 to +1 input range, allowing different shaping for positive and negative signal halves.
+The post-shaping output compensation uses a simple drive-dependent divisor that provides mild level reduction at high drive values, rather than computing a static inverse from the transfer function like $MODULES.ShapeFX$.
 
 **See also:** $MODULES.ShapeFX$ -- Monophonic variant with pre-shaper filtering, autogain, dry/wet mix, bit reduction, and configurable oversampling factors (1x-16x), $MODULES.Saturator$ -- Simpler monophonic saturation effect without table-based modes or per-voice processing

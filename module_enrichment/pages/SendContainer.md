@@ -137,14 +137,20 @@ chains:
 ---
 ::
 
-## Notes
+### Module Tree Placement
 
-The Send Container is classified as a SoundGenerator in HISE's module tree but it behaves as a routing utility. It does not respond to MIDI notes, does not have a voice-per-note model, and does not generate audio. All parameters and modulation chains are inherited from the SoundGenerator base class and are not functionally connected to the container's render path.
+The Send Container must be placed **after** all Send Effects that route to it in the module tree. If it appears before a Send Effect, the send signal is delayed by one full audio buffer, breaking phase coherence between dry and wet paths. [1]($FORUM_REF.1223$)
 
-The FX chain is the primary user-facing feature. It accepts MasterEffect-type effects only, and any polyphonic effects placed in the chain are forced to process monophonically. To control the output level of the container, place a SimpleGain or other gain effect in the FX chain.
+### FX Chain
 
-Multiple Send Effects can target the same container. Their signals are summed additively into the internal buffer before the effect chain processes it. Each Send Effect controls its own gain level (in decibels) and can specify a channel offset for multichannel routing setups.
+The FX chain accepts MasterEffect-type effects only. Polyphonic effects placed in the chain are forced to process monophonically. The inherited Gain and Balance parameters in the header are not applied in the render path - control the output level by placing a $MODULES.SimpleGain$ in the FX chain. [2]($FORUM_REF.9104$)
 
-The routing matrix is resizable, supporting more than two internal channels. The Send Effect's channel offset determines which stereo pair within the internal buffer receives the send signal. The routing matrix then maps each internal channel to an output channel, enabling flexible multichannel routing configurations.
+### Multichannel Routing
+
+Multiple Send Effects can target the same container, with signals summed additively. The routing matrix supports more than two internal channels. Each Send Effect's channel offset targets a specific stereo pair within the internal buffer, enabling multiple parallel send busses in a single container. [3]($FORUM_REF.13113$)
+
+### FX Plugin Export
+
+In compiled effect plugins, the Send Container only processes audio if the 'Enable Sound Generators FX' flag is enabled in the project settings. [4]($FORUM_REF.6353$)
 
 **See also:** $MODULES.SendFX$ -- the send side of the send/return pair, routes audio into this container with adjustable gain and channel offset

@@ -164,16 +164,18 @@ chains:
 ---
 ::
 
-## Notes
+### Placement
 
-The Send Effect is one half of a send/return pair. It handles the send side - routing a copy of the signal to a Send Container - while the Send Container handles the receive side, processing the accumulated signals through its effect chain. Multiple Send Effects can target the same container; their signals are summed additively.
+Do not place a Send Effect in the Master Container - it will feed its output back into itself, producing an immediate feedback loop. Always place Send Effects inside child containers. [1]($FORUM_REF.5032$)
 
-The default gain of -100 dB means a newly added Send Effect is silent. This is by design to prevent unexpected signal routing when adding the module.
+The send is post-fader relative to the sound generator's gain stage. There is no pre-fader option. [2]($FORUM_REF.76$)
 
-Bypass uses a soft ramp: when bypass is engaged, the send gain ramps to zero over one block; when bypass is disengaged, it ramps from zero back to the target gain. This one-block transition happens regardless of the Smoothing toggle.
+### Defaults and Bypass
 
-The Send Modulation chain is sampled twice per block (at the start and end of the processing window) rather than per-sample. This provides smooth per-block gain envelopes while keeping CPU usage minimal. For sample-accurate send level control, consider using a scriptnode equivalent.
+The default gain of -100 dB means a newly added Send Effect is silent. Bypass uses a soft ramp: send gain ramps to zero over one block when engaged and back to the target when disengaged, regardless of the Smoothing toggle.
 
-If a Send Container is deleted while a Send Effect references it, the connection safely becomes inactive. The effect will attempt to reconnect on the next audio preparation cycle if a container with the matching index exists.
+### Scripting
+
+The `SendIndex` parameter (attribute index 2) can be set via `setAttribute()` to dynamically switch the target Send Container at runtime. Use `Engine.getDecibelsForGainFactor()` when exposing SendLevel as a dB knob. [3]($FORUM_REF.13113$)
 
 **See also:** $MODULES.SendContainer$ -- the receive side of the send/return pair, accumulates signals from Send Effects and processes them through its FX chain

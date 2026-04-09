@@ -22,6 +22,14 @@ commonMistakes:
     wrong: "Adding a Global Time Variant consumer without selecting a source"
     right: "Select a source from the Connection dropdown"
     explanation: "When disconnected, the modulator outputs a constant 1.0 and does not track any source."
+  - title: "Container must be above consumers in the module tree"
+    wrong: "Placing the Global Modulator Container below the sound generators that use this modulator"
+    right: "Place the Global Modulator Container above all consumers in the module tree"
+    explanation: "HISE processes modules top-down. If the container is below its consumers, the modulation source has not yet rendered when the consumer tries to read it, resulting in silent modulation with no error. [1]($FORUM_REF.1015$)"
+  - title: "setNoteNumber() breaks global modulator lookup"
+    wrong: "Using `Message.setNoteNumber()` in a MIDI script when global modulators are active"
+    right: "Use `Message.setTransposeAmount()` to redirect notes while preserving the event association"
+    explanation: "Global modulators identify events by note number and event ID. Calling `setNoteNumber()` changes the note number after the container has processed the event, breaking the association. `setTransposeAmount()` preserves the original note number. [2]($FORUM_REF.6390$)"
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator
@@ -47,6 +55,10 @@ llmRef: |
   Common mistakes:
     Inversion does not work when UseTable is enabled.
     No source selected - outputs constant 1.0.
+    Container must be above all consumers in the module tree (top-down processing order).
+    setNoteNumber() breaks event association - use setTransposeAmount() instead.
+    LFO source restarts on note-on; use scriptnode Script FX for free-running LFO.
+    Read values from script via GlobalCable callback, not direct polling.
 
   See also:
     source GlobalModulatorContainer - hosts the source modulator
@@ -122,12 +134,16 @@ groups:
 ---
 ::
 
-## Notes
+### FX Plugin Mode
 
-The `Inverted` parameter only works when `UseTable` is disabled. When the table is active, inversion is not applied. To achieve inversion with a table, draw the table curve inverted (from top-left to bottom-right).
+In FX plugin exports, global modulators are not available in the master chain connection dropdown by default. Enable the Sound Generator option in the FX plugin export settings and place the Global Modulator Container correctly to make the connection available. [3]($FORUM_REF.1583$)
 
-When disconnected (no source selected), the modulator fills its output buffer with 1.0 (pass-through in gain mode).
+### Free-Running LFO
 
-This modulator is monophonic - it reads from a single shared source buffer. All voices in the parent Sound Generator receive the same modulation values. For per-voice variation from a time-variant source, use the Global Static Time Variant Modulator instead, which snapshots the value at note-on.
+A Global Time Variant Modulator wrapping an LFO restarts on each note-on. For a free-running LFO that does not retrigger, implement the oscillator as a scriptnode network inside a Script FX module instead. [4]($FORUM_REF.7693$)
+
+### Scripting Access
+
+Reading the current value of a Global Time Variant Modulator from HISEScript is not supported directly. Attach a GlobalCable to the modulator and register a callback to receive value updates on the script side. [5]($FORUM_REF.9641$)
 
 **See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source time-variant modulator, $MODULES.GlobalStaticTimeVariantModulator$ -- also reads from a time-variant source, but snapshots the value at note-on for per-voice variation

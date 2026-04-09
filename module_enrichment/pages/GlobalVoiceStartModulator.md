@@ -18,6 +18,14 @@ commonMistakes:
     wrong: "Expecting different values for multiple voices playing the same note"
     right: "All voices on the same MIDI note number receive the same value"
     explanation: "Voice-start values are indexed by MIDI note number (0-127), not by voice. Retriggering the same note returns the same value from the source."
+  - title: "Does not work with artificial notes from Synth.playNote()"
+    wrong: "Using a Global Voice Start Modulator in a signal chain that generates notes via `Synth.playNote()`"
+    right: "Use `Message.setTransposeAmount()` to redirect notes, or replace with a $MODULES.ScriptVoiceStartModulator$"
+    explanation: "Notes created by `Synth.playNote()` are generated after the container has already processed the original event. The artificial note has a new event ID with no stored voice-start value, producing silence or undefined output. [1]($FORUM_REF.2259$) [2]($FORUM_REF.10815$)"
+  - title: "Arpeggiator causes note dropouts"
+    wrong: "Using a Global Voice Start Modulator alongside an arpeggiator"
+    right: "Use a local voice-start modulator directly on each sound generator, or disable global velocity modulation when the arpeggiator is active"
+    explanation: "Arpeggiator-generated notes are artificial events that lack stored values in the global container, causing some notes to play silently. [3]($FORUM_REF.6271$)"
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator
@@ -43,6 +51,8 @@ llmRef: |
   Common mistakes:
     All voices on the same note number get the same value.
     No source selected - outputs constant 1.0.
+    Does not work with artificial notes from Synth.playNote() - use Message.setTransposeAmount() or a ScriptVoiceStartModulator instead.
+    Arpeggiator-generated notes lack stored values, causing dropouts.
 
   See also:
     source GlobalModulatorContainer - hosts the source modulator
@@ -117,10 +127,10 @@ groups:
 ---
 ::
 
-## Notes
+### Working with Note Remapping
 
-Voice-start values are indexed by MIDI note number (0-127), not by voice index. This means all voices playing the same note number receive the same modulation value. This is the expected behaviour for modulators like velocity or key number, where the value is inherently tied to the note, not the voice.
+When a script needs to redirect incoming notes to different pitches, use `Message.setTransposeAmount()` rather than blocking the original event and calling `Synth.playNote()`. This preserves the original event ID so the global modulator container can correctly associate the voice-start value with the note. [4]($FORUM_REF.2259$)
 
-When disconnected (no source selected), the modulator returns 1.0 (pass-through in gain mode).
+For instruments that generate notes programmatically (arpeggios, strum scripts, chord generators), consider replacing this module with a $MODULES.ScriptVoiceStartModulator$ that reads `Message.getVelocity()` directly. This avoids the event ID lookup entirely. [5]($FORUM_REF.10815$)
 
 **See also:** $MODULES.GlobalModulatorContainer$ -- hosts the source voice-start modulator, $MODULES.GlobalStaticTimeVariantModulator$ -- also a voice-start consumer, but reads from a time-variant source (snapshots an LFO or similar at note-on)

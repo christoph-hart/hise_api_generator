@@ -26,6 +26,14 @@ commonMistakes:
     wrong: "Toggling the gate or compressor rapidly and hearing clicks"
     right: "Only the limiter has a crossfade on toggle. Gate and compressor switch instantly."
     explanation: "The limiter uses a one-block crossfade when enabled or disabled to prevent clicks. The gate and compressor do not have this mechanism, so toggling them during playback may produce audible artefacts."
+  - title: "Do not automate limiter attack time"
+    wrong: "Changing the limiter attack parameter during playback via automation or scripting"
+    right: "Set the limiter attack time before playback and leave it static"
+    explanation: "Changing the limiter attack mid-playback switches internal processing at a random point in the buffer, causing clicks and pops. [1]($FORUM_REF.2857$)"
+  - title: "Hard knee only"
+    wrong: "Looking for a soft knee parameter on the compressor"
+    right: "The compressor uses a hard knee exclusively"
+    explanation: "No knee control is exposed. For soft-knee compression, use a custom scriptnode compressor. [2]($FORUM_REF.3466$)"
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -224,16 +232,12 @@ groups:
 ---
 ::
 
-## Notes
+### Gain Reduction Metering
 
-The three stages always process in fixed order: gate, then compressor, then limiter. This order cannot be changed.
+The Reduction parameters (`GateReduction`, `CompressorReduction`, `LimiterReduction`) are output-only values for display purposes. They use peak-hold with exponential decay and must be polled via `getAttribute()` inside a timer callback - the module does not push updates. [3]($FORUM_REF.1929$) Gain reduction meters can be displayed using FloatingTile slots: index 0 for gate, 1 for compressor, 2 for limiter. [4]($FORUM_REF.13755$)
 
-All stages default to disabled with thresholds at 0 dB. A newly added Dynamics module passes audio through unchanged until at least one stage is enabled and its threshold lowered.
+### Sidechain Filtering
 
-The compressor makeup gain is calculated as the theoretical gain reduction at the threshold: for a threshold of -20 dB and ratio of 4:1, the makeup gain is approximately 15 dB. The limiter makeup gain is simply the inverse of the threshold: a -6 dB threshold produces +6 dB makeup.
-
-The limiter uses a one-block crossfade when its enabled state changes, preventing clicks. The gate and compressor do not have this crossfade, so toggling them during playback may produce audible artefacts.
-
-The Reduction parameters (GateReduction, CompressorReduction, LimiterReduction) use peak-hold with exponential decay for metering. They cannot be set - they are output-only values for display purposes.
+The Dynamics module has no built-in sidechain filter for frequency-dependent compression (e.g., de-essing). For sidechain filtering, build a custom compressor in scriptnode that routes a filtered copy of the signal to drive the compression envelope. [5]($FORUM_REF.2072$)
 
 **See also:** $MODULES.SimpleGain$ -- Simpler gain control without gate, compressor, or limiter stages

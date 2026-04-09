@@ -137,14 +137,18 @@ groups:
 ---
 ::
 
-## Notes
+### Sampler Requirement
 
 CC2Note is designed specifically for Sampler-based instruments. It calls Sampler-specific functions for round-robin group control and will produce errors if placed in the MIDI chain of a non-Sampler sound generator.
 
-The Bypass parameter name is misleading - it does not bypass the module's core CC-to-note conversion. It only determines whether the module uses its own custom round-robin group cycling (groups organised in up/down-stroke pairs) or defers to the Sampler's built-in round-robin system.
+### Round-Robin Group Layout
 
 The round-robin system expects sample groups to be organised in consecutive pairs (1-2, 3-4, 5-6, etc.), where each pair represents alternating articulations such as up-stroke and down-stroke. The total group count is read from the parent Sampler. If the group count changes after the module is initialised, the module may use a stale value until a parameter is adjusted.
 
+### CC Passthrough
+
 The matching CC message is not consumed - it passes through to downstream processors alongside the generated note. Non-matching CC messages and all other MIDI event types also pass through unchanged.
+
+### Default CC Number
 
 The default ccSelector value of 0 corresponds to CC#0 (Bank Select MSB), which is unlikely to be the intended trigger source. This should be changed to the appropriate CC number for the connected controller.
