@@ -14,6 +14,19 @@ cpuProfile:
     - { parameter: EnableFM, impact: medium, note: "Adds one extra voice render for the FM modulator plus per-sample pitch multiplication on the carrier." }
 seeAlso:
   - { id: SynthChain, type: alternative, reason: "Simple container that sums children independently. Use when children do not need shared modulation, FM, or unison." }
+forumReferences:
+  - id: 1
+    title: "Unison causes clicks without attack envelope"
+    summary: "When UnisonoVoiceAmount > 1, each voice gets a random start offset (~10ms) to prevent phase cancellation; without an amplitude envelope this causes audible clicks on note-on."
+    topic: 2871
+  - id: 2
+    title: "Child pitch modulation chains bypassed by group"
+    summary: "When a synth is added as a child of a SynthGroup, its own pitch modulation chain is bypassed and hidden; all pitch modulation is driven exclusively by the group's shared chain."
+    topic: 669
+  - id: 3
+    title: "core.pitch_mod misses unison detune in scriptnode"
+    summary: "Inside a scriptnode network child of a SynthGroup, core.pitch_mod reads pitch values before the group applies per-voice unison detune offsets, so detune is invisible to scriptnode nodes."
+    topic: 13030
 commonMistakes:
   - title: "Unison multiplies CPU cost per note"
     wrong: "Setting UnisonoVoiceAmount to 16 with high polyphony and wondering why CPU spikes"
@@ -114,7 +127,7 @@ tags:
 
 ![Synthesiser Group screenshot](/images/v2/reference/audio-modules/synthgroup.png)
 
-The Synthesiser Group is an advanced container for sound generators that share common modulation. Unlike a Container, which sums children independently, the group applies its own gain and pitch modulation chains to all children collectively. This means a single envelope on the group controls the volume shape for the combined output, and a single LFO on the group modulates the pitch of all children simultaneously. When a synth is added as a child, its own pitch modulation chain is bypassed and hidden in the UI - all pitch modulation is driven exclusively by the group's shared Pitch Modulation chain.
+The Synthesiser Group is an advanced container for sound generators that share common modulation. Unlike a Container, which sums children independently, the group applies its own gain and pitch modulation chains to all children collectively. This means a single envelope on the group controls the volume shape for the combined output, and a single LFO on the group modulates the pitch of all children simultaneously. When a synth is added as a child, its own pitch modulation chain is bypassed and hidden in the UI - all pitch modulation is driven exclusively by the group's shared Pitch Modulation chain. [2]($FORUM_REF.669$)
 
 The group also provides FM synthesis between two designated child synths and unison voice stacking with configurable detune and stereo spread. Children inside a group can only use polyphonic (voice-level) effects - master effects such as reverb or delay must be placed on the group's own FX chain.
 
@@ -130,7 +143,7 @@ When FM is disabled but CarrierIndex is set to a valid child index, that child i
 
 ### Unison Behaviour
 
-Unison voices receive randomised start offsets (up to ~10 ms) to prevent phase cancellation when multiple copies of the same waveform play simultaneously. The gain of each unison voice is compensated using equal-power scaling (divided by the square root of the voice count) to maintain consistent overall volume.
+Unison voices receive randomised start offsets (up to ~10 ms) to prevent phase cancellation when multiple copies of the same waveform play simultaneously. The gain of each unison voice is compensated using equal-power scaling (divided by the square root of the voice count) to maintain consistent overall volume. When no amplitude envelope is present, these offsets cause audible clicks on note-on; adding ~5 ms of attack time to the group's gain envelope eliminates this. [1]($FORUM_REF.2871$)
 
 ### Controlling Children
 
@@ -140,7 +153,7 @@ To achieve monophonic behaviour with unison voices, add the built-in "Legato wit
 
 ### Scriptnode Interaction
 
-When using a scriptnode network as a child of a Synthesiser Group, the `core.pitch_mod` node reads pitch modulation values before the group applies its per-voice unison detune offsets. This means unison detune is not visible inside scriptnode. For fully scriptnode-based unison with per-voice detune, use a scriptnode clone container instead.
+When using a scriptnode network as a child of a Synthesiser Group, the `core.pitch_mod` node reads pitch modulation values before the group applies its per-voice unison detune offsets. This means unison detune is not visible inside scriptnode. For fully scriptnode-based unison with per-voice detune, use a scriptnode clone container instead. [3]($FORUM_REF.13030$)
 
 ## Signal Path
 

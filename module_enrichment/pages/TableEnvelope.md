@@ -31,6 +31,11 @@ commonMistakes:
     wrong: "Setting Attack or Release to 0 ms via setAttribute in script"
     right: "Clamp values with Math.max(1, value) before calling setAttribute"
     explanation: "The UI enforces a 1 ms minimum, but script can bypass this and cause undefined behaviour."
+forumReferences:
+  - id: 1
+    title: "Scriptnode workaround for guaranteed attack playthrough"
+    summary: "The stock TableEnvelope stops the attack table on note-off; to ensure the attack always plays to completion, build a scriptnode network with a ramp driven by note-on (not gate) feeding through a table node."
+    topic: 9922
 customEquivalent:
   approach: hisescript
   moduleType: ScriptEnvelopeModulator
@@ -175,7 +180,7 @@ groups:
         default: "20 ms"
         hints:
           - type: warning
-            text: "If a note is released before the attack completes, the table freezes at its current position. The captured level becomes the starting point for the release."
+            text: "If a note is released before the attack completes, the table freezes at its current position. The captured level becomes the starting point for the release. To guarantee the attack always plays to completion, use a scriptnode network: drive a ramp from note-on (not gate) through a table node for the attack shape, then feed a separate table for release. [1]($FORUM_REF.9922$)"
           - type: warning
             text: "Modulating the attack time below 1 ms can cause silence. Ensure velocity or random modulators on the AttackTimeModulation chain cannot push the effective time below 1 ms."
       - { name: Release, desc: "Time to sweep through the release table after note-off. The release output is multiplied by the level at the moment of note-off.", range: "1 - 20000 ms", default: "20 ms" }

@@ -14,6 +14,11 @@ seeAlso:
   - { id: PhaseFX, type: alternative, reason: "Allpass-based phaser for notch sweeps rather than echo repeats" }
   - { id: Chorus, type: alternative, reason: "Short modulated delay for chorus/thickening rather than rhythmic echoes" }
   - { id: SimpleGain, type: companion, reason: "SimpleGain includes a static delay feature useful for timing alignment without feedback" }
+forumReferences:
+  - id: 1
+    title: "1ms granularity; use scriptnode for sub-millisecond delays"
+    summary: "The module tree Delay effect only accepts integer millisecond values; for sample-accurate or sub-millisecond delays the scriptnode delay node must be used instead."
+    topic: 11516
 commonMistakes:
   - title: "Filter parameters have no effect"
     wrong: "Adjusting the Low-Pass or High-Pass filter parameters expecting them to shape the delay feedback tone"
@@ -79,7 +84,7 @@ When tempo sync is enabled (the default), the delay times snap to musical note v
 
 ### Timing Limitations
 
-Delay times are rounded to whole milliseconds (1ms granularity). For sub-millisecond or sample-accurate delays, use a scriptnode delay node instead.
+Delay times are rounded to whole milliseconds (1ms granularity). For sub-millisecond or sample-accurate delays, use a scriptnode delay node instead. [1]($FORUM_REF.11516$)
 
 The internal delay buffer has a fixed size of 131072 samples, which limits the achievable maximum delay time depending on the host sample rate. At 48kHz, the maximum is approximately 2730ms rather than the 3000ms shown in the parameter range. At 96kHz, the maximum drops to approximately 1365ms.
 

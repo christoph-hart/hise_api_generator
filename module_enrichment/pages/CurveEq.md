@@ -14,6 +14,19 @@ cpuProfile:
 seeAlso:
   - { id: PolyphonicFilter, type: alternative, reason: "Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed" }
   - { id: HarmonicFilter, type: alternative, reason: "Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping" }
+forumReferences:
+  - id: 1
+    title: "Q below 0.1 causes assertion failure"
+    summary: "Setting a band's Q to 0 (e.g., from a knob with default value 0) causes a JUCE assertion failure and breaks the EQ; the minimum valid Q value is 0.1."
+    topic: 1308
+  - id: 2
+    title: "HISE_USE_SVF_FOR_CURVE_EQ eliminates zipper noise on automation"
+    summary: "Adding HISE_USE_SVF_FOR_CURVE_EQ=1 to Extra Definitions switches all bands from biquad to SVF filters, eliminating zipper noise when frequency, gain, or Q are automated or scripted in real time."
+    topic: 5557
+  - id: 3
+    title: "No built-in callback for DraggableFilterPanel band dragging"
+    summary: "There is no onBandChanged callback; use attachToComponentMouseEvents() on the FloatingTile and read band values in drag/click callbacks to sync external UI controls."
+    topic: 6379
 commonMistakes:
   - title: "Low Pass/High Pass bands ignore gain"
     wrong: "Setting the Gain parameter on a Low Pass or High Pass band and expecting it to change the sound"
@@ -162,6 +175,8 @@ groups:
         default: "1.0"
         hints:
           - type: warning
+            text: "The minimum valid Q value is 0.1. Setting Q to 0 (e.g., from a UI knob whose default is 0) triggers a JUCE assertion failure and breaks the EQ. Ensure all Q controls have a minimum of 0.1."
+          - type: warning
             text: "On **Low Pass** and **High Pass** bands, the filter curve display responds to Q changes but the audio output does not. These are one-pole filters with no resonance parameter. Enable `HISE_USE_SVF_FOR_CURVE_EQ` for SVF-based LP/HP where Q shapes the actual response."
       - { name: Type, desc: "The filter algorithm for this band.", range: "Low Pass, High Pass, Low Shelf, High Shelf, Peak", default: "Peak" }
       - { name: Enabled, desc: "Toggles the band on or off. Disabled bands are skipped during processing at zero cost.", range: "On / Off", default: "On" }
@@ -180,17 +195,17 @@ eq.setAttribute(0 * eq.BandOffset + eq.Freq, 2000.0);
 eq.setAttribute(2 * eq.BandOffset + eq.Type, 3);
 ```
 
-The available scripting constants are: `Gain` (0), `Freq` (1), `Q` (2), `Enabled` (3), `Type` (4), and `BandOffset` (5).
+The available scripting constants are: `Gain` (0), `Freq` (1), `Q` (2), `Enabled` (3), `Type` (4), and `BandOffset` (5). The minimum valid Q value is 0.1 — passing 0 triggers a JUCE assertion failure that breaks the EQ. Ensure any UI knob or script driving Q has a lower bound of at least 0.1. [1]($FORUM_REF.1308$)
 
 The complete band configuration can be serialised with `exportState()` and restored with `restoreState()`. This is the recommended approach for implementing named EQ preset slots (e.g., stored in a ComboBox or array of JSON objects). To include EQ band state in user presets, call `Engine.addModuleStateToUserPreset()` with the EQ module reference - the DraggableFilterPanel FloatingTile does not participate in user preset saving by default.
 
-There is no built-in callback that fires when a user drags a band in the DraggableFilterPanel. To sync external UI controls (e.g., knobs showing a band's frequency or gain), attach a broadcaster to the FloatingTile's mouse events via `attachToComponentMouseEvents()` and read band values on drag and click events.
+There is no built-in callback that fires when a user drags a band in the DraggableFilterPanel. To sync external UI controls (e.g., knobs showing a band's frequency or gain), attach a broadcaster to the FloatingTile's mouse events via `attachToComponentMouseEvents()` and read band values on drag and click events. [3]($FORUM_REF.6379$)
 
 ### Smoothing and Filter Mode
 
 Each band uses biquad filters by default with 280ms parameter smoothing. Coefficients are updated every 64 samples, so rapid automation produces smooth transitions without audible stepping. There are no modulation chains - all parameter changes are applied directly.
 
-Adding `HISE_USE_SVF_FOR_CURVE_EQ=1` to the project's Extra Definitions switches all bands from biquad to state-variable filters. SVF filters do not produce zipper noise when frequency, gain, or Q are changed in real time, making them preferable when bands will be automated or scripted to move. The tonal character differs slightly from the default biquad mode. This setting requires recompiling the plugin.
+Adding `HISE_USE_SVF_FOR_CURVE_EQ=1` to the project's Extra Definitions switches all bands from biquad to state-variable filters. SVF filters do not produce zipper noise when frequency, gain, or Q are changed in real time, making them preferable when bands will be automated or scripted to move. The tonal character differs slightly from the default biquad mode. This setting requires recompiling the plugin. [2]($FORUM_REF.5557$)
 
 ### Spectrum Analyser
 

@@ -33,6 +33,19 @@ commonMistakes:
     wrong: "Using loadAudioFilesIntoPool() index positions to recall IRs, assuming the order is stable"
     right: "Store and recall IRs by filename, not by array index"
     explanation: "The file list returned by loadAudioFilesIntoPool() can have a different order in the exported plugin compared to the HISE IDE. Saving a default user preset can also shuffle the order. Always match IRs by name."
+forumReferences:
+  - id: 1
+    title: "IR resampling causes gain increase at non-native sample rates"
+    summary: "When the host sample rate differs from the IR's native sample rate, resampling introduces a gain increase (~6dB at 96kHz vs 44.1kHz). No built-in compensation."
+    topic: 2054
+  - id: 2
+    title: "Glitch when DAW playback starts at the exact beginning of the timeline"
+    summary: "Starting DAW playback from position 0:0:0 causes an audible glitch in the Convolution Reverb output. Acknowledged by Christoph Hart, no workaround documented."
+    topic: 7006
+  - id: 3
+    title: "IR preset recall requires a hidden slider or combobox as intermediary"
+    summary: "HISE presets save control values, not script state. To make IR selection recallable, bind the selection to a hidden slider whose onControl callback calls setFile()."
+    topic: 1672
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -96,7 +109,7 @@ tags:
 
 A zero-latency convolution reverb that convolves the input signal with a loaded impulse response (IR) audio file. It uses a two-stage partitioned FFT architecture to keep latency low while handling long impulse responses efficiently. The tail portion of the convolution can optionally run on a background thread to reduce audio thread load.
 
-Unlike most reverb effects, the default mix is 100% wet: DryGain starts at -100 dB (silent) while WetGain starts at 0 dB. Raise DryGain to hear the original signal alongside the reverb. Damping and HiCut do not filter the wet output in real time - they reshape the impulse response itself during an offline preparation step, which triggers a brief crossfade when changed.
+Unlike most reverb effects, the default mix is 100% wet: DryGain starts at -100 dB (silent) while WetGain starts at 0 dB. Raise DryGain to hear the original signal alongside the reverb. Damping and HiCut do not filter the wet output in real time - they reshape the impulse response itself during an offline preparation step, which triggers a brief crossfade when changed. The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes. Starting DAW playback from the very beginning of the timeline (position 0:0:0) may produce a brief audible glitch in the reverb output [2]($FORUM_REF.7006$).
 
 ## Signal Path
 
@@ -176,7 +189,13 @@ groups:
   - label: Mix Levels
     params:
       - { name: DryGain, desc: "Dry output level. The default is -100 dB, which is effectively silent. Raise this to hear the original signal alongside the reverb.", range: "-100 - 0 dB", default: "-100 dB" }
-      - { name: WetGain, desc: "Wet output level for the convolved signal. A fixed 0.5x gain compensation is applied after this gain, so the effective maximum wet level is -6 dB.", range: "-100 - 0 dB", default: "0 dB" }
+      - name: WetGain
+        desc: "Wet output level for the convolved signal. A fixed 0.5x gain compensation is applied after this gain, so the effective maximum wet level is -6 dB."
+        range: "-100 - 0 dB"
+        default: "0 dB"
+        hints:
+          - type: warning
+            text: "When the host sample rate is higher than the IR's native rate, internal resampling can introduce a gain increase (roughly +3 dB per octave of rate difference). There is no automatic compensation - adjust WetGain manually if needed. [1]($FORUM_REF.2054$)"
   - label: Impulse Response Shaping
     params:
       - { name: Damping, desc: "Applies an exponential fadeout to the impulse response. At 0 dB, the IR is unmodified. Lower values cause the IR tail to decay faster. This is applied offline during IR preparation and triggers a reload when changed.", range: "-100 - 0 dB", default: "0 dB" }
@@ -196,26 +215,8 @@ groups:
 ---
 ::
 
-## Notes
+### IR Selection and Presets
 
-The default mix is 100% wet (DryGain = -100 dB, WetGain = 0 dB). This differs from most reverb effects and means a newly added Convolution Reverb outputs only the convolved signal. Raise DryGain to 0 dB for a standard wet/dry blend.
-
-A fixed 0.5x gain compensation is applied to the wet signal after the wet gain stage. At WetGain = 0 dB, the effective wet level is -6 dB. This compensates for the tendency of convolution to increase overall signal level.
-
-When the host sample rate is higher than the IR's native rate, the internal resampling step can introduce a gain increase (roughly +3 dB per octave of rate difference). There is no automatic compensation for this - adjust WetGain manually if needed.
-
-Damping and HiCut are not real-time filters on the wet output. They modify the impulse response itself during an offline preparation step. Changing either parameter triggers a full IR reload with a ~20ms crossfade between the old and new convolver engines to prevent clicks.
-
-The convolution engine uses a two-stage partitioned FFT architecture. The head convolver processes the first portion of the IR at the audio block size for zero-latency output. The tail convolver handles the remainder using a larger FFT size (up to 8192 samples). When UseBackgroundThread is enabled, the tail convolution runs on a dedicated background thread, freeing the audio thread for other processing.
-
-When a new impulse response is loaded or the IR is modified, the module crossfades between the old and new convolver engines over approximately 20ms using a squared fade curve.
-
-Starting DAW playback from the very beginning of the timeline (position 0:0:0) may produce a brief audible glitch in the reverb output.
-
-The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes.
-
-IR file selection via `setFile()` is not automatically saved in user presets. To make IR selection recallable, bind the selection index to a UI slider (hidden if needed) whose control callback calls `setFile()` with the corresponding filename. The slider value is then persisted by the preset system.
+IR file selection via `setFile()` is not automatically saved in user presets. To make IR selection recallable, bind the selection index to a UI slider (hidden if needed) whose control callback calls `setFile()` with the corresponding filename. The slider value is then persisted by the preset system [3]($FORUM_REF.1672$).
 
 For products with many impulse responses, use the Expansion system to package IRs separately rather than embedding all of them. Alternatively, uncheck 'Embed Audio Files' in the project settings and distribute the AudioResources.dat file to the user's AppData folder.
-
-**See also:** $MODULES.SimpleReverb$ -- Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading, $MODULES.Convolution$ -- The scriptnode node shares the same two-stage FFT convolution engine with additional routing flexibility | `Engine.loadAudioFilesIntoPool` -- Required in `onInit` for IR embedding in exported plugins | `AudioSampleProcessor.setFile` -- Load IRs by pool reference string with `{PROJECT_FOLDER}` prefix

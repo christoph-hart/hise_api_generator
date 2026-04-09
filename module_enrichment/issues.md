@@ -160,6 +160,14 @@ Sorted by severity (critical first).
 - **Observed:** The octave expansion adds `(int8)(octaveSign * i * 12)` to held note numbers. The `NoteWithChannel` struct uses `int8` for `noteNumber` (max 127). When a high note (e.g., C7 = 96) is expanded by +3 octaves (+36), the result (132) overflows `int8`, wrapping to a negative value. No bounds check exists before the note is passed to `Synth.addNoteOn()`.
 - **Expected:** Clamp expanded note numbers to the 0-127 range, or skip notes that would exceed the valid MIDI range.
 
+### StreamingSampler -- KillThirdOldestNote repeat mode not implemented
+
+- **Type:** silent-fail
+- **Severity:** medium
+- **Location:** hi_core/hi_sampler/sampler/ModulatorSampler.cpp:1446
+- **Observed:** The `RepeatMode` enum defines `KillThirdOldestNote` (index 4, exposed as "Kill Third" in the UI), but `handleRetriggeredNote()` has no `case` for it. It falls through to `default: jassertfalse; break;`, meaning selecting this mode triggers an assertion in debug builds and does nothing in release builds. Only `KillSecondOldestNote` (Kill Duplicate) is implemented among the advanced repeat modes.
+- **Expected:** Either implement KillThirdOldestNote (kill oldest voice when 3+ voices overlap on the same key) or remove it from the enum and UI to avoid user confusion.
+
 ## Low
 
 ### ArrayModulator -- Doxygen class comment is copy-pasted from ConstantModulator

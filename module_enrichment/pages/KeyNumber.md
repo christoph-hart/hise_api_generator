@@ -23,6 +23,11 @@ commonMistakes:
     wrong: "Adding KeyNumber and expecting it to reshape the note response immediately"
     right: "Edit the table curve to create the desired mapping"
     explanation: "The default table is a linear identity ramp, so the output simply tracks the normalised note number until you draw a custom curve."
+forumReferences:
+  - id: 1
+    title: "Array Modulator is the preferred alternative for per-note value mapping"
+    summary: "Christoph Hart (the author) recommends the Array Modulator as the preferred tool for per-note value mapping; it provides the same capability with a more convenient interface."
+    topic: 398
 customEquivalent:
   approach: hisescript
   moduleType: ScriptVoiceStartModulator
@@ -108,6 +113,6 @@ The table curve determines how note position maps to modulation output. Common s
 - **Step function** - creates a keyboard split point where notes below a threshold receive one value and notes above receive another
 - **S-curve** - gentle roll-off at the extremes with stronger response in the mid range
 
-For discrete per-key control rather than a continuous curve, the [Array Modulator]($MODULES.ArrayModulator$) provides a 128-entry slider pack with individual values per note.
+For discrete per-key control rather than a continuous curve, the [Array Modulator]($MODULES.ArrayModulator$) provides a 128-entry slider pack with individual values per note. It is also the recommended alternative when you need per-note value mapping more generally — Christoph Hart considers it the preferred tool over KeyNumber for that use case. [1]($FORUM_REF.398$)
 
 **See also:** $MODULES.Velocity$ -- similar voice-start modulator that reads MIDI velocity instead of note number, $MODULES.ArrayModulator$ -- per-note modulation values from a 128-entry slider pack for discrete per-key control, $MODULES.Constant$ -- also a VoiceStartModulator but outputs a fixed value with no MIDI input

@@ -32,6 +32,19 @@ commonMistakes:
     wrong: "Placing an LFO in a Container's modulation chain and expecting FadeIn to work"
     right: "Place the LFO inside the sound generator's modulation chain or use a Global LFO Modulator"
     explanation: "Containers do not process note-on messages, so the LFO never resets and FadeIn never triggers."
+forumReferences:
+  - id: 1
+    title: "Control rate processing degrades LFO accuracy above ~30 Hz"
+    summary: "All HISE modulators run at 1/8th audio rate by default; this aliases the LFO above ~30 Hz but can be improved by setting HISE_EVENT_RASTER to 4, 2, or 1 in Extra Definitions."
+    topic: 3639
+  - id: 2
+    title: "LFO pitch center shifts when intensity is reduced"
+    summary: "Reducing the intensity of an LFO assigned to pitch does not return the pitch to its unmodulated baseline — the pitch center shifts asymmetrically."
+    topic: 4674
+  - id: 3
+    title: "TempoSync maximum is 1/1 bar; slower rates require C++ source edit"
+    summary: "The built-in TempoSync range tops out at 1/1 bar; values like 2/1 or 4/1 require appending new entries to the TempoSyncer enum in MiscToolClasses.cpp/.h."
+    topic: 6446
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedTimeVariantModulator
@@ -96,6 +109,8 @@ tags:
 The LFO Modulator generates a periodic modulation signal from one of seven waveform types: Sine, Triangle, Saw, Square, Random, Custom (user-drawn table), or Steps (step sequencer). It is monophonic - all voices share the same LFO output, making it suitable for global modulation effects like tremolo, vibrato, and filter sweeps.
 
 The LFO rate can run freely in Hz or lock to the host tempo. A fade-in envelope ramps the modulation depth after each note trigger, preventing abrupt modulation jumps. Two modulation chains allow external control of the output intensity and the LFO frequency. The output is smoothed to reduce discontinuities, particularly useful for the Random and Steps waveforms.
+
+The LFO output semantics change depending on where it is placed in the module tree. In a gain chain, the output modulates downward from 1.0. In a pitch or pan chain, the output can be bipolar (centred at 0.5) or unipolar depending on the bipolar setting. This is handled automatically - no user configuration is needed.
 
 ## Signal Path
 
@@ -197,12 +212,18 @@ groups:
         default: "(dynamic)"
         hints:
           - type: warning
-            text: "Accuracy degrades above ~30 Hz due to control-rate processing (`HISE_EVENT_RASTER`). Set to `4`, `2`, or `1` in **Extra Definitions** to improve."
+            text: "Accuracy degrades above ~30 Hz due to control-rate processing (`HISE_EVENT_RASTER`). Set to `4`, `2`, or `1` in **Extra Definitions** to improve. [1]($FORUM_REF.3639$)"
       - { name: WaveformType, desc: "Selects the waveform shape. See the waveform table below for visual reference. Sine, Triangle, Saw, and Square use pre-computed lookup tables. Random generates a new value each cycle. Custom uses a user-drawn table curve. Steps reads from a slider pack step sequencer.", range: "Sine, Triangle, Saw, Square, Random, Custom, Steps", default: "Sine" }
       - { name: PhaseOffset, desc: "Initial phase offset applied when the LFO resets on note trigger. Does not affect the waveform shape, only the starting position.", range: "0 - 100%", default: "0%" }
   - label: Tempo & Sync
     params:
-      - { name: TempoSync, desc: "Switches the Frequency parameter from Hz to tempo-synced note divisions (e.g. Quarter, Eighth, Sixteenth)", range: "Off / On", default: "Off" }
+      - name: TempoSync
+        desc: "Switches the Frequency parameter from Hz to tempo-synced note divisions (e.g. Quarter, Eighth, Sixteenth)"
+        range: "Off / On"
+        default: "Off"
+        hints:
+          - type: tip
+            text: "Supports divisions from 1/32T up to 1/1 bar. For slower rates (2/1, 4/1), use a scriptnode LFO with a tempo node that supports a multiplier parameter. [3]($FORUM_REF.6446$)"
       - name: SyncToMasterClock
         desc: "Aligns the LFO phase to the host transport position on play start and resync events. Only active when TempoSync is also enabled."
         range: "Off / On"
@@ -243,7 +264,7 @@ groups:
 | Square | <svg viewBox="0 0 80 32" width="80" height="32" xmlns="http://www.w3.org/2000/svg"><polyline points="0,30 0,2 20,2 20,30 40,30 40,2 60,2 60,30 80,30" fill="none" stroke="currentColor" stroke-width="1.5"/></svg> | Alternates between minimum and maximum. |
 | Random | <svg viewBox="0 0 80 32" width="80" height="32" xmlns="http://www.w3.org/2000/svg"><polyline points="0,20 10,20 10,8 20,8 20,26 30,26 30,12 40,12 40,22 50,22 50,6 60,6 60,28 70,28 70,14 80,14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg> | New random value each cycle. |
 | Custom | <svg viewBox="0 0 80 32" width="80" height="32" xmlns="http://www.w3.org/2000/svg"><path d="M0,28 Q10,28 15,20 T30,8 Q40,4 50,14 T65,24 Q72,28 80,20" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="0" y1="30" x2="80" y2="30" stroke="currentColor" stroke-width="0.5" stroke-dasharray="2,2"/></svg> | User-drawn table shape. Supports one-shot playback via LoopEnabled. |
-| Steps | <svg viewBox="0 0 80 32" width="80" height="32" xmlns="http://www.w3.org/2000/svg"><polyline points="0,24 10,24 10,8 20,8 20,18 30,18 30,4 40,4 40,28 50,28 50,12 60,12 60,20 70,20 70,6 80,6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg> | Step sequencer driven by a slider pack. NumSteps controls step count. |
+| Steps | <svg viewBox="0 0 80 32" width="80" height="32" xmlns="http://www.w3.org/2000/svg"><polyline points="0,24 10,24 10,8 20,8 20,18 30,18 30,4 40,4 40,28 50,28 50,12 60,12 60,20 70,20 70,6 80,6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg> | Step sequencer driven by a slider pack. Slider values are inverted so that sliders pushed up produce high modulation values. There is a brief crossfade at each step transition to avoid clicks. NumSteps controls step count. |
 
 ## Modulation Chains
 
@@ -256,25 +277,11 @@ chains:
     constrainer: "Any"
     hints:
       - type: warning
-        text: "In **pitch mode**, reducing intensity shifts the pitch center asymmetrically. Add a `Constant` modulator to offset, or use a scriptnode LFO with explicit bipolar output."
+        text: "In **pitch mode**, reducing intensity shifts the pitch center asymmetrically. Add a `Constant` modulator to offset, or use a scriptnode LFO with explicit bipolar output. [2]($FORUM_REF.4674$)"
   - { name: "LFO Frequency Mod", desc: "Scales the LFO frequency. Multiplies the base rate (Hz or tempo-derived). Updated approximately every 4096 audio samples, not per-sample.", scope: "monophonic", constrainer: "Any" }
 ---
 ::
 
-## Notes
-
-The LFO output semantics change depending on where it is placed in the module tree. In a gain chain, the output modulates downward from 1.0. In a pitch or pan chain, the output can be bipolar (centred at 0.5) or unipolar depending on the bipolar setting. This is handled automatically - no user configuration is needed.
-
-The Custom waveform mode uses the table editor to draw an arbitrary shape. When combined with LoopEnabled Off, this creates a one-shot modulation envelope with a fully custom shape.
-
-The Steps waveform mode reads values from a slider pack. Slider values are inverted so that sliders pushed up produce high modulation values. There is a brief crossfade at each step transition to avoid clicks.
-
-The frequency modulation chain is heavily downsampled (approximately every 4096 audio samples). It is designed for slow, smooth rate changes rather than precise FM-style modulation.
-
-The built-in TempoSync parameter supports divisions from 1/32T up to 1/1 bar. Slower rates (2/1, 4/1, etc.) are not available without modifying the HISE source code. For slower tempo-synced modulation, use a scriptnode-based LFO with a tempo node that supports a multiplier parameter.
+### Scripting Access
 
 When using the Custom waveform, `Synth.getTableProcessor("LFO1")` and `Synth.getModulator("LFO1")` return different typed references to the same module. Create both if you need to control the table shape and the modulator parameters from script.
-
-When routing the LFO to filter cutoff, only SVF and Ladder filter types handle smooth modulation. Biquad-based filters (Low/High Shelf EQ, Moog LP) produce zipper noise when their frequency is modulated.
-
-

@@ -22,6 +22,11 @@ commonMistakes:
     wrong: "Expecting DefaultValue to reset the modulator after all notes are released"
     right: "DefaultValue sets the initial output when the preset is loaded, before any MIDI is received"
     explanation: "The modulator starts at full output (1.0) by default. DefaultValue is applied once during preset loading and does not reset during playback."
+forumReferences:
+  - id: 1
+    title: "Synth.sendController() drives MidiController modulators from script"
+    summary: "To control a MidiController modulator from a UI element or script, use Synth.sendController(ccNumber, value) so the value passes through the full signal path including table lookup and smoothing."
+    topic: 3179
 customEquivalent:
   approach: hisescript
   moduleType: ScriptTimeVariantModulator
@@ -171,7 +176,7 @@ When ControllerNumber is set to 129 (aftertouch), the modulator accepts both cha
 
 To drive a Midi Controller modulator from script, use [Synth.sendController]($API.Synth.sendController$) with the matching CC number. This sends an internal controller message that the modulator responds to as if it came from external MIDI hardware. This is useful for connecting UI sliders to modulation targets without bypassing the smoothing and table processing.
 
-> [!Tip:Use Synth.sendController for scripted CC values] Rather than setting the modulation value directly, send a controller message via `Synth.sendController(ccNumber, value)` so the value passes through the full signal path including table lookup and smoothing.
+> [!Tip:Use Synth.sendController for scripted CC values] Rather than setting the modulation value directly, send a controller message via `Synth.sendController(ccNumber, value)` so the value passes through the full signal path including table lookup and smoothing. [1]($FORUM_REF.3179$)
 
 ### MPE Behaviour
 

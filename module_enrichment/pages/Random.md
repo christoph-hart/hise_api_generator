@@ -27,6 +27,15 @@ commonMistakes:
     wrong: "Expecting simultaneous voices to share or correlate their random values"
     right: "Each voice receives an independent random value"
     explanation: "Every note-on generates a fresh random value. There is no correlation between voices triggered at the same time."
+forumReferences:
+  - id: 1
+    title: "Sample start offset silently capped by preload buffer size"
+    summary: "When using Random as a sample start modulator, the maximum usable offset is limited by the preload buffer size; a large offset with a small preload buffer is silently clamped."
+    topic: 9526
+  - id: 2
+    title: "Pitch randomisation via Random modulator only works in instrument plugins"
+    summary: "A Random modulator on the pitch parameter requires a voice chain; in an FX plugin there is no note chain, so pitch randomisation must be done via Message.setTransposeAmount() in script."
+    topic: 2210
 customEquivalent:
   approach: hisescript
   moduleType: ScriptVoiceStartModulator
@@ -71,7 +80,7 @@ tags:
 
 ![Random Modulator screenshot](/images/v2/reference/audio-modules/random.png)
 
-The Random Modulator generates an independent random value between 0 and 1 for each voice at note-on. It ignores all MIDI data - the output is purely random regardless of velocity, note number, or any other event property. Typical uses include sample start offset variation, subtle pitch detune, gain humanisation, and filter cutoff jitter.
+The Random Modulator generates an independent random value between 0 and 1 for each voice at note-on. It ignores all MIDI data - the output is purely random regardless of velocity, note number, or any other event property. Typical uses include sample start offset variation, subtle pitch detune, gain humanisation, and filter cutoff jitter. When using it as a sample start modulator, the usable range is bounded by the sampler's preload buffer size — a large offset value with a small preload buffer is silently clamped. [1]($FORUM_REF.9526$) Pitch randomisation via this modulator requires an instrument plugin with a voice chain; in an FX plugin context, use `Message.setTransposeAmount()` from script instead. [2]($FORUM_REF.2210$)
 
 Enabling **UseTable** activates a curve editor that reshapes the probability distribution. The random value becomes the X position in the table and the Y value becomes the output. Flat regions in the table concentrate probability towards those output values, while steep regions spread it. With the table disabled (the default), the distribution is uniform.
 

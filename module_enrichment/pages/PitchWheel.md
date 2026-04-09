@@ -22,6 +22,15 @@ commonMistakes:
     wrong: "Designing a table curve that accounts for the Inverted parameter"
     right: "The table always receives the normalised pitch wheel value (0.0 = full down, 1.0 = full up) regardless of the Inverted setting"
     explanation: "The processing order is fixed: normalise, then table lookup, then inversion. The table input is always the raw normalised value."
+forumReferences:
+  - id: 1
+    title: "Pitch bend arrives as CC128 in onController"
+    summary: "Hardware pitch wheel messages arrive in the scripting onController callback with controller number 128; the named constant Message.PITCH_BEND_CC can be used instead of the magic number."
+    topic: 11256
+  - id: 2
+    title: "MIDI learn on pitch wheel sliders pollutes user presets"
+    summary: "Connecting UI pitch wheel sliders via MIDI learn causes slider positions to be saved in user presets; handling CC128 manually in onController is the recommended alternative."
+    topic: 13837
 customEquivalent:
   approach: hisescript
   moduleType: ScriptTimeVariantModulator
@@ -153,9 +162,9 @@ When MPE mode is active, the Pitch Wheel Modulator only processes pitch bend mes
 
 ### Scripting Integration
 
-In the HISEScript `onController` callback, pitch bend messages arrive with a controller number of 128. The named constant `Message.PITCH_BEND_CC` can be used instead of the raw number. The value range is 0-16383 (14-bit), not 0-127 like standard CCs.
+In the HISEScript `onController` callback, pitch bend messages arrive with a controller number of 128. The named constant `Message.PITCH_BEND_CC` can be used instead of the raw number. The value range is 0-16383 (14-bit), not 0-127 like standard CCs. [1]($FORUM_REF.11256$)
 
-> [!Tip:Use onController for custom pitch wheel UI] To build a custom pitch wheel display panel, handle CC 128 in the `onController` callback rather than using MIDI learn on a slider. MIDI learn causes slider positions to be saved in user presets, which is usually undesirable.
+> [!Tip:Use onController for custom pitch wheel UI] To build a custom pitch wheel display panel, handle CC 128 in the `onController` callback rather than using MIDI learn on a slider. MIDI learn causes slider positions to be saved in user presets, which is usually undesirable. [2]($FORUM_REF.13837$)
 
 The modulator's intensity parameter accepts values from -1 to +1 when set via `setAttribute()`. In a pitch chain, this maps to the semitone range (typically +/-12 semitones at full intensity).
 

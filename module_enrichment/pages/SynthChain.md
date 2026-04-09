@@ -26,6 +26,19 @@ commonMistakes:
     wrong: "Expecting VoiceLimit to enforce a global voice limit across all children"
     right: "Set VoiceLimit on each child synth individually"
     explanation: "Each child manages its own voice pool independently. The Container's VoiceLimit affects the initial voice allocation when children are created but does not enforce a shared limit at runtime."
+forumReferences:
+  - id: 1
+    title: "Polyphonic FX in a Container's FX chain are silently ignored"
+    summary: "Containers sum child output monophonically, so any polyphonic effect placed in a Container's FX chain has no effect and produces no error."
+    topic: 198
+  - id: 2
+    title: "FX plugin exports ignore all child sound generators"
+    summary: "When exporting as an FX plugin, only the master SynthChain's FX chain is active; all child sound generators are ignored entirely."
+    topic: 1583
+  - id: 3
+    title: "Global modulators cannot be referenced above the GlobalModulatorContainer"
+    summary: "A Global modulator reference placed above the GlobalModulatorContainer in the tree (e.g. directly in the root chain's gain modulation) will have no effect."
+    topic: 1583
 customEquivalent:
   approach: scriptnode
   moduleType: SoundGenerator
@@ -118,7 +131,7 @@ chains:
 
 ### Effect Chain
 
-The FX chain accepts master effects only (reverb, delay, convolution, etc.). Voice-level effects added to the chain are forced into monophonic processing mode. For per-voice effects, add them to the individual child synth FX chains.
+The FX chain accepts master effects only (reverb, delay, convolution, etc.). Voice-level effects added to the chain are forced into monophonic processing mode — polyphonic effects placed here are silently ignored rather than producing an error. [1]($FORUM_REF.198$) For per-voice effects, add them to the individual child synth FX chains.
 
 ### Root Container vs Nested Containers
 
@@ -135,10 +148,10 @@ Children render in tree order (top to bottom). Each child adds its output to the
 
 ### FX Plugin Mode
 
-When exporting as an FX plugin, only the master Container's effect chain is active. All child sound generators are ignored - the plugin receives host audio directly into the master FX chain. Design FX plugins with effects only in the root Container.
+When exporting as an FX plugin, only the master Container's effect chain is active. All child sound generators are ignored - the plugin receives host audio directly into the master FX chain. [2]($FORUM_REF.1583$) Design FX plugins with effects only in the root Container.
 
 ### Global Modulator Placement
 
-A GlobalModulatorContainer must be placed as a child of a Container, and only processors that sit below the GlobalModulatorContainer in the module tree can reference its global modulators. Placing a global modulator reference above the GlobalModulatorContainer (for example, directly in the root Container's gain modulation) will have no effect. If you need global modulation on all sound generators, add a nested Container below the GlobalModulatorContainer and place your sound generators inside it.
+A GlobalModulatorContainer must be placed as a child of a Container, and only processors that sit below the GlobalModulatorContainer in the module tree can reference its global modulators. Placing a global modulator reference above the GlobalModulatorContainer (for example, directly in the root Container's gain modulation) will have no effect. [3]($FORUM_REF.1583$) If you need global modulation on all sound generators, add a nested Container below the GlobalModulatorContainer and place your sound generators inside it.
 
 **See also:** $MODULES.SynthGroup$ -- Advanced container with shared modulation, FM synthesis, and unison. Use when children need common envelopes or pitch modulation., $MODULES.GlobalModulatorContainer$ -- Hosts global modulators accessible from anywhere in the module tree. Must be placed as a child of a Container.

@@ -16,6 +16,19 @@ seeAlso:
   - { id: GlobalTimeVariantModulator, type: target, reason: "Consumer that continuously reads time-variant values from this container" }
   - { id: GlobalStaticTimeVariantModulator, type: target, reason: "Consumer that snapshots time-variant values at note-on from this container" }
   - { id: MatrixModulator, type: target, reason: "Matrix-based consumer that combines multiple modulators from this container" }
+forumReferences:
+  - id: 1
+    title: "Container must be placed above all consumers"
+    summary: "Consumer modules can only find a GlobalModulatorContainer that is higher in the tree than themselves; placing it below or beside a consumer silently breaks all connections."
+    topic: 1015
+  - id: 2
+    title: "setNoteNumber() breaks global voice-start lookup"
+    summary: "Global voice-start modulators are indexed by note number; remapping notes with Message.setNoteNumber() before the container causes consumers to look up the wrong index and silently lose the modulation value."
+    topic: 6390
+  - id: 3
+    title: "Global LFO retriggers on every note-on"
+    summary: "Every incoming note-on resets the global LFO phase; suppress with Message.ignoreEvent(true) in a Script Processor before the container for free-running behaviour."
+    topic: 6813
 commonMistakes:
   - title: "Global Modulator Container is silent"
     wrong: "Expecting the Global Modulator Container to produce audio output"
@@ -93,15 +106,17 @@ This is the producer half of HISE's global modulation system. It allocates phant
 
 ### Placement
 
-The container must be placed above all consumer modules in the module tree. Consumer modules search upward through the tree for containers, so a container placed below or beside a consumer will not be found and the connection silently fails. Place the Global Modulator Container as the first Sound Generator in the top-level container.
+The container must be placed above all consumer modules in the module tree. Consumer modules search upward through the tree for containers, so a container placed below or beside a consumer will not be found and the connection silently fails. Place the Global Modulator Container as the first Sound Generator in the top-level container. [1]($FORUM_REF.1015$)
 
 ### Polyphonic Behaviour
 
 Polyphonic envelope synchronisation between the container and consumers uses event IDs rather than voice indices. Consumers work correctly even when the consumer's parent Sound Generator has a different voice allocation than the container. A two-phase release mechanism prevents envelope tails from being cut off prematurely when voices are reused.
 
+Voice-start modulators store their computed values indexed by MIDI note number. If a Script Processor remaps note numbers using `Message.setNoteNumber()` before the container processes the event, the consumer module looks up the wrong index and the modulation value is silently lost. Use `Message.setTransposeAmount()` instead - it shifts pitch without altering the note number used for the lookup. [2]($FORUM_REF.6390$)
+
 ### LFO Retriggering
 
-Hosted LFOs retrigger their phase on every incoming note-on event. To achieve a free-running global LFO unaffected by new notes, place a Script Processor before the container that calls `Message.ignoreEvent(true)` in its `onNoteOn` callback.
+Hosted LFOs retrigger their phase on every incoming note-on event. To achieve a free-running global LFO unaffected by new notes, place a Script Processor before the container that calls `Message.ignoreEvent(true)` in its `onNoteOn` callback. [3]($FORUM_REF.6813$)
 
 ## Signal Path
 

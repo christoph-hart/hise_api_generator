@@ -31,6 +31,15 @@ commonMistakes:
     wrong: "Switching to Monophonic mode and expecting voices to be killed normally when the envelope finishes"
     right: "Add a second polyphonic envelope to handle voice killing when using monophonic mode"
     explanation: "In monophonic mode the envelope never signals the voice to stop, which can cause notes to ring indefinitely."
+forumReferences:
+  - id: 1
+    title: "Monophonic mode disables voice killing"
+    summary: "Switching an AHDSR to Monophonic mode causes it to lose its ability to kill voices; add a second polyphonic envelope as a workaround."
+    topic: 9608
+  - id: 2
+    title: "Release curve cannot be shaped in AHDSR"
+    summary: "The AHDSR has no release curve control; DecayCurve shapes both decay and release identically. Use TableEnvelope for a shaped release."
+    topic: 8306
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedEnvelopeModulator
@@ -236,7 +245,7 @@ groups:
   - label: Curve Shape
     params:
       - { name: AttackCurve, desc: "Controls the curvature of the attack phase. 0.0 = concave (fast initial rise), 0.5 = nearly linear, 1.0 = convex (slow initial rise)", range: "0.0 - 1.0", default: "0.0" }
-      - { name: DecayCurve, desc: "Controls the curvature of both the decay and release phases. 0.0 = steep exponential, 1.0 = gentler curve closer to linear", range: "0.0 - 1.0", default: "0.0" }
+      - { name: DecayCurve, desc: "Controls the curvature of both the decay and release phases. 0.0 = steep exponential, 1.0 = gentler curve closer to linear. There is no separate release curve control - use TableEnvelope if you need to shape the release independently. [2]($FORUM_REF.8306$)", range: "0.0 - 1.0", default: "0.0" }
   - label: Voice Mode
     params:
       - name: Monophonic
@@ -245,7 +254,7 @@ groups:
         default: "(dynamic)"
         hints:
           - type: warning
-            text: "Monophonic mode prevents the envelope from killing voices. The voice will never stop on its own. If you need voice killing alongside a monophonic envelope, add a second polyphonic envelope to the same sound generator."
+            text: "Monophonic mode prevents the envelope from killing voices. The voice will never stop on its own. If you need voice killing alongside a monophonic envelope, add a second polyphonic envelope to the same sound generator. [1]($FORUM_REF.9608$)"
       - { name: Retrigger, desc: "Restarts the envelope from its current value when a new note arrives in monophonic mode. Has no effect in polyphonic mode", range: "Off / On", default: "On" }
   - label: Legacy
     params:

@@ -26,6 +26,19 @@ commonMistakes:
     wrong: "Adjusting SmoothedIntensity to change the smoothing amount"
     right: "Use SmoothingTime to control smoothing speed; SmoothedIntensity sets overall modulation depth"
     explanation: "Despite the name, SmoothedIntensity is the modulator intensity (depth/amplitude). Setting it to zero disables the modulation output entirely."
+forumReferences:
+  - id: 1
+    title: "MPE modulators are disabled until the MPE panel activates them"
+    summary: "MPE modulators start disabled and only activate when the end user enables MPE through the MPE panel widget; instruments without a panel will never have their MPE modulators activated."
+    topic: 1245
+  - id: 2
+    title: "Default MPE to off to avoid release trigger issues"
+    summary: "Enabling MPE by default in presets can interfere with the release trigger mechanism; setting MPE off by default and letting the user opt in reduces this breakage."
+    topic: 11871
+  - id: 3
+    title: "No scripting API to read or set individual MPE modulator values"
+    summary: "There is no scripting API to check or set the current value of an MPE modulator; the only related call is Engine.isMpeEnabled() for global MPE state."
+    topic: 6132
 customEquivalent:
   approach: scriptnode
   moduleType: ScriptNode
@@ -78,7 +91,7 @@ The MPE Modulator converts MIDI Polyphonic Expression (MPE) gesture data into pe
 
 A lookup table shapes the normalised gesture value through a user-defined curve before a per-voice one-pole smoother removes any zipper noise. The table is always active - there is no toggle to bypass it. A fresh modulator uses a linear identity curve that passes values through unchanged.
 
-> [!Warning:MPE panel required in the interface] MPE modulators start bypassed and only activate when global MPE mode is enabled. Include an MPE panel widget in your interface so the end user can switch MPE on. Without it, these modulators produce no output.
+> [!Warning:MPE panel required in the interface] MPE modulators start bypassed and only activate when global MPE mode is enabled. Include an MPE panel widget in your interface so the end user can switch MPE on. Without it, these modulators produce no output. [1]($FORUM_REF.1245$)
 
 ## Signal Path
 
@@ -214,9 +227,9 @@ MPE modulators are designed to be activated by the end user through a dedicated 
 2. Place an MPE panel widget in the interface design.
 3. The end user enables MPE via the panel at runtime, which activates all MPE modulators simultaneously.
 
-There is no scripting API for enabling individual MPE modulators or reading their current values. The only related API call is `Engine.isMpeEnabled()`, which checks the global MPE state.
+There is no scripting API for enabling individual MPE modulators or reading their current values. The only related API call is `Engine.isMpeEnabled()`, which checks the global MPE state. [3]($FORUM_REF.6132$)
 
-> [!Tip:Default MPE to off in presets] When building presets, leave MPE disabled by default. Enabling it unconditionally can interfere with release triggers and other voice management features. Let the end user opt in through the MPE panel.
+> [!Tip:Default MPE to off in presets] When building presets, leave MPE disabled by default. Enabling it unconditionally can interfere with release triggers and other voice management features. Let the end user opt in through the MPE panel. [2]($FORUM_REF.11871$)
 
 ### Per-Voice Channel Routing
 
