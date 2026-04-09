@@ -25,6 +25,32 @@ Modulators are placed inside **modulation chains** that belong to a parent modul
 - **Pitch Modulation** - modulates the pitch of all voices. Uses additive (Pitch) mode with bipolar range.
 - **Effect parameter chains** - some effects expose modulatable parameters with their own modulation chains.
 - **Global modulators** - modulators placed inside a [Global Modulator Container]($MODULES.GlobalModulatorContainer$) can be shared across multiple targets using Global Voice Start, Global Time Variant, or Global Envelope proxy modules.
+- **Extra modulation chains** - scriptnode and hardcoded modules can expose additional modulation slots beyond the standard Gain and Pitch chains. See [Scriptnode Modulation Bridge](#scriptnode-modulation-bridge) below.
+
+### Scriptnode Modulation Bridge
+
+Scriptnode and hardcoded modules can expose extra modulation chain slots that bridge the HISE modulator system into the scriptnode network. The number of extra slots is configured per module type via preprocessor macros in the project settings' **Extra Definitions** field:
+
+| Module Type | Preprocessor Macro | Default |
+|---|---|---|
+| Script FX | `HISE_NUM_SCRIPTNODE_FX_MODS` | 0 |
+| Polyphonic Script FX | `HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS` | 0 |
+| Scriptnode Synthesiser | `HISE_NUM_SCRIPTNODE_SYNTH_MODS` | 2 |
+| Hardcoded Master FX | `NUM_HARDCODED_FX_MODS` | 0 |
+| Hardcoded Polyphonic FX | `NUM_HARDCODED_POLY_FX_MODS` | 0 |
+| Hardcoded Synthesiser | `NUM_HARDCODED_SYNTH_MODS` | 2 |
+
+Once extra slots are configured, traditional HISE modulators (LFOs, envelopes, velocity modulators, etc.) can be placed in these slots. The modulation signals are produced at control rate (downsampled by a factor of 8) and delivered to the scriptnode network. Each extra slot supports one of two mutually exclusive connection modes:
+
+**Direct parameter modulation** — Enable the *External Modulation* property on a root parameter in the scriptnode editor and select a modulation mode (Combined, Scale, or Add). The modulation chain drives the parameter directly at the resolution defined by the network's modulation block size. No node is needed inside the network — the parameter receives the modulated value automatically. This is the simpler approach when you just need a HISE modulator to scale or offset a network parameter.
+
+**extra_mod node** — Place a `core::extra_mod` node in the network and set its **Index** parameter to match the modulation slot. The root parameter is rerouted to control the **base value** of the modulation chain rather than the network parameter directly. The `extra_mod` node picks up the full modulation signal inside the network, where it can be routed to any target, processed by other nodes, or split to multiple destinations. The root parameter still controls the parameter from the user's perspective — changing it adjusts the base value that the modulation signal is applied to. This also means a UI knob connected to the root parameter will display the modulation signal.
+
+> [!Warning:Mutually exclusive modes] These two modes cannot be combined on the same slot. If a root parameter has External Modulation enabled and an `extra_mod` node is also connected to the same index, a warning icon will appear. Use one or the other per slot.
+
+In addition to extra modulation slots, sound generators' built-in **Pitch Modulation** chain is bridged to the network via `core::pitch_mod` nodes. Any HISE pitch modulators placed in the pitch chain are automatically routed to these nodes.
+
+Modulation that does not need to be exposed to the parent module tree can be handled entirely within the scriptnode graph using `container.modchain`, modulation cables, and `control.*` nodes. These operate within the network's own sample rate and do not require extra modulation slots.
 
 ## Common Parameters
 

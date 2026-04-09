@@ -76,6 +76,14 @@ const var MasterChain = Synth.getRoutingMatrix("Master Chain");
 MasterChain.setNumChannels(8);
 ```
 
+### Scriptnode and Hardcoded Module Channels
+
+Scriptnode and hardcoded modules determine their channel count from the network's top-level container. The default is stereo (2 channels), but multichannel configurations of up to 16 channels are supported.
+
+The hosting module passes its channel count to the network during initialisation. If there is a mismatch between the module's channel count and the network's expected channel count, extra channels are zero-padded and excess channels are truncated. For hardcoded (compiled) modules, the channel count is fixed at compile time — it cannot be changed without recompilation. The routing matrix channel count must match the compiled network's channel count.
+
+Use the routing matrix to map network output channels to the desired bus layout, or to configure multi-channel input for effect modules.
+
 ## Common Parameters
 
 ::parameter-table

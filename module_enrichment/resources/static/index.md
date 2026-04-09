@@ -143,6 +143,24 @@ Modules that hold and combine other sound generators.
 
 Modules that run user-defined DSP logic via scriptnode networks, compiled C++ code, or HiseScript callbacks. Contains sound generators, MIDI processors, effects, and modulators.
 
+Scriptnode modules load interpreted XML networks created in the scriptnode editor via `Engine.createDspNetwork()`. Hardcoded modules load compiled C++ code — either compiled scriptnode networks or custom [C++ DSP nodes]($LANG.cpp-dsp-nodes$) written in `DspNetworks/ThirdParty/*.h`. Both variants share the same hosting infrastructure for parameters, modulation, channels, and complex data.
+
+**Parameters** — Each module type reserves a fixed set of parameters (e.g. sound generators reserve indices 0-3 for Gain, Balance, VoiceLimit, KillFadeTime; envelope modulators reserve indices 0-1 for Monophonic, Retrigger). Network parameters are appended after the reserved indices. Reserved parameter names cannot be reused by the network.
+
+**Modulation** — Extra modulation chain slots bridge HISE modulators into the scriptnode network. Each slot supports two mutually exclusive connection modes: direct parameter modulation or `extra_mod` node pickup. See [Scriptnode Modulation Bridge](/v2/reference/audio-modules/modulators/#scriptnode-modulation-bridge) for details and preprocessor macro configuration.
+
+**Channels** — Scriptnode and hardcoded modules support multichannel configurations up to 16 channels. See [Scriptnode and Hardcoded Module Channels](/v2/reference/audio-modules/sound-generators/#scriptnode-and-hardcoded-module-channels) for details.
+
+**Complex data** — Five complex data types are available: Tables, SliderPacks, AudioFiles, FilterCoefficients, and DisplayBuffers. Each type has its own index sequence (Table[0], Table[1], SliderPack[0], etc.). Data is created on demand when nodes in the network declare their requirements. Complex data is **preserved** across network switches — the data holder is shared across all networks hosted by the module. Access from script via standard processor reference methods (`getTableProcessor()`, `getSliderPackProcessor()`, etc.).
+
+| Module Type | Fixed Params | Param Offset | Voice Context | Built-in Chains |
+|---|---|---|---|---|
+| Scriptnode Synthesiser / Hardcoded Synthesiser | Gain, Balance, VoiceLimit, KillFadeTime | 4 | polyphonic | Gain, Pitch |
+| Script FX / Hardcoded Master FX | (none) | 0 | monophonic | (none) |
+| PolyScriptFX / Hardcoded Polyphonic FX | (none) | 0 | polyphonic | (none) |
+| Script Envelope / Hardcoded Envelope | Monophonic, Retrigger | 2 | polyphonic (control rate) | (none) |
+| Script Time Variant / Hardcoded Time Variant | (none) | 0 | monophonic | (none) |
+
 #### Hardcoded modules
 
 - [Hardcoded Master FX]($MODULES.HardcodedMasterFX$): Runs a compiled C++ DSP network as a master effect, with dynamic parameter and complex data exposure from the network.
