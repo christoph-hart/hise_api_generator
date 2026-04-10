@@ -361,3 +361,369 @@ rather than these static callbacks, the bug may be masked at runtime.
 - **Observed:** When a node inside a modchain is deleted, its modulation connection can persist on the destination node. The target parameter behaves as if still modulated - it ignores manual input. Fix: manually remove the connection on the target node.
 - **Expected:** Deleting a modulation source should automatically clean up all its outgoing connections.
 - **Source:** Forum topic 4978
+
+## Issue 27: routing.selector createParameters uses wrong class name in DEFINE_PARAMETERDATA
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/RoutingNodes.h`:1051-1076
+- **Observed:** `selector::createParameters()` uses `DEFINE_PARAMETERDATA(receive, ChannelIndex)`, `DEFINE_PARAMETERDATA(receive, NumChannels)`, etc. -- all four parameters reference the `receive` class instead of `selector`. The DEFINE_PARAMETERDATA macro generates parameter callback bindings using the first argument as the class name.
+- **Expected:** Should use `DEFINE_PARAMETERDATA(selector, ChannelIndex)` etc. In practice this may be masked because the dynamic parameter path uses `DEFINE_PARAMETERS` / `SN_PARAMETER_MEMBER_FUNCTION` which correctly binds to `selector::setParameterStatic`.
+
+## Issue 28: routing.selector SelectOutput parameter range mismatch
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/RoutingNodes.h`:1066
+- **Observed:** The SelectOutput parameter's range is set to `{1.0, 16.0, 1.0}` which defines a range of 1 to 16 with step 1. However, SelectOutput is used as a boolean toggle (compared with `v > 0.5` in `setSelectOutput()`). The `setParameterValueNames({"Disabled", "Enabled"})` call overrides the visual presentation to show two options, but the underlying range does not match the 0/1 boolean semantics.
+- **Expected:** Range should be `{0.0, 1.0, 1.0}` to match the boolean usage.
+
+## Issue 29: routing.global_receive -- description copy-paste error
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_scripting/scripting/scriptnode/dynamic_elements/GlobalRoutingManager.cpp`:1642
+- **Observed:** `GlobalReceiveNode::getNodeDescription()` returns "Send the signal anywhere in HISE!" -- identical to GlobalSendNode. This is a copy-paste error; the receive node should say "Receive" not "Send".
+- **Expected:** Description should be "Receive a signal sent from a global_send node anywhere in HISE" or similar.
+
+## Issue 30: routing.global_receive -- base data isPolyphonic is false
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_scripting/scripting/scriptnode/dynamic_elements/GlobalRoutingManager.cpp`:1577
+- **Observed:** The preliminary JSON for routing.global_receive has `isPolyphonic: false`, but the node is registered via `registerPolyNodeRaw<GlobalReceiveNode<1>, GlobalReceiveNode<NUM_POLYPHONIC_VOICES>>()` and has per-voice state (`PolyData<float, NumVoices> value`, `PolyData<int, NumVoices> offset`). The polyphonic variant handles per-voice offset on note-on.
+- **Expected:** Base data classification should indicate polyphonic support exists (AllowPolyphonic or isPolyphonic depending on the variant).
+
+## Issue 31: routing.event_data_reader -- static mode ModValue shared across voices
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/RoutingNodes.h`:510
+- **Observed:** In static mode, `ModValue staticValue` is a single member (not wrapped in PolyData). When multiple polyphonic voices trigger note-on, each overwrites the same staticValue. This means in polyphonic static mode, the modulation output reflects the last voice that started, not necessarily the current voice's value.
+- **Expected:** For correct polyphonic static mode, `staticValue` should be `PolyData<ModValue, NV>` or the static read should use a per-voice cache. In dynamic mode, this is not an issue because the per-voice eventId correctly looks up per-voice data.
+
+## Issue 32: control.compare description inaccurate for MIN/MAX modes
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h`:2231
+- **Observed:** The SN_DESCRIPTION says "compares the input signals and outputs either 1.0 or 0.0". However, the MIN (index 6) and MAX (index 7) comparator modes return `jmin(leftValue, rightValue)` and `jmax(leftValue, rightValue)` respectively -- continuous values, not binary 0/1. Only EQ through LET (indices 0-5) produce strict 0/1 output.
+- **Expected:** Description should acknowledge MIN/MAX modes produce continuous output, e.g., "Compares input signals and outputs 1.0 or 0.0 (or min/max of inputs for MIN/MAX modes)."
+
+## Issue 33: control.blend preliminary JSON incorrectly reports normalised output
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `scriptnode_enrichment/preliminary/control.blend.json`:63
+- **Observed:** The preliminary JSON has `modulationOutput.isUnnormalised: false`, but `multilogic::blend::isNormalisedModulation()` returns `false` at `CableNodes.h:2055`. This means the output IS unnormalised. The control-infrastructure.md correctly lists blend as unnormalised.
+- **Expected:** `modulationOutput.isUnnormalised` should be `true` in the preliminary JSON.
+
+## Issue 34: pack_resizer -- vestigial float member
+
+- **Type:** vestigial
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h`:854
+- **Observed:** `pack_resizer` has a member `float something = 90.0f` that is never read or written by any method. It is not referenced in any processing, parameter, or serialization code.
+- **Expected:** The field can be removed with no behavioral change.
+
+## Issue 35: pack_resizer -- NumSliders parameter range inconsistent with implementation clamping
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h`:837,846
+- **Observed:** The NumSliders parameter is defined with range `{0.0, 128.0, 1.0}` (line 846), allowing a minimum of 0. However, `setParameter<0>()` clamps to `jlimit<int>(1, 128, ...)` (line 837), making 0 effectively impossible. The parameter default is 0.0 which gets clamped to 1.
+- **Expected:** Parameter range minimum should be 1.0 to match the implementation: `{1.0, 128.0, 1.0}`.
+
+## Issue 36: clone_forward and clone_cable -- numClones member not initialized
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h`:1600,1699
+- **Observed:** Both `clone_cable` (line 1600) and `clone_forward` (line 1699) declare `int numClones;` without initialization. Both rely on `setNumClones()` being called before `sendValue()`, but if `setValue()` is called before `setNumClones()`, the uninitialized `numClones` could cause undefined loop bounds in `sendValue()`.
+- **Expected:** `int numClones = 1;` (matching the parameter default).
+
+## Issue 34: control.blend Value1/Value2 not registered as unscaled despite unnormalised output
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h:2081-2101`
+- **Observed:** The `multilogic::blend` class does NOT inherit from `no_mod_normalisation` and does not register Value1 or Value2 as unscaled parameters. However, `isNormalisedModulation()` returns false, making the output unnormalised. Input values are scaled by the connection system but the output bypasses range conversion.
+- **Expected:** If blend is intended to work with raw values, Value1 and Value2 should be registered as unscaled via `no_mod_normalisation`.
+
+## Issue 35: control.cable_expr lastValue member is vestigial
+
+- **Type:** vestigial
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h:1096`
+- **Observed:** The `cable_expr` class declares `double lastValue = 0.0` but never reads or writes to it in any method.
+- **Expected:** The `lastValue` member can be removed with no behavioral change.
+
+## Issue 36: control.midi_cc EnableMPE flag is vestigial
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h:1044-1059`
+- **Observed:** The `enableMpe` boolean is set by `setEnableMPE(double)` but is never read in `handleHiseEvent()` or any other method. The `isInPolyphonicContext` member is also declared but unused.
+- **Expected:** EnableMPE should filter MIDI CC events by MPE zone channels, or the parameter should be removed if MPE support is not implemented.
+
+## Issue 37: control.voice_bang missing IsProcessingHiseEvent property
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h:1099`
+- **Observed:** voice_bang implements `handleHiseEvent()` and responds to note-on events, but does not register `IsProcessingHiseEvent` as a CustomNodeProperty. The method works because OpaqueNode::create wires function pointers based on method existence, but the missing property may cause confusion in the C++ code generator or documentation.
+- **Expected:** voice_bang should register `IsProcessingHiseEvent` to match its actual behaviour.
+
+## Issue 38: control.midi_cc missing IsProcessingHiseEvent property
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/CableNodes.h:951`
+- **Observed:** midi_cc implements `handleHiseEvent()` and processes MIDI CC/pitchbend/aftertouch/note events, but does not register `IsProcessingHiseEvent`. It inherits `SN_EMPTY_HANDLE_EVENT` from `no_processing` but overrides it in the class body.
+- **Expected:** midi_cc should register `IsProcessingHiseEvent` to match its actual behaviour.
+
+### core.faust -- empty description in base data
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** scriptnodeList.json (core.faust entry)
+- **Observed:** The description field is an empty string for core.faust. The C++ source does not define an SN_DESCRIPTION macro for faust_jit_node_base.
+- **Expected:** A description such as "A Faust JIT node that compiles and runs Faust DSP code" should be present.
+
+### core.stretch_player -- SN_EMPTY_HANDLE_EVENT despite IsProcessingHiseEvent
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/StretchNode.h:217`
+- **Observed:** stretch_player declares `SN_EMPTY_HANDLE_EVENT` but inherits from `polyphonic_base` which registers `IsProcessingHiseEvent`. The node does not actually process MIDI events in its handleHiseEvent callback. The Gate parameter must be driven externally rather than by MIDI note-on/note-off.
+- **Expected:** Either the node should handle MIDI events to trigger playback (like file_player), or the IsProcessingHiseEvent flag registration should be suppressed via polyphonic_base constructor parameter (`addProcessEventFlag=false`).
+
+### core.stretch_player -- Pitch parameter clamped wider than range
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/StretchNode.h:420`
+- **Observed:** The Pitch parameter range in createParameters is -12 to +12, but setParameter<2> clamps to -24 to +24 (`jlimit(-24.0, 24.0, v)`). Modulation could push the pitch beyond the UI-visible range.
+- **Expected:** Either the clamp should match the parameter range (-12 to +12), or the parameter range should be documented as extendable via modulation.
+
+---
+
+## Modulation Bridge Nodes (core.global_mod, core.extra_mod, core.pitch_mod, core.matrix_mod)
+
+### core.global_mod -- Missing SN_DESCRIPTION macro
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/ModulationNodes.h:570`
+- **Observed:** global_mod has no `SN_DESCRIPTION()` macro, unlike pitch_mod and matrix_mod which both define descriptions.
+- **Expected:** A description string should be provided for consistency, e.g. "Picks up a modulation signal from the GlobalModulatorContainer".
+
+### core.extra_mod -- Missing SN_DESCRIPTION macro
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/ModulationNodes.h:646`
+- **Observed:** extra_mod has no `SN_DESCRIPTION()` macro.
+- **Expected:** A description string should be provided, e.g. "Picks up a modulation signal from an extra modulation chain of a hardcoded effect".
+
+### core.matrix_mod -- SourceIndex/AuxIndex range discrepancy
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/ModulationNodes.h:949`
+- **Observed:** The C++ createParameters sets the range to `{-1.0, (double)modulation::NumMaxModulationSources, 1.0}` where NumMaxModulationSources depends on HISE_NUM_MODULATORS_PER_CHAIN (default 128). The preliminary JSON shows max 64. The actual runtime max depends on the preprocessor define.
+- **Expected:** The JSON should reflect the actual C++ range, or the range should be documented as build-dependent.
+
+### core.matrix_mod -- No output clamping
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/ModulationNodes.h:844-885`
+- **Observed:** matrix_mod's `applyModulation()` does not clamp output to [0,1] for any mode (Scale, Unipolar, Bipolar). This differs from global_mod's mod_base `applyModulation()` which clamps all Gain/Unipolar/Bipolar outputs to [0,1].
+- **Expected:** Either intentional design difference (matrix_mod allows out-of-range values by design) or should match global_mod's clamping behavior. Documentation should clarify.
+
+## Issue 39: core.table -- audio waveshaping is broken (passthrough only)
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** `hi_dsp_library/dsp_nodes/CoreNodes.h`:82-101 (process), 115-131 (processFrame)
+- **Observed:** The `table::process()` method iterates samples with `ignoreUnused(s)` and operates on a local variable `v` instead of the actual sample `s`. The `processFloat(v)` call modifies `v` in-place but the result is never written back to the audio buffer. Similarly, `processFrame()` reads `v = hmath::abs(s)` and processes `v` through the table but never writes back to `s` or `data`. The audio signal passes through completely unmodified. Additionally, the `ModValue currentValue` is only set in `reset()` (to 0.0) and is never updated during processing, making the modulation output non-functional.
+- **Expected:** Based on the SN_DESCRIPTION "a (symmetrical) lookup table based waveshaper", the node should modify the audio signal by applying the table lookup to each sample. Either `s = processFloat(s)` or the modulation output should be properly updated with the table lookup result.
+
+## Issue 40: core.fm -- preliminary JSON incorrectly classifies as monophonic
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `scriptnode_enrichment/preliminary/core.fm.json`:10-11
+- **Observed:** The preliminary JSON has `isPolyphonic: false` and `isProcessingHiseEvent: false`. However, the C++ source at CoreNodes.h:2038-2041 declares `isProcessingHiseEvent() = true` and `isPolyphonic() = true`. The node uses `PolyData<OscData, NUM_POLYPHONIC_VOICES>` and `PolyData<double, NUM_POLYPHONIC_VOICES>`. The `handleHiseEvent()` in CoreNodes.cpp:98 responds to note-on for frequency tracking.
+- **Expected:** Preliminary JSON should have `isPolyphonic: true` and `isProcessingHiseEvent: true`.
+
+## Issue 41: core.granulator -- MIDI handling not reflected in preliminary JSON
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `scriptnode_enrichment/preliminary/core.granulator.json`:10
+- **Observed:** The preliminary JSON has `isProcessingHiseEvent: false`. However, the C++ source at CoreNodes.h:2734 implements `handleHiseEvent()` which processes note-on, note-off, CC#64 (sustain pedal), and all-notes-off events. The granulator requires MIDI note-on events to produce sound (its internal voice counter must be > 0).
+- **Expected:** The node should be flagged with isProcessingHiseEvent. Note: the SNEX_NODE macro does not register this property automatically, so it may genuinely be missing from the node's runtime properties, which would mean MIDI events are never forwarded to it.
+
+## Issue 42: envelope.silent_killer -- Threshold parameter is vestigial
+
+- **Type:** vestigial
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/EnvelopeNodes.h`:1813-1816
+- **Observed:** The Threshold parameter is converted from dB to linear gain via `Decibels::decibelsToGain()` and stored in the `threshold` member variable. However, the `process()` method uses `d.isSilent()` which has its own hardcoded threshold (~-90dB). The `threshold` member is never read after being set.
+- **Expected:** Either the Threshold parameter should be used in the silence check (e.g., comparing peak level against threshold), or the parameter should be documented as non-functional. The parameter range (-120 to -60 dB) suggests intentional configurability.
+
+## Issue 43: envelope.silent_killer -- Description grammar error
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/EnvelopeNodes.h`:1765
+- **Observed:** Description reads "Send a voice reset message as soon when silence is detected"
+- **Expected:** "Send a voice reset message as soon as silence is detected" or "Send a voice reset message when silence is detected"
+
+## Issue 44: envelope.global_mod_gate / extra_mod_gate -- Description grammar error
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/EnvelopeNodes.h`:1977, 1996
+- **Observed:** Both descriptions read "Sends a On-Off modulation signal..."
+- **Expected:** "Sends an On-Off modulation signal..."
+
+## Issue 45: envelope.silent_killer -- IsProcessingHiseEvent mismatch
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/EnvelopeNodes.h`:1778-1810
+- **Observed:** The `polyphonic_base` constructor is called with `addProcessEventFlag=false`, so `IsProcessingHiseEvent` is NOT registered. However, `handleHiseEvent()` is defined at line 1805 and tracks note-on/note-off state. The preliminary JSON has `isProcessingHiseEvent: false`. If events are not forwarded, the per-voice boolean state will never be set to true on note-on, meaning silence detection could kill voices prematurely (since `state.get()` defaults to false, and the condition `!s` would always be true).
+- **Expected:** Either `IsProcessingHiseEvent` should be registered (change `false` to `true` in the polyphonic_base constructor call), or the node relies on being placed inside a `wrap::event` container that forwards events.
+
+## Issue 46: envelope.voice_manager -- Unreferenced parameter slot P==1
+
+- **Type:** vestigial
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/EnvelopeNodes.h`:2038-2039
+- **Observed:** `setParameter<>()` handles P==1 with `p->sendVoiceResetMessage(true)` (all-voices panic), but only parameter 0 ("Kill Voice") is registered in `createParameters()`. Parameter slot 1 is never accessible through the normal parameter system.
+- **Expected:** Either remove the P==1 handler or register a second parameter. This may be intentional internal API for the editor's panic button.
+
+## Issue 42: math.clip -- opSingle multiplies by clamped value instead of clamping
+
+- **Type:** silent-fail
+- **Severity:** critical
+- **Location:** `hi_dsp_library/dsp_nodes/MathNodes.h`:410
+- **Observed:** The frame-processing path (`OP_SINGLE`) computes `s *= jlimit(-value, value, s)`, which multiplies the sample by its own clamped value instead of simply clamping it. This produces `s * clamp(s, -value, value)` rather than `clamp(s, -value, value)`. The block path (line 403) correctly uses `hmath::vclip(b, -value, value)` which is a pure clamp.
+- **Expected:** The frame path should be `s = jlimit(-value, value, s)` (assignment, not multiplication) to match the block path behaviour.
+
+## Issue 43: math.div -- only guards positive divisors, negative Value produces silence
+
+- **Type:** missing-validation
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/MathNodes.h`:254,266
+- **Observed:** Both block and frame paths check `value > 0.0f` and set factor to `1.0f / value` if true, else `0.0f`. A negative Value parameter (e.g., -2.0) is treated identically to zero, producing silence. Negative division (signal inversion with scaling) is not supported.
+- **Expected:** The guard should check `value != 0.0f` (or `abs(value) > epsilon`) to allow negative divisors, which would produce inverted and scaled output.
+
+## Issue 44: math.pi -- description typo "3.13" instead of 3.14159
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/MathNodes.h`:318
+- **Observed:** The SN_DESCRIPTION string reads "Multiplies the signal with PI (3.13)". The actual value used is `hmath::PI` which is 3.14159265358979...
+- **Expected:** Description should read "3.14" or "3.14159" instead of "3.13".
+
+## Issue 45: math.sqrt -- NaN on negative input (no abs protection)
+
+- **Type:** silent-fail
+- **Severity:** high
+- **Location:** `hi_dsp_library/dsp_nodes/MathNodes.h`:445
+- **Observed:** The `opSingle` implementation calls `sqrtf(s)` directly without any protection against negative input values. Audio signals are bipolar (typically [-1, 1]), so negative samples will produce NaN. The NaN then propagates through downstream processing.
+- **Expected:** Either apply `abs()` before sqrt (i.e., `sqrtf(fabsf(s))`) or clamp input to non-negative range. Alternatively, document that the node expects unipolar [0, 1] input only.
+
+## Issue 46: math.neural -- description says "first channel" but code processes all channels
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/MathNodes.h`:824,957
+- **Observed:** The SN_DESCRIPTION reads "Runs a per-sample inference on the first channel of the signal using a neural network". However, the `process()` method at line 957 iterates `for(auto& ch: data)` which processes ALL channels, each with its own network instance (offset + channel index). The `processFrame()` method (line 980) also processes all channels.
+- **Expected:** Description should read "all channels" instead of "the first channel".
+
+## Issue 47: dynamics.comp/gate/limiter -- ModulationTargets empty despite active modulation output
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `scriptnodeList.json` (dynamics.comp, dynamics.gate, dynamics.limiter entries)
+- **Observed:** The `ModulationTargets` field is empty `{}` for all three nodes. However, the C++ source clearly implements modulation output: `isNormalisedModulation()` returns true, `handleModulation()` returns `modValue` which stores `1.0 - obj.getGainReduction()`. The descriptions also reference "modulation signal".
+- **Expected:** `ModulationTargets` should reflect the active modulation output.
+
+## Issue 48: dynamics.envelope_follower -- ModulationTargets empty despite active modulation output
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `scriptnodeList.json` (dynamics.envelope_follower entry)
+- **Observed:** `ModulationTargets` is empty. C++ implements `isNormalisedModulation() = true` and `handleModulation()` returning the envelope value.
+- **Expected:** `ModulationTargets` should reflect the active modulation output.
+
+## Issue 49: dynamics.envelope_follower -- empty description in base data
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `scriptnodeList.json` (dynamics.envelope_follower entry)
+- **Observed:** The `description` field is an empty string. The node does not define `SN_DESCRIPTION` or `getDescription()`.
+- **Expected:** Should have a description such as "Tracks input amplitude with per-voice envelope follower, outputs envelope as modulation signal".
+
+## Issue 50: dynamics.updown_comp -- fixed 2-channel processing
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** `hi_dsp_library/dsp_nodes/DynamicsNode.h`:509
+- **Observed:** `getFixChannelAmount()` returns 2. The node casts input to `ProcessData<2>` in `process()`. Mono or multi-channel configurations will not work correctly.
+- **Expected:** Users should be informed that this node requires stereo context.
+
+---
+
+### jdsp.jcompressor -- Parameter spelling: "Treshold" missing 'h'
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** `hi_dsp_library/dsp_nodes/JuceNodes.cpp` (createParameters)
+- **Observed:** Parameter is registered as "Treshold" (missing second 'h'). The underlying JUCE Compressor method is correctly named setThreshold().
+- **Expected:** Parameter should be "Threshold" per standard English spelling. This is a cosmetic issue but affects documentation and user-facing parameter names.
+
+### jdsp.jdelay -- Phase3 doc has incorrect frontmatter
+
+- **Type:** inconsistency
+- **Severity:** low
+- **Location:** `scriptnode_enrichment/phase3/jdsp/jdelay.md`
+- **Observed:** The frontmatter of jdelay.md says `keywords: jdelay_thiran` and `summary: A interpolating delay line using the Thiran interpolation algorithm`. This describes jdelay_thiran, not jdelay (linear interpolation).
+- **Expected:** Frontmatter should reference jdelay and linear interpolation.
+
+### analyse.oscilloscope -- IsProcessingHiseEvent flag mismatch
+
+- **Type:** inconsistency
+- **Severity:** high
+- **Location:** scriptnode_enrichment/preliminary/analyse.oscilloscope.json:12
+- **Observed:** cppProperties does not include "IsProcessingHiseEvent": true, but the C++ code (line 445 in AnalyserNodes.h) returns true from isProcessingHiseEvent() constexpr for Helpers::Oscilloscope specialization. The node actively processes MIDI note-on events in handleHiseEvent() (lines 467-475) to enable cycle-sync.
+- **Expected:** cppProperties should include "IsProcessingHiseEvent": true to match the C++ behavior and enable MIDI event routing.
+
+### analyse.specs -- Empty description field
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** scriptnode_enrichment/preliminary/analyse.specs.json:6
+- **Observed:** The description field is empty. The node displays PrepareSpecs information (sample rate, block size, channel count, MIDI status, polyphony status).
+- **Expected:** Description should be "Displays processing context (sample rate, block size, channels, MIDI/polyphony status). Debug tool; removed in C++ export."
+
+### analyse.fft -- PropertyObject configuration terminology
+
+- **Type:** ux-issue
+- **Severity:** low
+- **Location:** scriptnode_enrichment/phase3/analyse/fft.md
+- **Observed:** The existing doc is well-structured but does not explicitly note that all nine properties (BufferLength, WindowType, Overlap, DecibelRange, UsePeakDecay, UseDecibelScale, YGamma, Decay, UseLogarithmicFreqAxis) are SimpleRingBuffer PropertyObject properties, not scriptnode parameters. This is important for users to understand where to configure these settings.
+- **Expected:** Clarify that FFT configuration happens via the display buffer UI (ring buffer properties panel), not via scriptnode parameter connections.
+
+### analyse.goniometer -- Missing base description
+
+- **Type:** inconsistency
+- **Severity:** medium
+- **Location:** scriptnode_enrichment/preliminary/analyse.goniometer.json:6
+- **Observed:** Existing phase3 doc is a stub (7 lines, tier: STUB). No details on stereo correlation method or channel requirements.
+- **Expected:** Exploration provides complete signal flow and method (Lissajous X-Y plot of L/R correlation).
