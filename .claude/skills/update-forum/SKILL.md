@@ -127,7 +127,42 @@ After distribution, review the Notes section. Move each paragraph to a better lo
 
 Goal: eliminate the `## Notes` section entirely. Every paragraph becomes either part of the intro prose, a named `###` subsection, or is removed as redundant.
 
-### 8. Validate
+### 8. Forum Reference Citations
+
+After distribution and Notes restructuring, select the 2-3 most citation-worthy insights for the page. Not every insight deserves a citation — pick only those where provenance adds value:
+
+**Citation-worthy:** Non-obvious gotchas, confirmed behavioral quirks, practical workarounds sourced from real user experience.
+
+**Skip:** General API knowledge, information already confirmed via C++ exploration, bugs moved to issues.md, feature requests.
+
+For each selected insight:
+
+A. Add a `forumReferences` entry to the YAML frontmatter (after `commonMistakes`, before `customEquivalent`):
+
+```yaml
+forumReferences:
+  - id: 1
+    title: "Short insight title"
+    summary: "One-sentence summary of the finding"
+    topic: 2054
+  - id: 2
+    title: "..."
+    summary: "..."
+    topic: 7006
+```
+
+B. Place an inline citation in the page body where the insight's content appears: `[1]($FORUM_REF.2054$)`
+
+The `[N]` number is sequential per page (1, 2, 3). The `$FORUM_REF.{tid}$` token contains the actual forum topic ID — `publish.py` resolves it to `https://forum.hise.audio/topic/{tid}`. The Nuxt.js renderer auto-injects a `::forum-references` component from the frontmatter data.
+
+Rules:
+- Maximum 2-3 citations per page
+- Place citations at the end of the sentence/paragraph where the insight content appears
+- Only cite in body prose, parameter hints, or modulation chain descriptions — NOT in frontmatter-only fields (commonMistakes, llmRef)
+- If an insight's content doesn't appear in the page body, don't force a citation — skip it
+- If no insights are citation-worthy, omit `forumReferences` entirely (no empty array)
+
+### 9. Validate
 
 ```bash
 cd "HISE/tools/api generator"

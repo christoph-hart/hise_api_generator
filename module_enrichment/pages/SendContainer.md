@@ -12,6 +12,19 @@ cpuProfile:
   scalingFactors: [effect chain complexity, number of internal channels]
 seeAlso:
   - { id: SendFX, type: alternative, reason: "The send side of the send/return pair - routes audio into this container with adjustable gain and channel offset" }
+forumReferences:
+  - id: 1
+    title: "SendContainer must follow its SendFX in the module tree"
+    summary: "Placing a SendContainer before any SendFX that feeds it delays the send signal by one full audio buffer, breaking phase coherence."
+    topic: 1223
+  - id: 2
+    title: "Gain and Balance parameters are not applied"
+    summary: "The inherited Gain and Balance knobs on the SendContainer header have no effect on output level; control level via the FX chain or SendFX gain."
+    topic: 9104
+  - id: 3
+    title: "Effect plugins require 'Enable Sound Generators FX' project setting"
+    summary: "SendContainers only process audio in compiled effect plugins when the 'Enable Sound Generators FX' flag is enabled in project settings."
+    topic: 6353
 commonMistakes:
   - title: "Container Gain and Balance are unused"
     wrong: "Expecting the Gain or Balance knobs on the Send Container to affect the output level"

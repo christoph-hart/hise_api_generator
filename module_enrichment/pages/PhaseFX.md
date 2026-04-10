@@ -21,6 +21,11 @@ commonMistakes:
     wrong: "Setting Mix to 0.5 expecting a subtle effect"
     right: "Mix defaults to 1.0 (fully wet). The phaser output already contains the dry signal summed with the allpass output, so Mix controls the blend between unprocessed and phased signal."
     explanation: "At Mix=1.0 the output is the full phaser signal (input + allpass output). Reducing Mix blends toward the unprocessed input."
+forumReferences:
+  - id: 1
+    title: "All 6 allpass stages share the same frequency — Frequency1/2 are sweep range bounds"
+    summary: "Frequency1 and Frequency2 define the lower and upper bounds of the sweep range; all 6 stages are always set to the same frequency coefficient derived from the modulation position."
+    topic: 12772
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX

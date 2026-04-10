@@ -13,6 +13,15 @@ cpuProfile:
 seeAlso:
   - { id: GlobalModulatorContainer, type: source, reason: "Hosts the source voice-start modulator that this consumer reads from" }
   - { id: GlobalStaticTimeVariantModulator, type: disambiguation, reason: "Also a VoiceStartModulator consumer, but reads from a TimeVariant source rather than a VoiceStart source" }
+forumReferences:
+  - id: 4
+    title: "Use setTransposeAmount() to preserve event association"
+    summary: "Redirecting notes with Message.setTransposeAmount() keeps the original event ID intact so global modulators resolve correctly; Synth.playNote() breaks the association."
+    topic: 2259
+  - id: 5
+    title: "Replace with ScriptVoiceStartModulator for programmatic notes"
+    summary: "When notes are generated programmatically, replace the global modulator with a ScriptVoiceStartModulator that reads Message.getVelocity() directly."
+    topic: 10815
 commonMistakes:
   - title: "Same note gets same value"
     wrong: "Expecting different values for multiple voices playing the same note"

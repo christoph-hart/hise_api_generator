@@ -16,6 +16,15 @@ seeAlso:
   - { id: AHDSR, type: alternative, reason: "Built-in five-stage envelope when a custom shape is not needed" }
   - { id: HardcodedSynth, type: companion, reason: "Compiled synthesiser that benefits from a compiled envelope for consistency" }
   - { id: "LANG.cpp-dsp-nodes", type: guide, reason: "Complete callback interface and worked examples for writing custom C++ DSP nodes" }
+forumReferences:
+  - id: 3
+    title: "Global envelope usage requires Uniform Voice Handler"
+    summary: "To use a scriptnode envelope as a global modulator across multiple sound generators, enable the Uniform Voice Handler at root level with Synth.setUseUniformVoiceHandler()."
+    topic: 7890
+  - id: 4
+    title: "Modulation source and target must both be inside midichain for sample accuracy"
+    summary: "Placing the target node outside the midichain container loses sample-accurate timing; the modulation value is applied from the last MIDI message to the entire buffer rather than per-sample."
+    topic: 7890
 commonMistakes:
   - title: "Missing compiled DLL"
     wrong: "Adding a Hardcoded Envelope Modulator without first compiling the scriptnode networks"

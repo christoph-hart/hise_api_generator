@@ -31,6 +31,19 @@ commonMistakes:
     wrong: "Leaving the scriptnode .xml network file in the project when exporting a compiled plugin"
     right: "Remove or do not save the network XML before export so only the compiled C++ code is active"
     explanation: "Including a saved .xml scriptnode network file alongside compiled C++ code can cause the plugin to crash on load in a DAW."
+forumReferences:
+  - id: 1
+    title: "HISEScript processBlock mode is legacy and will be removed"
+    summary: "Christoph Hart confirmed the HISEScript processBlock callback approach is deprecated; all new DSP work should use scriptnode networks."
+    topic: 5813
+  - id: 2
+    title: "HISEScript per-sample DSP is at least 10x slower than scriptnode"
+    summary: "Processing audio sample-by-sample via HISEScript is far more expensive than the equivalent logic in a scriptnode network or SNEX node."
+    topic: 8672
+  - id: 6
+    title: "Swap ScriptFX and HardcodedMasterFX at compile time via preprocessor define"
+    summary: "Maintain both module variants in the tree and use a #define flag to bypass the inactive set, enabling a clean development-to-export workflow."
+    topic: 14343
 llmRef: |
   Script FX (Effect/MasterEffect)
 
@@ -148,14 +161,14 @@ This module has no fixed parameters — all network parameters start at index 0.
 
 ### Legacy Script Mode
 
-The HISEScript `processBlock` mode is legacy and will be removed in a future version [1](https://forum.hise.audio/topic/5813). All new DSP work should use scriptnode networks. Processing audio on a per-sample basis via HISEScript is at least ten times slower than the equivalent logic in a scriptnode network or SNEX node [2](https://forum.hise.audio/topic/8672).
+The HISEScript `processBlock` mode is legacy and will be removed in a future version [1]($FORUM_REF.5813$). All new DSP work should use scriptnode networks. Processing audio on a per-sample basis via HISEScript is at least ten times slower than the equivalent logic in a scriptnode network or SNEX node [2]($FORUM_REF.8672$).
 
 ### Connecting Interface Controls to Network Parameters
 
-Only parameters exposed at the top level of the network (via the macro knob section) are available in the processorId/parameterId picker [3](https://forum.hise.audio/topic/13585) [4](https://forum.hise.audio/topic/12743). Internal node parameters are not directly addressable from the Interface script. When scripted UI components are present in a Script FX interface, they connect to the top-level network parameters in the order the parameters were added [5](https://forum.hise.audio/topic/12743).
+Only parameters exposed at the top level of the network (via the macro knob section) are available in the processorId/parameterId picker [3]($FORUM_REF.13585$) [4]($FORUM_REF.12743$). Internal node parameters are not directly addressable from the Interface script. When scripted UI components are present in a Script FX interface, they connect to the top-level network parameters in the order the parameters were added [5]($FORUM_REF.12743$).
 
 ### Development-to-Export Workflow
 
-A common pattern is to maintain both a Script FX (for development) and a HardcodedMasterFX (for export) version of each effect in the module tree, then use a preprocessor define to bypass the inactive set via `setBypassed()` after initialisation [6](https://forum.hise.audio/topic/14343). This enables a clean development-to-export workflow without restructuring the project.
+A common pattern is to maintain both a Script FX (for development) and a HardcodedMasterFX (for export) version of each effect in the module tree, then use a preprocessor define to bypass the inactive set via `setBypassed()` after initialisation [6]($FORUM_REF.14343$). This enables a clean development-to-export workflow without restructuring the project.
 
 **See also:** $MODULES.HardcodedMasterFX$ -- compiled variant for exported plugins, $MODULES.PolyScriptFX$ -- per-voice effect variant for polyphonic processing

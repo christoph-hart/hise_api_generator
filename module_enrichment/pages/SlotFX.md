@@ -12,6 +12,19 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: EmptyFX, type: companion, reason: "The default placeholder loaded when the slot is empty or cleared" }
+forumReferences:
+  - id: 1
+    title: "setBypassed() does not work on SlotFX scripting references"
+    summary: "Call setBypassed() via a second reference obtained with Synth.getEffect() instead — both references target the same physical module."
+    topic: 5947
+  - id: 2
+    title: "SlotFX state is not saved in user presets by default"
+    summary: "Call Engine.addModuleStateToUserPreset(moduleId) in onInit to include the loaded effect and its parameters in user preset data."
+    topic: 13353
+  - id: 3
+    title: "Filter effect type is excluded from the Effect Slot dropdown"
+    summary: "The built-in Filter module cannot be loaded into an Effect Slot via setEffect(); use a Script FX wrapping filter behaviour as a workaround."
+    topic: 2536
 commonMistakes:
   - title: "No crossfade on effect swap"
     wrong: "Expecting a crossfade when swapping effects in the slot during playback"
@@ -96,15 +109,15 @@ An empty slot always contains an Empty effect internally rather than being truly
 Bypass is fully delegated to the hosted effect. Bypassing the Effect Slot forwards the bypass state to whatever effect is currently loaded.
 
 :::{.warning}
-`setBypassed()` does not work when called on a SlotFX scripting reference [1](https://forum.hise.audio/topic/5947). As a workaround, obtain a second reference to the same module using `Synth.getEffect()` and call `setBypassed()` on that reference instead.
+`setBypassed()` does not work when called on a SlotFX scripting reference [1]($FORUM_REF.5947$). As a workaround, obtain a second reference to the same module using `Synth.getEffect()` and call `setBypassed()` on that reference instead.
 :::
 
 ### Persisting State Across Presets
 
-By default, user presets do not save which effect is loaded in an Effect Slot or its parameter values. Call `Engine.addModuleStateToUserPreset(moduleId)` in onInit for each Effect Slot to include its full state in user preset data [2](https://forum.hise.audio/topic/13353) [3](https://forum.hise.audio/topic/13661).
+By default, user presets do not save which effect is loaded in an Effect Slot or its parameter values. Call `Engine.addModuleStateToUserPreset(moduleId)` in onInit for each Effect Slot to include its full state in user preset data [2]($FORUM_REF.13353$).
 
 ### Excluded Effect Types
 
-The built-in Filter module is excluded from the Effect Slot type list and cannot be loaded via `setEffect()` [4](https://forum.hise.audio/topic/2536). Use a Script FX wrapping the desired filter behaviour as a workaround.
+The built-in Filter module is excluded from the Effect Slot type list and cannot be loaded via `setEffect()` [3]($FORUM_REF.2536$). Use a Script FX wrapping the desired filter behaviour as a workaround.
 
 **See also:** $MODULES.EmptyFX$ -- The default placeholder loaded when the slot is empty or cleared

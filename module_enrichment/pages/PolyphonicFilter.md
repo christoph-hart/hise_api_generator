@@ -28,6 +28,15 @@ commonMistakes:
     wrong: "Selecting StateVariablePeak or LadderFourPoleHP mode and expecting the filter to change"
     right: "These two modes are non-functional - the previously selected filter type remains active"
     explanation: "StateVariablePeak (index 11) and LadderFourPoleHP (index 16) are listed in the mode selector but do not switch the filter. Avoid these modes."
+forumReferences:
+  - id: 1
+    title: "Frequency modulation scales to knob value, not around it"
+    summary: "The Frequency Modulation chain multiplies the normalised frequency by 0-1, sweeping from ~20 Hz up to the knob value rather than modulating around a centre frequency. Use the Bipolar Freq Modulation chain to offset from a centre."
+    topic: 2749
+  - id: 2
+    title: "Any polyphonic modulator forces per-voice processing"
+    summary: "Adding even one polyphonic modulator to any chain switches the entire filter to per-voice processing, significantly raising CPU cost compared to the monophonic fallback path."
+    topic: 404
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX

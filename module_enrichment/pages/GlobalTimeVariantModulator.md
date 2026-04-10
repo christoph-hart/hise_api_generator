@@ -13,6 +13,19 @@ cpuProfile:
 seeAlso:
   - { id: GlobalModulatorContainer, type: source, reason: "Hosts the source time-variant modulator that this consumer reads from" }
   - { id: GlobalStaticTimeVariantModulator, type: disambiguation, reason: "Also reads from a TimeVariant source, but snapshots the value at note-on instead of continuously tracking" }
+forumReferences:
+  - id: 3
+    title: "Global modulators unavailable in FX plugin master chain"
+    summary: "In FX plugin mode, GlobalTimeVariantModulators do not appear in the connection dropdown for master chain effects; enabling Sound Generator in FX plugin export settings and correct container placement fixes it."
+    topic: 1583
+  - id: 4
+    title: "Free-running LFO requires scriptnode Script FX"
+    summary: "A GlobalTimeVariantModulator wrapping an LFO restarts on each note-on; implement a non-retriggering LFO as a scriptnode network inside a Script FX module instead."
+    topic: 7693
+  - id: 5
+    title: "Read modulator value from script via GlobalCable callback"
+    summary: "Direct polling of a GlobalTimeVariantModulator's value from HISEScript is not supported; attach a GlobalCable and register a callback to receive updates."
+    topic: 9641
 commonMistakes:
   - title: "Inverted doesn't work with UseTable"
     wrong: "Using the Inverted toggle with UseTable enabled and expecting inversion to work"

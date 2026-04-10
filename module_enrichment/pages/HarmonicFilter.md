@@ -28,6 +28,19 @@ commonMistakes:
     wrong: "Changing NumFilterBands during playback and expecting a smooth transition"
     right: "Changing the band count resets all filter states, which may cause a brief transient"
     explanation: "The filter states are cleared when the band count changes. Avoid automating this parameter during sustained notes."
+forumReferences:
+  - id: 1
+    title: "Slider pack components can be promoted to the interface"
+    summary: "Pack A, B, and Mix can be promoted to the plugin interface for custom layout; FilterDisplay FloatingTile does not support this module."
+    topic: 671
+  - id: 2
+    title: "FilterDisplay FloatingTile does not support Harmonic Filter"
+    summary: "The FilterDisplay content type cannot render the Harmonic Filter; build the UI manually by promoting the slider pack components."
+    topic: 671
+  - id: 3
+    title: "Polyphonic version is CPU-intensive at high voice counts"
+    summary: "The polyphonic Harmonic Filter scales linearly with voice count — the author describes it as 'quite a CPU hog, especially in the polyphonic version' with high band counts."
+    topic: 671
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -86,7 +99,7 @@ tags:
 
 A polyphonic bank of peak EQ filters tuned to the integer harmonics of each voice's played note. When a note starts, the module calculates harmonic frequencies (f, 2f, 3f, ...) from the MIDI note and sets a series of peak filters at those frequencies. The per-band gain values are defined by two slider pack configurations (A and B), which can be crossfaded to morph between different harmonic profiles in real time.
 
-Each voice maintains its own independent filter bank, so chords and polyphonic passages receive per-note harmonic shaping. The crossfade between slider packs A and B interpolates the gain values before filtering - only one filter bank runs per voice, keeping the crossfade CPU-neutral. There is no dry/wet mix; the output is the fully filtered signal.
+Each voice maintains its own independent filter bank, so chords and polyphonic passages receive per-note harmonic shaping. The crossfade between slider packs A and B interpolates the gain values before filtering - only one filter bank runs per voice, keeping the crossfade CPU-neutral. There is no dry/wet mix; the output is the fully filtered signal. At high voice counts and band counts the CPU cost can be prohibitive. [3]($FORUM_REF.671$)
 
 ## Signal Path
 

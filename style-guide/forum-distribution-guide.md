@@ -235,3 +235,21 @@ After:
    > Add concise anti-pattern note for MCP consumers.
 
 3. Add `Engine.loadAudioFilesIntoPool` to the Convolution page's See Also section (if not already present).
+
+### Forum reference citation (Convolution WetGain resampling)
+
+Frontmatter:
+```yaml
+forumReferences:
+  - id: 1
+    title: "IR resampling causes gain increase at non-native sample rates"
+    summary: "When the host sample rate differs from the IR's native sample rate, resampling introduces a gain increase (~6dB at 96kHz vs 44.1kHz). No built-in compensation."
+    topic: 2054
+```
+
+Inline citation in body prose:
+```markdown
+adjust WetGain manually if needed. [1]($FORUM_REF.2054$)
+```
+
+The `[N]` number is sequential per page. The `$FORUM_REF.{tid}$` token contains the forum topic ID — resolved by `publish.py` to `https://forum.hise.audio/topic/{tid}`. Maximum 2-3 citations per page. Only cite non-obvious gotchas, confirmed quirks, and practical workarounds — not general API knowledge or bugs moved to issues.md.

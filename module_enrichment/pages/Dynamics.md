@@ -34,6 +34,35 @@ commonMistakes:
     wrong: "Looking for a soft knee parameter on the compressor"
     right: "The compressor uses a hard knee exclusively"
     explanation: "No knee control is exposed. For soft-knee compression, use a custom scriptnode compressor. [2]($FORUM_REF.3466$)"
+forumReferences:
+  - id: 1
+    title: "Do not automate limiter attack time"
+    summary: "Changing the limiter attack mid-playback switches internal processing at a random buffer point, causing clicks and pops."
+    topic: 2857
+  - id: 2
+    title: "Hard knee only — no soft knee control"
+    summary: "The chunkware SimpleComp algorithm uses a hard knee exclusively; there is no knee parameter exposed."
+    topic: 3466
+  - id: 3
+    title: "Reduction parameters must be polled"
+    summary: "CompressorReduction, GateReduction, and LimiterReduction do not push updates — poll them with getAttribute() inside a timer callback."
+    topic: 1929
+  - id: 4
+    title: "FloatingTile slots for gain reduction meters"
+    summary: "Set FloatingTile processor ID to the Dynamics module name; index 0 = gate, 1 = compressor, 2 = limiter."
+    topic: 13755
+  - id: 5
+    title: "Sidechain filtering requires scriptnode"
+    summary: "No built-in sidechain filter — route a filtered copy of the signal through a DSP network to drive frequency-dependent compression."
+    topic: 2072
+  - id: 6
+    title: "Auto-makeup over-compensates at typical settings"
+    summary: "The formula (1 - ratio) * threshold applies full theoretical gain at threshold, which is too hot in practice — scale by 0.7 or apply a logarithmic correction."
+    topic: 1965
+  - id: 7
+    title: "Parallel compression requires routing matrix"
+    summary: "The Dynamics module has no built-in dry/wet mix; use a Routing Matrix to split into dry and wet paths and mix them with a gain module."
+    topic: 1745
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -231,6 +260,14 @@ groups:
       - { name: LimiterMakeup, desc: "Enables automatic makeup gain calculated from the threshold to compensate for limiting.", range: "Off / On", default: "Off" }
 ---
 ::
+
+### Auto Makeup Gain
+
+The compressor auto-makeup formula is `(1 - ratio) * threshold * -1`, which applies the full theoretical gain at the threshold point. In practice this tends to over-compensate at typical settings, producing output that is louder than the uncompressed signal. If auto-makeup is too hot, scale the result down manually (a factor of 0.7 is a common community workaround) or leave auto-makeup off and set output level explicitly. [6]($FORUM_REF.1965$)
+
+### Parallel Compression
+
+The Dynamics module has no built-in dry/wet mix parameter. To implement parallel (New York) compression, increase the container channel count to 4, use a Routing Matrix to copy the signal to channels 3–4, apply the Dynamics module only to channels 3–4, and mix the two paths back together using a gain module on a single knob. [7]($FORUM_REF.1745$)
 
 ### Gain Reduction Metering
 

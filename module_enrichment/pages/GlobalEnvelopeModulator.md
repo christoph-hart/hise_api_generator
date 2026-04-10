@@ -30,6 +30,19 @@ commonMistakes:
     wrong: "Placing a Global Envelope consumer inside a Synth Group"
     right: "Use a Synth Chain as the host container instead"
     explanation: "Synth Group starts multiple voices per event, violating the one-voice-per-event constraint that the Uniform Voice Handler depends on. [2]($FORUM_REF.9499$)"
+forumReferences:
+  - id: 1
+    title: "Requires Uniform Voice Handler for correct voice sync"
+    summary: "Global envelopes rely on consistent event IDs; without a Uniform Voice Handler the envelope assignment silently fails. Synth Group also breaks this by starting multiple voices per event."
+    topic: 9499
+  - id: 3
+    title: "Arpeggiator must be in the Master Chain to trigger global envelopes"
+    summary: "An arpeggiator inside a child synth's MIDI chain produces notes never seen by the GlobalModulatorContainer; only events passing through the master chain can trigger a new envelope voice."
+    topic: 13000
+  - id: 4
+    title: "Setting intensity to zero does not kill notes"
+    summary: "Voice lifetime is determined by the source envelope in the container; setting consumer intensity to zero silences output but the voice keeps running until the source envelope finishes."
+    topic: 14176
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator

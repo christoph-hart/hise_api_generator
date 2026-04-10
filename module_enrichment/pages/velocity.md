@@ -23,6 +23,11 @@ commonMistakes:
     wrong: "Leaving UseTable off but expecting a custom velocity curve"
     right: "Enable UseTable to activate the curve editor"
     explanation: "The table is bypassed by default. Without UseTable enabled, the velocity mapping is linear (or inverted linear)."
+forumReferences:
+  - id: 1
+    title: "Velocity table cannot be shared between modules"
+    summary: "There is no way to share one velocity modulator's table between two modules; use a Global Voice Start Modulator with receivers instead."
+    topic: 687
 customEquivalent:
   approach: hisescript
   moduleType: ScriptVoiceStartModulator

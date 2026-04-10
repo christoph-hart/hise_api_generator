@@ -20,6 +20,23 @@ commonMistakes:
     wrong: "Setting Time to 0 s with TimeAttenuate enabled and expecting no attenuation"
     right: "Set TimeAttenuate to Off to disable attenuation entirely, or set Time to a value that covers the expected hold duration"
     explanation: "With Time at 0, even the briefest key press maps to the far right of the attenuation curve, making attenuation maximally aggressive. Most release notes will be heavily attenuated or silent."
+forumReferences:
+  - id: 1
+    title: "Time parameter is in seconds, not milliseconds"
+    summary: "The Time knob shows a 'ms' suffix but the underlying value and all internal calculations use seconds."
+    topic: 6214
+  - id: 2
+    title: "Release samples require a dedicated second sampler"
+    summary: "Release trigger layers cannot share a Sampler with normal sustain samples; use a separate Sampler module with the ReleaseTrigger on its MIDI chain."
+    topic: 4225
+  - id: 3
+    title: "Built-in module does not handle sustain pedal (CC64)"
+    summary: "Release samples fire immediately on key-up even when the sustain pedal is held; a custom ScriptProcessor is needed for pedal-aware behaviour."
+    topic: 13205
+  - id: 4
+    title: "MPE mode disrupts release triggering; keep disabled by default"
+    summary: "Having an MPE Modulator active can break release trigger behaviour; the workaround is to keep MPE off by default."
+    topic: 11871
 customEquivalent:
   approach: hisescript
   moduleType: ScriptProcessor
@@ -138,22 +155,22 @@ groups:
   - label: Time Attenuation
     params:
       - { name: TimeAttenuate, desc: "Enables time-based velocity attenuation. When off, release velocity equals the original noteOn velocity. The Time and TimeTable controls are hidden in the UI when this is off.", range: "Off / On", default: "Off" }
-      - { name: Time, desc: "Normalisation window for hold-time attenuation. The elapsed hold time is divided by this value and clamped to 0-1 before the table lookup. Longer values spread the attenuation curve over a wider time range.", range: "0 - 20 s", default: "0 s", hints: ["Despite the slider label showing 'ms', the underlying value is in seconds. Custom scripted variants should use Engine.getUptime() (which returns seconds) for consistency [1](https://forum.hise.audio/topic/6214)."] }
+      - { name: Time, desc: "Normalisation window for hold-time attenuation. The elapsed hold time is divided by this value and clamped to 0-1 before the table lookup. Longer values spread the attenuation curve over a wider time range.", range: "0 - 20 s", default: "0 s", hints: ["Despite the slider label showing 'ms', the underlying value is in seconds. Custom scripted variants should use Engine.getUptime() (which returns seconds) for consistency [1]($FORUM_REF.6214$)."] }
       - { name: TimeTable, desc: "Attenuation curve that maps normalised hold time to a velocity multiplier. The horizontal axis represents normalised time (0 = key just pressed, 1 = held for the duration set by Time or longer). The vertical axis is the velocity scale factor (0 = silent, 1 = full velocity).", range: "Table curve (0.0 - 1.0)", default: "Linear (identity)" }
 ---
 ::
 
 ### Dedicated Sampler Requirement
 
-Release-triggered sample layers cannot share a single Sampler with normal sustain samples. Use two separate Sampler modules: one for normal notes and one for release-triggered notes, with the ReleaseTrigger on the second sampler's MIDI chain [1](https://forum.hise.audio/topic/4225). Both the original noteOn and noteOff events are consumed by this module -- nothing passes through unchanged -- so it must not be placed on a sustain layer's chain.
+Release-triggered sample layers cannot share a single Sampler with normal sustain samples. Use two separate Sampler modules: one for normal notes and one for release-triggered notes, with the ReleaseTrigger on the second sampler's MIDI chain [2]($FORUM_REF.4225$). Both the original noteOn and noteOff events are consumed by this module -- nothing passes through unchanged -- so it must not be placed on a sustain layer's chain.
 
 ### Sustain Pedal Behaviour
 
-The built-in ReleaseTrigger does not handle MIDI CC64 (sustain pedal): release samples fire immediately on key-up even when the pedal is held [1](https://forum.hise.audio/topic/13205). For instruments that need pedal-aware release behaviour, a custom ScriptProcessor implementation that tracks pedal state and defers release sample playback until pedal release is the recommended approach.
+The built-in ReleaseTrigger does not handle MIDI CC64 (sustain pedal): release samples fire immediately on key-up even when the pedal is held [3]($FORUM_REF.13205$). For instruments that need pedal-aware release behaviour, a custom ScriptProcessor implementation that tracks pedal state and defers release sample playback until pedal release is the recommended approach.
 
 ### MPE Mode
 
-In MPE mode, the velocity source switches from the original noteOn velocity to the noteOff velocity. Enabling MPE can disrupt release trigger behaviour in some configurations; if problems occur, keep MPE disabled by default and only enable it when explicitly needed [1](https://forum.hise.audio/topic/11871).
+In MPE mode, the velocity source switches from the original noteOn velocity to the noteOff velocity. Enabling MPE can disrupt release trigger behaviour in some configurations; if problems occur, keep MPE disabled by default and only enable it when explicitly needed [4]($FORUM_REF.11871$).
 
 ### Overlapping Notes
 

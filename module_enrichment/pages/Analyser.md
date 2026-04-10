@@ -17,6 +17,19 @@ commonMistakes:
     wrong: "Setting colour properties directly on the AudioAnalyser component"
     right: "Use a LookAndFeel override to style the AudioAnalyser display"
     explanation: "Standard colour properties have no effect on the AudioAnalyser component. The display must be styled through a custom LookAndFeel."
+forumReferences:
+  - id: 1
+    title: "BufferSize setAttribute expects sample count, not a combo-box index"
+    summary: "Pass the actual sample count (e.g. 4096, 8192) to setAttribute() for BufferSize, not a positional index."
+    topic: 5320
+  - id: 2
+    title: "FFT display properties are not persisted; apply via setRingBufferProperties() each time"
+    summary: "WindowType, DecibelRange, Decay, UseLogarithmicFreqAxis etc. must be set from script on every init using DisplayBuffer.setRingBufferProperties()."
+    topic: 6666
+  - id: 7
+    title: "Use Engine.createFFT() for offline spectrum analysis instead"
+    summary: "The Analyser module is real-time only; for offline or file-based spectrum analysis, Engine.createFFT() with setEnableSpectrum2D() is the correct approach."
+    topic: 13231
 llmRef: |
   Analyser (MasterEffect)
 
@@ -68,24 +81,24 @@ groups:
   - label: Visualisation
     params:
       - { name: PreviewType, desc: "Selects the visualisation mode. Each mode configures the display buffer for a different analysis type.", range: "Nothing, Goniometer, Oscilloscope, Spectral Analyser", default: "Nothing" }
-      - { name: BufferSize, desc: "Size of the analysis ring buffer in samples. Larger values give better frequency resolution for the spectrum analyser but increase display latency.", range: "0 - 32768", default: "8192", hints: ["When setting via setAttribute(), pass the actual sample count (e.g. 8192, 16384), not a combo-box index [1](https://forum.hise.audio/topic/5320)."] }
+      - { name: BufferSize, desc: "Size of the analysis ring buffer in samples. Larger values give better frequency resolution for the spectrum analyser but increase display latency.", range: "0 - 32768", default: "8192", hints: ["When setting via setAttribute(), pass the actual sample count (e.g. 8192, 16384), not a combo-box index [1]($FORUM_REF.5320$)."] }
 ---
 ::
 
 ### Configuring FFT Display Properties
 
-Properties such as BufferLength, WindowType, DecibelRange, Decay, and UseLogarithmicFreqAxis are not persisted when set in the HISE editor. They must be applied each time from script using `DisplayBuffer.setRingBufferProperties()` with a JSON object [1](https://forum.hise.audio/topic/6666) [2](https://forum.hise.audio/topic/11056). The same property set works for the `analyse.fft` scriptnode node.
+Properties such as BufferLength, WindowType, DecibelRange, Decay, and UseLogarithmicFreqAxis are not persisted when set in the HISE editor. They must be applied each time from script using `DisplayBuffer.setRingBufferProperties()` with a JSON object [2]($FORUM_REF.6666$) [3]($FORUM_REF.11056$). The same property set works for the `analyse.fft` scriptnode node.
 
 ### Toggling the Display
 
-There is no scripting API to bypass or disable the ring buffer from script. To hide the visualisation at runtime, call `showControl(false)` on the AudioAnalyser FloatingTile panel or toggle its visibility [1](https://forum.hise.audio/topic/1951) [2](https://forum.hise.audio/topic/10897). Without a connected display component, the module has zero processing overhead beyond the standard effect chain traversal.
+There is no scripting API to bypass or disable the ring buffer from script. To hide the visualisation at runtime, call `showControl(false)` on the AudioAnalyser FloatingTile panel or toggle its visibility [4]($FORUM_REF.1951$) [5]($FORUM_REF.10897$). Without a connected display component, the module has zero processing overhead beyond the standard effect chain traversal.
 
 ### Display Buffer Index
 
-The numeric argument passed to `getDisplayBuffer()` is an arbitrary ID used to distinguish multiple display buffers on the same source -- it is not a channel index [1](https://forum.hise.audio/topic/12442). Any numbering scheme (0-9 or otherwise) is valid.
+The numeric argument passed to `getDisplayBuffer()` is an arbitrary ID used to distinguish multiple display buffers on the same source -- it is not a channel index [6]($FORUM_REF.12442$). Any numbering scheme (0-9 or otherwise) is valid.
 
 ### Offline Spectrum Analysis
 
-The Analyser module is designed for real-time visualisation. For offline spectrum analysis of audio files or buffers (e.g. generating a 2D spectrogram), use `Engine.createFFT()` with `fft.setEnableSpectrum2D(true)` and `g.drawFFTSpectrum()` in a paint routine instead [1](https://forum.hise.audio/topic/13231).
+The Analyser module is designed for real-time visualisation. For offline spectrum analysis of audio files or buffers (e.g. generating a 2D spectrogram), use `Engine.createFFT()` with `fft.setEnableSpectrum2D(true)` and `g.drawFFTSpectrum()` in a paint routine instead [7]($FORUM_REF.13231$).
 
 **See also:** [AudioAnalyser](/v2/reference/floating-tiles/audioanalyser) -- FloatingTile that renders the goniometer, oscilloscope, or spectrum analyser visualisation from this module's display buffer

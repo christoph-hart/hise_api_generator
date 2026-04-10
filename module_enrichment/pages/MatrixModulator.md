@@ -31,6 +31,19 @@ commonMistakes:
     wrong: "Creating connections without calling `setMatrixModulationProperties` first"
     right: "Call `setMatrixModulationProperties` once in `onInit` before creating connections"
     explanation: "Without this call, mode comboboxes in the matrix table remain empty after drag-and-drop connections are created. [2]($FORUM_REF.13379$)"
+forumReferences:
+  - id: 1
+    title: "matrixTargetId without MatrixModulator loses polyphonic modulation"
+    summary: "Using matrixTargetId on a plain knob with no MatrixModulator in the chain sends the value only once per buffer in monophonic mode; the Matrix Modulator is required for polyphonic, sample-accurate modulation."
+    topic: 13203
+  - id: 2
+    title: "setMatrixModulationProperties must be called once at init"
+    summary: "Mode comboboxes in the matrix table stay empty after drag-and-drop if setMatrixModulationProperties has not been called; it is a one-time setup call in onInit."
+    topic: 13379
+  - id: 3
+    title: "Use FilterFreq edit-range preset for filter cutoff modulation"
+    summary: "When driving filter cutoff from a MatrixModulator, select the FilterFreq or FilterFreq Logarithmic edit-range preset and set the filter frequency parameter to 20 kHz before connecting."
+    topic: 13240
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator

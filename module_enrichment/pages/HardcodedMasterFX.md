@@ -16,6 +16,19 @@ seeAlso:
   - { id: HardcodedPolyphonicFX, type: alternative, reason: "Per-voice compiled effect for polyphonic processing" }
   - { id: SlotFX, type: disambiguation, reason: "Swaps between existing HISE effects; Hardcoded Master FX loads compiled scriptnode networks" }
   - { id: "LANG.cpp-dsp-nodes", type: guide, reason: "Complete callback interface and worked examples for writing custom C++ DSP nodes" }
+forumReferences:
+  - id: 1
+    title: "restoreState() loads network and parameter values in one call"
+    summary: "Rather than calling setEffect() and setting parameters individually, use exportState()/restoreState() to capture and restore the full module state including the loaded network name."
+    topic: 7701
+  - id: 2
+    title: "getModuleList() and setEffect() require Synth.getSlotFX()"
+    summary: "A reference obtained via Synth.getEffect() does not expose setEffect() or getModuleList(); use Synth.getSlotFX() for those and Synth.getEffect() only for exportState()/restoreState()."
+    topic: 12498
+  - id: 3
+    title: "AllowCompilation must be enabled per-network before DLL build"
+    summary: "Each scriptnode network must have AllowCompilation enabled individually; after building, use Tools > Show DLL info to confirm registration, and ensure the build configuration matches the HISE build."
+    topic: 5911
 commonMistakes:
   - title: "Missing compiled DLL"
     wrong: "Adding a Hardcoded Master FX without first compiling the scriptnode networks"
@@ -180,10 +193,10 @@ In both cases, the exported plugin contains no DLL and no XML — everything run
 
 ### Restoring State in a Single Call
 
-Rather than calling `setEffect()` followed by individual parameter assignments, you can capture the entire module state with `exportState()` (or via **Edit > Create Base64 encoded state**) and restore it in one call with `restoreState()`. The Base64 string encodes both the loaded network name and all parameter values [1](https://forum.hise.audio/topic/7701) [2](https://forum.hise.audio/topic/12498).
+Rather than calling `setEffect()` followed by individual parameter assignments, you can capture the entire module state with `exportState()` (or via **Edit > Create Base64 encoded state**) and restore it in one call with `restoreState()`. The Base64 string encodes both the loaded network name and all parameter values. [1]($FORUM_REF.7701$) [2]($FORUM_REF.12498$)
 
 ### Enabling Networks for Compilation
 
-Each scriptnode network that should appear in the Hardcoded Master FX dropdown must have **AllowCompilation** enabled individually before the DLL build step [1](https://forum.hise.audio/topic/5911). After building and restarting HISE, use **Tools > Show DLL info** to verify the compiled networks are registered. The build configuration (Debug/Release) must also match the HISE build -- a mismatch results in 'No DLL loaded' [2](https://forum.hise.audio/topic/5911).
+Each scriptnode network that should appear in the Hardcoded Master FX dropdown must have **AllowCompilation** enabled individually before the DLL build step. After building and restarting HISE, use **Tools > Show DLL info** to verify the compiled networks are registered. The build configuration (Debug/Release) must also match the HISE build -- a mismatch results in 'No DLL loaded'. [3]($FORUM_REF.5911$)
 
 **See also:** $MODULES.ScriptFX$ -- loads interpreted XML scriptnode networks instead of compiled C++ code, $MODULES.HardcodedPolyphonicFX$ -- per-voice compiled effect for polyphonic processing, $MODULES.SlotFX$ -- swaps between existing HISE effects rather than compiled networks, [C++ DSP Nodes]($LANG.cpp-dsp-nodes$) -- complete callback interface and worked examples for writing custom C++ DSP nodes

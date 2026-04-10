@@ -21,6 +21,11 @@ commonMistakes:
     wrong: "Expecting the response curve table to update in real-time when the macro value changes continuously"
     right: "The table is applied once when the macro value changes, before smoothing"
     explanation: "The table lookup transforms the incoming macro value into a target value. The smoother then interpolates towards that target. The table is not re-evaluated during the smoothing ramp."
+forumReferences:
+  - id: 1
+    title: "Macro modulation is not sample-accurate and is designed for slow movements only"
+    summary: "Christoph Hart confirmed that macro modulation is not sample-accurate and never will be; it moves the target parameter's knob value at block rate, not via the modulation chain."
+    topic: 4333
 customEquivalent:
   approach: scriptnode
   moduleType: Modulator

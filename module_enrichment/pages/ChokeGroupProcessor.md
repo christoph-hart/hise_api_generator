@@ -11,6 +11,15 @@ cpuProfile:
   polyphonic: false
   scalingFactors: []
 seeAlso: []
+forumReferences:
+  - id: 1
+    title: "Choke fires across processors, not within one"
+    summary: "Multiple notes within the same ChokeGroupProcessor can play simultaneously; only a new note-on from a different processor triggers a choke."
+    topic: 6609
+  - id: 2
+    title: "Script-based choke requires makeArtificial() before storing event IDs"
+    summary: "Only artificial events can be killed via Synth.noteOffByEventId(); call Message.makeArtificial() on each note-on before pushing its event ID to the group array."
+    topic: 437
 commonMistakes:
   - title: "ChokeGroup 0 still filters by key range"
     wrong: "Expecting ChokeGroup 0 to pass all MIDI through unchanged"
@@ -160,7 +169,7 @@ onMidiEvent(message) {
 groups:
   - label: Choke Group
     params:
-      - { name: ChokeGroup, desc: "Group number for choke matching. Processors with the same non-zero group number choke each other's voices. Set to 0 to disable choke behaviour (key range filtering still applies).", range: "0 - 16", default: "0", hints: ["Triggering a note in group N kills voices from other processors in group N, but multiple notes within the same processor can play simultaneously -- the choke only fires across processors, not within one [1](https://forum.hise.audio/topic/6609)."] }
+      - { name: ChokeGroup, desc: "Group number for choke matching. Processors with the same non-zero group number choke each other's voices. Set to 0 to disable choke behaviour (key range filtering still applies).", range: "0 - 16", default: "0", hints: ["Triggering a note in group N kills voices from other processors in group N, but multiple notes within the same processor can play simultaneously -- the choke only fires across processors, not within one [1]($FORUM_REF.6609$)."] }
       - { name: KillVoice, desc: "Controls how choked voices are stopped. On: voices are killed instantly with no release phase. Off: a note-off is sent, allowing envelope release stages to play out naturally.", range: "Off / On", default: "On" }
   - label: Key Range
     params:
@@ -171,7 +180,7 @@ groups:
 
 ### Recommended Setup for Drum Kits
 
-Each drum type (e.g. open hi-hat, closed hi-hat, kick) needs its own Sampler module with a Choke Group Processor set to the appropriate group number. Processors on different samplers with the same group number choke each other globally across the module tree [1](https://forum.hise.audio/topic/13857) [2](https://forum.hise.audio/topic/6609). There is no way to scope groups to a specific container or synth chain, so use distinct group numbers for groups that should be independent.
+Each drum type (e.g. open hi-hat, closed hi-hat, kick) needs its own Sampler module with a Choke Group Processor set to the appropriate group number. Processors on different samplers with the same group number choke each other globally across the module tree. There is no way to scope groups to a specific container or synth chain, so use distinct group numbers for groups that should be independent.
 
 ### Partial Choke with Key Ranges
 
@@ -183,4 +192,4 @@ Voices held by the sustain pedal (CC#64) are still choked when a choke message a
 
 ### Script-Based Choke for Dynamic Groups
 
-When implementing choke logic in a ScriptProcessor (for dynamic per-note group assignment), you must call `Message.makeArtificial()` on note-ons before storing their event IDs [1](https://forum.hise.audio/topic/437). HISE can only kill artificial events via `Synth.noteOffByEventId()` for stability reasons. Maintain one array per choke group and call `Synth.noteOffByEventId()` for all stored IDs when a new note arrives in that group.
+When implementing choke logic in a ScriptProcessor (for dynamic per-note group assignment), you must call `Message.makeArtificial()` on note-ons before storing their event IDs [2]($FORUM_REF.437$). HISE can only kill artificial events via `Synth.noteOffByEventId()` for stability reasons. Maintain one array per choke group and call `Synth.noteOffByEventId()` for all stored IDs when a new note arrives in that group.

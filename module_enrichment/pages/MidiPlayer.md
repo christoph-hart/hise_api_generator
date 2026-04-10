@@ -33,6 +33,19 @@ commonMistakes:
     wrong: "Compiling without exporting pooled MIDI files first"
     right: "Run Export > Export Pooled Files To Binary Resource before compiling"
     explanation: "MIDI files must be explicitly exported to the binary resource pool. If skipped, the compiled plugin contains an empty MIDI pool and no sequences will play."
+forumReferences:
+  - id: 1
+    title: "NoteOff events from MidiPlayer are invisible to sibling MIDI script processors"
+    summary: "Script processors placed as siblings of the MidiPlayer in the same MIDI chain will not receive noteOff callbacks; place them inside a child container beneath the MidiPlayer instead."
+    topic: 1903
+  - id: 2
+    title: "MIDI files missing from compiled plugins if pooled files not exported first"
+    summary: "MIDI files must be exported via 'Export Pooled Files To Binary Resource' before compiling; skipping this step results in an empty MIDI pool in the compiled plugin."
+    topic: 9646
+  - id: 3
+    title: "Sequence length defaults to last note-off, not bar boundary"
+    summary: "Use setSequenceCallback with Math.ceil on NumBars to normalize the loop boundary to full bars after loading any MIDI file."
+    topic: 7311
 customEquivalent:
   approach: hisescript
   moduleType: "ScriptProcessor"
@@ -199,13 +212,13 @@ groups:
 
 ### Tempo Synchronisation
 
-Playback is always synchronised to the host tempo. The embedded tempo in MIDI files is discarded on load; all timing is recalculated relative to the host BPM. The internal tick resolution is 960 ticks per quarter note. Tempo map events such as ritardando or accelerando embedded in a MIDI file are ignored entirely [1](https://forum.hise.audio/topic/1425) [2](https://forum.hise.audio/topic/7411). Use `Engine.setHostBpm()` or the PlaybackSpeed parameter for tempo adjustments in standalone mode.
+Playback is always synchronised to the host tempo. The embedded tempo in MIDI files is discarded on load; all timing is recalculated relative to the host BPM. The internal tick resolution is 960 ticks per quarter note. Tempo map events such as ritardando or accelerando embedded in a MIDI file are ignored entirely [1]($FORUM_REF.1425$) [2]($FORUM_REF.7411$). Use `Engine.setHostBpm()` or the PlaybackSpeed parameter for tempo adjustments in standalone mode.
 
 ### Sequence Length and Time Signatures
 
-When a MIDI file is loaded, its length is set to the timestamp of the last note-off event rather than the last bar boundary. If the file has no end-of-track marker or no notes reaching the final bar, the reported length may be fractional [3](https://forum.hise.audio/topic/7311) [4](https://forum.hise.audio/topic/5595). Call `setSequenceCallback` with a function that reads the TimeSignature, rounds NumBars up with `Math.ceil`, and writes it back via `setTimeSignature` to ensure the loop boundary falls on a bar line [5](https://forum.hise.audio/topic/7311).
+When a MIDI file is loaded, its length is set to the timestamp of the last note-off event rather than the last bar boundary. If the file has no end-of-track marker or no notes reaching the final bar, the reported length may be fractional [3]($FORUM_REF.7311$) [4]($FORUM_REF.5595$). Call `setSequenceCallback` with a function that reads the TimeSignature, rounds NumBars up with `Math.ceil`, and writes it back via `setTimeSignature` to ensure the loop boundary falls on a bar line [5]($FORUM_REF.7311$).
 
-Each sequence supports exactly one TimeSignature. Files with internal time signature changes will have those changes ignored [6](https://forum.hise.audio/topic/11082). Split content into multiple sequences and switch between them if mixed metres are needed.
+Each sequence supports exactly one TimeSignature. Files with internal time signature changes will have those changes ignored [6]($FORUM_REF.11082$). Split content into multiple sequences and switch between them if mixed metres are needed.
 
 ### Loop Region Behaviour
 
@@ -213,17 +226,17 @@ LoopStart and LoopEnd define the playback region. In one-shot mode (LoopEnabled 
 
 ### Artificial Events
 
-All events injected by the MIDI Player are marked as artificial. In a script processor that receives both player output and live keyboard input, use `Message.isArtificial()` to distinguish them [7](https://forum.hise.audio/topic/13471). Alternatively, assign the MIDI Player to a different MIDI channel via the CurrentTrack parameter.
+All events injected by the MIDI Player are marked as artificial. In a script processor that receives both player output and live keyboard input, use `Message.isArtificial()` to distinguish them [7]($FORUM_REF.13471$). Alternatively, assign the MIDI Player to a different MIDI channel via the CurrentTrack parameter.
 
-The built-in keyboard FloatingTile responds only to incoming MIDI events, not to the artificial events from the MIDI Player. To visualise playback on a keyboard, create a custom panel and use the event callbacks or `getNoteRectangleList` [8](https://forum.hise.audio/topic/13704).
+The built-in keyboard FloatingTile responds only to incoming MIDI events, not to the artificial events from the MIDI Player. To visualise playback on a keyboard, create a custom panel and use the event callbacks or `getNoteRectangleList` [8]($FORUM_REF.13704$).
 
 ### NoteRectangleList Indexing
 
-`getNoteRectangleList()` returns one rectangle per note, following note-on order. If the EventList contains CC or other non-note events, the indices diverge. Filter the EventList to note-on events only before using EventId to index into the rectangle list [9](https://forum.hise.audio/topic/7724).
+`getNoteRectangleList()` returns one rectangle per note, following note-on order. If the EventList contains CC or other non-note events, the indices diverge. Filter the EventList to note-on events only before using EventId to index into the rectangle list [9]($FORUM_REF.7724$).
 
 ### Clearing Sequences
 
-There is no dedicated method to clear all loaded sequences. Pass an empty string as the first argument to `setFile()` -- for example `MidiPlayer.setFile("", true, true)` -- to effectively clear all sequences [10](https://forum.hise.audio/topic/4228).
+There is no dedicated method to clear all loaded sequences. Pass an empty string as the first argument to `setFile()` -- for example `MidiPlayer.setFile("", true, true)` -- to effectively clear all sequences [10]($FORUM_REF.4228$).
 
 ### Event Limit and Bypass Behaviour
 

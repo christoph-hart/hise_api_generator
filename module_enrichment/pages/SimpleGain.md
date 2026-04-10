@@ -23,6 +23,23 @@ commonMistakes:
     wrong: "Setting Width to 0 expecting silence"
     right: "Width=0 produces a mono signal (mid only), not silence. Width=100 is unchanged stereo."
     explanation: "The Width parameter works on the mid/side balance. At 0% only the mid (mono) signal remains. At 200% the side signal is exaggerated."
+forumReferences:
+  - id: 1
+    title: "Use SimpleGain over sound generator gain for smooth automation"
+    summary: "SimpleGain applies a 50ms smoothed gain ramp; sound generators' own Gain parameter has no smoothing and can cause clicks on automated changes."
+    topic: 8822
+  - id: 2
+    title: "Width has no effect on mono sources"
+    summary: "Mid/side width processing scales the side signal (L-R); if both channels are identical the side is zero and Width has no audible effect."
+    topic: 7956
+  - id: 3
+    title: "SimpleGain does not attenuate a multi-channel Sampler below 0dB"
+    summary: "When a Sampler uses multiple mic channels, a single SimpleGain provides boost but gain reduction has no audible effect due to signal doubling via routing — use one SimpleGain per mic channel."
+    topic: 1252
+  - id: 4
+    title: "Pan modulation requires Balance knob offset from centre"
+    summary: "Pan modulation scales the existing Balance offset, so with Balance at centre (0) the modulation has zero range and no audible effect."
+    topic: 6062
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX
@@ -186,7 +203,7 @@ chains:
   - { name: "Gain Modulation", desc: "Scales the output gain. A single modulation value is sampled per block and multiplied with the gain parameter.", scope: "monophonic", constrainer: "Any" }
   - { name: "Delay Modulation", desc: "Scales the delay time. The modulation value multiplies the Delay parameter to determine the actual delay.", scope: "monophonic", constrainer: "Any" }
   - { name: "Width Modulation", desc: "Interpolates between 1.0 (no width change) and the set Width value. At modulation=1.0, the full Width setting is applied. At modulation=0.0, width is 100% (unchanged).", scope: "monophonic", constrainer: "Any" }
-  - { name: "Pan Modulation", desc: "Scales the Balance parameter. Uses Pan mode for bipolar modulation of the stereo position.", scope: "monophonic", constrainer: "Any" }
+  - { name: "Pan Modulation", desc: "Scales the Balance parameter. Uses Pan mode for bipolar modulation of the stereo position. The modulation multiplies the current Balance value, so with Balance at centre (0), Pan Modulation has no range and no audible effect — set Balance to a non-centre value first.", scope: "monophonic", constrainer: "Any" }
 ---
 ::
 
@@ -197,5 +214,13 @@ The gain smoothing ramp is 50 ms, while the balance smoothing is 1000 ms. Sound 
 ### Width Behaviour
 
 When Width is exactly 100% (the default), mid/side processing is skipped entirely. Width has no effect on a mono source (where L equals R) because mid/side encoding produces zero side signal. To widen a mono source, create stereo differences first using a short delay (Haas effect) or chorus, then apply Width. [2]($FORUM_REF.7956$) Width above 100% amplifies the side signal only, which can introduce out-of-phase content that cancels when summed to mono.
+
+### Multi-Channel Routing
+
+When a Sampler uses multiple mic channels, placing a single SimpleGain in the Sampler's FX chain provides boost but gain reduction below 0 dB has no audible effect due to signal doubling from the multi-channel routing. Use one SimpleGain per mic channel, or place the Sampler inside a Container and attach SimpleGain there. [3]($FORUM_REF.1252$)
+
+### Pan Modulation Range
+
+Pan Modulation scales the existing Balance offset, so with Balance at centre (0), the modulation has zero range and no audible effect. Set Balance to a non-centre value (e.g. full right) to give the Pan Modulation chain a range to work within. [4]($FORUM_REF.6062$)
 
 **See also:** $MODULES.Delay$ -- Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment

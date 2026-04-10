@@ -20,11 +20,28 @@ commonMistakes:
   - title: "Feedback 0.5 equals zero feedback"
     wrong: "Setting Feedback to 0.5 expecting moderate feedback"
     right: "At Feedback=0.5 the internal feedback is actually zero. Values below 0.5 produce negative feedback, values above 0.5 produce positive feedback."
-    explanation: "The Feedback parameter maps 0-1 to an internal range of -0.95 to +0.95. The crossover point at 0.5 means zero feedback. [5]($FORUM_REF.980$)"
+    explanation: "The Feedback parameter maps 0-1 to an internal range of -0.95 to +0.95. The crossover point at 0.5 means zero feedback."
   - title: "No Mix parameter"
     wrong: "Looking for a wet/dry mix control"
     right: "The wet/dry mix is hardcoded at approximately 47% wet"
-    explanation: "There is no Mix parameter. To blend the effect, use send/return routing or bypass the module programmatically. [6]($FORUM_REF.4525$)"
+    explanation: "There is no Mix parameter. To blend the effect, use send/return routing or bypass the module programmatically."
+forumReferences:
+  - id: 1
+    title: "Wet/dry mix is hardcoded at 47% — no Mix parameter"
+    summary: "The wet level is fixed at 0.47 in the constructor and cannot be changed. Use send/return routing to control blend."
+    topic: 4525
+  - id: 2
+    title: "Both channels share the same LFO phase — no stereo widening"
+    summary: "The internal LFO uses identical phase for both L and R delay lines; stereo effect comes only from different feedback histories, not LFO offset."
+    topic: 4525
+  - id: 3
+    title: "Wet signal is subtracted from dry — subtractive comb-filter mixing"
+    summary: "Output is dry * input minus wet * delayed, not additive. This creates a comb-filter cancellation pattern characteristic of the mda chorus algorithm."
+    topic: 980
+  - id: 4
+    title: "Use scriptnode jchorus node for a more flexible chorus"
+    summary: "Multiple experienced users recommend the scriptnode jchorus node when wider stereo, independent L/R LFO phases, or configurable mix are needed."
+    topic: 12406
 customEquivalent:
   approach: scriptnode
   moduleType: HardcodedFX

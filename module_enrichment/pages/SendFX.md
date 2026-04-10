@@ -25,6 +25,19 @@ commonMistakes:
     wrong: "Disabling Smoothing and automating the Gain parameter during playback"
     right: "Keep Smoothing enabled when automating Gain to avoid clicks"
     explanation: "With Smoothing off, gain changes take effect immediately with no crossfade, which produces audible clicks on sudden value changes."
+forumReferences:
+  - id: 1
+    title: "SendFX in Master Container causes instant feedback"
+    summary: "A SendFX placed directly in the Master Container feeds its output back into itself, producing an immediate full-volume feedback loop."
+    topic: 5032
+  - id: 2
+    title: "SendFX send is post-fader only"
+    summary: "The send is tapped after the sound generator's own gain stage; there is no pre-fader option in the built-in module."
+    topic: 76
+  - id: 3
+    title: "SendIndex can be scripted to switch containers at runtime"
+    summary: "The SendIndex parameter (attribute index 2) can be changed via setAttribute() to dynamically redirect the send to a different container."
+    topic: 13113
 customEquivalent:
   approach: scriptnode
   moduleType: Effect
