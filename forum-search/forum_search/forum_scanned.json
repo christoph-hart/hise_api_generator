@@ -470,14 +470,11 @@
     ]
   },
   "scriptnode:fx.bitcrush": {
-    "lastRun": "2026-03-31",
+    "lastRun": "2026-04-10",
     "queries": [
+      "fx.bitcrush",
       "bitcrush",
-      "bit crush",
-      "bit depth reduction",
-      "lo-fi",
-      "lofi",
-      "quantisation noise"
+      "bitcrush scriptnode"
     ],
     "topicIds": [
       3544,
@@ -489,11 +486,11 @@
     ]
   },
   "scriptnode:container.split": {
-    "lastRun": "2026-04-01",
+    "lastRun": "2026-04-10",
     "queries": [
+      "container.split",
       "split",
-      "container split",
-      "scriptnode split"
+      "split container scriptnode"
     ],
     "topicIds": [
       721,
@@ -519,12 +516,11 @@
     ]
   },
   "scriptnode:container.oversample": {
-    "lastRun": "2026-04-01",
+    "lastRun": "2026-04-10",
     "queries": [
+      "container.oversample",
       "oversample",
-      "oversampling scriptnode",
-      "aliasing scriptnode",
-      "anti-aliasing"
+      "oversample container scriptnode"
     ],
     "topicIds": [
       2652,
@@ -552,12 +548,11 @@
     ]
   },
   "scriptnode:container.sidechain": {
-    "lastRun": "2026-04-01",
+    "lastRun": "2026-04-10",
     "queries": [
+      "container.sidechain",
       "sidechain",
-      "sidechain scriptnode",
-      "sidechain compression",
-      "sidechain routing"
+      "sidechain container scriptnode"
     ],
     "topicIds": [
       2002,
@@ -574,12 +569,11 @@
     ]
   },
   "scriptnode:container.repitch": {
-    "lastRun": "2026-04-01",
+    "lastRun": "2026-04-10",
     "queries": [
+      "container.repitch",
       "repitch",
-      "scriptnode repitch",
-      "resampling scriptnode",
-      "pitch shifting scriptnode"
+      "repitch container scriptnode"
     ],
     "topicIds": [
       3920,
@@ -588,26 +582,22 @@
     ]
   },
   "scriptnode:container.midichain": {
-    "lastRun": "2026-04-01",
+    "lastRun": "2026-04-10",
     "queries": [
+      "container.midichain",
       "midichain",
-      "midi chain scriptnode",
-      "sample accurate midi",
-      "no_midi",
-      "midi processing scriptnode"
+      "midichain container scriptnode"
     ],
     "topicIds": [
       13807
     ]
   },
   "scriptnode:container.branch": {
-    "lastRun": "2026-04-01",
+    "lastRun": "2026-04-10",
     "queries": [
-      "branch",
       "container.branch",
-      "scriptnode branch",
-      "algorithm switching",
-      "switch processing"
+      "branch",
+      "branch container scriptnode"
     ],
     "topicIds": [
       831,
@@ -626,6 +616,7 @@
       4954,
       4973,
       4996,
+      5171,
       5188,
       5352,
       5702,
@@ -2019,6 +2010,986 @@
       13512,
       13660,
       13674
+    ]
+  },
+  "scriptnode:envelope.ahdsr": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "envelope.ahdsr",
+      "AHDSR",
+      "ahdsr envelope",
+      "scriptnode envelope",
+      "attack decay sustain release scriptnode"
+    ],
+    "topicIds": [
+      377,
+      2926,
+      3582,
+      4351,
+      4626,
+      5106,
+      5492,
+      7890,
+      7964,
+      7975,
+      8112,
+      8144,
+      8270,
+      8677,
+      8757,
+      9608,
+      9615,
+      10072,
+      10818,
+      11510,
+      13481,
+      13641,
+      14119,
+      14311
+    ]
+  },
+  "scriptnode:envelope.flex_ahdsr": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "envelope.flex_ahdsr",
+      "flex_ahdsr",
+      "flex ahdsr",
+      "FlexAHDSR scriptnode",
+      "flexible envelope"
+    ],
+    "topicIds": [
+      3735,
+      13481,
+      14211
+    ]
+  },
+  "scriptnode:envelope.voice_manager": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "voice_manager",
+      "voice manager",
+      "voice kill",
+      "voice lifecycle scriptnode"
+    ],
+    "topicIds": [
+      8176
+    ]
+  },
+  "scriptnode:envelope.silent_killer": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "silent_killer",
+      "silent killer",
+      "voice cleanup scriptnode",
+      "silence detection"
+    ],
+    "topicIds": [
+      11723,
+      11725
+    ]
+  },
+  "scriptnode:filters.svf": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "filters.svf",
+      "svf",
+      "svf filter scriptnode"
+    ],
+    "topicIds": [
+      8941,
+      13944,
+      14037
+    ]
+  },
+  "scriptnode:filters.biquad": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "filters.biquad",
+      "biquad",
+      "biquad filter scriptnode"
+    ],
+    "topicIds": [
+      1381
+    ]
+  },
+  "scriptnode:filters.ladder": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "filters.ladder",
+      "ladder",
+      "ladder filter scriptnode"
+    ],
+    "topicIds": [
+      2687,
+      7834
+    ]
+  },
+  "scriptnode:filters.moog": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "filters.moog",
+      "moog",
+      "moog filter scriptnode"
+    ],
+    "topicIds": [
+      1413
+    ]
+  },
+  "scriptnode:filters.convolution": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "filters.convolution",
+      "convolution",
+      "convolution filter scriptnode"
+    ],
+    "topicIds": [
+      819,
+      1139,
+      1251,
+      1353,
+      1507,
+      1527,
+      1633,
+      1672,
+      2054,
+      2310,
+      2594,
+      2906,
+      3127,
+      3272,
+      3374,
+      4216,
+      5412,
+      6815,
+      6824,
+      7006,
+      7456,
+      7500,
+      7878,
+      14114
+    ]
+  },
+  "scriptnode:filters.allpass": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "filters.allpass",
+      "allpass",
+      "allpass filter scriptnode"
+    ],
+    "topicIds": [
+      5787
+    ]
+  },
+  "scriptnode:fx.reverb": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "fx.reverb",
+      "reverb",
+      "reverb scriptnode"
+    ],
+    "topicIds": [
+      819,
+      825,
+      1507,
+      1527,
+      2097,
+      2310,
+      2370,
+      2906,
+      2992,
+      3050,
+      3127,
+      3272,
+      4119,
+      4216,
+      4465,
+      5975,
+      6176,
+      8596,
+      10750,
+      10839,
+      11421,
+      11501,
+      11538,
+      14228,
+      14285,
+      14573
+    ]
+  },
+  "scriptnode:fx.haas": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "fx.haas",
+      "haas",
+      "haas scriptnode"
+    ],
+    "topicIds": [
+      13650
+    ]
+  },
+  "scriptnode:fx.pitch_shift": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "fx.pitch_shift",
+      "pitch_shift",
+      "pitch_shift scriptnode"
+    ],
+    "topicIds": [
+      12366,
+      12929,
+      13654
+    ]
+  },
+  "scriptnode:dynamics.comp": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "dynamics.comp",
+      "comp",
+      "comp dynamics scriptnode"
+    ],
+    "topicIds": [
+      56,
+      201,
+      550,
+      686,
+      758,
+      1136,
+      1197,
+      1372,
+      1409,
+      1675,
+      1695,
+      1742,
+      1879,
+      1965,
+      2035,
+      2124,
+      2329,
+      2685,
+      2857,
+      3001,
+      3014,
+      3466,
+      3559,
+      3626,
+      3655,
+      5775,
+      7557,
+      11869,
+      12144,
+      12740,
+      13755
+    ]
+  },
+  "scriptnode:dynamics.gate": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "dynamics.gate",
+      "gate",
+      "gate dynamics scriptnode"
+    ],
+    "topicIds": [
+      1191,
+      7734,
+      7987,
+      12246,
+      12497,
+      12722,
+      12794,
+      13014,
+      13675
+    ]
+  },
+  "scriptnode:dynamics.limiter": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "dynamics.limiter",
+      "limiter",
+      "limiter dynamics scriptnode"
+    ],
+    "topicIds": [
+      407,
+      817,
+      2015,
+      2329,
+      2701,
+      2857,
+      3490,
+      3499,
+      4705,
+      7102,
+      7143,
+      8165,
+      12215,
+      12229,
+      12884,
+      12992,
+      13300
+    ]
+  },
+  "scriptnode:dynamics.updown_comp": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "dynamics.updown_comp",
+      "updown_comp",
+      "updown_comp dynamics scriptnode"
+    ],
+    "topicIds": [
+      10460,
+      11255
+    ]
+  },
+  "scriptnode:core.gain": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.gain",
+      "gain",
+      "gain scriptnode"
+    ],
+    "topicIds": [
+      99,
+      570,
+      639,
+      731,
+      941,
+      1052,
+      1252,
+      1524,
+      1904,
+      2054,
+      2161,
+      2683,
+      3362,
+      3802,
+      4327,
+      6324,
+      8006,
+      8344,
+      9608,
+      10379,
+      10619,
+      10721,
+      11255,
+      11289,
+      11532,
+      11711,
+      14330
+    ]
+  },
+  "scriptnode:core.oscillator": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.oscillator",
+      "oscillator",
+      "oscillator scriptnode"
+    ],
+    "topicIds": [
+      953,
+      1934,
+      8046,
+      9277,
+      10637,
+      10696,
+      10793,
+      11455,
+      11523,
+      11561,
+      12679,
+      13426,
+      13665,
+      13720,
+      13734
+    ]
+  },
+  "scriptnode:core.smoother": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.smoother",
+      "smoother",
+      "smoother scriptnode"
+    ],
+    "topicIds": [
+      188,
+      3314,
+      5694,
+      12272,
+      13415,
+      13821
+    ]
+  },
+  "scriptnode:core.file_player": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.file_player",
+      "file_player",
+      "file_player scriptnode"
+    ],
+    "topicIds": [
+      2221,
+      13406,
+      13579
+    ]
+  },
+  "scriptnode:core.granulator": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.granulator",
+      "granulator",
+      "granulator scriptnode"
+    ],
+    "topicIds": [
+      5221,
+      6779,
+      7388,
+      7796,
+      7812,
+      8030,
+      8621,
+      8724,
+      9632,
+      10045,
+      10127,
+      12776
+    ]
+  },
+  "scriptnode:core.recorder": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.recorder",
+      "recorder",
+      "recorder scriptnode"
+    ],
+    "topicIds": [
+      3462,
+      7947,
+      9134,
+      11131
+    ]
+  },
+  "scriptnode:core.table": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.table",
+      "table",
+      "table scriptnode"
+    ],
+    "topicIds": [
+      89,
+      200,
+      574,
+      596,
+      1356,
+      2286,
+      2829,
+      3029,
+      3596,
+      3894,
+      3895,
+      4552,
+      4560,
+      4653,
+      4814,
+      5521,
+      5851,
+      6190,
+      7042,
+      7183,
+      8733,
+      8970,
+      9742,
+      9848,
+      9920,
+      9922,
+      10108,
+      10132,
+      11532,
+      11751,
+      12701
+    ]
+  },
+  "scriptnode:core.peak": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.peak",
+      "peak",
+      "peak scriptnode"
+    ],
+    "topicIds": [
+      3483,
+      3622,
+      3860,
+      4964,
+      7081,
+      7297,
+      7301,
+      7566,
+      7998,
+      8652,
+      8879,
+      10066,
+      10659,
+      10706,
+      11152,
+      11190,
+      11403,
+      11639,
+      12229,
+      13418,
+      13646,
+      14341
+    ]
+  },
+  "scriptnode:core.fm": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.fm",
+      "fm",
+      "fm scriptnode"
+    ],
+    "topicIds": [
+      452,
+      720,
+      1658,
+      1751,
+      1754,
+      2400,
+      5379,
+      6287,
+      8171,
+      10213,
+      13082,
+      14257
+    ]
+  },
+  "scriptnode:core.snex_node": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.snex_node",
+      "snex_node",
+      "snex_node scriptnode"
+    ],
+    "topicIds": [
+      4364,
+      13587
+    ]
+  },
+  "scriptnode:core.snex_osc": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.snex_osc",
+      "snex_osc",
+      "snex_osc scriptnode"
+    ],
+    "topicIds": [
+      7855
+    ]
+  },
+  "scriptnode:core.snex_shaper": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.snex_shaper",
+      "snex_shaper",
+      "snex_shaper scriptnode"
+    ],
+    "topicIds": [
+      7744
+    ]
+  },
+  "scriptnode:core.faust": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "core.faust",
+      "faust",
+      "faust scriptnode"
+    ],
+    "topicIds": [
+      6505,
+      6512,
+      6556,
+      6607,
+      6622,
+      6834,
+      6839,
+      6848,
+      7003,
+      7021,
+      7024,
+      7102,
+      7162,
+      7229,
+      7236,
+      7281,
+      7343,
+      7356,
+      7734,
+      8196,
+      8254,
+      8265,
+      8332,
+      9661,
+      10111,
+      10126,
+      10348,
+      11160,
+      11860,
+      11947,
+      14413
+    ]
+  },
+  "scriptnode:routing.global_cable": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "routing.global_cable",
+      "global_cable",
+      "global_cable routing scriptnode"
+    ],
+    "topicIds": [
+      13355
+    ]
+  },
+  "scriptnode:routing.send": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "routing.send",
+      "send",
+      "send routing scriptnode"
+    ],
+    "topicIds": [
+      76,
+      1223,
+      1664,
+      1766,
+      4553,
+      4670,
+      4714,
+      5032,
+      5558,
+      6236,
+      6353,
+      6372,
+      8259,
+      9463,
+      10213,
+      10582,
+      10600,
+      10906,
+      11327,
+      12398,
+      12450,
+      12586,
+      13212,
+      14157,
+      14278
+    ]
+  },
+  "scriptnode:routing.receive": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "routing.receive",
+      "receive",
+      "receive routing scriptnode"
+    ],
+    "topicIds": [
+      1766,
+      4213,
+      4553,
+      7691,
+      8423,
+      8699,
+      10582,
+      10600,
+      10894,
+      10906,
+      11327,
+      13807
+    ]
+  },
+  "scriptnode:routing.matrix": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "routing.matrix",
+      "matrix",
+      "matrix routing scriptnode"
+    ],
+    "topicIds": [
+      634,
+      1644,
+      2905,
+      4236,
+      4370,
+      5076,
+      5491,
+      6347,
+      6571,
+      6604,
+      6685,
+      7301,
+      8479,
+      10199,
+      11190,
+      12078,
+      12398,
+      13036,
+      13091,
+      13203,
+      13240,
+      13458,
+      13759,
+      14218,
+      14262,
+      14348,
+      14354,
+      14476
+    ]
+  },
+  "scriptnode:routing.selector": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "routing.selector",
+      "selector",
+      "selector routing scriptnode"
+    ],
+    "topicIds": [
+      619,
+      981,
+      1378,
+      3135,
+      6768,
+      8945,
+      9132,
+      9524
+    ]
+  },
+  "scriptnode:routing.global_send": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "routing.global_send",
+      "global_send",
+      "global_send routing scriptnode"
+    ],
+    "topicIds": [
+      12950,
+      13649
+    ]
+  },
+  "scriptnode:container.chain": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "container.chain",
+      "chain",
+      "chain container scriptnode"
+    ],
+    "topicIds": [
+      569,
+      667,
+      1583,
+      3110,
+      3132,
+      3176,
+      5236,
+      5825,
+      7678,
+      9031,
+      9268,
+      9276,
+      10096,
+      10949,
+      11022,
+      11223,
+      11912,
+      12803,
+      12946,
+      13084,
+      13153,
+      13721
+    ]
+  },
+  "scriptnode:container.clone": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "container.clone",
+      "clone",
+      "clone container scriptnode"
+    ],
+    "topicIds": [
+      7840,
+      8034,
+      9277,
+      11240,
+      11866,
+      11905,
+      12012,
+      12027,
+      13810
+    ]
+  },
+  "scriptnode:container.multi": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "container.multi",
+      "multi",
+      "multi container scriptnode"
+    ],
+    "topicIds": [
+      66,
+      67,
+      158,
+      190,
+      1115,
+      1177,
+      2002,
+      2197,
+      3604,
+      3677,
+      7457,
+      7488,
+      8980,
+      9027,
+      9201,
+      9346,
+      9659
+    ]
+  },
+  "scriptnode:container.soft_bypass": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "container.soft_bypass",
+      "soft_bypass",
+      "soft_bypass container scriptnode"
+    ],
+    "topicIds": [
+      11991,
+      13894
+    ]
+  },
+  "scriptnode:container.modchain": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "container.modchain",
+      "modchain",
+      "modchain container scriptnode"
+    ],
+    "topicIds": [
+      4978
+    ]
+  },
+  "scriptnode:container.offline": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "container.offline",
+      "offline",
+      "offline container scriptnode"
+    ],
+    "topicIds": [
+      4247,
+      4497,
+      8770,
+      9731,
+      13700
+    ]
+  },
+  "scriptnode:control.tempo_sync": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "control.tempo_sync",
+      "tempo_sync",
+      "tempo_sync control scriptnode"
+    ],
+    "topicIds": [
+      9520,
+      9530,
+      14548
+    ]
+  },
+  "scriptnode:control.midi": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "control.midi",
+      "midi",
+      "midi control scriptnode"
+    ],
+    "topicIds": [
+      969,
+      1122,
+      1283,
+      1286,
+      1294,
+      1422,
+      1469,
+      1565,
+      1769,
+      1955,
+      2299,
+      2392,
+      2589,
+      2639,
+      2850,
+      2970,
+      3100,
+      3489,
+      7122,
+      8215,
+      8906,
+      11363,
+      12580,
+      12615,
+      13798,
+      13807,
+      14278
+    ]
+  },
+  "scriptnode:control.timer": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "control.timer",
+      "timer",
+      "timer control scriptnode"
+    ],
+    "topicIds": [
+      95,
+      112,
+      1201,
+      2146,
+      2447,
+      3175,
+      6204,
+      6255,
+      6874,
+      7791,
+      7977,
+      8169,
+      10319,
+      10390,
+      10573,
+      10720,
+      11547,
+      11569,
+      11578,
+      12448,
+      13308,
+      14414
+    ]
+  },
+  "scriptnode:control.xfader": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "control.xfader",
+      "xfader",
+      "xfader control scriptnode"
+    ],
+    "topicIds": [
+      10616
+    ]
+  },
+  "scriptnode:control.cable_expr": {
+    "lastRun": "2026-04-10",
+    "queries": [
+      "control.cable_expr",
+      "cable_expr",
+      "cable_expr control scriptnode"
+    ],
+    "topicIds": [
+      7074
     ]
   }
 }

@@ -727,3 +727,155 @@ rather than these static callbacks, the bug may be masked at runtime.
 - **Location:** scriptnode_enrichment/preliminary/analyse.goniometer.json:6
 - **Observed:** Existing phase3 doc is a stub (7 lines, tier: STUB). No details on stereo correlation method or channel requirements.
 - **Expected:** Exploration provides complete signal flow and method (Lissajous X-Y plot of L/R correlation).
+
+## Issue: Sustain pedal (CC64) ignored inside scriptnode envelope
+
+- **Node:** envelope.ahdsr
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:13641
+- **Observed:** The sustain pedal (MIDI CC 64) works with the flex envelope outside scriptnode but is ignored when envelope.ahdsr is used inside a scriptnode network.
+- **Expected:** CC64 should extend the sustain phase, matching the behaviour of the module-tree AHDSR envelope.
+
+## Issue: Chain node rendered twice inside frame2_block (fixed May 2022)
+
+- **Node:** container.chain (inside frame2_block)
+- **Type:** bug (fixed)
+- **Severity:** high
+- **Source:** Forum tid:5825
+- **Author:** Christoph Hart [author]
+- **Observed:** A chain node was rendered twice when used inside a frame2_block context, causing oscillators to run an octave higher and other significant processing differences. container.fixblock nodes were not affected. Compiled-to-C++ networks also worked correctly, which may explain discrepancies between interpreted and compiled networks.
+- **Status:** Fixed in May 2022. If relying on pre-fix behaviour, audit existing networks.
+
+## Issue: Compiling an empty or polyphonic clone container fails with isPolyphonic() error
+
+- **Node:** container.clone
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:12012
+- **Author:** David Healey [expert], HISEnberg [trusted]
+- **Observed:** Compiling a clone container that is empty or contains only core::empty nodes produces a compiler error: "has no member named isPolyphonic". Reproducible on both macOS and Windows.
+- **Workaround:** Ensure the clone container has actual processing nodes inside it, and that NumClones is specified as the first macro control before attempting compilation.
+
+## Issue: Wrapping an oscillator in container.soft_bypass inside a clone container crashes
+
+- **Node:** container.clone + container.soft_bypass
+- **Type:** bug (crash)
+- **Severity:** high
+- **Source:** Forum tid:9277
+- **Author:** David Healey [expert]
+- **Observed:** Placing a container.soft_bypass node around an oscillator node inside a clone container caused a crash. Confirmed with a snippet.
+- **Workaround:** Avoid soft_bypass wrappers around oscillator-type nodes within clone containers.
+
+## Issue: Compiled VST3 FX plugin crashed when channel count exceeded 2 (fixed late 2022)
+
+- **Node:** routing.matrix (multichannel context)
+- **Type:** bug (fixed)
+- **Severity:** high
+- **Source:** Forum tid:6685
+- **Author:** Christoph Hart [author]
+- **Observed:** A commit in late 2022 introduced a crash in compiled multichannel plugins (VST3 and standalone) when the routing matrix used more than 2 channels. The crash occurred at AudioBuffer::setSize.
+- **Status:** Fixed the same day. Update to a post-fix develop branch snapshot if building against a snapshot from that period.
+
+## Issue: core.oscillator uptime counter overflow after extended playback
+
+- **Node:** core.oscillator
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:10696
+- **Observed:** A core.oscillator running on the second channel inside a modchain context causes the internal uptime counter to overflow after several minutes of continuous playback, producing an audio artefact.
+- **Expected:** The uptime counter should wrap or reset gracefully without producing audible artefacts during extended playback.
+
+## Issue: core.granulator crashes with audio files shorter than the grain length
+
+- **Node:** core.granulator
+- **Type:** bug
+- **Severity:** high
+- **Source:** Forum tid:8030
+- **Observed:** Loading an audio file that is shorter than the configured grain length into the granulator causes crashes or audio artefacts. The edge case is not handled.
+- **Expected:** The granulator should clamp the grain length to the available audio length or report an error gracefully.
+
+## Issue: MatrixPeakMeter maxPeaks array always returns [0, 0]
+
+- **Node:** core.peak (MatrixPeakMeter FloatingTile)
+- **Type:** bug
+- **Severity:** low
+- **Source:** Forum tid:11190
+- **Observed:** The `maxPeaks` array in the MatrixPeakMeter LAF callback always contains `[0, 0]` regardless of actual peak levels. Identified as a typo in the source; a PR was submitted.
+- **Expected:** The maxPeaks array should report the peak-hold values for each channel.
+
+## Issue: Moog filter produces noise bursts under modulation
+
+- **Node:** filters.moog
+- **Type:** bug
+- **Severity:** high
+- **Source:** Forum tid:7834
+- **Observed:** The filters.moog node produces sudden loud noise transients, especially when cutoff or resonance are modulated by LFOs or envelopes. Multiple trusted users report this independently.
+- **Expected:** The filter should remain stable under modulation.
+- **Workaround:** Use filters.ladder instead, which provides the same 4-pole ladder topology without this instability.
+- **Status:** Long-standing issue. Community consensus for several years has been to avoid filters.moog entirely.
+
+## Issue: Convolution output gain increases at sample rates above 48 kHz
+
+- **Node:** filters.convolution
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:2054
+- **Observed:** The convolution engine exhibits gain increase at higher sample rates due to IR resampling artefacts. Measured values from the author: 44.1 kHz = -1 dB, 48 kHz = 0 dB (reference), 96 kHz = +3.5 dB, 192 kHz = +6.6 dB.
+- **Expected:** Consistent output level across sample rates.
+- **Workaround:** Provide separately recorded IRs at each target sample rate and load the correct one based on Engine.getSampleRate() (called from prepareToPlay, not onInit).
+- **Status:** The author acknowledged the issue but noted a precise automatic correction is difficult because the relationship is non-linear across real-world IRs.
+
+## Issue: Convolution offline render glitch at start of audio
+
+- **Node:** filters.convolution
+- **Type:** bug
+- **Severity:** low
+- **Source:** Forum tid:7006
+- **Observed:** Convolution reverb produces a glitch artefact at the very beginning of an offline render when the render start point is positioned exactly at the start of audio. Suspected cause is a buffer not being cleared before the first block.
+- **Expected:** Clean output from the first sample of an offline render.
+- **Workaround:** Start the offline bounce a few milliseconds before the audio begins.
+
+## Issue: Auto makeup gain on dynamics.comp is excessively hot
+
+- **Node:** dynamics.comp (via Dynamics module)
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:1965
+- **Observed:** The auto makeup gain calculation produces too much gain for typical compression settings. The stock formula scales aggressively with threshold and ratio.
+- **Expected:** Makeup gain should approximate the average gain reduction to restore perceived loudness without overdriving.
+- **Workaround:** Modify the makeup gain formula in hi_modules/effects/fx/Dynamics.cpp and recompile HISE from source.
+- **Status:** Reported 2019. Check whether the formula was updated in later versions.
+
+## Issue: Limiter knob ranges do not map correctly via processor ID connection
+
+- **Node:** dynamics.limiter (standalone Limiter FX)
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:3499, tid:7143
+- **Observed:** When connecting UI knobs to the limiter via processor ID, parameter ranges do not behave as expected. The value popup is meaningless and the mapping is incorrect.
+- **Expected:** Correct parameter range mapping consistent with the node's internal ranges.
+- **Workaround:** Use the limiter within the Dynamics module instead, which has properly configured ranges.
+- **Status:** Reported by David Healey in 2021 and again in 2023. Check if fixed in recent versions.
+
+## Issue: control.timer crashes DAW plugins and standalone apps
+
+- **Node:** control.timer
+- **Type:** bug
+- **Severity:** high
+- **Source:** Forum tid:14414, tid:13308
+- **Observed:** The control.timer scriptnode crashes both DAW plugins (Ableton) and standalone apps.
+- **Expected:** Stable operation in all deployment targets.
+- **Workaround:** Replace with a tempo-synced ramp node and compare nodes to simulate timer engagement.
+- **Status:** Active issue. No fix confirmed as of the reporting date.
+
+## Issue: UI performance issues with flex_ahdsr envelope
+
+- **Node:** envelope.flex_ahdsr
+- **Type:** bug
+- **Severity:** medium
+- **Source:** Forum tid:14211
+- **Observed:** UI performance problems (sluggishness, frame drops) when the flex_ahdsr envelope is active, reported by experienced user.
+- **Expected:** Smooth UI performance with the envelope active.
+- **Workaround:** None known. The author requested a minimal reproducer.
+- **Status:** Acknowledged by the author (January 2026). Check if fixed in later builds.

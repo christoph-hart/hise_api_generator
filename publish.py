@@ -725,6 +725,32 @@ def convert_see_also(content, class_name, registry=None):
                     yaml_links.append(
                         f'  - {{ label: "{cls}.{method}", to: "/v2/scripting-api/{cls.lower()}#{method.lower()}" }}'
                     )
+
+            # Parse bare $API.ClassName$ tokens (no method, with optional annotation)
+            elif re.match(r'\$API\.([A-Za-z]\w*)\$', item):
+                api_cls_ann = re.match(
+                    r'\$API\.([A-Za-z]\w*)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                api_cls_plain = re.match(r'\$API\.([A-Za-z]\w*)\$', item)
+                api_cls_match = api_cls_ann or api_cls_plain
+                cls = api_cls_match.group(1)
+                desc = api_cls_ann.group(2).strip().replace('"', '\\"') if api_cls_ann else None
+
+                url = None
+                if registry:
+                    url, _, _ = registry.resolve("API", cls)
+                if not url:
+                    url = f"/v2/scripting-api/{cls.lower()}"
+
+                if desc:
+                    yaml_links.append(
+                        f'  - {{ label: "{cls}", to: "{url}", desc: "{desc}" }}'
+                    )
+                else:
+                    yaml_links.append(
+                        f'  - {{ label: "{cls}", to: "{url}" }}'
+                    )
+
             else:
                 # Parse $MODULES.ModuleId$ tokens (with optional annotation)
                 mod_ann = re.match(
