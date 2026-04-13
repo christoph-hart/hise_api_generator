@@ -87,8 +87,6 @@ groups:
 ---
 ::
 
-## Notes
-
 If no slider pack data is connected, the node produces no output. When the slider pack data is updated, the node re-evaluates the current input position and sends the updated result. The slider pack size determines the number of discrete output levels -- with 8 sliders, the 0..1 input range is divided into 8 equal zones, each mapping to one slider value.
 
 **See also:** $SN.control.cable_table$ -- smooth table lookup with interpolation, $SN.control.cable_expr$ -- formula-based transform

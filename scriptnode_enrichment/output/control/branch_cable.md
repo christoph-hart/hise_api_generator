@@ -95,8 +95,6 @@ groups:
 ---
 ::
 
-## Notes
-
 Each voice can route to a different output slot independently in polyphonic mode. Changing the Index immediately re-sends the current value to the newly selected output, so the target always receives an up-to-date value without waiting for the next Value change.
 
 **See also:** $SN.control.xfader$ -- distributes fade coefficients across all outputs, $SN.control.input_toggle$ -- selects one of two inputs

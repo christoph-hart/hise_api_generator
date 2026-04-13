@@ -79,10 +79,6 @@ groups:
 ---
 ::
 
-## Notes
-
-This node is monophonic. It does not maintain per-voice state.
-
-The [control.minmax]($SN.control.minmax$) node performs the inverse operation: it takes a normalised 0-1 input and maps it to a custom unscaled range.
+This node is monophonic and does not maintain per-voice state. The [control.minmax]($SN.control.minmax$) node performs the inverse operation: it takes a normalised 0-1 input and maps it to a custom unscaled range.
 
 **See also:** $SN.control.minmax$ -- inverse operation converting normalised to unscaled, $SN.control.converter$ -- converts between specific unit domains

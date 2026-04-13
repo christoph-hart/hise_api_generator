@@ -12,6 +12,7 @@ cpuProfile:
 seeAlso:
   - { id: "envelope.ahdsr", type: alternative, reason: "Simpler AHDSR with fewer parameters when per-segment curves are not needed" }
   - { id: "envelope.voice_manager", type: companion, reason: "Connect the Gate output here to manage voice lifecycle" }
+  - { id: "FlexAHDSR", type: module, reason: "Module-tree equivalent with per-segment curve control and trigger/loop modes" }
 commonMistakes:
   - title: "Trigger mode skips the sustain phase"
     wrong: "Setting Mode to Trigger and expecting the envelope to hold at the Sustain level while the note is down."
@@ -21,6 +22,14 @@ commonMistakes:
     wrong: "Setting AttackLevel below the Sustain value and expecting a dip after the attack peak."
     right: "AttackLevel is clamped to be at least equal to Sustain. Lower the Sustain level if you need a lower attack peak."
     explanation: "The envelope enforces AttackLevel >= Sustain to maintain a coherent shape where the decay always moves downward."
+  - title: "No modulation slots for envelope parameters"
+    wrong: "Expecting to modulate Decay, Attack, or other parameters via the standard HISE modulation system"
+    right: "Use a GlobalModulatorContainer with a matrixTargetId on the UI control, or set parameters from a non-deferred MIDI processor script."
+    explanation: "The flex_ahdsr currently lacks modulation slots for its parameters. The author has acknowledged this limitation."
+  - title: "Do not set envelope parameters from the Interface script"
+    wrong: "Calling setAttribute on envelope parameters from a deferred Interface script in response to MIDI events"
+    right: "Add a separate non-deferred MIDI processor script for any realtime envelope parameter changes."
+    explanation: "The Interface script should always be deferred. Setting envelope parameters from a deferred script will produce a HISE runtime error. Use a dedicated MIDI processor for realtime manipulation."
 llmRef: |
   envelope.flex_ahdsr
 
@@ -46,15 +55,31 @@ llmRef: |
   Common mistakes:
     - Trigger mode skips sustain hold
     - AttackLevel is clamped to >= Sustain
+    - No modulation slots for parameters -- use GlobalModulatorContainer or a MIDI processor script
+    - Do not set parameters from deferred Interface script -- use a separate MIDI processor
 
   See also:
     [alternative] envelope.ahdsr -- simpler AHDSR with fewer parameters
     [companion] envelope.voice_manager -- voice lifecycle from Gate output
+    [module] FlexAHDSR -- module-tree equivalent with per-segment curve control and trigger/loop modes
+forumReferences:
+  - { tid: 14211, summary: "Modulation slots missing, velocity routing via GlobalModulatorContainer, deferred script warning" }
+  - { tid: 13481, summary: "Retrigger attribute behaviour" }
 ---
 
 The flex AHDSR is an advanced envelope with independent curve shaping for the attack, decay, and release segments. It adds three playback modes (Trigger, Note, Loop) and provides an interactive graph where you can drag points to adjust timing, levels, and curves directly. Like the standard AHDSR, it multiplies the input audio by the envelope value and sends CV and Gate modulation outputs.
 
-The key differences from the standard [envelope.ahdsr]($SN.envelope.ahdsr$) are per-segment curve parameters, extended time ranges (up to 30 seconds), the Mode selector for one-shot and looping behaviour, and the absence of Retrigger and Gate parameters. Note-on always retriggers from the current value.
+The key differences from the standard [envelope.ahdsr]($SN.envelope.ahdsr$) are per-segment curve parameters, extended time ranges (up to 30 seconds), the Mode selector for one-shot and looping behaviour, and the absence of Retrigger and Gate parameters. Note-on always retriggers from the current value. The graph UI allows direct manipulation: drag points to adjust timing, levels, and curve shapes interactively.
+
+### Modes
+
+In **Note** mode the envelope holds at the Sustain level while the note is down and enters the release phase on note-off -- the standard AHDSR behaviour. In **Trigger** mode the envelope plays through all stages in one continuous pass without pausing at sustain, useful for percussive sounds. In **Loop** mode the envelope restarts from the attack phase each time it completes, creating a repeating cycle until note-off, at which point the release phase plays once.
+
+### Limitations
+
+- There is no Retrigger or Gate parameter. Every note-on retriggers the envelope from its current value (not from zero), which avoids clicks. There is no manual gate input; the envelope is always driven by MIDI.
+- Stages with zero time are skipped automatically. Setting Hold to 0 makes the envelope behave like a standard ADSR.
+- Parameter changes are smoothed to prevent clicks during playback.
 
 ## Signal Path
 
@@ -166,12 +191,14 @@ groups:
 ---
 ::
 
-## Notes
+### Retrigger Attribute
 
-- The graph UI allows direct manipulation: drag points to adjust timing, levels, and curve shapes interactively.
-- There is no Retrigger or Gate parameter. Every note-on retriggers the envelope from its current value (not from zero), which avoids clicks. There is no manual gate input; the envelope is always driven by MIDI.
-- In Loop mode, the envelope restarts from the attack phase each time it completes, creating a repeating cycle. It continues looping until note-off, at which point the release phase plays once.
-- Stages with zero time are skipped automatically. Setting Hold to 0 makes the envelope behave like a standard ADSR.
-- Parameter changes are smoothed to prevent clicks during playback.
+The node exposes a Retrigger attribute (attribute index 1, default 1.0) that affects how the envelope behaves on retriggering and release. Adjusting this in combination with the Mode setting can change the release and retrigger behaviour. This attribute is not visible on the primary graph UI.
 
-**See also:** $SN.envelope.ahdsr$ -- simpler AHDSR with fewer parameters, $SN.envelope.voice_manager$ -- voice lifecycle management
+### Velocity-to-Envelope Routing
+
+To modulate an envelope parameter (e.g. Decay time) from velocity without scripting, place a Velocity modulator inside a GlobalModulatorContainer and assign a `matrixTargetId` to the UI control that drives the envelope parameter. This routes the velocity through the HISE modulation system without requiring realtime scripting.
+
+If scripting is preferred, use a dedicated non-deferred MIDI processor script -- not the Interface script, which should always be deferred. Setting envelope parameters from a deferred Interface script produces a HISE runtime error.
+
+**See also:** $SN.envelope.ahdsr$ -- simpler AHDSR with fewer parameters, $SN.envelope.voice_manager$ -- voice lifecycle management, $MODULES.FlexAHDSR$ -- module-tree equivalent with per-segment curve control and trigger/loop modes

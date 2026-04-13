@@ -97,8 +97,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The delay is measured in raw samples, not milliseconds. At 44100 Hz, the maximum delay of 44100 samples equals one second. Modulating DelayTimeSamples in real time is supported: shortening it below the current counter causes immediate output on the next process call, while lengthening it extends the wait.
 
 **See also:** $SN.control.smoothed_parameter$ -- smooths value transitions rather than delaying them

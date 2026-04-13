@@ -64,14 +64,12 @@ process(input) {
 
 ::
 
-## Notes
+Unlike [frame1_block]($SN.container.frame1_block$) which only processes channel 0, this node processes both stereo channels. Channels beyond the first two are zeroed, not passed through. If the network has more than two channels, use [framex_block]($SN.container.framex_block$) to process all of them. In compiled mode, the fixed stereo channel count allows the compiler to fully optimise the interleaving loop, making `frame2_block` slightly more efficient than [framex_block]($SN.container.framex_block$) for stereo networks.
 
-Unlike [frame1_block]($SN.container.frame1_block$) which only processes channel 0, this node processes both stereo channels. Channels beyond the first two are zeroed, not passed through. If the network has more than two channels, use [framex_block]($SN.container.framex_block$) to process all of them.
+### SNEX Considerations
 
 When writing SNEX nodes with a templated `processFrame` function, the compiler generates overloads for every channel count (mono and stereo). If the template body accesses `data[1]`, the mono overload triggers a compile error. To fix this, replace the template with explicit overloads: a no-op `processFrame(span<float, 1>&)` and the real logic in `processFrame(span<float, 2>&)`.
 
-When bypassed, children revert to block processing with the original block size and process the full host buffer. This allows A/B comparison of per-sample vs block processing.
-
-In compiled mode, the fixed stereo channel count allows the compiler to fully optimise the interleaving loop, making `frame2_block` slightly more efficient than [framex_block]($SN.container.framex_block$) for stereo networks.
+When bypassed, children revert to block processing with the original block size and process the full host buffer, allowing A/B comparison of per-sample vs block processing.
 
 **See also:** $SN.container.frame1_block$ -- mono per-sample processing, $SN.container.framex_block$ -- dynamic channel count, $SN.container.fix8_block$ -- block chunking as lower-cost alternative

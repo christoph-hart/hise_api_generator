@@ -16,6 +16,7 @@ cpuProfile:
 seeAlso:
   - { id: SimpleReverb, type: alternative, reason: "Lightweight algorithmic reverb with much lower CPU cost but no impulse response loading" }
   - { id: Convolution, type: scriptnode, reason: "The fx.convolution scriptnode node shares the same DSP engine with additional routing flexibility" }
+  - { id: "filters.convolution", type: scriptnode, reason: "Direct equivalent -- FFT partitioned convolution reverb" }
 commonMistakes:
   - title: "Default convolution is 100% wet"
     wrong: "Adding a Convolution Reverb and expecting to hear dry signal"
@@ -96,6 +97,7 @@ llmRef: |
   See also:
     alternative SimpleReverb - lightweight algorithmic reverb, much lower CPU
     scriptnode fx.convolution - same DSP engine with scriptnode routing
+    [scriptnode] filters.convolution - direct equivalent -- FFT partitioned convolution reverb
 ---
 
 ::category-tags
@@ -220,3 +222,5 @@ groups:
 IR file selection via `setFile()` is not automatically saved in user presets. To make IR selection recallable, bind the selection index to a UI slider (hidden if needed) whose control callback calls `setFile()` with the corresponding filename. The slider value is then persisted by the preset system [3]($FORUM_REF.1672$).
 
 For products with many impulse responses, use the Expansion system to package IRs separately rather than embedding all of them. Alternatively, uncheck 'Embed Audio Files' in the project settings and distribute the AudioResources.dat file to the user's AppData folder.
+
+**See also:** $MODULES.SimpleReverb$ -- lightweight algorithmic reverb, much lower CPU, $SN.filters.convolution$ -- direct equivalent -- FFT partitioned convolution reverb

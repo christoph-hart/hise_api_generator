@@ -14,6 +14,7 @@ cpuProfile:
 seeAlso:
   - { id: PolyphonicFilter, type: alternative, reason: "Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed" }
   - { id: HarmonicFilter, type: alternative, reason: "Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping" }
+  - { id: "filters.svf_eq", type: scriptnode, reason: "Scriptnode SVF-based parametric EQ" }
 forumReferences:
   - id: 1
     title: "Q below 0.1 causes assertion failure"
@@ -88,6 +89,7 @@ llmRef: |
   See also:
     alternative PolyphonicFilter - single filter with modulation chains, per-voice capable
     alternative HarmonicFilter - harmonic series filter bank
+    [scriptnode] filters.svf_eq - scriptnode SVF-based parametric EQ
 ---
 
 ::category-tags
@@ -217,4 +219,4 @@ The DraggableFilterPanel FloatingTile embeds the EQ display in custom interfaces
 
 The module is automatically suspended when the input signal is silent.
 
-**See also:** $MODULES.PolyphonicFilter$ -- Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed, $MODULES.HarmonicFilter$ -- Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping
+**See also:** $MODULES.PolyphonicFilter$ -- Single filter with modulation chain support - better suited when per-voice filtering or modulated cutoff is needed, $MODULES.HarmonicFilter$ -- Harmonic series filter bank with fixed harmonic spacing - a different approach to spectral shaping, $SN.filters.svf_eq$ -- scriptnode SVF-based parametric EQ

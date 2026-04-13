@@ -83,8 +83,6 @@ groups:
 ---
 ::
 
-## Notes
-
 Connect the output to an envelope gate parameter to restart the envelope on demand. The 0-then-1 sequence works with any parameter that responds to rising edges or state transitions.
 
 **See also:** $SN.control.bang$ -- sends a stored value on trigger rather than a fixed impulse pair

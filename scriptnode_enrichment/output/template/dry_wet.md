@@ -108,9 +108,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- The crossfade is linear, not equal-power. At DryWet = 0.5, both paths receive 0.5 gain (-6 dB each). For uncorrelated signals, expect approximately 3 dB less perceived loudness at the midpoint compared to the extremes.
-- The xfader node sits inside the dry path but its switch targets cross the path boundary to reach wet_gain. This is standard scriptnode modulation routing.
+The crossfade is linear, not equal-power. At DryWet = 0.5, both paths receive 0.5 gain (-6 dB each). For uncorrelated signals, expect approximately 3 dB less perceived loudness at the midpoint compared to the extremes. The xfader node sits inside the dry path but its switch targets cross the path boundary to reach wet_gain -- this is standard scriptnode modulation routing.
 
 **See also:** $SN.container.split$ -- the underlying parallel container, $SN.control.xfader$ -- the crossfade controller

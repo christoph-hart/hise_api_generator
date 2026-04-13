@@ -116,8 +116,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The [control.normaliser]($SN.control.normaliser$) node performs the inverse operation: it takes an unscaled value and converts it back to normalised 0-1 using the range defined on its Value parameter.
 
 **See also:** $SN.control.normaliser$ -- inverse operation converting unscaled to normalised, $SN.control.pma_unscaled$ -- simpler linear scaling without range mapping

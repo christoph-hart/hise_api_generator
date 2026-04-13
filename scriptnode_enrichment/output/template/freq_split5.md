@@ -157,11 +157,8 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
-- The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough). Replace or supplement these with your per-band processing.
-- Each band contains 4 Linkwitz-Riley filters (20 total). This is the most CPU-intensive freq_split variant. The allpass filters are necessary for phase coherence but add overhead compared to simpler crossover designs.
-- Keep crossover frequencies in ascending order: Band 1 < Band 2 < Band 3 < Band 4. Reversing them produces unexpected filter behaviour.
-- The default crossover frequencies are spaced logarithmically across the audible range, providing roughly equal perceptual bandwidth per band.
+The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough) -- replace or supplement these with your per-band processing. Each band contains 4 Linkwitz-Riley filters (20 total), making this the most CPU-intensive freq_split variant. The allpass filters are necessary for phase coherence but add overhead compared to simpler crossover designs. Keep crossover frequencies in ascending order: Band 1 < Band 2 < Band 3 < Band 4 -- reversing them produces unexpected filter behaviour. The default frequencies are spaced logarithmically across the audible range, providing roughly equal perceptual bandwidth per band.
 
 **See also:** $SN.template.freq_split2$ -- 2-band crossover when fewer bands are sufficient, $SN.template.freq_split3$ -- 3-band crossover for lighter CPU usage, $SN.template.freq_split4$ -- 4-band crossover for lighter CPU usage, $SN.container.split$ -- the underlying parallel container used internally, $SN.jdsp.jlinkwitzriley$ -- the Linkwitz-Riley crossover filter used internally

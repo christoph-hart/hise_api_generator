@@ -100,10 +100,6 @@ groups:
 ---
 ::
 
-## Notes
-
-After a voice reset, both inputs are in an undefined state. The node waits until both Left and Right have each received at least one value before producing any output. This prevents spurious results when only one input has been initialised.
-
-Changes to either input or to the Operator selection trigger a new output evaluation, provided both inputs have been defined.
+After a voice reset, both inputs are in an undefined state. The node waits until both Left and Right have each received at least one value before producing any output, preventing spurious results when only one input has been initialised. Changes to either input or to the Operator selection trigger a new output evaluation, provided both inputs have been defined.
 
 **See also:** $SN.control.compare$ -- produces binary signals from value comparisons

@@ -22,6 +22,13 @@ commonMistakes:
     wrong: "Placing a clone container inside container.frame2_block or similar frame containers"
     right: "Keep clone containers outside frame-based containers. Use frame containers inside the clone's children instead."
     explanation: "Clone does not support frame-based processing. Place frame containers inside the cloned child chain if per-sample processing is needed."
+  - title: "NumClones not set as first macro control"
+    wrong: "Adding NumClones as a secondary parameter or with mismatched ranges across connected nodes"
+    right: "Always make NumClones the first macro control. Ensure all nodes connected to it have matching min/max parameter ranges."
+    explanation: "If NumClones is not the first macro parameter, or if connected nodes have mismatched ranges, the clone container may fail silently or produce compilation errors."
+forumReferences:
+  - { tid: 11905, reason: "NumClones compile-time vs runtime semantics" }
+  - { tid: 11866, reason: "clone_forward connection rules" }
 llmRef: |
   container.clone
 
@@ -54,10 +61,13 @@ llmRef: |
   Key details:
     NumClones is a compile-time max. The parameter only caps the active count at runtime.
     For complex payloads, build the DSP chain as a separate compiled network first.
+    NumClones must be the first macro control with matching ranges on all connected nodes.
+    clone_forward connects to the first node only; one clone_forward per target container.
 
   Common mistakes:
     Clone parameters are synced. Use control.clone_cable or control.clone_pack for per-clone values.
     Clone does not support frame-based processing. Keep it outside frame containers.
+    NumClones not set as first macro control causes silent failures or compile errors.
 
   See also:
     [alternative] container.split -- parallel processing with different children
@@ -124,13 +134,20 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 - Each clone's root element must be a container node.
 - All clones must have the same structure. Mismatched clones produce an error.
 - Clones cannot have modulation or parameter connections to nodes outside the clone or to each other.
 - Resizing clones causes a brief audio gap (one buffer) while the internal state is updated.
 - When bypassed, only the first clone processes audio.
-- For complex clone payloads, build the DSP chain as a separate compiled network first, then load it into the clone container. This reduces compile errors and simplifies debugging. Make `NumClones` the first macro control with matching parameter ranges for every connected node.
+
+### Using clone_forward
+
+When forwarding a value into a clone container with [control.clone_forward]($SN.control.clone_forward$), connect it to the first node inside the container only -- propagation to the remaining clones happens automatically. If you have multiple separate clone containers that each need forwarding, use one `clone_forward` node per container.
+
+### Workflow
+
+For complex clone payloads, build the DSP chain as a separate compiled network first, then load it into the clone container. This reduces compile errors and simplifies debugging. Make `NumClones` the first macro control with matching parameter ranges for every connected node.
 
 **See also:** $SN.container.split$ -- parallel processing with different children instead of identical clones

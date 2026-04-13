@@ -139,10 +139,8 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
-- The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough). Replace or supplement these with your per-band processing.
-- Each band contains 3 Linkwitz-Riley filters (12 total). The allpass filters at non-boundary crossover points ensure all bands share the same total phase shift, preserving flat magnitude response when summed.
-- Keep crossover frequencies in ascending order: Band 1 < Band 2 < Band 3. Reversing them produces unexpected filter behaviour.
+The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough) -- replace or supplement these with your per-band processing. Each band contains 3 Linkwitz-Riley filters (12 total). The allpass filters at non-boundary crossover points ensure all bands share the same total phase shift, preserving flat magnitude response when summed. Keep crossover frequencies in ascending order: Band 1 < Band 2 < Band 3 -- reversing them produces unexpected filter behaviour.
 
 **See also:** $SN.template.freq_split2$ -- 2-band crossover when fewer bands are sufficient, $SN.template.freq_split3$ -- 3-band crossover for lighter CPU usage, $SN.template.freq_split5$ -- 5-band crossover for maximum frequency separation, $SN.container.split$ -- the underlying parallel container used internally, $SN.jdsp.jlinkwitzriley$ -- the Linkwitz-Riley crossover filter used internally

@@ -12,9 +12,13 @@ cpuProfile:
     - parameter: Mode
       impact: negligible
       note: "Noise mode avoids table lookup but uses random number generation"
+forumReferences:
+  - { tid: 13426, reason: "MIDI retune gotcha when using oscillator as fixed-frequency source" }
+  - { tid: 11455, reason: "Audio-rate AM requires frame-processing context" }
 seeAlso:
   - { id: "core.phasor", type: alternative, reason: "Naive ramp output for waveshaping pipelines" }
   - { id: "core.fm", type: companion, reason: "FM operator that reads its modulator from the signal input" }
+  - { id: "SineSynth", type: module, reason: "Module-tree sine oscillator with saturation waveshaping" }
 commonMistakes:
   - title: "Oscillator adds to existing signal"
     wrong: "Expecting the oscillator to replace the signal when placed in a chain"
@@ -24,6 +28,18 @@ commonMistakes:
     wrong: "Assuming MIDI note-on and note-off toggle the Gate parameter automatically"
     right: "MIDI note-on sets the frequency but does not change Gate. Connect an envelope or MIDI gate source to the Gate parameter explicitly."
     explanation: "The node responds to MIDI note-on for pitch only. Gate defaults to 1 (always on) and must be controlled separately for note-on/note-off behaviour."
+  - title: "MIDI retunes the oscillator even when used as a fixed-frequency source"
+    wrong: "Using core.oscillator as a fixed-frequency LFO or test tone inside a synthesiser without blocking MIDI"
+    right: "Wrap the oscillator in a container.no_midi to prevent incoming MIDI note-on events from changing its frequency."
+    explanation: "The oscillator always responds to MIDI note-on for pitch. If you need a fixed frequency (e.g. as an LFO or modulation source), isolate it from the MIDI stream."
+  - title: "Output is mono -- stereo requires container.multi"
+    wrong: "Expecting stereo output from a single core.oscillator in a stereo network"
+    right: "Place two oscillator instances inside a container.multi to produce independent left and right channels."
+    explanation: "The oscillator processes a single channel. In a stereo network it only writes to channel 0. Use container.multi to split processing per channel."
+  - title: "Audio-rate modulation updates only once per buffer"
+    wrong: "Modulating amplitude or frequency at audio rate and expecting sample-accurate results"
+    right: "Wrap the processing chain in a container.frame2_block or container.framex_block for sample-accurate modulation updates."
+    explanation: "Without a frame-processing context, parameter modulation updates once per audio buffer, producing stepped artefacts at audio rates."
 llmRef: |
   core.oscillator
 
@@ -50,10 +66,16 @@ llmRef: |
   Common mistakes:
     - Output is additive, not replacing - use math.clear before if needed
     - MIDI controls pitch only, not Gate
+    - MIDI retunes even when used as a fixed source -- wrap in container.no_midi
+    - Mono output -- use container.multi for stereo
+    - Audio-rate modulation needs a frame-processing context for sample accuracy
+
+  Forum references: tid:13426 (MIDI retune gotcha), tid:11455 (audio-rate AM frame context)
 
   See also:
     alternative core.phasor -- naive ramp for waveshaping
     companion core.fm -- FM operator using signal input as modulator
+    [module] SineSynth -- module-tree sine oscillator with saturation waveshaping
 ---
 
 The oscillator generates one of five waveform shapes and adds it to the audio signal passing through the node. In a polyphonic context, each voice maintains its own phase accumulator, and MIDI note-on messages set the oscillator frequency to match the incoming pitch.
@@ -130,10 +152,12 @@ groups:
 ---
 ::
 
-## Notes
+### Fixed-frequency use
 
-The oscillator output is additive: it sums with whatever signal is already in the buffer. This means you can stack multiple oscillators in a single chain to build layered tones. If you need a clean oscillator output without any existing signal, place a [math.clear]($SN.math.clear$) node before the oscillator.
+If you need the oscillator to run at a fixed frequency (for example, as a sub-audio modulation source or test tone), wrap it in a [container.no_midi]($SN.container.no_midi$). Without this wrapper, any MIDI note-on event in the network will retune the oscillator to the incoming pitch.
 
-MIDI note-on messages set the frequency but do not control the Gate parameter. To implement proper note-on/note-off behaviour, connect an envelope or gate signal to the Gate parameter.
+### Stereo output
 
-**See also:** $SN.core.phasor$ -- naive ramp output for waveshaping pipelines, $SN.core.fm$ -- FM operator using signal input as modulator
+The oscillator writes to a single channel. To produce stereo output from two independent oscillators, place them inside a [container.multi]($SN.container.multi$) which automatically routes each instance to a separate channel.
+
+**See also:** $SN.core.phasor$ -- naive ramp output for waveshaping pipelines, $SN.core.fm$ -- FM operator using signal input as modulator, $MODULES.SineSynth$ -- module-tree sine oscillator with saturation waveshaping

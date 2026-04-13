@@ -103,8 +103,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The output is normalised to 0..1 regardless of the source message type. For standard CCs and velocity, this is a simple division by 127. For pitch bend, the full 14-bit range (0-16383) is normalised.
 
 **See also:** $SN.control.midi$ -- converts note events (gate, velocity, note number, frequency) to modulation signals

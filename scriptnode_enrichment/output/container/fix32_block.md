@@ -61,9 +61,9 @@ process(input) {
 
 ::
 
-## Notes
+The block size of 32 is a maximum -- the last chunk may be smaller if the host buffer size is not a multiple of 32. MIDI events are distributed across chunks by timestamp for sub-block timing accuracy.
 
-The block size of 32 is a maximum. The last chunk may be smaller if the host buffer size is not a multiple of 32. MIDI events are distributed across chunks by timestamp for sub-block timing accuracy.
+### Feedback Loops
 
 In feedback loops using send/receive nodes, the routing delay is exactly one processing chunk. With a 32-sample block size, this means 32 samples of latency in the feedback path. To minimise feedback delay, use a frame-based container instead, which reduces the routing delay to a single sample.
 

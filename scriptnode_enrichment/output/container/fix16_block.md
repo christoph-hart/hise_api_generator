@@ -58,10 +58,6 @@ process(input) {
 
 ::
 
-## Notes
-
-The block size of 16 is a maximum. The last chunk may be smaller if the host buffer size is not a multiple of 16. MIDI events are distributed across chunks by timestamp for sub-block timing accuracy.
-
-When bypassed, children process the full host buffer without chunking, equivalent to a [container.chain]($SN.container.chain$). Toggling bypass triggers a full re-preparation of all children. If the network is already in frame mode, this container becomes a no-op.
+The block size of 16 is a maximum -- the last chunk may be smaller if the host buffer size is not a multiple of 16. MIDI events are distributed across chunks by timestamp for sub-block timing accuracy. When bypassed, children process the full host buffer without chunking, equivalent to a [container.chain]($SN.container.chain$). Toggling bypass triggers a full re-preparation of all children. If the network is already in frame mode, this container becomes a no-op.
 
 **See also:** $SN.container.fix_blockx$ -- adjustable block size via property, $SN.container.frame2_block$ -- per-sample processing instead of block chunking

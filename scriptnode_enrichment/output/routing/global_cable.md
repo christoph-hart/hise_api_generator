@@ -11,6 +11,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: "routing.local_cable", type: disambiguation, reason: "Network-scoped alternative for connections within a single network" }
+  - { id: "GlobalCable", type: api, reason: "Direct equivalent -- scriptnode node wraps the GlobalCable API for cross-network value distribution" }
 commonMistakes:
   - title: "Values clamped to 0..1 range"
     wrong: "Sending a value of 440.0 through a global_cable expecting it to arrive unchanged"
@@ -38,6 +39,7 @@ llmRef: |
 
   See also:
     [disambiguation] routing.local_cable -- network-scoped cable for single-network use
+    [api] GlobalCable -- HiseScript API for creating and connecting global cables
 ---
 
 Routes a normalised control value between any number of nodes across all DspNetworks via a shared named connection. Each global_cable node acts as both sender and receiver -- setting the Value parameter broadcasts it to every other global_cable sharing the same Connection ID, and incoming values from peers appear on the modulation output. A built-in recursion guard prevents feedback loops.
@@ -82,10 +84,8 @@ groups:
 ---
 ::
 
-## Notes
+### Compilation
 
-Global cables can be compiled to C++ for use in exported plugins. The compiled node uses hash-based addressing to connect to the cable system at runtime.
+Global cables can be compiled to C++ for use in exported plugins. The compiled node uses hash-based addressing to connect to the cable system at runtime. External nodes can send values back to HISE through the cable system -- useful for displaying internal state such as gain reduction or level metering on the UI.
 
-For C++ integration, external nodes can send values back to HISE through the cable system -- useful for displaying internal state such as gain reduction or level metering on the UI.
-
-**See also:** $SN.routing.local_cable$ -- network-scoped cable for connections within a single network
+**See also:** $SN.routing.local_cable$ -- network-scoped cable for connections within a single network, $API.GlobalCable$ -- HiseScript API for creating and connecting global cables

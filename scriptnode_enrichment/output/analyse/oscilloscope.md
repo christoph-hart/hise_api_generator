@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "analyse.fft", type: alternative, reason: "Frequency-domain spectrum display instead of time-domain waveform" }
   - { id: "analyse.goniometer", type: alternative, reason: "Stereo correlation display instead of time-domain waveform" }
+  - { id: "Analyser", type: module, reason: "Waveform oscilloscope display" }
 commonMistakes:
   - title: "MIDI sync requires a MIDI processing context"
     wrong: "Expecting automatic cycle sync when the oscilloscope is outside a MIDI-aware container"
@@ -45,6 +46,7 @@ llmRef: |
   See also:
     [alternative] analyse.fft - frequency spectrum display
     [alternative] analyse.goniometer - stereo correlation display
+    [module] Analyser - module-tree analyser with oscilloscope mode
 ---
 
 ![Oscilloscope screenshot](/images/scriptnode/oscilloscope.png)
@@ -82,12 +84,16 @@ onNoteOn(event) {
 
 ::
 
-## Notes
+### Display Buffer Configuration
 
 The display buffer defaults to 8192 samples and accepts values between 128 and 65536. The number of displayed channels is configurable between 1 and 2 via the display buffer properties.
 
+### MIDI Synchronisation
+
 When MIDI sync is active, each note-on recalculates the buffer size. The calculation is straightforward: `numSamples = sampleRate / frequency`. This means lower notes use longer buffers and higher notes use shorter ones.
+
+### UI Integration
 
 To display the oscilloscope on your main user interface, register the display buffer as an external [DisplayBufferSource]($API.DisplayBufferSource$) and render the output from script.
 
-**See also:** $SN.analyse.fft$ -- frequency spectrum display, $SN.analyse.goniometer$ -- stereo correlation display
+**See also:** $SN.analyse.fft$ -- frequency spectrum display, $SN.analyse.goniometer$ -- stereo correlation display, $MODULES.Analyser$ -- module-tree analyser with oscilloscope mode

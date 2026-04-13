@@ -70,9 +70,8 @@ dispatch(input, events) {
 
 ::
 
-## Notes
+### Limitations
 
-- Midichain should not be nested inside frame-based or resampled containers. Both interfere with the timestamp-based audio splitting.
-- With zero MIDI events in a block, the overhead is a single conditional check.
+Midichain should not be nested inside frame-based or resampled containers, as both interfere with the timestamp-based audio splitting. With zero MIDI events in a block, the overhead is a single conditional check.
 
 **See also:** $SN.container.no_midi$ -- blocks MIDI events instead of enabling them, $SN.container.chain$ -- serial chain without MIDI event splitting

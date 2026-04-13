@@ -126,12 +126,13 @@ groups:
 ---
 ::
 
-## Notes
-
 When the Oversampling parameter is set to None (1x), the up- and downsampling stages still execute as a trivial passthrough. This adds negligible overhead compared to not using the container at all, but is not zero-cost.
 
-When bypassed, child nodes revert to the original sample rate and block size but continue to process audio normally. Bypassing only removes the upsampling/downsampling step - it does not reduce CPU usage. The container re-prepares the entire child chain on bypass state changes, so toggling bypass is not instantaneous.
+### Bypass Behaviour
 
+When bypassed, child nodes revert to the original sample rate and block size but continue to process audio normally. Bypassing only removes the upsampling/downsampling step -- it does not reduce CPU usage. The container re-prepares the entire child chain on bypass state changes, so toggling bypass is not instantaneous.
+
+### Latency
 
 The anti-aliasing filter introduces a small amount of latency that is not reported to the host or the surrounding network. For most use cases this is inaudible, but it may be relevant in parallel signal paths where phase alignment matters.
 

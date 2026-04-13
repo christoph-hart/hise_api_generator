@@ -88,8 +88,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The NumParameters property controls how many output slots are available. The slider pack is automatically resized to match this count. Each output can be connected to a different target parameter, allowing a single knob to control multiple destinations with individual scaling.
 
 **See also:** $SN.control.clone_pack$ -- drives clone containers with per-element values, $SN.control.normaliser$ -- single-output passthrough without per-element scaling

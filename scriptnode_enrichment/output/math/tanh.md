@@ -72,8 +72,6 @@ groups:
 ---
 ::
 
-## Notes
-
 This node has a higher CPU cost than simple arithmetic math nodes because the tanh function is computed per sample without hardware acceleration. The output is always bounded to (-1, 1), making it inherently safe against clipping at the output stage.
 
 **See also:** $SN.math.clip$ -- hard clipping alternative

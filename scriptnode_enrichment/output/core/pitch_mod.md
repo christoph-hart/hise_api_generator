@@ -98,11 +98,9 @@ groups:
 ---
 ::
 
-## Notes
+### Output format
 
-The modulation output uses unnormalised mode, meaning downstream parameter connections receive the raw pitch factor values directly. This avoids the overhead of converting to normalised range and back, which matters for sample-accurate pitch modulation in FM synthesis and similar applications.
-
-The display plotter in the node UI shows a normalised view of the signal for visual clarity, but this is a display-only transformation -- the actual output remains in the pitch factor domain.
+The modulation output uses unnormalised mode, meaning downstream parameter connections receive the raw pitch factor values directly. This avoids the overhead of converting to normalised range and back, which matters for sample-accurate pitch modulation in FM synthesis and similar applications. The display plotter in the node UI shows a normalised view of the signal for visual clarity, but this is a display-only transformation -- the actual output remains in the pitch factor domain.
 
 As with all modulation bridge nodes, this node is compilable to C++ and works in all module configurations since HISE 5.0.
 

@@ -97,10 +97,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- The NumClones parameter is automatically kept in sync with the parent clone container.
-- This node does not process MIDI events.
-- Output is unnormalised: target parameter ranges are not applied, so the source value must already be in the correct range.
+The NumClones parameter is automatically kept in sync with the parent clone container. This node does not process MIDI events.
 
 **See also:** $SN.control.clone_cable$ -- distributes different values per clone, $SN.control.clone_pack$ -- per-clone values via a slider pack, $SN.container.clone$ -- the clone container

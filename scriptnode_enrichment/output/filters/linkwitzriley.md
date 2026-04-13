@@ -120,10 +120,8 @@ groups:
 ---
 ::
 
-## Notes
+### Building a Crossover
 
-Both the LP and HP processing paths run regardless of Mode, so AP mode has no additional CPU cost over LP or HP alone.
-
-To build a two-band crossover, place two linkwitzriley nodes in a [container.split]($SN.container.split$) with matching Frequency values. The first node in LP mode provides the low band; the second in HP mode provides the high band.
+Both the LP and HP processing paths run regardless of Mode, so AP mode has no additional CPU cost over LP or HP alone. To build a two-band crossover, place two linkwitzriley nodes in a [container.split]($SN.container.split$) with matching Frequency values. The first node in LP mode provides the low band; the second in HP mode provides the high band.
 
 **See also:** $SN.filters.svf$ -- general-purpose filter for non-crossover use

@@ -14,6 +14,7 @@ seeAlso:
   - { id: AHDSR, type: upgrade, reason: "Full five-stage envelope with adjustable sustain level and hold stage" }
   - { id: FlexAHDSR, type: upgrade, reason: "Draggable envelope curves with multiple shape modes per stage" }
   - { id: TableEnvelope, type: alternative, reason: "Table-driven envelope shape for arbitrary attack curves" }
+  - { id: "envelope.simple_ar", type: scriptnode, reason: "Scriptnode equivalent -- two-stage attack/release envelope" }
 commonMistakes:
   - title: "No sustain level parameter"
     wrong: "Looking for a sustain knob to control the held level"
@@ -68,6 +69,7 @@ llmRef: |
     upgrade AHDSR - full five-stage envelope with adjustable sustain
     upgrade FlexAHDSR - draggable curves with multiple shape modes
     alternative TableEnvelope - table-driven shapes for arbitrary curves
+    [scriptnode] envelope.simple_ar -- scriptnode equivalent -- two-stage attack/release envelope
 ---
 
 ::category-tags
@@ -196,4 +198,4 @@ chains:
 
 > [!Tip:Store event IDs for artificial notes] When triggering notes with `Synth.playNote()`, store the returned event ID (e.g. in a [MIDIList]($API.MIDIList$)) and call `Synth.noteOffByEventId()` to ensure the release stage fires. Without an explicit note-off, the envelope remains in sustain indefinitely.
 
-**See also:** $MODULES.AHDSR$ -- full five-stage envelope with adjustable sustain level and hold stage, $MODULES.FlexAHDSR$ -- draggable envelope curves with multiple shape modes per stage, $MODULES.TableEnvelope$ -- table-driven envelope shape for arbitrary attack curves
+**See also:** $MODULES.AHDSR$ -- full five-stage envelope with adjustable sustain level and hold stage, $MODULES.FlexAHDSR$ -- draggable envelope curves with multiple shape modes per stage, $MODULES.TableEnvelope$ -- table-driven envelope shape for arbitrary attack curves, $SN.envelope.simple_ar$ -- scriptnode equivalent -- two-stage attack/release envelope

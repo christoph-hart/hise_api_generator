@@ -44,7 +44,7 @@ This node analyses the input signal and detects the sample with the largest abso
 
 Unlike [core.peak]($SN.core.peak$), which folds negative values to positive (absolute), this variant returns the actual signed value. A signal peaking at -0.8 produces a modulation output of -0.8 rather than 0.8. This makes it suitable for scenarios where the polarity of the signal matters, such as DC offset detection or bipolar control signals.
 
-The display graph automatically adjusts its range to show whatever values are being processed, since the output is not constrained to a fixed range.
+The display graph automatically adjusts its range to show whatever values are being processed, since the output is not constrained to a fixed range. The modulation output updates once per audio block, just like [core.peak]($SN.core.peak$); wrap the node in a fixed-block container for predictable update rates.
 
 This node also supports a display buffer for UI visualisation using the [DisplayBuffer]($API.DisplayBuffer$) scripting API.
 
@@ -70,9 +70,5 @@ analyse(input) {
 ```
 
 ::
-
-## Notes
-
-The modulation output updates once per audio block, just like [core.peak]($SN.core.peak$). Wrap in a fixed-block container for predictable update rates.
 
 **See also:** $SN.core.peak$ -- normalised variant that folds negative values to positive

@@ -86,8 +86,6 @@ groups:
 ---
 ::
 
-## Notes
-
 Changing the Value parameter while no trigger is active simply updates the stored value without producing output. The output only fires when the Bang parameter is set above 0.5. Repeated values above the threshold will re-trigger the output each time.
 
 **See also:** $SN.control.change$ -- filters duplicate values, $SN.control.voice_bang$ -- voice-specific trigger variant

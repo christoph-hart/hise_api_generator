@@ -12,6 +12,9 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: AudioAnalyser, type: ui_component, reason: "FloatingTile that displays the Analyser's goniometer, oscilloscope, or spectrum visualisation" }
+  - { id: "analyse.fft", type: scriptnode, reason: "Scriptnode FFT spectrum analyser node" }
+  - { id: "analyse.oscilloscope", type: scriptnode, reason: "Scriptnode waveform oscilloscope display node" }
+  - { id: "analyse.goniometer", type: scriptnode, reason: "Scriptnode stereo goniometer display node" }
 commonMistakes:
   - title: "AudioAnalyser FloatingTile ignores standard colour properties"
     wrong: "Setting colour properties directly on the AudioAnalyser component"
@@ -58,6 +61,9 @@ llmRef: |
 
   See also:
     ui_component AudioAnalyser - FloatingTile displaying the visualisation
+    scriptnode analyse.fft - FFT spectrum analyser node
+    scriptnode analyse.oscilloscope - waveform oscilloscope display node
+    scriptnode analyse.goniometer - stereo goniometer display node
 ---
 
 ::category-tags
@@ -101,4 +107,4 @@ The numeric argument passed to `getDisplayBuffer()` is an arbitrary ID used to d
 
 The Analyser module is designed for real-time visualisation. For offline spectrum analysis of audio files or buffers (e.g. generating a 2D spectrogram), use `Engine.createFFT()` with `fft.setEnableSpectrum2D(true)` and `g.drawFFTSpectrum()` in a paint routine instead [7]($FORUM_REF.13231$).
 
-**See also:** [AudioAnalyser](/v2/reference/floating-tiles/audioanalyser) -- FloatingTile that renders the goniometer, oscilloscope, or spectrum analyser visualisation from this module's display buffer
+**See also:** [AudioAnalyser](/v2/reference/floating-tiles/audioanalyser) -- FloatingTile that renders the goniometer, oscilloscope, or spectrum analyser visualisation from this module's display buffer, $SN.analyse.fft$ -- scriptnode FFT spectrum analyser, $SN.analyse.oscilloscope$ -- scriptnode waveform oscilloscope, $SN.analyse.goniometer$ -- scriptnode stereo goniometer

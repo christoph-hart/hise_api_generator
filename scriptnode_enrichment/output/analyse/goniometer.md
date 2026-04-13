@@ -12,6 +12,7 @@ cpuProfile:
 seeAlso:
   - { id: "analyse.fft", type: alternative, reason: "Frequency-domain spectrum display instead of stereo field" }
   - { id: "analyse.oscilloscope", type: alternative, reason: "Time-domain waveform display instead of stereo field" }
+  - { id: "Analyser", type: module, reason: "Stereo goniometer display" }
 commonMistakes:
   - title: "Requires stereo input"
     wrong: "Placing the goniometer in a mono signal path and expecting a display"
@@ -42,6 +43,7 @@ llmRef: |
   See also:
     [alternative] analyse.fft - frequency spectrum display
     [alternative] analyse.oscilloscope - time-domain waveform display
+    [module] Analyser - module-tree analyser with goniometer mode
 ---
 
 Displays the stereo correlation of the audio signal as an X-Y Lissajous plot. The left channel maps to one axis and the right channel to the other, giving a visual representation of the stereo field. Audio passes through the node completely unmodified.
@@ -70,12 +72,12 @@ analyse(left, right) {
 
 ::
 
-## Notes
-
-The node requires exactly two channels. Place it at a point in the signal chain where stereo data is available.
+### Display Buffer Configuration
 
 The ring buffer length is configurable between 512 and 32768 samples via the display buffer properties. Longer buffers show more history but respond more slowly to changes.
 
+### UI Integration
+
 To display the goniometer on your main user interface, register the display buffer as an external [DisplayBufferSource]($API.DisplayBufferSource$) and render the output from script.
 
-**See also:** $SN.analyse.fft$ -- frequency spectrum display, $SN.analyse.oscilloscope$ -- time-domain waveform display
+**See also:** $SN.analyse.fft$ -- frequency spectrum display, $SN.analyse.oscilloscope$ -- time-domain waveform display, $MODULES.Analyser$ -- module-tree analyser with goniometer mode

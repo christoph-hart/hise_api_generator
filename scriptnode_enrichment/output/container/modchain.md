@@ -17,6 +17,16 @@ commonMistakes:
     wrong: "Placing audio effect nodes inside a modchain and expecting the parent signal to change"
     right: "Use a regular container.chain for audio processing. Place modulation source nodes (core.peak, envelopes) inside modchain."
     explanation: "Modchain does not modify the parent audio signal. It processes a separate internal control buffer at reduced rate. Nodes inside it should generate modulation output via cables, not process audio."
+  - title: "Orphan modulation connections after deleting nodes"
+    wrong: "Deleting a modulating node and assuming the connection is removed automatically"
+    right: "After deleting a modulation source node, manually inspect the target node and remove any remaining connections."
+    explanation: "When a node that modulates another node is deleted, the connection can persist on the target node, preventing it from working normally. The symptom is a parameter that no longer responds as expected."
+  - title: "Setting parameter range on source only"
+    wrong: "Defining the min/max range on the modulation source node but not on the target node"
+    right: "Define the parameter range (min/max) on both the source and the target node for connections to work."
+    explanation: "Modulation connections require ranges defined on both ends. Use Shift-click on the min/max fields in the range editor to set values. Setting min greater than max inverts the modulation curve."
+forumReferences:
+  - { tid: 4978, reason: "Modchain signal flow and connection range requirements" }
 llmRef: |
   container.modchain
 
@@ -38,9 +48,12 @@ llmRef: |
 
   Common mistakes:
     Modchain does not modify parent audio. Use container.chain for audio processing.
+    Deleting a modulation source can leave orphan connections on the target. Inspect and remove them manually.
+    Parameter ranges must be defined on both source AND target for connections to work.
 
   Key details:
     To combine multiple mod signals, use a split inside the modchain with a core.peak after it.
+    Avoid overusing send/receive inside modchains -- prefer the normal top-down signal flow.
 
   See also:
     [disambiguation] container.chain -- audio-rate serial chain that modifies the signal
@@ -76,11 +89,10 @@ dispatch(parentAudio) {
 
 ::
 
-## Notes
+The modchain itself is not a modulation source -- nodes inside it (such as [core.peak]($SN.core.peak$)) produce the actual modulation output. When nested inside a frame-based container, the control-rate downsampling is disabled and children run at full audio rate. Modchain should not be nested inside a resampled container.
 
-- The modchain itself is not a modulation source. Nodes inside it (such as [core.peak]($SN.core.peak$)) produce the actual modulation output.
-- When nested inside a frame-based container, the control-rate downsampling is disabled and children run at full audio rate.
-- Modchain should not be nested inside a resampled container.
-- To combine multiple modulation signals into a single output, place a [container.split]($SN.container.split$) inside the modchain with each signal as a child, then add a [core.peak]($SN.core.peak$) after the split to capture the summed result. This is more efficient than using send/receive nodes for linear signal combining.
+### Combining Multiple Signals
+
+To combine multiple modulation signals into a single output, place a [container.split]($SN.container.split$) inside the modchain with each signal as a child, then add a [core.peak]($SN.core.peak$) after the split to capture the summed result. Avoid using many send/receive nodes inside a modchain for summing or routing -- the normal top-down signal flow is simpler and more efficient. Only use send/receive when genuinely needed (e.g. for feedback loops).
 
 **See also:** $SN.container.chain$ -- audio-rate serial chain that modifies the signal

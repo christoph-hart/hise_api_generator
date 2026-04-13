@@ -142,13 +142,15 @@ groups:
 ---
 ::
 
-## Notes
+### Mode details
 
 The three modes work differently from [core.global_mod]($SN.core.global_mod$):
 
 - **Scale:** The aux-modulated intensity scales the source signal multiplicatively, with an optional centre offset from ZeroPosition. When ZeroPosition is Center, modulation is centred around 0.5.
 - **Unipolar:** The source signal is multiplied by the aux-modulated intensity and added to the input.
 - **Bipolar:** The source is converted to a bipolar range (-1 to +1), scaled by the aux-modulated intensity, and added to the input.
+
+### Voice tracking
 
 The node can track envelope voice lifecycle -- when the source is an envelope modulator, the node reports whether the voice is still active, which integrates with voice management.
 

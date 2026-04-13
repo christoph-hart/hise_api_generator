@@ -15,6 +15,10 @@ cpuProfile:
 seeAlso:
   - { id: CurveEq, type: alternative, reason: "Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering" }
   - { id: HarmonicFilter, type: alternative, reason: "Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency" }
+  - { id: "filters.svf", type: scriptnode, reason: "Scriptnode state variable filter with superior modulation stability" }
+  - { id: "filters.biquad", type: scriptnode, reason: "Scriptnode biquad filter with six modes" }
+  - { id: "filters.ladder", type: scriptnode, reason: "Scriptnode 24 dB/oct ladder filter" }
+  - { id: "filters.moog", type: scriptnode, reason: "Scriptnode Moog-style transistor ladder filter" }
 commonMistakes:
   - title: "Gain only affects shelves and peaks"
     wrong: "Setting Gain and expecting it to affect a low-pass or high-pass filter mode"
@@ -80,6 +84,10 @@ llmRef: |
   See also:
     CurveEq - monophonic multi-band parametric EQ alternative
     HarmonicFilter - polyphonic harmonic series filter
+    [scriptnode] filters.svf - scriptnode state variable filter with superior modulation stability
+    [scriptnode] filters.biquad - scriptnode biquad filter with six modes
+    [scriptnode] filters.ladder - scriptnode 24 dB/oct ladder filter
+    [scriptnode] filters.moog - scriptnode Moog-style transistor ladder filter
 ---
 
 ::category-tags
@@ -214,4 +222,4 @@ The module automatically detects whether polyphonic processing is needed based o
 
 The `Quality` parameter is vestigial - it is stored and appears in the interface but does not affect processing. Two filter modes are non-functional: **StateVariablePeak** (index 11) and **LadderFourPoleHP** (index 16). Selecting either does not change the active filter. Use Peak (index 4) or StateVariableHP (index 7) as alternatives.
 
-**See also:** $MODULES.CurveEq$ -- Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering, $MODULES.HarmonicFilter$ -- Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency
+**See also:** $MODULES.CurveEq$ -- Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering, $MODULES.HarmonicFilter$ -- Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency, $SN.filters.svf$ -- scriptnode state variable filter with superior modulation stability, $SN.filters.biquad$ -- scriptnode biquad filter with six modes, $SN.filters.ladder$ -- scriptnode 24 dB/oct ladder filter, $SN.filters.moog$ -- scriptnode Moog-style transistor ladder filter

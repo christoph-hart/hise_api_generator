@@ -101,11 +101,8 @@ groups:
 ---
 ::
 
-## Notes
+### Slider Pack Sizing
 
-- The slider pack is not automatically resized when the clone count changes. Use [control.pack_resizer]($SN.control.pack_resizer$) if you need dynamic resizing, or set the pack size manually to match the maximum clone count.
-- If the slider pack has fewer entries than the active clone count, extra clones are not updated.
-- If the slider pack has more entries than clones, extra entries are ignored.
-- Output values are normalised (0-1), so target parameter ranges are applied automatically.
+The slider pack is not automatically resized when the clone count changes. Use [control.pack_resizer]($SN.control.pack_resizer$) if you need dynamic resizing, or set the pack size manually to match the maximum clone count. If the slider pack has fewer entries than the active clone count, extra clones are not updated. If it has more entries than clones, extra entries are ignored. Output values are normalised (0-1), so target parameter ranges are applied automatically.
 
 **See also:** $SN.control.clone_cable$ -- formula-based per-clone distribution, $SN.control.clone_forward$ -- same value to all clones, $SN.control.pack_resizer$ -- dynamically resizes the slider pack, $SN.container.clone$ -- the clone container

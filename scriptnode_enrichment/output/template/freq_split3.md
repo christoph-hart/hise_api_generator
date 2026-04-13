@@ -125,10 +125,8 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
-- The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough). Replace or supplement these with your per-band processing.
-- Allpass filters in the low and high bands match the phase shift introduced by the opposite crossover point, maintaining flat magnitude response across all three bands.
-- Keep Band 1 below Band 2. Reversing the crossover frequencies produces unexpected filter behaviour.
+The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough) -- replace or supplement these with your per-band processing. Allpass filters in the low and high bands match the phase shift introduced by the opposite crossover point, maintaining flat magnitude response across all three bands. Keep Band 1 below Band 2 -- reversing the crossover frequencies produces unexpected filter behaviour.
 
 **See also:** $SN.template.freq_split2$ -- 2-band crossover when fewer bands are sufficient, $SN.template.freq_split4$ -- 4-band crossover for finer frequency separation, $SN.template.freq_split5$ -- 5-band crossover for maximum frequency separation, $SN.container.split$ -- the underlying parallel container used internally, $SN.jdsp.jlinkwitzriley$ -- the Linkwitz-Riley crossover filter used internally

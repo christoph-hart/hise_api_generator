@@ -96,10 +96,8 @@ groups:
 ---
 ::
 
-## Notes
-
 The value only updates on two events: transport start (when playing begins) and position jumps (loop boundaries or user seeks). It does not update continuously during playback. If the user moves the playback ruler while the transport is stopped, the new position is picked up the next time playback starts.
 
-> [!Tip:Use cable_expr for debugging] Connect a [control.cable_expr]($SN.control.cable_expr$) node with debug mode enabled to visualise the output. Use the HISE Controller popup to simulate DAW transport positions and observe how the ppq node responds.
+> [!Tip:Debugging with cable_expr] Connect a [control.cable_expr]($SN.control.cable_expr$) node with debug mode enabled to visualise the output. Use the HISE Controller popup to simulate DAW transport positions and observe how the ppq node responds.
 
 **See also:** $SN.control.transport$ -- simple on/off transport state, $SN.core.clock_ramp$ -- continuous tempo-synced ramp signal

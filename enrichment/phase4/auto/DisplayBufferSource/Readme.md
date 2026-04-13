@@ -34,3 +34,5 @@ For single-buffer access, you can chain the calls directly. When you need multip
 - **Wrong:** Displaying an FFT spectrum without calling `setRingBufferProperties()` first
   **Right:** Configure FFT properties (buffer length, window type, decibel range) immediately after obtaining the buffer
   *Without explicit configuration, the buffer uses default settings that may not match your processor's frequency range or resolution requirements.*
+
+**See also:** $SN.core.peak$ -- Scriptnode peak meter node whose display buffer can be accessed through this API

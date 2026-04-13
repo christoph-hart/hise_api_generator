@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: SendFX, type: alternative, reason: "Routes signal to a separate Send Container with gain control, rather than duplicating within the same buffer" }
+  - { id: "routing.matrix", type: scriptnode, reason: "Scriptnode channel routing matrix for DspNetwork signal paths" }
 commonMistakes:
   - title: "Routing matrix copies, not moves"
     wrong: "Expecting the Routing Matrix to move signal from one channel to another"
@@ -45,6 +46,7 @@ llmRef: |
 
   See also:
     alternative SendFX - gain-controlled send to a separate container
+    scriptnode routing.matrix - channel routing matrix in DspNetwork
 ---
 
 ::category-tags
@@ -88,4 +90,4 @@ for each channel:
 
 The Routing Matrix cannot be soft-bypassed - it is always active because downstream modules may depend on the routing. All routing is configured through the editor panel's matrix grid with no scriptable parameters for runtime control. For gain-controlled routing to a separate effect chain (aux send/return), use a $MODULES.SendFX$ targeting a $MODULES.SendContainer$ instead.
 
-**See also:** $MODULES.SendFX$ -- Gain-controlled send to a separate Send Container, for aux send/return workflows
+**See also:** $MODULES.SendFX$ -- Gain-controlled send to a separate Send Container, for aux send/return workflows, $SN.routing.matrix$ -- Scriptnode channel routing matrix for DspNetwork signal paths

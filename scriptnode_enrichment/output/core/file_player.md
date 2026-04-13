@@ -11,10 +11,14 @@ cpuProfile:
   polyphonic: true
   scalingFactors:
     - { parameter: "PlaybackMode", impact: low, note: "SignalInput mode uses a different interpolation path" }
+forumReferences:
+  - { tid: 13579, reason: "Audio file embedding for export using {PROJECT_FOLDER} wildcard" }
+  - { tid: 13406, reason: "Accessing multiple audio file slots via ScriptFX.getAudioFile(index)" }
 seeAlso:
   - { id: "core.stretch_player", type: alternative, reason: "File player with independent time stretching and pitch shifting" }
   - { id: "core.granulator", type: alternative, reason: "Granular playback from an audio file" }
   - { id: "core.recorder", type: companion, reason: "Records audio into the same audio file slot" }
+  - { id: "AudioLooper", type: module, reason: "Module-tree audio file player with looping and tempo sync" }
 commonMistakes:
   - title: "Output mode differs between playback modes"
     wrong: "Expecting consistent additive or replacing behaviour across all three modes"
@@ -24,6 +28,10 @@ commonMistakes:
     wrong: "Selecting Signal Input mode and expecting automatic playback"
     right: "Feed a ramp signal (0 to 1 over the sample duration) into the input to get standard playback in Signal Input mode."
     explanation: "In Signal Input mode, channel 0 of the input signal is used as a normalised read position into the file. Without an external signal driving it, no meaningful playback occurs."
+  - title: "Audio files loaded from filesystem paths are not embedded in compiled plugins"
+    wrong: "Loading audio files using a raw filesystem path and expecting them to be available in the exported plugin"
+    right: "Call Engine.loadAudioFilesIntoPool() and reference files with the {PROJECT_FOLDER} wildcard to ensure they are embedded in the plugin binary."
+    explanation: "Files loaded via an absolute filesystem path work during development but are not bundled into the exported plugin. Only files in the audio pool referenced with {PROJECT_FOLDER} are embedded."
 llmRef: |
   core.file_player
 
@@ -47,11 +55,15 @@ llmRef: |
   Common mistakes:
     Output is additive in Static/MIDI modes but replacing in Signal Input mode.
     Signal Input mode requires an external signal to drive the read position.
+    Files loaded from filesystem paths are not embedded in compiled plugins -- use {PROJECT_FOLDER} wildcard.
+
+  Forum references: tid:13579 (audio file embedding for export), tid:13406 (multiple audio file slots via getAudioFile)
 
   See also:
     [alternative] core.stretch_player -- time-stretched file playback
     [alternative] core.granulator -- granular playback from audio file
     [companion] core.recorder -- records into the same audio file slot
+    [module] AudioLooper -- module-tree audio file player with looping and tempo sync
 ---
 
 ![Node screenshot](/images/custom/scriptnode/file_player.png)
@@ -132,10 +144,22 @@ groups:
 ---
 ::
 
-## Notes
+### Signal Input workflow
 
 In Signal Input mode, feed a [core.ramp]($SN.core.ramp$) generator outputting 0 to 1 over the sample duration for standard linear playback. From there you can apply waveshaping or modulation to the position signal for creative effects.
 
+### Gate and MIDI interaction
+
 The Gate parameter and MIDI note-on events are independent triggers. In MIDI Frequency mode, note-on events override the playback speed with the pitch ratio but Gate must still be On for playback to occur.
 
-**See also:** $SN.core.stretch_player$ -- file playback with independent time stretching and pitch shifting, $SN.core.granulator$ -- granular playback from an audio file, $SN.core.recorder$ -- records audio into the same file slot
+### Loading audio files for export
+
+Audio files must be loaded into the pool and referenced with the `{PROJECT_FOLDER}` wildcard to be embedded in the compiled plugin. Call `Engine.loadAudioFilesIntoPool()` during initialisation, then use `audioFile.loadFile("{PROJECT_FOLDER}myfile.wav")`. Files loaded via a raw filesystem path work during development but will not be found in the exported binary.
+
+To access multiple file_player slots from HiseScript, use `ScriptFX.getAudioFile(index)` where the index is zero-based in the order the slots were created. Create all references in `onInit`, not inside control callbacks.
+
+### Maturity
+
+This node was originally implemented as an internal testing tool and may exhibit inconsistent looping behaviour across different DAWs. For production use cases requiring robust file playback, consider the module-tree [AudioLooper]($MODULES.AudioLooper$) or [core.stretch_player]($SN.core.stretch_player$) as alternatives.
+
+**See also:** $SN.core.stretch_player$ -- file playback with independent time stretching and pitch shifting, $SN.core.granulator$ -- granular playback from an audio file, $SN.core.recorder$ -- records audio into the same file slot, $MODULES.AudioLooper$ -- module-tree audio file player with looping and tempo sync

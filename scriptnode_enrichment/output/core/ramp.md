@@ -99,10 +99,4 @@ groups:
 ---
 ::
 
-## Notes
-
-The ramp adds its value to the audio signal on all channels. If you only need the modulation output, either place the node in a dedicated modulation chain or follow it with a [math.clear]($SN.math.clear$) node to remove the audio contribution.
-
-When Gate is off, no processing occurs: the audio passes through unmodified and no modulation signal is sent.
-
 **See also:** $SN.core.clock_ramp$ -- tempo-synced ramp for DAW-locked modulation

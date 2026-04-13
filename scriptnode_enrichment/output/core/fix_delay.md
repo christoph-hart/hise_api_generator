@@ -11,6 +11,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: "jdsp.jdelay", type: alternative, reason: "Interpolating delay line suitable for modulation effects like chorus and phaser" }
+  - { id: "Delay", type: module, reason: "Module-tree delay with feedback and tempo sync" }
 commonMistakes:
   - title: "Using fix_delay for modulation effects"
     wrong: "Modulating DelayTime rapidly to create chorus or phaser effects"
@@ -43,6 +44,7 @@ llmRef: |
 
   See also:
     [alternative] jdsp.jdelay -- interpolating delay for modulation effects
+    [module] Delay -- module-tree delay with feedback and tempo sync
 ---
 
 This node delays the input signal by a configurable amount, using a non-interpolating circular buffer. The delay time is quantised to the nearest integer sample, so fractional millisecond values are truncated. Each channel is delayed independently through its own delay line, but all channels share the same delay time setting.
@@ -93,10 +95,10 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 The maximum delay time is 1000 ms. For longer delays, consider using multiple delay nodes in series or an alternative approach.
 
 Changing the channel configuration (e.g. moving the node between containers with different channel counts) clears the delay buffer.
 
-**See also:** $SN.jdsp.jdelay$ -- interpolating delay suitable for chorus and phaser effects
+**See also:** $SN.jdsp.jdelay$ -- interpolating delay suitable for chorus and phaser effects, $MODULES.Delay$ -- module-tree delay with feedback and tempo sync

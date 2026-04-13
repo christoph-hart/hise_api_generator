@@ -108,7 +108,7 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 When ChannelIndex is 0 the copy step is skipped entirely -- only the clearing logic runs (if enabled). If the requested channel range exceeds the available channels, the node safely processes only the channels that exist.
 

@@ -71,9 +71,11 @@ process(input) {
 
 All parameters are defined dynamically by the user's SNEX code. The node itself has no built-in parameters.
 
-## Notes
+### Setup
 
 The `ClassId` property selects which SNEX shaper class to compile. The SNEX code can optionally implement `setExternalData` to access tables or audio files for lookup-based shaping.
+
+### Compilation
 
 When compiled to C++, the shaper class receives the voice count as a template argument, allowing per-voice state if needed in a polyphonic context. However, within the scriptnode interpreter the node itself operates monophonically.
 

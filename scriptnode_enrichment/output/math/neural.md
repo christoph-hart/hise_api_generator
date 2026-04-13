@@ -92,11 +92,13 @@ process(input) {
 | Model | The neural network model to use for inference. | Model identifier string |
 | HpfFreq | DC-blocking high-pass filter applied after inference. Removes low-frequency drift that some models introduce. | Off, 1 Hz, 5 Hz, Dynamic |
 
-## Notes
-
 Each voice maintains its own clone of the neural network, so per-voice state is fully independent. The number of network instances scales with the voice count multiplied by the channel count, which can result in significant memory usage for large models in polyphonic configurations.
 
+### High-pass Filter
+
 The high-pass filter options provide fixed-frequency DC blocking at 1 Hz (very gentle, removes only the slowest drift) or 5 Hz (more aggressive). The Dynamic option allows the filter frequency to be changed at runtime.
+
+### Limitations
 
 The maximum channel count for the built-in high-pass filter is four. Channels beyond the fourth bypass the filter but still receive neural network inference.
 

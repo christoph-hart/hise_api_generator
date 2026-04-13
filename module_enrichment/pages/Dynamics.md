@@ -13,6 +13,9 @@ cpuProfile:
     - { parameter: "Enabled stages", impact: low, note: "Each enabled stage adds one per-sample processing loop. All three enabled is still low-to-medium." }
 seeAlso:
   - { id: SimpleGain, type: alternative, reason: "Simpler gain control without gate, compressor, or limiter stages" }
+  - { id: "dynamics.comp", type: scriptnode, reason: "Scriptnode compressor -- scriptnode splits dynamics processing into separate nodes" }
+  - { id: "dynamics.gate", type: scriptnode, reason: "Scriptnode noise gate" }
+  - { id: "dynamics.limiter", type: scriptnode, reason: "Scriptnode peak limiter" }
 commonMistakes:
   - title: "0 dB threshold disables all stages"
     wrong: "Enabling a stage but leaving its threshold at 0 dB and expecting an effect"
@@ -112,6 +115,9 @@ llmRef: |
 
   See also:
     alternative SimpleGain - simpler gain control without dynamics stages
+    [scriptnode] dynamics.comp - scriptnode compressor -- scriptnode splits dynamics processing into separate nodes
+    [scriptnode] dynamics.gate - scriptnode noise gate
+    [scriptnode] dynamics.limiter - scriptnode peak limiter
 ---
 
 ::category-tags
@@ -277,4 +283,4 @@ The Reduction parameters (`GateReduction`, `CompressorReduction`, `LimiterReduct
 
 The Dynamics module has no built-in sidechain filter for frequency-dependent compression (e.g., de-essing). For sidechain filtering, build a custom compressor in scriptnode that routes a filtered copy of the signal to drive the compression envelope. [5]($FORUM_REF.2072$)
 
-**See also:** $MODULES.SimpleGain$ -- Simpler gain control without gate, compressor, or limiter stages
+**See also:** $MODULES.SimpleGain$ -- Simpler gain control without gate, compressor, or limiter stages, $SN.dynamics.comp$ -- scriptnode compressor -- scriptnode splits dynamics processing into separate nodes, $SN.dynamics.gate$ -- scriptnode noise gate, $SN.dynamics.limiter$ -- scriptnode peak limiter

@@ -106,10 +106,8 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
-- The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough). Replace or supplement these with your per-band processing.
-- At the crossover frequency, both filters are at -6 dB. Their in-phase sum equals 0 dB, preserving unity gain.
-- This is the simplest freq_split variant. If you need finer frequency separation, choose a higher band count variant.
+The placeholder nodes in each band are [math.mul]($SN.math.mul$) set to 1.0 (passthrough) -- replace or supplement these with your per-band processing. At the crossover frequency, both filters are at -6 dB. Their in-phase sum equals 0 dB, preserving unity gain. This is the simplest freq_split variant; if you need finer frequency separation, choose a higher band count variant.
 
 **See also:** $SN.template.freq_split3$ -- 3-band crossover for more frequency separation, $SN.template.freq_split4$ -- 4-band crossover, $SN.template.freq_split5$ -- 5-band crossover for maximum frequency separation, $SN.container.split$ -- the underlying parallel container used internally, $SN.jdsp.jlinkwitzriley$ -- the Linkwitz-Riley crossover filter used internally

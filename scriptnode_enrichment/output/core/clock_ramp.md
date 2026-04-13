@@ -116,9 +116,11 @@ groups:
 ---
 ::
 
-## Notes
+### Polyphonic behaviour
 
 In polyphonic mode, note-on events resync the ramp to the current transport position, giving each voice a consistent phase relationship to the beat grid.
+
+### Update modes
 
 The Continuous update mode is useful when you need the ramp to reflect the absolute playback position (e.g. for a visual playhead). The Synced mode is better for musical effects where the ramp should restart cleanly on loop boundaries and transport jumps.
 

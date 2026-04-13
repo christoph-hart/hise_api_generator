@@ -10,7 +10,8 @@ cpuProfile:
   baseline: very low
   polyphonic: true
   scalingFactors: [voice count, saturation]
-seeAlso: []
+seeAlso:
+  - { id: "core.oscillator", type: scriptnode, reason: "Scriptnode multi-waveform oscillator (includes sine mode)" }
 commonMistakes:
   - title: "Use scriptnode for additive synthesis"
     wrong: "Using multiple SineSynth modules for additive synthesis"
@@ -66,7 +67,8 @@ llmRef: |
   Custom equivalent:
     scriptnode SoundGenerator with sine oscillator node.
 
-  See also: none
+  See also:
+    [scriptnode] core.oscillator -- scriptnode multi-waveform oscillator (includes sine mode)
 ---
 
 ::category-tags
@@ -216,3 +218,5 @@ The saturation waveshaper uses a soft-clipping transfer function that progressiv
 ### Output Routing
 
 The sine output is generated in mono and copied to both channels. The Balance parameter is applied by the base class after the voice buffer is complete. An effect chain slot is available for per-voice effects.
+
+**See also:** $SN.core.oscillator$ -- scriptnode multi-waveform oscillator (includes sine mode)

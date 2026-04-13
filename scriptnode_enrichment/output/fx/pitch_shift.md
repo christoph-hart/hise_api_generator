@@ -102,12 +102,6 @@ groups:
 ---
 ::
 
-## Notes
-
-The node has significant CPU cost, especially in polyphonic contexts where each voice maintains its own independent time stretcher instance. Use sparingly with high voice counts, or place it as a monophonic bus effect after voice summing.
-
-Frame-based processing is not supported. The node must be placed in a block-processing context (the default for [container.chain]($SN.container.chain$) and most other containers).
-
 At FreqRatio=1.0 the resampling is 1:1 and the time stretcher receives an equal number of input and output samples, producing an effective pass-through with minimal overhead.
 
 **See also:** $SN.core.pitch_mod$ -- pitch modulation for oscillators (not audio pitch shifting)

@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: PolyshapeFX, type: alternative, reason: "Another polyphonic effect - applies waveshaping per-voice rather than stereo processing" }
   - { id: SimpleGain, type: disambiguation, reason: "Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning" }
+  - { id: "jdsp.jpanner", type: scriptnode, reason: "Scriptnode stereo panner with seven selectable pan laws" }
 commonMistakes:
   - title: "Pan needs modulators to work"
     wrong: "Setting the Pan parameter and expecting a static pan position"
@@ -58,6 +59,7 @@ llmRef: |
   See also:
     PolyshapeFX - another polyphonic effect (waveshaping per-voice)
     SimpleGain - monophonic gain/balance for static stereo positioning
+    scriptnode jdsp.jpanner - stereo panner with seven selectable pan laws
 ---
 
 ::category-tags
@@ -156,4 +158,4 @@ The Pan parameter is a modulation range scaler, not a static pan control. Withou
 
 Width is applied to the combined output buffer after all voices are summed, not per-voice. Width has no effect on a mono source (where L equals R) because the side signal is zero. [2]($FORUM_REF.7956$) The Width parameter has no modulation chain - for dynamic width control, build a mid/side network in scriptnode. [3]($FORUM_REF.6144$)
 
-**See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect - applies waveshaping per-voice rather than stereo processing, $MODULES.SimpleGain$ -- Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning
+**See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect - applies waveshaping per-voice rather than stereo processing, $MODULES.SimpleGain$ -- Monophonic gain and balance control. Use SimpleGain for static stereo balance; use StereoFX for per-voice modulated panning, $SN.jdsp.jpanner$ -- Scriptnode stereo panner with seven selectable pan laws

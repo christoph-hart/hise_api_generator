@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "math.table", type: alternative, reason: "Visual waveshaping via an editable curve instead of a formula" }
   - { id: "control.cable_expr", type: companion, reason: "Expression node for control cable values instead of audio" }
+  - { id: "Math", type: api, reason: "HiseScript Math class provides the same mathematical functions available in script" }
 commonMistakes:
   - title: "Type mismatch in math function calls"
     wrong: "Writing Math.min(input, 3.0) where arguments have mixed float/double types"
@@ -49,6 +50,7 @@ llmRef: |
   See also:
     [alternative] math.table - visual waveshaping curve
     [companion] control.cable_expr - expression node for control cables
+    [api] Math -- HiseScript Math class with the same mathematical functions
 ---
 
 A programmable math node that evaluates a user-defined SNEX expression for every audio sample. The expression receives two variables: `input` (the current audio sample) and `value` (the Value parameter), and the result replaces the sample. This makes it a general-purpose tool for custom waveshaping, signal transformation, or any per-sample math operation that is not covered by the built-in math nodes.
@@ -125,10 +127,10 @@ SNEX is strictly typed. The `input` and `value` variables are single-precision f
 - **Code** -- The SNEX expression to evaluate. Defaults to `input` (passthrough).
 - **Debug** -- Toggles debug mode. When enabled, shows compiler warnings or prints input/output value pairs depending on the compilation state.
 
-## Notes
+### Limitations
 
 The expression must compile to a valid single-line formula. Variable declarations and multi-statement code are not supported. If you need more complex processing, consider using a dedicated SNEX node for full control over the processing callback.
 
 When compiling a network to a hardcoded effect for export, the expression is baked in at compile time. This means the Code property cannot be changed at runtime in exported plugins.
 
-**See also:** $SN.math.table$ -- visual waveshaping via an editable curve, $SN.control.cable_expr$ -- expression node for control cable values
+**See also:** $SN.math.table$ -- visual waveshaping via an editable curve, $SN.control.cable_expr$ -- expression node for control cable values, $API.Math$ -- HiseScript Math class with the same mathematical functions

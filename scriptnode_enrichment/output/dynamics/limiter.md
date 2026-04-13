@@ -12,6 +12,7 @@ cpuProfile:
 seeAlso:
   - { id: "dynamics.comp", type: alternative, reason: "General-purpose compressor with standard envelope" }
   - { id: "dynamics.gate", type: alternative, reason: "Gate for attenuating below threshold" }
+  - { id: "Dynamics", type: module, reason: "Module-tree dynamics processor that combines compressor, gate, and limiter" }
 commonMistakes:
   - title: "Sidechain mode needs extra channels"
     wrong: "Enabling Sidechain mode on a stereo signal and expecting it to use an external key signal"
@@ -21,6 +22,14 @@ commonMistakes:
     wrong: "Using Ratio 1 and expecting the limiter to catch peaks"
     right: "Set Ratio to a high value (16 or above) for effective peak limiting."
     explanation: "Ratio 1:1 means no gain reduction. The limiter only becomes effective at higher ratios, with very high values approaching brickwall behaviour."
+  - title: "Latency varies with attack time"
+    wrong: "Expecting zero latency from the limiter, or automating attack time during playback"
+    right: "The limiter uses lookahead tied to the attack setting. Longer attack = more latency. Call Engine.setLatencySamples() with the maximum expected latency."
+    explanation: "This is a lookahead limiter whose delay equals the attack time. The latency is not automatically reported to the DAW, so manual compensation is required. Changing the attack time during playback causes audible clicks and sudden delay changes."
+  - title: "Do not automate attack time"
+    wrong: "Modulating or automating the Attack parameter at runtime"
+    right: "Treat Attack as a fixed setting. Set it once and do not change it during playback."
+    explanation: "Changing the attack parameter at runtime causes an internal processing mode switch that introduces sudden large delay spikes and audible clicks. This is inherent to the lookahead design."
 llmRef: |
   dynamics.limiter
 
@@ -47,10 +56,16 @@ llmRef: |
   Common mistakes:
     Sidechain mode requires double the channel count (4 channels for stereo).
     Ratio 1:1 applies no limiting.
+    Latency varies with attack time (lookahead design). Must call Engine.setLatencySamples() for DAW compensation.
+    Do not automate attack time -- causes clicks and delay spikes.
 
   See also:
     [alternative] dynamics.comp - general-purpose compressor
     [alternative] dynamics.gate - gate for attenuating below threshold
+    [module] Dynamics - module-tree dynamics processor that combines compressor, gate, and limiter
+forumReferences:
+  - { tid: 13300, summary: "Limiter lookahead latency and DAW compensation" }
+  - { tid: 2857, summary: "Attack time changes cause clicks and delay spikes" }
 ---
 
 A peak limiter that reduces gain when the input exceeds the threshold. The limiter uses fast envelope detection optimised for transparent peak control, making it more suitable for catching transients than the general-purpose [dynamics.comp]($SN.dynamics.comp$). At high ratio values the limiter approaches brickwall behaviour.
@@ -112,7 +127,7 @@ groups:
   - label: Dynamics
     params:
       - { name: Threshhold, desc: "Level above which limiting begins.", range: "-100 - 0 dB", default: "0" }
-      - { name: Attack, desc: "How quickly limiting engages after the signal exceeds the threshold.", range: "0 - 250 ms", default: "50" }
+      - { name: Attack, desc: "How quickly limiting engages after the signal exceeds the threshold. Also determines the lookahead delay. Do not automate -- changing at runtime causes clicks.", range: "0 - 250 ms", default: "50" }
       - { name: Release, desc: "How quickly limiting releases after the signal drops below the threshold.", range: "0 - 250 ms", default: "50" }
       - { name: Ratio, desc: "Limiting ratio. Higher values produce stronger peak control, approaching brickwall limiting.", range: "1 - 32", default: "1" }
   - label: Routing
@@ -121,12 +136,14 @@ groups:
 ---
 ::
 
-## Notes
+### Lookahead Latency
+
+The limiter uses a lookahead design where the delay equals the attack time setting. A longer attack means more lookahead and more latency. This latency is not automatically reported to the DAW host, so you must call `Engine.setLatencySamples()` with the maximum expected latency to ensure correct DAW latency compensation and aligned offline rendering.
+
+Do not change the Attack parameter during playback. Modifying it at runtime causes an internal processing mode switch that introduces sudden delay spikes and audible clicks. Treat Attack as a fixed setting.
+
+### Modulation Output
 
 The modulation output sends the inverse of the gain reduction, normalised to 0..1. A value of 1.0 means no limiting is occurring; lower values indicate more gain reduction.
 
-For effective peak limiting, set the ratio to a high value (16 or above). At Ratio 1:1, no gain reduction is applied regardless of the threshold setting.
-
-When using Sidechain mode, the node expects double the normal channel count. For stereo limiting with an external key signal, route four channels into the node.
-
-**See also:** $SN.dynamics.comp$ -- general-purpose compressor with standard envelope, $SN.dynamics.gate$ -- gate for attenuating below threshold
+**See also:** $SN.dynamics.comp$ -- general-purpose compressor with standard envelope, $SN.dynamics.gate$ -- gate for attenuating below threshold, $MODULES.Dynamics$ -- module-tree dynamics processor that combines compressor, gate, and limiter

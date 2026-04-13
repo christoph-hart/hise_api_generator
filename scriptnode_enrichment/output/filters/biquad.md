@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "filters.svf", type: alternative, reason: "SVF with better modulation stability" }
   - { id: "filters.svf_eq", type: alternative, reason: "SVF EQ with gain modes and better modulation stability" }
+  - { id: "PolyphonicFilter", type: module, reason: "Module-tree filter -- scriptnode offers individual filter types as separate nodes" }
 commonMistakes:
   - title: "Unstable under fast modulation"
     wrong: "Using filters.biquad with fast frequency modulation from an LFO or envelope"
@@ -50,6 +51,7 @@ llmRef: |
   See also:
     [alternative] filters.svf - SVF with better modulation stability
     [alternative] filters.svf_eq - SVF EQ with gain modes
+    [module] PolyphonicFilter - module-tree filter -- scriptnode offers individual filter types as separate nodes
 ---
 
 A second-order biquad filter with six modes: LowPass, HighPass, LowShelf, HighShelf, Peak, and ResoLow. This provides the widest mode selection of any filter node, including a dedicated resonant lowpass mode separate from the standard Butterworth lowpass.
@@ -128,10 +130,8 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 Changing the Mode parameter at runtime resets the filter state, which can produce a click. Avoid switching modes during audio playback.
 
-The LowPass mode (mode 0) provides a clean Butterworth response with no resonance control. If you need a resonant lowpass, use ResoLow (mode 5) instead, which responds to the Q parameter.
-
-**See also:** $SN.filters.svf$ -- SVF with better modulation stability, $SN.filters.svf_eq$ -- SVF EQ with gain modes and better modulation stability
+**See also:** $SN.filters.svf$ -- SVF with better modulation stability, $SN.filters.svf_eq$ -- SVF EQ with gain modes and better modulation stability, $MODULES.PolyphonicFilter$ -- module-tree filter -- scriptnode offers individual filter types as separate nodes

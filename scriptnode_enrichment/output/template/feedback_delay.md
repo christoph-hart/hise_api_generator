@@ -103,10 +103,10 @@ process(input) {
 
 ::
 
-## Notes
+The feedback path has a minimum latency of 32 samples (one block) due to the send/receive mechanism operating on a per-block basis. At 44100 Hz this is approximately 0.73 ms, small enough to be inaudible as a separate echo.
 
-- The feedback path has a minimum latency of 32 samples (one block) due to the send/receive mechanism operating on a per-block basis. At 44100 Hz this is approximately 0.73 ms, small enough to be inaudible as a separate echo.
-- The FadeTime parameter controls the crossfade when DelayTime is changed, preventing clicks during delay time modulation.
-- Users can insert processing nodes between the delay and send nodes (for filtered or shaped feedback) or between the receive and delay nodes (to process the combined input and feedback signal before delaying).
+### Customisation
+
+Users can insert processing nodes between the delay and send nodes (for filtered or shaped feedback) or between the receive and delay nodes (to process the combined input and feedback signal before delaying). The FadeTime parameter controls the crossfade when DelayTime is changed, preventing clicks during delay time modulation.
 
 **See also:** $SN.routing.send$ -- sends delayed signal back into the loop, $SN.routing.receive$ -- receives and mixes the feedback signal, $SN.core.fix_delay$ -- the delay line used internally, $SN.container.fix32_block$ -- the fixed block container required for feedback

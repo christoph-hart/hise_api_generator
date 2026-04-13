@@ -47,3 +47,5 @@ The editor's autocomplete also exposes standard mathematical constants:
 - **Wrong:** `x + amount * Math.random()` for bipolar randomisation
   **Right:** `x + amount * (2.0 * Math.random() - 1.0)` for bipolar randomisation
   *`Math.random()` returns values in [0, 1). For offsets that should go both positive and negative, scale to [-1, 1) first with `2.0 * Math.random() - 1.0`.*
+
+**See also:** $SN.math.expr$ -- Scriptnode expression node for per-sample math operations in DspNetwork

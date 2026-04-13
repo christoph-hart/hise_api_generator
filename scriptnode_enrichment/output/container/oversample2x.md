@@ -103,10 +103,6 @@ groups:
 ---
 ::
 
-## Notes
-
-When bypassed, child nodes revert to the original sample rate and block size. The container re-prepares the entire child chain on bypass state changes.
-
-The anti-aliasing filter introduces a small amount of latency that is not reported to the host or the surrounding network.
+When bypassed, child nodes revert to the original sample rate and block size, and the container re-prepares the entire child chain on bypass state changes. The anti-aliasing filter introduces a small amount of latency that is not reported to the host or the surrounding network.
 
 **See also:** $SN.container.oversample$ -- dynamic variant with selectable factor, $SN.container.oversample4x$ -- fixed 4x variant for stronger aliasing reduction, $SN.container.repitch$ -- resampling alternative that changes pitch

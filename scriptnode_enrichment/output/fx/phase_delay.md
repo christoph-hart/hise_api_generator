@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: "filters.allpass", type: alternative, reason: "Higher-order allpass filter with more parameters" }
+  - { id: "PhaseFX", type: module, reason: "Scriptnode allpass phase-shift building block (PhaseFX uses cascaded allpass stages)" }
 commonMistakes:
   - title: "Not a comb filter on its own"
     wrong: "Using fx.phase_delay alone expecting comb filter output"
@@ -38,11 +39,12 @@ llmRef: |
 
   See also:
     alternative filters.allpass - higher-order allpass filter
+    [module] PhaseFX - scriptnode allpass phase-shift building block (PhaseFX uses cascaded allpass stages)
 ---
 
 A first-order allpass filter that shifts the phase of the input signal without changing its amplitude. Below the corner frequency the phase shift approaches zero; at the corner frequency it is exactly -90 degrees; above the corner frequency it approaches -180 degrees.
 
-The node is designed as a building block for comb filter effects. On its own it only shifts phase - to produce the characteristic notches and peaks of a comb filter, place it inside a [container.split]($SN.container.split$) so the phase-shifted output is summed with the dry signal. The frequency-dependent phase differences create constructive and destructive interference, producing the comb pattern. Modulating the Frequency parameter sweeps the notch pattern for phaser-style effects.
+The node processes up to two channels independently, each with its own filter state; additional channels beyond the first two pass through unmodified. It is designed as a building block for comb filter effects. On its own it only shifts phase -- to produce the characteristic notches and peaks of a comb filter, place it inside a [container.split]($SN.container.split$) so the phase-shifted output is summed with the dry signal. The frequency-dependent phase differences create constructive and destructive interference, producing the comb pattern. Modulating the Frequency parameter sweeps the notch pattern for phaser-style effects.
 
 ## Signal Path
 
@@ -82,10 +84,8 @@ groups:
 ---
 ::
 
-## Notes
-
-The node processes up to two channels independently, each with its own filter state. Additional channels beyond the first two pass through unmodified.
+### Building a Phaser
 
 To build a phaser effect, chain multiple phase_delay nodes in series within a [container.split]($SN.container.split$) and modulate their Frequency parameters together. The number of stages determines the number of notches in the comb pattern.
 
-**See also:** $SN.filters.allpass$ -- higher-order allpass filter with additional parameters
+**See also:** $SN.filters.allpass$ -- higher-order allpass filter with additional parameters, $MODULES.PhaseFX$ -- scriptnode allpass phase-shift building block (PhaseFX uses cascaded allpass stages)

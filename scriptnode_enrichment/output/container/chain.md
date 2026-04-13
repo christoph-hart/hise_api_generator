@@ -18,6 +18,8 @@ commonMistakes:
     wrong: "Bypassing a chain containing stateful effects (filters, delays) during playback"
     right: "Use container.soft_bypass for click-free bypass transitions with stateful effects."
     explanation: "Chain uses hard bypass - processing stops immediately with no crossfade. Stateful effects may produce clicks when abruptly bypassed or un-bypassed."
+forumReferences:
+  - { tid: 5825, reason: "Historical frame2block double-rendering bug (fixed May 2022)" }
 llmRef: |
   container.chain
 
@@ -69,9 +71,6 @@ dispatch(input) {
 
 ::
 
-## Notes
-
-- The `IsVertical` property controls UI layout direction (vertical or horizontal) without affecting processing.
-- MIDI events are forwarded to all children in list order. If a child modifies an event, subsequent children see the modified version.
+The `IsVertical` property controls UI layout direction (vertical or horizontal) without affecting processing. MIDI events are forwarded to all children in list order; if a child modifies an event, subsequent children see the modified version.
 
 **See also:** $SN.container.split$ -- parallel processing instead of serial, $SN.container.modchain$ -- control-rate chain for modulation sources, $SN.container.midichain$ -- serial chain with MIDI event splitting

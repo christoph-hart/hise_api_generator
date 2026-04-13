@@ -14,6 +14,7 @@ cpuProfile:
 seeAlso:
   - { id: PolyshapeFX, type: alternative, reason: "Another polyphonic effect with per-voice processing, but applies waveshaping rather than granular synthesis" }
   - { id: Convolution, type: disambiguation, reason: "Also loads an audio file for processing, but applies it as an impulse response rather than decomposing it into noise grains" }
+  - { id: "core.granulator", type: scriptnode, reason: "Scriptnode granular synthesiser with position, density, and detune controls" }
 commonMistakes:
   - title: "WhiteNoise modulates grain position"
     wrong: "Expecting the WhiteNoise parameter to mix audio-domain white noise into the output"
@@ -61,6 +62,7 @@ llmRef: |
   See also:
     alternative PolyshapeFX - polyphonic waveshaping effect
     disambiguation Convolution - also loads audio files but uses them as impulse responses
+    [scriptnode] core.granulator -- scriptnode granular synthesiser with position, density, and detune controls
 ---
 
 ::category-tags
@@ -191,4 +193,4 @@ If the loaded audio file is shorter than one FFT frame at the current GrainSize,
 
 Grain playback speed is determined by the ratio between the host sample rate and the file's sample rate. It is not affected by voice pitch - all voices play grains at the same rate regardless of note number.
 
-**See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect with per-voice processing, but applies waveshaping rather than granular synthesis, $MODULES.Convolution$ -- Also loads an audio file for processing, but applies it as an impulse response rather than decomposing it into noise grains
+**See also:** $MODULES.PolyshapeFX$ -- Another polyphonic effect with per-voice processing, but applies waveshaping rather than granular synthesis, $MODULES.Convolution$ -- Also loads an audio file for processing, but applies it as an impulse response rather than decomposing it into noise grains, $SN.core.granulator$ -- scriptnode granular synthesiser with position, density, and detune controls

@@ -50,3 +50,5 @@ Cables can deliver values through callbacks (synchronous or asynchronous) or be 
   **Wrong:** Using `registerCallback` with `SyncNotification` for UI updates
   **Right:** Use `AsyncNotification` or timer-polled `getValue()` for anything that triggers repaints
   *Synchronous callbacks run on the calling thread (possibly the audio thread). UI operations like `repaint()` or `Console.print()` are not realtime-safe and will silently fail or cause audio glitches.*
+
+**See also:** $SN.routing.global_cable$ -- Scriptnode node for global cable connections in DspNetwork

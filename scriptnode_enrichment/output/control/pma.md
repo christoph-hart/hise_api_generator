@@ -99,10 +99,6 @@ groups:
 ---
 ::
 
-## Notes
-
-The output is always clamped to the 0-1 range regardless of the Multiply and Add values. If you need the result to exceed this range (for example when working with frequency or pitch values), use [control.pma_unscaled]($SN.control.pma_unscaled$) instead.
-
-With the default settings (Multiply = 1.0, Add = 0.0), the node passes the input value through unchanged.
+The output is always clamped to the 0-1 range regardless of the Multiply and Add values. If you need the result to exceed this range (for example when working with frequency or pitch values), use [control.pma_unscaled]($SN.control.pma_unscaled$) instead. With the default settings (Multiply = 1.0, Add = 0.0), the node passes the input value through unchanged.
 
 **See also:** $SN.control.pma_unscaled$ -- unscaled variant without clamping, $SN.control.bipolar$ -- centres modulation around the midpoint, $SN.control.intensity$ -- scales depth using the HISE intensity formula

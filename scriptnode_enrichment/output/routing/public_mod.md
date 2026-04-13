@@ -32,7 +32,9 @@ llmRef: |
 
 Exposes a value as a modulation output on the parent network. This node is used inside compiled or nested DSP networks to create custom modulation sources. It sits outside the audio signal path -- all audio processing callbacks are empty.
 
-Connect any modulation source inside the network to the Value parameter. When the network is compiled and loaded as a `project.*` node, it will display a modulation dragger that outputs whatever value is sent to this node internally. Only one public_mod node per network is supported.
+Connect any modulation source inside the network to the Value parameter. When the network is compiled and loaded as a `project.*` node, it will display a modulation dragger that outputs whatever value is sent to this node internally. Only one public_mod node per network is supported. The value update is immediate -- there is no buffering or smoothing between the Value parameter changing and the modulation output updating. The output only fires a change notification when the value actually differs from the previous one.
+
+This node is only useful inside networks that will be compiled or nested. In a top-level network it has no effect since there is no parent to receive the modulation output.
 
 ## Signal Path
 
@@ -71,8 +73,3 @@ groups:
 ---
 ::
 
-## Notes
-
-The value update is immediate -- there is no buffering or smoothing between the Value parameter changing and the modulation output updating. The output only fires a change notification when the value actually differs from the previous one.
-
-This node is only useful inside networks that will be compiled or nested. In a top-level network it has no effect since there is no parent to receive the modulation output.

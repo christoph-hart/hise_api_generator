@@ -100,8 +100,10 @@ groups:
 ---
 ::
 
-## Notes
+### Oscillator Behaviour
 
 The oscillator phase is shared across all channels but is not reset on note-on. In a polyphonic context, different voices may have different modulation phases depending on when they started.
+
+### Limitations
 
 The minimum oscillator frequency is 20 Hz. For tremolo effects at lower rates, use a [control.pma]($SN.control.pma$) with an external LFO modulating a [core.gain]($SN.core.gain$) node instead.

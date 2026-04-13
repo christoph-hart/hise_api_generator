@@ -112,11 +112,11 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 - Repitch only processes mono or stereo signals. Audio with more than 2 channels passes through unmodified.
 - Repitch containers cannot be nested inside frame-based containers.
-- The one-octave range can be extended by stacking repitch containers.
-- When the repitch container holds only effects (no sound generator), the frequency response shift may appear inverted relative to the factor. Placing a sound generator inside the container normalises the shift direction.
-- Nodes that do not depend on sample rate - such as gain stages, waveshapers, or static lookup tables - produce identical output regardless of the repitch factor. Only algorithms whose behaviour is tied to sample rate (filters, convolution reverbs, neural network models) are affected.
+- Nodes that do not depend on sample rate -- such as gain stages, waveshapers, or static lookup tables -- produce identical output regardless of the repitch factor. Only algorithms whose behaviour is tied to sample rate (filters, convolution reverbs, neural network models) are affected.
+
+The one-octave range can be extended by stacking repitch containers. When the repitch container holds only effects (no sound generator), the frequency response shift may appear inverted relative to the factor. Placing a sound generator inside the container normalises the shift direction.
 

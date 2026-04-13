@@ -47,7 +47,9 @@ llmRef: |
 
 Copies audio from the local signal chain into a shared buffer that can be read by [global_receive]($SN.routing.global_receive$) nodes anywhere in HISE, including in other DspNetworks. The local signal passes through unmodified -- the node copies but does not consume the audio. The Value parameter applies a linear gain to the copied signal.
 
-Each signal slot accepts exactly one sender. If a second global_send attempts to connect to an occupied slot, the connection is rejected. This node cannot be compiled to C++ -- for compileable audio routing within a single network, use [routing.send]($SN.routing.send$) instead.
+Each signal slot accepts exactly one sender. If a second global_send attempts to connect to an occupied slot, the connection is rejected. The send node overwrites the shared buffer on each processing block; if no global_receive is connected, the copied audio is discarded silently.
+
+This node cannot be compiled to C++ -- for compileable audio routing within a single network, use [routing.send]($SN.routing.send$) instead.
 
 ## Signal Path
 
@@ -86,9 +88,5 @@ groups:
       - { name: Value, desc: "Linear gain multiplier applied to the audio copied into the shared buffer. Does not affect the passthrough signal.", range: "0.0 - 1.0", default: "1.0" }
 ---
 ::
-
-## Notes
-
-The send node overwrites the shared buffer on each processing block. If no global_receive is connected, the copied audio is discarded silently.
 
 **See also:** $SN.routing.global_receive$ -- receives the audio sent by this node, $SN.routing.send$ -- intra-network audio routing (compileable)

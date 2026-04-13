@@ -35,6 +35,8 @@ Converts a stereo left/right signal to mid/side representation. After encoding, 
 
 Place this node before a [container.multi]($SN.container.multi$) to process mid and side channels independently -- for example, applying EQ only to the mid channel or adjusting stereo width by scaling the side channel. Follow with routing.ms_decode to convert back to left/right.
 
+The 0.5 scaling factor is applied during encoding, not decoding. This means the mid and side channels are at half the amplitude of the original left/right channels. The decode node compensates by using no scaling factor, so the full round-trip is gain-neutral.
+
 Non-stereo signals (mono or more than two channels) pass through unmodified.
 
 ## Signal Path
@@ -59,9 +61,5 @@ process(left, right) {
 ```
 
 ::
-
-## Notes
-
-The 0.5 scaling factor is applied during encoding, not decoding. This means the mid and side channels are at half the amplitude of the original left/right channels. The decode node compensates by using no scaling factor, so the full round-trip is gain-neutral.
 
 **See also:** $SN.routing.ms_decode$ -- converts mid/side back to left/right

@@ -107,8 +107,6 @@ The Mode property determines the shape of the fade curve applied to each output:
 
 For most mixing applications, **RMS** provides perceptually even crossfading. **Linear** is the simplest and works well for control signals. **Switch** is useful when only one path should be active at a time.
 
-## Notes
-
 The xfader is monophonic -- it does not maintain per-voice state. All voices share the same crossfade position and coefficients.
 
 **See also:** $SN.control.blend$ -- interpolates between two values, $SN.control.branch_cable$ -- routes to a single output

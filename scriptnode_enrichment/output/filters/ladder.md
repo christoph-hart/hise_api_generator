@@ -13,11 +13,18 @@ cpuProfile:
 seeAlso:
   - { id: "filters.moog", type: disambiguation, reason: "Moog-style ladder with more analog character" }
   - { id: "filters.svf", type: alternative, reason: "SVF with multiple filter types" }
-commonMistakes: []
+  - { id: "PolyphonicFilter", type: module, reason: "Module-tree filter -- scriptnode offers individual filter types as separate nodes" }
+forumReferences:
+  - { tid: 7834, summary: "Moog filter instability under modulation -- use filters.ladder instead" }
+commonMistakes:
+  - title: "Prefer filters.ladder over filters.moog for modulated use"
+    wrong: "Using filters.moog with frequency or resonance modulation from an LFO or envelope"
+    right: "Use filters.ladder instead. The Moog filter has a known instability that can produce extreme noise bursts under modulation."
+    explanation: "The filters.moog node can produce sudden loud noise transients when its parameters are modulated. filters.ladder provides the same 4-pole ladder topology without this instability and is the recommended choice for production work."
 llmRef: |
   filters.ladder
 
-  Simple 4-pole (24 dB/oct) ladder lowpass filter. Lightweight alternative to filters.moog with a cleaner character.
+  Simple 4-pole (24 dB/oct) ladder lowpass filter. Lightweight and stable alternative to filters.moog. Recommended for modulated use.
 
   Signal flow:
     audio in -> 4 cascaded one-pole stages with feedback -> audio out
@@ -33,14 +40,18 @@ llmRef: |
     Enabled: Off / On (default On). Hard bypass.
 
   When to use:
-    Lightweight 24 dB/oct lowpass when CPU matters and analog character is not needed. For warmer sound, use filters.moog instead.
+    Preferred 4-pole ladder lowpass for production work, especially when modulating cutoff or resonance. Use instead of filters.moog, which has known instability under modulation.
+
+  Common mistakes:
+    Do not use filters.moog with modulation -- it produces noise bursts. Use filters.ladder instead.
 
   See also:
-    [disambiguation] filters.moog - Moog-style ladder with more character
+    [disambiguation] filters.moog - Moog-style ladder with more character but unstable under modulation
     [alternative] filters.svf - multimode SVF
+    [module] PolyphonicFilter - module-tree filter -- scriptnode offers individual filter types as separate nodes
 ---
 
-A simple 4-pole (24 dB/octave) ladder lowpass filter. This is a lightweight alternative to [filters.moog]($SN.filters.moog$) - it uses four cascaded one-pole stages with feedback but without the analog-modelling constants, resulting in a cleaner sound and the lowest CPU cost of any multi-pole filter.
+A simple 4-pole (24 dB/octave) ladder lowpass filter. This is the recommended alternative to [filters.moog]($SN.filters.moog$) -- it uses four cascaded one-pole stages with feedback but without the analog-modelling constants, resulting in a cleaner sound and the lowest CPU cost of any multi-pole filter. Unlike the Moog filter, it is stable under modulation and will not produce noise bursts when cutoff or resonance are driven by LFOs or envelopes.
 
 ![Ladder screenshot](/images/v2/reference/scriptnodes/filters/ladder.png)
 
@@ -111,4 +122,10 @@ groups:
 ---
 ::
 
-**See also:** $SN.filters.moog$ -- Moog-style ladder with more analog character, $SN.filters.svf$ -- multimode SVF with LP/HP/BP/Notch/Allpass
+### Moog Filter Replacement
+
+This node is the standing community recommendation for any use case that would otherwise call for [filters.moog]($SN.filters.moog$). The Moog filter has a well-documented instability that produces sudden loud noise bursts, particularly when its parameters are modulated. filters.ladder provides an equivalent 4-pole ladder response without this instability.
+
+When labelling this filter in a shipped product, refer to it as "Moog-style" rather than "Moog" to avoid trademark confusion.
+
+**See also:** $SN.filters.moog$ -- Moog-style ladder with more analog character (unstable under modulation), $SN.filters.svf$ -- multimode SVF with LP/HP/BP/Notch/Allpass, $MODULES.PolyphonicFilter$ -- module-tree filter -- scriptnode offers individual filter types as separate nodes

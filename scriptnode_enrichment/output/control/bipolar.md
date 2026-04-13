@@ -100,8 +100,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The Gamma curve is applied symmetrically around the centre point. It operates on the absolute deviation, preserving the sign, so the positive and negative halves of the modulation are shaped identically.
 
 **See also:** $SN.control.pma$ -- linear scaling and offset without centring, $SN.control.intensity$ -- scales modulation depth from the top

@@ -79,8 +79,6 @@ groups:
 ---
 ::
 
-## Notes
-
 If no table data is connected, the node produces no output. When the table data is updated (e.g. by editing the curve), the node automatically re-evaluates the current input position and sends the updated result.
 
 **See also:** $SN.control.cable_expr$ -- formula-based transform, $SN.control.cable_pack$ -- discrete step lookup via slider pack

@@ -12,6 +12,7 @@ cpuProfile:
 seeAlso:
   - { id: "envelope.ahdsr", type: alternative, reason: "Full AHDSR when hold, decay, or adjustable sustain are needed" }
   - { id: "envelope.voice_manager", type: companion, reason: "Connect the Gate output here to manage voice lifecycle" }
+  - { id: "SimpleEnvelope", type: module, reason: "Module-tree equivalent -- two-stage attack/release envelope" }
 commonMistakes:
   - title: "Sustain is always at full level"
     wrong: "Expecting an adjustable sustain level like the AHDSR envelopes."
@@ -49,11 +50,16 @@ llmRef: |
   See also:
     [alternative] envelope.ahdsr -- full AHDSR with configurable sustain
     [companion] envelope.voice_manager -- voice lifecycle from Gate output
+    [module] SimpleEnvelope -- module-tree equivalent -- two-stage attack/release envelope
 ---
 
 A lightweight two-stage envelope that ramps to full level on note-on and fades to zero on note-off. It multiplies the input audio by the envelope value and sends CV and Gate modulation outputs. The sustain level is fixed at 1.0 and cannot be adjusted.
 
-This envelope has the lowest CPU cost of the envelope nodes, making it a good choice when you only need a fade-in and fade-out without the additional stages of a full AHDSR. The AttackCurve parameter blends between exponential, linear, and power curve shapes for both the attack and release segments.
+This envelope has the lowest CPU cost of the envelope nodes, making it a good choice when you only need a fade-in and fade-out without the additional stages of a full AHDSR. The AttackCurve parameter blends between exponential, linear, and power curve shapes for both the attack and release segments. Values between the key points (0, 0.5, 1) interpolate smoothly between the curve types.
+
+### Setup
+
+The Gate output should be connected to an [envelope.voice_manager]($SN.envelope.voice_manager$) node for proper voice lifecycle management.
 
 ## Signal Path
 
@@ -130,10 +136,4 @@ groups:
 ---
 ::
 
-## Notes
-
-- The sustain level is always 1.0. If you need a configurable sustain, use [envelope.ahdsr]($SN.envelope.ahdsr$) or [envelope.flex_ahdsr]($SN.envelope.flex_ahdsr$).
-- The AttackCurve parameter affects both attack and release shapes. Values between the key points (0, 0.5, 1) interpolate smoothly between the curve types.
-- Like other envelope nodes, the Gate output should be connected to an [envelope.voice_manager]($SN.envelope.voice_manager$) node for proper voice lifecycle management.
-
-**See also:** $SN.envelope.ahdsr$ -- full AHDSR with configurable sustain, $SN.envelope.voice_manager$ -- voice lifecycle management
+**See also:** $SN.envelope.ahdsr$ -- full AHDSR with configurable sustain, $SN.envelope.voice_manager$ -- voice lifecycle management, $MODULES.SimpleEnvelope$ -- module-tree equivalent -- two-stage attack/release envelope

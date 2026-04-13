@@ -68,11 +68,9 @@ process(input) {
 
 ::
 
-## Notes
+### Setup
 
-The BlockSize property is hidden by default. Click the parameter button in the node header to reveal it. Available values are 8, 16, 32, 64, 128, and 256. The default is 64.
-
-Changing the BlockSize property during playback triggers a full re-preparation of all children, which may cause a brief audio interruption. This is a design-time operation, not intended for real-time control. For runtime block size changes, use [dynamic_blocksize]($SN.container.dynamic_blocksize$) instead.
+The BlockSize property is hidden by default -- click the parameter button in the node header to reveal it. Available values are 8, 16, 32, 64, 128, and 256. The default is 64. Changing the BlockSize property during playback triggers a full re-preparation of all children, which may cause a brief audio interruption. This is a design-time operation, not intended for real-time control. For runtime block size changes, use [dynamic_blocksize]($SN.container.dynamic_blocksize$) instead.
 
 All behaviours from the `fixN_block` family apply: the block size is a maximum (last chunk may be smaller), MIDI events are timestamp-split across chunks, bypass reverts to full host buffer processing, and frame mode is preserved as a no-op.
 

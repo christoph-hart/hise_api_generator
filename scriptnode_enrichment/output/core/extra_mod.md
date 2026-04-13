@@ -108,9 +108,11 @@ groups:
 ---
 ::
 
-## Notes
+### Root parameter interaction
 
 The extra mod node supports an interaction with root parameters: if a root parameter is configured with the Combined modulation mode and associated with the same index as an extra_mod node, the root parameter controls the base value of the modulation chain rather than directly setting the target. This enables modulation display on UI knobs while the actual modulation happens at full resolution inside the network.
+
+### Compilation
 
 If you plan to compile the DSP network to a C++ node, the corresponding hardcoded module preprocessor variables must also be set (e.g. `NUM_HARDCODED_FX_MODS`).
 

@@ -72,10 +72,6 @@ process(input) {
 
 ::
 
-## Notes
-
-Linear interpolation is applied between adjacent slider values, producing smooth transitions even with a small number of sliders. If you want hard steps without interpolation, you will need to use closely spaced identical values in adjacent sliders.
-
-The pack reads are thread-safe. Editing slider values during playback applies changes smoothly without blocking the audio thread.
+Linear interpolation is applied between adjacent slider values, producing smooth transitions even with a small number of sliders. If you want hard steps without interpolation, you will need to use closely spaced identical values in adjacent sliders. The pack reads are thread-safe -- editing slider values during playback applies changes smoothly without blocking the audio thread.
 
 **See also:** $SN.math.table$ -- continuous curve lookup table, $SN.core.peak$ -- envelope follower for preparing input

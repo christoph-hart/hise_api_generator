@@ -11,6 +11,8 @@ cpuProfile:
   polyphonic: false
   scalingFactors:
     - { parameter: "State", impact: low, note: "Recording adds per-sample buffer write overhead" }
+forumReferences:
+  - { tid: 7947, reason: "Recorder workflow: external slot, length, trigger" }
 seeAlso:
   - { id: "core.file_player", type: companion, reason: "Plays back audio from the same audio file slot" }
 commonMistakes:
@@ -18,6 +20,10 @@ commonMistakes:
     wrong: "Leaving RecordingLength at 0 and toggling State to On"
     right: "Set RecordingLength to the desired duration in milliseconds before starting recording."
     explanation: "A RecordingLength of 0 allocates no buffer, so no samples are captured. Always set a positive value first."
+  - title: "Audio file slot must be set to External for shared playback"
+    wrong: "Recording audio and expecting a file_player or granulator to pick it up without configuring the slot"
+    right: "Set the recorder's audio file slot to External and assign the same external slot to the playback node."
+    explanation: "The recorder writes to an internal audio file slot. For another node to read the recorded audio, both nodes must share the same external slot reference."
 llmRef: |
   core.recorder
 
@@ -38,6 +44,9 @@ llmRef: |
 
   Common mistakes:
     RecordingLength must be set before recording -- a value of 0 captures nothing.
+    Audio file slot must be set to External for shared playback with other nodes.
+
+  Forum references: tid:7947 (recorder workflow and shared external slot)
 
   See also:
     [companion] core.file_player -- plays back from the same audio file slot
@@ -47,7 +56,7 @@ llmRef: |
 
 This node records the input audio signal into an internal buffer and writes it to an audio file slot when recording completes. The audio signal passes through completely unmodified during recording. When the buffer is full, the recorded audio is automatically flushed to the audio file slot, where it can be picked up by other nodes (such as [core.file_player]($SN.core.file_player$)) or displayed on the UI using the [DisplayBufferSource]($API.DisplayBufferSource$) scripting API.
 
-Recording starts when State is set to On and stops automatically when the buffer reaches the configured RecordingLength. Setting State to On again resets the recording position and starts a new capture.
+The recorder supports mono and stereo input, matching the channel count of its container. Recording starts when State is set to On and stops automatically when the buffer reaches the configured RecordingLength. Setting State to On again resets the recording position and starts a new capture. The audio file slot is written asynchronously when the buffer is full, after which the recorded data is available to any node referencing the same audio file slot.
 
 ## Signal Path
 
@@ -98,10 +107,14 @@ groups:
 ---
 ::
 
-## Notes
+### Recording workflow
 
-The recorder supports mono and stereo input, matching the channel count of its container.
+The complete recording workflow is:
 
-The audio file slot is written asynchronously when the buffer is full. The recorded data is then available to any node referencing the same audio file slot.
+1. Assign the recorder an **external** audio file slot, shared with a playback node (such as [core.file_player]($SN.core.file_player$) or [core.granulator]($SN.core.granulator$)).
+2. Set **RecordingLength** to the desired capture duration in milliseconds.
+3. Set **State** to On to begin recording. The recorder captures the predetermined length and then stops automatically.
+
+When recording completes, the buffer in the shared external slot is immediately available to the connected playback node. Setting State to On again resets the position and starts a new capture.
 
 **See also:** $SN.core.file_player$ -- plays back audio from the same audio file slot

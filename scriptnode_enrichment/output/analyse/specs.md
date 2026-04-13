@@ -53,7 +53,7 @@ Displays the audio processing specifications at the current location in the sign
 
 Audio passes through completely unmodified. The node has no parameters, no display buffer, and no effect on the signal. It exists purely as a design-time inspection tool.
 
-## Notes
+### Setup
 
 Place multiple instances at different points in the chain to compare how containers affect the processing context. For example, placing one before and one after a [container.fix32_block]($SN.container.fix32_block$) reveals the block size change, or before and after a [container.no_midi]($SN.container.no_midi$) shows the MIDI routing change.
 

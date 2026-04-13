@@ -73,10 +73,6 @@ process(input) {
 
 ::
 
-## Notes
-
-The table always has 512 entries. For a lookup table with a different number of discrete steps, use [math.pack]($SN.math.pack$) with a SliderPack instead.
-
-Because the input is clamped to 0-1, bipolar audio signals need to be converted first. Use [math.sig2mod]($SN.math.sig2mod$) to shift a -1..1 signal into the 0..1 range before feeding it into the table.
+The table always has 512 entries. For a lookup table with a different number of discrete steps, use [math.pack]($SN.math.pack$) with a SliderPack instead. Because the input is clamped to 0-1, bipolar audio signals need to be converted first -- use [math.sig2mod]($SN.math.sig2mod$) to shift a -1..1 signal into the 0..1 range before feeding it into the table.
 
 **See also:** $SN.math.pack$ -- SliderPack-based lookup table, $SN.core.peak$ -- envelope follower for preparing table input

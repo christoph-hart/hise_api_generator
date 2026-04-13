@@ -81,9 +81,11 @@ groups:
 ---
 ::
 
-## Notes
+### Cable Management
 
 The network provides UX helpers for working with local cables. A panel lists all active cable IDs with LED indicators showing current values. Clicking an ID highlights all nodes using that cable. Right-clicking offers an option to replace the local cable with a direct connection (and vice versa from the connection editor).
+
+### Limitations
 
 Up to 64 unique cable IDs can be used per network.
 

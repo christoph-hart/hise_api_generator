@@ -123,11 +123,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- The NumClones parameter is automatically kept in sync with the parent clone container. Manual adjustment is possible but will be overwritten when the container's clone count changes.
-- Toggle mode is an exception: it does not auto-update when the clone count changes.
-- Output values are normalised (0-1), so target parameter ranges are applied automatically.
-- For MIDI-reactive modes, connect the target parameter using the linear 0-20kHz range preset if it represents a frequency.
+The NumClones parameter is automatically kept in sync with the parent clone container. Manual adjustment is possible but will be overwritten when the container's clone count changes. Toggle mode is an exception: it does not auto-update when the clone count changes. Output values are normalised (0-1), so target parameter ranges are applied automatically.
 
 **See also:** $SN.control.clone_forward$ -- sends the same unscaled value to all clones, $SN.control.clone_pack$ -- per-clone values via a slider pack, $SN.container.clone$ -- the clone container

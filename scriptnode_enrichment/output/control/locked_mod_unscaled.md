@@ -75,7 +75,7 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
 The setup procedure is identical to [locked_mod]($SN.control.locked_mod$): place this node as an immediate child of a container, connect its Value parameter, and lock the container. The only difference is that the modulation output bypasses range conversion, so the raw value flows directly to the connected target.
 

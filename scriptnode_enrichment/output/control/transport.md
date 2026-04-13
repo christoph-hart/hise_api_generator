@@ -64,10 +64,6 @@ onTransportChange(isPlaying) {
 
 ::
 
-## Notes
-
 Each voice independently detects the transport change in polyphonic contexts, ensuring every active voice receives the state update exactly once.
-
-For more detailed host synchronisation, consider combining this node with [control.ppq]($SN.control.ppq$) for playback position tracking or [core.clock_ramp]($SN.core.clock_ramp$) for a continuous tempo-synced ramp signal.
 
 **See also:** $SN.control.ppq$ -- provides PPQ position for playback-synced effects, $SN.core.clock_ramp$ -- tempo-synced ramp signal driven by host playback, $SN.control.tempo_sync$ -- converts host tempo to millisecond durations

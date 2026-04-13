@@ -13,6 +13,7 @@ cpuProfile:
     - { parameter: "IR length", impact: "linear", note: "Longer impulse responses increase FFT partition count and processing time" }
 seeAlso:
   - { id: "fx.reverb", type: alternative, reason: "Algorithmic reverb with lower CPU cost" }
+  - { id: "Convolution", type: module, reason: "Direct equivalent -- FFT partitioned convolution reverb" }
 commonMistakes:
   - title: "Always monophonic, not per-voice"
     wrong: "Placing filters.convolution inside a polyphonic voice chain expecting per-voice reverb"
@@ -22,6 +23,14 @@ commonMistakes:
     wrong: "Modulating Damping or HiCut in real time expecting smooth changes"
     right: "Damping and HiCut are applied during impulse response loading, not in real time. Changes trigger a reload."
     explanation: "These parameters pre-process the impulse response. Changing them causes the IR to be reloaded with crossfading, which is not suited for continuous modulation."
+  - title: "Call Engine.loadAudioFilesIntoPool() before exporting"
+    wrong: "Exporting a plugin without calling Engine.loadAudioFilesIntoPool() first"
+    right: "Call Engine.loadAudioFilesIntoPool() in onInit to ensure all IRs are embedded in the compiled plugin."
+    explanation: "The audio file pool does not load all files by default. At export time only files currently in use are embedded. Without this call, IR files will be missing in the compiled plugin."
+  - title: "IR file paths are case-sensitive in compiled plugins"
+    wrong: "Using a filename case that differs from the actual file on disk (e.g. '.wav' when the file is '.WAV')"
+    right: "Ensure the exact case of the filename matches between your setFile() call and the file on disk."
+    explanation: "In the HISE IDE on Windows, file paths are case-insensitive. In a compiled plugin, the path is used as a case-sensitive string key on all platforms. A mismatch will silently fail to load the IR."
 llmRef: |
   filters.convolution
 
@@ -45,9 +54,17 @@ llmRef: |
   Common mistakes:
     Not polyphonic - always processes summed output.
     Damping and HiCut are not real-time - they trigger IR reload.
+    Must call Engine.loadAudioFilesIntoPool() in onInit before exporting or IRs will be missing.
+    IR file paths are case-sensitive in compiled plugins even if they are not in the HISE IDE.
+    Engine.getSampleRate() returns undefined in onInit inside a compiled plugin -- read it in prepareToPlay instead.
 
   See also:
     [alternative] fx.reverb - algorithmic reverb with lower CPU
+    [module] Convolution - direct equivalent -- FFT partitioned convolution reverb
+forumReferences:
+  - { tid: 819, summary: "Engine.loadAudioFilesIntoPool() required for IR embedding" }
+  - { tid: 1139, summary: "Case-sensitive IR file paths in compiled plugins" }
+  - { tid: 2054, summary: "Convolution gain increase at high sample rates" }
 ---
 
 A partitioned FFT convolution reverb that convolves the input signal with an impulse response loaded from an AudioFile slot. The wet signal is mixed at approximately 50% with the dry input. This is the only filter node that is not polyphonic - it always processes the summed signal on a monophonic bus.
@@ -126,16 +143,34 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
 The node does not support frame-based processing. It must be placed in a block-processing context (not inside a [container.frame2_block]($SN.container.frame2_block$)).
 
+The AudioFile slot accepts audio files directly. SampleMap and SFZ references are not supported. To access the convolution node from HiseScript, use `Synth.getAudioSampleProcessor()` -- not `Synth.getEffect()`. The AudioSampleProcessor reference exposes `setFile()` for loading IRs. Alternatively, set the audio file slot to External in the node UI and use `getAudioFile(0)` on the ScriptFX reference; this pattern also works after compiling the network to C++.
+
+### Embedding IRs for Export
+
+Call `Engine.loadAudioFilesIntoPool()` in onInit before exporting. Without this, only files currently in use are embedded in the compiled plugin and other IRs in the AudioFiles folder will be missing. This is the most common cause of missing IR resources in compiled plugins.
+
+### File Path Case Sensitivity
+
+IR file paths are case-sensitive in compiled plugins on all platforms, even though they may be case-insensitive in the HISE IDE on Windows. Ensure the filename string passed to `setFile()` matches the exact case of the file on disk. A mismatch will silently fail to load the IR.
+
+### Sample Rate Considerations
+
+`Engine.getSampleRate()` returns undefined in onInit inside an exported plugin because the sample rate is not yet known at that point. To read the sample rate (e.g. for loading rate-specific IRs), use the `prepareToPlay` callback of a Script FX module instead.
+
+### IR Preset Recall
+
+The convolution node does not automatically save which IR is loaded as part of a preset. To persist the selected IR across preset changes, store the IR selection as an integer index in a hidden knob or slider. The preset system saves the knob value, and the control callback reloads the correct IR on recall using the index into an array of IR file references.
+
+### Wet/Dry Control
+
 The wet/dry mix is fixed at approximately 50% and cannot be adjusted. To control the wet/dry balance, place the convolution node in a [container.split]($SN.container.split$) with a [control.xfader]($SN.control.xfader$) controlling the mix between the dry path and the convolution path.
 
-The AudioFile slot accepts audio files directly. SampleMap and SFZ references are not supported.
-
-When using a convolution node inside a ScriptFX module, load impulse responses via `Synth.getEffect('ScriptFXId').getAudioFile(0)` rather than `getAudioSampleProcessor()`, since scriptnode nodes expose their audio slots through the `getAudioFile()` interface.
+### AudioFile Range
 
 The Range parameter on the AudioFile slot can be used to select a portion of a longer audio file as the impulse response, allowing multiple IRs to be packed into a single file.
 
-**See also:** $SN.fx.reverb$ -- algorithmic reverb with lower CPU cost
+**See also:** $SN.fx.reverb$ -- algorithmic reverb with lower CPU cost, $MODULES.Convolution$ -- direct equivalent -- FFT partitioned convolution reverb

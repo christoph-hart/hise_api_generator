@@ -9,6 +9,8 @@ cpuProfile:
   baseline: low
   polyphonic: true
   scalingFactors: []
+forumReferences:
+  - { tid: 14257, reason: "FM operator signal flow and feedback pattern" }
 seeAlso:
   - { id: "core.phasor_fm", type: companion, reason: "FM ramp carrier for custom waveforms via waveshaping" }
   - { id: "core.oscillator", type: alternative, reason: "Standalone oscillator with multiple waveforms but no FM input" }
@@ -21,6 +23,10 @@ commonMistakes:
     wrong: "Expecting to change the carrier waveform with a Mode parameter"
     right: "The carrier is always a sine wave. For custom carrier waveforms, use core.phasor_fm with a waveshaper."
     explanation: "This node has no waveform selection. It produces a sine carrier only. Use core.phasor_fm plus a table or waveshaper for other carrier shapes."
+  - title: "Output is mono -- stereo requires container.multi"
+    wrong: "Expecting stereo output from a single core.fm node in a stereo network"
+    right: "Place two core.fm instances inside a container.multi to produce independent left and right channels."
+    explanation: "The fm node processes a single channel. In a stereo network it only writes to channel 0. Use container.multi to split processing per channel."
 llmRef: |
   core.fm
 
@@ -45,6 +51,9 @@ llmRef: |
   Common mistakes:
     - Modulator must be placed before this node in the chain
     - Carrier is always sine - no waveform selection
+    - Mono output -- use container.multi for stereo
+
+  Forum references: tid:14257 (FM feedback pattern with frame_block)
 
   See also:
     companion core.phasor_fm -- FM ramp for custom waveforms
@@ -117,8 +126,16 @@ groups:
 ---
 ::
 
-## Notes
+### Modulator parameter
 
-The FM modulator source must be placed before this node in the signal chain. To build a two-operator FM patch, place one [core.oscillator]($SN.core.oscillator$) (or another fm node) before this one. The carrier is always a sine wave; for custom carrier waveforms, use [core.phasor_fm]($SN.core.phasor_fm$) followed by a waveshaper.
+The Modulator parameter is not the modulation source itself -- it is a gain multiplier applied to the incoming audio signal before FM processing. The actual modulation source is whatever audio signal arrives on channel 0 of the input. A typical 2-operator chain is: `oscillator -> ahdsr -> fm -> ahdsr`. For 3+ operators, chain additional fm nodes.
+
+### FM feedback
+
+To create FM feedback (a carrier modulating itself), route the output signal back to the input using a feedback path and wrap the chain in a `container.framex_block`. Without the frame container, the feedback delay equals the full buffer size. With it, the delay is reduced to a single sample. Compile the network for acceptable CPU performance when using feedback.
+
+### Stereo output
+
+The fm node processes a single channel. To produce stereo FM synthesis, place two fm nodes inside a [container.multi]($SN.container.multi$) which routes each instance to a separate channel.
 
 **See also:** $SN.core.phasor_fm$ -- FM ramp carrier for custom waveforms via waveshaping, $SN.core.oscillator$ -- standalone multi-waveform oscillator

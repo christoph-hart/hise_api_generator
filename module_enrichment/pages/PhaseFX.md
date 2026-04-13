@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: Chorus, type: alternative, reason: "Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep" }
+  - { id: "fx.phase_delay", type: scriptnode, reason: "Scriptnode allpass phase-shift building block (PhaseFX uses cascaded allpass stages)" }
 commonMistakes:
   - title: "Requires external modulation"
     wrong: "Adding a Phase FX and expecting it to sweep automatically"
@@ -62,6 +63,7 @@ llmRef: |
 
   See also:
     alternative Chorus - modulated delay lines instead of allpass filters
+    [scriptnode] fx.phase_delay - scriptnode allpass phase-shift building block (PhaseFX uses cascaded allpass stages)
 ---
 
 ::category-tags
@@ -162,4 +164,4 @@ Phase FX has no internal LFO. Without modulators in the Phase Modulation chain, 
 
 Frequency1 and Frequency2 are smoothed with a 50 ms ramp to prevent clicks when changed via automation or scripting.
 
-**See also:** $MODULES.Chorus$ -- Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep
+**See also:** $MODULES.Chorus$ -- Uses modulated delay lines rather than allpass filters, producing pitch-shift chorus rather than notch sweep, $SN.fx.phase_delay$ -- scriptnode allpass phase-shift building block (PhaseFX uses cascaded allpass stages)

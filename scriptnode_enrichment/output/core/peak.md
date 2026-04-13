@@ -9,14 +9,22 @@ cpuProfile:
   baseline: negligible
   polyphonic: false
   scalingFactors: []
+forumReferences:
+  - { tid: 8652, reason: "ENABLE_ALL_PEAK_METERS compile definition for exported plugins" }
+  - { tid: 7566, reason: "Using core.peak as an envelope follower trigger" }
 seeAlso:
   - { id: "core.peak_unscaled", type: disambiguation, reason: "Sends the raw signed peak value without folding to absolute" }
   - { id: "math.sig2mod", type: companion, reason: "Converts a bipolar audio signal to the 0-1 modulation range" }
+  - { id: "DisplayBufferSource", type: api, reason: "DisplayBufferSource API enables script-side access to peak meter data" }
 commonMistakes:
   - title: "Update rate depends on block size"
     wrong: "Expecting sample-accurate modulation output from core.peak"
     right: "Place core.peak inside a container.frame2_block for sample-accurate updates, or container.fix8_block for a fixed update rate."
     explanation: "The node sends one modulation value per audio block. The update rate depends on the surrounding container's block size."
+  - title: "Peak metering requires a compile definition in exported plugins"
+    wrong: "Expecting peak meters to work in the compiled plugin without extra settings"
+    right: "Add ENABLE_ALL_PEAK_METERS=1 to the Extra Definitions in the project settings before exporting."
+    explanation: "Peak metering (including MatrixPeakMeter and getCurrentLevel) is disabled by default in compiled plugins to save CPU. The compile definition must be added explicitly."
 llmRef: |
   core.peak
 
@@ -36,10 +44,14 @@ llmRef: |
 
   Common mistakes:
     Update rate depends on block size -- use a fixed-block container for predictable timing.
+    Peak metering disabled in compiled plugins by default -- add ENABLE_ALL_PEAK_METERS=1.
+
+  Forum references: tid:8652 (ENABLE_ALL_PEAK_METERS compile definition), tid:7566 (peak as envelope follower)
 
   See also:
     [disambiguation] core.peak_unscaled -- raw signed peak without absolute folding
     [companion] math.sig2mod -- bipolar-to-unipolar signal conversion
+    [api] DisplayBufferSource -- script-side access to peak meter data
 ---
 
 This node analyses the input signal and detects the maximum absolute value across all channels for each audio block. The result is sent as a normalised modulation signal to any connected target. The audio signal passes through completely unmodified.
@@ -71,10 +83,18 @@ analyse(input) {
 
 ::
 
-## Notes
+### Update rate
 
 The modulation output updates once per audio block. To get a fixed update rate, wrap this node in a [container.fix8_block]($SN.container.fix8_block$) or similar fixed-block container. For sample-accurate control signals, use [container.frame2_block]($SN.container.frame2_block$).
 
 If you need the raw signed peak value (preserving the sign of the loudest sample), use [core.peak_unscaled]($SN.core.peak_unscaled$) instead.
 
-**See also:** $SN.core.peak_unscaled$ -- raw signed peak without absolute folding, $SN.math.sig2mod$ -- converts bipolar audio to 0-1 modulation range
+### Envelope follower
+
+The normalised modulation output of core.peak can be connected to a gate parameter on an AHDSR or other envelope to create an amplitude-triggered gate effect. For smoother envelope following with dedicated attack and release controls, prefer the `envelope_follower` node. A `cable_expr` node can be inserted between the peak output and the gate input to define a custom threshold.
+
+### Compiled plugin metering
+
+Peak metering (including the MatrixPeakMeter FloatingTile and timer-based `getCurrentLevel()` calls) is disabled by default in compiled plugins. To enable it, add `ENABLE_ALL_PEAK_METERS=1` to the Extra Definitions in the project settings before exporting. An additional `ENABLE_PEAK_METERS_FOR_GAIN_EFFECT=1` flag exists for gain-effect-specific metering.
+
+**See also:** $SN.core.peak_unscaled$ -- raw signed peak without absolute folding, $SN.math.sig2mod$ -- converts bipolar audio to 0-1 modulation range, $API.DisplayBufferSource$ -- script-side access to peak meter data

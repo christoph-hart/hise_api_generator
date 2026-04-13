@@ -78,7 +78,7 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 Zero and negative Value settings produce silence rather than causing errors. This means the node cannot perform negative division or phase inversion.
 

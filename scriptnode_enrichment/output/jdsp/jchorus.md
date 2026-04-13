@@ -12,6 +12,7 @@ cpuProfile:
 seeAlso:
   - { id: "jdsp.jdelay", type: companion, reason: "Raw delay line for building custom modulation effects" }
   - { id: "jdsp.jdelay_cubic", type: companion, reason: "Delay with flat frequency response for cleaner chorus/flanger" }
+  - { id: "Chorus", type: module, reason: "Direct equivalent -- LFO-modulated delay chorus" }
 commonMistakes:
   - title: "CentreDelay near maximum causes clipping"
     wrong: "Setting CentreDelay to exactly 100 ms"
@@ -43,6 +44,7 @@ llmRef: |
   See also:
     companion jdsp.jdelay -- raw delay line for custom modulation effects
     companion jdsp.jdelay_cubic -- delay with flat frequency response
+    [module] Chorus -- module-tree LFO-modulated delay chorus
 ---
 
 A chorus effect that modulates a delay line with an internal LFO. The delayed copies of the input signal are pitch-shifted slightly by the LFO modulation, creating a thicker, wider sound. Adjusting Rate and Depth controls the speed and intensity of the modulation, whilst CentreDelay sets the base delay time that determines the overall character.
@@ -110,4 +112,4 @@ groups:
 ---
 ::
 
-**See also:** [$SN.jdsp.jdelay$]($SN.jdsp.jdelay$) -- raw delay line for building custom modulation effects, [$SN.jdsp.jdelay_cubic$]($SN.jdsp.jdelay_cubic$) -- delay with flat frequency response for cleaner chorus/flanger
+**See also:** [$SN.jdsp.jdelay$]($SN.jdsp.jdelay$) -- raw delay line for building custom modulation effects, [$SN.jdsp.jdelay_cubic$]($SN.jdsp.jdelay_cubic$) -- delay with flat frequency response for cleaner chorus/flanger, $MODULES.Chorus$ -- module-tree LFO-modulated delay chorus

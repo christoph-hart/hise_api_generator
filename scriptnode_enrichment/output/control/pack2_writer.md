@@ -92,10 +92,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- The node has no modulation output. It writes to complex data (the slider pack), not to parameter targets.
-- UI updates for the slider pack display are asynchronous.
-- Variants from [control.pack3_writer]($SN.control.pack3_writer$) to [control.pack8_writer]($SN.control.pack8_writer$) provide the same functionality with 3 to 8 Value parameters respectively.
+The node has no modulation output -- it writes to complex data (the slider pack), not to parameter targets. UI updates for the slider pack display are asynchronous. Variants from [control.pack3_writer]($SN.control.pack3_writer$) to [control.pack8_writer]($SN.control.pack8_writer$) provide the same functionality with 3 to 8 Value parameters respectively.
 
 **See also:** $SN.control.pack_resizer$ -- dynamically resizes slider packs, $SN.control.clone_pack$ -- reads slider pack values for clone distribution

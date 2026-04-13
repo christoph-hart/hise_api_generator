@@ -16,6 +16,7 @@ seeAlso:
   - { id: GlobalTimeVariantModulator, type: target, reason: "Consumer that continuously reads time-variant values from this container" }
   - { id: GlobalStaticTimeVariantModulator, type: target, reason: "Consumer that snapshots time-variant values at note-on from this container" }
   - { id: MatrixModulator, type: target, reason: "Matrix-based consumer that combines multiple modulators from this container" }
+  - { id: "core.global_mod", type: scriptnode, reason: "Scriptnode node that reads modulation signals from this container" }
 forumReferences:
   - id: 1
     title: "Container must be placed above all consumers"
@@ -88,6 +89,7 @@ llmRef: |
 
   See also:
     target GlobalEnvelopeModulator, GlobalVoiceStartModulator, GlobalTimeVariantModulator, GlobalStaticTimeVariantModulator, MatrixModulator - consumer types that read from this container
+    [scriptnode] core.global_mod -- scriptnode node that reads modulation signals from this container
 ---
 
 ::category-tags
@@ -192,4 +194,4 @@ chains:
 ---
 ::
 
-**See also:** $MODULES.GlobalEnvelopeModulator$ -- reads per-voice envelope values from this container, $MODULES.GlobalVoiceStartModulator$ -- reads per-note voice-start values from this container, $MODULES.GlobalTimeVariantModulator$ -- continuously reads monophonic time-variant values from this container, $MODULES.GlobalStaticTimeVariantModulator$ -- snapshots a time-variant value at note-on from this container, $MODULES.MatrixModulator$ -- combines multiple modulators from this container via a connection matrix
+**See also:** $MODULES.GlobalEnvelopeModulator$ -- reads per-voice envelope values from this container, $MODULES.GlobalVoiceStartModulator$ -- reads per-note voice-start values from this container, $MODULES.GlobalTimeVariantModulator$ -- continuously reads monophonic time-variant values from this container, $MODULES.GlobalStaticTimeVariantModulator$ -- snapshots a time-variant value at note-on from this container, $MODULES.MatrixModulator$ -- combines multiple modulators from this container via a connection matrix, $SN.core.global_mod$ -- scriptnode node that reads modulation signals from this container

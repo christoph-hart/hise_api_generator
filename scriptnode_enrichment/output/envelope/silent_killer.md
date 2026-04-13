@@ -44,7 +44,7 @@ llmRef: |
 
 Monitors the audio signal and sends a voice reset message when silence is detected after a note-off event. The audio passes through completely unmodified. This provides automatic voice cleanup as a fallback when you cannot easily derive a clean gate signal from an envelope.
 
-The node checks for silence on a per-block basis and only triggers when three conditions are met: the Active parameter is enabled, the voice has received a note-off, and the audio block is silent. The note-off requirement prevents false kills during intentional momentary silences (for example, from an LFO modulating amplitude to zero).
+The node checks for silence on a per-block basis and only triggers when three conditions are met: the Active parameter is enabled, the voice has received a note-off, and the audio block is silent. The note-off requirement prevents false kills during intentional momentary silences (for example, from an LFO modulating amplitude to zero). The voice reset is immediate with no fade-out, but since the audio is already silent when the reset fires, no click occurs.
 
 ## Signal Path
 
@@ -94,11 +94,5 @@ groups:
       - { name: Active, desc: "Enables silence detection. When Off, the node becomes a transparent passthrough with no voice management.", range: "Off / On", default: "On" }
 ---
 ::
-
-## Notes
-
-- The audio signal passes through completely unchanged. The node only reads the audio data to check for silence; it never modifies it.
-- The voice reset is immediate, with no fade-out. Since the audio is already silent when the reset fires, no click occurs.
-- This approach is less predictable than using an explicit envelope gate with [envelope.voice_manager]($SN.envelope.voice_manager$). Use silent_killer as a safety net or when the signal path makes gate-based management impractical.
 
 **See also:** $SN.envelope.voice_manager$ -- preferred gate-based voice management

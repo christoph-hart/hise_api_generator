@@ -88,12 +88,10 @@ dispatch(input) {
 
 ::
 
-## Notes
+The `SmoothingTime` property (default 20 ms) controls the crossfade duration. Setting it to 0 effectively creates a hard bypass. MIDI events are always forwarded to children regardless of bypass state, keeping their internal state (note tracking, CC values) up to date. Bypass state is shared across all voices in polyphonic contexts -- there is no per-voice bypass. Changing `SmoothingTime` during a crossfade cancels the transition and snaps to the current bypass state.
 
-- The `SmoothingTime` property (default 20 ms) controls the crossfade duration. Setting it to 0 effectively creates a hard bypass.
-- MIDI events are always forwarded to children regardless of bypass state, keeping their internal state (note tracking, CC values) up to date.
-- Bypass state is shared across all voices in polyphonic contexts. There is no per-voice bypass.
-- Changing `SmoothingTime` during a crossfade cancels the transition and snaps to the current bypass state.
-- To derive bypass state from a continuous parameter (e.g. bypass a filter when its gain reaches zero), connect a `math.compare` node between the parameter and the soft_bypass. This gives precise threshold control rather than relying on the default 0.5 cutoff.
+### Threshold-based Bypass Control
+
+To derive bypass state from a continuous parameter (e.g. bypass a filter when its gain reaches zero), connect a `math.compare` node between the parameter and the soft_bypass. This gives precise threshold control rather than relying on the default 0.5 cutoff.
 
 **See also:** $SN.container.chain$ -- hard bypass with no crossfade, $SN.container.branch$ -- index-based switching that benefits from soft bypass wrappers

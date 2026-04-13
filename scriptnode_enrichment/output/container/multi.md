@@ -17,6 +17,8 @@ commonMistakes:
     wrong: "Adding three child nodes in a stereo (2-channel) context"
     right: "Ensure the channel count is at least equal to the number of children. Use a container with more channels or reduce children."
     explanation: "Multi divides channels equally among children. If there are more children than channels, an error is raised and excess children are silently skipped."
+forumReferences:
+  - { tid: 7457, reason: "HISE_NUM_FX_PLUGIN_CHANNELS for multi-output plugin export" }
 llmRef: |
   container.multi
 
@@ -32,6 +34,9 @@ llmRef: |
 
   When to use:
     Independent left/right processing, mid/side processing (with routing.ms_encode/ms_decode), or any topology requiring per-channel processing paths.
+
+  Plugin export:
+    Set HISE_NUM_FX_PLUGIN_CHANNELS in ExtraDefinitions to expose more than 2 channels from a compiled FX plugin. Internal channel count can exceed this value for hidden processing channels.
 
   Common mistakes:
     Adding more children than available channels raises an error. Ensure channel count >= child count.
@@ -70,9 +75,10 @@ dispatch(input) {
 
 ::
 
-## Notes
+Each child receives an independent copy of MIDI events, so one child's event modifications do not affect others.
 
-- Each child receives an independent copy of MIDI events, so one child's event modifications do not affect others.
-- The total channel count of the network must be at least equal to the number of children. Excess children beyond the available channels are silently skipped.
+### Multi-Channel Plugin Export
+
+To expose more than one stereo pair from an FX plugin that uses a multi container (or any multichannel master container), set the `HISE_NUM_FX_PLUGIN_CHANNELS` preprocessor define in ExtraDefinitions to the desired channel count. Without this, the compiled plugin only exposes 2 channels regardless of the internal channel configuration. This also enables DAW sidechain inputs on supporting hosts. You can set the internal routing matrix channel count higher than `HISE_NUM_FX_PLUGIN_CHANNELS` to use extra channel pairs for internal processing without exposing them to the DAW.
 
 **See also:** $SN.container.split$ -- same channels to each child instead of different channels, $SN.container.sidechain$ -- channel doubling for sidechain input

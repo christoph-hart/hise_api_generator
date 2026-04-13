@@ -16,6 +16,13 @@ commonMistakes:
     wrong: "Adding a dynamics node with Sidechain enabled but not routing any signal into the extra channels"
     right: "Use routing nodes (routing.receive, routing.global_cable) to fill the sidechain channels with the desired input signal."
     explanation: "The extra channels created by the sidechain container are zeroed by default. Without routing a signal into them, sidechain-enabled processors detect silence and have no effect."
+  - title: "Not enabling all channels on the Script FX wrapper"
+    wrong: "Setting up a 4-channel sidechain compressor but leaving the wrapping Script FX at 2 channels"
+    right: "Enable all 4 channels on the Script FX module that hosts the scriptnode network, in addition to configuring the master container for 4 channels."
+    explanation: "The Script FX module must also have its channel count set to match the master container. Otherwise the extra sidechain channels are not passed through to the network."
+forumReferences:
+  - { tid: 8165, reason: "Author-verified sidechain limiter setup snippet" }
+  - { tid: 7678, reason: "4-channel sidechain compressor configuration" }
 llmRef: |
   container.sidechain
 
@@ -36,10 +43,12 @@ llmRef: |
     Sidechain compression, ducking, or any effect that uses a secondary signal to control processing. Combine with dynamics nodes that have a Sidechain parameter and routing nodes to fill the extra channels.
 
   Key details:
-    Internal routing only. External DAW sidechain input requires HISE source modification (HISE_NUM_FX_PLUGIN_CHANNELS).
+    Internal routing only. External DAW sidechain input requires HISE_NUM_FX_PLUGIN_CHANNELS preprocessor define.
+    The Script FX module wrapping the network must also have its channel count set to match.
 
   Common mistakes:
     Sidechain channels are zeroed by default. Route a signal into them using routing nodes.
+    Script FX channel count must match the master container channel count.
 
   See also:
     [alternative] container.multi -- channel splitting without doubling
@@ -78,10 +87,10 @@ dispatch(input) {
 
 ::
 
-## Notes
+Sidechain channels are zeroed at the start of each block, so signal routed into them does not carry over between blocks. Sidechain containers cannot be nested inside frame-based containers.
 
-- Sidechain channels are zeroed at the start of each block. Signal routed into them does not carry over between blocks.
-- Sidechain containers cannot be nested inside frame-based containers.
-- The sidechain container handles signal routing within the scriptnode network only. Accepting an external sidechain input from a DAW requires modifying HISE source files and setting `HISE_NUM_FX_PLUGIN_CHANNELS` to the total of main plus sidechain channels.
+### External Sidechain Input
+
+The sidechain container handles signal routing within the scriptnode network only. To accept an external sidechain input from a DAW, set the `HISE_NUM_FX_PLUGIN_CHANNELS` preprocessor define in ExtraDefinitions to the total number of main plus sidechain channels (typically 4). This exposes the extra channels to the host, enabling sidechain input on supporting DAWs. Earlier workarounds that required editing HISE source files directly are obsolete since this preprocessor define was introduced.
 
 **See also:** $SN.container.multi$ -- channel splitting without doubling

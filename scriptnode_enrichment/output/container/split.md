@@ -79,9 +79,6 @@ dispatch(input) {
 
 ::
 
-## Notes
-
-- Each child receives an independent copy of the original input. Changes made by one child do not affect other children.
-- Memory cost is constant regardless of child count - a single work buffer is reused for each additional child.
+Each child receives an independent copy of the original input, so changes made by one child do not affect other children. Memory cost is constant regardless of child count since a single work buffer is reused for each additional child.
 
 **See also:** $SN.container.chain$ -- serial processing instead of parallel, $SN.container.multi$ -- channel splitting instead of signal copying, $SN.container.clone$ -- parallel processing with identical children

@@ -44,7 +44,7 @@ llmRef: |
 
 Sends a voice reset message when the Kill Voice parameter drops below 0.5. This is the standard way to manage voice lifecycle in scriptnode: connect an envelope's Gate modulation output to the Kill Voice parameter, and the voice is stopped once the envelope finishes its release phase and goes idle.
 
-The node does not process audio and sits outside the signal path. Despite being monophonic, it operates within the polyphonic voice rendering context, so the voice reset targets whichever voice is currently being rendered.
+The node does not process audio and sits outside the signal path. Despite being monophonic, it operates within the polyphonic voice rendering context, so the voice reset targets whichever voice is currently being rendered. The Kill Voice parameter uses a step size of 1, so the UI presents it as a simple toggle (0 or 1), but any value below 0.5 from a modulation source triggers the kill. The node displays the number of active voices in its custom editor and provides a panic button for manually resetting all voices.
 
 ## Signal Path
 
@@ -83,11 +83,5 @@ groups:
       - { name: Kill Voice, desc: "Triggers a voice reset when the value drops below 0.5. Connect an envelope's Gate modulation output here. The default of 1.0 means no kill; a value of 0 kills the voice.", range: "0 - 1", default: "1.0" }
 ---
 ::
-
-## Notes
-
-- The node displays the number of active voices in its custom editor and provides a panic button for manually resetting all voices.
-- The Kill Voice parameter uses a step size of 1, so the UI presents it as a simple toggle (0 or 1). However, any value below 0.5 from a modulation source triggers the kill.
-- For the standard voice management pattern, connect the Gate output of an [envelope.ahdsr]($SN.envelope.ahdsr$), [envelope.flex_ahdsr]($SN.envelope.flex_ahdsr$), or [envelope.simple_ar]($SN.envelope.simple_ar$) to the Kill Voice input.
 
 **See also:** $SN.envelope.ahdsr$ -- connect its Gate output here, $SN.envelope.silent_killer$ -- silence-based fallback

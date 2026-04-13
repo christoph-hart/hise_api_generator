@@ -13,6 +13,7 @@ seeAlso:
   - { id: "dynamics.comp", type: alternative, reason: "Compressor for reducing gain above threshold" }
   - { id: "dynamics.limiter", type: alternative, reason: "Limiter for peak control" }
   - { id: "dynamics.envelope_follower", type: companion, reason: "Envelope tracking without gain reduction" }
+  - { id: "Dynamics", type: module, reason: "Module-tree dynamics processor that combines compressor, gate, and limiter" }
 commonMistakes:
   - title: "Sidechain mode needs extra channels"
     wrong: "Enabling Sidechain mode on a stereo signal and expecting it to use an external key signal"
@@ -44,10 +45,16 @@ llmRef: |
   Common mistakes:
     Sidechain mode requires double the channel count (4 channels for stereo).
 
+  Depth control:
+    Route gate modulation into core.pma and use multiply to scale gate depth (adjustable downward expansion instead of hard gating).
+
   See also:
     [alternative] dynamics.comp - compressor for gain reduction above threshold
     [alternative] dynamics.limiter - limiter for peak control
     [companion] dynamics.envelope_follower - envelope tracking without gain reduction
+    [module] Dynamics - module-tree dynamics processor that combines compressor, gate, and limiter
+forumReferences:
+  - { tid: 12246, summary: "Gate depth control using core.pma to scale modulation output" }
 ---
 
 A noise gate that attenuates signals falling below the threshold. The ratio controls the depth of attenuation: low ratios produce gentle expansion, while high ratios approach hard gating. Attack controls how quickly the gate opens when the signal rises above the threshold, and release controls how quickly it closes.
@@ -118,12 +125,12 @@ groups:
 ---
 ::
 
-## Notes
+### Modulation Output
 
 The modulation output sends the inverse of the gain reduction, normalised to 0..1. A value of 1.0 means the gate is fully open; 0.0 means it is fully closed. This can be routed to other parameters for gate activity metering.
 
-When using Sidechain mode, the node expects double the normal channel count. For stereo gating with an external key signal, route four channels into the node: the first two carry audio, the second two carry the sidechain key signal.
+### Adjustable Gate Depth
 
-Unlike [dynamics.comp]($SN.dynamics.comp$), which reduces gain above the threshold, the gate attenuates signals that fall below the threshold.
+By default the gate fully attenuates the signal when closed. To create a downward expander with adjustable depth instead of a hard gate, route the gate modulation output into a `core.pma` node and use the multiply parameter to scale how deeply the gate closes. A multiply value of 0.5, for example, means the gate only attenuates by half when closed.
 
-**See also:** $SN.dynamics.comp$ -- compressor for reducing gain above threshold, $SN.dynamics.limiter$ -- limiter for peak control, $SN.dynamics.envelope_follower$ -- envelope tracking without gain reduction
+**See also:** $SN.dynamics.comp$ -- compressor for reducing gain above threshold, $SN.dynamics.limiter$ -- limiter for peak control, $SN.dynamics.envelope_follower$ -- envelope tracking without gain reduction, $MODULES.Dynamics$ -- module-tree dynamics processor that combines compressor, gate, and limiter

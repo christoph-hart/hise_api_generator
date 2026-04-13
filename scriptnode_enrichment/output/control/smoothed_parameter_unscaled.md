@@ -109,10 +109,6 @@ groups:
 ---
 ::
 
-## Notes
-
-The smoothing modes (Linear Ramp, Low Pass, No) behave identically to [control.smoothed_parameter]($SN.control.smoothed_parameter$). The only difference is the output: this variant bypasses normalisation, so the target receives the exact value rather than having it mapped through the target's parameter range.
-
-Each voice maintains its own independent smoothing state in polyphonic contexts.
+The smoothing modes (Linear Ramp, Low Pass, No) behave identically to [control.smoothed_parameter]($SN.control.smoothed_parameter$). The only difference is the output: this variant bypasses normalisation, so the target receives the exact value rather than having it mapped through the target's parameter range. Each voice maintains its own independent smoothing state in polyphonic contexts.
 
 **See also:** $SN.control.smoothed_parameter$ -- same smoothing with normalised 0-1 output, $SN.control.unscaler$ -- simple passthrough for unnormalised values without smoothing

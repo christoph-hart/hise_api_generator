@@ -110,13 +110,13 @@ groups:
 ---
 ::
 
-## Notes
+### Smoothing Modes
 
 The Mode property must be set before compilation and determines the smoothing algorithm:
 
-- **Linear Ramp** - constant-rate interpolation, reaches the target in exactly the specified time
-- **Low Pass** - exponential approach, fast initial response that tapers off near the target
-- **No** - no smoothing, equivalent to setting Enabled to off permanently
+- **Linear Ramp** -- constant-rate interpolation, reaches the target in exactly the specified time
+- **Low Pass** -- exponential approach, fast initial response that tapers off near the target
+- **No** -- no smoothing, equivalent to setting Enabled to off permanently
 
 On voice start, the smoother resets to the current target value and forces a modulation update, ensuring the first sample of each voice receives the correct value.
 

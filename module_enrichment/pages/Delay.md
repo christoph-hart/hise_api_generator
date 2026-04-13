@@ -14,6 +14,8 @@ seeAlso:
   - { id: PhaseFX, type: alternative, reason: "Allpass-based phaser for notch sweeps rather than echo repeats" }
   - { id: Chorus, type: alternative, reason: "Short modulated delay for chorus/thickening rather than rhythmic echoes" }
   - { id: SimpleGain, type: companion, reason: "SimpleGain includes a static delay feature useful for timing alignment without feedback" }
+  - { id: "core.fix_delay", type: scriptnode, reason: "Scriptnode fixed-size delay line (no feedback or tempo sync -- build those with send/receive)" }
+  - { id: "jdsp.jdelay", type: scriptnode, reason: "Scriptnode JUCE-based delay line with interpolation options" }
 forumReferences:
   - id: 1
     title: "1ms granularity; use scriptnode for sub-millisecond delays"
@@ -67,6 +69,8 @@ llmRef: |
     alternative PhaseFX - allpass notch sweeps
     alternative Chorus - short modulated delay for thickening
     companion SimpleGain - static delay for timing alignment
+    [scriptnode] core.fix_delay -- scriptnode fixed-size delay line (no feedback or tempo sync -- build those with send/receive)
+    scriptnode jdsp.jdelay -- JUCE-based delay line with interpolation options
 ---
 
 ::category-tags
@@ -187,4 +191,4 @@ groups:
 ---
 ::
 
-**See also:** $MODULES.PhaseFX$ -- Allpass-based phaser for notch sweeps rather than echo repeats, $MODULES.Chorus$ -- Short modulated delay for chorus/thickening rather than rhythmic echoes, $MODULES.SimpleGain$ -- Includes a static delay feature useful for timing alignment without feedback
+**See also:** $MODULES.PhaseFX$ -- Allpass-based phaser for notch sweeps rather than echo repeats, $MODULES.Chorus$ -- Short modulated delay for chorus/thickening rather than rhythmic echoes, $MODULES.SimpleGain$ -- Includes a static delay feature useful for timing alignment without feedback, $SN.core.fix_delay$ -- scriptnode fixed-size delay line (no feedback or tempo sync -- build those with send/receive), $SN.jdsp.jdelay$ -- Scriptnode JUCE-based delay line with interpolation options

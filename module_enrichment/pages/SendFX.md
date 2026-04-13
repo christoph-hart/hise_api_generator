@@ -12,6 +12,8 @@ cpuProfile:
   scalingFactors: [smoothing]
 seeAlso:
   - { id: SendContainer, type: alternative, reason: "The receive side of the send/return pair - accumulates signals from Send Effects and processes them through its FX chain" }
+  - { id: "routing.send", type: scriptnode, reason: "Scriptnode send node for bus-style routing in DspNetwork" }
+  - { id: "routing.receive", type: scriptnode, reason: "Scriptnode receive node for bus-style routing in DspNetwork" }
 commonMistakes:
   - title: "Send copies signal, doesn't remove it"
     wrong: "Expecting the Send Effect to remove the signal from the original chain"
@@ -75,6 +77,7 @@ llmRef: |
 
   See also:
     alternative SendContainer - the receive side of the pair
+    scriptnode routing.send + routing.receive - send/receive pair for bus-style routing in DspNetwork
 ---
 
 ::category-tags
@@ -191,4 +194,4 @@ The default gain of -100 dB means a newly added Send Effect is silent. Bypass us
 
 The `SendIndex` parameter (attribute index 2) can be set via `setAttribute()` to dynamically switch the target Send Container at runtime. Use `Engine.getDecibelsForGainFactor()` when exposing SendLevel as a dB knob. [3]($FORUM_REF.13113$)
 
-**See also:** $MODULES.SendContainer$ -- the receive side of the send/return pair, accumulates signals from Send Effects and processes them through its FX chain
+**See also:** $MODULES.SendContainer$ -- the receive side of the send/return pair, accumulates signals from Send Effects and processes them through its FX chain, $SN.routing.send$ + $SN.routing.receive$ -- scriptnode send/receive pair for bus-style routing in DspNetwork

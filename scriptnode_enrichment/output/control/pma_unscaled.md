@@ -94,7 +94,7 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 The output has no overflow protection. If the connected sources produce extreme values, the result can be any value including very large numbers. Ensure that downstream nodes can handle the expected output range.
 

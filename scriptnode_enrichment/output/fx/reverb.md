@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: "filters.convolution", type: alternative, reason: "Impulse response reverb for realistic spaces versus algorithmic reverb" }
+  - { id: "SimpleReverb", type: module, reason: "Direct equivalent -- Freeverb algorithm" }
 commonMistakes:
   - title: "Output is 100% wet only"
     wrong: "Using fx.reverb inline expecting a dry/wet mix"
@@ -37,14 +38,19 @@ llmRef: |
 
   Common mistakes:
     Output is 100% wet - use a parallel container for dry/wet mixing.
+    Room Size has no simple mapping to decay time in seconds - depends on Width and Damping too.
+
+  Stereo:
+    Always spreads input across the full stereo field (expected diffusion behaviour, not a bug).
 
   See also:
     alternative filters.convolution - impulse response reverb
+    [module] SimpleReverb - direct equivalent -- Freeverb algorithm
 ---
 
 A Freeverb-style algorithmic reverb that processes the input through parallel comb filters and series allpass filters to produce a diffuse reverb tail. The node outputs a 100% wet signal - to blend with the dry input, place it inside a [container.split]($SN.container.split$) or use a dry/wet template.
 
-The reverb handles both mono and stereo input automatically. With mono input it produces mono output; with stereo input it adds decorrelation between channels for a wider reverb image.
+The node is monophonic -- it processes a single shared reverb rather than duplicating state per voice, which is the typical usage pattern for a bus effect. The reverb handles both mono and stereo input automatically. With mono input it produces mono output; with stereo input it adds decorrelation between channels for a wider reverb image.
 
 ## Signal Path
 
@@ -93,7 +99,7 @@ process(input) {
 groups:
   - label: Reverb
     params:
-      - { name: Size, desc: "Room size. Controls the feedback amount in the comb filters, determining the length of the reverb tail. Higher values produce longer, more spacious decay.", range: "0.0 - 1.0", default: "0.5" }
+      - { name: Size, desc: "Room size. Controls the feedback amount in the comb filters, determining the length of the reverb tail. Higher values produce longer, more spacious decay. There is no simple mapping to decay time in seconds -- the actual decay also depends on Width and Damping.", range: "0.0 - 1.0", default: "0.5" }
       - { name: Damping, desc: "High-frequency absorption. Higher values cause high frequencies to decay faster than low frequencies, producing a warmer, darker reverb tail.", range: "0.0 - 1.0", default: "0.5" }
   - label: Stereo
     params:
@@ -101,10 +107,12 @@ groups:
 ---
 ::
 
-## Notes
-
-The node is monophonic - it processes a single shared reverb rather than duplicating the reverb state per voice. This is the typical usage pattern for reverb, which acts as a shared bus effect.
+### Dry/Wet Control
 
 For dry/wet control, place this node inside a [container.split]($SN.container.split$) alongside the dry signal path. Use a [control.xfader]($SN.control.xfader$) to control the blend.
 
-**See also:** $SN.filters.convolution$ -- impulse response reverb for realistic acoustic spaces
+### Stereo Behaviour
+
+The reverb always creates a full stereo output from any input, including hard-panned mono signals. This is expected diffusion behaviour -- a hard-panned signal will produce reverb spread across the entire stereo field. This is intentional, not a bug.
+
+**See also:** $SN.filters.convolution$ -- impulse response reverb for realistic acoustic spaces, $MODULES.SimpleReverb$ -- direct equivalent -- Freeverb algorithm

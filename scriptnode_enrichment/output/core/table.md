@@ -39,7 +39,7 @@ llmRef: |
 
 This node reads the absolute value of the input audio signal, maps it through a user-editable 512-point lookup table, and displays the result. The audio signal itself passes through completely unmodified. The table lookup is symmetrical: positive and negative input values of the same magnitude map to the same table position.
 
-The lookup table is editable through the node's UI. The input range of 0 to 1 (after taking the absolute value) maps across the full table.
+The lookup table is editable through the node's UI. The input range of 0 to 1 (after taking the absolute value) maps across the full table. The node has no parameters -- the table curve is edited directly through the graphical interface. The table uses linear interpolation between its 512 entries for smooth lookup results.
 
 ## Signal Path
 
@@ -65,11 +65,5 @@ process(input) {
 ```
 
 ::
-
-## Notes
-
-This node has no parameters. The table curve is edited directly through the node's graphical interface.
-
-The table uses linear interpolation between its 512 entries for smooth lookup results.
 
 **See also:** $SN.math.table$ -- lookup table for control signals

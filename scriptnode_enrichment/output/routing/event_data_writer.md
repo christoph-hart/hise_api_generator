@@ -99,11 +99,11 @@ groups:
 ---
 ::
 
-## Notes
-
-This node must be placed in a MIDI processing context, and the global routing manager must be initialised externally. Without a MIDI context, no event IDs are captured and no values are written.
+### Update Resolution
 
 The value is written once per buffer when driven by a modulation source. For higher-resolution updates across different sound generators, reduce the maximum block size with Engine.setMaximumBlockSize().
+
+### Compilation
 
 This node can be compiled within a DLL network as it does not depend on dynamic connections.
 

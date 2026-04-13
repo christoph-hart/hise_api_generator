@@ -80,11 +80,12 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
-- The node must be connected to a GlobalModulatorContainer via the runtime target system. Without a valid connection, the gate always reads as active.
-- The gate output is strictly binary (0 or 1). There are no intermediate values.
-- For non-envelope modulators (such as voice-start or time-variant types), the gate always returns 1 because these modulator types do not have per-voice release states.
-- Each voice independently tracks its own gate state based on the corresponding voice of the global modulator.
+The node must be connected to a GlobalModulatorContainer via the runtime target system. Without a valid connection, the gate always reads as active.
+
+### Limitations
+
+For non-envelope modulators (such as voice-start or time-variant types), the gate always returns 1 because these modulator types do not have per-voice release states.
 
 **See also:** $SN.envelope.extra_mod_gate$ -- same behaviour for extra modulation chains, $SN.envelope.voice_manager$ -- voice lifecycle management

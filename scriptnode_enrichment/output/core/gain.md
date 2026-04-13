@@ -12,13 +12,20 @@ cpuProfile:
     - parameter: Smoothing
       impact: low
       note: "Per-sample processing while smoothing is active; efficient block multiply when settled"
+forumReferences:
+  - { tid: 1524, reason: "Width parameter mid/side behaviour clarification" }
 seeAlso:
   - { id: "math.mul", type: alternative, reason: "Linear multiplication without dB scaling or smoothing" }
+  - { id: "SimpleGain", type: module, reason: "Module-tree gain utility with smoothed dB control" }
 commonMistakes:
   - title: "Gain range is attenuation only"
     wrong: "Expecting to boost a signal above unity with core.gain"
     right: "The Gain parameter ranges from -100 to 0 dB. Use math.mul for amplification above unity."
     explanation: "The maximum gain is 0 dB (unity). This node can only attenuate. For boosting, multiply the signal with a value greater than 1 using math.mul."
+  - title: "Width amplifies the side channel, not a pseudo-stereo effect"
+    wrong: "Using the Width parameter to add stereo width without monitoring output levels"
+    right: "Width controls the gain of the side (L-R) signal. Values above 100% amplify the side channel and can push the output above the original level."
+    explanation: "The Width parameter is a simple mid/side balance control. It does not apply any decorrelation or pseudo-stereo processing. Setting it beyond 100% boosts the side channel, which may cause clipping."
 llmRef: |
   core.gain
 
@@ -41,9 +48,13 @@ llmRef: |
 
   Common mistakes:
     - Cannot boost above 0 dB - use math.mul for amplification
+    - Width parameter amplifies the side (L-R) channel; values above 100% can exceed original level
+
+  Forum references: tid:1524 (Width parameter mid/side behaviour)
 
   See also:
     alternative math.mul -- linear multiplication without dB or smoothing
+    [module] SimpleGain -- module-tree gain utility with smoothed dB control
 ---
 
 The gain node multiplies all audio channels by a smoothed gain factor specified in decibels. It is the most commonly used node in scriptnode networks, providing clean volume control with built-in parameter smoothing to prevent clicks and zipper noise during gain changes.
@@ -99,10 +110,16 @@ groups:
 ---
 ::
 
-## Notes
+### Smoothing behaviour
 
 When the smoothing ramp is active, processing switches to per-sample mode. Once the gain has settled at its target, the node uses efficient block-based multiplication. This means short smoothing times have minimal CPU overhead.
 
+### Width parameter
+
+The Width parameter controls the gain of the side (L-R) signal in a mid/side decomposition. It does not apply decorrelation or pseudo-stereo processing. At 100%, the stereo image is unchanged. Below 100%, the side signal is attenuated (narrowing the image towards mono). Above 100%, the side signal is amplified, which increases the perceived stereo width but can push the output level above the original signal level.
+
+### Limitations
+
 At -100 dB the linear gain is approximately 0.00001, not exactly zero. For true silence, bypass the node or use a gate mechanism.
 
-**See also:** $SN.math.mul$ -- linear multiplication without dB scaling or smoothing
+**See also:** $SN.math.mul$ -- linear multiplication without dB scaling or smoothing, $MODULES.SimpleGain$ -- module-tree gain utility with smoothed dB control

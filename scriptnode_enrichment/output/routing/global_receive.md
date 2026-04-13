@@ -87,9 +87,11 @@ groups:
 ---
 ::
 
-## Notes
+### Multiple Receivers
 
 Multiple global_receive nodes can read from the same signal slot independently. Each adds the received audio into its own local chain without affecting the others.
+
+### Polyphonic Behaviour
 
 In a polyphonic context, each voice maintains its own read offset into the shared buffer. This handles sub-block voice starts correctly, aligning each voice's read position with the monophonic shared buffer.
 

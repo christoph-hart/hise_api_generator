@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "filters.ladder", type: disambiguation, reason: "Simpler ladder lowpass with lighter CPU cost" }
   - { id: "filters.svf", type: alternative, reason: "SVF with multiple filter types and better modulation stability" }
+  - { id: "PolyphonicFilter", type: module, reason: "Module-tree filter -- scriptnode offers individual filter types as separate nodes" }
 commonMistakes:
   - title: "Mode only affects display curve"
     wrong: "Switching the Mode parameter expecting different filter slopes"
@@ -45,6 +46,7 @@ llmRef: |
   See also:
     [disambiguation] filters.ladder - simpler ladder lowpass, lighter CPU
     [alternative] filters.svf - multimode SVF with better modulation stability
+    [module] PolyphonicFilter - module-tree filter -- scriptnode offers individual filter types as separate nodes
 ---
 
 A Moog-style transistor ladder lowpass filter with a 24 dB/octave slope. The analog-modelled design includes input history mixing and specific scaling constants that give it a warmer, more coloured character than the simpler [filters.ladder]($SN.filters.ladder$).
@@ -124,10 +126,4 @@ groups:
 ---
 ::
 
-## Notes
-
-The Mode parameter is misleading - it only changes the filter display curve, not the processing. Audio always passes through all four ladder stages (24 dB/oct).
-
-For a lighter ladder lowpass without the analog-modelling character, use [filters.ladder]($SN.filters.ladder$). For a multimode filter with LP/HP/BP options, use [filters.svf]($SN.filters.svf$) instead.
-
-**See also:** $SN.filters.ladder$ -- simpler ladder lowpass with lighter CPU cost, $SN.filters.svf$ -- multimode SVF with better modulation stability
+**See also:** $SN.filters.ladder$ -- simpler ladder lowpass with lighter CPU cost, $SN.filters.svf$ -- multimode SVF with better modulation stability, $MODULES.PolyphonicFilter$ -- module-tree filter -- scriptnode offers individual filter types as separate nodes

@@ -76,10 +76,6 @@ onMidiEvent(event) {
 
 ::
 
-## Notes
-
-This node appears in 9 networks across the surveyed projects (rank 43), making it one of the more commonly used MIDI-to-modulation converters. Typical uses include velocity-sensitive effect parameters, key-tracking filter cutoffs, and gate signals for envelopes.
-
 The node does not process audio -- it only responds to MIDI events. However, it must be placed inside the signal path so that the event processing system can deliver MIDI events to it. The output only updates when a relevant MIDI event is received.
 
 **See also:** $SN.control.midi_cc$ -- listens for MIDI CC messages rather than note events

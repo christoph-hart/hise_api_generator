@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: PhaseFX, type: alternative, reason: "Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation" }
+  - { id: "jdsp.jchorus", type: scriptnode, reason: "Scriptnode LFO-modulated delay chorus with configurable mix and parameters" }
 commonMistakes:
   - title: "Chorus lacks stereo LFO offset"
     wrong: "Expecting stereo widening from the chorus"
@@ -76,6 +77,7 @@ llmRef: |
 
   See also:
     alternative PhaseFX - allpass filter sweep rather than delay-line pitch modulation
+    scriptnode jdsp.jchorus - LFO-modulated delay chorus with configurable mix
 ---
 
 ::category-tags
@@ -169,4 +171,4 @@ The wet signal is subtracted from the dry signal, not added. This creates a comb
 
 The delay buffer holds 2048 samples. At 44.1 kHz, the maximum modulation depth is approximately 45 ms. For more flexible chorus effects, the scriptnode `jchorus` node is recommended. [4]($FORUM_REF.12406$)
 
-**See also:** $MODULES.PhaseFX$ -- Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation
+**See also:** $MODULES.PhaseFX$ -- Uses allpass filters for frequency notch sweeping rather than delay-line pitch modulation, $SN.jdsp.jchorus$ -- Scriptnode LFO-modulated delay chorus with configurable mix and parameters

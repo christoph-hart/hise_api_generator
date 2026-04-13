@@ -43,7 +43,7 @@ llmRef: |
 
 A sample rate reduction effect that captures one input sample and holds its value for a configurable number of periods. The result is a staircase waveform that reduces the effective time resolution of the signal, producing the characteristic lo-fi sound of low sample rate audio.
 
-At Counter=1 the node is a pass-through. As the Counter increases, fewer samples are captured and the decimation becomes more pronounced. At Counter=64 only every 64th sample is captured, reducing the effective sample rate by a factor of 64.
+Each voice maintains its own counter position and held sample values, so polyphonic use does not share decimation state between voices. At Counter=1 the node is a pass-through. As the Counter increases, fewer samples are captured and the decimation becomes more pronounced. At Counter=64 only every 64th sample is captured, reducing the effective sample rate by a factor of 64. When Counter is large enough that the entire processing block fits within a single hold period, the node uses an optimised block fill rather than per-sample processing.
 
 ## Signal Path
 
@@ -87,11 +87,5 @@ groups:
       - { name: Counter, desc: "Number of samples to hold each captured value. At 1, every sample passes through unchanged. Higher values produce stronger decimation with a more pronounced staircase effect.", range: "1 - 64", default: "1" }
 ---
 ::
-
-## Notes
-
-Each voice maintains its own counter position and held sample values, so polyphonic use does not share decimation state between voices.
-
-When Counter is large enough that the entire processing block fits within a single hold period, the node uses an optimised block fill rather than per-sample processing.
 
 **See also:** $SN.fx.bitcrush$ -- bit-depth reduction counterpart, often paired for combined lo-fi effects

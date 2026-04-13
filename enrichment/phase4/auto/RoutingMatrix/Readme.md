@@ -48,3 +48,5 @@ The class exposes two constants, `RoutingMatrix.NumInputs` and `RoutingMatrix.Nu
   **Wrong:** Not checking the return value of `addConnection()` when routing to higher channel pairs.
   **Right:** `local ok = rm.addConnection(1, 5); if(!ok) { /* fallback */ }`
   *The host DAW may not support the requested output channels. The method returns `false` when the destination is unavailable.*
+
+**See also:** $SN.routing.matrix$ -- Scriptnode node for channel routing matrix in DspNetwork

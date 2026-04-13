@@ -92,13 +92,13 @@ groups:
 ---
 ::
 
-## Notes
+### Block Size Table
 
 Block sizes 2 and 4 are deliberately excluded from the table. These values would conflict with the internal event raster (default 8 samples), which could cause control-rate processing issues.
 
-When the block size changes at runtime, a brief silence (one buffer) may occur while children are re-prepared with the new block size. The audio thread is never blocked - if re-preparation is in progress, the current buffer outputs silence instead.
+### Runtime Switching
 
-The compiled output retains the full block size dispatch, unlike [fix_blockx]($SN.container.fix_blockx$) which bakes a single static size. This adds one branch per buffer but preserves runtime flexibility.
+When the block size changes at runtime, a brief silence (one buffer) may occur while children are re-prepared with the new block size. The audio thread is never blocked -- if re-preparation is in progress, the current buffer outputs silence instead. The compiled output retains the full block size dispatch, unlike [fix_blockx]($SN.container.fix_blockx$) which bakes a single static size. This adds one branch per buffer but preserves runtime flexibility.
 
 When bypassed, children process the full host buffer without chunking. All other behaviours from the `fixN_block` family apply: MIDI events are timestamp-split across chunks, and the block size is a maximum (last chunk may be smaller).
 

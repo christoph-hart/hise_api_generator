@@ -119,10 +119,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The output only updates when the calculated value actually changes, avoiding redundant modulation signals. Each voice maintains its own state in polyphonic contexts, though the underlying BPM and parameters are shared.
-
-The Enabled parameter defaults to Off, meaning the node starts in manual mode using UnsyncedTime. Toggle it on to activate tempo synchronisation.
 
 **See also:** $SN.control.transport$ -- detects DAW play/stop state, $SN.control.ppq$ -- provides PPQ position for playback-synced effects, $SN.core.clock_ramp$ -- ready-to-use tempo-synced ramp signal

@@ -102,8 +102,6 @@ groups:
 ---
 ::
 
-## Notes
-
 Output is only sent when a Left or Right value actually changes, or when the Comparator selection changes. Repeated identical values on either input are suppressed.
 
 **See also:** $SN.control.logic_op$ -- combines binary signals using AND, OR, XOR logic

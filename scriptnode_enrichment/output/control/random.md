@@ -80,8 +80,6 @@ groups:
 ---
 ::
 
-## Notes
-
 Connect a trigger source such as [control.bang]($SN.control.bang$) or a gate signal to the Value input to control when new random values are generated. Each instance uses an independent random seed, so multiple random nodes produce different sequences.
 
 **See also:** $SN.control.midi$ -- the random mode generates a per-note random value on each note-on

@@ -45,7 +45,7 @@ llmRef: |
     [companion] dynamics.gate - gate for dynamics processing
 ---
 
-A polyphonic envelope follower that tracks the peak amplitude of the input signal. Each voice maintains its own envelope state with independent attack and release smoothing. The tracked envelope is output as a normalised modulation signal (0..1), which can be routed to other parameters for amplitude-dependent processing such as ducking, auto-gain, or visual metering.
+The only polyphonic node in the dynamics factory, this envelope follower tracks the peak amplitude of the input signal. Each voice maintains its own envelope state with independent attack and release smoothing, making it suitable for per-voice amplitude modulation in synthesiser patches. The tracked envelope is output as a normalised modulation signal (0..1), which can be routed to other parameters for amplitude-dependent processing such as ducking, auto-gain, or visual metering.
 
 By default, audio passes through the node unchanged while the envelope is tracked in the background. Enabling ProcessSignal replaces the audio output with the envelope value itself.
 
@@ -108,12 +108,8 @@ groups:
 ---
 ::
 
-## Notes
+### Detection Method
 
-This is the only polyphonic node in the dynamics factory. Each voice tracks its own envelope independently, making it suitable for per-voice amplitude modulation in synthesiser patches.
-
-The envelope follower uses peak detection (not RMS), taking the maximum absolute sample value across all channels per frame. For RMS-based detection, use [dynamics.updown_comp]($SN.dynamics.updown_comp$) with its RMS toggle.
-
-The attack and release range (0-1000 ms) is wider than [dynamics.comp]($SN.dynamics.comp$), [dynamics.gate]($SN.dynamics.gate$), and [dynamics.limiter]($SN.dynamics.limiter$) (0-250 ms), allowing slower envelope shapes for gentle amplitude tracking.
+The envelope follower uses peak detection (not RMS), taking the maximum absolute sample value across all channels per frame. For RMS-based detection, use [dynamics.updown_comp]($SN.dynamics.updown_comp$) with its RMS toggle. The attack and release range (0--1000 ms) is wider than [dynamics.comp]($SN.dynamics.comp$), [dynamics.gate]($SN.dynamics.gate$), and [dynamics.limiter]($SN.dynamics.limiter$) (0--250 ms), allowing slower envelope shapes for gentle amplitude tracking.
 
 **See also:** $SN.dynamics.comp$ -- compressor for dynamics processing, $SN.dynamics.gate$ -- gate for dynamics processing

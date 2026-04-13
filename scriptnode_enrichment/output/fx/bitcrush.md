@@ -21,6 +21,10 @@ commonMistakes:
     wrong: "Setting BitDepth to 16 expecting audible distortion"
     right: "Use lower BitDepth values (4-10) for audible bitcrushing. At 16 bits the quantisation noise is below the audible threshold."
     explanation: "At 16 bits there are 65536 quantisation levels, producing noise well below audible threshold. The effect becomes clearly audible below roughly 10-12 bits."
+  - title: "Clipping does not remove DC offset"
+    wrong: "Placing a clip node after DC Offset mode to remove the DC bias"
+    right: "Use a high-pass filter (even a single-pole HPF at ~20 Hz) after the node to remove DC offset."
+    explanation: "DC offset is a 0 Hz signal component, not an amplitude excess. Clipping to [-1, 1] has no effect on it. A high-pass filter is the correct remedy."
 llmRef: |
   fx.bitcrush
 
@@ -44,6 +48,7 @@ llmRef: |
   Common mistakes:
     DC Offset mode introduces DC bias - use Bipolar for most cases.
     BitDepth 16 is transparent - use lower values for audible effect.
+    Clipping does not remove DC offset -- use a high-pass filter instead.
 
   See also:
     companion fx.sampleandhold - sample rate reduction counterpart

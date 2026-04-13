@@ -48,7 +48,7 @@ llmRef: |
 
 The SNEX oscillator provides a framework for writing custom oscillator waveforms in [SNEX]($LANG.snex$) while the node handles frequency tracking, phase accumulation, MIDI integration, and polyphonic voice management. Each voice maintains its own phase state independently.
 
-The SNEX code defines two callbacks: `tick` (generates one sample at a given phase position) and `process` (generates a block of samples). The node manages the phase counter and advances it based on the current frequency and sample rate. MIDI note-on events set the oscillator frequency directly -- overriding the Frequency parameter. The oscillator output is additive: it is added to the existing signal on channel 0 rather than replacing it.
+The SNEX code defines two callbacks: `tick` (generates one sample at a given phase position) and `process` (generates a block of samples). The node manages the phase counter and advances it based on the current frequency and sample rate. MIDI note-on events set the oscillator frequency directly -- overriding the Frequency parameter. The oscillator output is additive: it is added to the existing signal on channel 0 rather than replacing it. The oscillator is fully polyphonic -- each voice tracks its own phase independently. When compiled to C++, the SNEX oscillator class receives the voice count as a template argument, enabling per-voice custom state beyond the built-in phase tracking.
 
 ## Signal Path
 
@@ -101,9 +101,5 @@ groups:
 ::
 
 Any additional parameters defined in the SNEX code are exposed starting from parameter index 2 onwards.
-
-## Notes
-
-The oscillator is fully polyphonic -- each voice tracks its own phase independently. When compiled to C++, the SNEX oscillator class receives the voice count as a template argument, enabling per-voice custom state beyond the built-in phase tracking.
 
 **See also:** $SN.core.oscillator$ -- built-in oscillator with standard waveforms, $SN.core.snex_node$ -- full SNEX callback set for non-oscillator DSP

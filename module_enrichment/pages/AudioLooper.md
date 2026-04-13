@@ -12,6 +12,8 @@ cpuProfile:
   scalingFactors: [voice count]
 seeAlso:
   - modules:StreamingSampler
+  - { id: "core.file_player", type: scriptnode, reason: "Scriptnode file playback with polyphonic voice handling" }
+  - { id: "core.stretch_player", type: scriptnode, reason: "Scriptnode file playback with time stretching and pitch shifting" }
 commonMistakes:
   - title: "Automatic pitch detection can be inaccurate"
     wrong: "Trusting the auto-detected RootNote value after loading a file"
@@ -72,7 +74,10 @@ llmRef: |
     AudioLooper: single audio file, loop playback, tempo-synced loops, simple pitch-shifted playback, background textures.
     Sampler: multiple samples mapped across keys/velocities, round-robin, crossfade groups, multi-mic, disk streaming, complex sample organisation.
 
-  See also: StreamingSampler
+  See also:
+    StreamingSampler
+    [scriptnode] core.file_player -- scriptnode file playback with polyphonic voice handling
+    [scriptnode] core.stretch_player -- scriptnode file playback with time stretching and pitch shifting
 ---
 
 ::category-tags
@@ -255,3 +260,5 @@ To create a play/stop button, place a Script Processor inside the Audio Loop Pla
 When SyncMode is set to a beat or bar division, the playback speed is adjusted so that the file completes in exactly the specified duration at the current host tempo. The sync factor is recalculated automatically when the host tempo changes.
 
 For best results, load files whose natural length matches the selected sync division at a common tempo. Large tempo deviations will stretch the playback significantly, which can affect audio quality since this is simple speed adjustment (not timestretching). For tempo-independent playback, use the [Sampler]($MODULES.StreamingSampler$) with timestretching enabled.
+
+**See also:** $SN.core.file_player$ -- scriptnode file playback with polyphonic voice handling, $SN.core.stretch_player$ -- scriptnode file playback with time stretching and pitch shifting

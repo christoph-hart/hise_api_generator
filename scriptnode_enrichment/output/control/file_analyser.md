@@ -67,7 +67,7 @@ onFileLoad(audioFile) {
 
 ::
 
-## Notes
+### Output Values
 
 The output values are unnormalised (raw). For the **pitch** mode, the output is a frequency in Hz (e.g. 440.0 for A4). For **milliseconds**, the output is the file duration in ms. For **peak**, the output is the linear peak amplitude. Connect the output to a node such as [control.pma_unscaled]($SN.control.pma_unscaled$) or [control.converter]($SN.control.converter$) if you need to scale or transform the raw value before it reaches a target parameter.
 

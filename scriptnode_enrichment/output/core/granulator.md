@@ -11,9 +11,13 @@ cpuProfile:
   scalingFactors:
     - { parameter: "Density", impact: high, note: "Higher density increases the number of simultaneous active grains" }
     - { parameter: "GrainSize", impact: medium, note: "Longer grains increase overlap potential" }
+forumReferences:
+  - { tid: 5221, reason: "SampleMap wildcard loading and External slot for UI display" }
+  - { tid: 7388, reason: "Granulator is monophonic -- polyphonic context distributes grains" }
 seeAlso:
   - { id: "core.file_player", type: alternative, reason: "Conventional file playback without granular processing" }
   - { id: "core.stretch_player", type: alternative, reason: "Phase-vocoder time stretching as an alternative to granular" }
+  - { id: "NoiseGrainPlayer", type: module, reason: "Module-tree granular effect using FFT-based noise decomposition" }
 commonMistakes:
   - title: "Requires MIDI notes to produce sound"
     wrong: "Adding core.granulator to a chain and expecting continuous grain output"
@@ -23,6 +27,10 @@ commonMistakes:
     wrong: "Setting Position to 0.5 and expecting the grains to scan through the file"
     right: "Modulate Position externally (e.g. with a ramp or LFO) to scan through the file over time."
     explanation: "The Position parameter is static. It sets the centre point for grain generation but does not move on its own."
+  - title: "Polyphonic context distributes grains across voices"
+    wrong: "Placing core.granulator inside a Scriptnode Synthesiser and expecting independent per-voice granulation"
+    right: "Use the granulator inside a Script FX (monophonic). In a polyphonic context, grains are distributed across active notes rather than duplicated per voice."
+    explanation: "The granulator has no per-voice state. When multiple MIDI notes are held in a polyphonic context, grains cycle through the active pitches rather than providing separate granulation per voice."
 llmRef: |
   core.granulator
 
@@ -48,10 +56,14 @@ llmRef: |
   Common mistakes:
     Requires MIDI notes to produce sound -- place in a midichain.
     Position does not auto-advance -- modulate it externally.
+    No per-voice state -- use in Script FX (monophonic) for predictable behaviour.
+
+  Forum references: tid:5221 (SampleMap wildcard and External slot), tid:7388 (monophonic design)
 
   See also:
     [alternative] core.file_player -- conventional file playback
     [alternative] core.stretch_player -- phase-vocoder time stretching
+    [module] NoiseGrainPlayer -- module-tree granular effect using FFT-based noise decomposition
 ---
 
 This node is a granular synthesiser that generates overlapping grains from an audio file. Up to 128 grains can be active simultaneously, each reading from a position in the file with its own pitch, envelope, and stereo placement. The output is additive -- grain audio is summed onto the existing signal on both channels. The node is fixed to stereo output.
@@ -136,12 +148,16 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
-The granulator must be placed inside a [container.midichain]($SN.container.midichain$) to receive MIDI events. Without MIDI note-on messages, no grains are generated.
+The granulator must be placed inside a [container.midichain]($SN.container.midichain$) to receive MIDI events. Without MIDI note-on messages, no grains are generated. Sustain pedal (CC#64) is supported -- held notes are released only after the pedal is lifted.
 
-Sustain pedal (CC#64) is supported -- held notes are released only after the pedal is lifted.
+To connect the granulator's audio content to an AudioWaveform UI component (for drag-and-drop file loading and waveform display), set the node's audio file slot to **External** mode. Without this setting, the audio file is not accessible from outside the scriptnode network.
+
+To load a sample map into the granulator from HiseScript, use the `{XYZ::SampleMap}` wildcard: `audioFile.loadFile("{XYZ::SampleMap}MySampleMap")`. The `{PROJECT_FOLDER}` wildcard works for single audio files but not for sample maps.
+
+### Scanning textures
 
 To create a scanning granular texture, modulate the Position parameter with an LFO or ramp. Without external modulation, all grains read from the same region of the file.
 
-**See also:** $SN.core.file_player$ -- conventional file playback, $SN.core.stretch_player$ -- phase-vocoder time stretching
+**See also:** $SN.core.file_player$ -- conventional file playback, $SN.core.stretch_player$ -- phase-vocoder time stretching, $MODULES.NoiseGrainPlayer$ -- module-tree granular effect using FFT-based noise decomposition

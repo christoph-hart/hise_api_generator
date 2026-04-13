@@ -89,7 +89,7 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 The maximum delay is 20ms, which is within the psychoacoustic range where the brain fuses two arrivals into a single perceived source with directional information. Beyond roughly 30ms, the delayed channel begins to be heard as a separate echo.
 

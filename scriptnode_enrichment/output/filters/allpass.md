@@ -123,8 +123,4 @@ groups:
 ---
 ::
 
-## Notes
-
-For a true allpass filter that shifts phase without creating amplitude notches, use [filters.svf]($SN.filters.svf$) in Allpass mode (mode 4). The SVF allpass is a single second-order allpass suitable for phase correction and phase-based stereo effects.
-
 **See also:** $SN.filters.svf$ -- SVF Allpass mode for true phase-only allpass (no amplitude notches)

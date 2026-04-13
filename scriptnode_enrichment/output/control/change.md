@@ -82,10 +82,6 @@ groups:
 ---
 ::
 
-## Notes
-
 Each voice maintains its own stored value for comparison when used in a polyphonic context. A value that is "new" for one voice may be "same" for another.
-
-The initial stored value is 0.0. If the first value received is also 0.0, it will not produce an output.
 
 **See also:** $SN.control.pma_unscaled$ -- additional scaling after filtering

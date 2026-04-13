@@ -9,6 +9,8 @@ cpuProfile:
   baseline: negligible
   polyphonic: true
   scalingFactors: []
+forumReferences:
+  - { tid: 5694, reason: "Buffer-rate smoothing gotcha and fix32_block workaround" }
 seeAlso:
   - { id: "filters.one_pole", type: alternative, reason: "Full one-pole filter processing all channels" }
 commonMistakes:
@@ -16,6 +18,10 @@ commonMistakes:
     wrong: "Expecting the smoother to process all channels equally"
     right: "Only channel 0 is filtered. Other channels pass through unmodified. Use filters.one_pole if you need all channels smoothed."
     explanation: "The node applies its lowpass filter to channel 0 only. In a stereo signal, the right channel is untouched."
+  - title: "Updates once per buffer without a fixed-block wrapper"
+    wrong: "Using core.smoother to smooth a rapidly modulated parameter and hearing zipper noise"
+    right: "Wrap the processing chain in a container.fix32_block (or similar fixed-block container) to force per-sample updates."
+    explanation: "By default, the smoother updates once per audio buffer. For parameters that change frequently, this still produces audible stepping. A fixed-block or frame-processing wrapper forces sample-accurate smoothing and also ensures correct results during offline bounce."
 llmRef: |
   core.smoother
 
@@ -37,6 +43,9 @@ llmRef: |
 
   Common mistakes:
     - Only channel 0 is processed; other channels are untouched
+    - Updates once per buffer by default -- wrap in fix32_block for sample-accurate smoothing
+
+  Forum references: tid:5694 (buffer-rate update and fix32 workaround)
 
   See also:
     alternative filters.one_pole -- one-pole filter for all channels
@@ -89,8 +98,8 @@ groups:
 ---
 ::
 
-## Notes
+### Sample-accurate smoothing
 
-The smoother processes channel 0 only. For a filter that operates on all channels, use [filters.one_pole]($SN.filters.one_pole$).
+By default, the smoother updates once per audio buffer. If parameters are being modulated at high speed (for example, from an automation lane or an audio-rate source), this can produce audible zipper noise. To force per-sample updates, wrap the surrounding processing chain in a [container.fix32_block]($SN.container.fix32_block$) or a frame-processing container. This also ensures correct behaviour during offline bounce, where the buffer size may differ from real-time playback.
 
 **See also:** $SN.filters.one_pole$ -- one-pole filter processing all channels

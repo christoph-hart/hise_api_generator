@@ -12,6 +12,7 @@ cpuProfile:
 seeAlso:
   - { id: "analyse.oscilloscope", type: alternative, reason: "Time-domain waveform display instead of frequency domain" }
   - { id: "analyse.goniometer", type: alternative, reason: "Stereo correlation display instead of frequency content" }
+  - { id: "Analyser", type: module, reason: "FFT spectrum analyser" }
 commonMistakes:
   - title: "FFT property changes do not persist"
     wrong: "Editing FFT properties via the popup editor and expecting them to survive a reload"
@@ -56,6 +57,7 @@ llmRef: |
   See also:
     [alternative] analyse.oscilloscope - time-domain waveform display
     [alternative] analyse.goniometer - stereo correlation display
+    [module] Analyser - module-tree FFT spectrum analyser
 ---
 
 Analyses the frequency content of the audio signal and displays it as an FFT spectrum graph. Audio passes through the node unmodified -- the node copies the first channel into a ring buffer where the FFT is computed asynchronously, outside the audio thread. This means the node adds virtually no CPU load to the audio processing chain regardless of the FFT size.
@@ -113,12 +115,10 @@ The FFT display is configured through the ring buffer's property object, not thr
 | Decay | Visual smoothing factor. Higher values produce a slower, smoother display. | 0.0 - 0.99999 | 0.7 |
 | UseLogarithmicFreqAxis | Switches the horizontal axis between linear and logarithmic frequency scaling. | Off / On | On |
 
-## Notes
-
-The node extracts only the first channel for analysis. If you need a combined stereo reading, place a mono mixdown before the FFT node.
+### Buffer Configuration
 
 Changing BufferLength or Overlap resizes the internal ring buffer. These properties interact: overlap effectively multiplies the buffer size to allow overlapping analysis windows.
 
 > [!Tip:Set FFT properties via script for persistence] Editing properties through the popup editor in the node UI is convenient for experimentation, but these changes revert when the patch is reloaded. Use the scripting API to set properties programmatically.
 
-**See also:** $SN.analyse.oscilloscope$ -- time-domain waveform display, $SN.analyse.goniometer$ -- stereo correlation display
+**See also:** $SN.analyse.oscilloscope$ -- time-domain waveform display, $SN.analyse.goniometer$ -- stereo correlation display, $MODULES.Analyser$ -- module-tree spectrum analyser with FFT, oscilloscope, and goniometer modes

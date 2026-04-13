@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "core.file_player", type: alternative, reason: "Simpler file player without timestretching" }
   - { id: "core.granulator", type: alternative, reason: "Granular approach to time manipulation" }
+  - { id: "AudioLooper", type: module, reason: "Module-tree audio file player with looping and tempo sync" }
 commonMistakes:
   - title: "High CPU with multiple polyphonic voices"
     wrong: "Using core.stretch_player in a polyphonic context with many voices"
@@ -50,6 +51,7 @@ llmRef: |
   See also:
     [alternative] core.file_player -- simpler file player without timestretching
     [alternative] core.granulator -- granular time manipulation
+    [module] AudioLooper -- module-tree audio file player with looping and tempo sync
 ---
 
 This node plays back stereo audio files with the ability to change playback speed and pitch independently. Time stretching and pitch shifting are handled by a phase-vocoder algorithm that preserves audio quality across a wide range of settings. The node is fixed to stereo (2 channels).
@@ -133,12 +135,16 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
 The node is fixed to stereo output. If placed in a mono context, it produces no output.
 
+### Playback control
+
 MIDI note events do not directly trigger playback. Use the Gate parameter (driven by a control node or automation) to start and stop playback. In a polyphonic context, each voice maintains its own playback position and stretcher state.
+
+### Tempo detection
 
 When ClockSync is enabled, the node auto-detects the source file's tempo by estimating the quarter-note count from the file duration. This works best with loop-based material that has a clear rhythmic structure.
 
-**See also:** $SN.core.file_player$ -- simpler file player without timestretching, $SN.core.granulator$ -- granular approach to time manipulation
+**See also:** $SN.core.file_player$ -- simpler file player without timestretching, $SN.core.granulator$ -- granular approach to time manipulation, $MODULES.AudioLooper$ -- module-tree audio file player with looping and tempo sync

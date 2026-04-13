@@ -14,6 +14,7 @@ cpuProfile:
     - { parameter: Width, impact: low, note: "Adds mid/side encoding when != 100%" }
 seeAlso:
   - { id: Delay, type: alternative, reason: "Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment" }
+  - { id: "core.gain", type: scriptnode, reason: "Scriptnode gain node with smoothed dB control" }
 commonMistakes:
   - title: "SimpleGain delay has no feedback"
     wrong: "Using SimpleGain's Delay parameter for echo effects"
@@ -80,6 +81,7 @@ llmRef: |
 
   See also:
     alternative Delay - full-featured delay with feedback and tempo sync
+    [scriptnode] core.gain -- scriptnode gain node with smoothed dB control
 ---
 
 ::category-tags
@@ -223,4 +225,4 @@ When a Sampler uses multiple mic channels, placing a single SimpleGain in the Sa
 
 Pan Modulation scales the existing Balance offset, so with Balance at centre (0), the modulation has zero range and no audible effect. Set Balance to a non-centre value (e.g. full right) to give the Pan Modulation chain a range to work within. [4]($FORUM_REF.6062$)
 
-**See also:** $MODULES.Delay$ -- Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment
+**See also:** $MODULES.Delay$ -- Full-featured delay with feedback and tempo sync, versus SimpleGain's static delay for timing alignment, $SN.core.gain$ -- scriptnode gain node with smoothed dB control

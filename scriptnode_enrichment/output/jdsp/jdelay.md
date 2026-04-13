@@ -14,6 +14,7 @@ seeAlso:
   - { id: "jdsp.jdelay_cubic", type: alternative, reason: "Flat frequency response but higher CPU cost" }
   - { id: "jdsp.jdelay_thiran", type: alternative, reason: "Flat frequency response and low CPU but not suitable for fast modulation" }
   - { id: "core.fix_delay", type: alternative, reason: "Built-in parameter smoothing for knob-controlled delay" }
+  - { id: "Delay", type: module, reason: "JUCE-based delay with interpolation options" }
 commonMistakes:
   - title: "No built-in delay time smoothing"
     wrong: "Connecting a knob directly to the DelayTime parameter"
@@ -51,6 +52,7 @@ llmRef: |
     alternative jdsp.jdelay_cubic -- flat response, higher CPU
     alternative jdsp.jdelay_thiran -- flat response, not for fast modulation
     alternative core.fix_delay -- delay with built-in smoothing
+    [module] Delay -- module-tree stereo delay with tempo sync
 ---
 
 A delay line that uses linear interpolation to calculate values between samples. This is the cheapest of the three delay line variants, but non-integer delay times cause a mild high-frequency roll-off because linear interpolation acts as a low-pass filter. The effect is more noticeable at lower sample rates and with rapidly modulated delay times.
@@ -114,4 +116,4 @@ The three jdelay variants share identical parameters and differ only in how they
 | [jdelay_cubic]($SN.jdsp.jdelay_cubic$) | Lagrange 3rd-order | Flat | Best | Medium |
 | [jdelay_thiran]($SN.jdsp.jdelay_thiran$) | Thiran allpass | Flat | Not suitable | Low |
 
-**See also:** [$SN.jdsp.jdelay_cubic$]($SN.jdsp.jdelay_cubic$) -- flat frequency response, highest CPU, [$SN.jdsp.jdelay_thiran$]($SN.jdsp.jdelay_thiran$) -- flat response, not for fast modulation, [$SN.core.fix_delay$]($SN.core.fix_delay$) -- delay with built-in parameter smoothing
+**See also:** [$SN.jdsp.jdelay_cubic$]($SN.jdsp.jdelay_cubic$) -- flat frequency response, highest CPU, [$SN.jdsp.jdelay_thiran$]($SN.jdsp.jdelay_thiran$) -- flat response, not for fast modulation, [$SN.core.fix_delay$]($SN.core.fix_delay$) -- delay with built-in parameter smoothing, $MODULES.Delay$ -- module-tree stereo delay with tempo sync

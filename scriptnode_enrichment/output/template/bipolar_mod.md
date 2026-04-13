@@ -101,10 +101,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- The `mod_signal` chain expects a source that produces a signal in the -1..1 audio range. The internal sig2mod stage converts this to 0..1 before bipolar scaling.
-- The entire template runs at control rate (decimated sample rate), so it is not suitable for audio-rate modulation that requires sample-accurate timing.
-- The internal pma node's Multiply parameter is fixed at 1.0 and not exposed, simplifying the formula to `output = Value + offset`.
+The `mod_signal` chain expects a source that produces a signal in the -1..1 audio range. The internal sig2mod stage converts this to 0..1 before bipolar scaling. The entire template runs at control rate (decimated sample rate), so it is not suitable for audio-rate modulation that requires sample-accurate timing. The internal pma node's Multiply parameter is fixed at 1.0 and not exposed, simplifying the formula to `output = Value + offset`.
 
 **See also:** $SN.control.pma$ -- the output stage used internally, $SN.control.bipolar$ -- the internal bipolar scaler

@@ -45,7 +45,7 @@ llmRef: |
 
 The phasor generates a linear ramp from 0 to 1 at the specified frequency and writes it directly to channel 0 of the audio signal. It is intended as a building block for custom synthesis: feed the ramp output into a waveshaper or table lookup to produce arbitrary waveform shapes.
 
-The ramp is naive (no anti-aliasing), so it will produce aliasing at high frequencies. This is acceptable when the output is used as an index for further processing rather than listened to directly. Each voice maintains its own phase accumulator, and MIDI note-on messages set the frequency.
+The ramp is naive (no anti-aliasing), so it will produce aliasing at high frequencies. This is acceptable when the output is used as an index for further processing rather than listened to directly. Only channel 0 is written; other channels pass through unmodified. The output range is strictly 0 to just below 1.0, with a hard discontinuity at the wrap point. Each voice maintains its own phase accumulator, and MIDI note-on messages set the frequency.
 
 ## Signal Path
 
@@ -99,9 +99,5 @@ groups:
       - { name: Phase, desc: "Phase offset for the ramp start position", range: "0 - 100%", default: "0%" }
 ---
 ::
-
-## Notes
-
-Only channel 0 is written; other channels pass through unmodified. The output range is strictly 0 to just below 1.0, with a hard discontinuity at the wrap point.
 
 **See also:** $SN.core.phasor_fm$ -- adds FM modulation from the input signal, $SN.core.oscillator$ -- band-limited waveforms with multiple modes

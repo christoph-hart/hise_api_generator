@@ -84,9 +84,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- Unlike the pack writer nodes, pack_resizer does not auto-resize the slider pack when first connected. It only resizes when the NumSliders parameter changes.
-- Resizing involves memory allocation, so avoid driving NumSliders from audio-rate sources. UI controls and low-rate control nodes are appropriate sources.
+Unlike the pack writer nodes, pack_resizer does not auto-resize the slider pack when first connected -- it only resizes when the NumSliders parameter changes.
 
 **See also:** $SN.control.pack2_writer$ -- writes individual values into a slider pack, $SN.control.clone_pack$ -- reads slider pack values for clone distribution

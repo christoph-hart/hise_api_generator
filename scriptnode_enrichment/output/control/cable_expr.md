@@ -87,7 +87,7 @@ groups:
 ---
 ::
 
-## Notes
+### Expression Syntax
 
 The Code property accepts any valid SNEX expression. Internally, the expression is wrapped as:
 

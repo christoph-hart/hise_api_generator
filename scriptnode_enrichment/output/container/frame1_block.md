@@ -70,10 +70,10 @@ process(input) {
 
 ::
 
-## Notes
+### Performance
 
 The CPU overhead of per-sample processing is substantial, especially in interpreted mode. Each sample in the buffer triggers a full call chain through all child nodes. In compiled mode, the compiler can inline much of this overhead. For a 512-sample buffer, frame1_block calls `processFrame()` 512 times compared to [fix8_block]($SN.container.fix8_block$)'s 64 calls to `process()`.
 
-When bypassed, children revert to block processing with the original block size and process the full host buffer. This allows A/B comparison of per-sample vs block processing.
+When bypassed, children revert to block processing with the original block size and process the full host buffer, allowing A/B comparison of per-sample vs block processing.
 
 **See also:** $SN.container.frame2_block$ -- stereo per-sample processing, $SN.container.framex_block$ -- dynamic channel count, $SN.container.fix8_block$ -- block chunking as lower-cost alternative

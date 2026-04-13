@@ -102,11 +102,6 @@ groups:
 ---
 ::
 
-## Notes
-
-- During a switch transition, both the outgoing and incoming paths process simultaneously for the crossfade duration. This briefly doubles the processing load.
-- The default crossfade time is 20ms per container. You can adjust the SmoothingTime property on each [soft_bypass]($SN.container.soft_bypass$) container individually.
-- Setting SmoothingTime to 0 makes the switch behave as a hard bypass (immediate, may click).
-- This is the largest pre-built variant. If you need more than 8 switch paths, you can build the structure manually using [container.soft_bypass]($SN.container.soft_bypass$) and [control.xfader]($SN.control.xfader$).
+During a switch transition, both the outgoing and incoming paths process simultaneously for the crossfade duration, briefly doubling the processing load. The default crossfade time is 20ms per container -- you can adjust the SmoothingTime property on each [soft_bypass]($SN.container.soft_bypass$) container individually. Setting SmoothingTime to 0 makes the switch behave as a hard bypass (immediate, may click). This is the largest pre-built variant; if you need more than 8 switch paths, build the structure manually using [container.soft_bypass]($SN.container.soft_bypass$) and [control.xfader]($SN.control.xfader$).
 
 **See also:** $SN.template.softbypass_switch2$ -- 2-way variant, $SN.template.softbypass_switch4$ -- 4-way variant, $SN.template.softbypass_switch7$ -- 7-way variant, $SN.container.soft_bypass$ -- the underlying bypass container, $SN.control.xfader$ -- the switch controller used internally, $SN.container.branch$ -- index-based branching without soft bypass crossfade

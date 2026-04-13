@@ -9,7 +9,8 @@ cpuProfile:
   baseline: low
   polyphonic: true
   scalingFactors: []
-seeAlso: []
+seeAlso:
+  - { id: "StereoFX", type: module, reason: "Stereo panning with multiple pan laws" }
 commonMistakes: []
 llmRef: |
   jdsp.jpanner
@@ -34,6 +35,9 @@ llmRef: |
 
   When to use:
     Stereo positioning of audio signals. Use Balanced for simple L/R panning. Use constant-power rules (Sine3dB, Sqrt3dB) when the panned signal must maintain perceived loudness across the stereo field.
+
+  See also:
+    [module] StereoFX -- module-tree stereo panner with mid/side width control
 ---
 
 A stereo panner that adjusts the left and right channel gains based on the Pan position and a selectable panning Rule. The panning rule determines how the gain is distributed across the stereo field, affecting the perceived loudness at different pan positions.
@@ -97,3 +101,5 @@ groups:
 | Sqrt 4.5 dB | -4.5 dB | Compromise between 3 dB and 6 dB using a square root curve. |
 
 > [!Tip:Choose the right panning law] Use **Balanced** for simple L/R placement where both channels should be at full volume when centred. Use **Sine 3 dB** or **Sqrt 3 dB** (constant power) when the panned signal must maintain consistent perceived loudness regardless of position - this is the standard choice for music mixing.
+
+**See also:** $MODULES.StereoFX$ -- module-tree stereo panner with mid/side width control

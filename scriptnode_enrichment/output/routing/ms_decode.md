@@ -33,6 +33,8 @@ llmRef: |
 
 Converts a mid/side signal back to stereo left/right. Channel 0 (mid) and channel 1 (side) are recombined into left and right channels. The decoding uses no scaling factor, which compensates for the 0.5 scaling applied during [routing.ms_encode]($SN.routing.ms_encode$), making the full round-trip gain-neutral.
 
+This node must be paired with [routing.ms_encode]($SN.routing.ms_encode$). Using ms_decode on a signal that was not encoded will produce unexpected results -- channel 0 would be treated as mid and channel 1 as side regardless of their actual content.
+
 Place this node after any mid/side processing to restore the standard left/right stereo format. Non-stereo signals pass through unmodified.
 
 ## Signal Path
@@ -57,9 +59,5 @@ process(mid, side) {
 ```
 
 ::
-
-## Notes
-
-This node must be paired with [routing.ms_encode]($SN.routing.ms_encode$). Using ms_decode on a signal that was not encoded will produce unexpected results -- channel 0 would be treated as mid and channel 1 as side regardless of their actual content.
 
 **See also:** $SN.routing.ms_encode$ -- converts left/right to mid/side

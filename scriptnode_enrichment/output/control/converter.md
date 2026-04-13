@@ -96,12 +96,6 @@ groups:
 ---
 ::
 
-## Notes
-
-This node is monophonic. It does not maintain per-voice state.
-
-The Midi2Freq mode is an exception -- it expects a normalised 0-1 input (which it multiplies by 127 internally to get a MIDI note number). All other modes expect values in their stated input domain.
-
-Modes that involve division (Ms2Freq, Freq2Ms, Ms2BPM) protect against division by zero.
+This node is monophonic and does not maintain per-voice state. The Midi2Freq mode is an exception -- it expects a normalised 0-1 input (which it multiplies by 127 internally to get a MIDI note number). All other modes expect values in their stated input domain. Modes that involve division (Ms2Freq, Freq2Ms, Ms2BPM) protect against division by zero.
 
 **See also:** $SN.control.normaliser$ -- range-based normalisation, $SN.control.pma_unscaled$ -- additional scaling before or after conversion

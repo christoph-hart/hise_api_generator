@@ -96,11 +96,12 @@ process(left, right) {
 
 ::
 
-## Notes
+### Limitations
 
-- This template requires a stereo (2-channel) input signal. With mono input the side channel is always zero, rendering the side chain ineffective.
-- Setting `side_gain` to 0 collapses the output to mono. Reducing it narrows the stereo image; increasing `mid_gain` relative to `side_gain` emphasises the centre content.
-- Each processing chain is mono. Use mono-compatible nodes inside mid_chain and side_chain.
-- Common applications include mid/side EQ for mastering, independent compression on centre and width content, and stereo width adjustment via gain balance.
+This template requires a stereo (2-channel) input signal. With mono input the side channel is always zero, rendering the side chain ineffective. Each processing chain is mono -- use mono-compatible nodes inside mid_chain and side_chain.
+
+### Gain Balance
+
+Setting `side_gain` to 0 collapses the output to mono. Reducing it narrows the stereo image; increasing `mid_gain` relative to `side_gain` emphasises the centre content.
 
 **See also:** $SN.routing.ms_decode$ -- the M/S decoder, $SN.routing.ms_encode$ -- the M/S encoder, $SN.container.multi$ -- splits M/S into mono chains

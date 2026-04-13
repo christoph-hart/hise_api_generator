@@ -39,7 +39,7 @@ llmRef: |
 
 A variant of [local_cable]($SN.routing.local_cable$) that passes values through without range conversion. Both the input and the modulation output bypass normalisation, so the raw value from the source arrives unchanged at the target. Use this when connecting parameters or modulation sources that operate in their native value ranges rather than the normalised 0..1 range.
 
-All other behaviour is identical to local_cable -- bidirectional routing within a single network, recursion guard, and the same LocalId-based peer system.
+All other behaviour is identical to local_cable -- bidirectional routing within a single network, recursion guard, and the same LocalId-based peer system. When using the connection editor to replace a cable with a local cable, the IDE automatically detects whether the connection is scaled or unscaled and creates the appropriate variant.
 
 ## Signal Path
 
@@ -77,9 +77,5 @@ groups:
       - { name: Value, desc: "Control value routed without range conversion. The modulation output sends the raw value rather than normalising to 0..1.", range: "0.0 - 1.0 (nominal)", default: "0.0" }
 ---
 ::
-
-## Notes
-
-When using the connection editor to replace a cable with a local cable, the IDE automatically detects whether the connection is scaled or unscaled and creates the appropriate variant.
 
 **See also:** $SN.routing.local_cable$ -- normalised variant for standard 0..1 connections

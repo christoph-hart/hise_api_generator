@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "core.extra_mod", type: alternative, reason: "Receives from extra mod chains instead of GlobalModulatorContainer" }
   - { id: "core.matrix_mod", type: alternative, reason: "Dual-source variant with aux modulation and matrix features" }
+  - { id: "GlobalModulatorContainer", type: module, reason: "Module-tree container that hosts the modulators this node reads from" }
 commonMistakes:
   - title: "Wrong Index for target modulator"
     wrong: "Guessing the Index value without checking the GlobalModulatorContainer order"
@@ -47,6 +48,7 @@ llmRef: |
   See also:
     [alternative] core.extra_mod -- receives from extra mod chains
     [alternative] core.matrix_mod -- dual-source with aux and matrix features
+    [module] GlobalModulatorContainer -- module-tree container that hosts the modulators this node reads from
 ---
 
 ![Global Mod screenshot](/images/custom/scriptnode/global_mod.png)
@@ -130,12 +132,12 @@ groups:
 ---
 ::
 
-## Notes
+### Output behaviour
 
 In Gain mode with Value = 1.0 and Intensity = 1.0, the output equals the raw modulation signal. This is the most common configuration for straightforward modulation passthrough with scaling.
 
 The output is clamped to 0-1 in all modes. Parameter changes are smoothed to prevent clicks. When the GlobalModulatorContainer is not connected or the selected slot is empty, the output defaults to the base Value with no modulation applied.
 
-This node is now compilable to C++ nodes (since HISE 5.0), so it properly connects to global modulators in compiled networks.
+This node is compilable to C++ nodes (since HISE 5.0), so it properly connects to global modulators in compiled networks.
 
-**See also:** $SN.core.extra_mod$ -- receives from extra mod chains instead of GlobalModulatorContainer, $SN.core.matrix_mod$ -- dual-source variant with aux modulation and matrix features
+**See also:** $SN.core.extra_mod$ -- receives from extra mod chains instead of GlobalModulatorContainer, $SN.core.matrix_mod$ -- dual-source variant with aux modulation and matrix features, $MODULES.GlobalModulatorContainer$ -- module-tree container that hosts the modulators this node reads from

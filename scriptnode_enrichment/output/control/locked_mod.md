@@ -75,7 +75,7 @@ groups:
 ---
 ::
 
-## Notes
+### Setup
 
 To use this node:
 

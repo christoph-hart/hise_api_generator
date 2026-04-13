@@ -9,6 +9,8 @@ cpuProfile:
   baseline: variable
   polyphonic: false
   scalingFactors: []
+forumReferences:
+  - { tid: 4364, reason: "SNEX export workflow: wrap into DSP network, compile, freeze" }
 seeAlso:
   - { id: "core.snex_shaper", type: alternative, reason: "Simpler SNEX interface for waveshaping only" }
   - { id: "core.snex_osc", type: alternative, reason: "SNEX interface specialised for oscillators with built-in frequency tracking" }
@@ -18,6 +20,10 @@ commonMistakes:
     wrong: "Using core.snex_node for per-voice synthesis"
     right: "Use core.snex_osc for polyphonic oscillators, or compile to a C++ node for full polyphonic support."
     explanation: "core.snex_node is monophonic. It does not support per-voice state. For polyphonic use cases, core.snex_osc provides voice management for oscillators."
+  - title: "SNEX JIT compiler is not included in exported plugins"
+    wrong: "Exporting a plugin that uses core.snex_node (or cable_expr, math.expr) without compiling to a C++ DLL first"
+    right: "Wrap the SNEX node into a sub-network using the 'Wrap into DSP Network' toolbar action, then compile it with 'Compile DSP Networks'. The frozen (snowflake) icon confirms the compiled version is active."
+    explanation: "The SNEX JIT compiler is not part of the exported plugin binary. Any node that uses SNEX (including cable_expr and math.expr) must be compiled to a C++ DLL before export, or it will be replaced by a silent dummy in the shipped plugin."
 llmRef: |
   core.snex_node
 
@@ -36,6 +42,12 @@ llmRef: |
     - Custom audio processing that cannot be built from existing nodes
     - Prototyping DSP algorithms with JIT compilation
     - Monophonic effects or utilities requiring MIDI access
+
+  Common mistakes:
+    - Monophonic only -- use core.snex_osc for polyphonic oscillators
+    - SNEX JIT not in exported plugins -- must wrap and compile to C++ DLL first
+
+  Forum references: tid:4364 (export workflow: wrap, compile, freeze)
 
   See also:
     [alternative] core.snex_shaper -- waveshaping-only SNEX interface
@@ -78,10 +90,20 @@ process(input) {
 
 All parameters are defined dynamically by the user's SNEX code. The node itself has no built-in parameters. Up to 16 parameters can be declared in the SNEX class.
 
-## Notes
+### Setup
 
 The SNEX code must implement five required callbacks: `prepare`, `reset`, `handleHiseEvent`, `process`, and `processFrame`. If any of these is missing, compilation fails. Two additional callbacks are optional: `handleModulation` (enables the node to act as a modulation source) and `setExternalData` (enables access to tables, audio files, and other complex data).
 
 The `ClassId` property selects which SNEX class to compile. Parameters, complex data slots, and modulation output are all discovered from the compiled SNEX code -- nothing is configured on the node itself.
+
+### Export workflow
+
+The SNEX JIT compiler is not included in exported plugin binaries. To use a SNEX node in a shipping plugin:
+
+1. Use the **Wrap into DSP Network** action in the scriptnode toolbar to create an encapsulated sub-network.
+2. Run **Compile DSP Networks** to generate the C++ DLL.
+3. After reloading, the frozen (snowflake) icon confirms the compiled version is active.
+
+This applies to all SNEX-based nodes, including `cable_expr`, `math.expr`, and parameter expression nodes.
 
 **See also:** $SN.core.snex_shaper$ -- simpler SNEX interface for waveshaping only, $SN.core.snex_osc$ -- SNEX interface specialised for oscillators with built-in frequency tracking, $SN.core.faust$ -- alternative custom DSP using Faust language instead of SNEX

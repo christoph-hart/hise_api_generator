@@ -63,14 +63,10 @@ process(input) {
 
 ::
 
-## Notes
+The block size of 8 is a maximum, not a fixed value -- the last chunk in a buffer may be smaller if the host buffer size is not a multiple of 8. MIDI events are distributed across chunks by timestamp, providing sub-block timing accuracy.
 
-The block size of 8 is a maximum, not a fixed value. The last chunk in a buffer may be smaller if the host buffer size is not a multiple of 8. Children are prepared with this maximum and must handle variable sizes gracefully.
+### Bypass Behaviour
 
-MIDI events are distributed across chunks by timestamp. Each chunk receives only the events whose timestamps fall within its sample range, providing sub-block MIDI timing accuracy.
-
-When bypassed, children process the full host buffer without chunking, equivalent to a [container.chain]($SN.container.chain$). This allows A/B comparison of the block subdivision effect. Toggling bypass triggers a full re-preparation of all children with the original block size.
-
-If the network is already in frame mode (block size of 1), this container becomes a no-op and frame mode is preserved through to children.
+When bypassed, children process the full host buffer without chunking, equivalent to a [container.chain]($SN.container.chain$). This allows A/B comparison of the block subdivision effect. Toggling bypass triggers a full re-preparation of all children with the original block size. If the network is already in frame mode (block size of 1), this container becomes a no-op and frame mode is preserved through to children.
 
 **See also:** $SN.container.fix_blockx$ -- adjustable block size via property, $SN.container.frame2_block$ -- per-sample processing instead of block chunking

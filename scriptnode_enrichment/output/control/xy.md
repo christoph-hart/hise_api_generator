@@ -78,8 +78,6 @@ groups:
 ---
 ::
 
-## Notes
-
 The two outputs are named X and Y in the connection list, making it clear which axis drives which target. Each output can be connected to any parameter independently.
 
 **See also:** $SN.control.sliderbank$ -- multi-output control with more than two targets

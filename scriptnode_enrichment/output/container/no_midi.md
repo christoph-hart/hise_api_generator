@@ -59,9 +59,6 @@ dispatch(input) {
 
 ::
 
-## Notes
-
-- All event types are blocked: note on/off, control change, pitch wheel, aftertouch, and any other MIDI event. There is no selective filtering.
-- Audio processing is completely unaffected - children process audio normally.
+All event types are blocked: note on/off, control change, pitch wheel, aftertouch, and any other MIDI message. There is no selective filtering -- audio processing is completely unaffected and children process audio normally.
 
 **See also:** $SN.container.midichain$ -- enables MIDI events instead of blocking them

@@ -68,6 +68,4 @@ groups:
 ---
 ::
 
-## Notes
-
 This node has a higher CPU cost than simple arithmetic math nodes because the modulo operation is computed per sample without hardware acceleration.

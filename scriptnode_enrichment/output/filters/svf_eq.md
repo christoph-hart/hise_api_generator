@@ -13,6 +13,7 @@ cpuProfile:
 seeAlso:
   - { id: "filters.svf", type: alternative, reason: "SVF without gain modes (LP/HP/BP/Notch/Allpass)" }
   - { id: "filters.biquad", type: alternative, reason: "Biquad with similar EQ modes but different topology" }
+  - { id: "CurveEq", type: module, reason: "Scriptnode SVF-based parametric EQ" }
 commonMistakes:
   - title: "Gain only works in shelf and peak modes"
     wrong: "Setting Gain and expecting it to affect LowPass or HighPass modes"
@@ -45,6 +46,7 @@ llmRef: |
   See also:
     [alternative] filters.svf - SVF without gain modes
     [alternative] filters.biquad - biquad with similar EQ modes
+    [module] CurveEq - scriptnode SVF-based parametric EQ
 ---
 
 An SVF-based parametric EQ with five modes: LowPass, HighPass, LowShelf, HighShelf, and Peak. Unlike [filters.svf]($SN.filters.svf$), this node responds to the Gain parameter in its shelving and peak modes, making it the primary choice for EQ bands in scriptnode.
@@ -125,10 +127,8 @@ groups:
 ---
 ::
 
-## Notes
+### Precision
 
 The double-precision processing provides slightly better numerical accuracy than [filters.svf]($SN.filters.svf$), which can matter when cascading multiple EQ bands.
 
-For simple lowpass/highpass filtering without gain control, [filters.svf]($SN.filters.svf$) is sufficient and offers additional modes (BP, Notch, Allpass) that this node does not provide.
-
-**See also:** $SN.filters.svf$ -- SVF without gain modes (LP/HP/BP/Notch/Allpass), $SN.filters.biquad$ -- biquad with similar EQ modes but different topology
+**See also:** $SN.filters.svf$ -- SVF without gain modes (LP/HP/BP/Notch/Allpass), $SN.filters.biquad$ -- biquad with similar EQ modes but different topology, $MODULES.CurveEq$ -- scriptnode SVF-based parametric EQ

@@ -104,8 +104,8 @@ groups:
 ---
 ::
 
-## Notes
+### Limitations
 
-The FM modulation source must appear before this node in the signal chain, since channel 0 is read as the modulator and then overwritten with the ramp output. With extreme modulation values the phase can advance multiple cycles per sample, producing erratic jumps in the output even though all values remain in the 0-1 range.
+With extreme modulation values the phase can advance multiple cycles per sample, producing erratic jumps in the output even though all values remain in the 0-1 range.
 
 **See also:** $SN.core.phasor$ -- same ramp generator without FM input, $SN.core.fm$ -- FM sine operator that can be stacked with this node

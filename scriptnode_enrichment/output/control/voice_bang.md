@@ -78,10 +78,6 @@ groups:
 ---
 ::
 
-## Notes
-
-Unlike [control.bang]($SN.control.bang$), which triggers when its input parameter changes, voice_bang triggers on MIDI note-on events. This distinction is important: bang responds to parameter automation, while voice_bang responds to musical input.
-
-A common pattern is to connect a [control.random]($SN.control.random$) node to the Value input, producing a different random value for each new voice.
+Unlike [control.bang]($SN.control.bang$), which triggers when its input parameter changes, voice_bang triggers on MIDI note-on events. A common pattern is to connect a [control.random]($SN.control.random$) node to the Value input, producing a different random value for each new voice.
 
 **See also:** $SN.control.bang$ -- triggers on parameter change rather than note-on

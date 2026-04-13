@@ -14,6 +14,7 @@ seeAlso:
   - { id: AHDSR, type: alternative, reason: "Simpler AHDSR with coefficient-based curves and a single shared decay/release shape" }
   - { id: SimpleEnvelope, type: alternative, reason: "Lighter-weight envelope with fewer stages and no curve control" }
   - { id: TableEnvelope, type: alternative, reason: "Table-driven envelope for arbitrary shapes that cannot be expressed as power curves" }
+  - { id: "envelope.flex_ahdsr", type: scriptnode, reason: "Scriptnode equivalent with per-segment curve control and trigger/loop modes" }
 commonMistakes:
   - title: "Trigger mode skips sustain entirely"
     wrong: "Using Trigger mode and expecting the envelope to hold at the sustain level"
@@ -80,6 +81,7 @@ llmRef: |
     alternative AHDSR - simpler envelope with coefficient-based curves
     alternative SimpleEnvelope - lighter-weight envelope
     alternative TableEnvelope - table-driven arbitrary shapes
+    [scriptnode] envelope.flex_ahdsr -- scriptnode equivalent with per-segment curve control and trigger/loop modes
 ---
 
 ::category-tags
@@ -292,4 +294,4 @@ The FlexAHDSRGraph supports seven LAF callbacks for full visual customisation:
 - `drawFlexAhdsrPosition` - playback ball position
 - `drawFlexAhdsrText` - parameter label text
 
-**See also:** $MODULES.AHDSR$ -- simpler AHDSR with coefficient-based curves and a single shared decay/release shape, $MODULES.SimpleEnvelope$ -- lighter-weight envelope with fewer stages and no curve control, $MODULES.TableEnvelope$ -- table-driven envelope for arbitrary shapes that cannot be expressed as power curves
+**See also:** $MODULES.AHDSR$ -- simpler AHDSR with coefficient-based curves and a single shared decay/release shape, $MODULES.SimpleEnvelope$ -- lighter-weight envelope with fewer stages and no curve control, $MODULES.TableEnvelope$ -- table-driven envelope for arbitrary shapes that cannot be expressed as power curves, $SN.envelope.flex_ahdsr$ -- scriptnode equivalent with per-segment curve control and trigger/loop modes

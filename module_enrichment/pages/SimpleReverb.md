@@ -10,7 +10,8 @@ cpuProfile:
   baseline: medium
   polyphonic: false
   scalingFactors: []
-seeAlso: []
+seeAlso:
+  - { id: "fx.reverb", type: scriptnode, reason: "Direct equivalent -- Freeverb algorithm" }
 commonMistakes:
   - title: "Dry Level is automatically controlled"
     wrong: "Adjusting the Dry Level slider expecting it to independently control the dry signal"
@@ -54,7 +55,7 @@ llmRef: |
     scriptnode HardcodedFX: fx.reverb node (same Freeverb algorithm).
 
   See also:
-    (none)
+    [scriptnode] fx.reverb - direct equivalent -- Freeverb algorithm
 ---
 
 ::category-tags
@@ -145,10 +146,4 @@ The Wet Level parameter controls both the wet and dry signal levels: setting Wet
 
 A fixed 0.5x gain reduction is applied to the output after the reverb algorithm. This compensates for the Freeverb algorithm's tendency to increase overall signal level, particularly at high room sizes. The reverb tail is cleared when voices are killed, preventing lingering reverb from previous notes.
 
-## See Also
-
-::see-also
----
-links: []
----
-::
+**See also:** $SN.fx.reverb$ -- direct equivalent -- Freeverb algorithm

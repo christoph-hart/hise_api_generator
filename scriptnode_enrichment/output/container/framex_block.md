@@ -59,12 +59,10 @@ process(input) {
 
 ::
 
-## Notes
+### Limitations
 
 The maximum supported channel count is 8 by default. Processing more channels triggers a debug assertion. This limit covers all standard use cases including surround configurations.
 
-This node is functionally equivalent to [dynamic_blocksize]($SN.container.dynamic_blocksize$) with its BlockSize parameter set to index 0 (block size 1). Both use the same frame-based processing path with runtime channel dispatch.
-
-When bypassed, children revert to block processing with the original block size and process the full host buffer.
+This node is functionally equivalent to [dynamic_blocksize]($SN.container.dynamic_blocksize$) with its BlockSize parameter set to index 0 (block size 1) -- both use the same frame-based processing path with runtime channel dispatch. When bypassed, children revert to block processing with the original block size and process the full host buffer.
 
 **See also:** $SN.container.frame2_block$ -- fixed stereo per-sample processing with better optimisation, $SN.container.dynamic_blocksize$ -- BlockSize index 0 is functionally equivalent

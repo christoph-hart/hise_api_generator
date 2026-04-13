@@ -153,12 +153,12 @@ groups:
 ---
 ::
 
-## Notes
+### Noise Floor
 
 The node includes a noise floor at -82 dB that prevents the upward compressor from boosting silence. Signals below this level are not amplified, avoiding the common problem of raising the noise floor with upward compression.
 
-The modulation output sends the applied gain ratio clamped to 0..1. Values below 1.0 indicate downward compression. Upward gain boost (values above 1.0) is clamped to 1.0 in the modulation output, so the modulation signal only reflects attenuation, not boost.
+### Modulation Output
 
-This node is fixed to stereo (two-channel) processing. For downward-only compression with mono support and sidechain keying, use [dynamics.comp]($SN.dynamics.comp$).
+The modulation output sends the applied gain ratio clamped to 0..1. Values below 1.0 indicate downward compression. Upward gain boost (values above 1.0) is clamped to 1.0 in the modulation output, so the modulation signal only reflects attenuation, not boost.
 
 **See also:** $SN.dynamics.comp$ -- simpler downward-only compressor
