@@ -324,7 +324,7 @@ class LinkRegistry:
         self._build_indexes("LANG")
 
     def _build_preprocessor_registry(self):
-        """Build PP (+ PREPROCESSOR alias) registry from preprocessor.json.
+        """Build PP registry from preprocessor.json.
 
         All macros live as anchors on a single index page, so each target
         resolves to `{basePath}#{macro_lower}`.
@@ -349,10 +349,6 @@ class LinkRegistry:
 
         self.targets["PP"] = targets
         self._build_indexes("PP")
-
-        for alias in domain_config.get("aliases", []):
-            self.targets[alias] = targets
-            self._build_indexes(alias)
 
     def _build_indexes(self, domain: str):
         """Build case-insensitive and normalized indexes for a domain."""
@@ -908,11 +904,11 @@ def convert_see_also(content, class_name, registry=None):
                         )
                     continue
 
-                # Parse $PP.MACRO$ / $PREPROCESSOR.MACRO$ tokens (with optional annotation)
+                # Parse $PP.MACRO$ tokens (with optional annotation)
                 pp_ann = re.match(
-                    r'\$(?:PP|PREPROCESSOR)\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+                    r'\$PP\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
                 )
-                pp_plain = re.match(r'\$(?:PP|PREPROCESSOR)\.(\w+)\$', item)
+                pp_plain = re.match(r'\$PP\.(\w+)\$', item)
 
                 if pp_ann or pp_plain:
                     pp_match = pp_ann or pp_plain
@@ -1705,21 +1701,18 @@ def _format_preprocessor_entry(macro_name: str, entry: dict) -> list:
     """Render one preprocessor as a list of markdown lines."""
     out = [f"### {macro_name}", ""]
 
-    meta = [
-        f"Default: `{entry.get('defaultValue', 0)}`",
-        f"Hot Reload: {'yes' if entry.get('supportsHotReload') else 'no'}",
-    ]
-    if entry.get("autoConfig"):
-        meta.append("Auto Config: yes")
-    if entry.get("valueRange"):
-        meta.append(f"Range: `{entry['valueRange']}`")
-    out.append("*" + " · ".join(meta) + "*")
-    out.append("")
-
     brief = entry.get("brief", "").strip()
     if brief:
         out.append(brief)
         out.append("")
+
+    default = entry.get("defaultValue", 0)
+    hot_reload = "yes" if entry.get("supportsHotReload") else "no"
+    auto_config = "yes" if entry.get("autoConfig") else "no"
+    out.append("| Default | Hot Reload | Auto Config |")
+    out.append("|---|---|---|")
+    out.append(f"| `{default}` | {hot_reload} | {auto_config} |")
+    out.append("")
 
     description = entry.get("description", "").strip()
     if description:
@@ -1841,7 +1834,7 @@ def build_preprocessor_backrefs(script_dir: Path, registry: "LinkRegistry",
             target_str = m.group(2).strip()
             rationale = (m.group(3) or "").strip()
 
-            if domain in ("PP", "PREPROCESSOR"):
+            if domain == "PP":
                 continue  # self-domain: already adjacent on the same page
 
             parts = target_str.split(".")
@@ -1869,12 +1862,15 @@ def build_preprocessor_backrefs(script_dir: Path, registry: "LinkRegistry",
 
 def inject_preprocessor_backrefs(content: str, domain: str, out_rel: Path,
                                  backrefs: dict) -> str:
-    """Prepend a **See also:** line with $PP.MACRO$ backlinks if any.
+    """Merge $PP.MACRO$ backlinks into the page's existing **See also:** line.
 
-    Match key: (domain, out_rel.stem.lower()). The `convert_see_also` pass
-    later promotes the line into an ::see-also MDC block.
+    Match key: (domain, out_rel.stem.lower()). If the page has an existing
+    `**See also:** ...` line, the backrefs are appended inline so they sit
+    alongside the hand-authored cross-references and render in the same
+    ::see-also block. If no see-also line exists, one is created at the
+    bottom of the file.
     """
-    if domain in ("PP", "PREPROCESSOR"):
+    if domain == "PP":
         return content
 
     stem = out_rel.stem.lower()
@@ -1888,12 +1884,16 @@ def inject_preprocessor_backrefs(content: str, domain: str, out_rel: Path,
             items.append(f"$PP.{macro_name}$ -- {rationale}")
         else:
             items.append(f"$PP.{macro_name}$")
-    line = "**See also:** " + ", ".join(items)
+    appended = ", ".join(items)
 
-    fm = re.match(r'^(---\n.*?\n---\n)', content, re.DOTALL)
-    if fm:
-        return content[:fm.end()] + "\n" + line + "\n\n" + content[fm.end():]
-    return line + "\n\n" + content
+    see_also_pattern = re.compile(r'^(\*\*See also:\*\* .+?)$', re.MULTILINE)
+    matches = list(see_also_pattern.finditer(content))
+    if matches:
+        last = matches[-1]
+        merged = last.group(1).rstrip().rstrip(",") + ", " + appended
+        return content[:last.start()] + merged + content[last.end():]
+
+    return content.rstrip() + "\n\n**See also:** " + appended + "\n"
 
 
 def collect_sources(script_dir: Path, site_structure: dict) -> list:

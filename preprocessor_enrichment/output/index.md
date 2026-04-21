@@ -13,9 +13,11 @@ Add an explanation for each category
 
 ### AUDIOFFT_FFTW3
 
-*Default: `0` · Hot Reload: no*
-
 Switches the FFT convolution backend over to the FFTW3 library instead of the built-in Ooura implementation.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Selects FFTW3 as the FFT engine used by the convolution reverb and the FFT convolver inside scriptnode's filters.convolution node. The built-in Ooura backend is lightweight and always available, whereas FFTW3 is noticeably faster for long impulse responses but has to be linked into the build separately and ships under a copyleft licence that may not suit a commercial product. The HISE exporter will only wire up an FFTW build when IPP is not active on the same platform, so enabling both at once has no effect.
 > FFTW3 has to be present as an external dependency at both compile and link time. Check the licensing terms of FFTW3 before shipping the resulting binary.
@@ -24,9 +26,11 @@ Selects FFTW3 as the FFT engine used by the convolution reverb and the FFT convo
 
 ### HISE_INCLUDE_BEATPORT
 
-*Default: `0` · Hot Reload: no*
-
 Compiles the Beatport authentication integration into the build.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Enables the real implementation of the BeatportManager scripting object, which talks to the Beatport SDK to validate a product against a user's Beatport account. With the flag off, the scripting object still loads so that existing scripts compile, but setProductId is a no-op, validate returns an empty object and isBeatportAccess always reports false. The Beatport SDK has to be supplied separately and linked into the project; HISE does not bundle it.
 > Only meaningful for products distributed through Beatport's plugin catalogue. Leave this off for everything else.
@@ -35,9 +39,11 @@ Enables the real implementation of the BeatportManager scripting object, which t
 
 ### HISE_INCLUDE_BX_LICENSER
 
-*Default: `0` · Hot Reload: no*
-
 Compiles the Brainworx / Plugin Alliance BX Licenser integration into the build.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Enables the Engine.createBXLicenser scripting factory and pulls in the BX Licenser wrapper sources, which let a plugin authenticate against the Plugin Alliance licence system and redeem installer codes. With the flag off, createBXLicenser returns undefined, the wrapper sources are excluded from the unity build and no Plugin Alliance dependency is linked. The BX licensing library has to be provided separately and is only available to Plugin Alliance partner developers.
 > Only set this for a product that ships through the Plugin Alliance distribution channel, because the licensing library is not publicly available.
@@ -46,9 +52,11 @@ Enables the Engine.createBXLicenser scripting factory and pulls in the BX Licens
 
 ### HISE_INCLUDE_LORIS
 
-*Default: `1` · Hot Reload: no · Auto Config: yes*
-
 Includes the Loris analysis and resynthesis library so scripts can access the LorisManager API.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | yes |
 
 Loris is an additive analysis and resynthesis toolkit that HISE uses for partial tracking, time stretching and spectral morphing of audio files. Enabling this flag compiles the entire hi_loris module (around fifty translation units), exposes Engine.getLorisManager and the LorisManager scripting class, and lets the wavetable converter use Loris-based resynthesis for cycle extraction. The flag is on by default in the HISE IDE because the Loris workflows are part of the authoring tooling, and off in the exported plugin template to keep the runtime binary small.
 > Disable this in the HISE build only if compile times are a problem and you never need Loris-based tools. The plugin template already disables it automatically for exports.
@@ -57,9 +65,11 @@ Loris is an additive analysis and resynthesis toolkit that HISE uses for partial
 
 ### HISE_INCLUDE_MUSEHUB
 
-*Default: `0` · Hot Reload: no*
-
 Compiles the MuseHub SDK integration into an exported plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Enables the real MuseHub licence check inside ScriptUnlocker so that Unlocker.checkMuseHub validates the plugin against a user's MuseHub account through the MuseHub SDK. With the flag off, the backend build falls back to a simulated 50/50 result after a two second delay and the frontend does nothing at all. The MuseHub SDK headers and static library have to be supplied separately by MuseHub and are only available to partners distributing through their catalogue.
 > Only takes effect in exported plugin builds. The HISE IDE always runs the simulated path regardless of this setting so that the scripting API can be tested without the SDK.
@@ -68,9 +78,11 @@ Enables the real MuseHub licence check inside ScriptUnlocker so that Unlocker.ch
 
 ### HISE_INCLUDE_NKS_SDK
 
-*Default: `0` · Hot Reload: no · Auto Config: yes*
-
 Compiles the Native Instruments NKS integration into the build.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | yes |
 
 Enables the Engine.createNKSManager scripting factory, pulls in the NKS wrapper sources and links the NKS VST3 interface hooks so that an exported plugin can show preset information, tag metadata and a factory browser inside Komplete Kontrol and Maschine. With the flag off, createNKSManager returns undefined, the NKS wrapper sources are excluded from the unity build and the frontend uses a dummy NKSVST3Interface stub. The NKS SDK has to be requested from Native Instruments separately; HISE does not ship it.
 > The exporter inspects the project's Extra Definitions for this flag and skips the NKS wiring automatically when it is not present, so in most cases you only need to set it in ExtraDefinitionsWindows or ExtraDefinitionsOSX rather than on the HISE build itself.
@@ -79,9 +91,11 @@ Enables the Engine.createNKSManager scripting factory, pulls in the NKS wrapper 
 
 ### HISE_INCLUDE_PITCH_DETECTION
 
-*Default: `1` · Hot Reload: no*
-
 Compiles the dywapitchtrack pitch detection library into the build.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Enables the PitchDetection helper class and exposes it to scripting through Buffer.detectPitch, which runs an autocorrelation-based pitch estimator over an audio buffer and returns the fundamental in Hz. With the flag off, the detection code is excluded and the scripting method is not registered, which trims a small amount from the compiled binary. Leave this on unless you are stripping HISE down to a minimal build and know that no script in the project calls detectPitch.
 
@@ -89,9 +103,11 @@ Enables the PitchDetection helper class and exposes it to scripting through Buff
 
 ### HISE_INCLUDE_RLOTTIE
 
-*Default: `1` · Hot Reload: no · Auto Config: yes*
-
 Compiles the rLottie vector animation library so scripts can play Lottie animations in a panel.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | yes |
 
 Pulls in the entire hi_rlottie module and wires up the Panel animation API (setAnimation, setAnimationFrame, getAnimationData) that plays JSON-based Lottie vector animations inside a ScriptPanel. The library is statically linked by default so no extra dynamic dependency ships with the plugin. Disabling this flag removes the animation methods, skips the rLottie translation units and noticeably cuts compile time for projects that do not use vector animations at all.
 > Enabled by default in both the HISE build and the exported plugin template so that animations work out of the box in new projects.
@@ -100,9 +116,11 @@ Pulls in the entire hi_rlottie module and wires up the Panel animation API (setA
 
 ### HISE_INCLUDE_RT_NEURAL
 
-*Default: `1` · Hot Reload: no*
-
 Compiles the RTNeural inference library so scriptnode can run neural network models in real time.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Enables the NeuralNetwork scripting class, the math.neural scriptnode node and the loaders for TensorFlow, PyTorch and ONNX models, which are the entire realtime-inference stack in HISE. With the flag off, the math.neural node still appears in the factory but renders nothing and shows 'This node is disabled. Recompile HISE with HISE_INCLUDE_RT_NEURAL' in its panel, and the NeuralNetwork holder on the MainController is compiled out so load calls fail silently.
 > Must be set identically in the HISE build and the exported plugin, because the NeuralNetwork storage and the node binary layout both change when the flag is toggled.
@@ -111,9 +129,11 @@ Enables the NeuralNetwork scripting class, the math.neural scriptnode node and t
 
 ### HISE_INCLUDE_XSIMD
 
-*Default: `0` · Hot Reload: no*
-
 Signals that the surrounding project already provides the xsimd SIMD header, so HISE skips its own copy.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 When off, HISE pulls in the xsimd header that is bundled with RTNeural from hi_tools and from MiscToolClasses so that the SIMD wrappers compile against a known version. When on, the include is skipped and the project is expected to have made a different xsimd installation visible on the include path before hi_tools is parsed. Use this only if your own code also includes xsimd and the two copies clash at compile time; leaving it off is correct for almost every project.
 
@@ -121,9 +141,11 @@ When off, HISE pulls in the xsimd header that is bundled with RTNeural from hi_t
 
 ### USE_IPP
 
-*Default: `0` · Hot Reload: no · Auto Config: yes*
-
 Enables the Intel Integrated Performance Primitives fast paths for FFT, vector math and sample playback.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | yes |
 
 IPP is Intel's hand-optimised SIMD library, and enabling this flag routes the FFT convolver, the sampler pitch accumulation and several vector operations through ippsAdd, ippsSum and the IPP FFT instead of the portable fallbacks. The gain on Windows is large for long convolutions and busy multi-voice samplers, but IPP has to be installed through Intel oneAPI and its libraries linked into the build separately. The flag is auto-defined to 1 on Windows when the Projucer detects any of the _IPP_SEQUENTIAL_STATIC / _IPP_PARALLEL_* macros, and is forced to 0 on macOS and Linux because IPP is Windows-only in HISE.
 > The exporter writes USE_IPP=1 into the Windows Extra Definitions automatically when the 'Use IPP' project setting is on, so it should normally not be set by hand. Setting it manually on macOS or Linux fails a static_assert in hi_lac.
@@ -134,9 +156,11 @@ IPP is Intel's hand-optimised SIMD library, and enabling this flag routes the FF
 
 ### FORCE_INPUT_CHANNELS
 
-*Default: `0` · Hot Reload: no*
-
 Routes the host audio input into the master chain of an instrument plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 By default an instrument plugin only produces audio from its sound generators and ignores any audio coming from the host. Setting this to 1 adds a stereo input bus that feeds directly into the top of the master chain, so the master effect chain processes the incoming host audio alongside the generated instrument output. Use this when you need an instrument plugin that also reacts to audio on the track, for example a sampler with a built-in input effect path or a hybrid instrument/effect hosted on an audio track.
 > Only meaningful in stereo instrument builds. It is automatically ignored when the plugin is configured for more than two output channels, and it has no effect on effect plugin exports (which always have an input bus).
@@ -145,9 +169,11 @@ By default an instrument plugin only produces audio from its sound generators an
 
 ### HI_SUPPORT_MONO_CHANNEL_LAYOUT
 
-*Default: `0` · Hot Reload: no · Auto Config: yes*
-
 Makes an exported effect plugin accept a mono track configuration in addition to stereo.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | yes |
 
 Only relevant when the project is exported as an effect plugin. When enabled, the plugin reports both a mono-in/mono-out and a stereo-in/stereo-out bus layout to the host, so it can be inserted on mono tracks as well as stereo tracks. When disabled, the plugin advertises stereo only and hosts will either refuse to load it on a mono track or silently wrap it in an adapter.
 > The HISE export dialog writes this flag automatically from the 'Support Mono FX' project setting, so you normally don't need to set it manually in the ExtraDefinitions field.
@@ -156,9 +182,11 @@ Only relevant when the project is exported as an effect plugin. When enabled, th
 
 ### HI_SUPPORT_MONO_TO_STEREO
 
-*Default: `0` · Hot Reload: no*
-
 Advertises a mono-input / stereo-output bus layout on an effect plugin with mono support enabled.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Extends the mono track support so that the plugin accepts a mono input feeding a stereo output, rather than only mono-in/mono-out and stereo-in/stereo-out. The incoming mono signal is duplicated to both channels before processing, which lets a naturally stereo effect (reverb, ping-pong delay, stereo widener) be inserted on a mono source without the host summing the output back to mono. Requires the mono channel layout support to also be enabled.
 > Do not set this flag by hand. Use the 'Force Stereo Output' project setting together with 'Support Mono FX' instead, because setting the preprocessor manually causes FL Studio VST3 builds to collapse the stereo output back to mono.
@@ -167,9 +195,11 @@ Extends the mono track support so that the plugin accepts a mono input feeding a
 
 ### PROCESS_SOUND_GENERATORS_IN_FX_PLUGIN
 
-*Default: `1` · Hot Reload: no · Auto Config: yes*
-
 Keeps child sound generators running inside an exported FX plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | yes |
 
 Only relevant when the project is exported as an effect plugin. If enabled, every sound generator in the master chain is still rendered so that global modulators, macro modulation sources, LFOs and envelopes that feed modulation slots on the effect chain keep producing their values. If disabled, only the effect chain itself is processed which saves a bit of CPU but breaks any modulation that originates from a sound generator.
 > The HISE export dialog writes this flag automatically based on the 'Process Sound Generators in FX Plugin' checkbox, so you normally don't need to set it manually in the ExtraDefinitions field.
@@ -180,9 +210,11 @@ Only relevant when the project is exported as an effect plugin. If enabled, ever
 
 ### HISE_BROWSE_FOLDER_WHEN_RELOCATING_SAMPLES
 
-*Default: `1` · Hot Reload: no*
-
 Controls whether relocating samples opens a folder picker or a file picker for a .ch1 file.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Changes the behaviour of the 'Relocate Samples' button in the standalone settings window of an exported plugin. When enabled, clicking it opens a folder browser so the user can point at the directory that contains the extracted sample archive. When disabled, it opens a file browser filtered to .ch1 files and uses the parent folder of the chosen file as the new sample location, which is useful if the installer produces a nested folder layout and you want the user to click on a known landmark file instead of navigating to the correct subfolder.
 > Only affects the standalone settings dialog in the exported plugin. Has no effect inside the HISE IDE.
@@ -191,9 +223,11 @@ Changes the behaviour of the 'Relocate Samples' button in the standalone setting
 
 ### HISE_ENABLE_CROSSFADE_MODULATION_THRESHOLD
 
-*Default: `1` · Hot Reload: no*
-
 Skips per-sample crossfade modulation when the control-rate signal is effectively constant over a block.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Affects how the sampler renders its group crossfade modulation chain. When enabled, the first and last control-rate values of each block are compared and if they differ by less than -80 dB the engine writes a single ramp value for the whole block instead of expanding the full modulation signal. This is a measurable CPU saving for patches with many voices in crossfaded groups where the modulation value is usually static. Disabling it always uses the full modulation signal and removes any chance of audible stepping when a crossfade slider is automated very slowly.
 > Disable only if you hear subtle artifacts when crossfading between sampler groups and need the full per-sample resolution.
@@ -202,9 +236,11 @@ Affects how the sampler renders its group crossfade modulation chain. When enabl
 
 ### HISE_LOAD_ENTIRE_SAMPLE_THRESHHOLD
 
-*Default: `2147483647` · Hot Reload: no*
-
 Preload size in samples above which the streaming engine loads the entire sample into memory.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `2147483647` | no | no |
 
 When a sample's preload buffer would exceed this threshold, the streaming engine skips disk streaming for that sample and loads it into memory in full. The default is INT_MAX which effectively disables the shortcut so every sample is streamed normally. Lower values (for example 28000) are useful as a workaround for rare edge cases where short samples produce clicks during streamed playback. The value is interpreted as a sample frame count, so memory cost scales with bit depth and channel count.
 > Setting this too low forces a lot of short samples to stay fully in RAM and can noticeably inflate memory usage on large sample sets.
@@ -213,9 +249,11 @@ When a sample's preload buffer would exceed this threshold, the streaming engine
 
 ### HISE_SAMPLER_ALLOW_RELEASE_START
 
-*Default: `1` · Hot Reload: no*
-
 Enables the release start feature on the sampler, including scripting APIs and the release start editor.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 When enabled, every sample can define a release start marker that the voice jumps to when the note is released, with configurable fade time, fade curve, zero crossing alignment, gain matching and peak smoothing. The full configuration is exposed in the sample editor and through Sampler.setReleaseStartOptions, Sampler.getReleaseStartOptions and Sampler.setAllowReleaseStart. Disabling it removes the feature entirely, which saves a small amount of per-voice state and removes the release start properties from the sample map format.
 > Must be set consistently for both the HISE build and the exported plugin. Calling the release start scripting APIs with this disabled raises a script error.
@@ -224,9 +262,11 @@ When enabled, every sample can define a release start marker that the voice jump
 
 ### HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON
 
-*Default: `1` · Hot Reload: no*
-
 Shows the 'Install Samples' button on the SamplesNotInstalled overlay in an exported plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Controls the install button in the overlay that appears when the exported plugin cannot find its sample archive. When enabled, the user can pick a downloaded .hr1 archive and the plugin extracts it into the sample folder using the built-in HLAC archiver. Disable this if you ship samples through a custom installer or a separate application and do not want the plugin to offer the HR1 extraction workflow. The default message shown on the overlay also changes depending on which of the install and locate buttons are enabled.
 > If both this and the locate button are disabled, the SamplesNotInstalled overlay is suppressed completely.
@@ -235,9 +275,11 @@ Controls the install button in the overlay that appears when the exported plugin
 
 ### HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON
 
-*Default: `1` · Hot Reload: no*
-
 Shows the 'Locate Samples' button on the SamplesNotInstalled overlay in an exported plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Controls the locate button in the overlay that appears when the exported plugin cannot find its sample archive. When enabled, the user can point the plugin at an existing sample folder on first launch. When disabled, the plugin silently picks a sensible default location (the user documents folder on Windows, the music folder on macOS and Linux) and keeps using that until the location is changed manually in the settings window. The default message on the overlay also changes depending on which of the install and locate buttons are enabled.
 > If both this and the install button are disabled, the SamplesNotInstalled overlay is suppressed completely.
@@ -246,18 +288,22 @@ Controls the locate button in the overlay that appears when the exported plugin 
 
 ### HI_SUPPORT_FULL_DYNAMICS_HLAC
 
-*Default: `0` · Hot Reload: no · Auto Config: yes*
-
 Exposes the Full Dynamics sample encoding option in the exported plugin's sample install dialog.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | yes |
 
 When enabled, the sample installer dialog inside the exported plugin shows the 'Sample bit depth' selector so the user can opt into the Full Dynamics HLAC encoding that preserves the original 24 bit dynamic range instead of the standard 16 bit path. The HISE IDE always shows this option. If disabled in an exported plugin, the install dialog falls back to the standard encoding with no user choice, which keeps the archive smaller and slightly speeds up decoding at the cost of extra quantisation noise.
 > The HISE export dialog writes this flag automatically from the 'Support Full Dynamics' project setting, so you normally don't need to set it manually in the ExtraDefinitions field.
 
 ### USE_FALLBACK_READERS_FOR_MONOLITH
 
-*Default: `0` · Hot Reload: no*
-
 Uses a per-instance file handle for every monolith reader instead of memory mapping the sample archive.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Switches the streaming backend from memory-mapped monolith access to regular FileInputStream-based HLAC readers. The default picks memory mapping on 64 bit desktop builds and falls back to file handles on iOS and 32 bit builds where the address space is too small to map large sample sets. Enabling this explicitly forces the file handle path on every platform, which is useful when the plugin must run under sandboxing restrictions that block mmap, or when debugging a sample loading issue that seems to be related to the memory mapper.
 > Turning this on costs one open file handle per monolith part per voice, so it can hit per-process file descriptor limits on large sample libraries.
@@ -268,9 +314,11 @@ Switches the streaming backend from memory-mapped monolith access to regular Fil
 
 ### HISE_LOG_FILTER_FREQMOD
 
-*Default: `0` · Hot Reload: no*
-
 Applies a logarithmic skew to filter frequency modulation so the modulated cutoff tracks pitch more naturally.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 By default, any modulator feeding a filter's frequency input scales linearly between 20 Hz and 20 kHz, which makes the same modulation depth sound dramatic at low cutoffs and almost inaudible at high cutoffs. Enabling this flag wraps the frequency modulation in a log-style skew (the same perceptual curve used by the frequency knob itself), so an LFO or envelope moves the cutoff by roughly the same number of semitones regardless of where the base frequency sits. The skew is only applied when modulation is actually active, so a patch with no frequency modulator sounds identical either way.
 > Left off by default because existing presets were voiced against the linear curve and flipping it changes the depth and shape of every filter modulation in the project.
@@ -279,9 +327,11 @@ By default, any modulator feeding a filter's frequency input scales linearly bet
 
 ### HISE_MAX_DELAY_TIME_SAMPLES
 
-*Default: `65536` · Hot Reload: no*
-
 Maximum buffer size (in samples) for every delay line in the project.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `65536` | no | no |
 
 Every delay line allocates a fixed power-of-two buffer at compile time, so this value defines the longest possible delay regardless of sample rate. The default of 65536 samples equals roughly 1.36 seconds at 48 kHz and drops to about 680 ms at 96 kHz. If your project uses long delays, big reverb tails or high sample rates, increase this to 131072, 262144 or 524288 to avoid the delay time being clamped at runtime.
 > The value must be a power of two. Doubling it doubles the memory footprint of every delay instance, so don't set it higher than you actually need.
@@ -290,9 +340,11 @@ Every delay line allocates a fixed power-of-two buffer at compile time, so this 
 
 ### HISE_NEURAL_NETWORK_WARMUP_TIME
 
-*Default: `0` · Hot Reload: yes*
-
 Number of silent samples that the neural network node processes on reset to flush its internal state.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | yes | no |
 
 Whenever a voice is started or the network is reset, the node feeds this many zero-valued samples through the model before real audio arrives. This warms up any recurrent layers and IIR-style history inside the network so the first output sample does not carry the noise or click that an uninitialised model produces. Values between 128 and 2048 are typical; larger networks with long temporal memory need higher values, whereas stateless feedforward models can leave it at zero.
 > Read from the project's Extra Definitions at runtime, so changing the value in the Preferences window and recompiling the scriptnode network is enough, no full HISE rebuild required.
@@ -301,9 +353,11 @@ Whenever a voice is started or the network is reset, the node feeds this many ze
 
 ### HISE_UPDATE_CONVOLUTION_DAMPING_ASYNC
 
-*Default: `1` · Hot Reload: no*
-
 Recomputes the convolution Damping filter asynchronously so UI drags stay smooth.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Changing the Damping parameter of a convolution reverb applies a one-pole low-pass to the impulse response, which is an expensive operation. With this flag on, the recomputation is dispatched to the worker thread so a slider drag or automation stream can keep feeding new values without stalling the UI or glitching the audio. Loading an impulse response or changing its sample range always stays synchronous, regardless of this setting.
 > Disable only if you need strict ordering when a script sets Damping back-to-back with an IR swap or range change, because the async path can otherwise apply the damping after the next IR has already loaded.
@@ -312,9 +366,11 @@ Changing the Damping parameter of a convolution reverb applies a one-pole low-pa
 
 ### HISE_USE_SVF_FOR_CURVE_EQ
 
-*Default: `0` · Hot Reload: no*
-
 Swaps the biquad implementation inside the Parametriq EQ for state-variable filters.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 The Parametriq EQ uses stock biquad coefficients for every band by default, which sound fine on static settings but produce audible zipper noise when the frequency, gain or Q of a band is automated or scripted in real time. Enabling this flag switches every band to the state-variable filter topology (the same one exposed as filters.svf_eq in scriptnode), which is zipper-free under modulation and additionally gives the LowPass and HighPass bands a working Q parameter instead of the fixed one-pole response. The static sound is slightly different from the biquad version, so existing mix references will shift.
 > Must be set in both the HISE build and the exported plugin's Extra Definitions, because the filter type is baked into the binary at compile time.
@@ -323,9 +379,11 @@ The Parametriq EQ uses stock biquad coefficients for every band by default, whic
 
 ### USE_MOD2_WAVETABLESIZE
 
-*Default: `1` · Hot Reload: no*
-
 Fast-path wavetable playback that requires power-of-two cycle lengths in every .hwt file.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 When enabled, the wavetable synthesiser indexes its buffer with a bitmask wrap instead of a modulo and a branch, which is the hot inner loop during every voice render and noticeably cheaper on the audio thread. Loading a wavetable whose cycle length is not a power of two logs an error and plays back incorrectly. Since HISE 3.5 the wavetable converter produces power-of-two cycles by default, so this only bites for projects that still ship legacy .hwt files.
 > Disable (set to 0) only if you need to keep playing pre-3.5 wavetables and can't reconvert them. The slower inner loop is the price of that compatibility.
@@ -336,9 +394,11 @@ When enabled, the wavetable synthesiser indexes its buffer with a bitmask wrap i
 
 ### HISE_NUM_FX_PLUGIN_CHANNELS
 
-*Default: `2` · Hot Reload: no*
-
 Number of audio channels exposed to the host when the project is exported as an effect plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `2` | no | no |
 
 Controls the channel count that an exported FX plugin advertises to the DAW, which is the standard way to enable sidechain input or multi-channel effect processing (set to 4 for a stereo main plus stereo sidechain bus, 6 for 5.1, and so on). The value must be an even number and must not be smaller than the master container's routing matrix channel count; it may be larger, which lets you keep additional stereo pairs for hidden internal routing that the host never sees. Only affects effect plugin exports.
 > Has no effect on instrument plugins or the standalone app, and is independent from the main plugin channel count used by instrument exports.
@@ -347,9 +407,11 @@ Controls the channel count that an exported FX plugin advertises to the DAW, whi
 
 ### HISE_NUM_MAX_FRAME_CONTAINER_CHANNELS
 
-*Default: `8` · Hot Reload: no*
-
 Upper channel limit for scriptnode frame processing containers.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `8` | no | no |
 
 Frame processing containers in scriptnode produce one sample per channel at a time instead of processing in blocks, and their channel dispatch is resolved at compile time through a fixed set of template specialisations. This value caps how many channels those specialisations cover, so a frame container configured for more channels than the limit will fail to compile or fall back to the non-frame path. The default of 8 covers all common surround formats and only needs to be raised for unusual routing setups such as ambisonics or bespoke multichannel effects.
 > Increasing this adds template instantiations and slightly grows compile time and binary size, so only raise it when you actually need wider frame containers.
@@ -358,9 +420,11 @@ Frame processing containers in scriptnode produce one sample per channel at a ti
 
 ### HISE_NUM_PLUGIN_CHANNELS
 
-*Default: `2` · Hot Reload: no · Auto Config: yes*
-
 Number of output channels advertised by an exported instrument plugin.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `2` | no | yes |
 
 Defines the output bus width of the compiled instrument plugin and the destination channel count of the master routing matrix in plugin builds. The value must be even, a multiple of 2, and must not exceed the project-wide channel ceiling; pairing it with a correspondingly sized routing matrix in the master container lets you build multi-output instruments where each stereo pair lands on its own DAW bus. The HISE export dialog derives this value automatically from the master container's routing matrix (or clamps it to 2 when 'Force Stereo Output' is set), so it should rarely be set by hand.
 > Manually overriding this in ExtraDefinitions bypasses the routing-matrix derivation and is only useful for edge cases such as exporting a plugin with more output channels than the master chain currently uses.
@@ -369,9 +433,11 @@ Defines the output bus width of the compiled instrument plugin and the destinati
 
 ### HISE_NUM_STANDALONE_OUTPUTS
 
-*Default: `2` · Hot Reload: no*
-
 Number of output channels used when the project runs as a standalone application.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `2` | no | no |
 
 Sets how many channels the standalone HISE app (and any exported standalone build) requests from the audio device and feeds to the master routing matrix. The value must be even and defaults to the main plugin channel count, which keeps standalone and plugin behaviour in sync for typical stereo projects. Raise this together with the plugin channel count when building a multi-output standalone instrument so that the extra buses reach the audio interface.
 > When the standalone device settings and this value disagree, the standalone startup code will prompt to reset the saved audio configuration to match.
@@ -380,9 +446,11 @@ Sets how many channels the standalone HISE app (and any exported standalone buil
 
 ### NUM_MAX_CHANNELS
 
-*Default: `16` · Hot Reload: no*
-
 Project-wide ceiling on the number of channels that the routing matrix and multichannel buffers can handle.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `16` | no | no |
 
 Sets the fixed array size used throughout HISE for channel connections, routing matrices, microphone position bookkeeping and the multichannel audio buffer, so every container, effect and sampler instance is limited to this many channels regardless of its own configuration. The value must be a multiple of 2 and defaults to 16, which is enough for most surround and multi-mic sampler setups. Raise it (for example to 32) only when a project genuinely needs more than 8 stereo pairs, because the extra channels grow every per-channel array in the runtime.
 > Must match between the HISE build and any project DLL or exported plugin; a mismatch corrupts routing-matrix state because the array sizes no longer line up.
@@ -391,9 +459,11 @@ Sets the fixed array size used throughout HISE for channel connections, routing 
 
 ### NUM_POLYPHONIC_VOICES
 
-*Default: `256` · Hot Reload: no*
-
 Compile-time upper bound on the number of simultaneously active voices per sound generator.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `256` | no | no |
 
 Sets the fixed voice array size for every polyphonic sound generator, modulator chain, polyphonic envelope and polyphonic scriptnode state, so no sound generator can ever play more than this many voices regardless of its runtime voice limit. The default is 256 on desktop and 128 on iOS, which is the ceiling of the per-generator VoiceLimit parameter. Raising it increases the memory footprint of every polyphonic modulator and envelope and is only needed for extreme voice counts; the VoiceLimit parameter on each synth is the right place to tune per-patch polyphony, not this macro.
 > Must match exactly between the HISE build and any project DLL, otherwise the voice-indexed arrays disagree in size and audio glitches or crashes occur when the DLL is loaded.
@@ -404,9 +474,11 @@ Sets the fixed voice array size for every polyphonic sound generator, modulator 
 
 ### HISE_PLAY_ALL_CROSSFADE_GROUPS_WHEN_EMPTY
 
-*Default: `1` · Hot Reload: no*
-
 Plays every crossfade group at full gain when no crossfade modulator is connected.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Affects the sampler's group crossfade behaviour. When the crossfade modulation chain has no active modulator, the sampler returns a constant gain of 1.0 for every group instead of using the stored crossfade table value, so every group plays simultaneously. The default matches the original HISE behaviour and is almost always what you want, because it lets you audition grouped samples without having to wire up a modulator first.
 > Disable this only if you have a legacy project that relied on the stored crossfade value being used when the chain is empty.
@@ -415,9 +487,11 @@ Affects the sampler's group crossfade behaviour. When the crossfade modulation c
 
 ### HISE_RAMP_RETRIGGER_ENVELOPES_FROM_ZERO
 
-*Default: `0` · Hot Reload: no*
-
 Ramps monophonic envelopes down to zero before retriggering instead of jumping straight into the attack phase.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Changes how the RETRIGGER state works in the AHDSR, Simple Envelope and the equivalent scriptnode envelope nodes when they run in monophonic mode. The default behaviour immediately transitions from RETRIGGER into ATTACK and continues from the current envelope value. With this flag enabled, the envelope first ramps towards zero at a fixed rate of 0.005 per sample and only then enters the attack phase, which gives a slightly softer restart but introduces a small retrigger delay that scales with the current envelope level.
 > Polyphonic mode is unaffected because a retrigger there allocates a new voice.
@@ -426,9 +500,11 @@ Changes how the RETRIGGER state works in the AHDSR, Simple Envelope and the equi
 
 ### HISE_USE_BACKWARDS_COMPATIBLE_TIMESTAMPS
 
-*Default: `1` · Hot Reload: no*
-
 Subtracts one audio block from event timestamps generated on the audio thread for compatibility with older patches.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 Adjusts the timestamp of artificial note-on and note-off events that scripts add through the Message and Synth scripting APIs while running on the audio thread. When enabled, the engine removes one buffer's worth of samples from the requested timestamp (clamped to zero) before queuing the event. This compensates for an old off-by-one-block scheduling behaviour so that presets built against the original timing keep sounding the same. Events triggered from other threads and artificial events created outside a MIDI callback are not affected.
 > Turning this off gives you the newer, more accurate timestamp semantics but can shift the position of scripted notes by one block in existing projects.
@@ -437,9 +513,11 @@ Adjusts the timestamp of artificial note-on and note-off events that scripts add
 
 ### HISE_USE_WRONG_VOICE_RENDERING_ORDER
 
-*Default: `0` · Hot Reload: no*
-
 Restores the pre-fix voice render order in which voice effects ran before the polyphonic gain modulation.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 Affects the Sampler, Waveform Generator, Audio Looper and Synth Group. In older HISE builds these sound generators rendered their voice effect chain before applying the polyphonic gain, crossfade and group modulation values, which is the reverse of the other generators and produces a slightly different sound whenever the voice effect is non-linear (saturation, compression, tanh wave shaping). The default behaviour is the corrected order. Enabling this flag swaps back to the legacy order so that user presets that were voiced against the old output keep sounding the same.
 > Only enable this if you are maintaining an existing product and need bit-exact compatibility with user presets built against the old order.
@@ -450,9 +528,11 @@ Affects the Sampler, Waveform Generator, Audio Looper and Synth Group. In older 
 
 ### HISE_USE_EXTENDED_TEMPO_VALUES
 
-*Default: `0` · Hot Reload: no*
-
 Adds longer tempo divisions (up to eight bars) to every tempo-synced parameter in the project.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 The built-in tempo list that feeds every TempoSync slider, the arpeggiator's Tempo parameter and the `Engine.getTempoInMilliSeconds` / `TransportHandler` scripting APIs only goes up to a whole note by default. Enabling this flag prepends five longer values (EightBar, SixBar, FourBar, ThreeBar, TwoBars) to the front of the list, which is useful for slowly evolving ambient patches or long arpeggiator phrases.
 > Turning this on shifts every existing tempo index by 5, so any user preset that stored a tempo as an integer index before the change will map to a different note value after recompiling. The flag must be set consistently for both the HISE build and the exported plugin, otherwise stored indices will not round-trip.
@@ -463,9 +543,11 @@ The built-in tempo list that feeds every TempoSync slider, the arpeggiator's Tem
 
 ### USE_RELATIVE_PATH_FOR_AUDIO_FILES
 
-*Default: `1` · Hot Reload: no*
-
 Store non-streaming audio file references in presets as paths relative to an installed AudioFiles folder.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 When enabled, the exported plugin stores and resolves audio file references using the `{AUDIO_FILES}` wildcard against an AudioFiles subfolder inside the plugin's AppData directory, and the folder is created automatically if it does not exist yet. When disabled, user presets store the full absolute path from the machine that saved them, which breaks on any other computer.
 > Only affects exported plugins. The HISE IDE always resolves audio files against the current project folder. Turn this off only if you deliberately manage the audio file location in HISEScript and don't want the AppData subfolder to be created.
@@ -476,32 +558,40 @@ These macros are still defined so old projects keep compiling, but no code reads
 
 ### HISE_SMOOTH_FIRST_MOD_BUFFER
 
-*Default: `0` · Hot Reload: no*
-
 Historical switch for smoothing the first control-rate modulation buffer after a voice starts.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 The original intent was to suppress a one-block jump in the modulation signal at voice start by ramping the first rendered buffer instead of writing the initial value straight away. The macro is still defined but no code reads it anywhere, so toggling it has no effect on modulation behaviour or on audio output. It is kept around so that older user projects which list it in their ExtraDefinitions still compile.
 
 ### HISE_USE_SQUARED_TIMEVARIANT_MOD_VALUES_BUG
 
-*Default: `0` · Hot Reload: no*
-
 Historical switch for reproducing a bug that squared time-variant modulation values before applying them.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 The original purpose was to keep the sound of legacy patches that were tuned against an incorrect modulation path where time-variant modulator output was inadvertently multiplied by itself. The macro is still defined but no code path reads it anywhere, so enabling it does not reintroduce the bug. It is kept only so that projects which still list it in their ExtraDefinitions field keep compiling.
 
 ### INCLUDE_BIG_SCRIPTNODE_OBJECT_COMPILATION
 
-*Default: `1` · Hot Reload: no*
-
 Historical switch for excluding large scriptnode template instantiations from the build.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `1` | no | no |
 
 The original purpose was to skip the bigger multi-template scriptnode objects during compilation so that iterative debug builds finished faster. The macro is still defined but no code reads it anywhere, so setting it has no effect on the build output or the runtime. It's kept around to avoid breaking user projects that still list it in their ExtraDefinitions.
 
 ### USE_OLD_MONOLITH_FORMAT
 
-*Default: `0` · Hot Reload: no*
-
 Historical switch for loading samples from the pre-HLAC monolith container format.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | no | no |
 
 The original purpose was to fall back to the very first monolith container layout that HISE used before the current HLAC-based format was introduced. The macro is still defined with a hard-coded value of zero and no code reads it anywhere, so toggling it has no effect on the sampler or on how monolith files are decoded. It is kept only so that older user projects which list it in their ExtraDefinitions still compile.

@@ -109,7 +109,6 @@
       "basePath": "/v2/reference/preprocessors",
       "contentDir": "reference/preprocessors",
       "description": "Compile-time preprocessor macros (ExtraDefinitions)",
-      "aliases": ["PREPROCESSOR"],
       "registrySource": "preprocessor_enrichment/resources/preprocessor.json",
       "sources": {
         "pages": "preprocessor_enrichment/output"
