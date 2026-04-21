@@ -26,6 +26,8 @@ guidance:
 
 Audio modules are the building blocks of every HISE instrument. They form a tree structure rooted at a top-level Container (ModulatorSynthChain), with each module processing audio, MIDI, or control signals.
 
+**See also:** $LANG.hsc#builder$ -- script the module tree from the hise-cli `/builder` mode
+
 ## Module Types
 
 **[Sound Generators](/v2/reference/audio-modules/sound-generators/)** produce audio output and form the backbone of the signal chain. They host MIDI processor, modulation, and effect chains.

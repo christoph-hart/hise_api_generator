@@ -5,6 +5,8 @@ description: Reference for all scriptnode nodes - DSP building blocks for visual
 
 Scriptnode is HISE's visual DSP framework. You build signal processing networks by connecting nodes - small, focused DSP operations - inside containers that define the signal flow. Each node has parameters that can be modulated, automated, or connected to other nodes via cables.
 
+**See also:** $LANG.hsc#dsp$ -- edit scriptnode graphs from the hise-cli `/dsp` mode
+
 ## Node Factories
 
 Nodes are organised by factory. Each factory groups nodes with a common purpose.

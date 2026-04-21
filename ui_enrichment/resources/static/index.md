@@ -26,6 +26,8 @@ guidance:
 
 UI components are the building blocks of every HISE plugin interface. They divide into two subsystems: [Plugin Components](/v2/reference/ui-components/components/) are scriptable controls that you create and configure from HiseScript, and [Floating Tiles](/v2/reference/ui-components/floating-tiles/) are pre-built panels for common tasks like preset browsing or audio analysis.
 
+**See also:** $LANG.hsc#ui$ -- script UI components from the hise-cli `/ui` mode
+
 ## The Component Data Model
 
 UI components in HISE are not owned by the scripting layer. They live in a persistent XML data model that exists independently of any script. When you call `Content.addKnob("Vol", 0, 0)` in your `onInit` callback, HISE checks whether a component with that ID already exists in the XML tree. If it does, the existing component is reused with its current property values and state intact. If it does not, a new component entry is created.

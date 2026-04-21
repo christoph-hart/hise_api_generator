@@ -6,6 +6,8 @@ The HISE Scripting API provides 87 classes across six functional domains. Every 
 
 Classes are tagged by **domain group** (what area of the engine they belong to) and **role** (what kind of object they are). Click any tag on a class page to jump to its category below.
 
+**See also:** $LANG.hsc#script$ -- run HiseScript expressions and install callbacks from the hise-cli `/script` mode
+
 ## Domain Groups
 
 An overview of all scripting API classes grouped by functional domain.
