@@ -70,6 +70,7 @@ class LinkRegistry:
         self._build_doc_registry()
         self._build_ui_registry()
         self._build_lang_registry()
+        self._build_preprocessor_registry()
 
     def _build_api_registry(self):
         """Build API domain registry from enrichment/base/*.json."""
@@ -321,6 +322,37 @@ class LinkRegistry:
 
         self.targets["LANG"] = targets
         self._build_indexes("LANG")
+
+    def _build_preprocessor_registry(self):
+        """Build PP (+ PREPROCESSOR alias) registry from preprocessor.json.
+
+        All macros live as anchors on a single index page, so each target
+        resolves to `{basePath}#{macro_lower}`.
+        """
+        domain_config = self.structure.get("domains", {}).get("PP", {})
+        if not domain_config:
+            self.targets["PP"] = {}
+            self.lower_index["PP"] = {}
+            self.normalized_index["PP"] = {}
+            return
+
+        base_path = domain_config["basePath"]
+        registry_source = domain_config.get("registrySource", "")
+        json_path = self.script_dir / registry_source
+
+        targets = {}
+        if json_path.is_file():
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for macro_name in data.get("preprocessors", {}).keys():
+                targets[macro_name] = f"{base_path}#{macro_name.lower()}"
+
+        self.targets["PP"] = targets
+        self._build_indexes("PP")
+
+        for alias in domain_config.get("aliases", []):
+            self.targets[alias] = targets
+            self._build_indexes(alias)
 
     def _build_indexes(self, domain: str):
         """Build case-insensitive and normalized indexes for a domain."""
@@ -873,6 +905,33 @@ def convert_see_also(content, class_name, registry=None):
                     else:
                         yaml_links.append(
                             f'  - {{ label: "{label}", to: "{url}" }}'
+                        )
+                    continue
+
+                # Parse $PP.MACRO$ / $PREPROCESSOR.MACRO$ tokens (with optional annotation)
+                pp_ann = re.match(
+                    r'\$(?:PP|PREPROCESSOR)\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                pp_plain = re.match(r'\$(?:PP|PREPROCESSOR)\.(\w+)\$', item)
+
+                if pp_ann or pp_plain:
+                    pp_match = pp_ann or pp_plain
+                    macro = pp_match.group(1)
+                    desc = pp_ann.group(2).strip().replace('"', '\\"') if pp_ann else None
+
+                    url = None
+                    if registry:
+                        url, _, _ = registry.resolve("PP", macro)
+                    if not url:
+                        url = f"/v2/reference/preprocessors#{macro.lower()}"
+
+                    if desc:
+                        yaml_links.append(
+                            f'  - {{ label: "{macro}", to: "{url}", desc: "{desc}" }}'
+                        )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{macro}", to: "{url}" }}'
                         )
                     continue
 
@@ -1505,6 +1564,20 @@ def apply_language_mdc_transforms(content: str, messages: list = None,
     return content
 
 
+def apply_preprocessor_mdc_transforms(content: str, messages: list = None,
+                                       filepath: str = "") -> str:
+    """Apply MDC transformations to the generated preprocessor reference page.
+
+    The generator emits a single page with many `### MACRO` sections, each
+    containing a description with embedded `> …` blockquote lines. Those
+    need the same tip/warning conversion used elsewhere.
+    """
+    content = convert_warning_blockquotes(content, messages, filepath)
+    content = convert_tip_blockquotes(content, messages, filepath)
+    content = fix_blank_lines_after_code_blocks(content)
+    return content
+
+
 # ---------------------------------------------------------------------------
 # Image validation
 # ---------------------------------------------------------------------------
@@ -1612,6 +1685,215 @@ def _resolve_module_subdir(module_id: str, module_list_path: Path,
             type_key = f"{module_type}.{module_subtype}" if module_subtype else module_type
             return type_mapping.get(type_key) or type_mapping.get(module_type, "")
     return ""
+
+
+# ---------------------------------------------------------------------------
+# Preprocessor page generation + backrefs
+# ---------------------------------------------------------------------------
+
+_PP_JSON_REL = Path("preprocessor_enrichment") / "resources" / "preprocessor.json"
+_PP_STATIC_REL = Path("preprocessor_enrichment") / "resources" / "static" / "index.md"
+_PP_OUTPUT_REL = Path("preprocessor_enrichment") / "output" / "index.md"
+
+# Matches `$DOMAIN.Target$` or `$DOMAIN.Target$ -- rationale`
+_CROSSREF_PATTERN = re.compile(
+    r'^\$([A-Z]+)\.([^$]+?)\$\s*(?:--\s*(.+))?\s*$', re.DOTALL
+)
+
+
+def _format_preprocessor_entry(macro_name: str, entry: dict) -> list:
+    """Render one preprocessor as a list of markdown lines."""
+    out = [f"### {macro_name}", ""]
+
+    meta = [
+        f"Default: `{entry.get('defaultValue', 0)}`",
+        f"Hot Reload: {'yes' if entry.get('supportsHotReload') else 'no'}",
+    ]
+    if entry.get("autoConfig"):
+        meta.append("Auto Config: yes")
+    if entry.get("valueRange"):
+        meta.append(f"Range: `{entry['valueRange']}`")
+    out.append("*" + " · ".join(meta) + "*")
+    out.append("")
+
+    brief = entry.get("brief", "").strip()
+    if brief:
+        out.append(brief)
+        out.append("")
+
+    description = entry.get("description", "").strip()
+    if description:
+        out.append(description)
+        out.append("")
+
+    cross_refs = entry.get("crossRefs", []) or []
+    if cross_refs:
+        out.append("**See also:** " + ", ".join(cr.strip() for cr in cross_refs))
+        out.append("")
+
+    return out
+
+
+def generate_preprocessor_page(script_dir: Path, messages: list = None) -> None:
+    """Reformat preprocessor.json + static intro into a single markdown page.
+
+    Writes preprocessor_enrichment/output/index.md, which is picked up by
+    collect_sources as the PP domain's sole page.
+    """
+    json_path = script_dir / _PP_JSON_REL
+    static_path = script_dir / _PP_STATIC_REL
+    out_path = script_dir / _PP_OUTPUT_REL
+
+    if not json_path.is_file():
+        if messages is not None:
+            messages.append({
+                "level": "WARN",
+                "file": str(json_path),
+                "message": "preprocessor.json not found — preprocessor page not generated",
+            })
+        return
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    intro = ""
+    if static_path.is_file():
+        with open(static_path, "r", encoding="utf-8") as f:
+            raw = f.read()
+        fm = re.match(r'^---\n.*?\n---\n\s*', raw, re.DOTALL)
+        intro = (raw[fm.end():] if fm else raw).strip()
+
+    categories = {}  # category -> list of (macro, entry), insertion order
+    vestigial = []
+    for macro_name, entry in data.get("preprocessors", {}).items():
+        if entry.get("vestigal", False):
+            vestigial.append((macro_name, entry))
+            continue
+        cat = entry.get("category", "Uncategorized")
+        categories.setdefault(cat, []).append((macro_name, entry))
+
+    lines = [
+        "---",
+        "title: Preprocessor Reference",
+        "description: Compile-time macros that change HISE behaviour project-wide",
+        "---",
+        "",
+    ]
+    if intro:
+        lines.append(intro)
+        lines.append("")
+
+    for category, entries in categories.items():
+        lines.append(f"## {category}")
+        lines.append("")
+        for macro_name, entry in entries:
+            lines.extend(_format_preprocessor_entry(macro_name, entry))
+
+    if vestigial:
+        lines.append("## Deprecated / Vestigial")
+        lines.append("")
+        lines.append(
+            "These macros are still defined so old projects keep compiling, "
+            "but no code reads them. Setting them has no effect."
+        )
+        lines.append("")
+        for macro_name, entry in vestigial:
+            lines.extend(_format_preprocessor_entry(macro_name, entry))
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines).rstrip() + "\n")
+
+
+def build_preprocessor_backrefs(script_dir: Path, registry: "LinkRegistry",
+                                messages: list = None) -> dict:
+    """Scan preprocessor.json and index incoming crossRefs per target page.
+
+    Returns a dict keyed by (domain, last_url_segment_lower) mapping to a
+    list of (macro_name, rationale) tuples. Pages look themselves up by
+    matching (domain, out_rel.stem.lower()) against this map.
+    """
+    json_path = script_dir / _PP_JSON_REL
+    if not json_path.is_file():
+        return {}
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    backrefs = {}
+    for macro_name, entry in data.get("preprocessors", {}).items():
+        for cref in entry.get("crossRefs", []) or []:
+            m = _CROSSREF_PATTERN.match(cref.strip())
+            if not m:
+                if messages is not None:
+                    messages.append({
+                        "level": "WARN",
+                        "file": str(json_path),
+                        "token": cref,
+                        "message": (
+                            f"Malformed crossRef on {macro_name} "
+                            f"(expected `$DOMAIN.Target$ -- rationale`): {cref}"
+                        ),
+                    })
+                continue
+
+            domain = m.group(1)
+            target_str = m.group(2).strip()
+            rationale = (m.group(3) or "").strip()
+
+            if domain in ("PP", "PREPROCESSOR"):
+                continue  # self-domain: already adjacent on the same page
+
+            parts = target_str.split(".")
+            url, _canonical, _match = registry.resolve_compound(domain, parts)
+            if not url:
+                if messages is not None:
+                    messages.append({
+                        "level": "WARN",
+                        "file": str(json_path),
+                        "token": cref,
+                        "message": f"Unresolved crossRef on {macro_name}: {cref}",
+                    })
+                continue
+
+            url_nofrag = url.split("#", 1)[0]
+            last_seg = url_nofrag.rstrip("/").rsplit("/", 1)[-1].lower()
+            if not last_seg:
+                continue
+
+            key = (domain, last_seg)
+            backrefs.setdefault(key, []).append((macro_name, rationale))
+
+    return backrefs
+
+
+def inject_preprocessor_backrefs(content: str, domain: str, out_rel: Path,
+                                 backrefs: dict) -> str:
+    """Prepend a **See also:** line with $PP.MACRO$ backlinks if any.
+
+    Match key: (domain, out_rel.stem.lower()). The `convert_see_also` pass
+    later promotes the line into an ::see-also MDC block.
+    """
+    if domain in ("PP", "PREPROCESSOR"):
+        return content
+
+    stem = out_rel.stem.lower()
+    entries = backrefs.get((domain, stem))
+    if not entries:
+        return content
+
+    items = []
+    for macro_name, rationale in entries:
+        if rationale:
+            items.append(f"$PP.{macro_name}$ -- {rationale}")
+        else:
+            items.append(f"$PP.{macro_name}$")
+    line = "**See also:** " + ", ".join(items)
+
+    fm = re.match(r'^(---\n.*?\n---\n)', content, re.DOTALL)
+    if fm:
+        return content[:fm.end()] + "\n" + line + "\n\n" + content[fm.end():]
+    return line + "\n\n" + content
 
 
 def collect_sources(script_dir: Path, site_structure: dict) -> list:
@@ -1804,10 +2086,15 @@ def run_topology(topology_path: Path):
     with open(SITE_STRUCTURE_PATH, "r", encoding="utf-8") as f:
         site_structure = json.load(f)
 
+    print("Generating preprocessor reference page...")
+    generate_preprocessor_page(SCRIPT_DIR)
+
     print("Building link registry...")
     registry = LinkRegistry(site_structure, SCRIPT_DIR)
     for domain, targets in registry.targets.items():
         print(f"  {domain}: {len(targets)} targets")
+
+    preprocessor_backrefs = build_preprocessor_backrefs(SCRIPT_DIR, registry)
 
     sources = collect_sources(SCRIPT_DIR, site_structure)
     if not sources:
@@ -1823,6 +2110,10 @@ def run_topology(topology_path: Path):
     for source_path, domain, out_rel, source_type in sources:
         with open(source_path, "r", encoding="utf-8") as f:
             content = f.read()
+
+        content = inject_preprocessor_backrefs(
+            content, domain, out_rel, preprocessor_backrefs
+        )
 
         # Derive page key from domain + identifier
         lines = content.split('\n')
@@ -1913,11 +2204,25 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
     with open(SITE_STRUCTURE_PATH, "r", encoding="utf-8") as f:
         site_structure = json.load(f)
 
+    messages = []
+
+    # Generate the preprocessor reference page so collect_sources picks it up
+    print("Generating preprocessor reference page...")
+    generate_preprocessor_page(SCRIPT_DIR, messages)
+
     # Build link registry
     print("Building link registry...")
     registry = LinkRegistry(site_structure, SCRIPT_DIR)
     for domain, targets in registry.targets.items():
         print(f"  {domain}: {len(targets)} targets")
+
+    # Build reverse index: target page -> preprocessor macros that reference it
+    preprocessor_backrefs = build_preprocessor_backrefs(
+        SCRIPT_DIR, registry, messages
+    )
+    if preprocessor_backrefs:
+        print(f"  PP backrefs: {sum(len(v) for v in preprocessor_backrefs.values())} "
+              f"incoming links across {len(preprocessor_backrefs)} target pages")
 
     # Collect source files
     sources = collect_sources(SCRIPT_DIR, site_structure)
@@ -1927,12 +2232,16 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
 
     print(f"\nProcessing {len(sources)} files...")
 
-    messages = []
     files_written = 0
 
     for source_path, domain, out_rel, source_type in sources:
         with open(source_path, "r", encoding="utf-8") as f:
             content = f.read()
+
+        # Inject preprocessor backlinks before any see-also conversion runs
+        content = inject_preprocessor_backrefs(
+            content, domain, out_rel, preprocessor_backrefs
+        )
 
         # Extract class name before transforms modify the heading
         lines = content.split('\n')
@@ -1958,6 +2267,8 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         elif mdc_transform == "language":
             lang_title = _extract_frontmatter_field(content, "title") or ""
             content = convert_see_also(content, lang_title, registry)
+        elif mdc_transform == "preprocessor":
+            content = convert_see_also(content, "", registry)
 
         # Step 2: Apply MDC transforms (may inject $DOMAIN$ tokens)
         if mdc_transform == "api":
@@ -1975,6 +2286,9 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
         elif mdc_transform == "language":
             content = apply_language_mdc_transforms(content, messages,
                                                      str(source_path))
+        elif mdc_transform == "preprocessor":
+            content = apply_preprocessor_mdc_transforms(content, messages,
+                                                         str(source_path))
 
         # Step 3: Resolve $DOMAIN.Target$ tokens (after MDC transforms)
         content = resolve_tokens(content, registry, str(source_path), messages)
