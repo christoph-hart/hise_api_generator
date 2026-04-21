@@ -326,8 +326,8 @@ class LinkRegistry:
     def _build_preprocessor_registry(self):
         """Build PP registry from preprocessor.json.
 
-        All macros live as anchors on a single index page, so each target
-        resolves to `{basePath}#{macro_lower}`.
+        Each preprocessor lives on its category page, so targets resolve to
+        `{basePath}/{category-slug}#{macro_lower}`.
         """
         domain_config = self.structure.get("domains", {}).get("PP", {})
         if not domain_config:
@@ -344,8 +344,12 @@ class LinkRegistry:
         if json_path.is_file():
             with open(json_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            for macro_name in data.get("preprocessors", {}).keys():
-                targets[macro_name] = f"{base_path}#{macro_name.lower()}"
+            for macro_name, entry in data.get("preprocessors", {}).items():
+                slug = entry.get("category-slug", "").strip()
+                if slug:
+                    targets[macro_name] = f"{base_path}/{slug}#{macro_name.lower()}"
+                else:
+                    targets[macro_name] = f"{base_path}#{macro_name.lower()}"
 
         self.targets["PP"] = targets
         self._build_indexes("PP")
@@ -1688,8 +1692,6 @@ def _resolve_module_subdir(module_id: str, module_list_path: Path,
 # ---------------------------------------------------------------------------
 
 _PP_JSON_REL = Path("preprocessor_enrichment") / "resources" / "preprocessor.json"
-_PP_STATIC_REL = Path("preprocessor_enrichment") / "resources" / "static" / "index.md"
-_PP_OUTPUT_REL = Path("preprocessor_enrichment") / "output" / "index.md"
 
 # Matches `$DOMAIN.Target$` or `$DOMAIN.Target$ -- rationale`
 _CROSSREF_PATTERN = re.compile(
@@ -1727,75 +1729,153 @@ def _format_preprocessor_entry(macro_name: str, entry: dict) -> list:
     return out
 
 
-def generate_preprocessor_page(script_dir: Path, messages: list = None) -> None:
-    """Reformat preprocessor.json + static intro into a single markdown page.
+def _read_static_intro(path: Path) -> tuple:
+    """Return (description, body) parsed from a static/*.md file.
 
-    Writes preprocessor_enrichment/output/index.md, which is picked up by
-    collect_sources as the PP domain's sole page.
+    description is pulled from the YAML frontmatter's `description:` field
+    (empty string if absent). body is the file content with frontmatter
+    stripped.
+    """
+    if not path.is_file():
+        return "", ""
+    with open(path, "r", encoding="utf-8") as f:
+        raw = f.read()
+    fm = re.match(r'^---\n(.*?)\n---\n\s*', raw, re.DOTALL)
+    if fm:
+        fm_body = fm.group(1)
+        body = raw[fm.end():]
+        desc_match = re.search(r'^description:\s*(.+)$', fm_body, re.MULTILINE)
+        description = desc_match.group(1).strip().strip('"').strip("'") if desc_match else ""
+    else:
+        description = ""
+        body = raw
+    return description, body.strip()
+
+
+def _yaml_escape(s: str) -> str:
+    """Wrap a value in double-quotes when it needs YAML escaping."""
+    if not s:
+        return '""'
+    if any(c in s for c in ':#\'"\n') or s.strip() != s:
+        escaped = s.replace('\\', '\\\\').replace('"', '\\"')
+        return f'"{escaped}"'
+    return s
+
+
+def generate_preprocessor_page(script_dir: Path, messages: list = None) -> None:
+    """Emit one markdown file per category-slug plus a landing index.
+
+    Reads preprocessor_enrichment/resources/preprocessor.json, groups entries
+    by category-slug (preserving insertion order), reads matching static
+    intro files, and writes one page per category + an index landing page
+    into preprocessor_enrichment/output/. collect_sources picks up the whole
+    directory via its single-level *.md glob.
     """
     json_path = script_dir / _PP_JSON_REL
-    static_path = script_dir / _PP_STATIC_REL
-    out_path = script_dir / _PP_OUTPUT_REL
+    static_dir = script_dir / "preprocessor_enrichment" / "resources" / "static"
+    out_dir = script_dir / "preprocessor_enrichment" / "output"
 
     if not json_path.is_file():
         if messages is not None:
             messages.append({
                 "level": "WARN",
                 "file": str(json_path),
-                "message": "preprocessor.json not found — preprocessor page not generated",
+                "message": "preprocessor.json not found — preprocessor pages not generated",
             })
         return
 
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    intro = ""
-    if static_path.is_file():
-        with open(static_path, "r", encoding="utf-8") as f:
-            raw = f.read()
-        fm = re.match(r'^---\n.*?\n---\n\s*', raw, re.DOTALL)
-        intro = (raw[fm.end():] if fm else raw).strip()
-
-    categories = {}  # category -> list of (macro, entry), insertion order
-    vestigial = []
+    # Group by category-slug, preserve insertion order. Track both the
+    # display name (JSON `category`) and vestigial split per slug.
+    categories = {}  # slug -> {"name": str, "entries": [], "vestigial": []}
     for macro_name, entry in data.get("preprocessors", {}).items():
+        slug = entry.get("category-slug", "").strip() or "uncategorized"
+        name = entry.get("category", slug)
+        bucket = categories.setdefault(slug, {
+            "name": name, "entries": [], "vestigial": []
+        })
         if entry.get("vestigal", False):
-            vestigial.append((macro_name, entry))
-            continue
-        cat = entry.get("category", "Uncategorized")
-        categories.setdefault(cat, []).append((macro_name, entry))
+            bucket["vestigial"].append((macro_name, entry))
+        else:
+            bucket["entries"].append((macro_name, entry))
 
-    lines = [
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clean stale generated files — overwriting known ones is fine, but a
+    # renamed/removed category would leave an orphan. Remove every .md in
+    # the output dir before regenerating.
+    for stale in out_dir.glob("*.md"):
+        stale.unlink()
+
+    # Per-category pages
+    category_hooks = []  # (slug, name, description) for the landing page
+    for slug, bucket in categories.items():
+        intro_path = static_dir / f"{slug}.md"
+        description, intro_body = _read_static_intro(intro_path)
+        if not intro_path.is_file() and messages is not None:
+            messages.append({
+                "level": "WARN",
+                "file": str(intro_path),
+                "message": f"Missing static intro for preprocessor category '{slug}'",
+            })
+
+        category_hooks.append((slug, bucket["name"], description))
+
+        page = [
+            "---",
+            f"title: {_yaml_escape(bucket['name'])}",
+            f"description: {_yaml_escape(description)}",
+            "---",
+            "",
+        ]
+        if intro_body:
+            page.append(intro_body)
+            page.append("")
+
+        for macro_name, entry in bucket["entries"]:
+            page.extend(_format_preprocessor_entry(macro_name, entry))
+
+        if bucket["vestigial"]:
+            page.append("## Deprecated")
+            page.append("")
+            page.append(
+                "These macros are still defined so old projects keep compiling, "
+                "but no code reads them. Setting them has no effect."
+            )
+            page.append("")
+            for macro_name, entry in bucket["vestigial"]:
+                page.extend(_format_preprocessor_entry(macro_name, entry))
+
+        with open(out_dir / f"{slug}.md", "w", encoding="utf-8") as f:
+            f.write("\n".join(page).rstrip() + "\n")
+
+    # Landing page
+    _landing_description, landing_body = _read_static_intro(static_dir / "index.md")
+    landing_description = (
+        "Compile-time macros that change HISE behaviour project-wide"
+    )
+    landing = [
         "---",
-        "title: Preprocessor Reference",
-        "description: Compile-time macros that change HISE behaviour project-wide",
+        f"title: Preprocessor Reference",
+        f"description: {_yaml_escape(landing_description)}",
         "---",
         "",
     ]
-    if intro:
-        lines.append(intro)
-        lines.append("")
+    if landing_body:
+        landing.append(landing_body)
+        landing.append("")
+    landing.append("## Categories")
+    landing.append("")
+    base_path = "/v2/reference/preprocessors"
+    for slug, name, description in category_hooks:
+        hook = f": {description}" if description else ""
+        landing.append(f"- [{name}]({base_path}/{slug}){hook}")
+    landing.append("")
 
-    for category, entries in categories.items():
-        lines.append(f"## {category}")
-        lines.append("")
-        for macro_name, entry in entries:
-            lines.extend(_format_preprocessor_entry(macro_name, entry))
-
-    if vestigial:
-        lines.append("## Deprecated / Vestigial")
-        lines.append("")
-        lines.append(
-            "These macros are still defined so old projects keep compiling, "
-            "but no code reads them. Setting them has no effect."
-        )
-        lines.append("")
-        for macro_name, entry in vestigial:
-            lines.extend(_format_preprocessor_entry(macro_name, entry))
-
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines).rstrip() + "\n")
+    with open(out_dir / "index.md", "w", encoding="utf-8") as f:
+        f.write("\n".join(landing).rstrip() + "\n")
 
 
 def build_preprocessor_backrefs(script_dir: Path, registry: "LinkRegistry",

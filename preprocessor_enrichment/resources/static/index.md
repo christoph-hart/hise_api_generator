@@ -1,5 +1,1 @@
-TODO: Add a explanation of the preprocessor system
-
-## Category 1
-
-Add an explanation for each category
+HISE preprocessors are compile-time macros set in a project's ExtraDefinitions field. They change engine behaviour, array sizes, optional library inclusion and bit-exact audio paths at build time, so every flag must match between the HISE build and any exported plugin. The defaults are sensible for new projects — only reach for these when you are maintaining a shipped product, trimming compile time, or opting into an optional feature.
