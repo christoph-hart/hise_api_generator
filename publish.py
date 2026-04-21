@@ -1701,7 +1701,7 @@ _CROSSREF_PATTERN = re.compile(
 
 def _format_preprocessor_entry(macro_name: str, entry: dict) -> list:
     """Render one preprocessor as a list of markdown lines."""
-    out = [f"### {macro_name}", ""]
+    out = [f"### `{macro_name}`", ""]
 
     brief = entry.get("brief", "").strip()
     if brief:

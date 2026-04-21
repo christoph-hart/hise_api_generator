@@ -5,7 +5,7 @@ description: Plugin type and host bus configuration — instrument vs effect, au
 
 Preprocessors in this category tell the compiled plugin what kind of thing it is and how it connects to the host. They control whether the plugin is an instrument or an effect, whether an instrument build accepts audio input on its master chain, whether an effect build advertises a mono bus layout alongside stereo, and whether child sound generators keep running inside an effect plugin so that their modulation signals are still rendered. The HISE export dialog writes most of these flags automatically from project settings, so they rarely need to be set by hand in the Extra Definitions field. Manual overrides are only useful for edge cases such as multi-bus builds or specialised hybrid plugins.
 
-### FORCE_INPUT_CHANNELS
+### `FORCE_INPUT_CHANNELS`
 
 Routes the host audio input into the master chain of an instrument plugin.
 
@@ -18,7 +18,7 @@ By default an instrument plugin only produces audio from its sound generators an
 
 **See also:** $PP.PROCESS_SOUND_GENERATORS_IN_FX_PLUGIN$ -- sibling FX plugin bus-configuration switch
 
-### HI_SUPPORT_MONO_CHANNEL_LAYOUT
+### `HI_SUPPORT_MONO_CHANNEL_LAYOUT`
 
 Makes an exported effect plugin accept a mono track configuration in addition to stereo.
 
@@ -31,7 +31,7 @@ Only relevant when the project is exported as an effect plugin. When enabled, th
 
 **See also:** $PP.HI_SUPPORT_MONO_TO_STEREO$ -- companion flag that extends the mono layout with a mono-in/stereo-out bus
 
-### HI_SUPPORT_MONO_TO_STEREO
+### `HI_SUPPORT_MONO_TO_STEREO`
 
 Advertises a mono-input / stereo-output bus layout on an effect plugin with mono support enabled.
 
@@ -44,7 +44,7 @@ Extends the mono track support so that the plugin accepts a mono input feeding a
 
 **See also:** $PP.HI_SUPPORT_MONO_CHANNEL_LAYOUT$ -- requires the mono channel layout support to be enabled as well
 
-### PROCESS_SOUND_GENERATORS_IN_FX_PLUGIN
+### `PROCESS_SOUND_GENERATORS_IN_FX_PLUGIN`
 
 Keeps child sound generators running inside an exported FX plugin.
 

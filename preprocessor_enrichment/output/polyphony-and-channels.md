@@ -5,7 +5,7 @@ description: Compile-time array sizes for voices, channels, and routing matrices
 
 Preprocessors in this category fix the compile-time array sizes that HISE uses for voices, audio channels and routing matrices. They set the main plugin output channel count, the FX plugin channel count, the standalone output count, the project-wide channel ceiling, the maximum polyphonic voice count per sound generator and the maximum channel width for scriptnode frame containers. Raising any of them increases the memory footprint of every polyphonic voice or routing destination regardless of runtime usage, so only raise them for projects that genuinely need more than the default. These values must match exactly between the HISE build, any project DLL and the exported plugin, otherwise the voice-indexed and channel-indexed arrays disagree at runtime.
 
-### HISE_NUM_FX_PLUGIN_CHANNELS
+### `HISE_NUM_FX_PLUGIN_CHANNELS`
 
 Number of audio channels exposed to the host when the project is exported as an effect plugin.
 
@@ -18,7 +18,7 @@ Controls the channel count that an exported FX plugin advertises to the DAW, whi
 
 **See also:** $PP.NUM_MAX_CHANNELS$ -- must not exceed the project-wide channel ceiling
 
-### HISE_NUM_MAX_FRAME_CONTAINER_CHANNELS
+### `HISE_NUM_MAX_FRAME_CONTAINER_CHANNELS`
 
 Upper channel limit for scriptnode frame processing containers.
 
@@ -31,7 +31,7 @@ Frame processing containers in scriptnode produce one sample per channel at a ti
 
 **See also:** $SN.container.frame1_block$ -- frame container whose channel dispatch is bounded by this value, $SN.container.framex_block$ -- multichannel frame container whose maximum width is set by this value
 
-### HISE_NUM_PLUGIN_CHANNELS
+### `HISE_NUM_PLUGIN_CHANNELS`
 
 Number of output channels advertised by an exported instrument plugin.
 
@@ -44,7 +44,7 @@ Defines the output bus width of the compiled instrument plugin and the destinati
 
 **See also:** $PP.NUM_MAX_CHANNELS$ -- must not exceed the project-wide channel ceiling, $PP.HISE_NUM_STANDALONE_OUTPUTS$ -- standalone output count defaults to this value
 
-### HISE_NUM_STANDALONE_OUTPUTS
+### `HISE_NUM_STANDALONE_OUTPUTS`
 
 Number of output channels used when the project runs as a standalone application.
 
@@ -57,7 +57,7 @@ Sets how many channels the standalone HISE app (and any exported standalone buil
 
 **See also:** $PP.HISE_NUM_PLUGIN_CHANNELS$ -- default tracks the plugin channel count so standalone and plugin builds stay aligned
 
-### NUM_MAX_CHANNELS
+### `NUM_MAX_CHANNELS`
 
 Project-wide ceiling on the number of channels that the routing matrix and multichannel buffers can handle.
 
@@ -70,7 +70,7 @@ Sets the fixed array size used throughout HISE for channel connections, routing 
 
 **See also:** $MODULES.RouteFX$ -- routing-matrix channel count ceiling applied to the RouteFX module, $PP.HISE_NUM_PLUGIN_CHANNELS$ -- instrument plugin channel count is capped by this value, $PP.HISE_NUM_FX_PLUGIN_CHANNELS$ -- effect plugin channel count is capped by this value
 
-### NUM_POLYPHONIC_VOICES
+### `NUM_POLYPHONIC_VOICES`
 
 Compile-time upper bound on the number of simultaneously active voices per sound generator.
 

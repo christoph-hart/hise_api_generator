@@ -52,9 +52,30 @@ guidance:
 
 ## Introduction
 
-HSC is a bash-like language for hise-cli. It is the same surface in every context: what you type at the TUI prompt, inside the multiline editor, as arguments to one-shot CLI invocations, or inside a `.hsc` file handed to the script runner.
+HSC is a bash-like language for hise-cli. It is the same surface in every context: what you type at the TUI prompt, as arguments to one-shot CLI invocations, or inside a `.hsc` file handed to the script runner.
 
-**See also:** [hisescript]($LANG.hisescript$) -- expression language evaluated inside the `/script` mode
+It acts as a remote controller for HISE and aims to replace all UI interactions with a clearly defined and agent-visible interface. So instead of
+
+1. Opening HISE
+2. Click on File -> load project
+3. Select the project folder in the file browser
+4. Click on File -> load Xml preset -> My Project.xml
+5. Click on Export -> Compile
+6. Select plugin
+7. Click on Next
+
+You can just type / run
+
+```hsc
+/hise launch
+/project 
+switch My Project
+load My Project.xml
+export VST3
+/exit
+```
+
+and HISE will launch and perform all the steps completely automatic.
 
 ### Where HSC Runs
 

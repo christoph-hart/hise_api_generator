@@ -5,7 +5,7 @@ description: Streaming sampler backend and sample-installation UX — monolith a
 
 Preprocessors in this category configure the streaming sampler backend and the sample-installation user experience in exported plugins. They pick between memory-mapped and file-handle-based monolith access, set the preload size above which a sample is loaded entirely into RAM, enable the release start feature with its editor and scripting API, control the install and locate buttons on the SamplesNotInstalled overlay, choose the folder versus file picker for the Relocate Samples action, and expose the Full Dynamics HLAC encoding option to end users. Most of these trade disk access patterns against memory footprint and against the sample archive size. The export dialog writes a couple of them from project settings, so the manual overrides mostly cover non-standard installer flows.
 
-### HISE_BROWSE_FOLDER_WHEN_RELOCATING_SAMPLES
+### `HISE_BROWSE_FOLDER_WHEN_RELOCATING_SAMPLES`
 
 Controls whether relocating samples opens a folder picker or a file picker for a .ch1 file.
 
@@ -18,7 +18,7 @@ Changes the behaviour of the 'Relocate Samples' button in the standalone setting
 
 **See also:** $PP.HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON$ -- the locate button driven by that flag picks either a folder or file picker depending on this one
 
-### HISE_ENABLE_CROSSFADE_MODULATION_THRESHOLD
+### `HISE_ENABLE_CROSSFADE_MODULATION_THRESHOLD`
 
 Skips per-sample crossfade modulation when the control-rate signal is effectively constant over a block.
 
@@ -31,7 +31,7 @@ Affects how the sampler renders its group crossfade modulation chain. When enabl
 
 **See also:** $MODULES.StreamingSampler$ -- crossfade modulation chain of the sampler uses this control-rate shortcut, $API.Sampler$ -- scripted crossfade modulation relies on the same threshold behaviour
 
-### HISE_LOAD_ENTIRE_SAMPLE_THRESHHOLD
+### `HISE_LOAD_ENTIRE_SAMPLE_THRESHHOLD`
 
 Preload size in samples above which the streaming engine loads the entire sample into memory.
 
@@ -44,7 +44,7 @@ When a sample's preload buffer would exceed this threshold, the streaming engine
 
 **See also:** $MODULES.StreamingSampler$ -- threshold above which the streaming engine falls back to a full in-memory load, $PP.USE_FALLBACK_READERS_FOR_MONOLITH$ -- companion streaming-backend knob that forces per-instance file handles regardless of size
 
-### HISE_SAMPLER_ALLOW_RELEASE_START
+### `HISE_SAMPLER_ALLOW_RELEASE_START`
 
 Enables the release start feature on the sampler, including scripting APIs and the release start editor.
 
@@ -57,7 +57,7 @@ When enabled, every sample can define a release start marker that the voice jump
 
 **See also:** $MODULES.StreamingSampler$ -- release start marker and its sample editor UI are gated on this flag, $API.Sampler$ -- setReleaseStartOptions, getReleaseStartOptions and setAllowReleaseStart are only available when this flag is on
 
-### HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON
+### `HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON`
 
 Shows the 'Install Samples' button on the SamplesNotInstalled overlay in an exported plugin.
 
@@ -70,7 +70,7 @@ Controls the install button in the overlay that appears when the exported plugin
 
 **See also:** $API.ErrorHandler$ -- controls the install button on the SamplesNotInstalled overlay raised by the sample error handler, $PP.HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON$ -- the overlay is suppressed entirely when both buttons are disabled
 
-### HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON
+### `HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON`
 
 Shows the 'Locate Samples' button on the SamplesNotInstalled overlay in an exported plugin.
 
@@ -83,7 +83,7 @@ Controls the locate button in the overlay that appears when the exported plugin 
 
 **See also:** $API.ErrorHandler$ -- controls the locate button on the SamplesNotInstalled overlay raised by the sample error handler, $PP.HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON$ -- the overlay is suppressed entirely when both buttons are disabled, $PP.HISE_BROWSE_FOLDER_WHEN_RELOCATING_SAMPLES$ -- picker type used by the locate button is selected by this flag
 
-### HI_SUPPORT_FULL_DYNAMICS_HLAC
+### `HI_SUPPORT_FULL_DYNAMICS_HLAC`
 
 Exposes the Full Dynamics sample encoding option in the exported plugin's sample install dialog.
 
@@ -94,7 +94,7 @@ Exposes the Full Dynamics sample encoding option in the exported plugin's sample
 When enabled, the sample installer dialog inside the exported plugin shows the 'Sample bit depth' selector so the user can opt into the Full Dynamics HLAC encoding that preserves the original 24 bit dynamic range instead of the standard 16 bit path. The HISE IDE always shows this option. If disabled in an exported plugin, the install dialog falls back to the standard encoding with no user choice, which keeps the archive smaller and slightly speeds up decoding at the cost of extra quantisation noise.
 > The HISE export dialog writes this flag automatically from the 'Support Full Dynamics' project setting, so you normally don't need to set it manually in the ExtraDefinitions field.
 
-### USE_FALLBACK_READERS_FOR_MONOLITH
+### `USE_FALLBACK_READERS_FOR_MONOLITH`
 
 Uses a per-instance file handle for every monolith reader instead of memory mapping the sample archive.
 

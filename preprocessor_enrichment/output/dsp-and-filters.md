@@ -5,7 +5,7 @@ description: Module-specific DSP switches — delay buffer size, Curve EQ topolo
 
 Preprocessors in this category change the behaviour of specific DSP modules and scriptnode nodes. They set the maximum delay line size, swap the Curve EQ implementation between biquad and state-variable filters, shape how filter frequency modulation is applied, decide whether convolution damping updates run asynchronously, and configure the neural network warmup length. Each flag ties to a single module or node pair rather than being a project-wide knob, so its consequences are local and predictable. Expect a bit-exact sound shift on any patch that uses the affected processor when you change these.
 
-### HISE_LOG_FILTER_FREQMOD
+### `HISE_LOG_FILTER_FREQMOD`
 
 Applies a logarithmic skew to filter frequency modulation so the modulated cutoff tracks pitch more naturally.
 
@@ -18,7 +18,7 @@ By default, any modulator feeding a filter's frequency input scales linearly bet
 
 **See also:** $MODULES.PolyphonicFilter$ -- applies the log-curve skew to the frequency modulation input, $MODULES.CurveEq$ -- applies the log-curve skew to the frequency modulation input of every band
 
-### HISE_MAX_DELAY_TIME_SAMPLES
+### `HISE_MAX_DELAY_TIME_SAMPLES`
 
 Maximum buffer size (in samples) for every delay line in the project.
 
@@ -31,7 +31,7 @@ Every delay line allocates a fixed power-of-two buffer at compile time, so this 
 
 **See also:** $MODULES.Delay$ -- sets the internal delay line buffer size that caps the maximum delay time, $SN.core.fix_delay$ -- scriptnode delay line that uses the same compile-time buffer size
 
-### HISE_NEURAL_NETWORK_WARMUP_TIME
+### `HISE_NEURAL_NETWORK_WARMUP_TIME`
 
 Number of silent samples that the neural network node processes on reset to flush its internal state.
 
@@ -44,7 +44,7 @@ Whenever a voice is started or the network is reset, the node feeds this many ze
 
 **See also:** $SN.math.neural$ -- warmup sample count used when the neural node resets, $PP.HISE_INCLUDE_RT_NEURAL$ -- only takes effect in builds where the RTNeural inference library is compiled in
 
-### HISE_UPDATE_CONVOLUTION_DAMPING_ASYNC
+### `HISE_UPDATE_CONVOLUTION_DAMPING_ASYNC`
 
 Recomputes the convolution Damping filter asynchronously so UI drags stay smooth.
 
@@ -57,7 +57,7 @@ Changing the Damping parameter of a convolution reverb applies a one-pole low-pa
 
 **See also:** $MODULES.Convolution$ -- Damping parameter changes are dispatched to the worker thread instead of stalling the audio thread, $SN.filters.convolution$ -- scriptnode convolution node that uses the same damping-update path
 
-### HISE_USE_SVF_FOR_CURVE_EQ
+### `HISE_USE_SVF_FOR_CURVE_EQ`
 
 Swaps the biquad implementation inside the Parametriq EQ for state-variable filters.
 
@@ -70,7 +70,7 @@ The Parametriq EQ uses stock biquad coefficients for every band by default, whic
 
 **See also:** $MODULES.CurveEq$ -- every band switches from biquad coefficients to SVF topology, $SN.filters.svf_eq$ -- scriptnode node that uses the same SVF topology by default
 
-### USE_MOD2_WAVETABLESIZE
+### `USE_MOD2_WAVETABLESIZE`
 
 Fast-path wavetable playback that requires power-of-two cycle lengths in every .hwt file.
 

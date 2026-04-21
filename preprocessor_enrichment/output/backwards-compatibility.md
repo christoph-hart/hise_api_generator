@@ -5,7 +5,7 @@ description: Flags that re-enable superseded HISE behaviours so shipped products
 
 Preprocessors in this category restore historical HISE behaviours that were later fixed or improved. Each flag re-enables a specific quirk (old voice render order, squared modulation values, off-by-one block timestamps, the pre-HLAC monolith format and similar) so that a shipped product keeps sounding bit-exact when it is recompiled against a newer HISE build. They are not meant for new projects; the defaults are always the corrected behaviour. Several entries in this category are vestigial stubs kept only so that projects listing them in their Extra Definitions still compile.
 
-### HISE_PLAY_ALL_CROSSFADE_GROUPS_WHEN_EMPTY
+### `HISE_PLAY_ALL_CROSSFADE_GROUPS_WHEN_EMPTY`
 
 Plays every crossfade group at full gain when no crossfade modulator is connected.
 
@@ -18,7 +18,7 @@ Affects the sampler's group crossfade behaviour. When the crossfade modulation c
 
 **See also:** $MODULES.StreamingSampler$ -- governs the crossfade group behaviour when no crossfade modulator is wired up, $API.Sampler$ -- scripted crossfade-group playback relies on the empty-chain fallback configured here, $PP.HISE_USE_WRONG_VOICE_RENDERING_ORDER$ -- related sampler backwards-compatibility switch
 
-### HISE_RAMP_RETRIGGER_ENVELOPES_FROM_ZERO
+### `HISE_RAMP_RETRIGGER_ENVELOPES_FROM_ZERO`
 
 Ramps monophonic envelopes down to zero before retriggering instead of jumping straight into the attack phase.
 
@@ -31,7 +31,7 @@ Changes how the RETRIGGER state works in the AHDSR, Simple Envelope and the equi
 
 **See also:** $MODULES.AHDSR$ -- monophonic retrigger state takes the ramp-to-zero path instead of snapping to attack, $MODULES.SimpleEnvelope$ -- monophonic retrigger state takes the ramp-to-zero path instead of snapping to attack, $SN.envelope.ahdsr$ -- scriptnode envelope equivalent that follows the same retrigger rule, $SN.envelope.simple_ar$ -- scriptnode envelope equivalent that follows the same retrigger rule
 
-### HISE_USE_BACKWARDS_COMPATIBLE_TIMESTAMPS
+### `HISE_USE_BACKWARDS_COMPATIBLE_TIMESTAMPS`
 
 Subtracts one audio block from event timestamps generated on the audio thread for compatibility with older patches.
 
@@ -44,7 +44,7 @@ Adjusts the timestamp of artificial note-on and note-off events that scripts add
 
 **See also:** $API.Synth$ -- scheduled note-on and note-off timestamps are shifted by one block when this is enabled, $API.Message$ -- timestamps set through Message.setTimestamp are adjusted the same way
 
-### HISE_USE_WRONG_VOICE_RENDERING_ORDER
+### `HISE_USE_WRONG_VOICE_RENDERING_ORDER`
 
 Restores the pre-fix voice render order in which voice effects ran before the polyphonic gain modulation.
 
@@ -61,7 +61,7 @@ Affects the Sampler, Waveform Generator, Audio Looper and Synth Group. In older 
 
 These macros are still defined so old projects keep compiling, but no code reads them. Setting them has no effect.
 
-### HISE_SMOOTH_FIRST_MOD_BUFFER
+### `HISE_SMOOTH_FIRST_MOD_BUFFER`
 
 Historical switch for smoothing the first control-rate modulation buffer after a voice starts.
 
@@ -71,7 +71,7 @@ Historical switch for smoothing the first control-rate modulation buffer after a
 
 The original intent was to suppress a one-block jump in the modulation signal at voice start by ramping the first rendered buffer instead of writing the initial value straight away. The macro is still defined but no code reads it anywhere, so toggling it has no effect on modulation behaviour or on audio output. It is kept around so that older user projects which list it in their ExtraDefinitions still compile.
 
-### HISE_USE_SQUARED_TIMEVARIANT_MOD_VALUES_BUG
+### `HISE_USE_SQUARED_TIMEVARIANT_MOD_VALUES_BUG`
 
 Historical switch for reproducing a bug that squared time-variant modulation values before applying them.
 
@@ -81,7 +81,7 @@ Historical switch for reproducing a bug that squared time-variant modulation val
 
 The original purpose was to keep the sound of legacy patches that were tuned against an incorrect modulation path where time-variant modulator output was inadvertently multiplied by itself. The macro is still defined but no code path reads it anywhere, so enabling it does not reintroduce the bug. It is kept only so that projects which still list it in their ExtraDefinitions field keep compiling.
 
-### USE_OLD_MONOLITH_FORMAT
+### `USE_OLD_MONOLITH_FORMAT`
 
 Historical switch for loading samples from the pre-HLAC monolith container format.
 

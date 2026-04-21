@@ -9,7 +9,7 @@ Preprocessors in this category shape the plugin's user interface and rendering p
 
 These macros are still defined so old projects keep compiling, but no code reads them. Setting them has no effect.
 
-### INCLUDE_BIG_SCRIPTNODE_OBJECT_COMPILATION
+### `INCLUDE_BIG_SCRIPTNODE_OBJECT_COMPILATION`
 
 Historical switch for excluding large scriptnode template instantiations from the build.
 

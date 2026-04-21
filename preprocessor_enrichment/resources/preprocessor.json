@@ -19,6 +19,168 @@
       "valueRange": "",
       "vestigal": false
     },
+    "CONFIRM_PRESET_OVERWRITE": {
+      "autoConfig": false,
+      "brief": "Shows a confirmation popup before overwriting an existing user preset file.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$UI.FloatingTiles.PresetBrowser$ -- preset browser save action is the main caller of the confirmation dialog",
+        "$PP.HISE_OVERWRITE_OLD_USER_PRESETS$ -- related flag that governs silent overwrite behaviour for shipped user presets in the exported plugin"
+      ],
+      "defaultValue": 1,
+      "description": "When enabled, saving a user preset on top of an existing file name opens a yes/no dialog asking whether to replace the file or cancel the save. When disabled, the existing file is deleted and replaced silently, which is useful when a scripted save flow already handles overwrite logic through its own UI. Only affects the built-in save path in the HISE IDE and the stock preset browser, not scripted saves that write preset files directly.\n> Disable this if your plugin ships a custom preset browser that handles overwrite confirmation itself, otherwise the user sees two confirmation popups in a row.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "CRASH_ON_GLITCH": {
+      "autoConfig": false,
+      "brief": "Historical switch for crashing the plugin on the first audio drop-out or burst above +36 dB.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "The original intent was to hard-crash the application as soon as the glitch detector spotted an output sample louder than +36 dB or a buffer-level drop-out, so that a debugger attached to the process would break at the exact stack frame responsible. The macro is still defined but no code path reads it anywhere, so toggling it has no effect on how glitches or bursts are handled at runtime. It is kept around so that older user projects which list it in their ExtraDefinitions field keep compiling.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": true
+    },
+    "DONT_CREATE_EXPANSIONS_FOLDER": {
+      "autoConfig": false,
+      "brief": "Disables automatic creation of the Expansions subfolder in the application data directory.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.HISE_ENABLE_EXPANSIONS$ -- gates the expansion subsystem whose default folder this flag suppresses",
+        "$PP.DONT_CREATE_USER_PRESET_FOLDER$ -- sibling flag that suppresses the automatic user preset folder in the same way"
+      ],
+      "defaultValue": 0,
+      "description": "When an exported plugin boots for the first time it normally ensures an Expansions subfolder exists so the expansion handler has somewhere to discover installed content. Setting this flag to 1 suppresses that directory creation, which is useful for projects that either ship without any expansion support or use a bespoke install location managed outside of the plugin. The directory is not deleted if it already exists, only the creation step is skipped.\n> Only meaningful when the expansion system is enabled, otherwise no folder would be created anyway.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "DONT_CREATE_USER_PRESET_FOLDER": {
+      "autoConfig": false,
+      "brief": "Skips the automatic creation of the UserPresets folder on first launch of the exported plugin.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$PP.DONT_CREATE_EXPANSIONS_FOLDER$ -- sibling folder-suppression flag that skips the automatic Expansions folder for non-audio utility builds"
+      ],
+      "defaultValue": 0,
+      "description": "On first launch, an exported plugin normally extracts the embedded user preset bank into a UserPresets folder inside its AppData directory. Enabling this flag suppresses that extraction step entirely, so the folder is never created and no presets are written to disk. This is only useful for non-audio projects (utilities, licensing helpers, installers) that happen to be built with HISE but do not need the preset system at all.\n> Only takes effect in exported plugins. Leaving it off is the right choice for every regular instrument or effect build.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "DONT_EMBED_FILES_IN_FRONTEND": {
+      "autoConfig": false,
+      "brief": "Exports the plugin without baking the project's image, audio and sample map assets into the binary.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$PP.USE_RELATIVE_PATH_FOR_AUDIO_FILES$ -- companion flag that controls how non-embedded audio files are located at runtime"
+      ],
+      "defaultValue": 0,
+      "description": "By default the compile exporter embeds every external file (images, audio files, sample maps, MIDI files, scripts) into the compiled plugin so the binary is self-contained. Enabling this flag skips the embedding step, which produces a much smaller binary and dramatically faster load times, but the plugin will then look for every asset inside its project subfolder at runtime. On iOS builds the flag is forced on automatically because the platform ships external resources alongside the app bundle.\n> Not recommended for desktop production builds because the plugin will fail to load any asset that is missing from the end user's file system.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "ENABLE_ALL_PEAK_METERS": {
+      "autoConfig": false,
+      "brief": "Collects output-level data on every module so that scripted peak meters keep working in an exported plugin.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [
+        "$MODULES.LFO$ -- getCurrentLevel returns zero in exported plugins unless per-module peak collection is enabled",
+        "$MODULES.AHDSR$ -- animated envelope graph display relies on the per-module peak collection",
+        "$MODULES.Convolution$ -- wet input and output magnitudes used by the module meter are only scanned when this flag is on",
+        "$SN.core.peak$ -- MatrixPeakMeter tile and scriptnode peak readback fall back to zero when per-module collection is off",
+        "$PP.ENABLE_PEAK_METERS_FOR_GAIN_EFFECT$ -- companion flag for the simple gain effect which scans its output magnitude through a separate switch"
+      ],
+      "defaultValue": 1,
+      "description": "Every modulator, effect and sound generator writes its current output magnitude into a per-module meter slot while this flag is on, which is what feeds the module header meters in the HISE IDE, the MatrixPeakMeter tile in an exported plugin and every timer-based getCurrentLevel call on a modulator. Turning it off saves the per-block magnitude scan on every module in the signal path and shrinks the per-module state, but any scripted peak readback or meter tile will read zero and modulator graphs like the animated AHDSR envelope stop updating. Needed in exported plugins because the default project template disables it to save CPU.\n> Add `ENABLE_ALL_PEAK_METERS=1` to the ExtraDefinitions field before exporting if your plugin uses peak meters, scripted level readback or modulator graph displays, otherwise they will read zero at runtime.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "ENABLE_CPU_MEASUREMENT": {
+      "autoConfig": false,
+      "brief": "Measures per-block rendering time so the CPU meter and sample loading thread report live load figures.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [],
+      "defaultValue": 1,
+      "description": "Wraps every audio render pass in a high-resolution benchmark so that the main CPU usage tile and the sample-loader busy-ratio readout have real numbers to display. The sampler streaming thread also uses the same timing hooks to report how much of each sample load window was spent doing work. Disabling it removes two high-resolution timer reads per render block and one more per streaming job, which is measurable on very small buffer sizes but usually negligible; the trade-off is that the CPU meter reads zero and the streaming diagnostics report no busy ratio.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "ENABLE_HOST_INFO": {
+      "autoConfig": false,
+      "brief": "Pulls transport and tempo information from the host into the engine on every audio block.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [],
+      "defaultValue": 1,
+      "description": "Queries the DAW playhead each render block to update the engine's tempo, playing position, time signature and grid tick information so that tempo-synced modulators, transport-aware scripts and the TransportHandler callbacks receive live values. Turning this off skips the playhead query entirely; the engine then falls back to its internal clock and any tempo-synced module will freeze at its last known BPM. Only disable it for a very lean utility build where the plugin must not react to host transport at all, because the cost of the query is small compared to what downstream modules do with the data.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "ENABLE_PEAK_METERS_FOR_GAIN_EFFECT": {
+      "autoConfig": false,
+      "brief": "Collects post-gain output magnitudes on the Simple Gain effect so its meter reads live values.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [
+        "$MODULES.SimpleGain$ -- output magnitude scan used by the module meter is gated by this flag",
+        "$PP.ENABLE_ALL_PEAK_METERS$ -- global peak meter switch that every other module uses; this flag carves out the Simple Gain effect separately"
+      ],
+      "defaultValue": 1,
+      "description": "Scans the left and right output magnitude of the Simple Gain effect after the gain stage has been applied, which feeds the module's output meter and any scripted getCurrentLevel call against it. This is split out from the global peak meter flag because the Simple Gain effect is used heavily on the master chain and in voice effect chains, so exporting without it can save the magnitude scan on every instance. Turning it off does not affect any other effect, only the Simple Gain.\n> Read together with the global peak meter flag: disabling the global flag still leaves the Simple Gain meter alive if this one is on, and vice versa.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "ENABLE_PLOTTER": {
+      "autoConfig": false,
+      "brief": "Historical switch for the per-modulator plotter ring buffer used by the IDE's Plotter panel.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [],
+      "defaultValue": 1,
+      "description": "The original purpose was to gate the sample collection that fed the IDE-side Plotter panel so that exported plugins could skip the per-sample push onto the plot ring buffer. The macro is still defined but no code reads it anywhere in the current engine; the project template still writes it to keep older ExtraDefinitions lists compiling, but toggling the value has no effect on CPU load or on whether the Plotter panel updates. It is kept only so that legacy user projects which list it keep working.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": true
+    },
+    "ENABLE_STARTUP_LOG": {
+      "autoConfig": false,
+      "brief": "Writes a timestamped plain-text startup log to the user's desktop while the plugin initialises.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "Installs a lightweight logger that appends every major initialisation step (preset load, sample scan, scriptnode compile, UI build) to a StartLog.txt file on the user's desktop, together with the elapsed milliseconds since the previous entry. Useful when debugging a plugin that fails on a customer machine where no debugger or console is available, because the file survives a crash and shows exactly which step hung. Carries essentially no overhead during normal operation (one file append per milestone) but writes to the desktop unconditionally, so do not ship a release build with this enabled.\n> The log file is always created at the same path on the desktop and is overwritten on every startup, so remind users to grab the file before relaunching the plugin.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
     "FORCE_INPUT_CHANNELS": {
       "autoConfig": false,
       "brief": "Routes the host audio input into the master chain of an instrument plugin.",
@@ -34,6 +196,22 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_ALLOW_OFFLINE_ACTIVATION": {
+      "autoConfig": false,
+      "brief": "Enables an offline activation path in the copy protection flow.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.USE_COPY_PROTECTION$ -- enables the licensing subsystem that this flag extends with an offline path",
+        "$API.Unlocker$ -- scripting surface that drives the activation flow affected by this flag"
+      ],
+      "defaultValue": 0,
+      "description": "When enabled the unlocker accepts an activation response file generated on a separate, internet-connected machine instead of performing a live server round trip. The end user requests a challenge from the plugin, submits it to the licence server through a browser, and loads the returned response back into the plugin to finalise registration. This is typically required for studio machines that are permanently offline.\n> Only takes effect when copy protection is compiled in.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_BROWSE_FOLDER_WHEN_RELOCATING_SAMPLES": {
       "autoConfig": false,
       "brief": "Controls whether relocating samples opens a folder picker or a file picker for a .ch1 file.",
@@ -44,6 +222,53 @@
       ],
       "defaultValue": 1,
       "description": "Changes the behaviour of the 'Relocate Samples' button in the standalone settings window of an exported plugin. When enabled, clicking it opens a folder browser so the user can point at the directory that contains the extracted sample archive. When disabled, it opens a file browser filtered to .ch1 files and uses the parent folder of the chosen file as the new sample location, which is useful if the installer produces a nested folder layout and you want the user to click on a known landmark file instead of navigating to the correct subfolder.\n> Only affects the standalone settings dialog in the exported plugin. Has no effect inside the HISE IDE.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_COMPLAIN_ABOUT_ILLEGAL_BUFFER_SIZE": {
+      "autoConfig": false,
+      "brief": "Shows an overlay message when the host asks for a buffer size that is not a multiple of the event raster.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [
+        "$PP.HISE_EVENT_RASTER$ -- defines the raster divisor that the buffer size must be a multiple of for the check to pass",
+        "$PP.HISE_MAX_PROCESSING_BLOCKSIZE$ -- caps the internal block size used after rastering and must itself stay a multiple of the event raster"
+      ],
+      "defaultValue": 1,
+      "description": "Every modulation block and MIDI event timestamp in HISE is aligned to the event raster grid, so any host buffer size that is not an integer multiple of that raster forces the engine to pad the block internally and can cause subtle timing drift. With this flag on, the engine pops up a user-facing error overlay the moment such a buffer size is negotiated, which catches misconfigured audio devices during development. Turn it off when shipping a plugin that is expected to run on fixed hardware where the buffer size is known to be compatible and the overlay would only confuse end users.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_DEACTIVATE_OVERLAY": {
+      "autoConfig": false,
+      "brief": "Hides the built-in dark error overlay so a project can present its own UI for engine errors.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [
+        "$API.ErrorHandler$ -- scripted error handler disables the same overlay at runtime and should replace it with custom UI"
+      ],
+      "defaultValue": 0,
+      "description": "Controls the default value of the overlay that the engine draws on top of the interface whenever something goes wrong (samples not installed, licence missing, incorrect audio folder and similar). When enabled, the overlay is suppressed entirely and the user only sees whatever the project itself shows in response. When disabled, the stock overlay with its default message and buttons is drawn automatically. The scripted error handler object flips the same switch from HISEScript, so creating an ErrorHandler from a script has the same end result as setting this flag at compile time.\n> Suppressing the overlay without providing a scripted replacement leaves the user with no feedback when samples are missing or the licence has expired, so only set this when you implement custom error handling in the interface.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_DEFAULT_OPENGL_VALUE": {
+      "autoConfig": false,
+      "brief": "Initial OpenGL rendering state when the plugin is launched for the first time on a machine.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [
+        "$PP.HISE_USE_OPENGL_FOR_PLUGIN$ -- only consulted when OpenGL support is actually compiled into the plugin",
+        "$API.Settings.isOpenGLEnabled$ -- Settings.isOpenGLEnabled reports the persisted value that this default seeds"
+      ],
+      "defaultValue": 1,
+      "description": "Picks the default for the Open GL toggle in the audio settings window and the standalone preferences, so a fresh installation starts either with hardware-accelerated rendering on or off depending on this value. Only consulted when the user has not yet stored an OPEN_GL choice in their settings file; subsequent launches read whatever the user selected last. Ignored entirely unless OpenGL support has been compiled in through the companion flag.\n> The user can still flip the renderer in the settings window at runtime, so this only influences the very first launch on a given machine.",
       "supportsHotReload": false,
       "value": 1,
       "valueRange": "",
@@ -65,13 +290,98 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_ENABLE_EXPANSIONS": {
+      "autoConfig": false,
+      "brief": "Compiles the expansion handler and related infrastructure into the plugin.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.HISE_USE_UNLOCKER_FOR_EXPANSIONS$ -- routes expansion protection through the main unlocker when expansions are active",
+        "$PP.DONT_CREATE_EXPANSIONS_FOLDER$ -- suppresses the default folder that this subsystem would otherwise create",
+        "$API.ExpansionHandler$ -- scripting entry point exposed only when this subsystem is compiled in",
+        "$API.Expansion$ -- represents a single pack managed by the subsystem this flag enables",
+        "$PP.HISE_USE_XML_FOR_HXI$ -- container format for encrypted expansions produced by this subsystem"
+      ],
+      "defaultValue": 1,
+      "description": "Expansions are optional content packs that can be loaded at runtime from a dedicated folder, each carrying their own samples, presets, and images. Turning this on activates the expansion handler so projects can enumerate, load, and protect expansion packs via the scripting API. Disabling it strips the related code paths and is appropriate for projects that ship as a single fixed instrument.\n> The guard is applied locally in the build rather than through the existing compile-time infrastructure.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": true
+    },
+    "HISE_ENABLE_FULL_CONTROL_RATE_PITCH_MOD": {
+      "autoConfig": false,
+      "brief": "Historical switch for retaining full-resolution pitch modulation on the control-rate path.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "The original intent was to keep pitch modulation at audio rate even when the rest of the modulation system ran at the reduced control rate, so that vibrato and pitch-envelope detail did not get stepped by the downsampling. The macro is still defined with a hard-coded value of zero and no code reads it anywhere, so toggling it has no effect on the pitch modulation path or on audio output. It is kept only so that older user projects which list it in their ExtraDefinitions field still compile.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": true
+    },
+    "HISE_ENABLE_MIDI_INPUT_FOR_FX": {
+      "autoConfig": true,
+      "brief": "Routes incoming MIDI data into the MIDI processor chain of an exported effect plugin.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$PP.PROCESS_SOUND_GENERATORS_IN_FX_PLUGIN$ -- sibling FX export flag that keeps sound generators running so MIDI-triggered modulators still produce values",
+        "$PP.HISE_USE_MIDI_CHANNELS_FOR_AUTOMATION$ -- MIDI channel filtering only takes effect once MIDI actually reaches the FX plugin"
+      ],
+      "defaultValue": 0,
+      "description": "Only relevant when the project is exported as an effect plugin. By default an FX plugin ignores MIDI entirely, because most DAWs do not route MIDI to audio track inserts and the keyboard-state processing step is pure overhead in that case. Enabling this flag makes the plugin advertise a MIDI input, consume note and controller messages from the host and run them through the master chain's MIDI processors and the MIDI automation handler. Use this for effects that need keytracking, note-triggered modulation or host-side MIDI automation of a plugin parameter.\n> The HISE export dialog writes this flag automatically from the 'Enable Midi Input For Effect Plugins' project setting, so you normally do not need to set it manually in the ExtraDefinitions field.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_ENABLE_MIDI_LEARN": {
+      "autoConfig": false,
+      "brief": "Lets the end user assign MIDI CC numbers to knobs and buttons through the right-click menu.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$API.MidiAutomationHandler$ -- MIDI learn assignments are stored and queried through this scripting object",
+        "$PP.HISE_ENABLE_MIDI_INPUT_FOR_FX$ -- effect plugins need MIDI input enabled before the learn menu can receive CC messages"
+      ],
+      "defaultValue": 1,
+      "description": "Controls whether the MIDI Learn entry appears on the context menu of macro-controlled UI components and whether incoming CC messages can be bound to a control at runtime. The default is on for instrument plugins and the standalone app and off for exported effect plugins, because an effect plugin normally does not receive MIDI anyway. Disable this on an instrument build only if you ship your own CC-to-parameter workflow through scripting and want to hide the stock assignment UI.\n> If you turn this on for an exported effect plugin, pair it with the MIDI input flag so that CC messages actually reach the automation handler in the first place.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_EVENT_RASTER": {
+      "autoConfig": false,
+      "brief": "Downsampling factor for the modulation and event-timestamp raster.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [
+        "$MODULES.LFO$ -- LFO accuracy above roughly 30 Hz improves when this divisor is lowered",
+        "$API.Engine.getControlRateDownsamplingFactor$ -- Engine.getControlRateDownsamplingFactor returns this value at runtime",
+        "$API.Synth$ -- sample-accurate timer events on the synth are rastered to this grid",
+        "$SN.container.modchain$ -- children of a modchain run at sampleRate divided by this factor",
+        "$PP.HISE_MAX_PROCESSING_BLOCKSIZE$ -- maximum block size must stay a multiple of this raster",
+        "$PP.HISE_COMPLAIN_ABOUT_ILLEGAL_BUFFER_SIZE$ -- triggers a user-facing overlay when the host buffer size is not a multiple of this raster"
+      ],
+      "defaultValue": 8,
+      "description": "Sets the divisor that every modulator, envelope and scriptnode modchain uses to step down from the audio rate, and also defines the sample grid that MIDI note, controller and timer events get aligned to inside a block. The default is 8 for instrument plugins (modulation runs at sampleRate / 8, which is about 5.5 kHz at 44.1 kHz) and 1 for effect plugins where no downsampling happens. Setting it to 4, 2 or 1 in instrument projects gives finer modulation resolution at the cost of proportionally more CPU in every modulator and scriptnode modchain, which is the standard workaround for LFO aliasing above roughly 30 Hz.\n> The host buffer size must be an integer multiple of this value or the engine refuses to render. Set it consistently in both the HISE build and the exported plugin, and keep it a power of two (1, 2, 4 or 8) to stay compatible with the event scheduler.",
+      "supportsHotReload": false,
+      "value": 8,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_INCLUDE_BEATPORT": {
       "autoConfig": false,
       "brief": "Compiles the Beatport authentication integration into the build.",
       "category": "Third-Party Modules",
       "category-slug": "third-party-modules",
       "crossRefs": [
-        "$API.BeatportManager$ -- scripting object that is only functional when this flag is on"
+        "$API.BeatportManager$ -- scripting object that is only functional when this flag is on",
+        "$PP.JUCE_ALLOW_EXTERNAL_UNLOCK$ -- Beatport sits alongside MuseHub as an external unlock path that relies on this JUCE back door"
       ],
       "defaultValue": 0,
       "description": "Enables the real implementation of the BeatportManager scripting object, which talks to the Beatport SDK to validate a product against a user's Beatport account. With the flag off, the scripting object still loads so that existing scripts compile, but setProductId is a no-op, validate returns an empty object and isBeatportAccess always reports false. The Beatport SDK has to be supplied separately and linked into the project; HISE does not bundle it.\n> Only meaningful for products distributed through Beatport's plugin catalogue. Leave this off for everything else.",
@@ -86,7 +396,7 @@
       "category": "Third-Party Modules",
       "category-slug": "third-party-modules",
       "crossRefs": [
-        "$API.Engine$ -- Engine.createBXLicenser is only registered when this flag is on"
+        "$API.Engine.createBXLicenser$ -- Engine.createBXLicenser is only registered when this flag is on"
       ],
       "defaultValue": 0,
       "description": "Enables the Engine.createBXLicenser scripting factory and pulls in the BX Licenser wrapper sources, which let a plugin authenticate against the Plugin Alliance licence system and redeem installer codes. With the flag off, createBXLicenser returns undefined, the wrapper sources are excluded from the unity build and no Plugin Alliance dependency is linked. The BX licensing library has to be provided separately and is only available to Plugin Alliance partner developers.\n> Only set this for a product that ships through the Plugin Alliance distribution channel, because the licensing library is not publicly available.",
@@ -102,7 +412,7 @@
       "category-slug": "third-party-modules",
       "crossRefs": [
         "$API.LorisManager$ -- entire LorisManager scripting class is only available when this flag is on",
-        "$API.Engine$ -- Engine.getLorisManager returns a real object only when this flag is on",
+        "$API.Engine.getLorisManager$ -- Engine.getLorisManager returns a real object only when this flag is on",
         "$API.WavetableController$ -- wavetable converter can use Loris-based resynthesis when this flag is on",
         "$PP.USE_MOD2_WAVETABLESIZE$ -- Loris cycle extraction produces power-of-two wavetables that pair with the fast wavetable path"
       ],
@@ -119,7 +429,8 @@
       "category": "Third-Party Modules",
       "category-slug": "third-party-modules",
       "crossRefs": [
-        "$API.Unlocker$ -- Unlocker.checkMuseHub only performs a real licence check when this flag is on"
+        "$API.Unlocker.checkMuseHub$ -- Unlocker.checkMuseHub only performs a real licence check when this flag is on",
+        "$PP.JUCE_ALLOW_EXTERNAL_UNLOCK$ -- provides the external-unlock back door that the MuseHub licence check routes through"
       ],
       "defaultValue": 0,
       "description": "Enables the real MuseHub licence check inside ScriptUnlocker so that Unlocker.checkMuseHub validates the plugin against a user's MuseHub account through the MuseHub SDK. With the flag off, the backend build falls back to a simulated 50/50 result after a two second delay and the frontend does nothing at all. The MuseHub SDK headers and static library have to be supplied separately by MuseHub and are only available to partners distributing through their catalogue.\n> Only takes effect in exported plugin builds. The HISE IDE always runs the simulated path regardless of this setting so that the scripting API can be tested without the SDK.",
@@ -134,7 +445,7 @@
       "category": "Third-Party Modules",
       "category-slug": "third-party-modules",
       "crossRefs": [
-        "$API.Engine$ -- Engine.createNKSManager is only registered when this flag is on"
+        "$API.Engine.createNKSManager$ -- Engine.createNKSManager is only registered when this flag is on"
       ],
       "defaultValue": 0,
       "description": "Enables the Engine.createNKSManager scripting factory, pulls in the NKS wrapper sources and links the NKS VST3 interface hooks so that an exported plugin can show preset information, tag metadata and a factory browser inside Komplete Kontrol and Maschine. With the flag off, createNKSManager returns undefined, the NKS wrapper sources are excluded from the unity build and the frontend uses a dummy NKSVST3Interface stub. The NKS SDK has to be requested from Native Instruments separately; HISE does not ship it.\n> The exporter inspects the project's Extra Definitions for this flag and skips the NKS wiring automatically when it is not present, so in most cases you only need to set it in ExtraDefinitionsWindows or ExtraDefinitionsOSX rather than on the HISE build itself.",
@@ -149,11 +460,29 @@
       "category": "Third-Party Modules",
       "category-slug": "third-party-modules",
       "crossRefs": [
-        "$API.Buffer$ -- Buffer.detectPitch is only registered when this flag is on"
+        "$API.Buffer.detectPitch$ -- Buffer.detectPitch is only registered when this flag is on"
       ],
       "defaultValue": 1,
       "description": "Enables the PitchDetection helper class and exposes it to scripting through Buffer.detectPitch, which runs an autocorrelation-based pitch estimator over an audio buffer and returns the fundamental in Hz. With the flag off, the detection code is excluded and the scripting method is not registered, which trims a small amount from the compiled binary. Leave this on unless you are stripping HISE down to a minimal build and know that no script in the project calls detectPitch.",
       "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_INCLUDE_PROFILING_TOOLKIT": {
+      "autoConfig": false,
+      "brief": "Compiles the in-engine profiler that records thread, scriptnode and script execution traces.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [
+        "$API.Threads.startProfiling$ -- Threads.startProfiling throws a script error unless this flag is enabled",
+        "$API.Console$ -- Console.startSampling and Console.sample become no-ops when the profiling toolkit is not compiled in",
+        "$API.Broadcaster$ -- sendMessage instrumentation and per-callback timing collection are only active with this flag",
+        "$API.ScriptLookAndFeel$ -- per-paint-routine timing for LAF callbacks requires the profiling toolkit"
+      ],
+      "defaultValue": 0,
+      "description": "Enables the full profiling toolkit: the Threads.startProfiling scripting API that captures a base64-encoded timeline, the per-node execution timing inside scriptnode, the paint-function timing on ScriptLookAndFeel, the broadcaster send trace and the script engine's sample/startSampling debug hooks. Without this flag the profiler entry points still compile but behave as no-ops or throw a script error, so calls from HISEScript fail silently in an exported plugin. Leave this off for release builds because the timeline collection adds measurable overhead to every instrumented code path and the recorded data is only useful inside the HISE IDE or when exported back out for analysis.\n> Read from the project's Extra Definitions at runtime, so a scripted profiling call can check the flag and warn the user when the compiled plugin was not built with it.",
+      "supportsHotReload": true,
       "value": 1,
       "valueRange": "",
       "vestigal": false
@@ -186,6 +515,38 @@
       ],
       "defaultValue": 1,
       "description": "Enables the NeuralNetwork scripting class, the math.neural scriptnode node and the loaders for TensorFlow, PyTorch and ONNX models, which are the entire realtime-inference stack in HISE. With the flag off, the math.neural node still appears in the factory but renders nothing and shows 'This node is disabled. Recompile HISE with HISE_INCLUDE_RT_NEURAL' in its panel, and the NeuralNetwork holder on the MainController is compiled out so load calls fail silently.\n> Must be set identically in the HISE build and the exported plugin, because the NeuralNetwork storage and the node binary layout both change when the flag is toggled.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_INCLUDE_TEMPO_IN_PLUGIN_STATE": {
+      "autoConfig": false,
+      "brief": "Stores and restores the current host tempo as part of the plugin's DAW project state.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$API.TransportHandler$ -- host BPM reported through the transport handler is the value that gets persisted",
+        "$API.Engine.getHostBpm$ -- Engine.getHostBpm reflects the restored tempo after a project reload"
+      ],
+      "defaultValue": 1,
+      "description": "When enabled, the plugin writes the last known host BPM into the state chunk that the DAW saves with the project, and reads it back when the project is reopened. This is useful for standalone testing and for plugins that override the tempo through the scripting API, because the custom value survives a save/reload cycle. The side effect is a short window at project load where the stored tempo briefly takes effect before the host updates the value on the next audio block, which can cause subtle glitches on patches that are tightly locked to tempo-synced LFOs or delays.\n> Disable this if your plugin always follows the host tempo and you prefer clean startups over persisting a custom BPM.",
+      "supportsHotReload": true,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_INCLUDE_UNLOCKER_OVERLAY": {
+      "autoConfig": false,
+      "brief": "Includes the built-in registration overlay UI for the copy protection flow.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.USE_COPY_PROTECTION$ -- provides the licensing state that this overlay visualises",
+        "$PP.USE_SCRIPT_COPY_PROTECTION$ -- alternative registration UI path used when the built-in overlay is disabled"
+      ],
+      "defaultValue": 1,
+      "description": "This overlay presents the licence entry dialog and activation status messages on top of the plugin interface whenever the copy protection state requires user input. Disabling it removes the default UI so a project can implement a fully custom registration screen using the script copy protection API. Projects that want the standard look without extra work should leave this enabled.\n> Has no effect when copy protection is not compiled in.",
       "supportsHotReload": false,
       "value": 0,
       "valueRange": "",
@@ -238,6 +599,23 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_MACROS_ARE_PLUGIN_PARAMETERS": {
+      "autoConfig": false,
+      "brief": "Publishes every macro control as a dedicated plugin parameter in front of the scripted automation slots.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$API.MacroHandler$ -- macro slots exposed as plugin parameters are the ones managed through this scripting object",
+        "$MODULES.MacroModulationSource$ -- every macro slot is mirrored as a front-of-list plugin parameter when this is on",
+        "$PP.HISE_NUM_MACROS$ -- determines how many macro plugin parameters the host sees"
+      ],
+      "defaultValue": 0,
+      "description": "When enabled, the exported plugin advertises one plugin parameter per active macro slot before any custom automation slot or scripted plugin parameter, which lets the host automate macros directly instead of routing through a UI component. The plugin parameter index reported to the host changes because the macro slots occupy the first positions, and macro state no longer restores from user presets when the preset system is running in exclusive mode (which matches how plugin parameters are normally managed by the DAW rather than by the preset). Combine this with a reduced macro count to keep the parameter list compact.\n> Read at runtime from the Extra Definitions, so no HISE rebuild is required. Pair it with HISE_NUM_MACROS so the number of exposed plugin parameters matches the macros you actually use.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_MAX_DELAY_TIME_SAMPLES": {
       "autoConfig": false,
       "brief": "Maximum buffer size (in samples) for every delay line in the project.",
@@ -251,6 +629,24 @@
       "description": "Every delay line allocates a fixed power-of-two buffer at compile time, so this value defines the longest possible delay regardless of sample rate. The default of 65536 samples equals roughly 1.36 seconds at 48 kHz and drops to about 680 ms at 96 kHz. If your project uses long delays, big reverb tails or high sample rates, increase this to 131072, 262144 or 524288 to avoid the delay time being clamped at runtime.\n> The value must be a power of two. Doubling it doubles the memory footprint of every delay instance, so don't set it higher than you actually need.",
       "supportsHotReload": false,
       "value": 65536,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_MAX_PROCESSING_BLOCKSIZE": {
+      "autoConfig": false,
+      "brief": "Upper ceiling for the internal audio block size used by the rendering loop.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [
+        "$API.Engine.setMaximumBlockSize$ -- Engine.setMaximumBlockSize clamps its argument to this ceiling",
+        "$MODULES.PolyphonicFilter$ -- filter quality and internal scratch buffers are sized to this block cap",
+        "$PP.HISE_EVENT_RASTER$ -- block size must stay a multiple of the event raster",
+        "$PP.HISE_COMPLAIN_ABOUT_ILLEGAL_BUFFER_SIZE$ -- illegal buffer sizes caught by the raster check raise the overlay message when this flag is on"
+      ],
+      "defaultValue": 512,
+      "description": "Caps the largest block size that the engine will process in a single pass; if the host calls with a bigger buffer, the render callback splits it into chunks no larger than this value before dispatching to the voice renderer and effect chain. Bigger values mean fewer dispatch overheads but also grow every internal scratch buffer that is sized to the maximum block, so very high ceilings waste memory and can introduce streaming engine edge cases. The default of 512 is the sweet spot for the built-in filter and polyphonic effect paths; the setMaximumBlockSize scripting method clamps its argument to the range 16 to this value.\n> Keep this as a power of two and at least equal to the event raster, otherwise block splitting will not align cleanly with modulation updates.",
+      "supportsHotReload": false,
+      "value": 512,
       "valueRange": "",
       "vestigal": false
     },
@@ -285,6 +681,26 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_NUM_MACROS": {
+      "autoConfig": false,
+      "brief": "Number of active macro control slots that the project exposes on the master chain.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$API.MacroHandler$ -- slot count seen by every scripting call that enumerates macros",
+        "$API.Engine.setFrontendMacros$ -- setFrontendMacros expects a name list sized to this value",
+        "$MODULES.MacroModulationSource$ -- chain count of the macro modulation source synthesiser matches this value",
+        "$MODULES.MacroModulator$ -- macro modulator slot index is validated against this value",
+        "$PP.HISE_NUM_MAX_MACROS$ -- hard upper ceiling that this value must not exceed",
+        "$PP.HISE_MACROS_ARE_PLUGIN_PARAMETERS$ -- determines how many plugin parameters are published when macros become plugin parameters"
+      ],
+      "defaultValue": 8,
+      "description": "Sets how many macro slots are visible to scripts, to the macro handler, to the Macro Modulation Source synthesiser and to the macro plugin-parameter publishing path. The default of 8 matches the original HISE layout and the UI panels that show a fixed eight-knob strip; values between 1 and the project-wide ceiling let you trim a compact product or scale up to a modular rig with many assignment targets. The value is read at runtime, so changing it in the Extra Definitions and reopening the project is enough to see the new slot count without a HISE rebuild.\n> Must not exceed the project-wide macro ceiling of 64, otherwise compilation fails with a hard error.",
+      "supportsHotReload": true,
+      "value": 8,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_NUM_MAX_FRAME_CONTAINER_CHANNELS": {
       "autoConfig": false,
       "brief": "Upper channel limit for scriptnode frame processing containers.",
@@ -298,6 +714,34 @@
       "description": "Frame processing containers in scriptnode produce one sample per channel at a time instead of processing in blocks, and their channel dispatch is resolved at compile time through a fixed set of template specialisations. This value caps how many channels those specialisations cover, so a frame container configured for more channels than the limit will fail to compile or fall back to the non-frame path. The default of 8 covers all common surround formats and only needs to be raised for unusual routing setups such as ambisonics or bespoke multichannel effects.\n> Increasing this adds template instantiations and slightly grows compile time and binary size, so only raise it when you actually need wider frame containers.",
       "supportsHotReload": false,
       "value": 8,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_NUM_MAX_MACROS": {
+      "autoConfig": false,
+      "brief": "Compile-time ceiling on the number of macro slots that internal fixed-size arrays reserve space for.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$PP.HISE_NUM_MACROS$ -- active macro slot count that must stay at or below this ceiling"
+      ],
+      "defaultValue": 64,
+      "description": "Sets the fixed array size used for macro bookkeeping inside the main controller and the macro modulation source, so that the macro slot count can be changed at runtime without reallocating per-slot state. The default of 64 covers every realistic macro layout and only needs to be raised if a project genuinely needs more than 64 simultaneous macro assignments. Raising it grows every per-macro array proportionally, so do not inflate this value beyond what the project actually uses.\n> Must be at least as large as the active macro count, otherwise compilation fails with a hard error. This value is baked into the binary at compile time and must match between the HISE build and any project DLL or exported plugin.",
+      "supportsHotReload": false,
+      "value": 64,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_NUM_MODULATORS_PER_CHAIN": {
+      "autoConfig": false,
+      "brief": "Maximum number of modulators a single modulation chain can hold.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [],
+      "defaultValue": 64,
+      "description": "Caps how many modulators (LFOs, envelopes, velocity modulators, script modulators and so on) may be inserted into any gain, pitch or parameter modulation chain in the project. The value also sizes the active-modulator lookup tables inside each chain and the scriptnode modulation source registry, so raising it increases per-chain memory footprint even when the extra slots stay empty. Only increase this if you hit the limit with a genuinely dense modulation setup.\n> Sensible range is 16 to 256.",
+      "supportsHotReload": false,
+      "value": 64,
       "valueRange": "",
       "vestigal": false
     },
@@ -317,6 +761,62 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS": {
+      "autoConfig": false,
+      "brief": "Number of extra modulation chain slots exposed by polyphonic scriptnode effects.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [
+        "$MODULES.PolyScriptFX$ -- host module that exposes these modulation slots",
+        "$SN.core.extra_mod$ -- node that reads the modulation signal inside the network",
+        "$PP.HISE_NUM_SCRIPTNODE_FX_MODS$ -- monophonic counterpart for master script effects",
+        "$PP.NUM_HARDCODED_POLY_FX_MODS$ -- equivalent slot count for compiled polyphonic effects",
+        "$PP.HISE_NUM_MODULATORS_PER_CHAIN$ -- master cap on modulators that can occupy each slot"
+      ],
+      "defaultValue": 0,
+      "description": "Adds per-voice modulation chain slots to every Polyphonic Script FX module so that polyphonic modulators can drive root parameters of the embedded scriptnode network. Because the slots run per voice, each active slot contributes to the polyphonic voice cost and memory footprint, so keep this as low as the project actually needs. Changing the value after a project has been saved will prompt users to reload the affected effects.\n> Sensible range is 0 to 4.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_NUM_SCRIPTNODE_FX_MODS": {
+      "autoConfig": false,
+      "brief": "Number of extra modulation chain slots exposed by monophonic scriptnode effects.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [
+        "$MODULES.ScriptFX$ -- host module that exposes these modulation slots",
+        "$SN.core.extra_mod$ -- node that reads the modulation signal inside the network",
+        "$PP.HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS$ -- polyphonic counterpart for per-voice script effects",
+        "$PP.NUM_HARDCODED_FX_MODS$ -- equivalent slot count for compiled hardcoded effects",
+        "$PP.HISE_NUM_MODULATORS_PER_CHAIN$ -- master cap on modulators that can occupy each slot"
+      ],
+      "defaultValue": 0,
+      "description": "Adds modulation chain slots to every Script FX module so that standard HISE modulators can drive root parameters of the embedded scriptnode network, either via the External Modulation property on a parameter or via a core.extra_mod node placed inside the network. Slots are evaluated at control rate and carry no measurable CPU cost when left empty, so the value can be sized to the worst-case network without penalty. Changing the value after a project has been saved will prompt users to reload the affected effects.\n> Sensible range is 0 to 8.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_NUM_SCRIPTNODE_SYNTH_MODS": {
+      "autoConfig": false,
+      "brief": "Number of extra modulation chain slots exposed by scriptnode synthesisers.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [
+        "$MODULES.ScriptSynth$ -- host module that exposes these modulation slots",
+        "$SN.core.extra_mod$ -- node that reads the modulation signal inside the network",
+        "$PP.NUM_HARDCODED_SYNTH_MODS$ -- equivalent slot count for compiled hardcoded synthesisers",
+        "$PP.HISE_NUM_MODULATORS_PER_CHAIN$ -- master cap on modulators that can occupy each slot"
+      ],
+      "defaultValue": 2,
+      "description": "Adds per-voice modulation chain slots to every Scriptnode Synthesiser so that standard HISE modulators can drive root parameters of the embedded scriptnode network in addition to the built-in gain and pitch chains. The default of two covers common filter-cutoff and amp-modulation patches; raise it only when the synth needs more independent modulation targets. Changing the value after a project has been saved will prompt users to reload the affected synths.\n> Sensible range is 0 to 8.",
+      "supportsHotReload": true,
+      "value": 2,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_NUM_STANDALONE_OUTPUTS": {
       "autoConfig": false,
       "brief": "Number of output channels used when the project runs as a standalone application.",
@@ -329,6 +829,22 @@
       "description": "Sets how many channels the standalone HISE app (and any exported standalone build) requests from the audio device and feeds to the master routing matrix. The value must be even and defaults to the main plugin channel count, which keeps standalone and plugin behaviour in sync for typical stereo projects. Raise this together with the plugin channel count when building a multi-output standalone instrument so that the extra buses reach the audio interface.\n> When the standalone device settings and this value disagree, the standalone startup code will prompt to reset the saved audio configuration to match.",
       "supportsHotReload": false,
       "value": 2,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_OVERWRITE_OLD_USER_PRESETS": {
+      "autoConfig": true,
+      "brief": "Silently replaces shipped user presets on disk when the plugin version is newer than the one that wrote them.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$PP.READ_ONLY_FACTORY_PRESETS$ -- related flag that stops the user from modifying shipped presets in the first place",
+        "$PP.CONFIRM_PRESET_OVERWRITE$ -- related flag that governs the overwrite confirmation on manual saves in the HISE IDE"
+      ],
+      "defaultValue": 0,
+      "description": "Controls how the exported plugin reacts when its bundled user preset bank on disk was written by an older build. When disabled, an existing UserPresets folder is left untouched and the embedded bank is only extracted on first launch. When enabled, the plugin compares the version stamp in an info.json file and, if the current plugin version is newer, rewrites every factory-shipped preset (including any that the end user has modified), while leaving presets that the user created themselves alone unless a name collision occurs.\n> The HISE export dialog writes this flag automatically from the 'Overwrite Old User Presets' project setting, so you normally don't need to set it manually in the ExtraDefinitions field.",
+      "supportsHotReload": false,
+      "value": 0,
       "valueRange": "",
       "vestigal": false
     },
@@ -416,6 +932,38 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_SCRIPT_SERVER_TIMEOUT": {
+      "autoConfig": false,
+      "brief": "Timeout in milliseconds for every HTTP request issued by the scripting server and download APIs.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [
+        "$API.Server$ -- every callWithGET, callWithPOST and isOnline request uses this timeout",
+        "$API.Download$ -- HTTP download resume and start use this as the connection timeout"
+      ],
+      "defaultValue": 10000,
+      "description": "Sets the connection and read timeout used by every HTTP call the engine makes on behalf of a script, which covers Server.callWithGET and callWithPOST, Server.isOnline, the Download and background-task HTTP helpers, and the internal update checker. The default of 10000 ms is a reasonable balance for typical authentication pings and small metadata requests; raise it to 30000 or more if the plugin talks to a slow REST endpoint or downloads larger responses synchronously, and lower it only if the script polls a URL fast enough that a stuck request must not block the script thread. The value is baked in at compile time, so overriding it requires an ExtraDefinitions entry rather than a runtime API.",
+      "supportsHotReload": false,
+      "value": 20000,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_SILENCE_THRESHOLD_DB": {
+      "autoConfig": false,
+      "brief": "Threshold in negative decibels below which the engine treats a parameter value or envelope level as silent.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [
+        "$MODULES.AHDSR$ -- envelope decay stage transitions to sustain or idle when the value falls below this threshold",
+        "$MODULES.StreamingSampler$ -- voice crossfade smoothing uses this threshold to decide when interpolation can stop"
+      ],
+      "defaultValue": 60,
+      "description": "Sets the gain value that parameter smoothers, the polyphonic envelope decay stage and the sampler voice crossfade logic use to decide that a ramp or decay has effectively reached its target. The stored value is interpreted as the negative dB, so the default of 60 means anything below -60 dB counts as silence. Lowering it (for example to 80 or 90) makes envelope decays run closer to true zero at the cost of a slightly longer voice tail; raising it shortens tails but can cut off quiet release material before it has finished. The value is a compile-time constant baked into every generator that uses the silence test.\n> The voice kill-fade-out time is still calibrated against a fixed -60 dB target regardless of this setting, so lowering the threshold can extend the actual kill fade beyond the scripted value.",
+      "supportsHotReload": false,
+      "value": 60,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_SMOOTH_FIRST_MOD_BUFFER": {
       "autoConfig": false,
       "brief": "Historical switch for smoothing the first control-rate modulation buffer after a voice starts.",
@@ -428,6 +976,36 @@
       "value": 0,
       "valueRange": "",
       "vestigal": true
+    },
+    "HISE_SUSPENSION_TAIL_MS": {
+      "autoConfig": false,
+      "brief": "Length in milliseconds that an effect keeps rendering after its input has gone silent before suspending itself.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [
+        "$MODULES.Convolution$ -- reverb tail needs a suspension window long enough to cover the impulse response",
+        "$MODULES.Delay$ -- delay tail needs a suspension window at least as long as the maximum delay time",
+        "$API.Effect.isSuspendedOnSilence$ -- isSuspendedOnSilence flag on effects uses this window to decide when to freeze processing"
+      ],
+      "defaultValue": 500,
+      "description": "Defines the tail window that every master and voice effect with suspend-on-silence enabled waits out before freezing its processing and outputting silence directly. The value is converted into a callback count based on the current sample rate and block size, so longer tails cover reverbs and long delays whose output keeps sounding well after the input stops, while shorter tails save more CPU on dry effects. The default of 500 ms is a compromise that works for most mixed effect chains; raise it to 2000 or higher for convolution reverbs with long impulse responses, lower it towards 100 for dry clippers or EQs.\n> Read from the project's Extra Definitions at runtime, so changing the value in the Preferences window takes effect on the next prepareToPlay without a full HISE rebuild.",
+      "supportsHotReload": true,
+      "value": 500,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_UNDO_INTERVAL": {
+      "autoConfig": false,
+      "brief": "Milliseconds between undo coalescing ticks for the global undo manager.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [],
+      "defaultValue": 500,
+      "description": "Sets the period of the timer that flushes pending undo transactions on the main controller. Rapid parameter changes inside one tick are merged into a single undoable step, so a lower value gives finer-grained undo history at the cost of longer undo stacks, while a higher value coalesces more aggressively and keeps the history shorter. The default of 500 ms matches a comfortable knob-drag granularity for most users; values below about 100 ms start creating one undo step per UI message, which quickly fills the history with noise.\n> Sensible range is roughly 100 to 2000 milliseconds. Only changing this is worthwhile if you have specific undo granularity requirements in a large utility project.",
+      "supportsHotReload": false,
+      "value": 500,
+      "valueRange": "",
+      "vestigal": false
     },
     "HISE_UPDATE_CONVOLUTION_DAMPING_ASYNC": {
       "autoConfig": false,
@@ -452,12 +1030,27 @@
       "category-slug": "backwards-compatibility",
       "crossRefs": [
         "$API.Synth$ -- scheduled note-on and note-off timestamps are shifted by one block when this is enabled",
-        "$API.Message$ -- timestamps set through Message.setTimestamp are adjusted the same way"
+        "$API.Message.setTimestamp$ -- timestamps set through Message.setTimestamp are adjusted the same way"
       ],
       "defaultValue": 1,
       "description": "Adjusts the timestamp of artificial note-on and note-off events that scripts add through the Message and Synth scripting APIs while running on the audio thread. When enabled, the engine removes one buffer's worth of samples from the requested timestamp (clamped to zero) before queuing the event. This compensates for an old off-by-one-block scheduling behaviour so that presets built against the original timing keep sounding the same. Events triggered from other threads and artificial events created outside a MIDI callback are not affected.\n> Turning this off gives you the newer, more accurate timestamp semantics but can shift the position of scripted notes by one block in existing projects.",
       "supportsHotReload": false,
       "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_USE_CUSTOM_ALERTWINDOW_LOOKANDFEEL": {
+      "autoConfig": false,
+      "brief": "Lets the project supply its own look and feel for JUCE alert windows instead of the HISE default.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [
+        "$API.ScriptLookAndFeel$ -- scripted look and feel is no longer consulted for alert windows when the project provides its own override"
+      ],
+      "defaultValue": 0,
+      "description": "By default HISE installs an alert-window look and feel that paints native popups (confirmation dialogs, error alerts, prompt boxes) in the same dark style as the rest of the editor, and falls back to the currently active scripted look and feel when one is attached. Enabling this flag skips that registration so the project can install a bespoke alert window style through C++ and avoid the stock HISE styling. Only relevant for projects that extend HISE on the C++ side; scripts cannot substitute the alert window style through this flag alone.\n> With this enabled, nothing styles the alert windows until your own code installs a replacement, so confirm dialogs will fall back to the default JUCE appearance.",
+      "supportsHotReload": false,
+      "value": 0,
       "valueRange": "",
       "vestigal": false
     },
@@ -473,6 +1066,53 @@
       ],
       "defaultValue": 0,
       "description": "The built-in tempo list that feeds every TempoSync slider, the arpeggiator's Tempo parameter and the `Engine.getTempoInMilliSeconds` / `TransportHandler` scripting APIs only goes up to a whole note by default. Enabling this flag prepends five longer values (EightBar, SixBar, FourBar, ThreeBar, TwoBars) to the front of the list, which is useful for slowly evolving ambient patches or long arpeggiator phrases.\n> Turning this on shifts every existing tempo index by 5, so any user preset that stored a tempo as an integer index before the change will map to a different note value after recompiling. The flag must be set consistently for both the HISE build and the exported plugin, otherwise stored indices will not round-trip.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_USE_MIDI_CHANNELS_FOR_AUTOMATION": {
+      "autoConfig": false,
+      "brief": "Enables per-channel MIDI CC assignment so the same CC number on different channels can control different parameters.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$API.MidiAutomationHandler$ -- channel field on the JSON automation object only appears when this flag is on",
+        "$PP.HISE_ENABLE_MIDI_LEARN$ -- channel filtering is applied on top of the MIDI learn assignment workflow"
+      ],
+      "defaultValue": 0,
+      "description": "By default the MIDI automation handler ignores the channel field of an incoming CC message, so CC 1 on channel 1 and CC 1 on channel 2 both drive the same assigned control. Enabling this flag switches the automation iterator to a channel-aware mode, stores a channel field alongside every assignment and makes the JSON automation objects include that field. This lets you build a plugin that responds to the same CC number differently depending on which MIDI channel carries it, for example separate knobs locked to channels 1 and 2 of a multi-timbral controller.\n> Read at runtime from the Extra Definitions, so no HISE rebuild is required. Enabling MIDI learn while this is on retains assignments on other channels and only replaces connections that share the new assignment's channel or that were stored as Omni.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_USE_MOUSE_WHEEL_FOR_TABLE_CURVE": {
+      "autoConfig": false,
+      "brief": "Legacy default that lets the mouse wheel adjust the curve tension on every table editor.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [
+        "$UI.Components.ScriptTable$ -- provides the default for the component's useMouseWheelForCurve property"
+      ],
+      "defaultValue": 0,
+      "description": "Sets the initial value of the useMouseWheelForCurve property on every table editor in the project so the mouse wheel bends the curve between two points instead of scrolling the parent viewport. The property is also exposed per instance in HISEScript, so the preprocessor only controls the starting value for components that have not overridden it. Leave this at the default unless you are maintaining a project built against older HISE versions where the mouse wheel always adjusted the curve.\n> Prefer setting the useMouseWheelForCurve property on individual table components instead, because flipping this globally hijacks the scroll wheel for every table in the interface.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_USE_OPENGL_FOR_PLUGIN": {
+      "autoConfig": false,
+      "brief": "Compiles OpenGL rendering support into the plugin so the user can enable hardware-accelerated drawing.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [
+        "$PP.HISE_DEFAULT_OPENGL_VALUE$ -- selects whether OpenGL starts on or off when the user launches the plugin for the first time",
+        "$API.Settings.isOpenGLEnabled$ -- Settings.isOpenGLEnabled reports the active renderer state only when this integration is compiled in"
+      ],
+      "defaultValue": 0,
+      "description": "Links the JUCE OpenGL code paths into the build and exposes the Open GL toggle in the settings window, which routes the interface rendering through the GPU instead of the CPU rasteriser. This is a significant quality-of-life improvement for large interfaces with animated panels or vector graphics, but adds a graphics driver dependency and a few megabytes to the binary, and can trigger driver-specific issues on older Windows GPUs. With the flag off, the toggle is absent and the plugin always draws through the software renderer regardless of the companion default value.\n> Must be set consistently in both the HISE build and the exported plugin. On iOS OpenGL support is always present regardless of this flag.",
       "supportsHotReload": false,
       "value": 0,
       "valueRange": "",
@@ -507,6 +1147,40 @@
       "valueRange": "",
       "vestigal": false
     },
+    "HISE_USE_SYSTEM_APP_DATA_FOLDER": {
+      "autoConfig": true,
+      "brief": "Stores user presets, audio files and plugin state under the shared system AppData folder rather than the per-user one.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$PP.USE_RELATIVE_PATH_FOR_AUDIO_FILES$ -- audio files are resolved against the same AppData location selected by this flag"
+      ],
+      "defaultValue": 0,
+      "description": "Switches the AppData directory that the exported plugin uses from the current user's application data folder to the system-wide shared folder. This means every user on the machine reads and writes the same preset bank and resource folder, which is useful for multi-user studio setups and for installers that place content in a shared location. Writing to the shared folder usually requires elevated privileges, so the installer and the plugin need to be configured accordingly. The HISE IDE always checks the project setting at runtime regardless of this compile-time value.\n> The HISE export dialog writes this flag automatically from the 'Use Global AppData Folder' project setting, so you normally don't need to set it manually in the ExtraDefinitions field.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HISE_USE_UNLOCKER_FOR_EXPANSIONS": {
+      "autoConfig": false,
+      "brief": "Routes expansion authorisation through the main plugin unlocker.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.USE_COPY_PROTECTION$ -- provides the unlocker instance that expansions are routed through",
+        "$PP.HISE_ENABLE_EXPANSIONS$ -- gates the expansion subsystem whose authorisation path this flag redirects",
+        "$API.Unlocker$ -- licence object consulted for each expansion when this flag is set",
+        "$API.ExpansionHandler$ -- manages the expansions whose protection path is altered by this flag",
+        "$PP.HISE_USE_XML_FOR_HXI$ -- container format for the encrypted expansions that this authorisation path gates"
+      ],
+      "defaultValue": 0,
+      "description": "When enabled each expansion checks its encryption key against the licence information held by the main unlocker instead of maintaining its own per-expansion key. This simplifies the activation flow for the end user because a single serial grants access to both the base plugin and its expansions. When disabled each expansion is protected by its own independent key stored in the expansion metadata.\n> Ignored when the expansion subsystem is not compiled in.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
     "HISE_USE_WRONG_VOICE_RENDERING_ORDER": {
       "autoConfig": false,
       "brief": "Restores the pre-fix voice render order in which voice effects ran before the polyphonic gain modulation.",
@@ -525,6 +1199,65 @@
       "value": 0,
       "valueRange": "",
       "vestigal": false
+    },
+    "HISE_USE_XML_FOR_HXI": {
+      "autoConfig": false,
+      "brief": "Stores encrypted expansion (.hxi) files as XML text instead of a compact binary value tree.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$API.ExpansionHandler$ -- encrypted expansion workflow driven by the expansion handler uses the format selected by this flag",
+        "$API.Expansion$ -- individual expansion objects serialise into the container format selected by this flag",
+        "$PP.HISE_ENABLE_EXPANSIONS$ -- only meaningful in builds that compile the expansion subsystem in",
+        "$PP.HISE_USE_UNLOCKER_FOR_EXPANSIONS$ -- companion flag that governs how encrypted expansions are authorised"
+      ],
+      "defaultValue": 0,
+      "description": "Switches the container format used by the encrypted expansion workflow so that the resulting .hxi files are human-readable XML rather than the default compact value-tree binary. Binary is smaller and loads faster at runtime; XML is noticeably larger but lets you diff the contents during development and inspect what a given expansion actually ships. The format is chosen per-write, so existing binary expansions keep loading regardless of this flag; only newly encoded expansions pick up the change.\n> Read at runtime, so changing it in the Extra Definitions and re-encoding an expansion is enough without rebuilding HISE itself.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HI_DONT_SEND_ATTRIBUTE_UPDATES": {
+      "autoConfig": false,
+      "brief": "Suppresses the async UI notification when a script changes a module parameter in an exported plugin.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "Every call to a scripted setAttribute normally posts an async message so that any attached UI controls and plotters update to reflect the new value. Enabling this flag replaces that notification with a silent write, which can noticeably reduce message-thread pressure in plugins that drive parameters from tight control-rate scripts. UI controls bound directly to those parameters will stop updating visually until the user interacts with them again or the script pushes an explicit repaint. Only applies to exported plugin builds; the HISE IDE always sends notifications so that parameter edits stay visible in the editor.\n> Only enable this when scripted parameter changes are verifiably clogging the message thread, because the lost UI feedback will confuse users interacting with automated controls.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HI_ENABLE_EXTERNAL_CUSTOM_TILES": {
+      "autoConfig": false,
+      "brief": "Enables a registration hook for custom floating tile panel types supplied in C++.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [
+        "$API.ScriptFloatingTile$ -- custom panel types registered through this hook become available as ContentType options on a script floating tile"
+      ],
+      "defaultValue": 0,
+      "description": "Activates the REGISTER_EXTERNAL_FLOATING_TILE macro and the registerExternalPanelTypes hook, so a project that subclasses HISE on the C++ side can add its own panel types to the floating tile factory and make them available as ContentType options in the interface. With the flag off, the registration hook compiles out and only the built-in panel types are offered. Only relevant for custom HISE builds; projects that stay inside the scripting API never need to touch this.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "HI_NUM_MIDI_AUTOMATION_SLOTS": {
+      "autoConfig": false,
+      "brief": "Historical switch that was intended to size the MIDI automation slot table.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [],
+      "defaultValue": 8,
+      "description": "The original purpose was to set the number of MIDI controller automation slots allocated by the MIDI automation handler. The macro is still defined with a hard-coded value of 8 but no code reads it anywhere, so toggling or redefining it has no effect on the number of available CC assignments or on how the automation handler stores its data. It is kept around only so that older user projects which list it in their ExtraDefinitions still compile.",
+      "supportsHotReload": false,
+      "value": 8,
+      "valueRange": "",
+      "vestigal": true
     },
     "HI_SUPPORT_FULL_DYNAMICS_HLAC": {
       "autoConfig": true,
@@ -582,6 +1315,108 @@
       "valueRange": "",
       "vestigal": true
     },
+    "JUCE_ALLOW_EXTERNAL_UNLOCK": {
+      "autoConfig": false,
+      "brief": "Allows third-party storefronts to unlock the plugin using their own licence tokens.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.HISE_INCLUDE_MUSEHUB$ -- enables the MuseHub storefront whose external activation relies on this flag",
+        "$PP.HISE_INCLUDE_BEATPORT$ -- enables the Beatport storefront whose external activation relies on this flag",
+        "$API.Unlocker$ -- scripting surface that receives the external token accepted by this flag"
+      ],
+      "defaultValue": 0,
+      "description": "When enabled the unlocker accepts activation tokens issued by external distribution platforms in addition to the built-in licence server. This is required when the plugin is sold through marketplaces such as MuseHub or Beatport, which manage activation through their own account systems. Disabling it restricts registration to the first-party licence flow only.\n> Local guard is added at the top of the translation unit that consumes this flag.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "JUCE_USE_BETTER_MACHINE_IDS": {
+      "autoConfig": false,
+      "brief": "Switches the machine identification to a more stable hardware fingerprint.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.USE_COPY_PROTECTION$ -- provides the licensing subsystem that consumes the machine identifier",
+        "$API.Unlocker$ -- exposes the machine identifier to scripts for activation messages"
+      ],
+      "defaultValue": 0,
+      "description": "The default machine identifier can change after OS reinstalls or hardware driver updates, which forces legitimate users to reactivate more often than necessary. Enabling this flag selects an alternative fingerprint that is more resilient to such changes while still uniquely identifying the host. Existing activations remain tied to the old identifier so this should be set before the first public release.\n> Changing this value after a release will invalidate previously issued licences.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "MIN_FILTER_FREQ": {
+      "autoConfig": false,
+      "brief": "Historical knob for the lowest cutoff frequency any filter can be tuned to.",
+      "category": "DSP & Filters",
+      "category-slug": "dsp-and-filters",
+      "crossRefs": [],
+      "defaultValue": 20,
+      "description": "The original intent was to raise or lower the hard floor that every filter clamps its frequency parameter against so that projects working below 20 Hz could still open the cutoff all the way down. The macro is still defined but the filter limit values are hard-coded to 20 Hz in the same header, so setting it has no effect on the audible frequency range. It is kept around only so that older user projects which list it in their ExtraDefinitions still compile.",
+      "supportsHotReload": false,
+      "value": 20,
+      "valueRange": "",
+      "vestigal": true
+    },
+    "NUM_HARDCODED_FX_MODS": {
+      "autoConfig": true,
+      "brief": "Number of extra modulation chain slots exposed by hardcoded master effects.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [
+        "$MODULES.HardcodedMasterFX$ -- host module that exposes these modulation slots",
+        "$SN.core.extra_mod$ -- node that reads the modulation signal inside the network",
+        "$PP.HISE_NUM_SCRIPTNODE_FX_MODS$ -- equivalent slot count for interpreted script effects",
+        "$PP.NUM_HARDCODED_POLY_FX_MODS$ -- polyphonic counterpart for per-voice hardcoded effects",
+        "$PP.HISE_NUM_MODULATORS_PER_CHAIN$ -- master cap on modulators that can occupy each slot"
+      ],
+      "defaultValue": 0,
+      "description": "Adds modulation chain slots to every Hardcoded Master FX module so that standard HISE modulators can drive parameters of the compiled C++ DSP network. The project exporter writes this value into the exported plugin automatically, so configuring it from Extra Definitions while developing is usually enough. Slots are evaluated at control rate and carry no measurable CPU cost when left empty. Changing the value after a project has been saved will prompt users to reload the affected effects.\n> Sensible range is 0 to 8.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "NUM_HARDCODED_POLY_FX_MODS": {
+      "autoConfig": true,
+      "brief": "Number of extra modulation chain slots exposed by hardcoded polyphonic effects.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [
+        "$MODULES.HardcodedPolyphonicFX$ -- host module that exposes these modulation slots",
+        "$SN.core.extra_mod$ -- node that reads the modulation signal inside the network",
+        "$PP.HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS$ -- equivalent slot count for interpreted polyphonic script effects",
+        "$PP.NUM_HARDCODED_FX_MODS$ -- monophonic counterpart for master hardcoded effects",
+        "$PP.HISE_NUM_MODULATORS_PER_CHAIN$ -- master cap on modulators that can occupy each slot"
+      ],
+      "defaultValue": 0,
+      "description": "Adds per-voice modulation chain slots to every Hardcoded Polyphonic FX module so that polyphonic modulators can drive parameters of the compiled C++ DSP network. The project exporter writes this value into the exported plugin automatically. Each active slot runs once per voice, so keep this as low as the project actually needs to avoid scaling the polyphonic voice cost. Changing the value after a project has been saved will prompt users to reload the affected effects.\n> Sensible range is 0 to 4.",
+      "supportsHotReload": true,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "NUM_HARDCODED_SYNTH_MODS": {
+      "autoConfig": false,
+      "brief": "Number of extra modulation chain slots exposed by hardcoded synthesisers.",
+      "category": "Modulator Slots",
+      "category-slug": "modulator-slots",
+      "crossRefs": [
+        "$MODULES.HardcodedSynth$ -- host module that exposes these modulation slots",
+        "$SN.core.extra_mod$ -- node that reads the modulation signal inside the network",
+        "$PP.HISE_NUM_SCRIPTNODE_SYNTH_MODS$ -- equivalent slot count for interpreted scriptnode synthesisers",
+        "$PP.HISE_NUM_MODULATORS_PER_CHAIN$ -- master cap on modulators that can occupy each slot"
+      ],
+      "defaultValue": 2,
+      "description": "Adds per-voice modulation chain slots to every Hardcoded Synthesiser so that standard HISE modulators can drive parameters of the compiled C++ DSP network in addition to the built-in gain and pitch chains. The default of two covers common filter-cutoff and amp-modulation patches; raise it only when the synth needs more independent modulation targets. Changing the value after a project has been saved will prompt users to reload the affected synths.\n> Sensible range is 0 to 8.",
+      "supportsHotReload": true,
+      "value": 2,
+      "valueRange": "",
+      "vestigal": false
+    },
     "NUM_MAX_CHANNELS": {
       "autoConfig": false,
       "brief": "Project-wide ceiling on the number of channels that the routing matrix and multichannel buffers can handle.",
@@ -621,12 +1456,49 @@
       "category": "Plugin Type",
       "category-slug": "plugin-type",
       "crossRefs": [
-        "$PP.FORCE_INPUT_CHANNELS$ -- sibling FX plugin bus-configuration switch"
+        "$PP.FORCE_INPUT_CHANNELS$ -- sibling FX plugin bus-configuration switch",
+        "$PP.HISE_ENABLE_MIDI_INPUT_FOR_FX$ -- MIDI input has to be enabled on an FX plugin before keeping sound generators alive delivers any MIDI-triggered modulation"
       ],
       "defaultValue": 1,
       "description": "Only relevant when the project is exported as an effect plugin. If enabled, every sound generator in the master chain is still rendered so that global modulators, macro modulation sources, LFOs and envelopes that feed modulation slots on the effect chain keep producing their values. If disabled, only the effect chain itself is processed which saves a bit of CPU but breaks any modulation that originates from a sound generator.\n> The HISE export dialog writes this flag automatically based on the 'Process Sound Generators in FX Plugin' checkbox, so you normally don't need to set it manually in the ExtraDefinitions field.",
       "supportsHotReload": false,
       "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "READ_ONLY_FACTORY_PRESETS": {
+      "autoConfig": true,
+      "brief": "Marks every shipped user preset as read-only so users cannot overwrite factory content.",
+      "category": "Preset & State",
+      "category-slug": "preset-and-state",
+      "crossRefs": [
+        "$API.Engine.isUserPresetReadOnly$ -- Engine.isUserPresetReadOnly reports the read-only status that this flag enables",
+        "$API.UserPresetHandler$ -- scripted preset handler queries the factory path list that this flag populates",
+        "$PP.HISE_OVERWRITE_OLD_USER_PRESETS$ -- related flag that governs automatic overwriting of shipped presets across plugin versions"
+      ],
+      "defaultValue": 0,
+      "description": "When enabled, the exported plugin tracks the list of file paths that were extracted from the embedded preset bank and expansions, and refuses to overwrite any of them from the preset save path. Users can still save new presets alongside the factory bank, they just cannot replace a shipped preset file. The Engine.isUserPresetReadOnly scripting method reports this status so a custom preset browser can hide or grey out the save button on factory entries.\n> The HISE export dialog writes this flag automatically from the 'Read Only Factory Presets' project setting, so you normally don't need to set it manually in the ExtraDefinitions field.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "USE_COPY_PROTECTION": {
+      "autoConfig": true,
+      "brief": "Compiles the licence verification and activation subsystem into the plugin.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.USE_SCRIPT_COPY_PROTECTION$ -- adds the scripting layer on top of this subsystem",
+        "$PP.HISE_INCLUDE_UNLOCKER_OVERLAY$ -- supplies the default registration UI for this subsystem",
+        "$PP.HISE_ALLOW_OFFLINE_ACTIVATION$ -- extends this subsystem with an offline activation path",
+        "$PP.JUCE_USE_BETTER_MACHINE_IDS$ -- controls the fingerprint used by this subsystem to identify the host",
+        "$API.Unlocker$ -- scripting surface exposed when this subsystem is compiled in"
+      ],
+      "defaultValue": 0,
+      "description": "Enabling this flag links the unlocker, overlay, and server communication code that challenge the user for a licence key on first launch and persist the result for subsequent sessions. Without it the plugin starts in an always-authorised state and no registration UI is shown, which is appropriate for free or internal builds. The flag is substituted by the compile exporter so it can differ between development and release builds of the same project.\n> Many downstream licensing flags are inert unless this is enabled.",
+      "supportsHotReload": false,
+      "value": 0,
       "valueRange": "",
       "vestigal": false
     },
@@ -646,6 +1518,32 @@
       "valueRange": "",
       "vestigal": false
     },
+    "USE_GLITCH_DETECTION": {
+      "autoConfig": false,
+      "brief": "Instruments performance-critical audio functions with a scoped timer that logs when they overrun the buffer budget.",
+      "category": "Debug & Profiling",
+      "category-slug": "debug-and-profiling",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "Wraps marked audio-thread functions in a stack-allocated timer that logs a warning to the system logger whenever the function runs longer than the current buffer budget, with deduplication so that a single glitch only produces one log entry even if the call appears multiple times in the stack. Useful during development to locate which module is responsible for an audible drop-out, but the per-scope timer and identifier bookkeeping add non-trivial overhead on the audio thread, which is why the default project template disables it for exported plugins. Leave this off for release builds.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "USE_HARD_CLIPPER": {
+      "autoConfig": false,
+      "brief": "Replaces the soft output safety clip with a hard brickwall limit at the final render stage.",
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "Controls the very last step in the master render callback where output samples are kept inside a sane range. With the flag off, iOS builds still clip to the range from -1.0 to 1.0 to avoid the nasty digital distortion that mobile audio hardware produces for out-of-range samples, and desktop builds pass the signal through untouched. With the flag on, every platform receives a hard brickwall clip at unity gain regardless of the device, which is useful for defensive plugin builds that must never overshoot full scale. The clip is always at 0 dBFS and is not configurable.\n> A hard clip adds harmonic distortion to every sample above 1.0, so only enable this if you actually need the safety net. Use a dedicated limiter on the master chain for musical peak control.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
     "USE_IPP": {
       "autoConfig": true,
       "brief": "Enables the Intel Integrated Performance Primitives fast paths for FFT, vector math and sample playback.",
@@ -653,13 +1551,41 @@
       "category-slug": "third-party-modules",
       "crossRefs": [
         "$MODULES.Convolution$ -- IPP FFT routines replace the portable convolution backend",
-        "$API.Settings$ -- Settings.getUseIpp reports the compile-time value of this flag",
+        "$API.Settings.getUseIpp$ -- Settings.getUseIpp reports the compile-time value of this flag",
         "$PP.AUDIOFFT_FFTW3$ -- IPP takes precedence over FFTW3 when both are enabled on the same platform"
       ],
       "defaultValue": 0,
       "description": "IPP is Intel's hand-optimised SIMD library, and enabling this flag routes the FFT convolver, the sampler pitch accumulation and several vector operations through ippsAdd, ippsSum and the IPP FFT instead of the portable fallbacks. The gain on Windows is large for long convolutions and busy multi-voice samplers, but IPP has to be installed through Intel oneAPI and its libraries linked into the build separately. The flag is auto-defined to 1 on Windows when the Projucer detects any of the _IPP_SEQUENTIAL_STATIC / _IPP_PARALLEL_* macros, and is forced to 0 on macOS and Linux because IPP is Windows-only in HISE.\n> The exporter writes USE_IPP=1 into the Windows Extra Definitions automatically when the 'Use IPP' project setting is on, so it should normally not be set by hand. Setting it manually on macOS or Linux fails a static_assert in hi_lac.",
       "supportsHotReload": false,
       "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "USE_LATO_AS_DEFAULT": {
+      "autoConfig": false,
+      "brief": "Uses the bundled Lato typeface as the default system font throughout the interface.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [],
+      "defaultValue": 1,
+      "description": "Selects which embedded typeface HISE binds to the GLOBAL_FONT and GLOBAL_BOLD_FONT macros and to the Linux font handler, so every label, popup, combobox and debug console picks it up unless a script explicitly overrides the font. The default since mid-2019 has been Lato Regular and Lato Bold, which read better at small sizes and ship with a wider glyph coverage. Setting this to 0 reverts to the older Oxygen typeface that shipped with early HISE releases, which is only useful for maintaining visual consistency with a project that was laid out against Oxygen metrics.\n> Oxygen and Lato have different x-heights and advance widths, so flipping this in an existing project will reflow every label that uses the global font.",
+      "supportsHotReload": false,
+      "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "USE_MIDI_AUTOMATION_MIGRATION": {
+      "autoConfig": false,
+      "brief": "Opt-in flag for supplying a custom old-to-new automation index conversion when loading legacy user presets.",
+      "category": "Automation & Macros",
+      "category-slug": "automation-and-macros",
+      "crossRefs": [
+        "$API.MidiAutomationHandler$ -- legacy user preset migration path for CC assignments is governed by this flag"
+      ],
+      "defaultValue": 0,
+      "description": "When a user preset from an older plugin version is loaded, the MIDI automation restore path calls a conversion helper that maps the stored integer automation index onto the current identifier-based scheme. The default implementation does nothing and returns an empty identifier, so legacy CC assignments are silently dropped on load. Enabling this flag and providing your own implementation of the conversion function lets you keep CC assignments working across a parameter reshuffle, for example when you have renamed or reordered controls between plugin versions.\n> Only useful if you also supply the custom conversion function in your project code. Without that, enabling the flag has no effect beyond skipping the default empty-identifier fallback.",
+      "supportsHotReload": false,
+      "value": 0,
       "valueRange": "",
       "vestigal": false
     },
@@ -697,11 +1623,44 @@
       "brief": "Store non-streaming audio file references in presets as paths relative to an installed AudioFiles folder.",
       "category": "Preset & State",
       "category-slug": "preset-and-state",
-      "crossRefs": [],
+      "crossRefs": [
+        "$PP.DONT_EMBED_FILES_IN_FRONTEND$ -- companion flag that skips embedding of external asset files entirely",
+        "$PP.HISE_USE_SYSTEM_APP_DATA_FOLDER$ -- selects whether the AppData root is the per-user or the system-wide folder"
+      ],
       "defaultValue": 1,
       "description": "When enabled, the exported plugin stores and resolves audio file references using the `{AUDIO_FILES}` wildcard against an AudioFiles subfolder inside the plugin's AppData directory, and the folder is created automatically if it does not exist yet. When disabled, user presets store the full absolute path from the machine that saved them, which breaks on any other computer.\n> Only affects exported plugins. The HISE IDE always resolves audio files against the current project folder. Turn this off only if you deliberately manage the audio file location in HISEScript and don't want the AppData subfolder to be created.",
       "supportsHotReload": false,
       "value": 1,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "USE_SCRIPT_COPY_PROTECTION": {
+      "autoConfig": false,
+      "brief": "Exposes the copy protection flow to HISEScript for custom registration UIs.",
+      "category": "Licensing & Expansions",
+      "category-slug": "licensing-and-expansions",
+      "crossRefs": [
+        "$PP.USE_COPY_PROTECTION$ -- provides the underlying licensing state that this scripting layer exposes",
+        "$PP.HISE_INCLUDE_UNLOCKER_OVERLAY$ -- default UI path replaced by custom scripts when this flag is enabled",
+        "$API.Unlocker$ -- scripting object that surfaces the licence state enabled by this flag"
+      ],
+      "defaultValue": 0,
+      "description": "This flag forwards the licence state, challenge, and activation response through the scripting API so a project can present a fully custom registration screen instead of relying on the built-in overlay. It is typically paired with a bespoke interface that matches the plugin branding and handles purchase links or trial logic. The underlying licensing checks still run natively, only the presentation layer moves into script.\n> Has no effect unless the licensing subsystem is also compiled in.",
+      "supportsHotReload": false,
+      "value": 0,
+      "valueRange": "",
+      "vestigal": false
+    },
+    "USE_SPLASH_SCREEN": {
+      "autoConfig": true,
+      "brief": "Shows a SplashScreen image while the standalone app loads its samples in the background.",
+      "category": "UI & Graphics",
+      "category-slug": "ui-and-graphics",
+      "crossRefs": [],
+      "defaultValue": 0,
+      "description": "When enabled, the standalone build of the exported plugin displays a bundled splash bitmap (SplashScreen.png for desktop and iPad, SplashScreeniPhone.png for iPhone) while the plugin loads its sample content and initialises the audio engine. The image has to be present in the project's Images folder for the embed to pick it up; without it the plugin will fail to compile. Only affects standalone targets, because plugin windows in a DAW do not present a splash screen. The HISE export dialog writes this flag automatically from the 'Use Splash Screen' project setting.\n> Only meaningful for standalone iOS and desktop exports. Regular VST, AU and AAX builds never display the splash image regardless of this flag.",
+      "supportsHotReload": false,
+      "value": 0,
       "valueRange": "",
       "vestigal": false
     }

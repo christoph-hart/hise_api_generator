@@ -5,7 +5,7 @@ description: Optional third-party libraries and SDK integrations — Loris, rLot
 
 Preprocessors in this category compile optional third-party libraries and SDK integrations into the build. They enable Loris for additive resynthesis, rLottie for vector animations, RTNeural for real-time neural network inference, the pitch detection helper, the FFTW3 and Intel IPP FFT backends, the xsimd header, and the MuseHub, Beatport, BX Licenser and NKS storefront or DRM hooks. Most third-party flags require headers and libraries that HISE does not bundle, so turning one on without the SDK in place will fail to link. Several of these are written automatically by the export dialog from project settings, and enabling an unused one only grows the compiled binary without changing behaviour.
 
-### AUDIOFFT_FFTW3
+### `AUDIOFFT_FFTW3`
 
 Switches the FFT convolution backend over to the FFTW3 library instead of the built-in Ooura implementation.
 
@@ -18,7 +18,7 @@ Selects FFTW3 as the FFT engine used by the convolution reverb and the FFT convo
 
 **See also:** $MODULES.Convolution$ -- FFT backend used by the convolution reverb switches over to FFTW3, $SN.filters.convolution$ -- scriptnode FFT convolver switches over to FFTW3 as well, $PP.USE_IPP$ -- exporter picks IPP over FFTW3 when both are enabled on the same platform
 
-### HISE_INCLUDE_BEATPORT
+### `HISE_INCLUDE_BEATPORT`
 
 Compiles the Beatport authentication integration into the build.
 
@@ -31,7 +31,7 @@ Enables the real implementation of the BeatportManager scripting object, which t
 
 **See also:** $API.BeatportManager$ -- scripting object that is only functional when this flag is on
 
-### HISE_INCLUDE_BX_LICENSER
+### `HISE_INCLUDE_BX_LICENSER`
 
 Compiles the Brainworx / Plugin Alliance BX Licenser integration into the build.
 
@@ -44,7 +44,7 @@ Enables the Engine.createBXLicenser scripting factory and pulls in the BX Licens
 
 **See also:** $API.Engine$ -- Engine.createBXLicenser is only registered when this flag is on
 
-### HISE_INCLUDE_LORIS
+### `HISE_INCLUDE_LORIS`
 
 Includes the Loris analysis and resynthesis library so scripts can access the LorisManager API.
 
@@ -57,7 +57,7 @@ Loris is an additive analysis and resynthesis toolkit that HISE uses for partial
 
 **See also:** $API.LorisManager$ -- entire LorisManager scripting class is only available when this flag is on, $API.Engine$ -- Engine.getLorisManager returns a real object only when this flag is on, $API.WavetableController$ -- wavetable converter can use Loris-based resynthesis when this flag is on, $PP.USE_MOD2_WAVETABLESIZE$ -- Loris cycle extraction produces power-of-two wavetables that pair with the fast wavetable path
 
-### HISE_INCLUDE_MUSEHUB
+### `HISE_INCLUDE_MUSEHUB`
 
 Compiles the MuseHub SDK integration into an exported plugin.
 
@@ -70,7 +70,7 @@ Enables the real MuseHub licence check inside ScriptUnlocker so that Unlocker.ch
 
 **See also:** $API.Unlocker$ -- Unlocker.checkMuseHub only performs a real licence check when this flag is on
 
-### HISE_INCLUDE_NKS_SDK
+### `HISE_INCLUDE_NKS_SDK`
 
 Compiles the Native Instruments NKS integration into the build.
 
@@ -83,7 +83,7 @@ Enables the Engine.createNKSManager scripting factory, pulls in the NKS wrapper 
 
 **See also:** $API.Engine$ -- Engine.createNKSManager is only registered when this flag is on
 
-### HISE_INCLUDE_PITCH_DETECTION
+### `HISE_INCLUDE_PITCH_DETECTION`
 
 Compiles the dywapitchtrack pitch detection library into the build.
 
@@ -95,7 +95,7 @@ Enables the PitchDetection helper class and exposes it to scripting through Buff
 
 **See also:** $API.Buffer$ -- Buffer.detectPitch is only registered when this flag is on
 
-### HISE_INCLUDE_RLOTTIE
+### `HISE_INCLUDE_RLOTTIE`
 
 Compiles the rLottie vector animation library so scripts can play Lottie animations in a panel.
 
@@ -108,7 +108,7 @@ Pulls in the entire hi_rlottie module and wires up the Panel animation API (setA
 
 **See also:** $UI.Components.ScriptPanel$ -- Panel animation API (setAnimation, setAnimationFrame) is only compiled in when this flag is on
 
-### HISE_INCLUDE_RT_NEURAL
+### `HISE_INCLUDE_RT_NEURAL`
 
 Compiles the RTNeural inference library so scriptnode can run neural network models in real time.
 
@@ -121,7 +121,7 @@ Enables the NeuralNetwork scripting class, the math.neural scriptnode node and t
 
 **See also:** $API.NeuralNetwork$ -- entire NeuralNetwork scripting class is only available when this flag is on, $SN.math.neural$ -- node renders silence and shows a disabled message when this flag is off, $PP.HISE_INCLUDE_XSIMD$ -- RTNeural inference relies on the bundled xsimd header, $PP.HISE_NEURAL_NETWORK_WARMUP_TIME$ -- warmup length that only takes effect together with this integration
 
-### HISE_INCLUDE_XSIMD
+### `HISE_INCLUDE_XSIMD`
 
 Signals that the surrounding project already provides the xsimd SIMD header, so HISE skips its own copy.
 
@@ -133,7 +133,7 @@ When off, HISE pulls in the xsimd header that is bundled with RTNeural from hi_t
 
 **See also:** $PP.HISE_INCLUDE_RT_NEURAL$ -- RTNeural inference consumes the xsimd header that this flag controls
 
-### USE_IPP
+### `USE_IPP`
 
 Enables the Intel Integrated Performance Primitives fast paths for FFT, vector math and sample playback.
 
