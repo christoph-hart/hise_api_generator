@@ -16,6 +16,7 @@ Outputs:
     processors.json     - enriched module documentation
     ui_components.json  - enriched UI component docs
     scriptnode.json     - scriptnode node documentation
+    preprocessor.json   - preprocessor macro documentation
 """
 
 import argparse
@@ -307,6 +308,21 @@ def collect_scriptnode(pipeline_dir: Path) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Preprocessor enrichment -> preprocessor.json
+# ---------------------------------------------------------------------------
+
+def collect_preprocessors(pipeline_dir: Path) -> dict:
+    """Load preprocessor_enrichment/resources/preprocessor.json as-is."""
+    path = pipeline_dir / "preprocessor_enrichment" / "resources" / "preprocessor.json"
+    if not path.is_file():
+        print(f"  [skip] {path} not found", file=sys.stderr)
+        return {"preprocessors": {}}
+
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -338,13 +354,13 @@ def main():
     print(file=sys.stderr)
 
     # --- Modules ---
-    print("[1/3] Collecting module enrichment...", file=sys.stderr)
+    print("[1/4] Collecting module enrichment...", file=sys.stderr)
     modules = collect_modules(pipeline_dir)
     enriched_count = sum(1 for m in modules.values() if m.get("llmRef"))
     print(f"      {len(modules)} modules ({enriched_count} with llmRef)", file=sys.stderr)
 
     # --- UI Components ---
-    print("[2/3] Collecting UI component enrichment...", file=sys.stderr)
+    print("[2/4] Collecting UI component enrichment...", file=sys.stderr)
     ui = collect_ui_components(pipeline_dir, output_dir)
     enriched_count = sum(1 for c in ui.values() if c.get("llmRef"))
     props_count = sum(len(c.get("properties", {})) for c in ui.values())
@@ -352,11 +368,17 @@ def main():
           file=sys.stderr)
 
     # --- Scriptnode ---
-    print("[3/3] Collecting scriptnode enrichment...", file=sys.stderr)
+    print("[3/4] Collecting scriptnode enrichment...", file=sys.stderr)
     sn = collect_scriptnode(pipeline_dir)
     node_count = len(sn["nodes"])
     enriched_count = sum(1 for n in sn["nodes"].values() if n.get("llmRef"))
     print(f"      {node_count} nodes ({enriched_count} with llmRef)", file=sys.stderr)
+
+    # --- Preprocessors ---
+    print("[4/4] Collecting preprocessor enrichment...", file=sys.stderr)
+    pp = collect_preprocessors(pipeline_dir)
+    pp_count = len(pp.get("preprocessors", {}))
+    print(f"      {pp_count} preprocessors", file=sys.stderr)
 
     if args.dry_run:
         print("\n[dry-run] No files written.", file=sys.stderr)
@@ -376,6 +398,7 @@ def main():
     write_json("processors.json", modules)
     write_json("ui_components.json", ui)
     write_json("scriptnode.json", sn)
+    write_json("preprocessor.json", pp)
 
     print("\nDone.", file=sys.stderr)
 
