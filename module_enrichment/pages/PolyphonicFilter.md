@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors:
     - "Cost scales linearly with active voice count"
     - "MoogLP and LadderFourPoleLP modes are more expensive than biquad or one-pole modes"
+    - "Disabled channels in the routing matrix bypass the filter at near-zero CPU cost"
 seeAlso:
   - { id: CurveEq, type: alternative, reason: "Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering" }
   - { id: HarmonicFilter, type: alternative, reason: "Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency" }
@@ -32,6 +33,10 @@ commonMistakes:
     wrong: "Selecting StateVariablePeak or LadderFourPoleHP mode and expecting the filter to change"
     right: "These two modes are non-functional - the previously selected filter type remains active"
     explanation: "StateVariablePeak (index 11) and LadderFourPoleHP (index 16) are listed in the mode selector but do not switch the filter. Avoid these modes."
+  - title: "Disabled routing matrix channels are not filtered"
+    wrong: "Expecting every channel of a multichannel container to be filtered when only some are enabled in the routing matrix"
+    right: "Enable every channel that should be filtered. Disabled channels bypass the filter and pass through unmodified."
+    explanation: "The routing matrix is enabling-only. Channels not connected in the matrix are skipped during processing, which is useful for splitting a multichannel signal into filtered and dry paths but can be surprising if you forget to enable all channels."
 forumReferences:
   - id: 1
     title: "Frequency modulation scales to knob value, not around it"
@@ -52,7 +57,7 @@ llmRef: |
   Per-voice filter with 18 selectable modes (LP, HP, shelf, peak, SVF, Moog, ladder, allpass, ring mod, one-pole). Automatically switches between per-voice and monophonic processing based on whether any modulation chain contains polyphonic modulators. Default: StateVariableLP at 20000 Hz (transparent).
 
   Signal flow:
-    audio in (per-voice) -> combine frequency modulation (normalise + bipolar offset + freq mod scale) -> update coefficients if changed -> filter process (topology selected by Mode) -> audio out
+    audio in (multichannel) -> select enabled source channels via routing matrix -> combine frequency modulation (normalise + bipolar offset + freq mod scale) -> update coefficients if changed -> filter process (topology selected by Mode) on enabled channels only -> audio out (disabled channels pass through unmodified)
 
   CPU: medium baseline, scales linearly with voice count. MoogLP and Ladder modes are more expensive.
 
@@ -70,6 +75,11 @@ llmRef: |
     Bipolar Freq Modulation (offset mode) - adds signed offset to normalised frequency before standard frequency modulation.
     Q Modulation (gain mode) - scales the Q value.
 
+  Channel routing:
+    Routing matrix supports up to NUM_MAX_CHANNELS source channels (enabling-only, no source-to-destination remapping).
+    Only enabled channels are processed by the filter; disabled channels pass through unmodified.
+    Default: all channels enabled. Persisted as RoutingMatrix child in the ValueTree.
+
   Filter modes:
     0=LowPass, 1=HighPass, 2=LowShelf, 3=HighShelf, 4=Peak, 5=ResoLow, 6=StateVariableLP, 7=StateVariableHP, 8=MoogLP, 9=OnePoleLowPass, 10=OnePoleHighPass, 11=StateVariablePeak(broken), 12=StateVariableNotch, 13=StateVariableBandPass, 14=Allpass, 15=LadderFourPoleLP, 16=LadderFourPoleHP(broken), 17=RingMod
 
@@ -80,6 +90,7 @@ llmRef: |
     Gain parameter only works with shelf/peak modes.
     StateVariablePeak and LadderFourPoleHP modes are non-functional.
     Quality parameter has no effect.
+    Channels left disabled in the routing matrix pass through unfiltered (this is intentional, not a bug).
 
   See also:
     CurveEq - monophonic multi-band parametric EQ alternative
@@ -99,7 +110,7 @@ tags:
 
 ![Filter screenshot](/images/v2/reference/audio-modules/polyphonicfilter.png)
 
-A per-voice filter effect with 18 selectable filter types including low-pass, high-pass, shelving, peak, state variable, Moog ladder, and ring modulation modes. Each active voice runs its own independent filter instance, making it suitable for classic polyphonic filter sweeps driven by envelopes or LFOs.
+A per-voice filter effect with 18 selectable filter types including low-pass, high-pass, shelving, peak, state variable, Moog ladder, and ring modulation modes. Each active voice runs its own independent filter instance, making it suitable for classic polyphonic filter sweeps driven by envelopes or LFOs. The filter operates on every source channel enabled in its routing matrix, supporting any channel count up to `NUM_MAX_CHANNELS`. Disabled channels pass through unfiltered, which lets you split a multichannel signal into filtered and dry paths within the same effect chain.
 
 The module automatically switches between per-voice and monophonic processing. When any modulation chain contains a polyphonic modulator, audio is filtered independently per voice. When all modulators are monophonic, the summed signal is processed as a single stream with coefficient updates every 64 samples. The default settings (StateVariableLP at 20000 Hz) pass all audible frequencies, so the filter is effectively transparent until you lower the Frequency or change the Mode.
 
@@ -130,6 +141,8 @@ glossary:
       range: "-1.0 - 1.0"
       default: "0.0"
   functions:
+    routingMatrix:
+      desc: "Selects which source channels of the input buffer are processed by the filter (enabling-only, up to NUM_MAX_CHANNELS)"
     normalise:
       desc: "Maps frequency from Hz (20-20000) to a 0-1 range for modulation"
     denormalise:
@@ -154,10 +167,15 @@ glossary:
 ---
 
 ```
-// Filter - per-voice polyphonic filter
-// audio in (per-voice) -> audio out (per-voice)
+// Filter - per-voice polyphonic filter, multichannel
+// audio in (multichannel, per-voice) -> audio out (multichannel, per-voice)
 
-process(left, right) {
+process(buffer) {
+    // Routing matrix selects which source channels are processed.
+    // Disabled channels are skipped and pass through untouched.
+    activeChannels = routingMatrix.getEnabledSourceChannels()
+    filterBuffer = referenceChannels(buffer, activeChannels)
+
     // Frequency modulation: normalise, apply bipolar offset, then scale
     normFreq = normalise(Frequency)
     normFreq = normFreq + BipolarIntensity * BipolarFreqModulation
@@ -171,8 +189,8 @@ process(left, right) {
     // Recalculate coefficients only when values have changed
     updateCoefficients(Mode, freq, q, gain)
 
-    // Apply filter in-place (topology depends on Mode)
-    filterProcess(left, right)
+    // Apply filter in-place on enabled channels only (topology depends on Mode)
+    filterProcess(filterBuffer)
 }
 ```
 
@@ -221,5 +239,13 @@ The module automatically detects whether polyphonic processing is needed based o
 ### Non-Functional Elements
 
 The `Quality` parameter is vestigial - it is stored and appears in the interface but does not affect processing. Two filter modes are non-functional: **StateVariablePeak** (index 11) and **LadderFourPoleHP** (index 16). Selecting either does not change the active filter. Use Peak (index 4) or StateVariableHP (index 7) as alternatives.
+
+### Channel Configuration
+
+The filter exposes its own routing matrix supporting up to `NUM_MAX_CHANNELS` source channels. The matrix is enabling-only: you can connect or disconnect each source channel, but cannot remap one source channel to a different destination. Each enabled channel is processed by the filter; disabled channels pass through unmodified.
+
+By default every channel is enabled, so on a stereo signal the module behaves exactly as before. In a container with more than two channels, open the routing matrix in the module's UI to enable additional channels or to leave specific channels unfiltered (useful for parallel dry/wet paths within a single effect chain).
+
+The routing configuration is persisted in the preset under a `RoutingMatrix` child node. Changes to the matrix at runtime are picked up safely; the audio thread skips a single block if a routing change is in progress.
 
 **See also:** $MODULES.CurveEq$ -- Monophonic multi-band parametric EQ with visual editor - use when you need multiple filter bands on the master signal rather than per-voice filtering, $MODULES.HarmonicFilter$ -- Polyphonic filter bank tuned to the harmonic series - use for harmonic-aware spectral shaping rather than a single cutoff frequency, $SN.filters.svf$ -- scriptnode state variable filter with superior modulation stability, $SN.filters.biquad$ -- scriptnode biquad filter with six modes, $SN.filters.ladder$ -- scriptnode 24 dB/oct ladder filter, $SN.filters.moog$ -- scriptnode Moog-style transistor ladder filter

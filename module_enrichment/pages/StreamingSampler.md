@@ -99,7 +99,7 @@ llmRef: |
 
   Timestretching (HISE 3.5.1+):
     4 modes: Disabled, VoiceStart (static ratio per voice), TimeVariant (dynamic ratio for all voices), TempoSynced (auto BPM sync).
-    Options: Mode, SkipLatency (true=zero latency but CPU spikes, false=~270 sample latency), NumQuarters (for tempo sync), Tonality (timbre retention 0-1).
+    Options: Mode, SkipLatency (true=zero latency but CPU spikes, false=~270 sample latency), SourceBPM (tempo-sync: source material BPM, derives NumQuarters automatically when non-zero), NumQuarters (tempo-sync: sample length in quarter notes, used when SourceBPM is zero), Tonality (timbre retention 0-1).
     Uses Signalsmith algorithm.
 
   SFZ import:
@@ -466,7 +466,8 @@ Four modes are available:
 |---|---|---|---|
 | Mode | string | "Disabled" | One of the four modes above |
 | SkipLatency | bool | false | When false, introduces minimal latency (~270 samples at 512 buffer) by processing the initial segment on a background thread. When true, starts immediately but causes CPU spikes during voice onset. |
-| NumQuarters | double | 0.0 | For TempoSynced mode: the length of the sample in quarter notes. Used to calculate the correct stretch ratio from the current tempo. |
+| SourceBPM | double | 0.0 | For TempoSynced mode: the tempo of the source material in BPM. When non-zero, the quarter-note count is derived from the sample duration and this tempo, so you do not have to calculate `NumQuarters` yourself. Takes precedence over `NumQuarters` when set. |
+| NumQuarters | double | 0.0 | For TempoSynced mode: the length of the sample in quarter notes. Used when `SourceBPM` is zero. If both are zero the sampler guesses the quarter-note count from the sample duration and the current tempo. |
 | Tonality | double | 0.0 | Controls timbre retention during pitch shifting (0.0 - 1.0). Higher values preserve the formant characteristics of the original sample. |
 
 > SkipLatency behaviour was refined in HISE 4.1.0. The default (false) is recommended for most use cases.

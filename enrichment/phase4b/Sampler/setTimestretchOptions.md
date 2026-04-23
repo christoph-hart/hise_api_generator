@@ -6,7 +6,11 @@ Mode values: "Disabled" (no stretching), "VoiceStart" (new voices use current
 ratio), "TimeVariant" (all voices share ratio), "TempoSynced" (ratio from
 sample length and tempo).
 Properties: {Mode: string, Tonality: double (0.0-1.0),
-  SkipLatency: bool, NumQuarters: double, PreferredEngine: string}
+  SkipLatency: bool, NumQuarters: double, SourceBPM: double,
+  PreferredEngine: string}
+SourceBPM (TempoSynced): when non-zero, numQuarters is derived from sample
+  duration and supplied BPM; NumQuarters and the duration-guess fallback are
+  only used when SourceBPM is zero.
 Pair with:
   getTimestretchOptions -- read current configuration
   setTimestretchRatio -- set the stretch ratio

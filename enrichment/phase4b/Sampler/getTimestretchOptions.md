@@ -3,7 +3,7 @@ Sampler::getTimestretchOptions() -> JSON
 Thread safety: UNSAFE -- allocates JSON object
 Returns the current timestretch configuration as a JSON object.
 Returns: {Mode: string, Tonality: double, SkipLatency: bool,
-  NumQuarters: double, PreferredEngine: string}
+  NumQuarters: double, SourceBPM: double, PreferredEngine: string}
 Mode values: "Disabled", "VoiceStart", "TimeVariant", "TempoSynced"
 Pair with:
   setTimestretchOptions -- configure timestretch behavior
