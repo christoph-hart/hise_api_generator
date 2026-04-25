@@ -42,7 +42,7 @@ Subtracts one audio block from event timestamps generated on the audio thread fo
 Adjusts the timestamp of artificial note-on and note-off events that scripts add through the Message and Synth scripting APIs while running on the audio thread. When enabled, the engine removes one buffer's worth of samples from the requested timestamp (clamped to zero) before queuing the event. This compensates for an old off-by-one-block scheduling behaviour so that presets built against the original timing keep sounding the same. Events triggered from other threads and artificial events created outside a MIDI callback are not affected.
 > Turning this off gives you the newer, more accurate timestamp semantics but can shift the position of scripted notes by one block in existing projects.
 
-**See also:** $API.Synth$ -- scheduled note-on and note-off timestamps are shifted by one block when this is enabled, $API.Message$ -- timestamps set through Message.setTimestamp are adjusted the same way
+**See also:** $API.Synth$ -- scheduled note-on and note-off timestamps are shifted by one block when this is enabled, $API.Message.setTimestamp$ -- timestamps set through Message.setTimestamp are adjusted the same way
 
 ### `HISE_USE_WRONG_VOICE_RENDERING_ORDER`
 

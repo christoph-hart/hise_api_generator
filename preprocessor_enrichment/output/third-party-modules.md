@@ -29,7 +29,7 @@ Compiles the Beatport authentication integration into the build.
 Enables the real implementation of the BeatportManager scripting object, which talks to the Beatport SDK to validate a product against a user's Beatport account. With the flag off, the scripting object still loads so that existing scripts compile, but setProductId is a no-op, validate returns an empty object and isBeatportAccess always reports false. The Beatport SDK has to be supplied separately and linked into the project; HISE does not bundle it.
 > Only meaningful for products distributed through Beatport's plugin catalogue. Leave this off for everything else.
 
-**See also:** $API.BeatportManager$ -- scripting object that is only functional when this flag is on
+**See also:** $API.BeatportManager$ -- scripting object that is only functional when this flag is on, $PP.JUCE_ALLOW_EXTERNAL_UNLOCK$ -- Beatport sits alongside MuseHub as an external unlock path that relies on this JUCE back door
 
 ### `HISE_INCLUDE_BX_LICENSER`
 
@@ -42,7 +42,7 @@ Compiles the Brainworx / Plugin Alliance BX Licenser integration into the build.
 Enables the Engine.createBXLicenser scripting factory and pulls in the BX Licenser wrapper sources, which let a plugin authenticate against the Plugin Alliance licence system and redeem installer codes. With the flag off, createBXLicenser returns undefined, the wrapper sources are excluded from the unity build and no Plugin Alliance dependency is linked. The BX licensing library has to be provided separately and is only available to Plugin Alliance partner developers.
 > Only set this for a product that ships through the Plugin Alliance distribution channel, because the licensing library is not publicly available.
 
-**See also:** $API.Engine$ -- Engine.createBXLicenser is only registered when this flag is on
+**See also:** $API.Engine.createBXLicenser$ -- Engine.createBXLicenser is only registered when this flag is on
 
 ### `HISE_INCLUDE_LORIS`
 
@@ -55,7 +55,7 @@ Includes the Loris analysis and resynthesis library so scripts can access the Lo
 Loris is an additive analysis and resynthesis toolkit that HISE uses for partial tracking, time stretching and spectral morphing of audio files. Enabling this flag compiles the entire hi_loris module (around fifty translation units), exposes Engine.getLorisManager and the LorisManager scripting class, and lets the wavetable converter use Loris-based resynthesis for cycle extraction. The flag is on by default in the HISE IDE because the Loris workflows are part of the authoring tooling, and off in the exported plugin template to keep the runtime binary small.
 > Disable this in the HISE build only if compile times are a problem and you never need Loris-based tools. The plugin template already disables it automatically for exports.
 
-**See also:** $API.LorisManager$ -- entire LorisManager scripting class is only available when this flag is on, $API.Engine$ -- Engine.getLorisManager returns a real object only when this flag is on, $API.WavetableController$ -- wavetable converter can use Loris-based resynthesis when this flag is on, $PP.USE_MOD2_WAVETABLESIZE$ -- Loris cycle extraction produces power-of-two wavetables that pair with the fast wavetable path
+**See also:** $API.LorisManager$ -- entire LorisManager scripting class is only available when this flag is on, $API.Engine.getLorisManager$ -- Engine.getLorisManager returns a real object only when this flag is on, $API.WavetableController$ -- wavetable converter can use Loris-based resynthesis when this flag is on, $PP.USE_MOD2_WAVETABLESIZE$ -- Loris cycle extraction produces power-of-two wavetables that pair with the fast wavetable path
 
 ### `HISE_INCLUDE_MUSEHUB`
 
@@ -68,7 +68,7 @@ Compiles the MuseHub SDK integration into an exported plugin.
 Enables the real MuseHub licence check inside ScriptUnlocker so that Unlocker.checkMuseHub validates the plugin against a user's MuseHub account through the MuseHub SDK. With the flag off, the backend build falls back to a simulated 50/50 result after a two second delay and the frontend does nothing at all. The MuseHub SDK headers and static library have to be supplied separately by MuseHub and are only available to partners distributing through their catalogue.
 > Only takes effect in exported plugin builds. The HISE IDE always runs the simulated path regardless of this setting so that the scripting API can be tested without the SDK.
 
-**See also:** $API.Unlocker$ -- Unlocker.checkMuseHub only performs a real licence check when this flag is on
+**See also:** $API.Unlocker.checkMuseHub$ -- Unlocker.checkMuseHub only performs a real licence check when this flag is on, $PP.JUCE_ALLOW_EXTERNAL_UNLOCK$ -- provides the external-unlock back door that the MuseHub licence check routes through
 
 ### `HISE_INCLUDE_NKS_SDK`
 
@@ -81,7 +81,7 @@ Compiles the Native Instruments NKS integration into the build.
 Enables the Engine.createNKSManager scripting factory, pulls in the NKS wrapper sources and links the NKS VST3 interface hooks so that an exported plugin can show preset information, tag metadata and a factory browser inside Komplete Kontrol and Maschine. With the flag off, createNKSManager returns undefined, the NKS wrapper sources are excluded from the unity build and the frontend uses a dummy NKSVST3Interface stub. The NKS SDK has to be requested from Native Instruments separately; HISE does not ship it.
 > The exporter inspects the project's Extra Definitions for this flag and skips the NKS wiring automatically when it is not present, so in most cases you only need to set it in ExtraDefinitionsWindows or ExtraDefinitionsOSX rather than on the HISE build itself.
 
-**See also:** $API.Engine$ -- Engine.createNKSManager is only registered when this flag is on
+**See also:** $API.Engine.createNKSManager$ -- Engine.createNKSManager is only registered when this flag is on
 
 ### `HISE_INCLUDE_PITCH_DETECTION`
 
@@ -93,7 +93,7 @@ Compiles the dywapitchtrack pitch detection library into the build.
 
 Enables the PitchDetection helper class and exposes it to scripting through Buffer.detectPitch, which runs an autocorrelation-based pitch estimator over an audio buffer and returns the fundamental in Hz. With the flag off, the detection code is excluded and the scripting method is not registered, which trims a small amount from the compiled binary. Leave this on unless you are stripping HISE down to a minimal build and know that no script in the project calls detectPitch.
 
-**See also:** $API.Buffer$ -- Buffer.detectPitch is only registered when this flag is on
+**See also:** $API.Buffer.detectPitch$ -- Buffer.detectPitch is only registered when this flag is on
 
 ### `HISE_INCLUDE_RLOTTIE`
 
@@ -144,4 +144,4 @@ Enables the Intel Integrated Performance Primitives fast paths for FFT, vector m
 IPP is Intel's hand-optimised SIMD library, and enabling this flag routes the FFT convolver, the sampler pitch accumulation and several vector operations through ippsAdd, ippsSum and the IPP FFT instead of the portable fallbacks. The gain on Windows is large for long convolutions and busy multi-voice samplers, but IPP has to be installed through Intel oneAPI and its libraries linked into the build separately. The flag is auto-defined to 1 on Windows when the Projucer detects any of the _IPP_SEQUENTIAL_STATIC / _IPP_PARALLEL_* macros, and is forced to 0 on macOS and Linux because IPP is Windows-only in HISE.
 > The exporter writes USE_IPP=1 into the Windows Extra Definitions automatically when the 'Use IPP' project setting is on, so it should normally not be set by hand. Setting it manually on macOS or Linux fails a static_assert in hi_lac.
 
-**See also:** $MODULES.Convolution$ -- IPP FFT routines replace the portable convolution backend, $API.Settings$ -- Settings.getUseIpp reports the compile-time value of this flag, $PP.AUDIOFFT_FFTW3$ -- IPP takes precedence over FFTW3 when both are enabled on the same platform
+**See also:** $MODULES.Convolution$ -- IPP FFT routines replace the portable convolution backend, $API.Settings.getUseIpp$ -- Settings.getUseIpp reports the compile-time value of this flag, $PP.AUDIOFFT_FFTW3$ -- IPP takes precedence over FFTW3 when both are enabled on the same platform

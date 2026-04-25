@@ -55,4 +55,4 @@ Keeps child sound generators running inside an exported FX plugin.
 Only relevant when the project is exported as an effect plugin. If enabled, every sound generator in the master chain is still rendered so that global modulators, macro modulation sources, LFOs and envelopes that feed modulation slots on the effect chain keep producing their values. If disabled, only the effect chain itself is processed which saves a bit of CPU but breaks any modulation that originates from a sound generator.
 > The HISE export dialog writes this flag automatically based on the 'Process Sound Generators in FX Plugin' checkbox, so you normally don't need to set it manually in the ExtraDefinitions field.
 
-**See also:** $PP.FORCE_INPUT_CHANNELS$ -- sibling FX plugin bus-configuration switch
+**See also:** $PP.FORCE_INPUT_CHANNELS$ -- sibling FX plugin bus-configuration switch, $PP.HISE_ENABLE_MIDI_INPUT_FOR_FX$ -- MIDI input has to be enabled on an FX plugin before keeping sound generators alive delivers any MIDI-triggered modulation

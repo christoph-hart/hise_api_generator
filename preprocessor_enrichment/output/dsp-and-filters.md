@@ -82,3 +82,17 @@ When enabled, the wavetable synthesiser indexes its buffer with a bitmask wrap i
 > Disable (set to 0) only if you need to keep playing pre-3.5 wavetables and can't reconvert them. The slower inner loop is the price of that compatibility.
 
 **See also:** $MODULES.WavetableSynth$ -- requires every wavetable cycle length to be a power of two, $PP.HISE_INCLUDE_LORIS$ -- Loris-based cycle extraction produces power-of-two wavetables that rely on this fast path
+
+## Deprecated
+
+These macros are still defined so old projects keep compiling, but no code reads them. Setting them has no effect.
+
+### `MIN_FILTER_FREQ`
+
+Historical knob for the lowest cutoff frequency any filter can be tuned to.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `20` | no | no |
+
+The original intent was to raise or lower the hard floor that every filter clamps its frequency parameter against so that projects working below 20 Hz could still open the cutoff all the way down. The macro is still defined but the filter limit values are hard-coded to 20 Hz in the same header, so setting it has no effect on the audible frequency range. It is kept around only so that older user projects which list it in their ExtraDefinitions still compile.
