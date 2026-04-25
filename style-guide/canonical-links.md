@@ -49,6 +49,14 @@ Use [Effect.setBypassed]($API.Effect.setBypassed$) to toggle the effect from scr
 See the [module tree architecture]($DOC.Architecture.ModuleTree$) for an overview.
 ```
 
+#### Auto-linkified bare tokens
+
+A bare `$DOMAIN.Target$` token written directly in prose (no surrounding `[text](...)`) is auto-wrapped into `[title](url)` by `publish.py`, where `title` is the target page's `title:` frontmatter (or its `prettyName`/canonical key as a fallback). Example: `Built-in envelopes like $MODULES.AHDSR$ handle voice killing…` → `Built-in envelopes like [AHDSR Envelope](/v2/reference/audio-modules/.../ahdsr) handle voice killing…`.
+
+If you want a custom display label, write the markdown link explicitly: `[the AHDSR envelope]($MODULES.AHDSR$)`. Any `[text]($TOKEN$)` form whose `text` is itself a token (or empty) is treated the same as a bare token — the resolver substitutes the registry title.
+
+Auto-wrap only fires in prose. Tokens inside YAML frontmatter, MDC YAML blocks (e.g. `::see-also` `to:` fields), fenced code blocks, and inline `` `code` `` spans keep their existing raw-URL behavior.
+
 ### See-also references
 
 Use the `**See also:**` format. Entries are comma-separated, with optional `--` descriptions:

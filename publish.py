@@ -57,6 +57,8 @@ class LinkRegistry:
         self.script_dir = script_dir
         # domain -> { canonical_key: url_path }
         self.targets = {}
+        # domain -> { canonical_key: human_title }
+        self.titles = {}
         # domain -> { lowercase_key: canonical_key }
         self.lower_index = {}
         # domain -> { lowercase_key: canonical_key } (dash-stripped for DOC)
@@ -75,11 +77,13 @@ class LinkRegistry:
     def _build_api_registry(self):
         """Build API domain registry from enrichment/base/*.json."""
         targets = {}
+        titles = {}
         base_path = self.structure["domains"]["API"]["basePath"]
         base_dir = self.script_dir / "enrichment" / "base"
 
         if not base_dir.is_dir():
             self.targets["API"] = {}
+            self.titles["API"] = {}
             self.lower_index["API"] = {}
             self.normalized_index["API"] = {}
             return
@@ -92,24 +96,29 @@ class LinkRegistry:
 
             # Class-level target: $API.ClassName$
             targets[class_name] = f"{base_path}/{slug}"
+            titles[class_name] = class_name
 
             # Method-level targets: $API.ClassName.method$
             for method_name in data.get("methods", {}).keys():
                 key = f"{class_name}.{method_name}"
                 targets[key] = f"{base_path}/{slug}#{method_name.lower()}"
+                titles[key] = key
 
         self.targets["API"] = targets
+        self.titles["API"] = titles
         self._build_indexes("API")
 
     def _build_modules_registry(self):
         """Build MODULES domain registry from moduleList.json."""
         targets = {}
+        titles = {}
         domain_config = self.structure["domains"]["MODULES"]
         base_path = domain_config["basePath"]
         type_mapping = domain_config.get("typeMapping", {})
 
         if not MODULE_LIST_PATH.is_file():
             self.targets["MODULES"] = {}
+            self.titles["MODULES"] = {}
             self.lower_index["MODULES"] = {}
             self.normalized_index["MODULES"] = {}
             return
@@ -121,9 +130,10 @@ class LinkRegistry:
             module_id = module["id"]
             module_type = module.get("type", "")
             module_subtype = module.get("subtype", "")
+            pretty_name = module.get("prettyName", module_id)
 
             self.module_info[module_id] = {
-                "prettyName": module.get("prettyName", module_id),
+                "prettyName": pretty_name,
                 "type": module_type,
                 "subtype": module_subtype,
             }
@@ -147,6 +157,7 @@ class LinkRegistry:
 
             slug = module_id.lower()
             targets[module_id] = f"{base_path}/{url_dir}/{slug}"
+            titles[module_id] = pretty_name
 
             # Parameter-level targets: $MODULES.ModuleId.ParamId$
             for param in module.get("parameters", []):
@@ -154,15 +165,19 @@ class LinkRegistry:
                 if param_id:
                     key = f"{module_id}.{param_id}"
                     targets[key] = f"{base_path}/{url_dir}/{slug}#{param_id.lower()}"
+                    titles[key] = f"{module_id}.{param_id}"
 
         self.targets["MODULES"] = targets
+        self.titles["MODULES"] = titles
         self._build_indexes("MODULES")
 
     def _build_sn_registry(self):
         """Build SN domain registry from scriptnodeList.json."""
         targets = {}
+        titles = {}
         if "SN" not in self.structure.get("domains", {}):
             self.targets["SN"] = {}
+            self.titles["SN"] = {}
             self.lower_index["SN"] = {}
             self.normalized_index["SN"] = {}
             return
@@ -174,6 +189,7 @@ class LinkRegistry:
 
         if not sn_list_path.is_file():
             self.targets["SN"] = {}
+            self.titles["SN"] = {}
             self.lower_index["SN"] = {}
             self.normalized_index["SN"] = {}
             return
@@ -188,11 +204,14 @@ class LinkRegistry:
             factory, node_id = factory_path.split(".", 1)
             # Node-level target: $SN.factory.node$
             targets[factory_path] = f"{base_path}/{factory}/{node_id}"
+            titles[factory_path] = factory_path
             # Factory-level target: $SN.factory$
             if factory not in targets:
                 targets[factory] = f"{base_path}/{factory}"
+                titles[factory] = factory
 
         self.targets["SN"] = targets
+        self.titles["SN"] = titles
         self._build_indexes("SN")
 
     def _build_doc_registry(self):
@@ -202,6 +221,7 @@ class LinkRegistry:
         strips, we scan the actual content dirs and register slug targets.
         """
         targets = {}
+        titles = {}
         domain_config = self.structure["domains"]["DOC"]
         base_path = domain_config["basePath"]
         subdomains = domain_config.get("subdomains", {})
@@ -221,6 +241,7 @@ class LinkRegistry:
         if content_root is None:
             # Can't scan -- register empty
             self.targets["DOC"] = {}
+            self.titles["DOC"] = {}
             self.lower_index["DOC"] = {}
             self.normalized_index["DOC"] = {}
             return
@@ -259,18 +280,32 @@ class LinkRegistry:
                 key = ".".join(key_parts)
                 targets[key] = f"{base_path}/{dir_name}/{slug}"
 
+                title = ""
+                try:
+                    with open(md_file, "r", encoding="utf-8") as f:
+                        title = _extract_frontmatter_field(f.read(), "title")
+                except OSError:
+                    pass
+                if not title:
+                    last = slug_parts[-1]
+                    title = last.replace("-", " ").replace("_", " ").title()
+                titles[key] = title
+
         self.targets["DOC"] = targets
+        self.titles["DOC"] = titles
         self._build_indexes("DOC")
 
     def _build_ui_registry(self):
         """Build UI domain registry from ui_enrichment/pages/ subdirectories."""
         targets = {}
+        titles = {}
         domain_config = self.structure.get("domains", {}).get("UI", {})
         base_path = domain_config.get("basePath", "/v2/reference/ui-components")
         pages_config = domain_config.get("sources", {}).get("pages", {})
 
         if not isinstance(pages_config, dict):
             self.targets["UI"] = {}
+            self.titles["UI"] = {}
             self.lower_index["UI"] = {}
             self.normalized_index["UI"] = {}
             return
@@ -290,16 +325,20 @@ class LinkRegistry:
                        md_file.stem)
                 slug = md_file.stem.lower()
                 targets[key] = f"{base_path}/{subdir_name}/{slug}"
+                titles[key] = _extract_frontmatter_field(content, "title") or key
 
         self.targets["UI"] = targets
+        self.titles["UI"] = titles
         self._build_indexes("UI")
 
     def _build_lang_registry(self):
         """Build LANG domain registry from language_enrichment/output/*.md."""
         targets = {}
+        titles = {}
         domain_config = self.structure.get("domains", {}).get("LANG", {})
         if not domain_config:
             self.targets["LANG"] = {}
+            self.titles["LANG"] = {}
             self.lower_index["LANG"] = {}
             self.normalized_index["LANG"] = {}
             return
@@ -310,6 +349,7 @@ class LinkRegistry:
 
         if not pages_dir.is_dir():
             self.targets["LANG"] = {}
+            self.titles["LANG"] = {}
             self.lower_index["LANG"] = {}
             self.normalized_index["LANG"] = {}
             return
@@ -320,7 +360,16 @@ class LinkRegistry:
             stem = md_file.stem
             targets[stem] = f"{base_path}/{stem}"
 
+            title = ""
+            try:
+                with open(md_file, "r", encoding="utf-8") as f:
+                    title = _extract_frontmatter_field(f.read(), "title")
+            except OSError:
+                pass
+            titles[stem] = title or stem
+
         self.targets["LANG"] = targets
+        self.titles["LANG"] = titles
         self._build_indexes("LANG")
 
     def _build_preprocessor_registry(self):
@@ -332,6 +381,7 @@ class LinkRegistry:
         domain_config = self.structure.get("domains", {}).get("PP", {})
         if not domain_config:
             self.targets["PP"] = {}
+            self.titles["PP"] = {}
             self.lower_index["PP"] = {}
             self.normalized_index["PP"] = {}
             return
@@ -341,6 +391,7 @@ class LinkRegistry:
         json_path = self.script_dir / registry_source
 
         targets = {}
+        titles = {}
         if json_path.is_file():
             with open(json_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -350,9 +401,19 @@ class LinkRegistry:
                     targets[macro_name] = f"{base_path}/{slug}#{macro_name.lower()}"
                 else:
                     targets[macro_name] = f"{base_path}#{macro_name.lower()}"
+                titles[macro_name] = macro_name
 
         self.targets["PP"] = targets
+        self.titles["PP"] = titles
         self._build_indexes("PP")
+
+    def get_title(self, domain: str, canonical: str) -> str:
+        """Return a human-readable title for a resolved canonical key.
+
+        Falls back to the canonical key itself so callers always get something
+        printable.
+        """
+        return self.titles.get(domain, {}).get(canonical) or canonical
 
     def _build_indexes(self, domain: str):
         """Build case-insensitive and normalized indexes for a domain."""
@@ -501,31 +562,39 @@ def resolve_tokens(content: str, registry: LinkRegistry, filepath: str,
                    messages: list) -> str:
     """Replace all $DOMAIN.target$ tokens in content with resolved URLs.
 
-    For tokens inside markdown links [text]($...$), replaces the URL part.
-    For standalone $...$ tokens, replaces with the URL.
+    Pass 1 — explicit markdown links [text]($TOKEN$):
+        - Always replaces the URL part.
+        - If the visible text is itself a token (or empty) the text is
+          replaced with the registry title for the resolved target.
+    Pass 2 — bare tokens. Behavior depends on context:
+        - Inside YAML frontmatter, MDC YAML blocks, or fenced code: replace
+          with the raw URL (current see-also / YAML behavior).
+        - Inside prose: wrap as [title](url) so the link renders correctly.
+        - Inside inline code spans (`...`): leave alone.
     """
 
-    def _replace_token(m):
-        domain = m.group(1)
-        target_str = m.group(2)
-        fragment = m.group(3)  # may be None
+    def _resolve(domain: str, target_str: str, fragment):
+        """Resolve a token, log INFO/WARN/ERROR as needed.
 
+        Returns (url, canonical, match_type) on success, or (None, None, None)
+        on failure (after logging an ERROR).
+        """
         parts = target_str.split(".")
         url, canonical, match_type = registry.resolve_compound(
             domain, parts, fragment
         )
 
+        original_token = f"${domain}.{target_str}$"
+
         if url is None:
             messages.append({
                 "level": "ERROR",
                 "file": filepath,
-                "token": m.group(0),
-                "message": f"Unresolved link: {m.group(0)}"
+                "token": original_token,
+                "message": f"Unresolved link: {original_token}"
             })
-            # Leave the token as-is so it's visible in output
-            return m.group(0)
+            return None, None, None
 
-        original_token = f"${domain}.{target_str}$"
         canonical_token = f"${domain}.{canonical}$"
 
         if match_type == "case":
@@ -550,30 +619,173 @@ def resolve_tokens(content: str, registry: LinkRegistry, filepath: str,
                 "message": f"Fuzzy match: {original_token} -> {canonical_token}"
             })
 
+        return url, canonical, match_type
+
+    def _replace_token_url(m):
+        """Pass 2 (raw URL) — replace token with bare URL string."""
+        domain = m.group(1)
+        target_str = m.group(2)
+        fragment = m.group(3)
+        url, _canonical, _mt = _resolve(domain, target_str, fragment)
+        if url is None:
+            return m.group(0)  # leave token as-is on failure
         return url
 
-    # Process markdown links: [text]($DOMAIN.target$)
-    def _replace_md_link(m):
-        before = m.group(1)  # [text](
-        token_match = LINK_TOKEN_PATTERN.search(m.group(2))
-        after = m.group(3)   # )
-        if token_match:
-            resolved = _replace_token(token_match)
-            return f"{before}{resolved}{after}"
-        return m.group(0)
+    def _replace_token_link(m):
+        """Pass 2 (prose) — wrap token as [title](url) markdown link."""
+        domain = m.group(1)
+        target_str = m.group(2)
+        fragment = m.group(3)
+        url, canonical, _mt = _resolve(domain, target_str, fragment)
+        if url is None:
+            return m.group(0)
+        title = registry.get_title(domain, canonical)
+        original_token = f"${domain}.{target_str}$"
+        messages.append({
+            "level": "INFO",
+            "file": filepath,
+            "token": original_token,
+            "message": f"Auto-linkified bare token: {original_token} -> [{title}]({url})"
+        })
+        return f"[{title}]({url})"
 
-    # First pass: resolve tokens inside markdown links
-    content = re.sub(
-        r'(\[[^\]]*\]\()(\$[A-Z]+\.[^$]+\$)(\))',
-        _replace_md_link,
-        content
+    # ---- Pass 1: explicit markdown links [text]($TOKEN$) ----
+    md_link_pattern = re.compile(
+        r'\[([^\]]*)\]\((\$[A-Z]+\.[^$]+\$)\)'
     )
 
-    # Second pass: resolve any remaining standalone tokens
-    # (e.g., in see-also lines, YAML blocks)
-    content = LINK_TOKEN_PATTERN.sub(_replace_token, content)
+    def _replace_md_link(m):
+        text = m.group(1)
+        token_str = m.group(2)
+        token_match = LINK_TOKEN_PATTERN.fullmatch(token_str)
+        if not token_match:
+            return m.group(0)
+
+        domain = token_match.group(1)
+        target_str = token_match.group(2)
+        fragment = token_match.group(3)
+        url, canonical, _mt = _resolve(domain, target_str, fragment)
+        if url is None:
+            return m.group(0)
+
+        # Replace text if it's empty or itself a token.
+        new_text = text
+        text_is_token = bool(LINK_TOKEN_PATTERN.fullmatch(text.strip()))
+        if not text.strip() or text_is_token:
+            new_text = registry.get_title(domain, canonical)
+            messages.append({
+                "level": "INFO",
+                "file": filepath,
+                "token": token_str,
+                "message": (
+                    f"Link-text replaced: [{text}]({token_str}) -> "
+                    f"[{new_text}]({url})"
+                )
+            })
+
+        return f"[{new_text}]({url})"
+
+    content = md_link_pattern.sub(_replace_md_link, content)
+
+    # ---- Pass 2: bare tokens, context-aware ----
+    content = _resolve_bare_tokens(content, _replace_token_url,
+                                   _replace_token_link)
 
     return content
+
+
+# Mask inline `code` spans before substitution so tokens inside backticks
+# are not linkified.  Matches paired backticks on a single line.
+_INLINE_CODE_RE = re.compile(r'`[^`\n]*`')
+
+
+def _resolve_bare_tokens(content: str, replace_url, replace_link) -> str:
+    """Walk content line-by-line, applying the right token replacement based
+    on context.
+
+    Inside YAML frontmatter, MDC YAML blocks (--- ... --- following a ::block
+    opener), and fenced code blocks: use ``replace_url`` (raw URL).
+    In prose: use ``replace_link`` (markdown link), but mask inline code spans
+    first so tokens inside backticks stay raw.
+    """
+    lines = content.split('\n')
+    result = []
+
+    in_fenced_code = False
+    in_frontmatter = False
+    in_mdc_yaml = False
+    mdc_yaml_pending = False  # set after a ::block line; next --- opens YAML
+    saw_first_line = False
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Top-of-file YAML frontmatter
+        if not saw_first_line:
+            saw_first_line = True
+            if stripped == '---':
+                in_frontmatter = True
+                result.append(line)
+                continue
+        elif in_frontmatter:
+            result.append(line)
+            if stripped == '---':
+                in_frontmatter = False
+            continue
+
+        # Fenced code blocks: ```... toggles
+        if stripped.startswith('```'):
+            in_fenced_code = not in_fenced_code
+            result.append(line)
+            continue
+        if in_fenced_code:
+            result.append(line)
+            continue
+
+        # MDC YAML blocks: a `::component` line arms detection of the next ---
+        if stripped.startswith('::') and not stripped.startswith('::: '):
+            # Includes ::component opener and bare `::` closer; on closer just
+            # emit the line, opener arms mdc_yaml_pending below.
+            if stripped == '::':
+                # Closing fence of a component block.
+                result.append(line)
+                continue
+            mdc_yaml_pending = True
+            result.append(line)
+            continue
+
+        if stripped == '---':
+            if mdc_yaml_pending:
+                in_mdc_yaml = True
+                mdc_yaml_pending = False
+                result.append(line)
+                continue
+            if in_mdc_yaml:
+                in_mdc_yaml = False
+                result.append(line)
+                continue
+            # Standalone --- in prose (e.g. horizontal rule). Treat as prose.
+
+        if in_mdc_yaml:
+            # Raw URL replacement inside YAML.
+            result.append(LINK_TOKEN_PATTERN.sub(replace_url, line))
+            continue
+
+        # Prose line. Mask inline `code` spans, linkify bare tokens, unmask.
+        masked_spans = []
+
+        def _mask(m):
+            masked_spans.append(m.group(0))
+            return f"\x00CODE{len(masked_spans) - 1}\x00"
+
+        masked = _INLINE_CODE_RE.sub(_mask, line)
+        linkified = LINK_TOKEN_PATTERN.sub(replace_link, masked)
+
+        for idx, span in enumerate(masked_spans):
+            linkified = linkified.replace(f"\x00CODE{idx}\x00", span)
+        result.append(linkified)
+
+    return "\n".join(result)
 
 
 # ---------------------------------------------------------------------------
