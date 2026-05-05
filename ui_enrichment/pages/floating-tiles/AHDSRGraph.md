@@ -156,4 +156,4 @@ ft.setLocalLookAndFeel(laf);
 - The `obj.currentState` property indicates which envelope stage is currently active. This is available in both `drawAhdsrPath` and `drawAhdsrBall`.
 - The `Index` property is not used by this content type — it can be left at its default value.
 
-**See also:** <!-- populated during cross-reference post-processing -->
+**See also:** $MODULES.AHDSR$ -- AHDSR envelope source visualised by this tile, $UI.FlexAHDSRGraph$ -- editable counterpart for the Flex AHDSR modulator, $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper

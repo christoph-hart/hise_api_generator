@@ -72,4 +72,4 @@ The `ColourData` object supports these colour IDs:
 - For scripting access to the individual values displayed by this panel, use `Engine.getCpuUsage()`, `Engine.getMemoryUsage()`, and `Engine.getNumVoices()`.
 - This content type has no LAF functions and no CSS support. To create a fully custom performance display, read the values via the Engine scripting calls above and render them in a ScriptPanel paint routine.
 
-**See also:** <!-- populated during cross-reference post-processing -->
+**See also:** $API.Engine.getCpuUsage$ -- script access to the CPU value shown by this tile, $API.Engine.getMemoryUsage$ -- script access to the memory value, $API.Engine.getNumVoices$ -- script access to the voice count, $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper

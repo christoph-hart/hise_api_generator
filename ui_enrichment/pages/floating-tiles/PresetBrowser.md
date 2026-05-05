@@ -396,4 +396,4 @@ ft.setLocalLookAndFeel(laf);
 - The `ColumnWidthRatio` array must have the same number of entries as `NumColumns`, and the values should sum to 1.0.
 - Custom bounds properties (`SearchBarBounds`, `SaveButtonBounds`, `MoreButtonBounds`, `FavoriteButtonBounds`) accept `[x, y, w, h]` arrays for pixel-precise positioning. Pass an empty array `[]` for automatic layout.
 
-**See also:** <!-- populated during cross-reference post-processing -->
+**See also:** $API.UserPresetHandler$ -- programmatic API for the preset system, $API.UserPresetHandler.setPostCallback$ -- preferred way to react to preset loads, $API.Engine.setUserPresetTagList$ -- defines the available preset tags, $API.Engine.addModuleStateToUserPreset$ -- include module state in user presets, $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper

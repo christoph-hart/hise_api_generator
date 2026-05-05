@@ -134,4 +134,4 @@ ft.setLocalLookAndFeel(laf);
 - **`obj.active` reflects loaded state.** It is `true` when a MIDI sequence is loaded into the connected MIDI Player, regardless of playback state.
 - **Colour property naming:** The old `custom_lookandfeel.md` documentation references `obj.itemColour` (without the `1` suffix), but the LAF style guide and C++ implementation use `obj.itemColour1`. Both may work depending on HISE version — prefer `obj.itemColour1` for consistency with other FloatingTile LAF functions.
 
-**See also:** <!-- populated during cross-reference post-processing -->
+**See also:** $MODULES.MidiPlayer$ -- MIDI player module that holds the dropped sequence, $UI.Components.ScriptAudioWaveform$ -- audio counterpart for sample-based drag and drop, $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper

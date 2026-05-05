@@ -410,4 +410,4 @@ ft.setLocalLookAndFeel(laf);
 
 > [!Tip:Selective MIDI routing with multiple sound generators] The keyboard sends MIDI into the root of the processing chain, reaching every child synth. To prevent unwanted triggering (e.g. an Audio Loop Player responding to keyboard clicks), add a Script Processor to the child synth and call `Message.ignoreEvent(true)` in its `onNoteOn` and `onNoteOff` callbacks.
 
-**See also:** <!-- populated during cross-reference post-processing -->
+**See also:** $API.Engine.setKeyColour$ -- per-key colour API used by this tile, $UI.MPEPanel$ -- pair with `MPEKeyboard = true` for MPE configuration, $API.Message.ignoreEvent$ -- per-synth note filtering when channel routing is needed, $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper
