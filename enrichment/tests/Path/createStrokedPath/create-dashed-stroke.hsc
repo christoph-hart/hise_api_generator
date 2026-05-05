@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Creating a dashed stroke path
 const var p = Content.createPath();
 p.startNewSubPath(0.0, 0.0);
 p.lineTo(200.0, 0.0);

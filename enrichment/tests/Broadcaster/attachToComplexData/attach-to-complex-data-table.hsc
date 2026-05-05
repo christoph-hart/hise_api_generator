@@ -17,6 +17,7 @@ add Velocity to MySynth.gain as "WatchTable"
 /script
 /callback onInit
 // end setup
+// Title: Watching a table's content changes
 const var bc = Engine.createBroadcaster({
     "id": "TableWatch",
     "args": ["processorId", "index", "value"]

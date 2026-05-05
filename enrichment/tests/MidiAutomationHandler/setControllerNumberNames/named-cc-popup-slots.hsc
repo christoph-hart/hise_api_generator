@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Build a named CC popup for a fixed set of automation slots
 // Context: An instrument reserves a contiguous block of CCs for automation.
 // The popup should show "Slot 1" through "Slot 4" instead of "CC#20" etc.
 

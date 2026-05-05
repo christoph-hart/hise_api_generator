@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Slice shares storage with the source buffer
 const var source = Buffer.create(6);
 source[0] = 1.0; source[1] = 2.0; source[2] = 3.0;
 source[3] = 4.0; source[4] = 5.0; source[5] = 6.0;

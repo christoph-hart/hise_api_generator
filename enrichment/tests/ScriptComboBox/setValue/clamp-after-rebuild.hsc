@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Clamp selection after rebuilding items
 // Context: When a dependent combo box has its items rebuilt, the previous selection
 // index may exceed the new item count. Clamp to the new max before calling changed().
 

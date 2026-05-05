@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Envelope curve segment with adjustable curvature
 // Context: AHDSR envelope editors use quadraticTo to draw curved
 // attack, decay, and release segments. The control point position
 // is interpolated between start and end based on a curve parameter

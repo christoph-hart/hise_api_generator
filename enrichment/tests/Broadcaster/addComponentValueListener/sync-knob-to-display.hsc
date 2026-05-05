@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Syncing FX knob values to visual display positions
 const var FXKnob1 = Content.addKnob("FXKnob1", 0, 0);
 FXKnob1.set("saveInPreset", false);
 const var FXKnob2 = Content.addKnob("FXKnob2", 150, 0);

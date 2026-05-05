@@ -18,21 +18,7 @@ None.
 - `$API.MidiList.isEmpty$`
 
 **Example:**
-```javascript:verify-clear-resets-list
-const var list = Engine.createMidiList();
-list.fill(42);
-list.clear();
-Console.print(list.isEmpty());  // 1
-```
-```json:testMetadata:verify-clear-resets-list
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["1"]
-  }
-}
-```
+
 
 ## fill
 
@@ -54,21 +40,7 @@ Sets all 128 slots to `valueToFill`. The internal non-empty counter is set to 12
 - `$API.MidiList.setRange$`
 
 **Example:**
-```javascript:fill-all-slots
-const var list = Engine.createMidiList();
-list.fill(64);
-Console.print(list.getValue(0));    // 64
-Console.print(list.getValue(127));  // 64
-```
-```json:testMetadata:fill-all-slots
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["64", "64"]
-  }
-}
-```
+
 
 ## getValue
 
@@ -89,21 +61,7 @@ Returns the value stored at the given index. If the index is out of range (negat
 - `$API.MidiList.setValue$`
 
 **Example:**
-```javascript:read-value-and-out-of-range
-const var list = Engine.createMidiList();
-list.setValue(60, 100);
-Console.print(list.getValue(60));   // 100
-Console.print(list.getValue(200));  // -1 (out of range)
-```
-```json:testMetadata:read-value-and-out-of-range
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["100", "-1"]
-  }
-}
-```
+
 
 ## getValueAmount
 
@@ -125,23 +83,7 @@ Counts how many of the 128 slots contain the specified value. When the list is e
 - `$API.MidiList.getNumSetValues$`
 
 **Example:**
-```javascript:count-occurrences
-const var list = Engine.createMidiList();
-list.fill(10);
-list.setValue(0, 20);
-list.setValue(1, 20);
-Console.print(list.getValueAmount(10));  // 126
-Console.print(list.getValueAmount(20));  // 2
-```
-```json:testMetadata:count-occurrences
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["126", "2"]
-  }
-}
-```
+
 
 ## getIndex
 
@@ -162,22 +104,7 @@ Returns the index of the first slot that contains the specified value, scanning 
 - `$API.MidiList.getValueAmount$`
 
 **Example:**
-```javascript:find-first-match
-const var list = Engine.createMidiList();
-list.setValue(60, 100);
-list.setValue(72, 100);
-Console.print(list.getIndex(100));  // 60 (first match)
-Console.print(list.getIndex(99));   // -1 (not found)
-```
-```json:testMetadata:find-first-match
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["60", "-1"]
-  }
-}
-```
+
 
 ## isEmpty
 
@@ -197,21 +124,7 @@ None.
 - `$API.MidiList.getNumSetValues$`
 
 **Example:**
-```javascript:check-empty-state
-const var list = Engine.createMidiList();
-Console.print(list.isEmpty());  // 1 (true - newly created lists are empty)
-list.setValue(0, 42);
-Console.print(list.isEmpty());  // 0 (false)
-```
-```json:testMetadata:check-empty-state
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["1", "0"]
-  }
-}
-```
+
 
 ## getNumSetValues
 
@@ -231,21 +144,7 @@ None.
 - `$API.MidiList.getValueAmount$`
 
 **Example:**
-```javascript:count-non-empty
-const var list = Engine.createMidiList();
-list.setValue(60, 100);
-list.setValue(61, 80);
-Console.print(list.getNumSetValues());  // 2
-```
-```json:testMetadata:count-non-empty
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["2"]
-  }
-}
-```
+
 
 ## setValue
 
@@ -272,20 +171,7 @@ Sets the value at the given index. If the index is out of range (negative or >= 
 - `$API.MidiList.setRange$`
 
 **Example:**
-```javascript:set-and-read-back
-const var list = Engine.createMidiList();
-list.setValue(60, 127);
-Console.print(list.getValue(60));  // 127
-```
-```json:testMetadata:set-and-read-back
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["127"]
-  }
-}
-```
+
 
 ## setRange
 
@@ -312,22 +198,7 @@ Sets a contiguous range of slots to the same value. The start index is clamped t
 - `$API.MidiList.setValue$`
 
 **Example:**
-```javascript:fill-octave-range
-const var list = Engine.createMidiList();
-list.setRange(0, 12, 100);  // Fill slots 0 through 11
-Console.print(list.getValue(0));   // 100
-Console.print(list.getValue(11));  // 100
-Console.print(list.getValue(12));  // -1 (outside range)
-```
-```json:testMetadata:fill-octave-range
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["100", "100", "-1"]
-  }
-}
-```
+
 
 ## getBase64String
 
@@ -347,21 +218,7 @@ None.
 - `$API.MidiList.restoreFromBase64String$`
 
 **Example:**
-```javascript:serialize-to-base64
-const var list = Engine.createMidiList();
-list.fill(42);
-const var encoded = list.getBase64String();
-Console.print(typeof encoded);  // string
-```
-```json:testMetadata:serialize-to-base64
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["string"]
-  }
-}
-```
+
 
 ## restoreFromBase64String
 
@@ -386,21 +243,4 @@ Restores all 128 values from a Base64-encoded string previously created by `getB
 - `$API.MidiList.getBase64String$`
 
 **Example:**
-```javascript:round-trip-serialization
-const var list = Engine.createMidiList();
-list.fill(42);
-const var encoded = list.getBase64String();
 
-const var list2 = Engine.createMidiList();
-list2.restoreFromBase64String(encoded);
-Console.print(list2.getValue(0));  // 42
-```
-```json:testMetadata:round-trip-serialization
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["42"]
-  }
-}
-```

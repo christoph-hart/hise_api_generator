@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Cloning a MessageHolder for independent modification
 const var mh = Engine.createMessageHolder();
 mh.setType(mh.NoteOn);
 mh.setNoteNumber(60);

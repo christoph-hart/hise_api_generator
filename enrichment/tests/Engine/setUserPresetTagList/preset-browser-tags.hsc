@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Configuring preset browser tags at initialization
 // Context: Call setUserPresetTagList during onInit to define the
 // tag categories that appear in the preset browser filter panel.
 // Tags should reflect the sonic categories of the preset library.

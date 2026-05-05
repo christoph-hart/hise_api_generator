@@ -370,47 +370,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - `$API.ScriptComponent.setKeyPressCallback$`
 
 **Example:**
-```javascript:consume-key-presses
-const var panel = Content.addPanel("KeyPanel", 0, 0);
 
-// Consume all keys exclusively
-panel.setConsumedKeyPresses("all");
-
-// Consume specific keys by description string
-panel.setConsumedKeyPresses(["ctrl + S", "F5", "escape"]);
-
-// Consume specific keys by JSON object
-panel.setConsumedKeyPresses([
-    { "keyCode": 65, "ctrl": true },
-    { "keyCode": 83, "ctrl": true }
-]);
-
-// --- test-only ---
-reg lastKey = "";
-
-inline function onPanelKeyPress(event)
-{
-    if (!event.isFocusChange)
-        lastKey = event.description;
-}
-
-panel.setKeyPressCallback(onPanelKeyPress);
-
-Console.testCallback(panel, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-```json:testMetadata:consume-key-presses
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "lastKey", "value": "A"}
-}
-```
 
 ---
 
@@ -448,39 +408,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `$API.ScriptComponent.changed$`
 
 **Example:**
-```javascript:label-control-callback
-const var label = Content.addLabel("StatusLabel", 10, 10);
-label.set("saveInPreset", false);
 
-reg lastLabelValue = "";
-
-inline function onMyLabel(component, value)
-{
-    lastLabelValue = value;
-    Console.print(component.getId() + ": " + value); // e.g. StatusLabel: Ready
-};
-
-label.setControlCallback(onMyLabel);
-```
-```json:testMetadata:label-control-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "lastLabelValue",
-      "value": "Ready"
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "StatusLabel",
-      "value": "Ready"
-    }
-  ]
-}
-```
 
 ---
 
@@ -557,39 +485,7 @@ Focus change event object:
 - `$API.ScriptComponent.setConsumedKeyPresses$`
 
 **Example:**
-```javascript:label-key-press-callback
-const var panel = Content.addPanel("Panel1", 0, 0);
-panel.setConsumedKeyPresses("all");
 
-reg lastKey = "";
-
-inline function onPanelKeyPress(event)
-{
-    if (!event.isFocusChange)
-    {
-        lastKey = event.description;
-        Console.print("Key: " + event.description); // Key: A
-    }
-}
-
-panel.setKeyPressCallback(onPanelKeyPress);
-
-// --- test-only ---
-Console.testCallback(panel, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-```json:testMetadata:label-key-press-callback
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "lastKey", "value": "A"}
-}
-```
 
 ---
 

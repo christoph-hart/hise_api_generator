@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Check for fast FFT support across platforms
 var hasFastFFT = Settings.isIppEnabled(true);
 Console.print(hasFastFFT ? "Fast FFT available" : "No hardware FFT acceleration");
 // test

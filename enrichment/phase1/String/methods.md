@@ -155,22 +155,7 @@ Encrypts the string using BlowFish with the provided key and returns a base64-en
 - `$API.String.decrypt$`
 
 **Example:**
-```javascript:encrypt-decrypt-roundtrip
-// Title: Encrypt and decrypt a string with BlowFish
-var secret = "Hello World";
-var key = "mySecretKey";
-var encrypted = secret.encrypt(key);
-var decrypted = encrypted.decrypt(key);
-Console.print(decrypted); // Hello World
-```
-```json:testMetadata:encrypt-decrypt-roundtrip
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["Hello World"]}
-  ]
-}
-```
+
 
 ---
 
@@ -340,23 +325,7 @@ Matches the string against a regular expression (std::regex syntax) and returns 
 - An invalid regex pattern silently returns undefined instead of throwing an error. Check `isDefined(result)` after calling match to distinguish "no matches" (empty array) from "invalid regex" (undefined).
 
 **Example:**
-```javascript:regex-matching
-// Title: Extract numeric values with regex
-var text = "Width: 100px, Height: 200px";
-var numbers = text.match("[0-9]+");
 
-Console.print(numbers.length); // 2
-Console.print(numbers[0]);     // 100
-Console.print(numbers[1]);     // 200
-```
-```json:testMetadata:regex-matching
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["2", "100", "200"]}
-  ]
-}
-```
 
 ---
 
@@ -456,26 +425,7 @@ Splits the string by a separator and returns an array of substrings. If the sepa
 - `$API.String.splitCamelCase$`
 
 **Example:**
-```javascript:split-behavior
-// Title: Split uses only the first character of the separator
-var csv = "one,two,three";
-var parts = csv.split(",");
-Console.print(parts[0]); // one
-Console.print(parts[1]); // two
-Console.print(parts[2]); // three
 
-// Empty separator splits into individual characters
-var chars = "abc".split("");
-Console.print(chars.length); // 3
-```
-```json:testMetadata:split-behavior
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["one", "two", "three", "3"]}
-  ]
-}
-```
 
 ---
 
@@ -498,23 +448,7 @@ Splits a camelCase or PascalCase string into an array of word tokens at uppercas
 - `$API.String.split$`
 
 **Example:**
-```javascript:split-camel-case
-// Title: Split camelCase identifiers into word tokens
-var name = "myValueTest";
-var parts = name.splitCamelCase();
 
-Console.print(parts[0]); // my
-Console.print(parts[1]); // Value
-Console.print(parts[2]); // Test
-```
-```json:testMetadata:split-camel-case
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["my", "Value", "Test"]}
-  ]
-}
-```
 
 ---
 

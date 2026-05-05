@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Initialize the server and verify with a GET request
 // Context: setBaseURL starts the background WebThread. Call it once during
 // onInit before any other Server method. All subsequent calls use relative
 // sub-URLs appended to this base.

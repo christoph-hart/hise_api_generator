@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Selecting random items from a modulation matrix
 // Context: A "randomize" button picks random source and destination
 // indices for modulation routing slots.
 

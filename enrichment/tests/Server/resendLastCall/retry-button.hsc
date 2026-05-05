@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Retry button for failed server requests
 // Context: A "Retry" button that resends the last server call after
 // a connectivity failure. Useful in panels where the user may have
 // restored their internet connection.

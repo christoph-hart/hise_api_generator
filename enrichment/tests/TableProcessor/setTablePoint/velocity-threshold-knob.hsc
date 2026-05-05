@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Adjusting a velocity threshold at runtime
 const var builder = Synth.createBuilder();
 builder.clear();
 var ss = builder.create(builder.SoundGenerators.SineSynth, "TestSynth", 0, builder.ChainIndexes.Direct);

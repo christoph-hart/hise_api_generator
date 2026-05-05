@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Setting values from a number and an array
 const var spd = Engine.createAndRegisterSliderPackData(0);
 spd.setNumSliders(4);
 

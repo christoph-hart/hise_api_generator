@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Reusable temp object for stack insertion
 // Context: Avoid per-event allocation by creating one template object and reusing it
 
 const var factory = Engine.createFixObjectFactory({

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: CPU meter with periodic polling
 // Context: Timer objects are the standard way to poll engine state
 // for UI display. This pattern appears in nearly every plugin that
 // shows CPU usage, peak levels, or loading progress.

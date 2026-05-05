@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Full-width combo box with rounded outline and text
 // Context: A standard-looking combo box LAF that draws a rounded rectangle outline,
 // left-aligned text, and a dropdown triangle on the right side.
 

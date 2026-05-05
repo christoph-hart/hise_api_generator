@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Read-modify-write to toggle a single macro connection
 const var uph = Engine.createUserPresetHandler();
 uph.setUseCustomUserPresetModel(function(obj){}, function(){ return {}; }, false);
 uph.setCustomAutomation([

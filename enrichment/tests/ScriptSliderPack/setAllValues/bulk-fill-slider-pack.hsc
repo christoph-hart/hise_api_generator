@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Fill every slider with one scalar value
 const var spData = Engine.createAndRegisterSliderPackData(0);
 spData.setNumSliders(4);
 spData.setAllValues(0.0);

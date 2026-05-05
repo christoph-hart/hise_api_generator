@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Type-specific attribute configuration in a modulator loop
 // Context: When creating multiple modulators from a definition table, use
 // conditional logic to apply different attribute sets based on the module
 // type. This pattern is common when building a GlobalModulatorContainer

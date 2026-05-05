@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Reset playback cursor when switching audio sources
 // Context: When a multi-channel instrument switches which processor
 // the waveform displays, the playback cursor retains its old position.
 // Reset it to the start after rebinding.

@@ -466,44 +466,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `$API.ScriptButton.changed$`
 
 **Example:**
-```javascript:control-callback-registration
-// Title: Registering a custom control callback
-const var btn = Content.addButton("CbBtn", 0, 0);
-btn.set("saveInPreset", false);
 
-var callbackLog = [];
-
-inline function onButtonToggled(component, value)
-{
-    callbackLog.push(component.getId() + ":" + value);
-};
-
-btn.setControlCallback(onButtonToggled);
-
-// --- test-only ---
-btn.setValue(1);
-btn.changed();
-// --- end test-only ---
-```
-```json:testMetadata:control-callback-registration
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "callbackLog[0]",
-      "value": "CbBtn:1.0"
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "CbBtn",
-      "value": 1
-    }
-  ]
-}
-```
 
 ---
 
@@ -559,37 +522,7 @@ Focus change event object:
 - `$API.ScriptButton.setConsumedKeyPresses$`
 
 **Example:**
-```javascript:key-press-callback
-// Title: Handling key presses on a button
-const var btn = Content.addButton("KeyPressBtn", 0, 0);
-btn.setConsumedKeyPresses("all");
 
-var lastKey = "";
-
-inline function onKeyPress(event)
-{
-    if (!event.isFocusChange)
-        lastKey = event.description;
-};
-
-btn.setKeyPressCallback(onKeyPress);
-
-// --- test-only ---
-Console.testCallback(btn, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-```json:testMetadata:key-press-callback
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "lastKey", "value": "A"}
-}
-```
 
 ---
 

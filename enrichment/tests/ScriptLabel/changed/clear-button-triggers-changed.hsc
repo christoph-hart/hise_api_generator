@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Trigger callbacks after programmatic reset
 // Context: Clear a search field from a button and notify listeners
 
 const var searchLabel = Content.addLabel("SearchField", 12, 10);

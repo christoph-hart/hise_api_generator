@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Reading playback speed via MidiProcessor attributes
 // Context: Access the MidiPlayer's module attributes (like PlaybackSpeed)
 // through the MidiProcessor interface for controlling loop speed
 

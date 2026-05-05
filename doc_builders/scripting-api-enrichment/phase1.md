@@ -366,9 +366,9 @@ Classify where a method can be called. The tiers form a spectrum from most restr
 - Boolean query (e.g., `isBypassed()`)
 - Self-explanatory signature where the description suffices
 
-### Test Metadata for Examples
+### Testable Examples
 
-When synthesizing an example, also produce `testMetadata` following `style-guide/scripting-api/test-metadata.md`. That file defines the full schema, verification types, and setup patterns.
+If the synthesized example is testable (deterministic, observable from script), author it as a `.hsc` test file at `enrichment/tests/{Class}/{method}/{slug}.hsc` instead of (or in addition to) inlining it as a ```` ```javascript:slug ```` block in the .md source. The `.hsc` file is the single source of truth — `api_enrich.py merge` auto-discovers and inlines it. See `style-guide/scripting-api/hsc-test-format.md` for the format, region sentinels, and assertion verbs. Non-testable examples (external resources, hardware) stay as `javascript:slug` blocks in the .md.
 
 ### Diagram Heuristic
 

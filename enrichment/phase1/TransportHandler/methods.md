@@ -30,35 +30,6 @@ Registers a callback that fires whenever the host tempo (BPM) changes. The `sync
 **DiagramRef:** sync-async-dispatch
 
 **Example:**
-```javascript:basic
-// --- setup ---
-Engine.setHostBpm(120);
-// --- end setup ---
-const var th = Engine.createTransportHandler();
-
-var tempoLog = [];
-
-inline function onTempoChanged(newTempo)
-{
-    tempoLog.push(newTempo);
-}
-
-th.setOnTempoChange(SyncNotification, onTempoChanged);
-
-// --- test-only ---
-Engine.setHostBpm(140);
-// --- end test-only ---
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "tempoLog.length", "value": 2},
-    {"type": "REPL", "expression": "tempoLog[0]", "value": 120},
-    {"type": "REPL", "expression": "tempoLog[1]", "value": 140}
-  ]
-}
-```
 
 
 ## setOnTransportChange
@@ -88,36 +59,7 @@ Registers a callback that fires when the transport state changes (play/stop). Th
 **DiagramRef:** sync-async-dispatch
 
 **Example:**
-```javascript:basic
-// --- setup ---
-const var th0 = Engine.createTransportHandler();
-th0.setSyncMode(th0.InternalOnly);
-th0.stopInternalClock(0);
-// --- end setup ---
-const var th = Engine.createTransportHandler();
 
-var transportLog = [];
-
-inline function onTransportChanged(isPlaying)
-{
-    transportLog.push(isPlaying);
-}
-
-th.setOnTransportChange(SyncNotification, onTransportChanged);
-
-// Trigger a transport change programmatically
-th.startInternalClock(0);
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "transportLog.length", "value": 2},
-    {"type": "REPL", "expression": "transportLog[0]", "value": false},
-    {"type": "REPL", "expression": "transportLog[1]", "value": true}
-  ]
-}
-```
 
 ## setOnBeatChange
 
@@ -463,24 +405,7 @@ Enables or disables the high-precision grid timer at a specific musical tempo di
 - `$API.TransportHandler.getGridLengthInSamples$`
 
 **Example:**
-```javascript:basic
-// --- setup ---
-Engine.setHostBpm(120);
-// --- end setup ---
-const var th = Engine.createTransportHandler();
 
-// Enable a 1/16 note grid
-th.setEnableGrid(true, 11);
-
-// Enable a 1/8 note grid (overwrites the previous)
-th.setEnableGrid(true, 8);
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "th.getGridLengthInSamples()", "value": 11025}
-}
-```
 
 ## setLocalGridMultiplier
 

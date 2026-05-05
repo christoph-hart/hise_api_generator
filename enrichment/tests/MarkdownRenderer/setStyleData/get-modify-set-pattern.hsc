@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Customize style with the get-modify-set pattern
 // Context: The safe way to change individual style properties without
 // resetting others. Get the defaults, modify what you need, set it back.
 

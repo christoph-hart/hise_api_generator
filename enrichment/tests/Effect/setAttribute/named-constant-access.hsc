@@ -16,6 +16,7 @@ add PolyphonicFilter as "PolyphonicFilter"
 /script
 /callback onInit
 // end setup
+// Title: Named constants for self-documenting parameter access
 // Context: Every Effect instance exposes its parameters as named constants.
 // Use these instead of raw integer indices.
 const var filter = Synth.getEffect("PolyphonicFilter");

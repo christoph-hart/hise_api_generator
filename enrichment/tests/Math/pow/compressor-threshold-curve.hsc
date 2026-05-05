@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Compressor threshold curve with inverse power mapping
 // Context: Mapping a 0-1 slider to a logarithmic dB threshold
 // requires a steep power curve. Using pow(x, 4.0) for the forward
 // mapping and pow(x, 0.25) for the inverse keeps the conversions

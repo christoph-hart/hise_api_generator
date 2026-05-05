@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Encrypt and decrypt a string with BlowFish
 var secret = "Hello World";
 var key = "mySecretKey";
 var encrypted = secret.encrypt(key);

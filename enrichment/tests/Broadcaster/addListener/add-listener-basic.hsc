@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Basic broadcaster listener with state tracking
 const var bc = Engine.createBroadcaster({
     "id": "StatusBC",
     "args": ["status", "count"]

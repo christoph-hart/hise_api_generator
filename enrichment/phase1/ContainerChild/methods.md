@@ -22,38 +22,7 @@ Creates a new child component from the given JSON data and appends it as the las
 - `$API.ContainerChild.getComponent$`
 
 **Example:**
-```javascript:add-child-both-formats
-// Title: Adding child components with bounds array and individual properties
-const var dc = Content.addDynamicContainer("DC1", 0, 0);
-const var cc = dc.setData({"id": "Root", "type": "Container", "width": 500, "height": 300});
 
-// Using bounds array
-var slider = cc.addChildComponent({
-    "id": "Vol",
-    "type": "Slider",
-    "bounds": [10, 10, 128, 48]
-});
-
-// Using individual position properties (defaults: 0, 0, 128, 50)
-var btn = cc.addChildComponent({
-    "id": "Mute",
-    "type": "Button",
-    "text": "Mute",
-    "x": 150, "y": 10, "width": 80, "height": 32
-});
-
-Console.print(cc.getNumChildComponents()); // 2
-```
-```json:testMetadata:add-child-both-formats
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["2"]},
-    {"type": "REPL", "expression": "slider.get(\"type\")", "value": "Slider"},
-    {"type": "REPL", "expression": "btn.get(\"text\")", "value": "Mute"}
-  ]
-}
-```
 
 ## addStateToUserPreset
 
@@ -472,28 +441,7 @@ Registers a callback that fires whenever a direct child component is added to or
 - `$API.ContainerChild.removeAllChildren$`
 
 **Example:**
-```javascript:child-callback-basic
-// Title: Monitoring child add/remove events
-const var dc = Content.addDynamicContainer("DC2", 0, 0);
-const var cc = dc.setData({"id": "Parent", "type": "Container"});
 
-reg childLog = "";
-
-inline function onChildChange(childId, wasAdded)
-{
-    childLog = childId + ":" + wasAdded;
-}
-
-cc.setChildCallback(onChildChange);
-cc.addChildComponent({"id": "NewChild", "type": "Button"});
-// childLog is updated asynchronously after onInit
-```
-```json:testMetadata:child-callback-basic
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "childLog", "value": "NewChild:1", "delay": 300}
-}
-```
 
 ## setControlCallback
 
@@ -522,28 +470,7 @@ Registers a callback that fires when this component's value changes. The callbac
 - `$API.ContainerChild.changed$`
 
 **Example:**
-```javascript:control-callback-basic
-// Title: Value callback with deduplication
-const var dc = Content.addDynamicContainer("DC3", 0, 0);
-const var cc = dc.setData({"id": "Knob1", "type": "Slider", "defaultValue": 0.0});
 
-reg lastVal = -1.0;
-
-inline function onKnobValue(value)
-{
-    lastVal = value;
-}
-
-cc.setControlCallback(onKnobValue);
-cc.setValue(0.75);
-cc.changed();
-```
-```json:testMetadata:control-callback-basic
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "lastVal", "value": 0.75}
-}
-```
 
 ## setPaintRoutine
 

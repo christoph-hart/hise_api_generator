@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Loop-based channel strip construction
 // Context: Building N identical processing channels in a loop. Each channel
 // gets a container synth, a sound generator, MIDI processors, and effects.
 // This is the Builder's primary advantage over manual tree construction.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Use a ScriptTable as a velocity transfer function
 // Context: A MIDI script shapes incoming velocity with a user-editable curve.
 
 const var velocityCurve = Content.addTable("VelocityCurve", 10, 10);

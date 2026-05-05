@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Serialize per-lane step data with empty-lane sentinel
 // Context: Preset models often store many lanes; writing "EMPTY" for silent lanes reduces payload size.
 
 const var NUM_LANES = 4;

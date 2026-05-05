@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Conditional component access
 Content.makeFrontInterface(600, 300);
 const var knob = Content.addKnob("CExKnob1", 10, 10);
 const var found = Content.componentExists("CExKnob1");

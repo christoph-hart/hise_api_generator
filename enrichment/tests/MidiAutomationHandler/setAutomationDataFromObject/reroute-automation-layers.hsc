@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Re-route automation connections between parameter layers
 // Context: When switching parameter layers (e.g., from individual layers
 // to a linked "all" mode), existing CC assignments need their Attribute
 // field updated to point to the new target parameter.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Property-based and custom comparison for sorting
 const var factory = Engine.createFixObjectFactory({
     "id": 0,
     "score": 0.0

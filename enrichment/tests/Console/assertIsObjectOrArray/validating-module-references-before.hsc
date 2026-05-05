@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Validating module references before method calls
 // Context: When working with data that should be objects or arrays,
 // assertIsObjectOrArray catches primitive values that would cause
 // errors in subsequent property access or method calls.

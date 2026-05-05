@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Creating multiple pattern bank sequences
 // Context: Initialize a player with multiple empty sequences (pattern banks)
 // for a step sequencer. Each sequence is a separate pattern slot.
 

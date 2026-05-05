@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Configuring module parameters after creation
 const var b = Synth.createBuilder();
 b.clear();
 var synthIdx = b.create(b.SoundGenerators.SineSynth, "AttrSine", 0, b.ChainIndexes.Direct);

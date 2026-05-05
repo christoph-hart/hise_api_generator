@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Async playback callback for UI state updates
 // Context: Register an async (UI-thread) callback to update transport button
 // state and handle recording transitions. Use the async mode (0) since
 // the callback updates UI components.

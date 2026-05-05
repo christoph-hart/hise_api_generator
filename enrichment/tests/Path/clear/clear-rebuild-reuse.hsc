@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Clearing and rebuilding a path with new geometry
 // Context: When a path's geometry changes (e.g., following a
 // modulation value), clearing and rebuilding is more efficient
 // than creating a new Path each time. The clear + anchor + rebuild

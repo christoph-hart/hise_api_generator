@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Function parameter validation
 // Context: Utility functions that expect a module reference or
 // structured data object use assertIsObjectOrArray as a type guard.
 

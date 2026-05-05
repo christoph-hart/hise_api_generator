@@ -78,34 +78,7 @@ The property name must match one of the members defined in the factory's layout 
 - `$API.FixObjectFactory.createArray$`
 
 **Example:**
-```javascript:copy-to-buffer
-// Title: Extract a property column into a Buffer
-const var f = Engine.createFixObjectFactory({
-    "id": 0,
-    "velocity": 0.0
-});
 
-const var a = f.createArray(4);
-
-a[0].velocity = 0.25;
-a[1].velocity = 0.5;
-a[2].velocity = 0.75;
-a[3].velocity = 1.0;
-
-const var buf = Buffer.create(4);
-a.copy("velocity", buf);
-
-Console.print(buf[2]); // 0.75
-```
-```json:testMetadata:copy-to-buffer
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "buf[0]", "value": 0.25},
-    {"type": "REPL", "expression": "buf[2]", "value": 0.75}
-  ]
-}
-```
 
 ## fill
 
@@ -230,37 +203,7 @@ The sort is only meaningful when a property-based or custom compare function has
 - `$API.FixObjectFactory.setCompareFunction$`
 
 **Example:**
-```javascript:sort-by-property
-// Title: Sort a FixObjectArray by a named property
-const var f = Engine.createFixObjectFactory({
-    "id": 0,
-    "velocity": 0.0
-});
 
-const var a = f.createArray(4);
-
-a[0].id = 3;
-a[1].id = 1;
-a[2].id = 4;
-a[3].id = 2;
-
-f.setCompareFunction("id");
-a.sort();
-
-Console.print(a[0].id); // 1
-Console.print(a[3].id); // 4
-```
-```json:testMetadata:sort-by-property
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "a[0].id", "value": 1},
-    {"type": "REPL", "expression": "a[1].id", "value": 2},
-    {"type": "REPL", "expression": "a[2].id", "value": 3},
-    {"type": "REPL", "expression": "a[3].id", "value": 4}
-  ]
-}
-```
 
 ## toBase64
 

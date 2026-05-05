@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Centralized event bus - one broadcaster notifies multiple independent modules
 const var Page1 = Content.addPanel("Page1", 0, 50);
 Page1.set("saveInPreset", false);
 const var Page2 = Content.addPanel("Page2", 0, 150);

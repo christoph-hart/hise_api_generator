@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Dashed arc outline for a decorative knob ring
 // Context: Passing a non-empty dotData array creates dashed stroke
 // geometry. This produces tick-mark or segmented ring effects around
 // rotary controls.

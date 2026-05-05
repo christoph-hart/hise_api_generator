@@ -37,26 +37,7 @@ None.
 - Assignment (`var b = a;`) creates a reference, not a copy. Both variables point to the same underlying array. Use `clone()` when you need an independent copy.
 
 **Example:**
-```javascript:clone-reference-vs-copy
-// Title: Reference assignment vs deep copy
-var a = [1, 2, 3];
 
-var ref = a;
-ref[0] = 99;
-Console.print(a[0]); // 99 -- ref and a share the same array
-
-var copy = a.clone();
-copy[0] = 0;
-Console.print(a[0]); // 99 -- copy is independent
-```
-```json:testMetadata:clone-reference-vs-copy
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["99", "99"]}
-  ]
-}
-```
 
 ## concat
 
@@ -83,21 +64,7 @@ Appends all elements from one or more arrays to this array. Modifies the array i
 - `$API.Array.push$`
 
 **Example:**
-```javascript:concat-in-place
-// Title: In-place concatenation (differs from JavaScript)
-var a = [1, 2, 3];
-a.concat([4, 5], [6, 7]);
-Console.print(a.length);
-Console.print(a.join(", "));
-```
-```json:testMetadata:concat-in-place
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["7", "1, 2, 3, 4, 5, 6, 7"]}
-  ]
-}
-```
+
 
 ## contains
 
@@ -149,20 +116,7 @@ Tests whether all elements pass the provided test function. Returns `true` if th
 - Undefined/void elements are silently skipped during iteration. An array of all-undefined elements behaves as empty.
 
 **Example:**
-```javascript:every-all-even
-// Title: Test if all elements satisfy a condition
-var a = [2, 4, 6, 8];
-Console.print(a.every(function(x){ return x % 2 == 0; }));
-Console.print(a.every(function(x){ return x > 5; }));
-```
-```json:testMetadata:every-all-even
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["1", "0"]}
-  ]
-}
-```
+
 
 **Cross References:**
 - `$API.Array.some$`
@@ -195,20 +149,7 @@ Creates a new array containing only the elements for which the callback returns 
 - `$API.Array.map$`
 
 **Example:**
-```javascript:filter-by-threshold
-// Title: Filter elements by a threshold
-var a = [1, 12, 3, 14, 5];
-var big = a.filter(function(x){ return x > 10; });
-Console.print(big.join(", "));
-```
-```json:testMetadata:filter-by-threshold
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["12, 14"]}
-  ]
-}
-```
+
 
 ## find
 
@@ -237,20 +178,7 @@ Returns the first element for which the callback returns a truthy value. Returns
 - `$API.Array.findIndex$`
 
 **Example:**
-```javascript:find-first-match
-// Title: Find first element matching a condition
-var a = [1, 12, 3, 14, 5];
-var first = a.find(function(x){ return x > 10; });
-Console.print(first);
-```
-```json:testMetadata:find-first-match
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["12"]}
-  ]
-}
-```
+
 
 ## findIndex
 
@@ -281,20 +209,7 @@ Returns the index of the first element for which the callback returns a truthy v
 - `$API.Array.find$`
 
 **Example:**
-```javascript:find-index-match
-// Title: Find index of first matching element
-var a = [1, 12, 3, 14, 5];
-var idx = a.findIndex(function(x){ return x > 10; });
-Console.print(idx);
-```
-```json:testMetadata:find-index-match
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["1"]}
-  ]
-}
-```
+
 
 ## forEach
 
@@ -321,19 +236,7 @@ Executes the callback once for each element. Returns `undefined`. Undefined/void
 - Undefined/void elements are silently skipped and never passed to the callback.
 
 **Example:**
-```javascript:foreach-print
-// Title: Execute a function for each element
-var a = ["Alice", "Bob", "Charlie"];
-a.forEach(function(name){ Console.print("Hello " + name); });
-```
-```json:testMetadata:foreach-print
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["Hello Alice", "Hello Bob", "Hello Charlie"]}
-  ]
-}
-```
+
 
 ## includes
 
@@ -386,20 +289,7 @@ Returns the index of the first occurrence of the specified value, or `-1` if not
 - `$API.Array.findIndex$`
 
 **Example:**
-```javascript:indexof-type-strictness
-// Title: Loose vs strict type comparison
-var a = [1, 2.0, "3"];
-Console.print(a.indexOf(2));       // 1 (loose: int 2 matches double 2.0)
-Console.print(a.indexOf(2, 0, 1)); // -1 (strict: int 2 != double 2.0)
-```
-```json:testMetadata:indexof-type-strictness
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["1", "-1"]}
-  ]
-}
-```
+
 
 ## insert
 
@@ -531,20 +421,7 @@ Creates a new array populated with the results of calling the provided function 
 - `$API.Array.filter$`
 
 **Example:**
-```javascript:map-transform
-// Title: Transform array elements
-var a = [1, 2, 3, 4];
-var doubled = a.map(function(x){ return x * 2; });
-Console.print(doubled.join(", "));
-```
-```json:testMetadata:map-transform
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["2, 4, 6, 8"]}
-  ]
-}
-```
+
 
 ## pop
 
@@ -745,22 +622,7 @@ Returns a shallow copy of a portion of the array from index `start` up to (but n
 None.
 
 **Example:**
-```javascript:slice-negative-indices
-// Title: Extract sub-arrays with negative indices
-var a = [10, 20, 30, 40, 50];
-var mid = a.slice(1, 3);
-var last2 = a.slice(-2);
-Console.print(mid.join(", "));
-Console.print(last2.join(", "));
-```
-```json:testMetadata:slice-negative-indices
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["20, 30", "40, 50"]}
-  ]
-}
-```
+
 
 ## some
 
@@ -790,20 +652,7 @@ Tests whether at least one element passes the provided test function. Returns `t
 - `$API.Array.every$`
 
 **Example:**
-```javascript:some-any-match
-// Title: Test if any element matches a condition
-var a = [1, 2, 3, 4, 5];
-Console.print(a.some(function(x){ return x > 4; }));
-Console.print(a.some(function(x){ return x > 10; }));
-```
-```json:testMetadata:some-any-match
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["1", "0"]}
-  ]
-}
-```
+
 
 ## sort
 
@@ -833,24 +682,7 @@ Sorts the array in-place. Without a comparator, uses the built-in VariantCompara
 - `$API.Array.sortNatural$`
 
 **Example:**
-```javascript:sort-numeric-and-custom
-// Title: Default numeric sort and custom descending sort
-var a = [3, 1, 4, 1, 5];
 
-a.sort();
-Console.print(a.join(", "));
-
-a.sort(function(x, y){ return y - x; });
-Console.print(a.join(", "));
-```
-```json:testMetadata:sort-numeric-and-custom
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["1, 1, 3, 4, 5", "5, 4, 3, 1, 1"]}
-  ]
-}
-```
 
 ## sortNatural
 

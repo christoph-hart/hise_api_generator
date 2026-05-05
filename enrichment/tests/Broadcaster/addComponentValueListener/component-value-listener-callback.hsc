@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Setting component values with a transform callback
 const var Knob1 = Content.addKnob("Knob1v", 0, 0);
 const var Knob2 = Content.addKnob("Knob2v", 150, 0);
 Knob1.set("saveInPreset", false);

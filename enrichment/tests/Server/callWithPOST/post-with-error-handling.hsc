@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: POST to a protected endpoint with multi-status error handling
 // Context: Demonstrates the standard callWithPOST pattern with proper
 // multi-status error handling. The forum API rejects unauthenticated
 // POST requests with a 403, which exercises the error path.

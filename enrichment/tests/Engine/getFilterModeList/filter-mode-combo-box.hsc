@@ -21,6 +21,7 @@ add ScriptComboBox "FilterSelector" at 0 0 128 32
 /script
 /callback onInit
 // end setup
+// Title: Populating a filter selector with mode constants
 // Context: Rather than hardcoding filter mode integers, store the
 // filter mode list object and index into it from a combo box callback.
 // This makes the code readable and robust against future mode additions.

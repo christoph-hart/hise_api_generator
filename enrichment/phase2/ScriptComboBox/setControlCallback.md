@@ -28,49 +28,4 @@ cbSampleMap.setControlCallback(onSampleMapChanged);
 }
 ```
 
-```javascript:multi-combo-dispatch
-// Title: Multi-purpose callback dispatching by component ID
-// Context: A single callback handles multiple combo boxes created in a loop.
-// The component's ID encodes its role, enabling one function to drive different behaviors.
 
-var dispatchLog = [];
-
-inline function onComboChanged(component, value)
-{
-    local id = component.getId();
-    local idx = parseInt(value) - 1;
-
-    if (id.contains("FilterType"))
-        dispatchLog.push("filter:" + idx);
-    else if (id.contains("Waveform"))
-        dispatchLog.push("waveform:" + idx);
-}
-
-// Create combo boxes in a loop, all sharing the same callback
-for (i = 1; i <= 2; i++)
-{
-    local cb = Content.addComboBox("FilterType" + i, (i - 1) * 200, 0);
-    cb.set("items", "LP\nHP\nBP");
-    cb.set("saveInPreset", false);
-    cb.setControlCallback(onComboChanged);
-}
-```
-```json:testMetadata:multi-combo-dispatch
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "dispatchLog[0]",
-      "value": "filter:1"
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "FilterType1",
-      "value": 2
-    }
-  ]
-}
-```

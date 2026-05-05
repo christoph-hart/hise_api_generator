@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Evict oldest entry when a stack reaches capacity
 // Context: A voice visualization keeps a fixed-size stack of active
 // notes. When the stack is full, find the oldest entry and remove
 // it by index before inserting the new one.

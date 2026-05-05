@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: ignoreEvent flag does not corrupt event data or timestamp
 const var mh = Engine.createMessageHolder();
 
 mh.setType(mh.NoteOn);

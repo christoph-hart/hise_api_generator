@@ -510,45 +510,7 @@ Sets a custom control callback for this slider.
 - `$API.ScriptSlider.changed$`
 
 **Example:**
-```javascript:slider-control-callback
-// Title: Custom inline control callback for a slider
-const var Slider1 = Content.addKnob("Slider1", 0, 0);
-reg lastControlValue = -1.0;
-reg lastControlId = "";
 
-inline function onSliderControl(component, value)
-{
-    lastControlId = component.getId();
-    lastControlValue = value;
-    Console.print(component.getId() + ": " + value);
-}
-
-Slider1.setControlCallback(onSliderControl);
-```
-```json:testMetadata:slider-control-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "lastControlId",
-      "value": "Slider1"
-    },
-    {
-      "type": "REPL",
-      "expression": "lastControlValue",
-      "value": 0.25
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "Slider1",
-      "value": 0.25
-    }
-  ]
-}
-```
 
 ---
 
@@ -673,29 +635,7 @@ Sets the midpoint source used for skew mapping. Accepts a numeric midpoint, a nu
 - Related: set("middlePosition", value)
 
 **Example:**
-```javascript:slider-midpoint-numeric-and-disabled
-// Title: Use numeric and explicit disabled midpoint routes
-const var Slider1 = Content.addKnob("Slider1", 0, 0);
 
-Slider1.setRange(-48.0, 0.0, 0.1);
-Slider1.setMidPoint(-12.0);      // Numeric midpoint route
-Slider1.setMidPoint("disabled"); // Explicit no-skew route
-
-Slider1.setRange(0.0, 10.0, 0.1);
-Slider1.setMidPoint("1.5");     // Numeric string route
-```
-```json:testMetadata:slider-midpoint-numeric-and-disabled
-{
-  "testable": true,
-  "verifyType": "REPL",
-  "verifyChecks": [
-    {
-      "expression": "Content.getComponent(\"Slider1\").get(\"middlePosition\")",
-      "value": "1.5"
-    }
-  ]
-}
-```
 
 **Cross References:**
 - `$API.ScriptSlider.setRange$`

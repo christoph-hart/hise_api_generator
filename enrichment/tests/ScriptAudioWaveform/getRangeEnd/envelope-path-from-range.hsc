@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Convert envelope times to normalized path coordinates
 // Context: When overlaying an AHDR envelope shape on a waveform display,
 // the total sample count from getRangeEnd() converts millisecond-based
 // envelope parameters into normalized (0-1) path coordinates that align

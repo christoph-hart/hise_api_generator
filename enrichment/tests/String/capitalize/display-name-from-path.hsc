@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Build a display name from the tail of a file path
 // Context: After stripping a common prefix with substring, capitalize
 // the remaining portion for use as a user-facing label.
 

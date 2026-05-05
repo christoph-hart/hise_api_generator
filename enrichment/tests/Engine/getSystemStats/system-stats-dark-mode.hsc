@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Adapt UI theme based on OS dark mode setting
 var stats = Engine.getSystemStats();
 var useDarkTheme = stats.isDarkMode;
 Console.print("Dark mode: " + useDarkTheme);

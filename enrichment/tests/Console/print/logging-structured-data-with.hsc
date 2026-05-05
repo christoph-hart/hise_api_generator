@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Logging structured data with trace()
 // Context: For arrays and objects, Console.print shows a memory address
 // unless you wrap the value in trace() to get readable JSON output.
 

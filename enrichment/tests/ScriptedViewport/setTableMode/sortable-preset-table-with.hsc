@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Sortable preset table with visible column headers
 // Context: A preset browser where users click column headers to sort by
 //          name, category, or BPM. The header row needs a visible height
 //          for the sort indicator to be meaningful.

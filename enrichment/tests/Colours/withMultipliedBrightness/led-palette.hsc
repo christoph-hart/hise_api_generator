@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Pre-computing LED palette variants at init time
 // Context: Level meters and status LEDs typically need a dim "off" state
 // and a bright "on" state derived from the same base colour. Computing
 // these once at init and storing as const var avoids per-frame

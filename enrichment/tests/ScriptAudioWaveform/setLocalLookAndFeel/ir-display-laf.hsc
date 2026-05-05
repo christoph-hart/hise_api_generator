@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: IR reverb waveform with vertically-scaled rendering
 // Context: For impulse response displays, scaleVertically normalizes the
 // visual amplitude so quiet IRs are still clearly visible. A custom
 // background draws placeholder text when no IR is loaded.

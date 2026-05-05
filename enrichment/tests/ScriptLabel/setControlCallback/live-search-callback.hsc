@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Live search field with per-key updates
 // Context: Use updateEachKey so the callback runs while typing
 
 const var searchLabel = Content.addLabel("SearchField", 12, 10);

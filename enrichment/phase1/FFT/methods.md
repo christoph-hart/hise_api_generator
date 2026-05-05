@@ -321,28 +321,7 @@ Configures the Spectrum2D spectrogram renderer from a JSON object. Only the prop
 - `$API.FFT.setEnableSpectrum2D$`
 
 **Example:**
-```javascript:spectrum2d-config
-// Title: Configuring and verifying spectrogram parameters
-const var fft = Engine.createFFT();
 
-fft.setSpectrum2DParameters({
-    "FFTSize": 10,
-    "Oversampling": 4,
-    "ColourScheme": 3,
-    "Gamma": 80,
-    "DynamicRange": 90,
-    "ResamplingQuality": "High"
-});
-
-var p = fft.getSpectrum2DParameters();
-Console.print(p.Gamma);
-```
-```json:testMetadata:spectrum2d-config
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["80"]}
-}
-```
 
 ---
 

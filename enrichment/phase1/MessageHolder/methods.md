@@ -230,28 +230,7 @@ None.
 - `$API.Message.store$`
 
 **Example:**
-```javascript:clone-independent-copy
-// Title: Cloning a MessageHolder for independent modification
-const var mh = Engine.createMessageHolder();
-mh.setType(mh.NoteOn);
-mh.setNoteNumber(60);
-mh.setVelocity(100);
-mh.setChannel(1);
 
-var copy = mh.clone();
-copy.setNoteNumber(72);
-
-Console.print(mh.getNoteNumber());
-Console.print(copy.getNoteNumber());
-```
-```json:testMetadata:clone-independent-copy
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["60", "72"]}
-  ]
-}
-```
 
 ---
 
@@ -277,24 +256,7 @@ None.
 - `$API.Console.print$`
 
 **Example:**
-```javascript:dump-debug-output
-// Title: Inspecting a MessageHolder with dump()
-const var mh = Engine.createMessageHolder();
-mh.setType(mh.NoteOn);
-mh.setNoteNumber(64);
-mh.setVelocity(80);
-mh.setChannel(1);
 
-Console.print(mh.dump());
-```
-```json:testMetadata:dump-debug-output
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["Type: NoteOn, Channel: 1, Number: 64, Value: 80, EventId: 0, Timestamp: 0, "]}
-  ]
-}
-```
 
 ---
 
@@ -472,26 +434,7 @@ MessageHolder performs no event-type guard. Calling this on a NoteOn event will 
 - `$API.MessageHolder.setType$`
 
 **Example:**
-```javascript:set-controller-number-type-coercion
-// Title: Constructing a pitch bend event via virtual CC number
-const var mh = Engine.createMessageHolder();
-mh.setType(mh.Controller);
-mh.setChannel(1);
 
-// Setting CC number 128 converts the event type to PitchBend
-mh.setControllerNumber(128);
-mh.setControllerValue(8192);
-
-Console.print(mh.dump());
-```
-```json:testMetadata:set-controller-number-type-coercion
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["Type: PitchBend, Channel: 1, Value: 8192, Timestamp: 0, "]}
-  ]
-}
-```
 
 ---
 
@@ -712,32 +655,7 @@ None.
 - `$API.Message.ignoreEvent$`
 
 **Example:**
-```javascript:ignore-and-reinject
-// Title: ignoreEvent flag does not corrupt event data or timestamp
-const var mh = Engine.createMessageHolder();
 
-mh.setType(mh.NoteOn);
-mh.setNoteNumber(60);
-mh.setVelocity(100);
-mh.setChannel(1);
-mh.setTimestamp(512);
-
-// Setting and clearing the ignored flag must not alter the timestamp
-// (the flag uses reserved bits in the timestamp field)
-mh.ignoreEvent(true);
-Console.print(mh.getTimestamp()); // 512 -- flag bits don't bleed through
-
-mh.ignoreEvent(false);
-Console.print(mh.getTimestamp()); // 512 -- still intact after clearing
-```
-```json:testMetadata:ignore-and-reinject
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["512", "512"]}
-  ]
-}
-```
 
 ---
 
@@ -961,33 +879,7 @@ None.
 - `$API.Synth.addMessageFromHolder$`
 
 **Example:**
-```javascript:set-timestamp-event-sequence
-// Title: Constructing a timed note sequence with explicit timestamps
-const var mh1 = Engine.createMessageHolder();
-mh1.setType(mh1.NoteOn);
-mh1.setNoteNumber(60);
-mh1.setVelocity(100);
-mh1.setChannel(1);
-mh1.setTimestamp(0);
 
-const var mh2 = Engine.createMessageHolder();
-mh2.setType(mh2.NoteOn);
-mh2.setNoteNumber(64);
-mh2.setVelocity(80);
-mh2.setChannel(1);
-mh2.setTimestamp(44100);
-
-Console.print(mh1.getTimestamp());
-Console.print(mh2.getTimestamp());
-```
-```json:testMetadata:set-timestamp-event-sequence
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["0", "44100"]}
-  ]
-}
-```
 
 ---
 
@@ -1072,25 +964,7 @@ None.
 - `$API.Synth.addMessageFromHolder$`
 
 **Example:**
-```javascript:set-type-construct-cc
-// Title: Constructing a CC event from scratch
-const var mh = Engine.createMessageHolder();
-mh.setType(mh.Controller);
-mh.setChannel(1);
-mh.setControllerNumber(1);
-mh.setControllerValue(64);
 
-Console.print(mh.dump());
-Console.print(mh.isController());
-```
-```json:testMetadata:set-type-construct-cc
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["Type: Controller, Channel: 1, Number: 1, Value: 64, EventId: 0, Timestamp: 0, ", "1"]}
-  ]
-}
-```
 
 ---
 

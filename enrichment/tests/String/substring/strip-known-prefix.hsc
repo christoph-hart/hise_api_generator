@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Strip a known prefix from a module attribute name
 // Context: Module attributes often have a common prefix (e.g., "Master"
 // or "SendFx"). Use substring to remove the prefix before further
 // processing like splitCamelCase.

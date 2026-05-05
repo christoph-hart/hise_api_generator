@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Constructing a pitch bend event via virtual CC number
 const var mh = Engine.createMessageHolder();
 mh.setType(mh.Controller);
 mh.setChannel(1);

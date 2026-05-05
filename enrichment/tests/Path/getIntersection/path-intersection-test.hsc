@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Finding where a horizontal line enters a circular path
 const var p = Content.createPath();
 p.addEllipse([0, 0, 100, 100]);
 

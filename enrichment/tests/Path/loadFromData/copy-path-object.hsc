@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Copying path geometry from another Path object
 // Context: loadFromData also accepts a Path object directly,
 // which copies the geometry from the source path.
 

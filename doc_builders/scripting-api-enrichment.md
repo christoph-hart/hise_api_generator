@@ -113,7 +113,7 @@ tools/api generator/
 │   │   │   ├── Broadcaster.md
 │   │   │   └── ...
 │   │   ├── guidelines/                       # Style guides for agents
-│   │   │   ├── test_metadata.md
+│   │   │   ├── hsc-test-format.md
 │   │   │   ├── userdocs_style.md
 │   │   │   ├── diagram_creation.md
 │   │   │   ├── hisescript_example_rules.md
@@ -737,9 +737,9 @@ Phase 2 has two stages: an external extraction pipeline produces real-world exam
 
 After Phase 1 completes, check whether `enrichment/phase2/ClassName/` exists for every class in the current batch. If any directory is missing, **stop and wait** - the user will launch the extraction agent separately. Do not proceed with any class until all directories exist. Directory existence (even empty) is the completion signal.
 
-### Test Metadata Enrichment
+### Test File Authoring
 
-Once Phase 2 files exist, add slugs, test metadata blocks, setup scripts, and test-only markers to the extracted examples, then validate with `snippet_validator.py`. Do not rewrite examples beyond what's needed for testability, and do not add new examples.
+Once Phase 2 files exist, convert testable examples to `.hsc` test files in `enrichment/tests/{Class}/{method}/{slug}.hsc`. Each `.hsc` includes the canonical example body wrapped in setup/test region sentinels and asserts via `/expect`. Run with `hise-cli --run` against a live HISE instance. Non-testable examples stay as ```` ```javascript:slug ```` blocks in the .md sources. See `style-guide/scripting-api/hsc-test-format.md` for the full format.
 
 ### Source
 
@@ -960,11 +960,14 @@ Output: `enrichment/output/preview/`
 
 After generating all preview files, the command copies `.md` files to `enrichment/output/website/` and runs `postprocess_md.py` on them to convert plain markdown patterns into MDC (Markdown Components) format for the Nuxt.js documentation site. Transformations include converting method headings, parameter tables, warning blockquotes, see-also links, and common mistakes into their corresponding `::component` syntax.
 
-### snippet_validator.py
+### Test runners (`run_all_tests.py`, `rerun_failing.py`)
 
 ```
-python snippet_validator.py --validate --source auto --class ClassName --launch
+python run_all_tests.py        # run every .hsc in enrichment/tests/
+python rerun_failing.py         # re-run only the tests marked failing in the previous report
 ```
 
-Validates code examples by executing them in HISE. Filters by `--source` (auto/project/manual/all) and `--class`. The `--launch` flag auto-starts HISE Debug if not already running. Results are written to `enrichment/output/test_results.json` and incorporated into the merged JSON via `api_enrich.py merge`.
+Both runners execute `hise-cli --run` against a live HISE instance (start it via `hise-cli -hise launch` or open the desktop app). Results are written to `enrichment/output/hsc_test_results.json`. The `rerun_failing.py` script also accepts substring filters as CLI args to scope the re-run to specific tests.
+
+The merged JSON pulls `.hsc` content directly from `enrichment/tests/{Class}/{method}/*.hsc` during `api_enrich.py merge` — no sidecar JSON is consulted. The `.hsc` file's existence in `tests/` is the validation signal.
 

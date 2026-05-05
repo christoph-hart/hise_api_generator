@@ -19,6 +19,7 @@ add SlotFX as "EffectSlot4"
 /script
 /callback onInit
 // end setup
+// Title: Clearing an FX slot in a user-selectable effect rack
 // Context: When the user selects "Off" or closes an effect panel,
 // the slot needs to return to unity-gain passthrough.
 

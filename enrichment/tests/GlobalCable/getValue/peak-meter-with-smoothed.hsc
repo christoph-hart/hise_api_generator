@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Peak meter with smoothed cable value
 // Context: A DSP network writes peak levels to a cable. The script
 // smooths the value for visually stable meter decay.
 

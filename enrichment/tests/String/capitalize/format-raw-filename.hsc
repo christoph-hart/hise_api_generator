@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Format raw file names into title-case display labels
 // Context: Audio file names often use underscores and lowercase.
 // Replace separators with spaces, then capitalize for display.
 

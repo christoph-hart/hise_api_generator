@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Downsample a buffer with linear interpolation
 const var b = Buffer.create(16);
 b[4] = 1.0;
 const var half = b.resample(2.0, "Linear", false);

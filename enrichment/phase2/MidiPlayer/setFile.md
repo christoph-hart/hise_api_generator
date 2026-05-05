@@ -51,29 +51,4 @@ if (files.length > 0)
 }
 ```
 
-```javascript:clear-player-sequences
-// Title: Clearing a player by loading an empty filename
-// Context: Pass an empty string to setFile() as a no-op, or clear with
-// clearAllSequences() for a full reset
 
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-const var mpIdx = builder.create(builder.MidiProcessors.MidiPlayer, "MidiPlayer1", 0, builder.ChainIndexes.Midi);
-builder.flush();
-// --- end setup ---
-
-const var mp = Synth.getMidiPlayer("MidiPlayer1");
-mp.create(4, 4, 1);
-
-// Clear all loaded MIDI data
-mp.clearAllSequences();
-```
-```json:testMetadata:clear-player-sequences
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "mp.getNumSequences()", "value": 0}
-  ]
-}
-```

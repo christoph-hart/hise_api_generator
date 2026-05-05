@@ -20,47 +20,48 @@ Directory existence is the signal. If the directory exists (even empty), extract
 
 ---
 
-## Test Metadata Enrichment
+## Test File Authoring
 
-Once Phase 2 files exist, the pipeline agent enriches examples with test metadata so they can be validated. This is a **combined pass covering both Phase 1 and Phase 2 examples** for the target class -- not just Phase 2 files. Phase 1 examples in `phase1/ClassName/methods.md` and Phase 2 examples in `phase2/ClassName/*.md` all receive slugs, testMetadata blocks, and setup/test-only markers in one go, then are validated together.
+Once Phase 2 files exist, the pipeline agent converts testable examples to `.hsc` test files. This is a **combined pass covering both Phase 1 and Phase 2 examples** for the target class — not just Phase 2 files. Phase 1 examples in `phase1/ClassName/methods.md` and Phase 2 examples in `phase2/ClassName/*.md` are all candidates.
 
-Follow `style-guide/scripting-api/test-metadata.md` for the full schema, verification types, setup patterns, and CLI reference.
+Follow `style-guide/scripting-api/hsc-test-format.md` for the full file format, region sentinels, assertion verbs, and worked examples.
 
 ### Per-method workflow
 
 For each method file in `enrichment/phase2/ClassName/`:
 
-1. **Skip class-level Readme.md** - Project Context and Common Mistakes do not need test metadata.
+1. **Skip class-level Readme.md** — Project Context and Common Mistakes are not example-bearing.
 
-2. **Add slugs to code fences.** Change bare ```` ```javascript ```` to ```` ```javascript:slug-name ````. Slugs are kebab-case, unique per method within this phase. Derive from the example's title or purpose (e.g., `track-velocity-per-note`, `channel-routing-table`).
-
-3. **Analyze each example for testability.** Ask: can this run standalone in HISE's onInit without external resources?
+2. **Analyze each example for testability.** Ask: can this run standalone against a HISE playground without external resources?
    - **Testable:** Self-contained, deterministic, no external files/MIDI/hardware.
-   - **Not testable:** Requires audio files, DAW interaction, MIDI controllers, or project-specific resources. Mark `testable: false` with a `skipReason`.
+   - **Not testable:** Requires audio files, DAW interaction, MIDI controllers, or project-specific resources. Leave it as a ```` ```javascript:slug ```` block in the .md source.
 
-4. **Complete incomplete examples.** Extraction output sometimes contains fragments (undefined variables, missing `const var` declarations, referencing objects that don't exist). Make the example runnable:
-   - Add inline setup blocks (`// --- setup ---` / `// --- end setup ---`) for UI components or modules the example references.
-   - Declare missing variables with realistic values.
-   - If the example cannot be completed without destroying its purpose, mark `testable: false`.
+3. **For testable examples**, create `enrichment/tests/{Class}/{method}/{slug}.hsc`:
+   - Slug = kebab-case, unique within method (e.g. `track-velocity-per-note`).
+   - Header block with health check + `playground open` + `/builder reset` (boilerplate, identical for every test).
+   - Setup region: `/builder add` and/or `/ui add` lines for required modules and components, OR inline HiseScript when the setup pattern can't be expressed in mode commands (e.g. loops with computed names).
+   - Example region: the canonical HiseScript code, verbatim from the .md source — visible on the website.
+   - Test region: any test-only invocation (callback trigger, test-side mutation), followed by `/compile` and `/expect` / `/expect-logs` / `/expect-compile throws` assertions.
+   - For UI control callbacks, use `/ui set Name.value <v>` in the test region to fire the callback via the REST API path (script-side `setValue` doesn't trigger callbacks during onInit).
+   - For async behavior, insert `/wait <ms>ms` before the relevant assertion.
 
-5. **Add test-only blocks** where needed. If the example registers a callback that needs a programmatic trigger, add `// --- test-only ---` / `// --- end test-only ---` markers with the trigger code. See `test_metadata.md` for the trigger table (transport, broadcasters, control callbacks, cable callbacks, etc.).
-
-6. **Write testMetadata blocks.** Add a ```` ```json:testMetadata:slug-name ```` block after each example with:
-   - `testable`: boolean
-   - `skipReason`: string (when not testable)
-   - `verifyScript`: verification steps (log-output, REPL, or expect-error)
-
-7. **Run validation** (covers both Phase 1 and Phase 2 examples):
+4. **Run the test:**
     ```bash
-    python snippet_validator.py --validate --source all --class ClassName --launch
+    hise-cli --run ./enrichment/tests/{Class}/{method}/{slug}.hsc --verbose
     ```
-    Fix failing examples and re-validate until all testable examples pass.
+    Iterate until all assertions pass.
+
+5. **Run the full test suite** before committing:
+    ```bash
+    python run_all_tests.py
+    ```
 
 ### What NOT to change
 
-- Do not rewrite the example code beyond what's needed for testability. The examples were extracted from real projects - preserve their patterns, variable names, and structure.
+- Do not rewrite the example code beyond what's needed for testability. The examples were extracted from real projects — preserve their patterns, variable names, and structure.
 - Do not add examples. Phase 2 content comes from the extraction agent only.
 - Do not modify the class-level Readme.md (Project Context, Common Mistakes).
+- Do not duplicate testable examples — when a `.hsc` file exists, the corresponding `javascript:slug` block has already been stripped from the .md source. The `.hsc` is the single source of truth.
 
 ---
 
@@ -77,7 +78,7 @@ One file per method. Only methods that have project examples need files here - t
 
 ## Method File Format
 
-Method files contain examples, optional pitfalls, and optional cross-references. They do NOT contain structured override fields (signature, parameters, description, callScope).
+Method files contain examples (non-testable only — testable ones live in `enrichment/tests/`), optional pitfalls, and optional cross-references. They do NOT contain structured override fields (signature, parameters, description, callScope).
 
 ```markdown
 ## methodName
@@ -87,14 +88,10 @@ Method files contain examples, optional pitfalls, and optional cross-references.
 ```javascript:slug-name
 // Title: What this example demonstrates
 // Context: When/why you'd use this pattern
+//
+// Non-testable: requires <reason — audio file / hardware / DAW>
 const var obj = Engine.createSomething();
 obj.methodName(args);
-```
-```json:testMetadata:slug-name
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "obj.value", "value": 42}
-}
 ```
 
 **Pitfalls:**
@@ -104,7 +101,7 @@ obj.methodName(args);
 - `$API.OtherClass.relatedMethod$`
 ```
 
-All sections are optional except `**Examples:**`.
+All sections are optional except `**Examples:**` (when non-testable examples exist). Testable examples live in `enrichment/tests/{Class}/{method}/*.hsc` — they are auto-discovered by `api_enrich.py merge` and rendered as ```` ```hsc ```` fenced blocks alongside the .md `javascript:slug` blocks.
 
 ---
 
@@ -169,10 +166,12 @@ The `projectContext` field is Phase 2-exclusive. It does not exist in Phase 1 an
 
 ---
 
-## Test Metadata Reference
+## Test Format Reference
 
-See `style-guide/scripting-api/test-metadata.md` for:
-- Full testMetadata schema (testable, skipReason, setupScript, verifyScript)
-- Verification types (log-output, REPL, expect-error)
-- Setup patterns (Builder API, saveInPreset, callback triggering)
-- CLI commands (coverage, extract, validate, add-metadata)
+See `style-guide/scripting-api/hsc-test-format.md` for:
+- When to test (testable vs non-testable distinction, callback testability table)
+- `.hsc` file structure (region sentinels, header boilerplate)
+- Setup translation (`/ui add`, `/builder add`, fallback to inline HiseScript)
+- Assertion verbs (`/expect ... is`, `contains`, `logs`, `throws`, `/expect-compile`, `/expect-logs`)
+- Trigger patterns (`/ui set`, `Console.testCallback`, transport handler)
+- Verification strategy (integration tests, configuration chains, async + audio caveats)

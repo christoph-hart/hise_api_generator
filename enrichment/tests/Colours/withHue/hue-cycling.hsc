@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Generating unique colours from an index by cycling the hue
 // Context: Assigning distinct colours to items in a list (channels,
 // categories, notes) by distributing hue values evenly around the
 // colour wheel. Start from any base colour -- only its saturation

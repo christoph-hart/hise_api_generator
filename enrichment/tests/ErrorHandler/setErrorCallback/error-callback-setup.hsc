@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Registering a custom error callback
 const var eh = Engine.createErrorHandler();
 
 reg lastState = -1;

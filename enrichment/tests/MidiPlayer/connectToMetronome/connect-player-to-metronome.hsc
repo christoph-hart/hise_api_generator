@@ -17,6 +17,7 @@ add MidiMetronome as "Metronome1"
 /script
 /callback onInit
 // end setup
+// Title: Connecting the most musically relevant player to the metronome
 // Context: In a multi-channel sequencer, connect the metronome to whichever
 // player best represents the current musical grid (e.g. the one with the
 // most steps at the standard speed)

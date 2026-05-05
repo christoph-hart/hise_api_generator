@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Forwarding slider values to DSP network via cable
 // Set normalized cable value and verify
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("TestCable");

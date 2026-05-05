@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Enable only MIDI channel 1, disable all others
 Settings.toggleMidiChannel(0, false);
 Settings.toggleMidiChannel(1, true);
 var ch1 = Settings.isMidiChannelEnabled(1);

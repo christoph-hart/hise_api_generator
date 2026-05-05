@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Clear all macro connections on init
 // Context: When using a custom preset model, clear macro state at
 // startup so the preset loader starts from a known empty state
 

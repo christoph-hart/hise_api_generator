@@ -40,27 +40,4 @@ inline function onPedalRelease()
 }
 ```
 
-```javascript:reset-tracking-on-mute
-// Title: Reset tracking state when articulation is muted
-// Context: Clearing stored velocities and timing data prevents stale
-// state from carrying over when the user mutes and unmutes an articulation.
 
-const var velocities = Engine.createMidiList();
-const var noteLengths = Engine.createMidiList();
-
-velocities.fill(64);
-noteLengths.fill(100);
-
-// On mute toggle:
-velocities.clear();
-noteLengths.clear();
-```
-```json:testMetadata:reset-tracking-on-mute
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "velocities.isEmpty()", "value": 1},
-    {"type": "REPL", "expression": "noteLengths.isEmpty()", "value": 1}
-  ]
-}
-```

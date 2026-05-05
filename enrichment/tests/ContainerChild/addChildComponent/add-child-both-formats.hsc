@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Adding child components with bounds array and individual properties
 const var dc = Content.addDynamicContainer("DC1", 0, 0);
 const var cc = dc.setData({"id": "Root", "type": "Container", "width": 500, "height": 300});
 

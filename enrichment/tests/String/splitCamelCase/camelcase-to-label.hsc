@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Convert internal camelCase IDs to human-readable labels
 // Context: NKS integration and display labels need space-separated
 // words from camelCase module attribute names.
 

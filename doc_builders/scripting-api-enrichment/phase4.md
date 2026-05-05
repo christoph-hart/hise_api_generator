@@ -277,9 +277,11 @@ The agent runs once per class. **Diagrams are rendered first**, then userDocs ar
 2. Extract the target class entry
 3. **Validate examples** (pre-authoring quality gate):
    ```bash
-   python snippet_validator.py --validate --source all --class ClassName
+   python rerun_failing.py {Class}/   # re-run any previously-failing .hsc tests for this class
+   # or, for a fresh check across the full suite:
+   python run_all_tests.py
    ```
-   Fix any failing examples before proceeding. Do not write user-facing prose about examples that fail validation.
+   Inspect any failures in `enrichment/output/hsc_test_results.json`. Fix the corresponding `.hsc` files in `enrichment/tests/{Class}/` before proceeding. Do not write user-facing prose about examples that fail validation.
 4. **Review injected diary notes** (if present):
    - Read and extract unique insights not in the JSON (integration patterns, use cases, workflow sequences, domain conventions)
    - Prefer diary framing for purpose and use cases over the C++ analysis

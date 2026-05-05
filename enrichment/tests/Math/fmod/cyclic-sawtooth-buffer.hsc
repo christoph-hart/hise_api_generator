@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Generating a cyclic sawtooth waveform for a buffer
 // Context: Math.fmod wraps a linearly increasing value into a
 // repeating 0-1 cycle, useful for generating waveforms or
 // cycling through animation frames.

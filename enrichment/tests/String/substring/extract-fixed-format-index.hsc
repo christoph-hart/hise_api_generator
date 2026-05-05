@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Extract a channel index from a fixed-format component ID
 // Context: When component IDs follow a strict naming format like
 // "MixerStrip01", substring extracts a specific character range
 // to parse as a number.

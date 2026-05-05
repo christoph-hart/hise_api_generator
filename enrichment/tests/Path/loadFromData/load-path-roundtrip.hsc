@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Saving and restoring path data via base64
 const var p = Content.createPath();
 p.startNewSubPath(0.0, 0.0);
 p.lineTo(1.0, 0.0);

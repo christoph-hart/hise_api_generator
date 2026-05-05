@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Batch LAF assignment using regex pattern matching
 // Context: When multiple components share a naming convention, use
 // getAllComponents to retrieve them all and assign a shared LAF or callback.
 

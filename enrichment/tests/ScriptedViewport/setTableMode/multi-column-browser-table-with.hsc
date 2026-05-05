@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Multi-column browser table with sorting and selection
 // Context: A sortable data browser that supports programmatic cell selection
 //          and touch-friendly scrolling. HeaderHeight: 0 hides the column
 //          labels when the context makes them unnecessary.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Link two table data objects to share the same curve
 const var td1 = Engine.createAndRegisterTableData(0);
 const var td2 = Engine.createAndRegisterTableData(1);
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Validate email input before enabling a submit button
 // Context: Client-side email validation for a contact or feedback form.
 // isEmailAddress() runs a quick structural check (no server round-trip),
 // making it suitable for real-time input validation.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Restore a custom MIDI mapping from user preset data
 // Context: When loading a user preset, the serialized MidiList is
 // decoded and applied to restore the user's custom MIDI mapping.
 

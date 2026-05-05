@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Closed segments for per-section envelope highlighting
 // Context: Envelope editors create separate closed sub-paths for
 // each envelope segment (attack, decay, sustain, release) so that
 // individual segments can be highlighted on hover by filling them

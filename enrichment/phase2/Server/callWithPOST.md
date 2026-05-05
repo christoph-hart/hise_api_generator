@@ -2,36 +2,6 @@
 
 **Examples:**
 
-```javascript:post-with-error-handling
-// Title: POST to a protected endpoint with multi-status error handling
-// Context: Demonstrates the standard callWithPOST pattern with proper
-// multi-status error handling. The forum API rejects unauthenticated
-// POST requests with a 403, which exercises the error path.
-
-Server.setBaseURL("https://forum.hise.audio");
-
-reg postResult = "pending";
-
-Server.callWithPOST("api/v3/topics", {"title": "test"}, function(status, response)
-{
-    if (status == Server.StatusOK)
-        postResult = "success";
-    else if (status == Server.StatusAuthenticationFail)
-        postResult = "auth-required";
-    else if (status == Server.StatusNoConnection)
-        postResult = "no-connection";
-    else
-        postResult = "error-" + status;
-});
-```
-```json:testMetadata:post-with-error-handling
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 1000, "expression": "postResult", "value": "auth-required"}
-  ]
-}
-```
 
 ```javascript:post-crash-report
 // Title: Submit a crash report with device information

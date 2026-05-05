@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Mapping sorted display index back to data for favorite toggle
 // Context: When the table is sorted by a column header, the display row
 //          indices no longer match the original data array. Use
 //          getOriginalRowIndex() to find the correct position in the

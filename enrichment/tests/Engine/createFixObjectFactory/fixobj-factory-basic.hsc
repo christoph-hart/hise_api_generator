@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Creating and using a fixed-layout object factory
 const var pointFactory = Engine.createFixObjectFactory({
     "x": 0.0,
     "y": 0.0,

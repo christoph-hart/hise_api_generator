@@ -18,44 +18,5 @@ Note that there is not a data queue for the sender side of this protocol, which 
 
 Also it will skip its own callbacks, so if you register a callback using [Global Cable.registerDataCallback()](/scripting/scripting-api/globalcable#registerdatacallback), it will not be executed:
 
-```javascript:senddata-2
-const var rm = Engine.getGlobalRoutingManager();
-
-// Create a instance of a cable
-const var c1 = rm.getCable("myDataCable");
-
-// Create a duplicate instance
-const var c2 = rm.getCable("myDataCable");
-
-// Register two callbacks to both objects
-c1.registerDataCallback(x => Console.print("C1 executed: " + trace(x)));
-c2.registerDataCallback(x => Console.print("C2 executed: " + trace(x)));
-
-Console.print("Send through cable 1");
-c1.sendData("some data");
-
-Console.print("Send through cable 2");
-c2.sendData("some data");
-
-// Output:
-// Interface: Send through cable 1
-// Interface: C2 executed: "some data"
-// Interface: Send through cable 2
-// Interface: C1 executed: "some data"
-```
-```json:testMetadata:senddata-2
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": [
-      "Send through cable 1",
-      "C2 executed: \"some data\"",
-      "Send through cable 2",
-      "C1 executed: \"some data\""
-    ]
-  }
-}
-```
 
 As you can see if you send a value through the first cable object it will skip the C1 callback and vice versa. This behaviour is also the same on the C++ side.

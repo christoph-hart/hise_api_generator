@@ -16,6 +16,7 @@ add StreamingSampler as "Sampler1"
 /script
 /callback onInit
 // end setup
+// Title: Monitoring samplemap load events on a sampler
 const var bc = Engine.createBroadcaster({
     "id": "SampleMapWatch",
     "args": ["eventType", "samplerId", "data"]

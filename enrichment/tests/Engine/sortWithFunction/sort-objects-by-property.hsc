@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Sort an array of objects by a numeric property
 var items = [
     {"name": "C", "value": 3},
     {"name": "A", "value": 1},

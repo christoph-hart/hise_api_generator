@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Normalize path separators for cross-platform display
 // Context: File paths may use backslashes on Windows. Replace them
 // with forward slashes for consistent display and parsing.
 

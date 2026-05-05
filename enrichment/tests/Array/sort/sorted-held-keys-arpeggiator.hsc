@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Maintain a sorted held-keys array for an arpeggiator
 // Context: An arpeggiator tracks held MIDI notes in two arrays:
 // one in input order (for "as played" mode) and one always sorted
 // (for "up/down" mode). Calling sort() after each push keeps the

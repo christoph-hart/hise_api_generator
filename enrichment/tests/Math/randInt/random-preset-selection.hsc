@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Random preset selection with duplicate avoidance
 // Context: Selecting a random preset from a list while avoiding
 // the currently loaded preset requires a retry loop.
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Check free disk space on the samples volume
 var freeBytes = FileSystem.getBytesFreeOnVolume(FileSystem.Samples);
 var freeText = FileSystem.descriptionOfSizeInBytes(freeBytes);
 

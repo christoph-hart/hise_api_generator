@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bridge transport state to a Broadcaster for multi-file reactivity
 const var th0 = Engine.createTransportHandler();
 th0.setSyncMode(th0.InternalOnly);
 th0.stopInternalClock(0);

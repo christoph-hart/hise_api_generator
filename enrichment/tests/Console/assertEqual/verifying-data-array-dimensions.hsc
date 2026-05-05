@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Verifying data array dimensions
 // Context: When a multi-dimensional data structure must have consistent
 // sizes, assertEqual catches mismatches before they cause index errors.
 

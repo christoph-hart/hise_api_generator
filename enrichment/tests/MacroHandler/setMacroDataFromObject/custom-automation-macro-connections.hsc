@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Building macro connections with custom automation targets
 // Context: Connect macro slots to custom automation parameters defined
 // through UserPresetHandler.setCustomAutomation()
 

@@ -14,34 +14,7 @@ Creates a new ScriptPanel as a child of this panel and returns it. The child pan
 - `$API.ScriptPanel.removeFromParent$`
 
 **Example:**
-```javascript:child-panel-setup
-// Title: Creating and configuring a child panel
-const var pnl = Content.addPanel("ParentPanel", 0, 0);
-pnl.set("width", 300);
-pnl.set("height", 200);
 
-var child = pnl.addChildPanel();
-child.set("width", 100);
-child.set("height", 50);
-child.set("x", 10);
-child.set("y", 10);
-
-child.setPaintRoutine(function(g)
-{
-    g.fillAll(0xFF444444);
-});
-
-child.repaint();
-```
-```json:testMetadata:child-panel-setup
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "pnl.getChildPanelList().length", "value": 1},
-    {"type": "REPL", "expression": "child.getWidth()", "value": 100}
-  ]
-}
-```
 
 ---
 
@@ -906,51 +879,7 @@ Registers a callback for mouse events on this panel. The `allowCallbacks` proper
 - `$API.ScriptPanel.setMouseCursor$`
 
 **Example:**
-```javascript:mouse-callback-clicks
-// Title: Mouse click handler with visual feedback
-const var pnl = Content.addPanel("ClickPanel", 0, 0);
-pnl.set("width", 200);
-pnl.set("height", 100);
-pnl.set("allowCallbacks", "Clicks Only");
 
-pnl.data.clickCount = 0;
-
-inline function onMouse(event)
-{
-    if (event.clicked)
-    {
-        this.data.clickCount++;
-        this.repaint();
-    }
-};
-
-pnl.setMouseCallback(onMouse);
-
-pnl.setPaintRoutine(function(g)
-{
-    g.fillAll(0xFF333333);
-    g.setColour(0xFFFFFFFF);
-    g.drawAlignedText("Clicks: " + this.data.clickCount, [0, 0, this.getWidth(), this.getHeight()], "centred");
-});
-
-pnl.repaint();
-
-// --- test-only ---
-Console.testCallback(pnl, "setMouseCallback", {
-    "clicked": true, "x": 100, "y": 50,
-    "mouseDownX": 100, "mouseDownY": 50,
-    "mouseUp": false, "doubleClick": false, "rightClick": false
-});
-// --- end test-only ---
-```
-```json:testMetadata:mouse-callback-clicks
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "pnl.data.clickCount", "value": 1}
-  ]
-}
-```
 
 ---
 
@@ -1254,40 +1183,7 @@ Registers a callback function that fires periodically when the timer is active. 
 - `$API.ScriptPanel.repaint$`
 
 **Example:**
-```javascript:timer-callback-counter
-// Title: Timer-driven counter with repaint
-const var pnl = Content.addPanel("TimerPanel", 0, 0);
-pnl.set("width", 200);
-pnl.set("height", 50);
 
-pnl.data.counter = 0;
-
-inline function onTimer()
-{
-    this.data.counter++;
-    this.repaint();
-};
-
-pnl.setTimerCallback(onTimer);
-
-pnl.setPaintRoutine(function(g)
-{
-    g.fillAll(0xFF222222);
-    g.setColour(0xFFFFFFFF);
-    g.drawAlignedText("Count: " + this.data.counter, [0, 0, this.getWidth(), this.getHeight()], "centred");
-});
-
-pnl.startTimer(100);
-pnl.repaint();
-```
-```json:testMetadata:timer-callback-counter
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 500, "expression": "pnl.data.counter > 0", "value": true}
-  ]
-}
-```
 
 ---
 

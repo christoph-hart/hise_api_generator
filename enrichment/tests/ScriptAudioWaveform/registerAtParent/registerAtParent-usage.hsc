@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Register waveform data at parent and get audio file handle
 const var wf = Content.addAudioWaveform("Waveform1", 0, 0);
 const var af = wf.registerAtParent(0);
 // test

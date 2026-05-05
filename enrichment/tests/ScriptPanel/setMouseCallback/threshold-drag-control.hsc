@@ -16,6 +16,7 @@ add ScriptSlider "ThresholdKnob" at 0 0 128 48
 /script
 /callback onInit
 // end setup
+// Title: Interactive threshold control with drag, double-click reset, and hover feedback
 // Context: A display panel where the user drags a vertical line to set a threshold.
 // Demonstrates the full mouse event state machine: click sets initial value,
 // drag updates continuously, double-click resets to default, hover changes cursor.

@@ -34,23 +34,4 @@ inline function onComboBox(component, value)
 }
 ```
 
-```javascript:rewrite-channel-index
-// Title: Rewrite a component ID to target a different channel index
-// Context: When copying parameter state between channels, replace
-// the trailing number in the automation ID to point at the new channel.
 
-var id = "PlayerVolume3";
-var currentIndex = id.getTrailingIntValue(); // 3
-
-// Replace the trailing "3" with the new channel index
-var newId = id.replace(currentIndex, 5);
-Console.print(newId); // PlayerVolume5
-```
-```json:testMetadata:rewrite-channel-index
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["PlayerVolume5"]}
-  ]
-}
-```

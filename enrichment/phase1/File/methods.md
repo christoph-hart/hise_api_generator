@@ -1023,26 +1023,7 @@ Reports a script error for invalid format values with message "Illegal formatTyp
 - `$API.File.getRelativePathFrom$`
 
 **Example:**
-```javascript:file-tostring-formats
-// Title: Extract different path components from a File
-const var dir = FileSystem.getFolder(FileSystem.AudioFiles);
-const var audioFile = dir.getChildFile("recording.wav");
 
-// FullPath is machine-dependent, but other formats are deterministic
-Console.print(audioFile.toString(audioFile.NoExtension));  // recording
-Console.print(audioFile.toString(audioFile.Extension));     // .wav
-Console.print(audioFile.toString(audioFile.Filename));      // recording.wav
-```
-```json:testMetadata:file-tostring-formats
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "audioFile.toString(audioFile.NoExtension)", "value": "recording"},
-    {"type": "REPL", "expression": "audioFile.toString(audioFile.Extension)", "value": ".wav"},
-    {"type": "REPL", "expression": "audioFile.toString(audioFile.Filename)", "value": "recording.wav"}
-  ]
-}
-```
 
 ## writeAsXmlFile
 

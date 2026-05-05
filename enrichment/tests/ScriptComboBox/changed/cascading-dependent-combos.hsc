@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Cascading dependent combo boxes
 // Context: Three combo boxes form a hierarchy: category -> option -> variant.
 // When the category changes, the dependent lists are rebuilt and changed() is called
 // to propagate the selection through the callback chain.

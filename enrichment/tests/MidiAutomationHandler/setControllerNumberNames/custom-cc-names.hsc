@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Customize CC popup with named controllers
 const var mah = Engine.createMidiAutomationHandler();
 
 // Only show CC1 and CC11 in the popup

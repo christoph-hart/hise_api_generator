@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Read-modify-write pattern for transposing notes
 const var __mp = Synth.getMidiPlayer("MidiPlayer1");
 __mp.setUseTimestampInTicks(true);
 __mp.create(4, 4, 1);

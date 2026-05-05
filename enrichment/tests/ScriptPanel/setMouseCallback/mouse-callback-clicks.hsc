@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Mouse click handler with visual feedback
 const var pnl = Content.addPanel("ClickPanel", 0, 0);
 pnl.set("width", 200);
 pnl.set("height", 100);

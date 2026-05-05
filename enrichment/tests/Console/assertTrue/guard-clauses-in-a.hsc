@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Guard clauses in a data-binding utility
 // Context: Validate preconditions at the start of utility functions
 // that access panel data properties. Each assertion targets a specific
 // failure mode that would otherwise produce a cryptic error downstream.

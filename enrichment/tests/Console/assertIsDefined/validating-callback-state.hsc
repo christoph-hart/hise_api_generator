@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Validating callback state
 // Context: Before invoking a stored callback reference, confirm it was
 // actually assigned. A missing callback is a programming error, not
 // a valid state.

@@ -66,27 +66,6 @@ Converts the input value from the local input range to normalised 0..1 using `co
 **DiagramRef:** cable-dispatch
 
 **Example:**
-```javascript:basic
-// Send a frequency value through a cable with a custom range
-const var rm = Engine.getGlobalRoutingManager();
-const var cable = rm.getCable("FreqCable");
-
-cable.setRange(20.0, 20000.0);
-cable.setValue(440.0);
-
-Console.print("Value set: " + cable.getValue());
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": [
-      "Value set: 440.0"
-    ]
-  }
-}
-```
 
 
 ---
@@ -195,28 +174,6 @@ Sets the local input range with a skew factor derived from a mid point. The `mid
 - `$API.GlobalCable.setRangeWithStep$`
 
 **Example:**
-```javascript:basic
-// Set a frequency range with perceptual skew
-const var rm = Engine.getGlobalRoutingManager();
-const var cable = rm.getCable("FreqCable");
-
-// 1000 Hz maps to the midpoint (0.5) of the normalised range
-cable.setRangeWithSkew(20.0, 20000.0, 1000.0);
-cable.setValue(1000.0);
-
-Console.print("Normalized: " + cable.getValueNormalised());
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": [
-      "Normalized: 0.5"
-    ]
-  }
-}
-```
 
 
 ---
@@ -282,47 +239,7 @@ When `synchronous` is `AsyncNotification`, the callback executes asynchronously 
 - **Description:** When synchronous=true, the callback function executes immediately inline on whatever thread called setValue/setValueNormalised (may be audio thread). When synchronous=false, the value is stored atomically via ModValue, and a PooledUIUpdater SimpleTimer polls on the UI thread at the display refresh rate, delivering only the latest value. Intermediate values between timer ticks are dropped.
 
 **Example:**
-```javascript:sync-and-async-callbacks
-// Register both sync and async callbacks
-const var rm = Engine.getGlobalRoutingManager();
-const var cable = rm.getCable("MyCable");
 
-cable.setRange(0.0, 1.0);
-
-// Async callback (safe, runs on UI thread)
-inline function onCableAsync(value)
-{
-    Console.print("Async: " + value);
-};
-
-cable.registerCallback(onCableAsync, AsyncNotification);
-
-// Sync callback (runs on calling thread, must be realtime-safe)
-inline function onCableSync(value)
-{
-    // Only do realtime-safe operations here
-};
-
-cable.registerCallback(onCableSync, SyncNotification);
-
-// --- test-only ---
-reg syncResult = -1.0;
-inline function testSyncCapture(v) { syncResult = v; };
-cable.registerCallback(testSyncCapture, SyncNotification);
-cable.setValue(0.5);
-// --- end test-only ---
-```
-```json:testMetadata:sync-and-async-callbacks
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "expression": "syncResult",
-      "value": 0.5
-    }
-  ]
-}
-```
 
 ---
 
@@ -352,33 +269,7 @@ The callback is always asynchronous (high-priority via `WeakCallbackHolder`). A 
 - `$API.GlobalCable.registerCallback$`
 
 **Example:**
-```javascript:data-callback-json
-// Register a data callback to receive JSON chunks
-const var rm = Engine.getGlobalRoutingManager();
-const var cable = rm.getCable("DataCable");
 
-inline function onDataReceived(data)
-{
-    Console.print("Received note: " + data.noteNumber);
-};
-
-cable.registerDataCallback(onDataReceived);
-
-// --- test-only ---
-// Use a second reference to bypass the recursion guard
-const var triggerCable = rm.getCable("DataCable");
-triggerCable.sendData({"noteNumber": 42});
-// --- end test-only ---
-```
-```json:testMetadata:data-callback-json
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "log-output",
-    "values": ["Received note: 42"]
-  }
-}
-```
 
 ---
 

@@ -16,6 +16,7 @@ add SimpleGain as "WatchGain"
 /script
 /callback onInit
 // end setup
+// Title: Monitoring a module parameter and bypass state
 const var bc = Engine.createBroadcaster({
     "id": "ParamWatch",
     "args": ["processorId", "parameterId", "value"]

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Chain replace calls to transform file names into display labels
 // Context: Raw file names use underscores and hyphens as separators.
 // A replace chain normalizes them into user-friendly display text.
 

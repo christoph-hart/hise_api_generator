@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Safe removal during index-based iteration
 // Context: Because removeElement() uses swap-and-pop, the loop index
 // must be decremented after each removal to avoid skipping the
 // swapped-in element.

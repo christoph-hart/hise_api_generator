@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bipolar knob arc (center-origin)
 // Context: For parameters with a center default (like pan or bipolar
 // modulation), the arc starts from 12 o'clock (angle 0) and extends
 // in both directions based on the value.

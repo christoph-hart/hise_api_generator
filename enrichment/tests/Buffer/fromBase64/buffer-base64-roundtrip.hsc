@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Restore a serialized buffer payload
 const var source = Buffer.create(4);
 source[0] = 0.1; source[1] = 0.2; source[2] = 0.3; source[3] = 0.4;
 const var encoded = source.toBase64();

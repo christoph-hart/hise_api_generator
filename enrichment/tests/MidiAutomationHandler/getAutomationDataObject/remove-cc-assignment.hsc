@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Remove a specific CC assignment by controller number
 // Context: A UI button removes the automation entry for a particular CC.
 // Read the array, filter out the matching entry, write back.
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Unreachable code marker
 const DATA_LIST = [{Key: 'A', Name: 'Alpha'}, {Key: 'B', Name: 'Beta'}];
 
 inline function findNameByKey(key)

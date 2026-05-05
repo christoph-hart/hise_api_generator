@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Timer-driven peak meter with decay and peak hold
 // Context: The most common real-world ScriptPanel pattern. A timer polls
 // audio levels, stores them in the data object, and the paint routine
 // visualizes the current and peak values with smooth decay.

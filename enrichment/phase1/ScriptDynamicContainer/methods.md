@@ -396,39 +396,7 @@ Supported component types: `"Button"`, `"Slider"`, `"ComboBox"`, `"Label"`, `"Pa
 - `$API.ScriptDynamicContainer.setValueCallback$`
 
 **Example:**
-```javascript:dyncomp-setup
-// Title: Create dynamic controls from JSON data
-const var dc = Content.addDynamicContainer("FXControls", 0, 0);
-dc.setPosition(0, 0, 400, 200);
 
-const var root = dc.setData([
-{
-    "id": "GainKnob",
-    "type": "Slider",
-    "text": "Gain",
-    "min": -100.0,
-    "max": 0.0,
-    "mode": "Decibel",
-    "x": 10, "y": 10, "width": 128, "height": 48
-},
-{
-    "id": "BypassBtn",
-    "type": "Button",
-    "text": "Bypass",
-    "x": 150, "y": 10, "width": 100, "height": 32
-}]);
-
-Console.print(dc.getWidth());
-```
-```json:testMetadata:dyncomp-setup
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["400"]},
-    {"type": "REPL", "expression": "dc.getWidth()", "value": 400}
-  ]
-}
-```
 
 ---
 
@@ -691,41 +659,7 @@ Registers a callback that fires whenever any dyncomp child component's value cha
 - `$API.ScriptDynamicContainer.setControlCallback$`
 
 **Example:**
-```javascript:dyncomp-value-callback
-// Title: Register a value callback for dynamic container children
-const var dc = Content.addDynamicContainer("Container1", 0, 0);
-dc.setPosition(0, 0, 300, 100);
 
-const var vol = dc.setData({
-    "id": "Vol",
-    "type": "Slider",
-    "x": 10, "y": 10, "width": 128, "height": 48
-});
-
-var lastId = "";
-var lastValue = -1;
-
-inline function onContainerValue(id, value)
-{
-    lastId = id;
-    lastValue = value;
-};
-
-dc.setValueCallback(onContainerValue);
-
-// --- test-only ---
-vol.setValue(0.75);
-// --- end test-only ---
-```
-```json:testMetadata:dyncomp-value-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastId", "value": "Vol"},
-    {"type": "REPL", "expression": "lastValue", "value": 0.75}
-  ]
-}
-```
 
 ---
 

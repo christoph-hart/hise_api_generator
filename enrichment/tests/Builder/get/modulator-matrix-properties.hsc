@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Modulator interface for MatrixModulator configuration
 // Context: When building a modulation matrix, get() with InterfaceTypes.Modulator
 // returns a reference that supports setMatrixProperties() for configuring the
 // modulator's input/output ranges and text converter.

@@ -346,39 +346,7 @@ JSON object format for individual key descriptions:
 - `$API.ScriptedViewport.setKeyPressCallback$`
 
 **Example:**
-```javascript:basic
-const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
 
-var keyLog = [];
-
-// Consume all key presses exclusively
-Viewport1.setConsumedKeyPresses("all");
-
-Viewport1.setKeyPressCallback(function(event)
-{
-    if (!event.isFocusChange)
-        keyLog.push(event.description);
-});
-
-// --- test-only ---
-Console.testCallback(Viewport1, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "keyLog.length", "value": 1},
-    {"type": "REPL", "expression": "keyLog[0]", "value": "A"}
-  ]
-}
-```
 
 ## setControlCallback
 
@@ -414,40 +382,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `$API.ScriptedViewport.changed$`
 
 **Example:**
-```javascript:basic
-const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
-Viewport1.set("useList", true);
-Viewport1.set("items", "Item A\nItem B\nItem C");
-Viewport1.set("saveInPreset", false);
 
-reg controlLog = [];
-
-inline function onViewportChanged(component, value)
-{
-    controlLog.push(value);
-};
-
-Viewport1.setControlCallback(onViewportChanged);
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "controlLog[0]",
-      "value": 1
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "Viewport1",
-      "value": 1
-    }
-  ]
-}
-```
 
 ## setEventTypesForValueCallback
 
@@ -540,45 +475,7 @@ Focus change event object:
 - `$API.ScriptedViewport.setConsumedKeyPresses$`
 
 **Example:**
-```javascript:basic
-const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
-Viewport1.setConsumedKeyPresses("all");
 
-reg keyLog = [];
-
-inline function onKeyPress(event)
-{
-    if (!event.isFocusChange)
-        keyLog.push(event.description);
-};
-
-Viewport1.setKeyPressCallback(onKeyPress);
-
-// --- test-only ---
-Console.testCallback(Viewport1, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "isWhitespace": false,
-    "isLetter": true,
-    "isDigit": false,
-    "keyCode": 65,
-    "description": "A",
-    "shift": false,
-    "cmd": false,
-    "alt": false
-});
-// --- end test-only ---
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "keyLog.length", "value": 1},
-    {"type": "REPL", "expression": "keyLog[0]", "value": "A"}
-  ]
-}
-```
 
 ## setLocalLookAndFeel
 
@@ -945,28 +842,7 @@ Table metadata properties:
 **DiagramRef:** table-setup
 
 **Example:**
-```javascript:basic
-const var Viewport1 = Content.addViewport("Viewport1", 0, 0);
-Viewport1.set("width", 400);
-Viewport1.set("height", 300);
 
-Viewport1.setTableMode({
-    "RowHeight": 28,
-    "HeaderHeight": 30,
-    "Sortable": true,
-    "MultiColumnMode": true,
-    "MultiSelection": false
-});
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Viewport1.getWidth()", "value": 400},
-    {"type": "REPL", "expression": "Viewport1.getHeight()", "value": 300}
-  ]
-}
-```
 
 ## setTableRowData
 

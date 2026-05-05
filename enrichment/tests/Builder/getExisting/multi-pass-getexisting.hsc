@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Multi-pass building with getExisting()
 // Context: When building in phases (channels first, then send effects),
 // use getExisting() to look up modules created in an earlier pass. This is
 // essential for send effect architectures where per-channel sends must

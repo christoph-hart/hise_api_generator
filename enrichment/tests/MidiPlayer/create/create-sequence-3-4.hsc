@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Create an 8-bar sequence in 3/4 time
 const var mp = Synth.getMidiPlayer("MidiPlayer1");
 mp.clearAllSequences();
 mp.create(3, 4, 8);

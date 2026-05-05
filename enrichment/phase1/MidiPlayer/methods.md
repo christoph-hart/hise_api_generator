@@ -140,28 +140,7 @@ Creates a new empty MIDI sequence with the given time signature and bar count, a
 - `$API.MidiPlayer.setFile$`
 
 **Example:**
-```javascript:create-sequence-3-4
-// Title: Create an 8-bar sequence in 3/4 time
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-const var mpIdx = builder.create(builder.MidiProcessors.MidiPlayer, "MidiPlayer1", 0, builder.ChainIndexes.Midi);
-builder.flush();
-// --- end setup ---
-const var mp = Synth.getMidiPlayer("MidiPlayer1");
-mp.clearAllSequences();
-mp.create(3, 4, 8);
-```
-```json:testMetadata:create-sequence-3-4
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "mp.getNumSequences()", "value": 1},
-    {"type": "REPL", "expression": "mp.getTimeSignature().Nominator", "value": 3},
-    {"type": "REPL", "expression": "mp.getTimeSignature().NumBars", "value": 8}
-  ]
-}
-```
+
 
 ---
 
@@ -242,54 +221,7 @@ Internally delegates to `getEventListFromSequence(-1)` where -1 means "current s
 - `$API.MidiPlayer.setUseTimestampInTicks$`
 
 **Example:**
-```javascript:transpose-events-up-octave
-// Title: Read events, transpose all notes up by 12, and write back
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-const var mpIdx = builder.create(builder.MidiProcessors.MidiPlayer, "MidiPlayer1", 0, builder.ChainIndexes.Midi);
-builder.flush();
-// --- end setup ---
-const var mp = Synth.getMidiPlayer("MidiPlayer1");
-mp.setUseTimestampInTicks(true);
-mp.create(4, 4, 1);
 
-// Populate with a test note
-var noteList = [];
-var on = Engine.createMessageHolder();
-var off = Engine.createMessageHolder();
-on.setType(on.NoteOn);
-off.setType(on.NoteOff);
-on.setNoteNumber(60);
-off.setNoteNumber(60);
-on.setVelocity(100);
-on.setTimestamp(0);
-off.setTimestamp(960);
-on.setChannel(1);
-off.setChannel(1);
-noteList.push(on);
-noteList.push(off);
-mp.flushMessageList(noteList);
-
-// Now transpose
-var events = mp.getEventList();
-
-for (e in events)
-{
-    if (e.isNoteOn() || e.isNoteOff())
-        e.setNoteNumber(e.getNoteNumber() + 12);
-}
-
-mp.flushMessageList(events);
-```
-```json:testMetadata:transpose-events-up-octave
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "mp.getEventList()[0].getNoteNumber()", "value": 72}
-  ]
-}
-```
 
 ---
 
@@ -821,39 +753,7 @@ The `synchronous` parameter controls threading: when 0 (async), the callback fir
 **Callback Signature:** playbackCallback(timestamp: int, playState: int)
 
 **Example:**
-```javascript:async-playback-state-callback
-// Title: Async playback callback for transport state logging
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-const var mpIdx = builder.create(builder.MidiProcessors.MidiPlayer, "MidiPlayer1", 0, builder.ChainIndexes.Midi);
-builder.flush();
-// --- end setup ---
-const var mp = Synth.getMidiPlayer("MidiPlayer1");
-mp.create(4, 4, 1);
 
-reg lastPlayState = -1;
-
-// Async callback (safe for UI operations)
-inline function onPlaybackChange(timestamp, playState)
-{
-    lastPlayState = playState;
-}
-
-mp.setPlaybackCallback(onPlaybackChange, 0);
-
-// --- test-only ---
-mp.play(0);
-// --- end test-only ---
-```
-```json:testMetadata:async-playback-state-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 300, "expression": "lastPlayState", "value": 1}
-  ]
-}
-```
 
 **Pitfalls:**
 - When using synchronous mode, the callback runs on the audio thread. In the HISE IDE (USE_BACKEND), a realtime safety check validates that the callback is safe. In exported plugins, only `isRealtimeSafe()` is checked.
@@ -1014,36 +914,7 @@ Immediately fires the callback once upon registration (so you can initialise you
 **Callback Signature:** updateFunction(midiPlayer: MidiPlayer)
 
 **Example:**
-```javascript:sequence-change-repaint
-// Title: Sequence change callback triggering panel repaint
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-const var mpIdx = builder.create(builder.MidiProcessors.MidiPlayer, "MidiPlayer1", 0, builder.ChainIndexes.Midi);
-builder.flush();
-// --- end setup ---
-const var mp = Synth.getMidiPlayer("MidiPlayer1");
-const var Panel1 = Content.addPanel("Panel1", 0, 0);
 
-reg callbackFired = false;
-
-inline function onSequenceChange(player)
-{
-    callbackFired = true;
-    Panel1.repaint();
-}
-
-mp.setSequenceCallback(onSequenceChange);
-// The callback fires immediately on registration
-```
-```json:testMetadata:sequence-change-repaint
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 300, "expression": "callbackFired", "value": true}
-  ]
-}
-```
 
 **Cross References:**
 - `$API.MidiPlayer.setPlaybackCallback$`

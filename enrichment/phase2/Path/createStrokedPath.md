@@ -54,51 +54,6 @@ laf.registerFunction("drawRotarySlider", function(g, obj)
 }
 ```
 
-```javascript:dashed-arc-ring
-// Title: Dashed arc outline for a decorative knob ring
-// Context: Passing a non-empty dotData array creates dashed stroke
-// geometry. This produces tick-mark or segmented ring effects around
-// rotary controls.
-
-const var p = Content.createPath();
-p.startNewSubPath(0.0, 0.0);
-p.startNewSubPath(1.0, 1.0);
-p.addArc([0.0, 0.0, 1.0, 1.0], -2.5, 2.5);
-
-// Dashed stroke: 3% dash, 4% gap (in normalized path coordinates)
-var dashed = p.createStrokedPath(0.005, [0.03, 0.04]);
-```
-```json:testMetadata:dashed-arc-ring
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "dashed.getLength() > p.getLength()", "value": true},
-    {"type": "REPL", "expression": "dashed.getBounds(1.0)[3] > 0", "value": true}
-  ]
-}
-```
-
-```javascript:thick-arc-fill-and-outline
-// Title: Thick arc converted to outline for draw + fill combination
-// Context: Creating a thick stroked path, then both filling and
-// outlining it, produces a solid arc band with a visible border.
-
-var arcPath = Content.createPath();
-arcPath.startNewSubPath(0.0, 0.0);
-arcPath.startNewSubPath(1.0, 1.0);
-arcPath.addArc([0, 0, 1.0, 1.0], -2.3, 2.3 * 2 * 0.7);
-
-var thick = arcPath.createStrokedPath(0.22, []);
-```
-```json:testMetadata:thick-arc-fill-and-outline
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "thick.getLength() > arcPath.getLength()", "value": true},
-    {"type": "REPL", "expression": "thick.getBounds(1.0)[3] > arcPath.getBounds(1.0)[3]", "value": true}
-  ]
-}
-```
 
 **Pitfalls:**
 - The second parameter `dotData` must be an array - pass `[]` for a solid stroke, not `""`. While some projects pass empty strings and it works (the engine silently treats non-arrays as solid), `[]` is the correct and explicit way to request no dash pattern.

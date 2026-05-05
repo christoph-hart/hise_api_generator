@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Roundtrip compress and uncompress a JSON object
 var original = {"key": "value", "number": 42};
 var compressed = Engine.compressJSON(original);
 Console.print(typeof compressed); // "string"

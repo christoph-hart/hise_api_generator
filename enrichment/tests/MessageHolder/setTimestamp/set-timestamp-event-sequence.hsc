@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Constructing a timed note sequence with explicit timestamps
 const var mh1 = Engine.createMessageHolder();
 mh1.setType(mh1.NoteOn);
 mh1.setNoteNumber(60);

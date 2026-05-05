@@ -40,25 +40,7 @@ Returns an array of JSON objects representing all active macro-to-parameter conn
 - `$API.MacroHandler.setUpdateCallback$`
 
 **Example:**
-```javascript:macro-data-snapshot
-// Title: Reading and inspecting macro connection data
-const var mh = Engine.createMacroHandler();
-var data = mh.getMacroDataObject();
 
-for (item in data)
-{
-    Console.print("Macro " + item.MacroIndex + ": " + item.Processor + "." + item.Attribute);
-}
-```
-```json:testMetadata:macro-data-snapshot
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Array.isArray(data)", "value": true},
-    {"type": "REPL", "expression": "data.length", "value": 0}
-  ]
-}
-```
 
 ## setExclusiveMode
 
@@ -124,30 +106,7 @@ Clears all existing macro connections and rebuilds them from the provided JSON a
 - `$API.MacroHandler.setUpdateCallback$`
 
 **Example:**
-```javascript:macro-roundtrip
-// Title: Save and restore macro connections
-const var mh = Engine.createMacroHandler();
 
-// Snapshot current connections (returns a copy, not a live reference)
-var savedData = mh.getMacroDataObject();
-
-// Clear all connections
-mh.setMacroDataFromObject([]);
-
-// Restore from the saved snapshot
-mh.setMacroDataFromObject(savedData);
-
-var restored = mh.getMacroDataObject();
-```
-```json:testMetadata:macro-roundtrip
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Array.isArray(savedData)", "value": true},
-    {"type": "REPL", "expression": "restored.length", "value": 0}
-  ]
-}
-```
 
 ## setUpdateCallback
 
@@ -178,20 +137,4 @@ Registers a callback function that fires whenever a macro connection changes. Th
 - `$API.MacroHandler.setMacroDataFromObject$`
 
 **Example:**
-```javascript:macro-update-callback
-// Title: Registering a macro connection change callback
-const var mh = Engine.createMacroHandler();
 
-inline function onMacroUpdate(macroData)
-{
-    Console.print("Connections: " + macroData.length);
-};
-
-mh.setUpdateCallback(onMacroUpdate);
-```
-```json:testMetadata:macro-update-callback
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Connections: 0"]}
-}
-```

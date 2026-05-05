@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Dynamically build a combo box item list
 const var cb = Content.addComboBox("AddItemCombo", 0, 0);
 cb.set("saveInPreset", false);
 cb.addItem("First");

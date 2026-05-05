@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Prepare trimmed stereo buffers for file writing
 // Context: After tail detection, export paths trim both channels to the same final length.
 
 const var TOTAL_SAMPLES = 4096;

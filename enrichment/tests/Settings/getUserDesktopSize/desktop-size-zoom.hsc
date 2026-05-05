@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Query usable desktop dimensions
 var desktop = Settings.getUserDesktopSize();
 var maxWidth = desktop[0];
 var maxHeight = desktop[1];

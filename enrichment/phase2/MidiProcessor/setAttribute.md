@@ -59,35 +59,4 @@ inline function setArticulation(index)
 }
 ```
 
-```javascript:bracket-assignment-syntax
-// Title: Bracket assignment syntax for parameter control
-// Context: The AssignableObject interface allows mp["ParamName"] = value
-// as shorthand for setAttribute. Writing works; reading does not.
 
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.MidiProcessors.Transposer, "Transposer1", 0, builder.ChainIndexes.Midi);
-builder.flush();
-// --- end setup ---
-
-const var transposer = Synth.getMidiProcessor("Transposer1");
-
-// Bracket write delegates to setAttribute -- this works
-transposer["SemiTones"] = 12;
-
-// Equivalent explicit call
-transposer.setAttribute(transposer.SemiTones, 12);
-
-// WARNING: bracket read always returns 1.0 -- use getAttribute instead
-var v = transposer.getAttribute(transposer.SemiTones); // correct
-// var v = transposer["SemiTones"]; // always returns 1.0!
-```
-```json:testMetadata:bracket-assignment-syntax
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "transposer.getAttribute(transposer.SemiTones)", "value": 12.0}
-  ]
-}
-```

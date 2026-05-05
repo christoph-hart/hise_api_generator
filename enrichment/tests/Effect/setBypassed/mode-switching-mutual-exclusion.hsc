@@ -20,6 +20,7 @@ add SimpleGain as "SideEQ"
 /script
 /callback onInit
 // end setup
+// Title: Mode switching with mutual exclusion
 // Context: A mid/side EQ where selecting "Master", "Mid", or "Side" mode
 // bypasses the unused EQ instances and the MS encoder/decoder.
 const var msEncode = Synth.getEffect("LR2MS");

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Split camelCase identifiers into word tokens
 var name = "myValueTest";
 var parts = name.splitCamelCase();
 

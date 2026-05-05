@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Extending timeout during heavy initialization
 // Context: Plugins with large sample libraries or complex Builder
 // API setups need to extend the compilation timeout to prevent
 // HISE from aborting the initialization. Call this before or

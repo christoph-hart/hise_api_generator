@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Extract a property column into a Buffer
 const var f = Engine.createFixObjectFactory({
     "id": 0,
     "velocity": 0.0

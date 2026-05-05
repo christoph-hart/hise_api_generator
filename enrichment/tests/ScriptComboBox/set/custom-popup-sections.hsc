@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Custom popup combo box with headers, separators, and submenus
 // Context: When useCustomPopup is enabled, the items string supports special
 // formatting syntax for organizing complex option lists into sections.
 

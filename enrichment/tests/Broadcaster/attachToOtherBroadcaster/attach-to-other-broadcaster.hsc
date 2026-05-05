@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Chaining broadcasters with argument transformation
 const var source = Engine.createBroadcaster({
     "id": "Source",
     "args": ["x", "y"]

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Build a MIDI note-to-channel routing table
 // Context: A multi-channel instrument maps each MIDI note to a channel
 // index. Unassigned notes remain at -1 (the default after clear).
 

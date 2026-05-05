@@ -18,6 +18,7 @@ add MidiPlayer as "MIDIPlayer 3"
 /script
 /callback onInit
 // end setup
+// Title: Enable grid for drum sequencer with MidiPlayer sync
 const var th0 = Engine.createTransportHandler();
 th0.setSyncMode(th0.InternalOnly);
 th0.stopInternalClock(0);

@@ -17,6 +17,7 @@ add ScriptButton "TooltipButton" at 0 50 128 32
 /script
 /callback onInit
 // end setup
+// Title: Conditional start/stop from a toggle button
 Content.getComponent("TooltipButton").set("saveInPreset", false);
 
 // Context: A tooltip polling timer that only runs while

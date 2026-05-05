@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Loading images with existence check
 // Context: Defensive pattern for loading optional images (e.g., from
 // expansion packs) where the file may not exist.
 

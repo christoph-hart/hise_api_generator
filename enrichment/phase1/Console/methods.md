@@ -260,24 +260,6 @@ Throws a script error with the provided `errorMessage` if `condition` is false. 
 - `$API.Console.assertTrue$`
 
 **Example:**
-```javascript:basic
-// Title: Custom assertion messages for debugging
-// Context: When assertTrue would be cryptic, assertWithMessage provides
-// context-specific error messages that include runtime values.
-
-const var index = -5;
-
-Console.assertWithMessage(index >= 0, "Index must not be negative, got: " + index);
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "expect-error",
-    "errorMessage": "Index must not be negative, got: -5"
-  }
-}
-```
 
 
 ## assertLegalNumber
@@ -300,25 +282,6 @@ Throws a script error if `value` is not a finite, legal number. This performs tw
 - `$API.Console.assertIsObjectOrArray$`
 
 **Example:**
-```javascript:basic
-// Example: Validating gain calculations before applying
-// Context: Division operations can produce illegal numbers (infinity/NaN)
-// that corrupt audio processing. assertLegalNumber catches these.
-
-var inputLevel = 0.0;
-var gain1 = 1.0 / inputLevel; // Division by zero creates infinity
-
-Console.assertLegalNumber(gain1); // Assertion fires - infinity is illegal
-```
-```json:testMetadata:basic
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "expect-error",
-    "errorMessage": "value is not a legal number"
-  }
-}
-```
 
 
 ## breakInDebugger

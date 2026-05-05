@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Timer-driven counter with repaint
 const var pnl = Content.addPanel("TimerPanel", 0, 0);
 pnl.set("width", 200);
 pnl.set("height", 50);

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Safe forward iteration with index adjustment
 // Context: When removing elements during a forward loop, decrement
 // the index after removal to avoid skipping the next element.
 

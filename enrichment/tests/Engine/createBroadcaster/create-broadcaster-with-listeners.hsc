@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Create a broadcaster and add a sync listener
 const var bc = Engine.createBroadcaster({
     "id": "ValueBroadcaster",
     "args": ["value", "source"]

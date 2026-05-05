@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Registering a content change callback
 const var spd = Engine.createAndRegisterSliderPackData(0);
 spd.setNumSliders(4);
 spd.setAllValues(0.5);

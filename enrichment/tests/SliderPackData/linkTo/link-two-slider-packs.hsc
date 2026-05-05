@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Linking two SliderPackData objects to share data
 const var spd1 = Engine.createAndRegisterSliderPackData(0);
 const var spd2 = Engine.createAndRegisterSliderPackData(1);
 

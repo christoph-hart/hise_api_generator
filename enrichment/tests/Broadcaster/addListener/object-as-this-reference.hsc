@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Using the object parameter as a lookup table inside the callback
 // Context: Passing a JSON object or array as the `object` parameter replaces `this`
 // inside the callback, giving clean access to related data without external variables.
 

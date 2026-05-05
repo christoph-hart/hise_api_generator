@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Getting typed references after creation
 const var b = Synth.createBuilder();
 b.clear();
 var synthIdx = b.create(b.SoundGenerators.SineSynth, "TestSine", 0, b.ChainIndexes.Direct);

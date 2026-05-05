@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Creating and configuring a child panel
 const var pnl = Content.addPanel("ParentPanel", 0, 0);
 pnl.set("width", 300);
 pnl.set("height", 200);

@@ -16,6 +16,7 @@ add SimpleGain as "PropGain"
 /script
 /callback onInit
 // end setup
+// Title: Greying out controls when a module is bypassed via property binding
 const var PropKnob1 = Content.addKnob("PropKnob1", 0, 0);
 PropKnob1.set("saveInPreset", false);
 const var PropKnob2 = Content.addKnob("PropKnob2", 150, 0);

@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Sequence change callback for UI refresh
 // Context: Register a callback that fires when the MIDI data changes
 // (load, edit, clear). Use this to rebuild UI elements like step
 // sequencer displays. The callback fires once immediately on registration.

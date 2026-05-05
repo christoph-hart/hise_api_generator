@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Unit-testing a string transformation function
 // Context: assertEqual works well for inline unit tests that run
 // during init and are stripped in exported builds.
 

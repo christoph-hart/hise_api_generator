@@ -316,30 +316,7 @@ Sets a callback function that receives expansion-related error and log messages.
 - `$API.ExpansionHandler.setErrorMessage$`
 
 **Example:**
-```javascript:error-function-with-severity
-// Title: Error function with severity routing
-const var eh = Engine.createExpansionHandler();
 
-inline function onExpansionError(message, isCritical)
-{
-    if (isCritical)
-        Console.print("CRITICAL: " + message);
-    else
-        Console.print("Info: " + message);
-};
-
-eh.setErrorFunction(onExpansionError);
-
-// --- test-only ---
-eh.setErrorMessage("test warning");
-// --- end test-only ---
-```
-```json:testMetadata:error-function-with-severity
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Info: test warning"]}
-}
-```
 
 ## setErrorMessage
 

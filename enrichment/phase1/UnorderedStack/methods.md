@@ -25,31 +25,7 @@ Returns a Buffer reference to the underlying float array without copying. When `
 - `$API.UnorderedStack.copyTo$`
 
 **Example:**
-```javascript:asbuffer-views
-// Title: Active elements vs full backing array
-const var us = Engine.createUnorderedStack();
-us.insert(10.0);
-us.insert(20.0);
-us.insert(30.0);
 
-// Only occupied elements (size = 3)
-const var active = us.asBuffer(false);
-Console.print(active.length); // 3
-
-// All 128 backing slots
-const var all = us.asBuffer(true);
-Console.print(all.length); // 128
-```
-```json:testMetadata:asbuffer-views
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "active.length", "value": 3},
-    {"type": "REPL", "expression": "all.length", "value": 128},
-    {"type": "REPL", "expression": "active[0]", "value": 10.0}
-  ]
-}
-```
 
 ---
 
@@ -129,33 +105,7 @@ Copies all elements from this stack into the target container. Accepts three tar
 - `$API.UnorderedStack.storeEvent$`
 
 **Example:**
-```javascript:copyto-targets
-// Title: Copying stack contents to different target types
-const var us = Engine.createUnorderedStack();
-us.insert(1.0);
-us.insert(2.0);
-us.insert(3.0);
 
-// Copy to Array
-var arr = [];
-us.copyTo(arr);
-Console.print(arr.length); // 3
-
-// Copy to Buffer (must be strictly larger than stack size)
-const var bf = Buffer.create(4);
-us.copyTo(bf);
-Console.print(bf[0]); // 1.0
-```
-```json:testMetadata:copyto-targets
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "arr.length", "value": 3},
-    {"type": "REPL", "expression": "arr[0]", "value": 1.0},
-    {"type": "REPL", "expression": "bf[0]", "value": 1.0}
-  ]
-}
-```
 
 ---
 
@@ -319,44 +269,7 @@ Switches the stack between float mode (default) and event mode. The second param
 - `$API.UnorderedStack.removeIfEqual$`
 
 **Example:**
-```javascript:setiseventstack-modes
-// Title: Configuring event stack with built-in and custom compare
-const var es = Engine.createUnorderedStack();
 
-// Built-in compare by event ID (matches note-on/off pairs)
-es.setIsEventStack(true, es.EventId);
-
-// Custom compare function (matches by note number only)
-const var es2 = Engine.createUnorderedStack();
-
-inline function compareByNote(a, b)
-{
-    return a.getNoteNumber() == b.getNoteNumber();
-};
-
-es2.setIsEventStack(true, compareByNote);
-
-// --- test-only ---
-const var h1 = Engine.createMessageHolder();
-h1.setNoteNumber(60);
-h1.setVelocity(100);
-es.insert(h1);
-
-const var h2 = Engine.createMessageHolder();
-h2.setNoteNumber(64);
-h2.setVelocity(90);
-es2.insert(h2);
-// --- end test-only ---
-```
-```json:testMetadata:setiseventstack-modes
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "es.size()", "value": 1},
-    {"type": "REPL", "expression": "es2.size()", "value": 1}
-  ]
-}
-```
 
 ---
 

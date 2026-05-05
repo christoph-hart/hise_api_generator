@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Custom combo box frame with dropdown arrow
 // Context: A non-rectangular combo box shape defined as a single
 // path with an integrated arrow indicator.
 

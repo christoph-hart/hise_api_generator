@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Log table content changes
 const var td = Engine.createAndRegisterTableData(0);
 
 var lastChangedIndex = -99;

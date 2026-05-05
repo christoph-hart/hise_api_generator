@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Preventing addXXX from resetting dynamic layouts
 Content.makeFrontInterface(900, 600);
 
 // Disable position updates -- layout is managed by script

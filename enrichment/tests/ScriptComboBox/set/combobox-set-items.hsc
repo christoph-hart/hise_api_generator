@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Populate a combo box with items
 const var cb = Content.addComboBox("SetItemsCombo", 0, 0);
 cb.set("items", "Option A\nOption B\nOption C");
 cb.set("text", "Choose...");

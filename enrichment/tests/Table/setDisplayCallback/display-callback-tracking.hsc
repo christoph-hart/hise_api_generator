@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Track the display ruler position
 const var td = Engine.createAndRegisterTableData(0);
 
 var lastPosition = -1.0;

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bypass suppresses messages, unbypass resends last values
 const var bc = Engine.createBroadcaster({
     "id": "BypassTest",
     "args": ["value"]

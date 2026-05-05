@@ -16,6 +16,7 @@ add ScriptButton "PlayButton" at 0 0 128 32
 /script
 /callback onInit
 // end setup
+// Title: Transport handler driving UI buttons through a broadcaster
 // Context: Sequencer-based plugins need to sync play/stop state with
 // the host DAW. This pattern creates a transport handler, connects it
 // to a broadcaster, and lets the broadcaster update UI components.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Macro handler with exclusive mode and broadcaster updates
 Engine.setFrontendMacros(["Macro1", "Macro2", "Macro3", "Macro4"]);
 
 // Context: Plugins with macro/automation systems create the macro

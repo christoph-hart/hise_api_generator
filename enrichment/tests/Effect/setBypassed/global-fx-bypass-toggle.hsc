@@ -19,6 +19,7 @@ add SimpleGain as "MasterLimiter"
 /script
 /callback onInit
 // end setup
+// Title: Global FX bypass with state preservation
 // Context: A "bypass all FX" toggle that saves each effect's current
 // bypass state before engaging, and restores it when disengaging.
 const var NUM_CHANNELS = 2;

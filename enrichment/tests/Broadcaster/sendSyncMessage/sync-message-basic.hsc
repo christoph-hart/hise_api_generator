@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Synchronous message dispatch with listener verification
 const var bc = Engine.createBroadcaster({
     "id": "StatusBc",
     "args": ["status", "count"]

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Find first element matching a condition
 var a = [1, 12, 3, 14, 5];
 var first = a.find(function(x){ return x > 10; });
 Console.print(first);

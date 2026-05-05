@@ -102,24 +102,7 @@ Creates a new module of the specified type and adds it to the chain at `chainInd
 - `$API.Builder.clearChildren$`
 
 **Example:**
-```javascript:builder-create-chain
-// Title: Creating a synth with effect chain
-const var b = Synth.createBuilder();
-b.clear();
-var synthIdx = b.create(b.SoundGenerators.SineSynth, "MySine", 0, b.ChainIndexes.Direct);
-var gainIdx = b.create(b.Effects.SimpleGain, "MyGain", synthIdx, b.ChainIndexes.FX);
-b.setAttributes(gainIdx, {"Gain": -6.0});
-b.flush();
 
-Console.print(Synth.getChildSynth("MySine").getId());
-Console.print(Synth.getEffect("MyGain").getAttribute(0));
-```
-```json:testMetadata:builder-create-chain
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["MySine", "-6"]}
-}
-```
 
 ## flush
 
@@ -186,25 +169,7 @@ Returns a typed scripting wrapper for the module at the given build index. The `
 - `$API.Builder.getExisting$`
 
 **Example:**
-```javascript:builder-get-typed-ref
-// Title: Getting typed references after creation
-const var b = Synth.createBuilder();
-b.clear();
-var synthIdx = b.create(b.SoundGenerators.SineSynth, "TestSine", 0, b.ChainIndexes.Direct);
-var gainIdx = b.create(b.Effects.SimpleGain, "TestGain", synthIdx, b.ChainIndexes.FX);
-b.flush();
 
-var synth = b.get(synthIdx, b.InterfaceTypes.ChildSynth);
-var gain = b.get(gainIdx, b.InterfaceTypes.Effect);
-Console.print(synth.getId());
-Console.print(gain.getId());
-```
-```json:testMetadata:builder-get-typed-ref
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["TestSine", "TestGain"]}
-}
-```
 
 ## getExisting
 
@@ -258,21 +223,4 @@ Sets multiple attributes on the module at `buildIndex` in a single call. The `at
 - `$API.Builder.flush$`
 
 **Example:**
-```javascript:builder-set-attributes
-// Title: Configuring module parameters after creation
-const var b = Synth.createBuilder();
-b.clear();
-var synthIdx = b.create(b.SoundGenerators.SineSynth, "AttrSine", 0, b.ChainIndexes.Direct);
-b.setAttributes(synthIdx, {"OctaveTranspose": 3, "SemiTones": 7});
-b.flush();
 
-const var sine = Synth.getChildSynth("AttrSine");
-Console.print(sine.getAttribute(sine.OctaveTranspose));
-Console.print(sine.getAttribute(sine.SemiTones));
-```
-```json:testMetadata:builder-set-attributes
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["3", "7"]}
-}
-```

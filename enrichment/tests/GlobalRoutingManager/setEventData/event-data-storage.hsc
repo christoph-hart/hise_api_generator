@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Attaching custom data to MIDI events
 const var rm = Engine.getGlobalRoutingManager();
 
 // Store values in two different data slots for event ID 1

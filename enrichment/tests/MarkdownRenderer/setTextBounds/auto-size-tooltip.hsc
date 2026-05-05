@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Auto-size a tooltip panel to fit markdown content
 // Context: A tooltip system measures how tall the rendered markdown
 // will be and resizes the host panel accordingly.
 

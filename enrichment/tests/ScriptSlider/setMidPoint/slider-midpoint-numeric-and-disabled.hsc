@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Use numeric and explicit disabled midpoint routes
 const var Slider1 = Content.addKnob("Slider1", 0, 0);
 
 Slider1.setRange(-48.0, 0.0, 0.1);

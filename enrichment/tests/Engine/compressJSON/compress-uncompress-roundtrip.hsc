@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Compress and uncompress a JSON object
 var data = {"name": "MyPreset", "values": [1, 2, 3]};
 var compressed = Engine.compressJSON(data);
 var restored = Engine.uncompressJSON(compressed);

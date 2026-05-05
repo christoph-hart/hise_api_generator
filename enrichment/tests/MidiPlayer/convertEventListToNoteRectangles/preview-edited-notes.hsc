@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Preview edited notes before flushing to the sequence
 // Context: Unlike getNoteRectangleList() which reads from the stored sequence,
 // convertEventListToNoteRectangles() operates on an arbitrary event list.
 // This is useful for visualizing a merged or modified set of events.

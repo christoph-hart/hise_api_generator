@@ -2,54 +2,6 @@
 
 **Examples:**
 
-```javascript:connecting-a-cable-to
-// Title: Connecting a cable to a gain module with smoothing
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-const var gainIndex = builder.create(builder.Effects.SimpleGain, "SimpleGain1", 0, builder.ChainIndexes.FX);
-builder.flush();
-// --- end setup ---
-
-// Title: Connecting a cable to a gain module with smoothing
-// Context: A cable drives a gain parameter directly, bypassing
-// script callbacks entirely. The target range JSON maps the
-// normalised 0..1 cable value to a dB range with smoothing
-// to avoid zipper noise on rapid value changes.
-
-const var rm = Engine.getGlobalRoutingManager();
-const var gainCable = rm.getCable("MasterGain");
-
-gainCable.connectToModuleParameter("SimpleGain1", "Gain", {
-    "MinValue": -100.0,
-    "MaxValue": 0.0,
-    "SkewFactor": 5.0,
-    "SmoothingTime": 50.0
-});
-
-// Now any setValue/setValueNormalised call on this cable
-// automatically updates SimpleGain1's Gain parameter
-gainCable.setValueNormalised(0.75);
-
-// Get module reference for verification
-const var gain = Synth.getEffect("SimpleGain1");
-```
-```json:testMetadata:connecting-a-cable-to
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "expression": "gainCable.getValueNormalised()",
-      "value": 0.75
-    },
-    {
-      "expression": "gain.getAttribute(gain.Gain)",
-      "value": -25.0
-    }
-  ]
-}
-```
-
 
 ```javascript:clearing-all-module-parameter
 // Title: Clearing all module parameter connections

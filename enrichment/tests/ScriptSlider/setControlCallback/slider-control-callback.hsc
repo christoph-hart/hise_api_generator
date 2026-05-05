@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Custom inline control callback for a slider
 const var Slider1 = Content.addKnob("Slider1", 0, 0);
 reg lastControlValue = -1.0;
 reg lastControlId = "";

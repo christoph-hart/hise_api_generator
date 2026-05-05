@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Method chaining with removeFromBottom and translated
 // Context: Positioning a label area below a slider's drag region, centered
 // and offset slightly downward. Demonstrates fluent chaining of
 // removeFromBottom -> withSizeKeepingCentre -> translated.

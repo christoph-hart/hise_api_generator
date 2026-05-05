@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Watching a component's text property for changes
 const var PropKnob1 = Content.addKnob("PropKnob1", 0, 0);
 PropKnob1.set("saveInPreset", false);
 

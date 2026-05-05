@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Building a 2-layer equal-power crossfade
 const var builder = Synth.createBuilder();
 builder.clear();
 var ss = builder.create(builder.SoundGenerators.SineSynth, "TestSynth", 0, builder.ChainIndexes.Direct);

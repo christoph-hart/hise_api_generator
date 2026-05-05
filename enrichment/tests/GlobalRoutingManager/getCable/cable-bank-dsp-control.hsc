@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Creating a bank of cables for DSP network parameter control
 // Context: A custom envelope editor sends attack/decay/sustain/retrigger
 // values into a DSP network through GlobalCable nodes.
 

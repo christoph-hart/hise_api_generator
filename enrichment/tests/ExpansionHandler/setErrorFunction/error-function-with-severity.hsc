@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Error function with severity routing
 const var eh = Engine.createExpansionHandler();
 
 inline function onExpansionError(message, isCritical)

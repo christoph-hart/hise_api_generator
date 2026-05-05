@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Registering a macro connection change callback
 const var mh = Engine.createMacroHandler();
 
 inline function onMacroUpdate(macroData)

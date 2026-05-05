@@ -16,6 +16,7 @@ add SimpleGain as "SyncGain"
 /script
 /callback onInit
 // end setup
+// Title: Syncing a broadcaster value to a module parameter
 const var bc = Engine.createBroadcaster({
     "id": "GainSync",
     "args": ["processorId", "parameterId", "value"]

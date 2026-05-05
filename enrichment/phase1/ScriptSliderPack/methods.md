@@ -404,27 +404,7 @@ Writes slider values in bulk. Accepts a Number (fill all), Array, or Buffer (cop
 - `$API.ScriptSliderPack.setAllValueChangeCausesCallback$`
 
 **Example:**
-```javascript:bulk-fill-slider-pack
-// Title: Fill every slider with one scalar value
-const var spData = Engine.createAndRegisterSliderPackData(0);
-spData.setNumSliders(4);
-spData.setAllValues(0.0);
 
-const var sp = Content.addSliderPack("SP1", 0, 0);
-sp.set("sliderAmount", 4);
-sp.referToData(spData);
-sp.setAllValues(0.75);
-```
-```json:testMetadata:bulk-fill-slider-pack
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "sp.getNumSliders()", "value": 4},
-    {"type": "REPL", "expression": "sp.getSliderValueAt(0)", "value": 0.75},
-    {"type": "REPL", "expression": "sp.getSliderValueAt(3)", "value": 0.75}
-  ]
-}
-```
 
 ---
 
@@ -508,28 +488,7 @@ Assigns a custom inline control callback for this slider pack.
 - `$API.ScriptSliderPack.setSliderAtIndex$`
 
 **Example:**
-```javascript:slider-pack-control-callback
-// Title: Custom control callback for slider-pack changes
-const var sp = Content.addSliderPack("SP2", 0, 0);
-reg lastIndex = -1;
 
-inline function onSliderPackControl(component, value)
-{
-    lastIndex = value;
-}
-
-sp.setControlCallback(onSliderPackControl);
-```
-```json:testMetadata:slider-pack-control-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "sp.setSliderAtIndex(1, 0.5) || true", "value": true},
-    {"type": "REPL", "expression": "lastIndex", "value": 1},
-    {"type": "REPL", "expression": "sp.getSliderValueAt(1)", "value": 0.5}
-  ]
-}
-```
 
 ---
 
@@ -574,39 +533,7 @@ Registers a key-press callback for this component. Requires `setConsumedKeyPress
 - `$API.ScriptSliderPack.loseFocus$`
 
 **Example:**
-```javascript:slider-pack-keypress-callback
-// Title: Handle consumed key presses on a slider-pack
-const var sp = Content.addSliderPack("SPKey", 0, 0);
-sp.setConsumedKeyPresses("all");
-reg lastKeyCode = -1;
 
-inline function onKeyPress(event)
-{
-    if (!event.isFocusChange)
-        lastKeyCode = event.keyCode;
-}
-
-sp.setKeyPressCallback(onKeyPress);
-
-// --- test-only ---
-Console.testCallback(sp, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A",
-    "shift": false,
-    "cmd": false,
-    "alt": false
-});
-// --- end test-only ---
-```
-```json:testMetadata:slider-pack-keypress-callback
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "lastKeyCode", "value": 65}
-}
-```
 
 ---
 

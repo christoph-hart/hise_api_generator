@@ -18,6 +18,7 @@ add ScriptButton "BypassBtn" at 300 10 128 32
 /script
 /callback onInit
 // end setup
+// Title: Caching component references at init time
 for (i = 0; i < 4; i++)
 {
     Content.addKnob("Volume" + (i + 1), 10, 60 + i * 50);

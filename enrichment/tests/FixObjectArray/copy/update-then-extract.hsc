@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Update-then-extract pattern in a timer callback
 // Context: For-in gives live references -- modify properties in-place,
 // then bulk-extract the updated values with copy().
 

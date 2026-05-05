@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bind multiple slider packs to one shared data handle
 // Context: A lane editor and a compact overview stay in sync by sharing one SliderPackData object.
 
 const var NUM_STEPS = 16;

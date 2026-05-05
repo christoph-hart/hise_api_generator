@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Inspecting a MessageHolder with dump()
 const var mh = Engine.createMessageHolder();
 mh.setType(mh.NoteOn);
 mh.setNoteNumber(64);

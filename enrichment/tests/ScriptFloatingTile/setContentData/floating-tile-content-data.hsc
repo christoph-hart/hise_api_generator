@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Configure a floating tile as a preset browser with custom colours
 const var ft = Content.addFloatingTile("FloatingTile1", 0, 0);
 ft.set("width", 600);
 ft.set("height", 400);

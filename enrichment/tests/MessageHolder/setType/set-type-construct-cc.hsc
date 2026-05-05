@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Constructing a CC event from scratch
 const var mh = Engine.createMessageHolder();
 mh.setType(mh.Controller);
 mh.setChannel(1);

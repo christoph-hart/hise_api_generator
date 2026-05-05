@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Constructing CC and pitch bend events for a MIDI sequence
 // Context: A sequencer stores both note and controller data. CC events
 // and pitch bend events are both created through the controller API,
 // using virtual CC number 128 for pitch bend type coercion.

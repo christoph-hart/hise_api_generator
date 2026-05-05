@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Programmatic factory for combo boxes in a namespace
 // Context: Create and configure combo boxes inside a namespace function that returns
 // the configured component. This pattern keeps creation, styling, and callback
 // assignment together for reusable selector components.

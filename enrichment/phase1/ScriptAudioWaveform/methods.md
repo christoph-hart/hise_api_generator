@@ -71,22 +71,7 @@ Connects this waveform component to an external audio data source. After calling
 - `$API.ScriptAudioWaveform.registerAtParent$`
 
 **Example:**
-```javascript:referToData-audio-file
-// Title: Connect waveform to a ScriptAudioFile handle
-const var wf = Content.addAudioWaveform("Waveform1", 0, 0);
-const var af = Engine.createAndRegisterAudioFile(0);
-wf.referToData(af);
-```
 
-```json:testMetadata:referToData-audio-file
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "af.getNumSamples()", "value": 0},
-    {"type": "REPL", "expression": "wf.getRangeEnd()", "value": 0}
-  ]
-}
-```
 
 ---
 
@@ -112,18 +97,7 @@ If the parent processor is not a `ProcessorWithDynamicExternalData`, returns an 
 - `$API.ScriptAudioWaveform.referToData$`
 
 **Example:**
-```javascript:registerAtParent-usage
-// Title: Register waveform data at parent and get audio file handle
-const var wf = Content.addAudioWaveform("Waveform1", 0, 0);
-const var af = wf.registerAtParent(0);
-```
 
-```json:testMetadata:registerAtParent-usage
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "af.getNumSamples()", "value": 0}
-}
-```
 
 ---
 
@@ -215,40 +189,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `$API.ScriptAudioWaveform.changed$`
 
 **Example:**
-```javascript:custom-control-callback
-// Title: Route a control callback to a per-component handler
-const var btn = Content.addButton("Btn1", 0, 0);
-btn.set("saveInPreset", false);
 
-var callbackLog = [];
-
-inline function onMyButton(component, value)
-{
-    callbackLog.push(component.getId() + ": " + value);
-};
-
-btn.setControlCallback(onMyButton);
-```
-
-```json:testMetadata:custom-control-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "callbackLog[0]",
-      "value": "Btn1: 1"
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "Btn1",
-      "value": 1
-    }
-  ]
-}
-```
 
 ---
 
@@ -302,33 +243,7 @@ Focus change event object:
 - `$API.ScriptAudioWaveform.setConsumedKeyPresses$`
 
 **Example:**
-```javascript:key-press-handler
-// Title: Log key presses on a focused panel
-const var panel = Content.addPanel("Panel1", 0, 0);
-panel.setConsumedKeyPresses("all");
-panel.setKeyPressCallback(inline function(event)
-{
-    if (!event.isFocusChange)
-        Console.print("Key: " + event.description);
-});
 
-// --- test-only ---
-Console.testCallback(panel, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-
-```json:testMetadata:key-press-handler
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Key: A"]}
-}
-```
 
 ---
 
@@ -376,47 +291,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - `$API.ScriptAudioWaveform.setKeyPressCallback$`
 
 **Example:**
-```javascript:consumed-key-formats
-// Title: Three ways to specify consumed key presses
-const var panel = Content.addPanel("Panel1", 0, 0);
 
-// Consume all keys exclusively
-panel.setConsumedKeyPresses("all");
-
-// Consume specific keys by description string
-panel.setConsumedKeyPresses(["ctrl + S", "F5", "escape"]);
-
-// Consume specific keys by JSON object
-panel.setConsumedKeyPresses([
-    { "keyCode": 65, "ctrl": true },
-    { "keyCode": 83, "ctrl": true }
-]);
-
-// Verify by registering a callback (would error if keys weren't consumed)
-var keyLog = [];
-panel.setKeyPressCallback(inline function(event)
-{
-    if (!event.isFocusChange)
-        keyLog.push(event.keyCode);
-});
-
-// --- test-only ---
-Console.testCallback(panel, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-
-```json:testMetadata:consumed-key-formats
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "keyLog[0]", "value": 65}
-}
-```
 
 ---
 
@@ -457,28 +332,7 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 - `$API.ScriptAudioWaveform.setLocalLookAndFeel$`
 
 **Example:**
-```javascript:css-variable-types
-// Title: Set CSS variables with different unit types
-const var knob = Content.addKnob("Knob1", 0, 0);
-const var laf = Content.createLocalLookAndFeel();
-knob.setLocalLookAndFeel(laf);
 
-// Set a colour variable
-knob.setStyleSheetProperty("track-color", 0xFFFF0000, "color");
-
-// Set a size variable
-knob.setStyleSheetProperty("track-width", 4, "px");
-
-// Set a percentage variable
-knob.setStyleSheetProperty("progress", 0.75, "%");
-```
-
-```json:testMetadata:css-variable-types
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "knob.getWidth()", "value": 128}
-}
-```
 
 ---
 
@@ -504,23 +358,7 @@ Sets the CSS class selectors for this component. The component's own type class 
 - `$API.ScriptAudioWaveform.setLocalLookAndFeel$`
 
 **Example:**
-```javascript:css-class-selectors
-// Title: Assign CSS class selectors to a component
-const var knob = Content.addKnob("Knob1", 0, 0);
-const var laf = Content.createLocalLookAndFeel();
-knob.setLocalLookAndFeel(laf);
 
-// Add custom classes (component type class is auto-prepended)
-knob.setStyleSheetClass(".large .highlighted");
-// Result: ".scriptslider .large .highlighted"
-```
-
-```json:testMetadata:css-class-selectors
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "knob.getWidth()", "value": 128}
-}
-```
 
 ---
 

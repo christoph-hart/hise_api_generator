@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Handle consumed key presses on a slider-pack
 const var sp = Content.addSliderPack("SPKey", 0, 0);
 sp.setConsumedKeyPresses("all");
 reg lastKeyCode = -1;

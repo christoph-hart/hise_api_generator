@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Programmatically building a step sequence from slider data
 // Context: Convert a velocity array (from a SliderPack or UI data) into
 // MIDI note-on/note-off pairs and flush them into the current sequence
 

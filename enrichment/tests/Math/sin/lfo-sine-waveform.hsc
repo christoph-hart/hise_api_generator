@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Drawing an LFO sine waveform preview
 // Context: Visualising a sine LFO shape in a ScriptPanel paint
 // routine by sampling Math.sin across the panel width.
 

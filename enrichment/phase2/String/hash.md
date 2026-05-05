@@ -42,34 +42,4 @@ inline function loadIfChanged()
 }
 ```
 
-```javascript:detect-pool-modification
-// Title: Detect whether a list of items has been modified
-// Context: Sum hashes of all items in a pool to detect changes
-// without comparing every element individually.
 
-var pool = ["Kick_01.wav", "Snare_02.wav", "HiHat_03.wav"];
-
-inline function getPoolFingerprint(list)
-{
-    local sum = 0;
-    
-    for (n in list)
-        sum += n.hash();
-    
-    return sum;
-}
-
-var before = getPoolFingerprint(pool);
-pool.push("Clap_04.wav");
-var after = getPoolFingerprint(pool);
-
-Console.print(before == after); // 0 (false - pool changed)
-```
-```json:testMetadata:detect-pool-modification
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["0"]}
-  ]
-}
-```

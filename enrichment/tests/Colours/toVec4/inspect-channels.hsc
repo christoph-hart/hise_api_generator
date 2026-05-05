@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Inspecting colour channel values
 // Context: toVec4 is useful for debugging or computing with individual
 // colour channels as normalized floats.
 

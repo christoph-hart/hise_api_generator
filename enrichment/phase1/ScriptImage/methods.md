@@ -422,37 +422,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `$API.ScriptComponent.changed$`
 
 **Example:**
-```javascript:control-callback-on-click
-const var img = Content.addImage("MyImage", 0, 0);
-img.set("allowCallbacks", "Clicks Only");
-img.set("saveInPreset", false);
 
-inline function onImageClicked(component, value)
-{
-    Console.print(component.getId() + ": " + value);
-};
-
-img.setControlCallback(onImageClicked);
-```
-```json:testMetadata:control-callback-on-click
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "img.getValue()",
-      "value": 1
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "MyImage",
-      "value": 1
-    }
-  ]
-}
-```
 
 ---
 
@@ -522,34 +492,7 @@ Focus change event object:
 - `$API.ScriptComponent.setConsumedKeyPresses$`
 
 **Example:**
-```javascript:key-press-handler
-const var img = Content.addImage("MyImage", 0, 0);
-img.setConsumedKeyPresses("all");
 
-inline function onKeyPress(event)
-{
-    if (!event.isFocusChange)
-        Console.print("Key: " + event.description);
-};
-
-img.setKeyPressCallback(onKeyPress);
-
-// --- test-only ---
-Console.testCallback(img, "setKeyPressCallback", {
-    "isFocusChange": false,
-    "character": "A",
-    "specialKey": false,
-    "keyCode": 65,
-    "description": "A"
-});
-// --- end test-only ---
-```
-```json:testMetadata:key-press-handler
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Key: A"]}
-}
-```
 
 ---
 
@@ -597,21 +540,7 @@ When passing individual key descriptions (as a string, object, or array of eithe
 - `$API.ScriptComponent.setKeyPressCallback$`
 
 **Example:**
-```javascript:consume-specific-keys
-const var img = Content.addImage("MyImage", 0, 0);
 
-// Consume all keys exclusively
-img.setConsumedKeyPresses("all");
-
-// Or consume specific keys
-img.setConsumedKeyPresses(["ctrl + S", "F5", "escape"]);
-```
-```json:testMetadata:consume-specific-keys
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "img.getId()", "value": "MyImage"}
-}
-```
 
 ---
 
@@ -776,21 +705,7 @@ Sets a CSS variable on this component that can be queried from a stylesheet. The
 - `$API.ScriptComponent.setLocalLookAndFeel$`
 
 **Example:**
-```javascript:css-variable-types
-const var img = Content.addImage("MyImage", 0, 0);
 
-// Set a size variable
-img.setStyleSheetProperty("border-width", 2, "px");
-
-// Set a percentage variable
-img.setStyleSheetProperty("opacity", 0.8, "%");
-```
-```json:testMetadata:css-variable-types
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "img.getId()", "value": "MyImage"}
-}
-```
 
 ---
 
@@ -816,19 +731,7 @@ Sets the CSS class selectors for this component. The component's own type class 
 - `$API.ScriptComponent.setLocalLookAndFeel$`
 
 **Example:**
-```javascript:auto-prepend-type-class
-const var img = Content.addImage("MyImage", 0, 0);
 
-// Add custom classes (component type class is auto-prepended)
-img.setStyleSheetClass(".thumbnail .highlighted");
-// Result: ".scriptimage .thumbnail .highlighted"
-```
-```json:testMetadata:auto-prepend-type-class
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "img.getId()", "value": "MyImage"}
-}
-```
 
 ---
 

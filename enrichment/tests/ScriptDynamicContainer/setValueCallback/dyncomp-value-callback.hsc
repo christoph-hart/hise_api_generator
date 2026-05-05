@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Register a value callback for dynamic container children
 const var dc = Content.addDynamicContainer("Container1", 0, 0);
 dc.setPosition(0, 0, 300, 100);
 

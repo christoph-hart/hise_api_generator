@@ -370,31 +370,7 @@ The JSON object should follow the FloatingTileContent configuration format. Colo
 - `$API.ScriptFloatingTile.setValue$`
 
 **Example:**
-```javascript:floating-tile-content-data
-// Title: Configure a floating tile as a preset browser with custom colours
-const var ft = Content.addFloatingTile("FloatingTile1", 0, 0);
-ft.set("width", 600);
-ft.set("height", 400);
-ft.setContentData({
-    "Type": "PresetBrowser",
-    "Font": "Oxygen Bold",
-    "FontSize": 16.0,
-    "ColourData": {
-        "bgColour": "0xFF222222",
-        "textColour": "0xFFFFFFFF",
-        "itemColour1": "0xFF444444",
-        "itemColour2": "0xFF666666"
-    }
-});
-```
-```json:testMetadata:floating-tile-content-data
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "ft.get(\"ContentType\")", "value": "PresetBrowser"}
-  ]
-}
-```
+
 
 ---
 

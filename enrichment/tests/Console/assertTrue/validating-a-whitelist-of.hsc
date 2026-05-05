@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Validating a whitelist of allowed keys
 // Context: When a function accepts a string key that must be one of
 // a known set, assertTrue with indexOf catches typos at the call site.
 

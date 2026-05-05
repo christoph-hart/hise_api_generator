@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Scaling an envelope path from normalized to pixel coordinates
 // Context: Envelope editors build paths in normalized [0, 1] space
 // (where x = time proportion, y = level) then use scaleToFit to map
 // them into the actual panel dimensions. The false parameter for

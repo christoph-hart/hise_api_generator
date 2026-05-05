@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Find index of first matching element
 var a = [1, 12, 3, 14, 5];
 var idx = a.findIndex(function(x){ return x > 10; });
 Console.print(idx);

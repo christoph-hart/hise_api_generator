@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Drive a hidden parameter slider from custom panel gestures
 // Context: A custom panel calculates pointer position, then forwards normalized values into a ScriptSlider.
 
 const var hiddenThreshold = Content.addKnob("HiddenThreshold", 0, 0);

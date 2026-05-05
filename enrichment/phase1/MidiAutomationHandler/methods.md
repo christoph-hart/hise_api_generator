@@ -38,25 +38,7 @@ None.
 - `$API.MacroHandler.getMacroDataObject$`
 
 **Example:**
-```javascript:inspect-automation-data
-// Title: Inspect current MIDI automation mappings
-const var mah = Engine.createMidiAutomationHandler();
-var data = mah.getAutomationDataObject();
 
-for (entry in data)
-{
-    Console.print("CC" + entry.Controller + " -> " + entry.Processor + "." + entry.Attribute);
-}
-```
-```json:testMetadata:inspect-automation-data
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Array.isArray(data)", "value": true},
-    {"type": "REPL", "expression": "data.length", "value": 0}
-  ]
-}
-```
 
 ## setAutomationDataFromObject
 
@@ -86,26 +68,7 @@ Internally, the method converts the array to a ValueTree and calls `restoreFromV
 - `$API.MacroHandler.setMacroDataFromObject$`
 
 **Example:**
-```javascript:roundtrip-automation-data
-// Title: Save and restore automation data
-const var mah = Engine.createMidiAutomationHandler();
 
-// Snapshot current state
-var saved = mah.getAutomationDataObject();
-Console.print("Saved " + saved.length + " entries");
-
-// Restore the saved state (clears existing, then adds saved entries)
-mah.setAutomationDataFromObject(saved);
-```
-```json:testMetadata:roundtrip-automation-data
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "log-output", "values": ["Saved 0 entries"]},
-    {"type": "REPL", "expression": "mah.getAutomationDataObject().length", "value": 0}
-  ]
-}
-```
 
 ## setConsumeAutomatedControllers
 
@@ -150,31 +113,7 @@ This method is typically used together with `setControllerNumbersInPopup()` to s
 - `$API.MidiAutomationHandler.setControllerNumbersInPopup$`
 
 **Example:**
-```javascript:custom-cc-names
-// Title: Customize CC popup with named controllers
-const var mah = Engine.createMidiAutomationHandler();
 
-// Only show CC1 and CC11 in the popup
-mah.setControllerNumbersInPopup([1, 11]);
-
-// Set the section header and give them readable names
-// Note: nameArray is indexed by CC number, so we need
-// entries at index 1 and 11
-var names = [];
-names[1] = "Mod Wheel";
-names[11] = "Expression";
-mah.setControllerNumberNames("Performance", names);
-```
-```json:testMetadata:custom-cc-names
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "names.length", "value": 12},
-    {"type": "REPL", "expression": "isDefined(names[1]) && isDefined(names[11])", "value": true},
-    {"type": "REPL", "expression": "isDefined(names[0])", "value": false}
-  ]
-}
-```
 
 ## setControllerNumbersInPopup
 
@@ -260,24 +199,4 @@ There is no mechanism to unregister the callback. Passing a non-function value i
 - `$API.MacroHandler.setUpdateCallback$`
 
 **Example:**
-```javascript:automation-update-callback
-// Title: Monitor automation changes with an update callback
-const var mah = Engine.createMidiAutomationHandler();
 
-var lastData = [];
-
-inline function onAutomationChanged(data)
-{
-    lastData = data;
-    Console.print("Automation changed: " + data.length + " entries");
-};
-
-// Registers and fires immediately with current state
-mah.setUpdateCallback(onAutomationChanged);
-```
-```json:testMetadata:automation-update-callback
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Automation changed: 0 entries"]}
-}
-```

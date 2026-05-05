@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Access multiple special folder locations
 var desktop = FileSystem.getFolder(FileSystem.Desktop);
 var appData = FileSystem.getFolder(FileSystem.AppData);
 var samples = FileSystem.getFolder(FileSystem.Samples);

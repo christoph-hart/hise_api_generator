@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Check whether a specific parameter has a CC assignment
 // Context: Before assigning a CC to a parameter, check the current
 // automation data to see if an assignment already exists.
 

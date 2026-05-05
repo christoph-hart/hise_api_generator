@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Check a string prefix for type dispatch
 // Context: When component IDs encode their type in the first few
 // characters, substring provides a lightweight prefix check.
 

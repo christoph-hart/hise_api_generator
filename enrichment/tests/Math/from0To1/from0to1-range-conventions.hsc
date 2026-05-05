@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Converting normalised values with different range conventions
 // Scriptnode convention
 var freq = Math.from0To1(0.5, {
     "MinValue": 20.0,

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Finding control point positions on an envelope curve
 // Context: Interactive envelope editors need to know where the curve
 // is at specific X positions so they can draw draggable control points.
 // After building and scaling the path, getYAt samples the curve at

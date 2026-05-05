@@ -271,15 +271,19 @@ c1.sendData("hello");
 
 ## Note on Testability
 
-Examples in this documentation are automatically validated to ensure correctness. When writing examples:
+Examples in this documentation are split into two tracks:
 
-- **Prefer deterministic output** - avoid `Math.random()`, file I/O, system state
-- **Show expected output in comments** - this documents behavior AND aids validation
-- **Use `trace()` for compound types** - produces parseable log output
+- **Testable examples** live as `.hsc` test files in `enrichment/tests/{Class}/{method}/{slug}.hsc`. They run against a live HISE instance via `hise-cli --run` and are auto-discovered by the api_enrich pipeline.
+- **Non-testable examples** stay as ```` ```javascript:slug ```` blocks in the phase1/2/3 .md sources. Use this for examples that need external resources (audio files, MIDI hardware, DAW interaction) or that demonstrate concepts without observable output.
 
-Examples that require external resources (files, MIDI, timers) or have non-deterministic output should be marked `testable: false` in their metadata. See `test_metadata.md` for testing guidelines.
+When writing testable examples:
+- **Prefer deterministic output** — avoid `Math.random()`, file I/O, system state
+- **Show expected output in comments** — documents behavior AND drives `/expect-logs` assertions
+- **Use `trace()` for compound types** — produces parseable log output
 
-Most examples following the quality guidelines above will be naturally testable.
+For the `.hsc` file format, region sentinels, and assertion verbs, see `hsc-test-format.md`.
+
+Most examples following the quality guidelines above will be naturally testable as `.hsc` files.
 
 ---
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Use callback index to update step state
 // Context: Step sequencer workflows treat the callback value as the edited step index.
 
 const var stepPack = Content.addSliderPack("StepPack", 10, 10);

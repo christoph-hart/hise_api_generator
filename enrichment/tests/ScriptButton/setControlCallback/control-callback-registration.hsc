@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Registering a custom control callback
 const var btn = Content.addButton("CbBtn", 0, 0);
 btn.set("saveInPreset", false);
 

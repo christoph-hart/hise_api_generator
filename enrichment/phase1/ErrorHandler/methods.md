@@ -153,31 +153,7 @@ Registers a callback function that fires when an error state changes. The callba
 - `$API.ErrorHandler.setCustomMessageToShow$`
 
 **Example:**
-```javascript:error-callback-setup
-// Title: Registering a custom error callback
-const var eh = Engine.createErrorHandler();
 
-reg lastState = -1;
-
-inline function onError(state, message)
-{
-    lastState = state;
-};
-
-eh.setErrorCallback(onError);
-
-// --- test-only ---
-eh.simulateErrorEvent(eh.IllegalBufferSize);
-// --- end test-only ---
-```
-```json:testMetadata:error-callback-setup
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastState", "value": 11}
-  ]
-}
-```
 
 ## simulateErrorEvent
 

@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Setting up master-clock-synced MIDI playback
 // Context: Configure the TransportHandler grid first, then sync all
 // MidiPlayer instances. Transport is controlled via the clock, not play()/stop().
 

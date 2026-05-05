@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Serializing step sequencer data for clipboard and preset storage
 // Context: A sequencer exports each channel's step data as a Base64 string
 // for copy/paste and custom preset serialization.
 

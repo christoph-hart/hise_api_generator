@@ -178,40 +178,7 @@ On registration, the target is immediately initialized with the broadcaster's cu
 - `$API.Broadcaster.removeListener$`
 
 **Example:**
-```javascript:component-value-listener-callback
-// Title: Setting component values with a transform callback
-const var bc = Engine.createBroadcaster({
-    "id": "ValueSync",
-    "args": ["component", "value"]
-});
 
-// --- setup ---
-const var Knob1 = Content.addKnob("Knob1v", 0, 0);
-const var Knob2 = Content.addKnob("Knob2v", 150, 0);
-Knob1.set("saveInPreset", false);
-Knob2.set("saveInPreset", false);
-// --- end setup ---
-
-inline function onValueTarget(targetIndex, component, value)
-{
-    if (targetIndex == 0)
-        return value;
-
-    return 1.0 - value;
-}
-
-bc.addComponentValueListener(["Knob1v", "Knob2v"], "invertSecond", onValueTarget);
-```
-```json:testMetadata:component-value-listener-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "bc.sendSyncMessage([\"Knob1v\", 0.75]) || true", "value": true},
-    {"type": "REPL", "expression": "Content.getComponent(\"Knob1v\").getValue()", "value": 0.75},
-    {"type": "REPL", "expression": "Content.getComponent(\"Knob2v\").getValue()", "value": 0.25}
-  ]
-}
-```
 
 ## addDelayedListener
 
@@ -326,31 +293,7 @@ If `setForceSynchronousExecution(true)` has been called, the `forceSync` flag ov
 - `$API.Broadcaster.setForceSynchronousExecution$`
 
 **Example:**
-```javascript:send-async-message
-// Title: Broadcasting values asynchronously
-const var bc = Engine.createBroadcaster({
-    "id": "StatusBroadcaster",
-    "args": ["status", "count"]
-});
 
-var lastStatus = "";
-
-inline function onStatusChange(status, count)
-{
-    lastStatus = status;
-}
-
-bc.addListener("handler", "statusLogger", onStatusChange);
-bc.sendAsyncMessage(["ready", 1]);
-```
-```json:testMetadata:send-async-message
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 300, "expression": "lastStatus", "value": "ready"}
-  ]
-}
-```
 
 ## reset
 
@@ -551,34 +494,7 @@ Listeners are sorted by metadata priority (higher priority values execute first)
 - `$API.Broadcaster.setRealtimeMode$`
 
 **Example:**
-```javascript:add-listener-basic
-// Title: Basic broadcaster listener with state tracking
-const var bc = Engine.createBroadcaster({
-    "id": "StatusBC",
-    "args": ["status", "count"]
-});
 
-var log = [];
-
-inline function onStatus(status, count)
-{
-    log.push(status + ":" + count);
-}
-
-bc.addListener("handler", "statusLogger", onStatus);
-bc.sendSyncMessage(["ready", 1]);
-bc.sendSyncMessage(["done", 2]);
-```
-```json:testMetadata:add-listener-basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "log.length", "value": 2},
-    {"type": "REPL", "expression": "log[0]", "value": "ready:1"},
-    {"type": "REPL", "expression": "log[1]", "value": "done:2"}
-  ]
-}
-```
 
 ## addModuleParameterSyncer
 
@@ -614,33 +530,7 @@ As a side effect, this method forces the broadcaster into synchronous execution 
 - `$API.Broadcaster.removeListener$`
 
 **Example:**
-```javascript:module-parameter-syncer
-// Title: Syncing a broadcaster value to a module parameter
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.Effects.SimpleGain, "SyncGain", 0, builder.ChainIndexes.FX);
-builder.flush();
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "GainSync",
-    "args": ["processorId", "parameterId", "value"]
-});
-
-bc.addModuleParameterSyncer("SyncGain", "Gain", "gainTarget");
-bc.sendSyncMessage(["SyncGain", "Gain", -12.0]);
-
-const var gain = Synth.getEffect("SyncGain");
-```
-```json:testMetadata:module-parameter-syncer
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "gain.getAttribute(gain.Gain)", "value": -12.0}
-  ]
-}
-```
 
 ## attachToComplexData
 
@@ -696,41 +586,7 @@ Queue mode is automatically enabled when multiple processors or multiple indices
 - **Description:** Shows the flow from an ExternalDataHolder module through the ComplexDataListener source to the broadcaster's target listeners. The source monitors either content changes or display value changes depending on the EventType, and forwards (processorId, index, value) triples to the broadcaster.
 
 **Example:**
-```javascript:attach-to-complex-data-table
-// Title: Watching a table's content changes
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.Modulators.Velocity, "WatchTable", 0, builder.ChainIndexes.Gain);
-builder.flush();
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "TableWatch",
-    "args": ["processorId", "index", "value"]
-});
-
-var lastProcId = "";
-var lastIndex = -1;
-
-inline function onTableChange(processorId, index, value)
-{
-    lastProcId = processorId;
-    lastIndex = index;
-}
-
-bc.addListener("handler", "tableLogger", onTableChange);
-bc.attachToComplexData("Table.Content", "WatchTable", 0, "tableSource");
-```
-```json:testMetadata:attach-to-complex-data-table
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastProcId", "value": "WatchTable"},
-    {"type": "REPL", "expression": "lastIndex", "value": 0}
-  ]
-}
-```
 
 ## attachToComponentMouseEvents
 
@@ -882,40 +738,7 @@ Unlike most other `attachTo*` methods, this method does NOT call `checkMetadataA
 - `$API.Broadcaster.addComponentPropertyListener$`
 
 **Example:**
-```javascript:attach-component-properties
-// Title: Watching a component's text property for changes
-// --- setup ---
-const var PropKnob1 = Content.addKnob("PropKnob1", 0, 0);
-PropKnob1.set("saveInPreset", false);
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "PropWatcher",
-    "args": ["component", "property", "value"]
-});
-
-var lastProp = "";
-var lastVal = "";
-
-inline function onPropChange(component, property, value)
-{
-    lastProp = property;
-    lastVal = value;
-}
-
-bc.addListener("handler", "propLogger", onPropChange);
-bc.attachToComponentProperties("PropKnob1", "text", "propSource");
-Content.getComponent("PropKnob1").set("text", "Hello");
-```
-```json:testMetadata:attach-component-properties
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 300, "expression": "lastProp", "value": "text"},
-    {"type": "REPL", "expression": "lastVal", "value": "Hello"}
-  ]
-}
-```
 
 ## attachToComponentValue
 
@@ -951,36 +774,7 @@ On attachment, `checkMetadataAndCallWithInitValues()` is called, which dispatche
 - `$API.Broadcaster.attachToComponentVisibility$`
 
 **Example:**
-```javascript:attach-component-value
-// Title: Watching a knob's value changes via broadcaster
-// --- setup ---
-const var ValKnob1 = Content.addKnob("ValKnob1", 0, 0);
-ValKnob1.set("saveInPreset", false);
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "ValueWatch",
-    "args": ["component", "value"]
-});
-
-var lastValue = -1.0;
-
-inline function onValueChange(component, value)
-{
-    lastValue = value;
-}
-
-bc.addListener("handler", "valueLogger", onValueChange);
-bc.attachToComponentValue("ValKnob1", "valueSource");
-```
-```json:testMetadata:attach-component-value
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastValue", "value": 0.0}
-  ]
-}
-```
 
 ## attachToComponentVisibility
 
@@ -1018,37 +812,7 @@ On attachment, `checkMetadataAndCallWithInitValues()` is called. The initial val
 - `$API.Broadcaster.attachToComponentProperties$`
 
 **Example:**
-```javascript:attach-component-visibility
-// Title: Tracking a component's visibility state
-// --- setup ---
-const var VisPanel1 = Content.addPanel("VisPanel1", 0, 0);
-VisPanel1.set("saveInPreset", false);
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "VisWatch",
-    "args": ["id", "isVisible"]
-});
-
-var visLog = [];
-
-inline function onVisChange(id, isVisible)
-{
-    visLog.push(id + ":" + isVisible);
-}
-
-bc.addListener("handler", "visLogger", onVisChange);
-bc.attachToComponentVisibility("VisPanel1", "visSource");
-```
-```json:testMetadata:attach-component-visibility
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "visLog.length", "value": 1},
-    {"type": "REPL", "expression": "visLog[0]", "value": "VisPanel1:1"}
-  ]
-}
-```
 
 ## attachToContextMenu
 
@@ -1274,34 +1038,7 @@ This source is particularly useful for responsive layouts where components need 
 - `$API.Broadcaster.addListener$`
 
 **Example:**
-```javascript:attach-interface-size
-// Title: Responding to interface size changes
-const var bc = Engine.createBroadcaster({
-    "id": "SizeWatch",
-    "args": ["width", "height"]
-});
 
-var currentWidth = 0;
-var currentHeight = 0;
-
-inline function onSizeChange(width, height)
-{
-    currentWidth = width;
-    currentHeight = height;
-}
-
-bc.addListener("handler", "sizeLogger", onSizeChange);
-bc.attachToInterfaceSize("sizeSource");
-```
-```json:testMetadata:attach-interface-size
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "currentWidth > 0", "value": true},
-    {"type": "REPL", "expression": "currentHeight > 0", "value": true}
-  ]
-}
-```
 
 ## attachToModuleParameter
 
@@ -1364,43 +1101,7 @@ Queue mode is automatically enabled after attachment, ensuring parameter change 
 - **Description:** Shows how the ModuleParameterListener registers with Processor::AttributeListener (or OtherListener on legacy dispatch) and Processor::BypassListener. Normal parameter changes flow through onAttributeUpdate/otherChange, special IDs (Bypassed/Enabled) flow through bypassStateChanged, and Intensity flows through Modulation::intensityBroadcaster. All paths converge at sendAsyncMessage to the parent broadcaster.
 
 **Example:**
-```javascript:attach-module-parameter
-// Title: Monitoring a module parameter and bypass state
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.Effects.SimpleGain, "WatchGain", 0, builder.ChainIndexes.FX);
-builder.flush();
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "ParamWatch",
-    "args": ["processorId", "parameterId", "value"]
-});
-
-var lastParamId = "";
-var lastParamValue = -1.0;
-
-inline function onParamChange(processorId, parameterId, value)
-{
-    lastParamId = parameterId;
-    lastParamValue = value;
-}
-
-bc.addListener("handler", "paramLogger", onParamChange);
-bc.attachToModuleParameter("WatchGain", ["Gain"], "paramSource");
-
-const var gain = Synth.getEffect("WatchGain");
-```
-```json:testMetadata:attach-module-parameter
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastParamId", "value": "Gain"},
-    {"type": "REPL", "expression": "lastParamValue", "value": 0.0}
-  ]
-}
-```
 
 ## attachToNonRealtimeChange
 
@@ -1502,44 +1203,7 @@ On attachment, the source broadcaster(s)' current `lastValues` are dispatched to
 - `$API.Broadcaster.sendAsyncMessage$`
 
 **Example:**
-```javascript:attach-to-other-broadcaster
-// Title: Chaining broadcasters with argument transformation
-const var source = Engine.createBroadcaster({
-    "id": "Source",
-    "args": ["x", "y"]
-});
 
-const var target = Engine.createBroadcaster({
-    "id": "Target",
-    "args": ["sum"]
-});
-
-var log = [];
-
-target.addListener("logger", "sumLog", function(sum)
-{
-    log.push(sum);
-});
-
-inline function transformArgs(x, y)
-{
-    return [x + y];
-}
-
-target.attachToOtherBroadcaster(source, transformArgs, false, "chainSource");
-source.sendSyncMessage([3, 4]);
-source.sendSyncMessage([10, 20]);
-```
-```json:testMetadata:attach-to-other-broadcaster
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "log.length", "value": 3},
-    {"type": "REPL", "expression": "log[1]", "value": 7},
-    {"type": "REPL", "expression": "log[2]", "value": 30}
-  ]
-}
-```
 
 ## attachToProcessingSpecs
 
@@ -1631,44 +1295,7 @@ The function-call syntax on the broadcaster (`bc(button, isOn)`) has special han
 - `$API.Broadcaster.sendAsyncMessage$`
 
 **Example:**
-```javascript:attach-to-radio-group
-// Title: Monitoring radio button group selection
-// --- setup ---
-const var Btn1 = Content.addButton("Btn1", 0, 0);
-Btn1.set("radioGroup", 1);
-Btn1.set("saveInPreset", false);
-const var Btn2 = Content.addButton("Btn2", 130, 0);
-Btn2.set("radioGroup", 1);
-Btn2.set("saveInPreset", false);
-const var Btn3 = Content.addButton("Btn3", 260, 0);
-Btn3.set("radioGroup", 1);
-Btn3.set("saveInPreset", false);
-Btn1.setValue(1);
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "RadioGroup1",
-    "args": ["selectedIndex"]
-});
-
-var selectedLog = [];
-
-bc.addListener("logger", "radioLog", function(selectedIndex)
-{
-    selectedLog.push(selectedIndex);
-});
-
-bc.attachToRadioGroup(1, "radioSource");
-```
-```json:testMetadata:attach-to-radio-group
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "selectedLog.length", "value": 1},
-    {"type": "REPL", "expression": "selectedLog[0]", "value": 0}
-  ]
-}
-```
 
 ## attachToRoutingMatrix
 
@@ -1705,37 +1332,7 @@ On attachment, initial values are dispatched for each monitored processor -- one
 - `$API.RoutingMatrix$`
 
 **Example:**
-```javascript:attach-to-routing-matrix
-// Title: Monitoring routing matrix changes on a processor
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.Effects.SimpleGain, "SimpleGain1", 0, builder.ChainIndexes.FX);
-builder.flush();
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "MatrixWatch",
-    "args": ["processorId", "matrix"]
-});
-
-var lastProcessorId = "";
-
-bc.addListener("handler", "matrixHandler", function(processorId, matrix)
-{
-    lastProcessorId = processorId;
-});
-
-bc.attachToRoutingMatrix("SimpleGain1", "matrixSource");
-```
-```json:testMetadata:attach-to-routing-matrix
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastProcessorId", "value": "SimpleGain1"}
-  ]
-}
-```
 
 ## attachToSampleMap
 
@@ -1792,37 +1389,7 @@ On attachment, initial values are dispatched for each sampler: one call each for
 - `$API.Broadcaster.addListener$`
 
 **Example:**
-```javascript:attach-to-samplemap
-// Title: Monitoring samplemap load events on a sampler
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.SoundGenerators.StreamingSampler, "Sampler1", 0, builder.ChainIndexes.Direct);
-builder.flush();
-// --- end setup ---
 
-const var bc = Engine.createBroadcaster({
-    "id": "SampleMapWatch",
-    "args": ["eventType", "samplerId", "data"]
-});
-
-var eventLog = [];
-
-bc.addListener("logger", "smLog", function(eventType, samplerId, data)
-{
-    eventLog.push(eventType + ":" + samplerId);
-});
-
-bc.attachToSampleMap("Sampler1", ["SampleMapChanged", "SamplesAddedOrRemoved"], "smSource");
-```
-```json:testMetadata:attach-to-samplemap
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "eventLog.length", "value": 2}
-  ]
-}
-```
 
 ## callWithDelay
 
@@ -2004,36 +1571,7 @@ For single-argument broadcasters, pass the value directly (not wrapped in an arr
 - `$API.Broadcaster.setEnableQueue$`
 
 **Example:**
-```javascript:sync-message-basic
-// Title: Synchronous message dispatch with listener verification
-const var bc = Engine.createBroadcaster({
-    "id": "StatusBc",
-    "args": ["status", "count"]
-});
 
-var lastStatus = "";
-var lastCount = 0;
-
-bc.addListener("logger", "Captures status",
-function(status, count)
-{
-    lastStatus = status;
-    lastCount = count;
-});
-
-bc.sendSyncMessage(["active", 5]);
-```
-```json:testMetadata:sync-message-basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastStatus", "value": "active"},
-    {"type": "REPL", "expression": "lastCount", "value": 5},
-    {"type": "REPL", "expression": "bc.status", "value": "active"},
-    {"type": "REPL", "expression": "bc.count", "value": 5}
-  ]
-}
-```
 
 ## setBypassed
 
@@ -2072,37 +1610,7 @@ The `bypass()` scoped statement in HiseScript provides a RAII alternative: the b
 - `$API.Broadcaster.resendLastMessage$`
 
 **Example:**
-```javascript:bypass-and-resume
-// Title: Bypass suppresses messages, unbypass resends last values
-const var bc = Engine.createBroadcaster({
-    "id": "BypassTest",
-    "args": ["value"]
-});
 
-var received = [];
-
-bc.addListener("logger", "Tracks values",
-function(value)
-{
-    received.push(value);
-});
-
-bc.sendSyncMessage([10]);
-bc.setBypassed(true, false, false);
-bc.sendSyncMessage([20]);
-bc.sendSyncMessage([30]);
-bc.setBypassed(false, true, true);
-```
-```json:testMetadata:bypass-and-resume
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "received.length", "value": 2},
-    {"type": "REPL", "expression": "received[0]", "value": 10},
-    {"type": "REPL", "expression": "received[1]", "value": 30}
-  ]
-}
-```
 
 ## setEnableQueue
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Creating knobs and accessing the returned reference
 Content.makeFrontInterface(600, 300);
 const var vol = Content.addKnob("VolKn", 10, 10);
 vol.setRange(0.0, 1.0, 0.01);

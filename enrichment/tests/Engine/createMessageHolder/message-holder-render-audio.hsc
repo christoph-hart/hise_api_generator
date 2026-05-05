@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Constructing MIDI events for offline audio rendering
 // Context: MessageHolder objects are used to build MIDI event
 // sequences for Engine.renderAudio(). Each event needs its type,
 // note number, velocity, channel, and timestamp set explicitly.

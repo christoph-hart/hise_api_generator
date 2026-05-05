@@ -16,6 +16,7 @@ add Transposer as "Transposer1"
 /script
 /callback onInit
 // end setup
+// Title: Bracket assignment syntax for parameter control
 // Context: The AssignableObject interface allows mp["ParamName"] = value
 // as shorthand for setAttribute. Writing works; reading does not.
 

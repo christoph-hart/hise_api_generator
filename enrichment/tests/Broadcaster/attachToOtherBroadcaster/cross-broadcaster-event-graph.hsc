@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Cross-broadcaster communication - forming a reactive event graph
 // Context: In a complex plugin, broadcasters can target other broadcasters
 // as listeners, creating a chain of reactive events. This allows event
 // propagation without tight coupling between the systems that own each

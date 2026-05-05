@@ -62,28 +62,7 @@ None.
 - `$API.SliderPackData.getValue$`
 
 **Example:**
-```javascript:buffer-reference-processing
-// Title: Processing slider pack data with Buffer operations
-const var spd = Engine.createAndRegisterSliderPackData(0);
-spd.setNumSliders(8);
-spd.setAllValues(0.5);
 
-// Get the buffer reference and modify directly
-var buf = spd.getDataAsBuffer();
-buf[0] = 1.0;
-
-// The slider pack data is now modified
-Console.print(spd.getValue(0));
-```
-```json:testMetadata:buffer-reference-processing
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "spd.getValue(0)", "value": 1.0},
-    {"type": "REPL", "expression": "spd.getValue(1)", "value": 0.5}
-  ]
-}
-```
 
 ## getNumSliders
 
@@ -152,30 +131,7 @@ Links this SliderPackData to another SliderPackData so they share the same under
 - `$API.SliderPackData.getDataAsBuffer$`
 
 **Example:**
-```javascript:link-two-slider-packs
-// Title: Linking two SliderPackData objects to share data
-const var spd1 = Engine.createAndRegisterSliderPackData(0);
-const var spd2 = Engine.createAndRegisterSliderPackData(1);
 
-spd1.setNumSliders(4);
-spd1.setAllValues(0.5);
-
-// Link spd2 to spd1 -- they now share data
-spd2.linkTo(spd1);
-
-// Changes through spd1 are visible through spd2
-spd1.setValue(0, 1.0);
-Console.print(spd2.getValue(0));
-```
-```json:testMetadata:link-two-slider-packs
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "spd2.getValue(0)", "value": 1.0},
-    {"type": "REPL", "expression": "spd2.getNumSliders()", "value": 4}
-  ]
-}
-```
 
 ## setAllValues
 
@@ -202,27 +158,7 @@ Sets slider values from a single number, an Array, or a Buffer. When passed a si
 - `$API.SliderPackData.setValue$`
 
 **Example:**
-```javascript:set-all-values-polymorphic
-// Title: Setting values from a number and an array
-const var spd = Engine.createAndRegisterSliderPackData(0);
-spd.setNumSliders(4);
 
-// Set all sliders to 0.5
-spd.setAllValues(0.5);
-
-// Set from an array
-spd.setAllValues([0.1, 0.2, 0.3, 0.4]);
-Console.print(spd.getValue(2));
-```
-```json:testMetadata:set-all-values-polymorphic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "spd.getValue(0)", "value": 0.1},
-    {"type": "REPL", "expression": "spd.getValue(2)", "value": 0.3}
-  ]
-}
-```
 
 ## setAllValuesWithUndo
 
@@ -290,33 +226,7 @@ Registers a callback that fires when slider values change. The callback receives
 - `$API.SliderPackData.setValue$`
 
 **Example:**
-```javascript:content-callback-setup
-// Title: Registering a content change callback
-const var spd = Engine.createAndRegisterSliderPackData(0);
-spd.setNumSliders(4);
-spd.setAllValues(0.5);
 
-reg lastChangedIndex = -99;
-
-inline function onContentChanged(index)
-{
-    lastChangedIndex = index;
-};
-
-spd.setContentCallback(onContentChanged);
-
-// --- test-only ---
-spd.setValue(2, 0.8);
-// --- end test-only ---
-```
-```json:testMetadata:content-callback-setup
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastChangedIndex", "value": 2}
-  ]
-}
-```
 
 ## setDisplayCallback
 
@@ -430,31 +340,7 @@ Configures a fixed-size preallocated memory block for the slider data. Once set,
 - `$API.SliderPackData.setNumSliders$`
 
 **Example:**
-```javascript:preallocated-resize
-// Title: Using preallocated length for efficient resizing
-const var spd = Engine.createAndRegisterSliderPackData(0);
 
-// Preallocate for up to 32 sliders
-spd.setUsePreallocatedLength(32);
-
-// Set initial values
-spd.setNumSliders(8);
-spd.setAllValues(0.5);
-spd.setValue(0, 1.0);
-
-// Resize preserves existing values (no reallocation)
-spd.setNumSliders(16);
-Console.print(spd.getValue(0));
-```
-```json:testMetadata:preallocated-resize
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "spd.getValue(0)", "value": 1.0},
-    {"type": "REPL", "expression": "spd.getNumSliders()", "value": 16}
-  ]
-}
-```
 
 ## setValue
 

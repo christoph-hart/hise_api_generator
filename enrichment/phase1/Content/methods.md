@@ -330,18 +330,7 @@ Creates a ScriptButton (toggle button) component and adds it to the interface. A
 - `$API.Content.componentExists$`
 
 **Example:**
-```javascript:add-button-basic
-// Title: Creating buttons with idempotent naming
-const var btn1 = Content.addButton("BypassBtn", 10, 10);
-const var btn2 = Content.addButton("BypassBtn", 10, 10);
-Console.assertTrue(btn1 == btn2);
-```
-```json:testMetadata:add-button-basic
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "btn1 == btn2", "value": true}
-}
-```
+
 
 ## addComboBox
 
@@ -444,19 +433,7 @@ Creates a ScriptSlider component (rotary knob or linear slider, depending on the
 - `$API.Content.componentExists$`
 
 **Example:**
-```javascript:add-knob-basic
-// Title: Creating knobs and accessing the returned reference
-Content.makeFrontInterface(600, 300);
-const var vol = Content.addKnob("VolKn", 10, 10);
-vol.setRange(0.0, 1.0, 0.01);
-vol.set("defaultValue", 0.75);
-```
-```json:testMetadata:add-knob-basic
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "vol.getRange().max", "value": 1.0}
-}
-```
+
 
 ## addLabel
 
@@ -654,22 +631,7 @@ Checks whether a component with the given name exists on the interface. Returns 
 - `$API.Content.getAllComponents$`
 
 **Example:**
-```javascript:component-exists-check
-// Title: Conditional component access
-Content.makeFrontInterface(600, 300);
-const var knob = Content.addKnob("CExKnob1", 10, 10);
-const var found = Content.componentExists("CExKnob1");
-const var missing = Content.componentExists("NonExistent");
-```
-```json:testMetadata:component-exists-check
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "found", "value": true},
-    {"type": "REPL", "expression": "missing", "value": false}
-  ]
-}
-```
+
 
 ## setPropertiesFromJSON
 
@@ -698,28 +660,7 @@ If the named component does not exist, a script error is thrown.
 - `$API.Content.componentExists$`
 
 **Example:**
-```javascript:set-props-from-json
-// Title: Bulk-setting component properties
-Content.makeFrontInterface(600, 300);
-Content.addKnob("SPKnob1", 10, 10);
-Content.setPropertiesFromJSON("SPKnob1", {
-  "text": "Volume",
-  "width": 128,
-  "height": 48,
-  "min": 0.0,
-  "max": 1.0
-});
-const var ref = Content.getComponent("SPKnob1");
-```
-```json:testMetadata:set-props-from-json
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "ref.get(\"width\")", "value": 128},
-    {"type": "REPL", "expression": "ref.get(\"text\")", "value": "Volume"}
-  ]
-}
-```
+
 
 ## storeAllControlsAsPreset
 
@@ -771,64 +712,7 @@ Returns a reference to the component with the given name. Performs a linear sear
 - `$API.Content.getAllComponents$`
 
 **Example:**
-```javascript:caching-component-refs
-// Title: Caching component references at init time
-// --- setup ---
-Content.addKnob("GainKnob", 10, 10);
-Content.addKnob("MixKnob", 150, 10);
-Content.addButton("BypassBtn", 300, 10);
-for (i = 0; i < 4; i++)
-{
-    Content.addKnob("Volume" + (i + 1), 10, 60 + i * 50);
-    Content.addKnob("Pan" + (i + 1), 150, 60 + i * 50);
-}
-// --- end setup ---
-// Context: getComponent performs a linear search. The standard practice is to
-// cache all references as const var during onInit and use those variables
-// everywhere else. This is the single most common API call in HiseScript.
 
-Content.makeFrontInterface(900, 600);
-
-// Cache references once at init
-const var gainKnob = Content.getComponent("GainKnob");
-const var mixKnob = Content.getComponent("MixKnob");
-const var bypassBtn = Content.getComponent("BypassBtn");
-
-// Build arrays of related components using a loop
-const var NUM_CHANNELS = 4;
-const var channelVolumes = [];
-const var channelPans = [];
-
-for (i = 0; i < NUM_CHANNELS; i++)
-{
-    channelVolumes.push(Content.getComponent("Volume" + (i + 1)));
-    channelPans.push(Content.getComponent("Pan" + (i + 1)));
-}
-
-Console.print(channelVolumes.length); // 4
-```
-```json:testMetadata:caching-component-refs
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "gainKnob.get(\"id\")",
-      "value": "GainKnob"
-    },
-    {
-      "type": "REPL",
-      "expression": "channelVolumes.length",
-      "value": 4
-    },
-    {
-      "type": "REPL",
-      "expression": "channelVolumes[2].get(\"id\")",
-      "value": "Volume3"
-    }
-  ]
-}
-```
 
 ## getComponentUnderDrag
 
@@ -938,31 +822,7 @@ Returns the current interface dimensions as a `[width, height]` array.
 - `$API.Content.makeFrontInterface$`
 
 **Example:**
-```javascript:get-interface-size
-// Title: Querying the interface dimensions
-Content.makeFrontInterface(800, 500);
 
-const var size = Content.getInterfaceSize();
-Console.print(size[0]);
-Console.print(size[1]);
-```
-```json:testMetadata:get-interface-size
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "size[0]",
-      "value": 800
-    },
-    {
-      "type": "REPL",
-      "expression": "size[1]",
-      "value": 500
-    }
-  ]
-}
-```
 
 ## getScreenBounds
 
@@ -1098,46 +958,7 @@ Sets the interface dimensions and registers this script processor as the front i
 - `$API.Content.getInterfaceSize$`
 
 **Example:**
-```javascript:init-scaffold
-// Title: Standard interface initialization scaffold
-// Context: This is always the very first line of the main interface script.
-// It sets the interface size and registers this script processor as the
-// front interface. Everything else follows after this call.
 
-Content.makeFrontInterface(900, 600);
-
-// Optional: enable HiDPI for custom-drawn panels
-Content.setUseHighResolutionForPanels(true);
-
-// Create the UI components
-const var mainPanel = Content.addPanel("MainPanel", 0, 0);
-mainPanel.set("width", 900);
-mainPanel.set("height", 600);
-
-const var gainKnob = Content.addKnob("GainKnob", 10, 10);
-const var bypassBtn = Content.addButton("BypassBtn", 150, 10);
-
-const var size = Content.getInterfaceSize();
-Console.print(size[0]); // 900
-Console.print(size[1]); // 600
-```
-```json:testMetadata:init-scaffold
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "size[0]",
-      "value": 900
-    },
-    {
-      "type": "REPL",
-      "expression": "size[1]",
-      "value": 600
-    }
-  ]
-}
-```
 
 ## makeFullScreenInterface
 
@@ -1618,20 +1439,3 @@ The flag is checked inside the `addComponent<T>()` template: `if ((x != -1 && y 
 - `$API.Content.setPropertiesFromJSON$`
 
 **Example:**
-```javascript:disable-position-update
-// Title: Preventing addXXX from resetting dynamic layouts
-Content.makeFrontInterface(900, 600);
-
-// Disable position updates -- layout is managed by script
-Content.setUpdateExistingPosition(false);
-
-const var btn = Content.addButton("DynBtn", 10, 10);
-// On recompile, "DynBtn" will NOT be moved back to (10, 10)
-// if it was repositioned at runtime
-```
-```json:testMetadata:disable-position-update
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "isDefined(btn)", "value": true}
-}
-```

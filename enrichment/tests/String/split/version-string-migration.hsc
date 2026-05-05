@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Parse a version string for migration logic
 // Context: User presets store a version string. On load, split it
 // into components to decide whether migration is needed.
 

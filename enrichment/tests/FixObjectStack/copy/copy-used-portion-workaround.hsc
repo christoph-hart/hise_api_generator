@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Copy only used portion of a stack property
 const var f = Engine.createFixObjectFactory({
     "note": 0,
     "velocity": 0.0

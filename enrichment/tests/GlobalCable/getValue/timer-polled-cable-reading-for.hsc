@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Timer-polled cable reading for visual feedback
 // Context: A ScriptPanel displays a modulation ring that shows the
 // current cable value as an arc. The panel polls the cable on a
 // timer rather than using a callback, which is simpler when the

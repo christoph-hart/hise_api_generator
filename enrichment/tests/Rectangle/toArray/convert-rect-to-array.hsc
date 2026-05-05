@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Converting a Rectangle back to [x,y,w,h] for APIs that expect arrays
 // Context: Some older utility functions or third-party include files expect
 // plain [x,y,w,h] arrays. Use toArray() to bridge between Rectangle objects
 // and array-based APIs.

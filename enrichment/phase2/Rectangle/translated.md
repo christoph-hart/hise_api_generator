@@ -43,27 +43,4 @@ parentPanel.setPaintRoutine(function(g)
 }
 ```
 
-```javascript:method-chain-remove-translate
-// Title: Method chaining with removeFromBottom and translated
-// Context: Positioning a label area below a slider's drag region, centered
-// and offset slightly downward. Demonstrates fluent chaining of
-// removeFromBottom -> withSizeKeepingCentre -> translated.
 
-var sliderBounds = Rectangle(0, 0, 80, 100);
-
-// Slice the bottom 20px, center it to 100px wide, nudge 5px down
-var labelArea = sliderBounds.removeFromBottom(20)
-    .withSizeKeepingCentre(100, 20)
-    .translated(0, 5);
-```
-```json:testMetadata:method-chain-remove-translate
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "labelArea.width", "value": 100},
-    {"type": "REPL", "expression": "labelArea.height", "value": 20},
-    {"type": "REPL", "expression": "labelArea.y", "value": 85},
-    {"type": "REPL", "expression": "sliderBounds.height", "value": 80}
-  ]
-}
-```

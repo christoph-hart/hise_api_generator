@@ -2,33 +2,6 @@
 
 **Examples:**
 
-```javascript:cpu-meter-polling
-// Title: CPU meter with periodic polling
-// Context: Timer objects are the standard way to poll engine state
-// for UI display. This pattern appears in nearly every plugin that
-// shows CPU usage, peak levels, or loading progress.
-
-const var cpuLabel = Content.addLabel("CpuLabel", 10, 10);
-cpuLabel.set("editable", false);
-
-const var cpuTimer = Engine.createTimerObject();
-
-cpuTimer.setTimerCallback(function()
-{
-    cpuLabel.set("text", parseInt(Engine.getCpuUsage()) + "% CPU");
-});
-
-// 500ms is a good default for diagnostic displays
-cpuTimer.startTimer(500);
-```
-```json:testMetadata:cpu-meter-polling
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 600, "expression": "cpuLabel.get(\"text\").contains(\"CPU\")", "value": true}
-  ]
-}
-```
 
 ```javascript:deferred-sample-map-loading
 // Title: Deferred sample map loading to avoid audio thread hitches

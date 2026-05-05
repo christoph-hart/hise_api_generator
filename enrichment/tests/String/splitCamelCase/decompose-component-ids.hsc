@@ -19,6 +19,7 @@ add ScriptSlider "PlayerDecay" at 300 0 128 48
 /script
 /callback onInit
 // end setup
+// Title: Decompose camelCase component IDs into structured data
 // Context: Name components with a convention like "FilterAttack" where the
 // first token is the envelope type and the second is the parameter. Then
 // splitCamelCase lets a single callback handle all envelope controls.

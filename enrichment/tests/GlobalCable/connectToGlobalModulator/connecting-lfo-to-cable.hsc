@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Connecting a global LFO modulator to a cable
 const var builder = Synth.createBuilder();
 builder.clear();
 var gmcIndex = builder.create(builder.SoundGenerators.GlobalModulatorContainer,

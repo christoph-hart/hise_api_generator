@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Modify existing style incrementally
 const var md = Content.createMarkdownRenderer();
 
 var style = md.getStyleData();

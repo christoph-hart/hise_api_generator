@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Build a master automation list from per-channel sub-arrays
 // Context: A plugin with multiple channel strips builds its full
 // automation parameter list by creating sub-arrays per channel,
 // then concatenating them into one master array. concat() modifies

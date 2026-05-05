@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Query table values at multiple positions
 const var td = Engine.createAndRegisterTableData(0);
 
 // Default table is a linear ramp 0->1

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Page navigation with radio buttons
 const var PageBtn1 = Content.addButton("PageBtn1", 0, 0);
 PageBtn1.set("radioGroup", 2);
 PageBtn1.set("saveInPreset", false);

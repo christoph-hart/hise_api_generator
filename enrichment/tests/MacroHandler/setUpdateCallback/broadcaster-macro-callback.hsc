@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Using a Broadcaster as the macro update callback
 // Context: Instead of a plain function, pass a Broadcaster to fan out
 // macro change notifications to multiple independent listeners
 

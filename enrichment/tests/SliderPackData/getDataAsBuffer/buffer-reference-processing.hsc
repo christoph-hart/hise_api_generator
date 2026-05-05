@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Processing slider pack data with Buffer operations
 const var spd = Engine.createAndRegisterSliderPackData(0);
 spd.setNumSliders(8);
 spd.setAllValues(0.5);

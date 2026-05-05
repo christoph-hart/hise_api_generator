@@ -321,24 +321,7 @@ Returns a two-element array `[width, height]` representing the main display's us
 None.
 
 **Example:**
-```javascript:desktop-size-zoom
-// Title: Query usable desktop dimensions
-var desktop = Settings.getUserDesktopSize();
-var maxWidth = desktop[0];
-var maxHeight = desktop[1];
-Console.print("Desktop: " + maxWidth + " x " + maxHeight);
-```
 
-```json:testMetadata:desktop-size-zoom
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "desktop.length", "value": 2},
-    {"type": "REPL", "expression": "desktop[0] > 0", "value": true},
-    {"type": "REPL", "expression": "desktop[1] > 0", "value": true}
-  ]
-}
-```
 
 **Cross References:**
 - `$API.Settings.getZoomLevel$`
@@ -381,18 +364,7 @@ Checks whether Intel Performance Primitives (IPP) is available for accelerated F
 | returnTrueIfMacOS | Integer | no | Value to return on non-Windows platforms. Pass `true` if macOS's vDSP is an acceptable substitute for IPP. | Boolean |
 
 **Example:**
-```javascript:check-fft-acceleration
-// Title: Check for fast FFT support across platforms
-var hasFastFFT = Settings.isIppEnabled(true);
-Console.print(hasFastFFT ? "Fast FFT available" : "No hardware FFT acceleration");
-```
 
-```json:testMetadata:check-fft-acceleration
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "hasFastFFT == 0 || hasFastFFT == 1", "value": true}
-}
-```
 
 ---
 
@@ -785,22 +757,7 @@ Enables or disables a MIDI channel for the main synth chain. Index 0 toggles all
 | value | Integer | no | `true` to enable, `false` to disable. | Boolean |
 
 **Example:**
-```javascript:midi-channel-filter
-// Title: Enable only MIDI channel 1, disable all others
-Settings.toggleMidiChannel(0, false);
-Settings.toggleMidiChannel(1, true);
-var ch1 = Settings.isMidiChannelEnabled(1);
-Console.print("Channel 1 enabled: " + ch1);
-```
 
-```json:testMetadata:midi-channel-filter
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Settings.isMidiChannelEnabled(1)", "value": 1}
-  ]
-}
-```
 
 **Cross References:**
 - `$API.Settings.isMidiChannelEnabled$`

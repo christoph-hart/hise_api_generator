@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Drawing a knob-style arc indicator
 const var p = Content.createPath();
 
 // Full donut ring background

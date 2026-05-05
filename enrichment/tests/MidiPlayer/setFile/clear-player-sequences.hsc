@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Clearing a player by loading an empty filename
 // Context: Pass an empty string to setFile() as a no-op, or clear with
 // clearAllSequences() for a full reset
 

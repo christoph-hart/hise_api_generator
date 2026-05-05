@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Async playback callback for transport state logging
 const var mp = Synth.getMidiPlayer("MidiPlayer1");
 mp.create(4, 4, 1);
 

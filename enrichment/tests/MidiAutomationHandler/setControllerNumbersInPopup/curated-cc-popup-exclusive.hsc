@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Configure a curated CC popup with readable names
 // Context: An instrument exposes a fixed set of CC-controllable parameters.
 // The popup should only show relevant CC numbers with descriptive labels
 // instead of the default full list of 128 CCs.

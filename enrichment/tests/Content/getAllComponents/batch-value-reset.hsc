@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Batch value retrieval for send level controls
 // Context: Retrieve groups of related controls by pattern to read or
 // write their values collectively.
 

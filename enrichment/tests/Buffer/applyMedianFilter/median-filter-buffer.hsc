@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Smooth short spikes with a median filter
 const var b = Buffer.create(8);
 b[0] = 0.0; b[1] = 0.0; b[2] = 1.0; b[3] = 0.0;
 b[4] = 0.0; b[5] = 1.0; b[6] = 0.0; b[7] = 0.0;

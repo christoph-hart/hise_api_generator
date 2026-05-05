@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Querying the interface dimensions
 Content.makeFrontInterface(800, 500);
 
 const var size = Content.getInterfaceSize();

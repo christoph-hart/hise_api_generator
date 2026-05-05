@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Disable callbacks while loading lane data
 // Context: Pattern recall writes many lanes at once, then performs one explicit rebuild.
 
 const var laneA = Content.addSliderPack("LaneA", 10, 10);

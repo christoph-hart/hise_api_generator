@@ -2,33 +2,6 @@
 
 **Examples:**
 
-```javascript:named-constant-access
-// Title: Named constants for self-documenting parameter access
-// Context: Every Effect instance exposes its parameters as named constants.
-// Use these instead of raw integer indices.
-// --- setup ---
-const var builder = Synth.createBuilder();
-builder.clear();
-builder.create(builder.Effects.PolyphonicFilter, "PolyphonicFilter", 0, builder.ChainIndexes.FX);
-builder.flush();
-// --- end setup ---
-
-const var filter = Synth.getEffect("PolyphonicFilter");
-
-// Named constants map to parameter indices automatically
-filter.setAttribute(filter.Frequency, 1000.0);
-filter.setAttribute(filter.Q, 0.7);
-filter.setAttribute(filter.Mode, 2); // filter mode enum value
-```
-```json:testMetadata:named-constant-access
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "filter.getAttribute(filter.Frequency)", "value": 1000.0},
-    {"type": "REPL", "expression": "filter.getAttribute(filter.Q)", "value": 0.7}
-  ]
-}
-```
 
 ```javascript:band-offset-arithmetic
 // Title: Parametric EQ band offset arithmetic

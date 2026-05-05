@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Size a ScriptPanel to fit markdown content
 const var md = Content.createMarkdownRenderer();
 md.setText("# Title\nParagraph one.\n\n- Item A\n- Item B\n- Item C");
 

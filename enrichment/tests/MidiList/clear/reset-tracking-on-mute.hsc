@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Reset tracking state when articulation is muted
 // Context: Clearing stored velocities and timing data prevents stale
 // state from carrying over when the user mutes and unmutes an articulation.
 

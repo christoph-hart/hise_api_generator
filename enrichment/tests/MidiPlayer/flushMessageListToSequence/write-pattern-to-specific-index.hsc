@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Writing note data to a specific pattern bank
 // Context: In a multi-pattern sequencer, write programmatically generated
 // notes to a specific pattern index. This avoids switching the active
 // sequence just to write data.

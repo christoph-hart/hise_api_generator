@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Filter response curve icons for a type selector
 // Context: Simple filter shape icons (HP, BP, LP) use lineTo
 // to draw characteristic frequency response silhouettes.
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Save and restore macro connections
 const var mh = Engine.createMacroHandler();
 
 // Snapshot current connections (returns a copy, not a live reference)

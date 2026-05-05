@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: HSL roundtrip with alpha correction
 var hsl = Colours.toHsl(Colours.dodgerblue);
 hsl[0] += 0.1;
 hsl[3] = Math.round(hsl[3] * 255);

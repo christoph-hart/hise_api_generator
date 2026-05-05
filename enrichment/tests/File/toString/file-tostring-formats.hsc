@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Extract different path components from a File
 const var dir = FileSystem.getFolder(FileSystem.AudioFiles);
 const var audioFile = dir.getChildFile("recording.wav");
 

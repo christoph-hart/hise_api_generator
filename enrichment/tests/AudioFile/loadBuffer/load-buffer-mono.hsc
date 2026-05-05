@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Loading a programmatically generated mono buffer
 const var af = Engine.createAndRegisterAudioFile(0);
 const var buf = Buffer.create(128);
 

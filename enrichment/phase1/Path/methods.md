@@ -94,26 +94,7 @@ Adds a pie segment (wedge shape) to the path. The segment is defined by the boun
 - `$API.Path.addEllipse$`
 
 **Example:**
-```javascript:pie-segment-knob-arc
-// Title: Drawing a knob-style arc indicator
-const var p = Content.createPath();
 
-// Full donut ring background
-p.addPieSegment([0, 0, 100, 100], -2.5, 2.5, 0.7);
-
-// Active value arc overlay
-const var valuePath = Content.createPath();
-valuePath.addPieSegment([0, 0, 100, 100], -2.5, 0.5, 0.7);
-```
-```json:testMetadata:pie-segment-knob-arc
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "p.getLength() > valuePath.getLength()", "value": true},
-    {"type": "REPL", "expression": "p.contains([50, 50])", "value": true}
-  ]
-}
-```
 
 ## quadraticTo
 
@@ -418,29 +399,7 @@ Tests whether a line segment intersects the path and returns the intersection po
 - `$API.Path.getPointOnPath$`
 
 **Example:**
-```javascript:path-intersection-test
-// Title: Finding where a horizontal line enters a circular path
-const var p = Content.createPath();
-p.addEllipse([0, 0, 100, 100]);
 
-var intersection = p.getIntersection([0, 50], [100, 50], false);
-
-if (intersection)
-    Console.print("Hit at: " + intersection[0] + ", " + intersection[1]);
-else
-    Console.print("No intersection");
-```
-```json:testMetadata:path-intersection-test
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "intersection !== false", "value": true},
-    {"type": "REPL", "expression": "intersection.length", "value": 2},
-    {"type": "REPL", "expression": "intersection[0] < 5.0", "value": true},
-    {"type": "REPL", "expression": "Math.abs(intersection[1] - 50.0) < 1.0", "value": true}
-  ]
-}
-```
 
 ## getLength
 
@@ -570,28 +529,7 @@ Loads path geometry from external data, replacing the current path contents. Acc
 - `$API.Path.toString$`
 
 **Example:**
-```javascript:load-path-roundtrip
-// Title: Saving and restoring path data via base64
-const var p = Content.createPath();
-p.startNewSubPath(0.0, 0.0);
-p.lineTo(1.0, 0.0);
-p.lineTo(0.5, 1.0);
-p.closeSubPath();
 
-var encoded = p.toBase64();
-
-const var p2 = Content.createPath();
-p2.loadFromData(encoded);
-```
-```json:testMetadata:load-path-roundtrip
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "p2.getLength() > 0", "value": true},
-    {"type": "REPL", "expression": "p.toBase64() == p2.toBase64()", "value": true}
-  ]
-}
-```
 
 ## addPolygon
 
@@ -708,20 +646,7 @@ Adds a closed rectangle with independently controllable corner rounding to the p
 - `$API.Path.roundCorners$`
 
 **Example:**
-```javascript:rounded-rect-top-only
-// Title: Rectangle with only top corners rounded
-const var p = Content.createPath();
-p.addRoundedRectangleCustomisable([0, 0, 200, 100], [10.0, 10.0], [true, true, false, false]);
-```
-```json:testMetadata:rounded-rect-top-only
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "p.contains([100, 50])", "value": true},
-    {"type": "REPL", "expression": "Math.abs(p.getBounds(1.0)[2] - 200.0) < 0.5", "value": true}
-  ]
-}
-```
+
 
 ## contains
 
@@ -781,27 +706,7 @@ Creates and returns a new Path object that represents the outlined (stroked) ver
 - `$API.Graphics.drawPath$`
 
 **Example:**
-```javascript:create-dashed-stroke
-// Title: Creating a dashed stroke path
-const var p = Content.createPath();
-p.startNewSubPath(0.0, 0.0);
-p.lineTo(200.0, 0.0);
 
-var stroked = p.createStrokedPath({
-    "Thickness": 3.0,
-    "EndCapStyle": "rounded",
-    "JointStyle": "curved"
-}, [10.0, 5.0]);
-```
-```json:testMetadata:create-dashed-stroke
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "stroked.getLength() > p.getLength()", "value": true},
-    {"type": "REPL", "expression": "stroked.getBounds(1.0)[3] > 0", "value": true}
-  ]
-}
-```
 
 ## cubicTo
 

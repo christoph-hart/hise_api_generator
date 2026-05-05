@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Using preallocated length for efficient resizing
 const var spd = Engine.createAndRegisterSliderPackData(0);
 
 // Preallocate for up to 32 sliders

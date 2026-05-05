@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Sort a FixObjectArray by a named property
 const var f = Engine.createFixObjectFactory({
     "id": 0,
     "velocity": 0.0

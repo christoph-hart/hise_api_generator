@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Building waveform shape icons
 // Context: Synthesizer UIs commonly display waveform type selectors
 // as small path icons. Each waveform shape is built once at init
 // from startNewSubPath/lineTo sequences in normalized coordinates.

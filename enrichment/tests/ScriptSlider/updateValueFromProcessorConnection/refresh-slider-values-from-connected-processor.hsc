@@ -16,6 +16,7 @@ add SimpleGain as "FxChain"
 /script
 /callback onInit
 // end setup
+// Title: Refresh connected sliders after processor state restore
 // Context: Preset or state restore updates module internals first, then UI controls pull the new values.
 const var connectedControls = [
     Content.addKnob("Drive", 0, 0),

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Thick arc converted to outline for draw + fill combination
 // Context: Creating a thick stroked path, then both filling and
 // outlining it, produces a solid arc band with a visible border.
 

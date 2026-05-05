@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Set CSS variables with different unit types
 const var knob = Content.addKnob("Knob1", 0, 0);
 const var laf = Content.createLocalLookAndFeel();
 knob.setLocalLookAndFeel(laf);

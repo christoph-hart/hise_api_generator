@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Create one shared modifier schema for many sliders
 // Context: A larger interface uses many ScriptSlider controls and keeps gesture mappings consistent.
 
 const var sliderIds = ["GainA", "GainB", "GainC", "GainD"];

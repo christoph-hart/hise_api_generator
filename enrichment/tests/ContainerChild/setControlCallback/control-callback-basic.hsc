@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Value callback with deduplication
 const var dc = Content.addDynamicContainer("DC3", 0, 0);
 const var cc = dc.setData({"id": "Knob1", "type": "Slider", "defaultValue": 0.0});
 

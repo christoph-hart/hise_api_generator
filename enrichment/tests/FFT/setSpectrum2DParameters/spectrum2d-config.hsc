@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Configuring and verifying spectrogram parameters
 const var fft = Engine.createFFT();
 
 fft.setSpectrum2DParameters({

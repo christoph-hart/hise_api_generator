@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Sequence change callback triggering panel repaint
 const var mp = Synth.getMidiPlayer("MidiPlayer1");
 const var Panel1 = Content.addPanel("Panel1", 0, 0);
 

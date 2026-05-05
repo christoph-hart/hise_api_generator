@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Save and load a JSON configuration file
 var config = {"volume": 0.8, "mode": "stereo", "channels": 2};
 Engine.dumpAsJSON(config, "myConfig.json");
 var loaded = Engine.loadFromJSON("myConfig.json");

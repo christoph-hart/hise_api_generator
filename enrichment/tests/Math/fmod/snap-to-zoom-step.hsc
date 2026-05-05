@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Snapping a continuous value to discrete steps
 // Context: Zoom handlers and grid-based controls need to quantize
 // a continuous drag value to fixed increments. Subtracting the
 // remainder from fmod rounds down to the nearest step.

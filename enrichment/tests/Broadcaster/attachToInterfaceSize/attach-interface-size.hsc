@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Responding to interface size changes
 const var bc = Engine.createBroadcaster({
     "id": "SizeWatch",
     "args": ["width", "height"]

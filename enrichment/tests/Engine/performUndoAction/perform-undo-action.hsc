@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Undo/redo a slider value change
 const var knob = Content.addKnob("UndoKnob", 0, 0);
 knob.set("saveInPreset", false);
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Isolating output before a batch operation
 // Context: Clear the console before a multi-step operation so its
 // output is easy to read without scrolling past prior noise.
 

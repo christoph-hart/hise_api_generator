@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Monitor automation changes with an update callback
 const var mah = Engine.createMidiAutomationHandler();
 
 var lastData = [];

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Find the last active block before exporting audio
 // Context: Export code scans fixed windows to remove trailing silence while keeping release tails.
 
 const var TOTAL_SAMPLES = 4096;

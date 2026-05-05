@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Async cable callback driving a UI repaint
 const var MeterPanel = Content.addPanel("MeterPanel", 0, 0);
 
 // Context: A DSP network writes its output level to a global cable.

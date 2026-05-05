@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Loading an SVG-converted icon from a byte array
 // Context: The most common loadFromData pattern uses numeric arrays
 // exported from SVG conversion tools. The icon is loaded once at
 // initialization and drawn repeatedly in paint routines or LAF

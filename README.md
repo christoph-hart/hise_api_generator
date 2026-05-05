@@ -27,7 +27,8 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 ├── batchCreateMeta.bat        # Full pipeline: Doxygen + enrich + binary blob
 ├── batchCreate.bat            # Step 1 only: Doxygen XML generation
 ├── api_enrich.py              # CLI tool: phase0, prepare, merge, preview, filter-binary
-├── snippet_validator.py       # Validates HISEScript examples against HISE REST API
+├── run_all_tests.py           # Runs all .hsc test files, writes report to enrichment/output/
+├── rerun_failing.py           # Re-runs only the .hsc tests that previously failed
 ├── ApiValueTreeBuilder.exe    # Converts filtered JSON into C++ binary blob
 ├── ApiValueTreeBuilder/       # JUCE console app source for the above
 ├── xml.doxyfile               # Doxygen configuration
@@ -40,7 +41,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │       ├── code-examples.md   # Code example quality guidelines
 │       ├── hisescript-rules.md # HISEScript syntax rules
 │       ├── diagrams.md        # Diagram creation guidelines
-│       ├── test-metadata.md   # Test metadata authoring
+│       ├── hsc-test-format.md # .hsc test file format + when to test
 │       └── builder-reference.md # Builder API reference
 ├── enrichment/
 │   ├── base/                  # Phase 0 output (gitignored, regenerated)
@@ -51,6 +52,9 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   │   ├── auto/              # Phase 4a LLM-generated userDocs (tracked)
 │   │   └── manual/            # Phase 4a human-edited overrides (tracked, wins over auto)
 │   ├── phase4b/               # Phase 4b LLM C++ reference entries (tracked)
+│   ├── tests/                 # .hsc test files — single source of truth for testable examples
+│   │                          #   Layout: tests/{Class}/{method}/{slug}.hsc
+│   │                          #   Auto-discovered by api_enrich merge, inlined as ```hsc fences
 │   ├── resources/             # Supporting data: explorations, survey
 │   ├── issues.md              # Bugs discovered during C++ source analysis
 │   ├── phase1_scanned.txt     # Diff manifest

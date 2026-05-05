@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bounds anchoring pattern for normalized-space paths
 // Context: The most frequent use of startNewSubPath is NOT to begin
 // visible drawing, but to anchor the path's bounding box to a known
 // coordinate range. When a path will be rendered via

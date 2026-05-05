@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Selecting an item by original data index in a sorted table
 // Context: After sorting, display indices no longer match data indices.
 //          Walk the display rows with getOriginalRowIndex() to find which
 //          one corresponds to a known data index, then select it.

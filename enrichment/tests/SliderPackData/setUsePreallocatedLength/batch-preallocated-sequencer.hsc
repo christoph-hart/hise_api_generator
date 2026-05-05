@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Batch-creating preallocated SliderPackData for a step sequencer
 // Context: A step sequencer with multiple channels and parameter modes
 // needs many SliderPackData objects that resize without reallocation.
 

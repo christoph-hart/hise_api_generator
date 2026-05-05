@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Iterating active elements for chord analysis
 // Context: asBuffer(false) returns only occupied elements, ideal
 // for iterating active notes without processing 128 empty slots.
 

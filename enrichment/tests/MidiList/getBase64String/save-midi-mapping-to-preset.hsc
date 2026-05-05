@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Save a custom MIDI mapping to a user preset
 // Context: A plugin allows users to remap which MIDI note triggers each
 // sound. The mapping is stored in a MidiList and serialized to Base64
 // for inclusion in user preset data.

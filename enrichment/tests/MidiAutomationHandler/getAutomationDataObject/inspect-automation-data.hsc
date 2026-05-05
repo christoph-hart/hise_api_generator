@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Inspect current MIDI automation mappings
 const var mah = Engine.createMidiAutomationHandler();
 var data = mah.getAutomationDataObject();
 

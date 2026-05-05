@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Standard interface initialization scaffold
 // Context: This is always the very first line of the main interface script.
 // It sets the interface size and registers this script processor as the
 // front interface. Everything else follows after this call.

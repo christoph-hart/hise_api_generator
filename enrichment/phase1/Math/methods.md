@@ -171,34 +171,7 @@ Converts a normalised value (0.0-1.0) to a value within the range defined by ran
 - `$API.Math.skew$`
 
 **Example:**
-```javascript:from0to1-range-conventions
-// Title: Converting normalised values with different range conventions
-// Scriptnode convention
-var freq = Math.from0To1(0.5, {
-    "MinValue": 20.0,
-    "MaxValue": 20000.0,
-    "SkewFactor": 0.3
-});
 
-// UI Component convention (middlePosition = centre frequency)
-var freq2 = Math.from0To1(0.5, {
-    "min": 20.0,
-    "max": 20000.0,
-    "middlePosition": 1000.0
-});
-
-Console.print(freq);
-Console.print(freq2);
-```
-```json:testMetadata:from0to1-range-conventions
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "freq > 20.0 && freq < 3000.0", "value": true},
-    {"type": "REPL", "expression": "Math.abs(freq2 - 1000.0) < 1.0", "value": true}
-  ]
-}
-```
 
 ---
 

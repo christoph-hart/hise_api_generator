@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Catching accidental string values in data arrays
 // Example: Validating data structure fields aren't corrupted to strings
 // Context: When deserializing data, fields that should be objects or numbers
 // can be corrupted to strings. assertNoString catches this data corruption.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Rotating step sequencer data using the buffer reference
 // Context: A sequencer "rotate" operation shifts all step values by an
 // offset amount, wrapping around. Reading via getDataAsBuffer() is
 // efficient for copying values, then setValueWithUndo() writes them

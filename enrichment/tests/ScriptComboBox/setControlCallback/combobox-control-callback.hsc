@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Custom control callback for a combo box
 const var cb = Content.addComboBox("CallbackCombo", 0, 0);
 cb.set("items", "Sine\nSaw\nSquare");
 cb.set("saveInPreset", false);

@@ -16,6 +16,7 @@ add StreamingSampler as "Sampler1"
 /script
 /callback onInit
 // end setup
+// Title: Configuring a sampler crossfade table
 // Context: When enabling dynamics crossfade on a sampler, the table needs a
 // simple linear fade-out shape. Only the two default edge points are modified.
 const var tp = Synth.getTableProcessor("Sampler1");

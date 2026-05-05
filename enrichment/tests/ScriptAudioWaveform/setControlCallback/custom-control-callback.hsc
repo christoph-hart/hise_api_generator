@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Route a control callback to a per-component handler
 const var btn = Content.addButton("Btn1", 0, 0);
 btn.set("saveInPreset", false);
 

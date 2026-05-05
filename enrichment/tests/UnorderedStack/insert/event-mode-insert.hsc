@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Event-mode insertion with MessageHolder
 // Context: Inserting events requires a MessageHolder. The current
 // MIDI event is captured with Message.store(), then the holder
 // is passed to insert(). Duplicate detection uses the configured

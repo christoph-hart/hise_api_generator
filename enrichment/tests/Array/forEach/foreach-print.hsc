@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Execute a function for each element
 var a = ["Alice", "Bob", "Charlie"];
 a.forEach(function(name){ Console.print("Hello " + name); });
 // test

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Generate a unique installation identifier for crash reporting
 // Context: getSystemId() returns a deterministic hex string derived from
 // hardware characteristics. It identifies a specific machine without
 // exposing personal information, making it suitable for anonymous

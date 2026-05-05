@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Configuring event stack with built-in and custom compare
 const var es = Engine.createUnorderedStack();
 
 // Built-in compare by event ID (matches note-on/off pairs)

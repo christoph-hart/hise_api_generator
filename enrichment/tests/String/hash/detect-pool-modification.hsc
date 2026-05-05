@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Detect whether a list of items has been modified
 // Context: Sum hashes of all items in a pool to detect changes
 // without comparing every element individually.
 

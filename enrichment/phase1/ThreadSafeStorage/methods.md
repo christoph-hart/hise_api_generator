@@ -117,21 +117,4 @@ Non-blocking read for audio-thread use. Attempts to acquire a shared read lock w
 - `$API.ThreadSafeStorage.store$`
 
 **Example:**
-```javascript:tryload-fallback-pattern
-// Title: Non-blocking read with fallback value
-const var storage = Engine.createThreadSafeStorage();
-storage.store([1, 2, 3]);
 
-// tryLoad returns stored data when no write is in progress
-var result = storage.tryLoad([]);
-Console.print("Length: " + result.length); // Length: 3
-```
-```json:testMetadata:tryload-fallback-pattern
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "result.length", "value": 3},
-    {"type": "REPL", "expression": "result[0]", "value": 1}
-  ]
-}
-```

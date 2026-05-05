@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Update dialog content dynamically
 // Context: A modal dialog uses markdown for its title and body text,
 // updating both when the dialog is shown with different messages.
 

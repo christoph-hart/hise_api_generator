@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Guard a server request with a connectivity check
 // Context: isOnline() blocks for up to 20 seconds when offline, so use it
 // sparingly -- only when you need a definitive answer to show the user
 // a meaningful "no internet" message before attempting an operation.

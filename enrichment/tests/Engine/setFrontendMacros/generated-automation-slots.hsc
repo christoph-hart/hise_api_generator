@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Setting up automation slots with generated names
 // Context: Plugins with many automatable parameters generate macro
 // names programmatically rather than hardcoding them. This pattern
 // creates a numbered list of automation slot names and enables the

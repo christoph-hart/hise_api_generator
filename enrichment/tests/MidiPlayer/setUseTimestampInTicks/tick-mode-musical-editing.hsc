@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Setting up tick mode for musical editing
 // Context: Always enable tick mode early in initialization when building
 // a step sequencer. Tick timestamps align to musical grid positions
 // regardless of tempo changes.

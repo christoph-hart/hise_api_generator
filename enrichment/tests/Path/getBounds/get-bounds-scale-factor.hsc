@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Using getBounds to position path rendering in a paint routine
 // Context: When a path is built in an arbitrary coordinate space
 // (e.g., arc paths from addArc), getBounds returns the actual area
 // the path occupies. Multiplying by a scale factor maps from the

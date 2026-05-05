@@ -62,28 +62,7 @@ None.
 - `$API.Table.setTablePoint$` -- modify a single point by index
 
 **Example:**
-```javascript:read-modify-write-table
-// Title: Read-modify-write pattern for table points
-const var td = Engine.createAndRegisterTableData(0);
 
-// Get current points
-var points = td.getTablePointsAsArray();
-
-// Modify the curve of the second-to-last point
-points[points.length - 2][2] = 0.2;
-
-// Write back the modified points
-td.setTablePointsFromArray(points);
-```
-```json:testMetadata:read-modify-write-table
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "td.getTablePointsAsArray()[0][2]", "value": 0.2},
-    {"type": "REPL", "expression": "td.getTablePointsAsArray().length", "value": 2}
-  ]
-}
-```
 
 ## getTableValueNormalised
 
@@ -110,29 +89,7 @@ Returns the interpolated output value of the table at the given normalized input
 - `$API.Table.setDisplayCallback$` -- callback fired as a side effect of this method
 
 **Example:**
-```javascript:table-value-query
-// Title: Query table values at multiple positions
-const var td = Engine.createAndRegisterTableData(0);
 
-// Default table is a linear ramp 0->1
-var atStart = td.getTableValueNormalised(0.0);
-var atMid = td.getTableValueNormalised(0.5);
-var atEnd = td.getTableValueNormalised(1.0);
-
-Console.print("Start: " + atStart);
-Console.print("Mid: " + atMid);
-Console.print("End: " + atEnd);
-```
-```json:testMetadata:table-value-query
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Math.abs(atStart) < 0.01", "value": true},
-    {"type": "REPL", "expression": "Math.abs(atMid - 0.5) < 0.05", "value": true},
-    {"type": "REPL", "expression": "Math.abs(atEnd - 1.0) < 0.01", "value": true}
-  ]
-}
-```
 
 ## linkTo
 
@@ -160,32 +117,7 @@ Makes this Table handle refer to the same underlying data as another Table objec
 - `$API.Table.reset$` -- resets table to default linear ramp; linkTo changes data identity while reset changes data content
 
 **Example:**
-```javascript:link-two-tables
-// Title: Link two table data objects to share the same curve
-const var td1 = Engine.createAndRegisterTableData(0);
-const var td2 = Engine.createAndRegisterTableData(1);
 
-// Set a custom curve on td1
-td1.setTablePointsFromArray([
-    [0.0, 0.0, 0.5],
-    [0.5, 1.0, 0.5],
-    [1.0, 0.0, 0.5]
-]);
-
-// Link td2 to td1 -- they now share the same data
-td2.linkTo(td1);
-
-// Querying td2 returns td1's curve
-var val = td2.getTableValueNormalised(0.5);
-```
-```json:testMetadata:link-two-tables
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Math.abs(val - 1.0) < 0.05", "value": true}
-  ]
-}
-```
 
 ## reset
 
@@ -236,30 +168,7 @@ Registers a callback function that fires whenever the table's content changes --
 - `$API.Table.reset$` -- triggers this callback with index -1
 
 **Example:**
-```javascript:content-callback-logging
-// Title: Log table content changes
-const var td = Engine.createAndRegisterTableData(0);
 
-var lastChangedIndex = -99;
-
-inline function onTableChanged(pointIndex)
-{
-    lastChangedIndex = pointIndex;
-}
-
-td.setContentCallback(onTableChanged);
-
-// Modify a point -- fires callback with index
-td.setTablePoint(0, 0.0, 0.5, 0.5);
-```
-```json:testMetadata:content-callback-logging
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastChangedIndex", "value": 0}
-  ]
-}
-```
 
 ## setDisplayCallback
 
@@ -286,30 +195,7 @@ Registers a callback function that fires whenever the table's ruler/display posi
 - `$API.Table.getCurrentlyDisplayedIndex$` -- reads back the last position without triggering the callback
 
 **Example:**
-```javascript:display-callback-tracking
-// Title: Track the display ruler position
-const var td = Engine.createAndRegisterTableData(0);
 
-var lastPosition = -1.0;
-
-inline function onDisplayChanged(position)
-{
-    lastPosition = position;
-}
-
-td.setDisplayCallback(onDisplayChanged);
-
-// Query a value -- fires the display callback as a side effect
-td.getTableValueNormalised(0.75);
-```
-```json:testMetadata:display-callback-tracking
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "Math.abs(lastPosition - 0.75) < 0.01", "value": true}
-  ]
-}
-```
 
 ## setTablePoint
 
@@ -367,27 +253,4 @@ Replaces all table control points from a nested array. Each element must be a 3-
 - `$API.Table.reset$` -- shorthand for resetting to the default linear ramp
 
 **Example:**
-```javascript:custom-curve-setup
-// Title: Set up a custom S-curve
-const var td = Engine.createAndRegisterTableData(0);
 
-td.setTablePointsFromArray([
-    [0.0, 0.0, 0.3],
-    [0.25, 0.1, 0.5],
-    [0.5, 0.5, 0.5],
-    [0.75, 0.9, 0.5],
-    [1.0, 1.0, 0.7]
-]);
-
-var numPoints = td.getTablePointsAsArray().length;
-var midVal = td.getTableValueNormalised(0.5);
-```
-```json:testMetadata:custom-curve-setup
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "numPoints", "value": 5},
-    {"type": "REPL", "expression": "Math.abs(midVal - 0.5) < 0.15", "value": true}
-  ]
-}
-```

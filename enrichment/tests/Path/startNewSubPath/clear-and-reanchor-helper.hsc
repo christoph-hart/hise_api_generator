@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Utility function to clear and re-anchor a reusable path
 // Context: When a path is reused across multiple paint calls with
 // different geometry each time, a helper function that clears and
 // re-anchors avoids repeating the boilerplate.

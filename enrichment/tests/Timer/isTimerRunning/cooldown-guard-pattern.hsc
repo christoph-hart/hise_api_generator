@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Guard pattern -- use running state as a cooldown check
 // Context: isTimerRunning() serves as a debounce gate to prevent
 // re-triggering an operation while its cooldown timer is active.
 

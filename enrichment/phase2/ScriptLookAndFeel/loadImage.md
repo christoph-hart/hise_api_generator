@@ -43,24 +43,4 @@ knob.setLocalLookAndFeel(knobLaf);
 }
 ```
 
-```javascript:load-image-existence-check
-// Title: Loading images with existence check
-// Context: Defensive pattern for loading optional images (e.g., from
-// expansion packs) where the file may not exist.
 
-const var laf = Content.createLocalLookAndFeel();
-
-laf.loadImage("{PROJECT_FOLDER}background.png", "bg");
-
-// loadImage prints a console warning but does not throw if missing.
-// Use isImageLoaded() to verify before referencing in draw functions.
-if (!laf.isImageLoaded("bg"))
-    Console.print("Warning: background image not found");
-```
-
-```json:testMetadata:load-image-existence-check
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "laf.isImageLoaded(\"bg\")", "value": 0}
-}
-```

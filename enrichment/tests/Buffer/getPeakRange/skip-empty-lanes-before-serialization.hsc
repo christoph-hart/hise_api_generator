@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Skip empty lanes before preset serialization
 // Context: Step-lane data is stored sparsely, so only lanes with real activity are serialized.
 
 const var NUM_STEPS = 16;

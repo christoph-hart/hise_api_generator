@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Clearing a specific modulation chain before rebuilding
 // Context: When rebuilding only part of the module tree (e.g. the gain
 // modulators of an oscillator group), use clearChildren() to remove
 // existing children from a specific chain without affecting the rest.

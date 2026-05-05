@@ -18,6 +18,7 @@ add CurveEq as "SideEQ"
 /script
 /callback onInit
 // end setup
+// Title: EQ Virtual Control Array - one set of knobs controls multiple EQ processors
 const var EQFreqK = Content.addKnob("EQFreqK", 0, 0);
 EQFreqK.set("saveInPreset", false);
 const var EQGainK = Content.addKnob("EQGainK", 150, 0);

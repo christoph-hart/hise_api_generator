@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bipolar random offset clamped to a normalised range
 // Context: Randomizing a parameter value by a controlled amount
 // requires converting the unipolar [0, 1) output to a bipolar
 // [-1, 1) range, scaling by the randomization amount, then

@@ -16,6 +16,7 @@ add ScriptLabel "StatusLabel" at 0 0 128 32
 /script
 /callback onInit
 // end setup
+// Title: One-shot self-stopping timer for delayed action
 // Context: Use this.stopTimer() inside the callback to fire once after
 // a delay, similar to setTimeout() in JavaScript.
 

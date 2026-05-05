@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Float-mode note tracking with random selection
 // Context: A granular effect tracks active notes and randomly selects
 // from them to spawn new grains. insert() provides set semantics
 // (no duplicates), and bracket access picks a random element.

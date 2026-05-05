@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Timer that counts ticks and stops itself
 const var t = Engine.createTimerObject();
 
 reg tickCount = 0;

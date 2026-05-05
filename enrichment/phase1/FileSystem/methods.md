@@ -310,21 +310,7 @@ Returns an `Array` of `File` objects representing all root drives on the current
 - `$API.FileSystem.findFiles$`
 
 **Example:**
-```javascript:list-filesystem-roots
-// Title: List all filesystem root drives
-var roots = FileSystem.findFileSystemRoots();
 
-for (r in roots)
-    Console.print(r.toString(r.FullPath));
-
-Console.print("Found " + roots.length + " root(s)");
-```
-```json:testMetadata:list-filesystem-roots
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "roots.length > 0", "value": true}
-}
-```
 
 ## fromAbsolutePath
 
@@ -419,19 +405,7 @@ If the folder parameter is neither a valid `SpecialLocations` constant nor a `Fi
 - `$API.FileSystem.descriptionOfSizeInBytes$`
 
 **Example:**
-```javascript:check-free-disk-space
-// Title: Check free disk space on the samples volume
-var freeBytes = FileSystem.getBytesFreeOnVolume(FileSystem.Samples);
-var freeText = FileSystem.descriptionOfSizeInBytes(freeBytes);
 
-Console.print("Free space on samples volume: " + freeText);
-```
-```json:testMetadata:check-free-disk-space
-{
-  "testable": true,
-  "verifyScript": {"type": "REPL", "expression": "freeBytes > 0", "value": true}
-}
-```
 
 ## getFolder
 
@@ -481,30 +455,7 @@ Returns `undefined` if the resolved path does not point to an existing directory
 - `$API.FileSystem.findFiles$`
 
 **Example:**
-```javascript:get-special-folders
-// Title: Access multiple special folder locations
-var desktop = FileSystem.getFolder(FileSystem.Desktop);
-var appData = FileSystem.getFolder(FileSystem.AppData);
-var samples = FileSystem.getFolder(FileSystem.Samples);
 
-if (isDefined(desktop))
-    Console.print("Desktop: " + desktop.toString(desktop.FullPath));
-
-if (isDefined(appData))
-    Console.print("AppData: " + appData.toString(appData.FullPath));
-
-if (isDefined(samples))
-    Console.print("Samples: " + samples.toString(samples.FullPath));
-```
-```json:testMetadata:get-special-folders
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "desktop.toString(0).length > 0", "value": true},
-    {"type": "REPL", "expression": "appData.toString(0).length > 0", "value": true}
-  ]
-}
-```
 
 ## getSystemId
 

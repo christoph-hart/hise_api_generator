@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Multiple sub-paths for compound shapes
 // Context: startNewSubPath creates a new disconnected segment within
 // the same path. This builds compound shapes like an X (close) icon
 // from two separate line segments.

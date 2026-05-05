@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Initialize a key-state display to "all keys up"
 // Context: A visual keyboard panel uses 0 for "key up" and 1 for "key down."
 // fill(0) establishes the initial state where no keys are pressed.
 

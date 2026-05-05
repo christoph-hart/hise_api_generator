@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Fitting a 16:9 content area inside a square region
 var area = Rectangle(0, 0, 300, 300);
 var fitted = area.withAspectRatioLike([0, 0, 16, 9]);
 // fitted is centered vertically: [0, 65.625, 300, 168.75]

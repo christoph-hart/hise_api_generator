@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Create dynamic controls from JSON data
 const var dc = Content.addDynamicContainer("FXControls", 0, 0);
 dc.setPosition(0, 0, 400, 200);
 

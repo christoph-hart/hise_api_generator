@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Reading and inspecting macro connection data
 const var mh = Engine.createMacroHandler();
 var data = mh.getMacroDataObject();
 

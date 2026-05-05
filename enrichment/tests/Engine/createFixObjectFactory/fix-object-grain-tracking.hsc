@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Fixed-layout objects with unordered stack for note tracking
 // Context: Performance-critical systems (grain engines, resonance
 // models) combine fixed-layout objects for typed per-element data
 // with an unordered stack for tracking active notes. This avoids

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Ensuring audio files are available at initialization
 // Context: Call loadAudioFilesIntoPool() in onInit before any
 // code that references audio files from scripts. In compiled
 // plugins, this ensures the embedded pool references are loaded.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Rectangle with only top corners rounded
 const var p = Content.createPath();
 p.addRoundedRectangleCustomisable([0, 0, 200, 100], [10.0, 10.0], [true, true, false, false]);
 // test

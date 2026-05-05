@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Case-insensitive preset search filtering
 // Context: A preset browser filters its list as the user types.
 // Both the search term and the preset name are lowercased before
 // checking, since contains() is case-sensitive.

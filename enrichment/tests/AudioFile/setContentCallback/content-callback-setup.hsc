@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Registering a content change callback
 const var af = Engine.createAndRegisterAudioFile(0);
 
 reg callCount = 0;

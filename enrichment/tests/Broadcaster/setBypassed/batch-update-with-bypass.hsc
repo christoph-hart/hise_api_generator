@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Batch UI update with bypass - suppress intermediate broadcasts
 // Context: When loading a preset that changes many values simultaneously,
 // bypass the broadcaster to prevent listeners from reacting to each
 // intermediate state. Unbypass with sendMessageIfEnabled to send the

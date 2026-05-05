@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Multiple cables with a shared callback pattern
 // Context: An envelope editor uses one cable per parameter stage.
 // A shared control callback forwards each slider's value through
 // its corresponding cable into the DSP network.

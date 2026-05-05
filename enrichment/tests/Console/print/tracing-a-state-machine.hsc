@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Tracing a state machine during development
 // Context: Console.print calls left in production code serve as
 // built-in documentation of control flow. They are no-ops in
 // exported plugins, so there is no reason to remove them.

@@ -37,26 +37,4 @@ laf.registerFunction("drawRotarySlider", function(g, obj)
 }
 ```
 
-```javascript:full-circle-record-icon
-// Title: Full circle as a record button icon
-// Context: addArc with a full 2*PI sweep is equivalent to addEllipse
-// for creating circular paths. Both are used interchangeably in
-// practice, but addEllipse is cleaner when a complete circle is needed.
 
-const var recIcon = Content.createPath();
-recIcon.addArc([0.0, 0.0, 1.0, 1.0], 0.0, Math.PI * 2.0);
-
-// Equivalent using addEllipse:
-const var recIcon2 = Content.createPath();
-recIcon2.addEllipse([0.0, 0.0, 1.0, 1.0]);
-```
-```json:testMetadata:full-circle-record-icon
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "recIcon.getLength() > 0", "value": true},
-    {"type": "REPL", "expression": "recIcon2.getLength() > 0", "value": true},
-    {"type": "REPL", "expression": "Math.abs(recIcon.getLength() - recIcon2.getLength()) < 0.1", "value": true}
-  ]
-}
-```

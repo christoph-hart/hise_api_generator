@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Monitoring child add/remove events
 const var dc = Content.addDynamicContainer("DC2", 0, 0);
 const var cc = dc.setData({"id": "Parent", "type": "Container"});
 

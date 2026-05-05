@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Split uses only the first character of the separator
 var csv = "one,two,three";
 var parts = csv.split(",");
 Console.print(parts[0]); // one

@@ -16,6 +16,7 @@ add SimpleGain as "SimpleGain1"
 /script
 /callback onInit
 // end setup
+// Title: Connecting a cable to a gain module with smoothing
 // Context: A cable drives a gain parameter directly, bypassing
 // script callbacks entirely. The target range JSON maps the
 // normalised 0..1 cable value to a dB range with smoothing

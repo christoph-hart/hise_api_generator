@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Multi-property column extraction for a visualization pipeline
 // Context: A fixed-size object pool tracks visual elements with typed
 // properties. Each timer tick updates the elements, then extracts
 // property columns into Buffers for downstream consumption.

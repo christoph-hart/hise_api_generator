@@ -84,46 +84,6 @@ selector.setControlCallback(onSelectorControl);
 }
 ```
 
-```javascript:one-shot-delayed-action
-// Title: One-shot self-stopping timer for delayed action
-// Context: Use this.stopTimer() inside the callback to fire once after
-// a delay, similar to setTimeout() in JavaScript.
-
-// --- setup ---
-Content.addLabel("StatusLabel", 0, 0);
-// --- end setup ---
-
-const var statusLabel = Content.getComponent("StatusLabel");
-
-const var delayTimer = Engine.createTimerObject();
-
-delayTimer.setTimerCallback(function()
-{
-    this.stopTimer();
-    statusLabel.set("text", "");
-});
-
-// Call this from any event to show a temporary status message
-inline function showStatus(text)
-{
-    statusLabel.set("text", text);
-    delayTimer.startTimer(2000);
-}
-
-// --- test-only ---
-showStatus("test");
-delayTimer.startTimer(50);
-// --- end test-only ---
-```
-```json:testMetadata:one-shot-delayed-action
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 300, "expression": "delayTimer.isTimerRunning()", "value": false},
-    {"type": "REPL", "expression": "statusLabel.get('text')", "value": ""}
-  ]
-}
-```
 
 **Pitfalls:**
 - The callback receives zero arguments and `this` is set to the Timer instance itself. Use `this.stopTimer()` for self-stopping patterns rather than capturing the timer variable.

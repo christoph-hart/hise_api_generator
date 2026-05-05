@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Loose vs strict type comparison
 var a = [1, 2.0, "3"];
 Console.print(a.indexOf(2));       // 1 (loose: int 2 matches double 2.0)
 Console.print(a.indexOf(2, 0, 1)); // -1 (strict: int 2 != double 2.0)

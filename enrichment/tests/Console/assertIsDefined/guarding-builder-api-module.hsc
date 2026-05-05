@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Guarding Builder API module creation
 // Context: After creating objects or retrieving properties, assertIsDefined
 // catches undefined values immediately rather than letting them propagate.
 

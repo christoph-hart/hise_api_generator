@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: In-place concatenation (differs from JavaScript)
 var a = [1, 2, 3];
 a.concat([4, 5], [6, 7]);
 Console.print(a.length);

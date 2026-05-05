@@ -38,24 +38,7 @@ Returns the current style configuration as a JSON object. The returned object co
 - `$API.MarkdownRenderer.setStyleData$`
 
 **Example:**
-```javascript:get-modify-style
-// Title: Modify existing style incrementally
-const var md = Content.createMarkdownRenderer();
 
-var style = md.getStyleData();
-style.FontSize = 24.0;
-style.textColour = 0xFFCCCCCC;
-md.setStyleData(style);
-```
-
-```json:testMetadata:get-modify-style
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "md.getStyleData().FontSize", "value": 24.0}
-  ]
-}
-```
 
 ## setImageProvider
 
@@ -218,25 +201,5 @@ Sets the rendering area for the markdown content and returns the actual height r
 - `$API.Graphics.drawMarkdownText$`
 
 **Example:**
-```javascript:dynamic-height-panel
-// Title: Size a ScriptPanel to fit markdown content
-const var md = Content.createMarkdownRenderer();
-md.setText("# Title\nParagraph one.\n\n- Item A\n- Item B\n- Item C");
 
-var requiredHeight = md.setTextBounds([0, 0, 400, 1000]);
-
-// Changing the text invalidates the previous height
-md.setText("Short.");
-var shortHeight = md.setTextBounds([0, 0, 400, 1000]);
-```
-
-```json:testMetadata:dynamic-height-panel
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "requiredHeight > 50", "value": true},
-    {"type": "REPL", "expression": "shortHeight < requiredHeight", "value": true}
-  ]
-}
-```
 

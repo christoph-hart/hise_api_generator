@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Reference assignment vs deep copy
 var a = [1, 2, 3];
 
 var ref = a;

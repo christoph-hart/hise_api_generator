@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Converting normalised automation values using parameter metadata
 // Context: When a plugin stores parameter ranges as JSON objects with
 // MinValue/MaxValue/SkewFactor, the same object can be passed directly
 // to Math.from0To1() - no manual range extraction needed.

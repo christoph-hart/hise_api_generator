@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Define a reusable style configuration object
 // Context: When multiple renderers share the same visual theme,
 // define the style as a standalone JSON object and pass it
 // to each renderer's setStyleData().

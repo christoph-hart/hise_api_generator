@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Building a key range gate on a KeyModulator table
 const var builder = Synth.createBuilder();
 builder.clear();
 var ss = builder.create(builder.SoundGenerators.SineSynth, "TestSynth", 0, builder.ChainIndexes.Direct);

@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Adjusting sequence length after writing note data
 // Context: After flushing new note data to a sequence, update the time
 // signature to match the desired bar count. Read-modify-write pattern
 // preserves existing time signature values.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Watching a knob's value changes via broadcaster
 const var ValKnob1 = Content.addKnob("ValKnob1", 0, 0);
 ValKnob1.set("saveInPreset", false);
 

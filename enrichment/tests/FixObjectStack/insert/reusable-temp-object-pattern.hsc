@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Reusable temp object pattern for event tracking
 // Context: Real-time note tracking uses a single temp object to avoid
 // per-event allocation. Mutate properties, then insert() copies the data.
 

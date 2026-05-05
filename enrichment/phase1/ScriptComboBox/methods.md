@@ -60,23 +60,7 @@ Base properties available on all components: `text`, `visible`, `enabled`, `lock
 - `$API.ScriptComboBox.setPropertiesFromJSON$`
 
 **Example:**
-```javascript:combobox-set-items
-// Title: Populate a combo box with items
-const var cb = Content.addComboBox("SetItemsCombo", 0, 0);
-cb.set("items", "Option A\nOption B\nOption C");
-cb.set("text", "Choose...");
-cb.set("fontName", "Default");
-cb.set("fontSize", 14);
-```
-```json:testMetadata:combobox-set-items
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "cb.get(\"items\")", "value": "Option A\nOption B\nOption C"},
-    {"type": "REPL", "expression": "cb.get(\"text\")", "value": "Choose..."}
-  ]
-}
-```
+
 
 ---
 
@@ -475,40 +459,7 @@ Assigns a custom inline function as the control callback, replacing the default 
 - `$API.ScriptComboBox.changed$`
 
 **Example:**
-```javascript:combobox-control-callback
-// Title: Custom control callback for a combo box
-const var cb = Content.addComboBox("CallbackCombo", 0, 0);
-cb.set("items", "Sine\nSaw\nSquare");
-cb.set("saveInPreset", false);
 
-var callbackLog = [];
-
-inline function onComboChanged(component, value)
-{
-    callbackLog.push(component.getId() + ": " + parseInt(value));
-};
-
-cb.setControlCallback(onComboChanged);
-```
-```json:testMetadata:combobox-control-callback
-{
-  "testable": true,
-  "verifyScript": [
-    {
-      "type": "REPL",
-      "expression": "callbackLog[0]",
-      "value": "CallbackCombo: 2"
-    }
-  ],
-  "triggerScript": [
-    {
-      "type": "ui-set",
-      "target": "CallbackCombo",
-      "value": 2
-    }
-  ]
-}
-```
 
 ---
 
@@ -909,24 +860,7 @@ Appends a new item to the combo box's item list. Adds a newline and the item nam
 - `$API.ScriptComboBox.set$`
 
 **Example:**
-```javascript:combobox-add-items
-// Title: Dynamically build a combo box item list
-const var cb = Content.addComboBox("AddItemCombo", 0, 0);
-cb.set("saveInPreset", false);
-cb.addItem("First");
-cb.addItem("Second");
-cb.addItem("Third");
-cb.setValue(2);
-```
-```json:testMetadata:combobox-add-items
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "cb.getValue()", "value": 2},
-    {"type": "REPL", "expression": "cb.getItemText()", "value": "Second"}
-  ]
-}
-```
+
 
 ---
 
@@ -954,18 +888,4 @@ Returns the display text of the currently selected item based on the 1-based val
 - `$API.ScriptComboBox.addItem$`
 
 **Example:**
-```javascript:combobox-get-item-text
-// Title: Retrieve selected item text
-const var cb = Content.addComboBox("ItemTextCombo", 0, 0);
-cb.set("items", "Sine\nSaw\nSquare");
-cb.set("saveInPreset", false);
-cb.setValue(1);
 
-Console.print(cb.getItemText());
-```
-```json:testMetadata:combobox-get-item-text
-{
-  "testable": true,
-  "verifyScript": {"type": "log-output", "values": ["Sine"]}
-}
-```

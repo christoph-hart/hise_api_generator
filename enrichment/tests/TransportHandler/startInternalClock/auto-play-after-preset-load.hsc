@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Auto-play after preset load with grid resync
 const var th0 = Engine.createTransportHandler();
 th0.setSyncMode(th0.InternalOnly);
 th0.stopInternalClock(0);

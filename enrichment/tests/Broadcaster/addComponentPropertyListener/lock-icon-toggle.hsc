@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Updating a lock icon based on a toggle button's state
 const var LockToggle = Content.addButton("LockToggle", 0, 0);
 LockToggle.set("saveInPreset", false);
 const var LockIcon = Content.addLabel("LockIcon", 150, 0);

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Minimal dropdown-arrow combo box with custom popup menu
 // Context: A common pattern for selectors that show only a small dropdown arrow and
 // custom-styled popup items. The drawComboBox callback renders just the triangle indicator,
 // while separate popup menu functions style the dropdown list.

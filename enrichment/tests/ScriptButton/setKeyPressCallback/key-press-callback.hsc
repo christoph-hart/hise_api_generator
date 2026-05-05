@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Handling key presses on a button
 const var btn = Content.addButton("KeyPressBtn", 0, 0);
 btn.setConsumedKeyPresses("all");
 

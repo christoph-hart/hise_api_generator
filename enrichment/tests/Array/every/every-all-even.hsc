@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Test if all elements satisfy a condition
 var a = [2, 4, 6, 8];
 Console.print(a.every(function(x){ return x % 2 == 0; }));
 Console.print(a.every(function(x){ return x > 5; }));

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Inspect automation entries and find assignments for a specific parameter
 // Context: A custom automation UI needs to check whether a particular parameter
 // is already assigned to a CC and which CC number controls it.
 

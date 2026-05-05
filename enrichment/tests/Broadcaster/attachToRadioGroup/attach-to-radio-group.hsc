@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Monitoring radio button group selection
 const var Btn1 = Content.addButton("Btn1", 0, 0);
 Btn1.set("radioGroup", 1);
 Btn1.set("saveInPreset", false);

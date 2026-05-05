@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Clone a template object before modifying
 // Context: When creating multiple parameter descriptors from a
 // template, clone() produces an independent deep copy. Without
 // it, all entries would share the same object reference and

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Populate a slider pack from sorted measurement data
 // Context: Utility workflows sort collected values, then write each entry into the matching slider.
 
 const var valuePack = Content.addSliderPack("ValuePack", 10, 10);

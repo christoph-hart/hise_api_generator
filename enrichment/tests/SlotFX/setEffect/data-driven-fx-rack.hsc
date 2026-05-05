@@ -27,6 +27,7 @@ add ScriptSlider "FxKnob4" at 0 0 128 48
 /script
 /callback onInit
 // end setup
+// Title: Data-driven FX rack with configurable effect slots
 // Context: An FX rack where users select effects from a popup menu.
 // Each effect type is defined in a configuration object that maps
 // the UI name to a module ID, parameter bindings, and a default state.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Transport button icons (play, stop)
 // Context: Media transport controls are typically built as simple
 // path shapes rendered inside toggle button LAF callbacks.
 

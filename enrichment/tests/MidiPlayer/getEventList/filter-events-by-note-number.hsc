@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Reading and filtering events from a MIDI sequence
 const var __mp = Synth.getMidiPlayer("MidiPlayer1");
 __mp.setUseTimestampInTicks(true);
 __mp.create(4, 4, 1);

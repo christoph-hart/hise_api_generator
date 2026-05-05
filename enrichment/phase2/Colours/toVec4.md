@@ -27,25 +27,4 @@ shader.setUniformData("uColour", Colours.toVec4(accentColour));
 }
 ```
 
-```javascript:inspect-channels
-// Title: Inspecting colour channel values
-// Context: toVec4 is useful for debugging or computing with individual
-// colour channels as normalized floats.
 
-var rgba = Colours.toVec4(Colours.dodgerblue);
-
-Console.print("R: " + rgba[0]); // R: 0.118 (approx)
-Console.print("G: " + rgba[1]); // G: 0.565 (approx)
-Console.print("B: " + rgba[2]); // B: 1.0
-Console.print("A: " + rgba[3]); // A: 1.0
-```
-```json:testMetadata:inspect-channels
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "rgba[2]", "value": 1.0},
-    {"type": "REPL", "expression": "rgba[3]", "value": 1.0},
-    {"type": "REPL", "expression": "rgba.length", "value": 4}
-  ]
-}
-```

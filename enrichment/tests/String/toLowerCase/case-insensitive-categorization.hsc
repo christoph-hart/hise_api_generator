@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Case-insensitive keyword search for auto-categorization
 // Context: Automatically assign audio files to categories based on
 // keywords in the file name. Convert to lowercase once, then check
 // multiple keywords to classify the sound.

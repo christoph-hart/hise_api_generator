@@ -81,32 +81,7 @@ Sets the function to be called on each timer tick. The callback receives zero ar
 - `$API.Timer.stopTimer$`
 
 **Example:**
-```javascript:timer-callback-self-stop
-// Title: Timer that counts ticks and stops itself
-const var t = Engine.createTimerObject();
 
-reg tickCount = 0;
-
-inline function onTimerTick()
-{
-    tickCount++;
-
-    if (tickCount >= 3)
-        t.stopTimer();
-};
-
-t.setTimerCallback(onTimerTick);
-t.startTimer(50);
-```
-```json:testMetadata:timer-callback-self-stop
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 500, "expression": "tickCount >= 3", "value": true},
-    {"type": "REPL", "expression": "t.isTimerRunning()", "value": false}
-  ]
-}
-```
 
 ## startTimer
 

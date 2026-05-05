@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Querying which macro slots are in use
 // Context: Scan macro connections to determine which slots are occupied,
 // e.g. to build a context menu with available/occupied indicators
 

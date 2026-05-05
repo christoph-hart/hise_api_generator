@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Enabling undo for a multi-channel sequencer
 // Context: Enable the global undo manager during initialization so that
 // all subsequent MIDI edits (flushMessageList, setTimeSignature) can be
 // undone with Engine.undo()

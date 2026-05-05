@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Keeping a floating tooltip within parent bounds
 // Context: Positioning a tooltip or popup element near a target control,
 // then constraining it so it does not overflow the parent panel's bounds.
 

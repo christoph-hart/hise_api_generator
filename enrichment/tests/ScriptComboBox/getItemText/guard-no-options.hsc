@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Handle empty and out-of-range return values
 // Context: getItemText() returns an empty string when the value is 0 (nothing
 // selected) and "No options" when the value exceeds the item count.
 // Guard against both in cascading selector patterns where items may be rebuilt.

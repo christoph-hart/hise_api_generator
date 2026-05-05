@@ -441,24 +441,7 @@ Returns the largest Rectangle that fits within this rectangle while matching the
 - `$API.Rectangle.scaled$`
 
 **Example:**
-```javascript:fit-aspect-ratio
-// Title: Fitting a 16:9 content area inside a square region
-var area = Rectangle(0, 0, 300, 300);
-var fitted = area.withAspectRatioLike([0, 0, 16, 9]);
-// fitted is centered vertically: [0, 65.625, 300, 168.75]
-Console.print("x=" + fitted.x + " y=" + fitted.y);
-Console.print("w=" + fitted.width + " h=" + fitted.height);
-```
 
-```json:testMetadata:fit-aspect-ratio
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "fitted.width", "value": 300},
-    {"type": "REPL", "expression": "fitted.height", "value": 168.75}
-  ]
-}
-```
 
 ## withBottom
 

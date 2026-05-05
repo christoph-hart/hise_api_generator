@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Bulk-setting component properties
 Content.makeFrontInterface(600, 300);
 Content.addKnob("SPKnob1", 10, 10);
 Content.setPropertiesFromJSON("SPKnob1", {

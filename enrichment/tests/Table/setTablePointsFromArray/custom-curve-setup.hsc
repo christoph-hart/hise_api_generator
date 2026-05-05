@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Set up a custom S-curve
 const var td = Engine.createAndRegisterTableData(0);
 
 td.setTablePointsFromArray([

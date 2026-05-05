@@ -16,6 +16,7 @@ add SimpleGain as "SimpleGain1"
 /script
 /callback onInit
 // end setup
+// Title: Monitoring routing matrix changes on a processor
 const var bc = Engine.createBroadcaster({
     "id": "MatrixWatch",
     "args": ["processorId", "matrix"]

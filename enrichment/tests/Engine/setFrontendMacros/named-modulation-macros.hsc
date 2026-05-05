@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Named modulation source macros
 // Context: Synthesizers with a fixed set of modulation sources use
 // descriptive macro names that map to the modulation architecture.
 

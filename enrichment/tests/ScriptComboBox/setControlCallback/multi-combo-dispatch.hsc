@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Multi-purpose callback dispatching by component ID
 // Context: A single callback handles multiple combo boxes created in a loop.
 // The component's ID encodes its role, enabling one function to drive different behaviors.
 

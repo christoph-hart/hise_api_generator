@@ -93,40 +93,7 @@ Copies the value of the named property from each element into a target Buffer or
 - `$API.FixObjectStack.fill$`
 
 **Example:**
-```javascript:copy-used-portion-workaround
-// Title: Copy only used portion of a stack property
-const var f = Engine.createFixObjectFactory({
-    "note": 0,
-    "velocity": 0.0
-});
 
-const var s = f.createStack(16);
-const var obj = f.create();
-
-obj.note = 60;
-obj.velocity = 0.8;
-s.insert(obj);
-obj.note = 72;
-obj.velocity = 0.6;
-s.insert(obj);
-
-// copy() reads all 16 slots -- use manual loop for used portion only
-var velocities = [];
-for (i = 0; i < s.size(); i++)
-    velocities.push(s[i].velocity);
-
-Console.print(velocities.length); // 2, not 16
-```
-```json:testMetadata:copy-used-portion-workaround
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "s.size()", "value": 2},
-    {"type": "REPL", "expression": "velocities.length", "value": 2},
-    {"type": "REPL", "expression": "velocities[0]", "value": 0.8}
-  ]
-}
-```
 
 ---
 
@@ -234,40 +201,7 @@ Inserts a copy of `obj` at the end of the used portion if no duplicate exists. D
 - `$API.FixObjectStack.contains$`
 
 **Example:**
-```javascript:insert-with-duplicates
-// Title: Insert with duplicate detection
-const var f = Engine.createFixObjectFactory({
-    "note": 0,
-    "velocity": 0.0
-});
 
-f.setCompareFunction("note");
-const var s = f.createStack(8);
-const var obj = f.create();
-
-obj.note = 60;
-obj.velocity = 0.8;
-var result1 = s.insert(obj);
-
-// Same note value -- rejected as duplicate
-obj.velocity = 0.5;
-var result2 = s.insert(obj);
-
-Console.print(result1); // 1 (true -- inserted)
-Console.print(result2); // 0 (false -- duplicate note=60)
-Console.print(s.size()); // 1
-```
-```json:testMetadata:insert-with-duplicates
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "result1", "value": 1},
-    {"type": "REPL", "expression": "result2", "value": 0},
-    {"type": "REPL", "expression": "s.size()", "value": 1},
-    {"type": "REPL", "expression": "s[0].velocity", "value": 0.8}
-  ]
-}
-```
 
 ---
 
@@ -367,38 +301,7 @@ Upsert operation: if an element matching `obj` exists (by the factory's compare 
 - `$API.FixObjectStack.contains$`
 
 **Example:**
-```javascript:set-upsert
-// Title: Upsert behavior of set()
-const var f = Engine.createFixObjectFactory({
-    "note": 0,
-    "velocity": 0.0
-});
 
-f.setCompareFunction("note");
-const var s = f.createStack(8);
-const var obj = f.create();
-
-// Insert new entry
-obj.note = 60;
-obj.velocity = 0.8;
-s.set(obj);
-
-// Update existing entry (same note, different velocity)
-obj.velocity = 0.5;
-s.set(obj);
-
-Console.print(s.size());       // 1 (replaced, not added)
-Console.print(s[0].velocity);  // 0.5 (updated)
-```
-```json:testMetadata:set-upsert
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "s.size()", "value": 1},
-    {"type": "REPL", "expression": "s[0].velocity", "value": 0.5}
-  ]
-}
-```
 
 ---
 

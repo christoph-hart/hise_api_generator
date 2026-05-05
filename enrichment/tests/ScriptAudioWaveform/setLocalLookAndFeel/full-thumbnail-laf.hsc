@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Complete LAF customization for an audio waveform display
 // Context: When building a custom sample player, override all six thumbnail
 // draw functions to fully control the waveform's appearance. The
 // getThumbnailRenderOptions callback controls how the waveform data is

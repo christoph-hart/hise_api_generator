@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Default numeric sort and custom descending sort
 var a = [3, 1, 4, 1, 5];
 
 a.sort();

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Read-modify-write pattern for table points
 const var td = Engine.createAndRegisterTableData(0);
 
 // Get current points

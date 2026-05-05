@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Full circle as a record button icon
 // Context: addArc with a full 2*PI sweep is equivalent to addEllipse
 // for creating circular paths. Both are used interchangeably in
 // practice, but addEllipse is cleaner when a complete circle is needed.

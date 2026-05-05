@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Tooltip speech bubble with rounded corners
 // Context: quadraticTo creates smooth rounded corners on custom
 // shapes that addRoundedRectangle cannot express - like a speech
 // bubble with an arrow pointer on one side.

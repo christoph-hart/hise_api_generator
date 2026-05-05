@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Filled triangle vs open triangle
 // Context: closeSubPath is required for shapes that need to be filled
 // with Graphics.fillPath. Without it, fillPath still works but the
 // path is implicitly closed by a straight line from the last point

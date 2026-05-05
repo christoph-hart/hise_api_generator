@@ -16,6 +16,7 @@ add ScriptPanel "PeakMeter" at 0 0 128 48
 /script
 /callback onInit
 // end setup
+// Title: Stereo peak meter driven by a timer
 // Context: Peak meters poll the master output level from a timer
 // callback and update a panel's paint routine. The timer interval
 // controls the visual smoothness of the meter.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Get a global cable and set its value
 const var rm = Engine.getGlobalRoutingManager();
 const var cable = rm.getCable("MyCable");
 cable.setValue(0.75);

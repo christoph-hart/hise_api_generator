@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Restore sparse lane state with one reusable scratch buffer
 // Context: Import routines decode many payloads, so they reuse one temp Buffer and handle "EMPTY" entries explicitly.
 
 const var NUM_STEPS = 16;

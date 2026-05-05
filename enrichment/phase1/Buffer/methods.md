@@ -25,24 +25,7 @@ Applies a median filter to the buffer and returns a new buffer containing the fi
 - `$API.Buffer.getRMSLevel$`
 
 **Example:**
-```javascript:median-filter-buffer
-// Title: Smooth short spikes with a median filter
-const var b = Buffer.create(8);
-b[0] = 0.0; b[1] = 0.0; b[2] = 1.0; b[3] = 0.0;
-b[4] = 0.0; b[5] = 1.0; b[6] = 0.0; b[7] = 0.0;
 
-const var filtered = b.applyMedianFilter(3);
-```
-```json:testMetadata:median-filter-buffer
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "filtered.length", "value": 8},
-    {"type": "REPL", "expression": "filtered[2]", "value": 0},
-    {"type": "REPL", "expression": "b[2]", "value": 1}
-  ]
-}
-```
 
 ## decompose
 
@@ -162,21 +145,7 @@ Creates and returns a new buffer resampled by `ratio` using the selected interpo
 - `$API.Buffer.trim$`
 
 **Example:**
-```javascript:buffer-resample-linear
-// Title: Downsample a buffer with linear interpolation
-const var b = Buffer.create(16);
-b[4] = 1.0;
-const var half = b.resample(2.0, "Linear", false);
-```
-```json:testMetadata:buffer-resample-linear
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "half.length", "value": 8},
-    {"type": "REPL", "expression": "half[2]", "value": 1}
-  ]
-}
-```
+
 
 ## toBase64
 
@@ -223,21 +192,7 @@ Encodes buffer magnitudes into a compact two-character-per-bin string. Each outp
 - `$API.Buffer.getMagnitude$`
 
 **Example:**
-```javascript:buffer-char-encoding
-// Title: Create a compact display string from sample data
-const var b = Buffer.create(32);
-const var encoded = b.toCharString(16, [-1.0, 1.0]);
-```
-```json:testMetadata:buffer-char-encoding
-{
-  "testable": true,
-  "verifyScript": {
-    "type": "REPL",
-    "expression": "encoded.length",
-    "value": 32
-  }
-}
-```
+
 
 ## trim
 
@@ -314,24 +269,7 @@ Returns a new Buffer object that references a subrange of the original buffer. T
 - `$API.Buffer.resample$`
 
 **Example:**
-```javascript:buffer-slice-reference
-// Title: Slice shares storage with the source buffer
-const var source = Buffer.create(6);
-source[0] = 1.0; source[1] = 2.0; source[2] = 3.0;
-source[3] = 4.0; source[4] = 5.0; source[5] = 6.0;
 
-const var slice = source.getSlice(2, 2);
-slice[0] = 99.0;
-```
-```json:testMetadata:buffer-slice-reference
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "slice.length", "value": 2},
-    {"type": "REPL", "expression": "source[2]", "value": 99}
-  ]
-}
-```
 
 ## indexOfPeak
 
@@ -405,24 +343,7 @@ Decodes a Base64 payload created by `Buffer.toBase64()`, resizes this buffer to 
 - `$API.Buffer.toBase64$`
 
 **Example:**
-```javascript:buffer-base64-roundtrip
-// Title: Restore a serialized buffer payload
-const var source = Buffer.create(4);
-source[0] = 0.1; source[1] = 0.2; source[2] = 0.3; source[3] = 0.4;
-const var encoded = source.toBase64();
 
-const var target = Buffer.create(1);
-const var ok = target.fromBase64(encoded);
-```
-```json:testMetadata:buffer-base64-roundtrip
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "ok", "value": 1},
-    {"type": "REPL", "expression": "target.length", "value": 4}
-  ]
-}
-```
 
 ## getMagnitude
 

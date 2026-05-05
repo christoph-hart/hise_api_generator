@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Restoring step data from a custom preset format
 // Context: A sequencer stores per-channel step data as Base64 strings
 // in a JSON preset. On restore, each channel's data is loaded from
 // the string, with "EMPTY" as a sentinel for cleared channels.

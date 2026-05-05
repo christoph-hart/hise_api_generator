@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Displaying project info in the console
 var info = Engine.getProjectInfo();
 Console.print(info.ProjectName + " v" + info.ProjectVersion);
 Console.print("Built with HISE " + info.HISEBuild);

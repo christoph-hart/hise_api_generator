@@ -16,6 +16,7 @@ add SimpleGain as "BypassTarget"
 /script
 /callback onInit
 // end setup
+// Title: Greying out controls when a module is bypassed
 const var CompThreshold = Content.addKnob("CompThreshold", 0, 0);
 CompThreshold.set("saveInPreset", false);
 const var CompRatio = Content.addKnob("CompRatio", 150, 0);

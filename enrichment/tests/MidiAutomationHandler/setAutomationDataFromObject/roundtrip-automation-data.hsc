@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Save and restore automation data
 const var mah = Engine.createMidiAutomationHandler();
 
 // Snapshot current state

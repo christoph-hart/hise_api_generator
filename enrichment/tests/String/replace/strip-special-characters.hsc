@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Strip unwanted characters from a string for identifier use
 // Context: When generating a clean identifier from user-provided text,
 // remove special characters that are not valid in IDs.
 

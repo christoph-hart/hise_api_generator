@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Drawing a piano roll in a ScriptPanel paint routine
 const var mp = Synth.getMidiPlayer("MidiPlayer1");
 mp.setUseTimestampInTicks(true);
 mp.create(1, 4, 1);

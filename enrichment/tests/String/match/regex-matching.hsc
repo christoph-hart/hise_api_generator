@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Extract numeric values with regex
 var text = "Width: 100px, Height: 200px";
 var numbers = text.match("[0-9]+");
 

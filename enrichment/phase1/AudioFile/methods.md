@@ -233,26 +233,7 @@ Loads audio data from script Buffer objects into the AudioFile. Accepts either a
 - `$API.AudioFile.getLoopRange$`
 
 **Example:**
-```javascript:load-buffer-mono
-// Title: Loading a programmatically generated mono buffer
-const var af = Engine.createAndRegisterAudioFile(0);
-const var buf = Buffer.create(128);
 
-// Fill with a sine wave
-for (i = 0; i < 128; i++)
-    buf[i] = Math.sin(2.0 * Math.PI * 440.0 * i / 44100.0);
-
-af.loadBuffer(buf, 44100.0, []);
-```
-```json:testMetadata:load-buffer-mono
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "af.getNumSamples()", "value": 128},
-    {"type": "REPL", "expression": "af.getSampleRate()", "value": 44100.0}
-  ]
-}
-```
 
 ---
 
@@ -307,34 +288,7 @@ Registers a callback function that fires when the audio content changes (file lo
 - `$API.AudioFile.update$`
 
 **Example:**
-```javascript:content-callback-setup
-// Title: Registering a content change callback
-const var af = Engine.createAndRegisterAudioFile(0);
 
-reg callCount = 0;
-
-inline function onContentChanged()
-{
-    // 'this' points to the AudioFile that changed
-    Console.print("Content changed: " + this.getNumSamples() + " samples");
-    callCount++;
-};
-
-af.setContentCallback(onContentChanged);
-
-// --- test-only ---
-const var trigBuf = Buffer.create(64);
-af.loadBuffer(trigBuf, 44100.0, []);
-// --- end test-only ---
-```
-```json:testMetadata:content-callback-setup
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "delay": 500, "expression": "callCount", "value": 1}
-  ]
-}
-```
 
 ---
 

@@ -25,22 +25,7 @@ Converts an HSL colour array to an ARGB integer colour value. Takes a four-eleme
 - `$API.Colours.fromVec4$`
 
 **Example:**
-```javascript:fromhsl-alpha-correction
-// Title: HSL roundtrip with alpha correction
-var hsl = Colours.toHsl(Colours.dodgerblue);
-hsl[0] += 0.1;
-hsl[3] = Math.round(hsl[3] * 255);
-var shifted = Colours.fromHsl(hsl);
-```
-```json:testMetadata:fromhsl-alpha-correction
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "shifted != Colours.dodgerblue", "value": true},
-    {"type": "REPL", "expression": "Colours.toVec4(shifted)[3]", "value": 1.0}
-  ]
-}
-```
+
 
 ## fromVec4
 

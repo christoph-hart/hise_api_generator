@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Preset handler with post-load callback driving a broadcaster
 // Context: Plugins that need to react to preset changes (update UI state,
 // reset effects, refresh displays) connect the preset handler's post-load
 // callback to a broadcaster that fans out the notification.

@@ -123,23 +123,7 @@ Converts a JSON object to its string representation, compresses it using zstd co
 - `$API.Engine.dumpAsJSON$`
 
 **Example:**
-```javascript:compress-uncompress-roundtrip
-// Title: Compress and uncompress a JSON object
-var data = {"name": "MyPreset", "values": [1, 2, 3]};
-var compressed = Engine.compressJSON(data);
-var restored = Engine.uncompressJSON(compressed);
-Console.print(restored.name);
-```
-```json:testMetadata:compress-uncompress-roundtrip
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "typeof compressed", "value": "string"},
-    {"type": "REPL", "expression": "restored.name", "value": "MyPreset"},
-    {"type": "REPL", "expression": "restored.values[2]", "value": 3}
-  ]
-}
-```
+
 
 ## copyToClipboard
 
@@ -262,33 +246,7 @@ Creates a broadcaster that can send messages to attached listeners. The `default
 - `$API.Broadcaster.attachToComponentProperties$`
 
 **Example:**
-```javascript:create-broadcaster-with-listeners
-// Title: Create a broadcaster and add a sync listener
-const var bc = Engine.createBroadcaster({
-    "id": "ValueBroadcaster",
-    "args": ["value", "source"]
-});
 
-var lastValue = 0;
-
-bc.addListener("logger", "Tracks value changes",
-function(value, source)
-{
-    lastValue = value;
-});
-
-bc.sendSyncMessage([42, "knob"]);
-```
-```json:testMetadata:create-broadcaster-with-listeners
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "lastValue", "value": 42},
-    {"type": "REPL", "expression": "bc.value", "value": 42},
-    {"type": "REPL", "expression": "bc.source", "value": "knob"}
-  ]
-}
-```
 
 ## createDspNetwork
 
@@ -502,30 +460,7 @@ Creates a fixed-layout object factory using the given data layout description. T
 - [BUG] If `layoutDescription` is not a JSON object (e.g., an array, string, or number), the factory is created but all subsequent `create()`, `createArray()`, and `createStack()` calls silently return undefined. No error message is reported to the user.
 
 **Example:**
-```javascript:fixobj-factory-basic
-// Title: Creating and using a fixed-layout object factory
-const var pointFactory = Engine.createFixObjectFactory({
-    "x": 0.0,
-    "y": 0.0,
-    "active": false
-});
 
-var point = pointFactory.create();
-point.x = 1.5;
-point.y = 2.5;
-point.active = true;
-
-Console.print(point.x); // 1.5
-```
-```json:testMetadata:fixobj-factory-basic
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "point.x", "value": 1.5},
-    {"type": "REPL", "expression": "point.active", "value": true}
-  ]
-}
-```
 
 **Cross References:**
 - `$API.FixObjectFactory.create$`
@@ -868,23 +803,7 @@ Exports a JSON object to a file. If `fileName` is an absolute path, writes to th
 - `$API.Engine.compressJSON$`
 
 **Example:**
-```javascript:dump-and-load-json
-// Title: Save and load a JSON configuration file
-var config = {"volume": 0.8, "mode": "stereo", "channels": 2};
-Engine.dumpAsJSON(config, "myConfig.json");
-var loaded = Engine.loadFromJSON("myConfig.json");
-Console.print(loaded.volume);
-```
-```json:testMetadata:dump-and-load-json
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "loaded.volume", "value": 0.8},
-    {"type": "REPL", "expression": "loaded.mode", "value": "stereo"},
-    {"type": "REPL", "expression": "loaded.channels", "value": 2}
-  ]
-}
-```
+
 
 ## extendTimeOut
 
@@ -1283,20 +1202,7 @@ None.
 - `$API.GlobalRoutingManager.connectToOSC$`
 
 **Example:**
-```javascript:global-routing-cable
-// Title: Get a global cable and set its value
-const var rm = Engine.getGlobalRoutingManager();
-const var cable = rm.getCable("MyCable");
-cable.setValue(0.75);
-```
-```json:testMetadata:global-routing-cable
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "cable.getValueNormalised()", "value": 0.75}
-  ]
-}
-```
+
 
 ## getHostBpm
 
@@ -1752,23 +1658,7 @@ None.
 - `$API.Engine.getVersion$`
 
 **Example:**
-```javascript:project-info-display
-// Title: Displaying project info in the console
-var info = Engine.getProjectInfo();
-Console.print(info.ProjectName + " v" + info.ProjectVersion);
-Console.print("Built with HISE " + info.HISEBuild);
-```
-```json:testMetadata:project-info-display
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "typeof info.ProjectName", "value": "string"},
-    {"type": "REPL", "expression": "info.ProjectName.length > 0", "value": true},
-    {"type": "REPL", "expression": "typeof info.HISEBuild", "value": "string"},
-    {"type": "REPL", "expression": "info.HISEBuild.length > 0", "value": true}
-  ]
-}
-```
+
 
 ## getQuarterBeatsForMilliSeconds
 
@@ -2085,25 +1975,7 @@ None.
 - `$API.Engine.getDeviceResolution$`
 
 **Example:**
-```javascript:system-stats-dark-mode
-// Title: Adapt UI theme based on OS dark mode setting
-var stats = Engine.getSystemStats();
-var useDarkTheme = stats.isDarkMode;
-Console.print("Dark mode: " + useDarkTheme);
-Console.print("CPU: " + stats.CpuModel);
-Console.print("RAM: " + stats.MemorySizeInMegabytes + " MB");
-```
-```json:testMetadata:system-stats-dark-mode
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "typeof stats.CpuModel", "value": "string"},
-    {"type": "REPL", "expression": "stats.MemorySizeInMegabytes > 0", "value": true},
-    {"type": "REPL", "expression": "stats.isDarkMode == 0 || stats.isDarkMode == 1", "value": true},
-    {"type": "REPL", "expression": "stats.NumCpus > 0", "value": true}
-  ]
-}
-```
+
 
 ## getSystemTime
 
@@ -2789,31 +2661,7 @@ Registers and immediately performs a scriptable undo action. The `undoAction` ca
 **Callback Signature:** undoAction(isUndo: bool)
 
 **Example:**
-```javascript:perform-undo-action
-// Title: Undo/redo a slider value change
-const var knob = Content.addKnob("UndoKnob", 0, 0);
-knob.set("saveInPreset", false);
 
-var previousValue = 0.5;
-
-inline function onUndoAction(isUndo)
-{
-    if (isUndo)
-        knob.setValue(previousValue);
-    else
-        knob.setValue(1.0);
-};
-
-Engine.performUndoAction({}, onUndoAction);
-```
-```json:testMetadata:perform-undo-action
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "knob.getValue()", "value": 1.0}
-  ]
-}
-```
 
 **Pitfalls:**
 - On the message thread, the callback is dispatched asynchronously, meaning the action may not be complete when `performUndoAction` returns. On the scripting thread and sample-loading thread it executes synchronously.
@@ -3490,34 +3338,7 @@ Sorts an array in-place using a custom comparison function. The comparator recei
 - `$API.Array.sort$`
 
 **Example:**
-```javascript:sort-objects-by-property
-// Title: Sort an array of objects by a numeric property
-var items = [
-    {"name": "C", "value": 3},
-    {"name": "A", "value": 1},
-    {"name": "B", "value": 2}
-];
 
-inline function compareByValue(a, b)
-{
-    return a.value - b.value;
-}
-
-Engine.sortWithFunction(items, compareByValue);
-Console.print(items[0].name); // "A"
-Console.print(items[1].name); // "B"
-Console.print(items[2].name); // "C"
-```
-```json:testMetadata:sort-objects-by-property
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "items[0].name", "value": "A"},
-    {"type": "REPL", "expression": "items[1].name", "value": "B"},
-    {"type": "REPL", "expression": "items[2].name", "value": "C"}
-  ]
-}
-```
 
 ## uncompressJSON
 
@@ -3543,25 +3364,7 @@ Decompresses a Base64-encoded, zstd-compressed string back into a JSON object. T
 - `$API.Engine.compressJSON$`
 
 **Example:**
-```javascript:roundtrip-compress-uncompress
-// Title: Roundtrip compress and uncompress a JSON object
-var original = {"key": "value", "number": 42};
-var compressed = Engine.compressJSON(original);
-Console.print(typeof compressed); // "string"
 
-var restored = Engine.uncompressJSON(compressed);
-Console.print(restored.key);    // "value"
-Console.print(restored.number); // 42
-```
-```json:testMetadata:roundtrip-compress-uncompress
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "restored.key", "value": "value"},
-    {"type": "REPL", "expression": "restored.number", "value": 42}
-  ]
-}
-```
 
 ## undo
 

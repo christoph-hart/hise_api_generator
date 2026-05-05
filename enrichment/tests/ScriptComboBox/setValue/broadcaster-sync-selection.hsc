@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Sync combo box selection from a Broadcaster
 // Context: A Broadcaster drives the combo box value from an external source
 // (e.g., a zoom level changed elsewhere). The combo box reflects the current
 // state without triggering its own callback.

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Filter elements by a threshold
 var a = [1, 12, 3, 14, 5];
 var big = a.filter(function(x){ return x > 10; });
 Console.print(big.join(", "));

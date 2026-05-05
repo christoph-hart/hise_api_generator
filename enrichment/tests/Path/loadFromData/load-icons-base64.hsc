@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Loading icons from base64-encoded strings
 // Context: Base64 encoding is more compact than byte arrays for
 // storing complex path data. Many plugins maintain icon libraries
 // as namespace objects with base64-encoded paths.

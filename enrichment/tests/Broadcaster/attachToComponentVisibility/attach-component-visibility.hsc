@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Tracking a component's visibility state
 const var VisPanel1 = Content.addPanel("VisPanel1", 0, 0);
 VisPanel1.set("saveInPreset", false);
 

@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Three ways to specify consumed key presses
 const var panel = Content.addPanel("Panel1", 0, 0);
 
 // Consume all keys exclusively

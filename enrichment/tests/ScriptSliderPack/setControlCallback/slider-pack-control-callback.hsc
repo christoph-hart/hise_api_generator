@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Custom control callback for slider-pack changes
 const var sp = Content.addSliderPack("SP2", 0, 0);
 reg lastIndex = -1;
 

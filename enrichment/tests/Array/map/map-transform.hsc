@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Transform array elements
 var a = [1, 2, 3, 4];
 var doubled = a.map(function(x){ return x * 2; });
 Console.print(doubled.join(", "));

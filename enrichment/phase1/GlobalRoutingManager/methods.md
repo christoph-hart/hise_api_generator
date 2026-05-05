@@ -218,33 +218,7 @@ Stores a double value in the per-event data storage, keyed by MIDI event ID and 
 - `$API.GlobalRoutingManager.getEventData$`
 
 **Example:**
-```javascript:event-data-storage
-// Title: Attaching custom data to MIDI events
-const var rm = Engine.getGlobalRoutingManager();
 
-// Store values in two different data slots for event ID 1
-rm.setEventData(1, 0, 0.75);
-rm.setEventData(1, 1, 440.0);
-
-// Read back stored values
-var slot0 = rm.getEventData(1, 0);
-var slot1 = rm.getEventData(1, 1);
-var empty = rm.getEventData(1, 2);
-
-Console.print("Slot 0: " + slot0); // Slot 0: 0.75
-Console.print("Slot 1: " + slot1); // Slot 1: 440
-Console.print("Slot 2: " + empty); // Slot 2: undefined
-```
-```json:testMetadata:event-data-storage
-{
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "rm.getEventData(1, 0)", "value": 0.75},
-    {"type": "REPL", "expression": "rm.getEventData(1, 1)", "value": 440.0},
-    {"type": "REPL", "expression": "rm.getEventData(1, 2)", "value": "undefined"}
-  ]
-}
-```
 
 ## getEventData
 

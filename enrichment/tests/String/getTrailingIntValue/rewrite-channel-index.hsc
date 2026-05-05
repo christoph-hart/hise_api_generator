@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Rewrite a component ID to target a different channel index
 // Context: When copying parameter state between channels, replace
 // the trailing number in the automation ID to point at the new channel.
 

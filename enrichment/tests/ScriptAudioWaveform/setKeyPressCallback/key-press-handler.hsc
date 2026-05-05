@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Log key presses on a focused panel
 const var panel = Content.addPanel("Panel1", 0, 0);
 panel.setConsumedKeyPresses("all");
 panel.setKeyPressCallback(function(event)

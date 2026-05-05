@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Creating buttons with idempotent naming
 const var btn1 = Content.addButton("BypassBtn", 10, 10);
 const var btn2 = Content.addButton("BypassBtn", 10, 10);
 Console.assertTrue(btn1 == btn2);

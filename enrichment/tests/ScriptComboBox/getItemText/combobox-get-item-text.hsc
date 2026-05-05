@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Retrieve selected item text
 const var cb = Content.addComboBox("ItemTextCombo", 0, 0);
 cb.set("items", "Sine\nSaw\nSquare");
 cb.set("saveInPreset", false);

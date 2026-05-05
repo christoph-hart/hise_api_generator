@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Argument transformation between broadcasters
 // Context: When chaining broadcasters with different argument structures,
 // use the transform function to reshape the data.
 

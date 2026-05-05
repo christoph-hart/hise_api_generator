@@ -16,6 +16,7 @@ add MidiPlayer as "MidiPlayer1"
 /script
 /callback onInit
 // end setup
+// Title: Read events, transpose all notes up by 12, and write back
 const var mp = Synth.getMidiPlayer("MidiPlayer1");
 mp.setUseTimestampInTicks(true);
 mp.create(4, 4, 1);

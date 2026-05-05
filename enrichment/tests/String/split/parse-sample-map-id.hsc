@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Parse a hierarchical sample map ID into folder and name
 // Context: Sample map IDs use "/" as a path separator. Splitting
 // extracts the category and the individual sample name.
 

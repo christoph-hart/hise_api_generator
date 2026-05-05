@@ -11,6 +11,7 @@ playground open
 /script
 /callback onInit
 // end setup
+// Title: Extract sub-arrays with negative indices
 var a = [10, 20, 30, 40, 50];
 var mid = a.slice(1, 3);
 var last2 = a.slice(-2);
