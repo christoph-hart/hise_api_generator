@@ -49,6 +49,22 @@
         {
           "class": "ThreadSafeStorage",
           "distinction": "Use ThreadSafeStorage to safely pass data between threads; use Array as a standard container on a single thread."
+        },
+        {
+          "video": "clear-array",
+          "distinction": "A video tutorial that shows how to use Array.clear() to empty an array declared with const var, since const var arrays cannot be reassigned"
+        },
+        {
+          "video": "indexof-multiple-values",
+          "distinction": "A video tutorial that shows how to use Array.indexOf() with an inline array to cleanly check if a value matches any of several discrete values"
+        },
+        {
+          "video": "reserve-array-memory",
+          "distinction": "A video tutorial that shows how to use Array.reserve() to pre-allocate memory for arrays of known size, avoiding incremental resizing during population"
+        },
+        {
+          "video": "sort-arrays",
+          "distinction": "A video tutorial that covers all array sorting methods: sort() for numeric, reverse() for descending, sortNatural() for embedded numbers and Engine.sortWithFunction() for custom comparators"
         }
       ],
       "callbackDensity": 0.25,
@@ -207,6 +223,10 @@
         {
           "class": "TransportHandler",
           "distinction": "Broadcaster can attach to arbitrary UI/module sources, while TransportHandler specifically reacts to host transport events (tempo, play/stop, beat, time signature)."
+        },
+        {
+          "video": "broadcasters-introduction",
+          "distinction": "A video tutorial that introduces the broadcaster system as an alternative to direct control callbacks, covering creation, attachment to component values and the broadcaster wizard"
         }
       ],
       "callbackDensity": 0.84,
@@ -355,6 +375,10 @@
         {
           "class": "Graphics",
           "distinction": "Colours provides colour constants and manipulation functions; Graphics uses those colour values for drawing operations via setColour()."
+        },
+        {
+          "video": "set-opacity-paint-routine",
+          "distinction": "A video tutorial that shows how to use Colours.withAlpha() to control colour opacity at draw time within a panel paint routine"
         }
       ],
       "callbackDensity": 0.0,
@@ -509,6 +533,18 @@
         {
           "class": "Engine",
           "distinction": "Content manages the visual interface; Engine manages the audio engine, MIDI, and global state."
+        },
+        {
+          "video": "components-in-bulk",
+          "distinction": "A video tutorial that shows how to use Content.getAllComponents() with regex pattern matching to retrieve and modify multiple UI components at once"
+        },
+        {
+          "video": "control-callback-multiple-controls",
+          "distinction": "A video tutorial that shows how to assign a single shared control callback to multiple buttons, identify which control triggered it using indexOf and implement radio button behaviour"
+        },
+        {
+          "video": "visual-guides-interface-designer",
+          "distinction": "A video tutorial that shows how to use Content.addVisualGuide to draw temporary alignment lines and rectangles in the HISE Interface Designer for layout debugging"
         }
       ],
       "callbackDensity": 0.06,
@@ -525,7 +561,12 @@
       "baseClass": "ApiClass",
       "creates": [],
       "references": [],
-      "seeAlso": [],
+      "seeAlso": [
+        {
+          "video": "date-api",
+          "distinction": "A video tutorial that shows how to use the Date namespace to get system time, convert between ISO-8601 strings and milliseconds and build a days-elapsed check"
+        }
+      ],
       "callbackDensity": 0.0,
       "statefulness": 0.5,
       "threadingExposure": 0.0,
@@ -788,6 +829,10 @@
         {
           "class": "ExpansionHandler",
           "distinction": "ExpansionHandler is the factory that returns Expansion references; Expansion is a handle to one specific expansion pack."
+        },
+        {
+          "video": "expansion-packs",
+          "distinction": "A complete video tutorial guide to HISE expansion packs covering enabling the feature, expansion folders, dynamic sample-map loading with {EXP::} prefixes, expansion-scoped presets and JSON manifest loading"
         }
       ],
       "callbackDensity": 0.0,
@@ -821,6 +866,10 @@
         {
           "class": "Unlocker",
           "distinction": "Unlocker manages RSA key-based product licensing; ExpansionHandler manages expansion pack installation/encryption which may use Unlocker credentials."
+        },
+        {
+          "video": "expansion-packs",
+          "distinction": "A complete video tutorial guide to HISE expansion packs covering enabling the feature, expansion folders, dynamic sample-map loading with {EXP::} prefixes, expansion-scoped presets and JSON manifest loading"
         }
       ],
       "callbackDensity": 0.17,
@@ -892,6 +941,18 @@
         {
           "class": "MidiPlayer",
           "distinction": "File.loadMidiMetadata defines the canonical TimeSignature JSON format that MidiPlayer.getTimeSignature/setTimeSignature consume."
+        },
+        {
+          "video": "batch-generate-sample-maps",
+          "distinction": "A video tutorial that demonstrates batch-generating sample map XML files from a template using HiseScript's File API for string replacement and file writing"
+        },
+        {
+          "video": "extract-zip-file",
+          "distinction": "A complete video tutorial guide on File.extractZipFile() covering the extraction callback object, progress monitoring, cancellation and error handling"
+        },
+        {
+          "video": "file-filesystem-api",
+          "distinction": "A complete video tutorial walkthrough of the HISE FileSystem and File APIs covering getFolder, getChildFile, loadAsString, writeString, browse and createDirectory"
         }
       ],
       "callbackDensity": 0.02,
@@ -925,6 +986,10 @@
         {
           "class": "File",
           "distinction": "FileSystem returns File objects from getFolder/fromAbsolutePath/browse; File is the handle you operate on after obtaining it from FileSystem."
+        },
+        {
+          "video": "file-filesystem-api",
+          "distinction": "A complete video tutorial walkthrough of the HISE FileSystem and File APIs covering getFolder, getChildFile, loadAsString, writeString, browse and createDirectory"
         }
       ],
       "callbackDensity": 0.27,
@@ -1125,6 +1190,30 @@
         {
           "class": "Rectangle",
           "distinction": "Graphics draws into rectangular areas; Rectangle provides layout slicing and transformation methods to compute those areas."
+        },
+        {
+          "video": "drawing-text-on-panel",
+          "distinction": "A video tutorial that covers the three Graphics text-drawing methods available in panel paint routines: drawText, drawAlignedText and drawFittedText with multi-line wrapping"
+        },
+        {
+          "video": "paint-images-on-panel",
+          "distinction": "A video tutorial that shows how to load an image into a Panel, draw it in a paint routine using g.drawImage and control positioning with offsets"
+        },
+        {
+          "video": "paint-routines-vector-graphics",
+          "distinction": "A comprehensive video tutorial guide to drawing vector graphics with paint routines, covering shapes, text, fonts, drop shadows, gradients and interactive button menus with mouse callbacks"
+        },
+        {
+          "video": "sharing-paint-routines",
+          "distinction": "A video tutorial that shows how to eliminate repetitive paint routine code by extracting shared drawing logic into an inline function and adding panel-specific extras on top"
+        },
+        {
+          "video": "striped-panel",
+          "distinction": "A video tutorial that shows how to draw alternating-colour vertical, horizontal or diagonal stripes on a Panel using a paint routine loop with g.fillRect and g.rotate"
+        },
+        {
+          "video": "transparent-image",
+          "distinction": "A video tutorial that shows how to control image opacity in a Panel paint routine using g.setColour with Colours.withAlpha before g.drawImage"
         }
       ],
       "callbackDensity": 0.0,
@@ -1261,6 +1350,10 @@
         {
           "class": "MidiList",
           "distinction": "Message is a single live MIDI event, transient within a callback; MidiList stores persistent note-number sets"
+        },
+        {
+          "video": "transposer-realtime-threads",
+          "distinction": "A video tutorial that builds a MIDI transposer using a two-script architecture: a deferred UI script for display and a non-deferred ScriptProcessor for real-time Message.setTransposeAmount calls"
         }
       ],
       "callbackDensity": 0.03,
@@ -1610,6 +1703,10 @@
         {
           "class": "Graphics",
           "distinction": "Path defines shape geometry; Graphics renders those shapes onto a surface."
+        },
+        {
+          "video": "import-vectors",
+          "distinction": "A video tutorial that shows how to convert SVG path data using the HISE Producer tool, load it into a Path object and draw or fill it on a Panel with proper centering"
         }
       ],
       "callbackDensity": 0.0,
@@ -1721,6 +1818,34 @@
         {
           "class": "AudioSampleProcessor",
           "distinction": "Sampler manages multi-sample instruments with key/velocity mapping, while AudioSampleProcessor controls single audio file playback modules like AudioLoopPlayer."
+        },
+        {
+          "video": "jingle-bell-sample-library",
+          "distinction": "A video tutorial that walks through building a complete sample library VST in HISE from scratch, covering sample mapping, AHDSR/reverb interface and preset browser setup"
+        },
+        {
+          "video": "change-sample-maps-presets",
+          "distinction": "A video tutorial that shows how to tie sample map selection to presets using a ComboBox populated from Sampler.getSampleMapList() with automatic preset save/restore"
+        },
+        {
+          "video": "non-repeating-round-robin",
+          "distinction": "A video tutorial that implements non-repeating round robin using modulo arithmetic to exclude the last-played index, guaranteeing no consecutive repeats"
+        },
+        {
+          "video": "random-round-robin",
+          "distinction": "A video tutorial that implements random round-robin sample group selection using Sampler.enableRoundRobin(false) and Sampler.setActiveGroup() with Math.randInt"
+        },
+        {
+          "video": "round-robin-techniques",
+          "distinction": "A comprehensive video tutorial that covers built-in sequential cycling, scripted sequential with group filtering, random selection and velocity-based round robin"
+        },
+        {
+          "video": "sampler-comprehensive-guide",
+          "distinction": "A comprehensive video tutorial that covers the HISE Sampler end-to-end: sample map creation, file naming, monolith compression, multi-mic workflows, velocity crossfading, round-robin groups and the scripted sample editor"
+        },
+        {
+          "video": "lazy-loading-purge-until-played",
+          "distinction": "A video tutorial that shows how to implement lazy loading (purge until played) in HISE samplers via scripting, reducing RAM usage by keeping samples purged until first triggered"
         }
       ],
       "callbackDensity": 0.0,
@@ -1933,6 +2058,10 @@
         {
           "class": "ScriptComboBox",
           "distinction": "Use ScriptLabel for displaying or editing free-form text; use ScriptComboBox for selecting from a predefined item list."
+        },
+        {
+          "video": "hide-reveal-passwords",
+          "distinction": "A video tutorial that shows how to toggle password masking on a Label component using the fontStyle property set to 'Password' or 'plain'"
         }
       ],
       "callbackDensity": 0.05,
@@ -1964,6 +2093,30 @@
         {
           "class": "Graphics",
           "distinction": "ScriptLookAndFeel defines which paint functions are called for components; Graphics is the drawing context passed into those paint functions."
+        },
+        {
+          "video": "laf-knobs-sliders",
+          "distinction": "A video tutorial that shows how to register drawRotarySlider and drawLinearSlider paint functions for fully custom knob and slider rendering"
+        },
+        {
+          "video": "checkboxes-look-and-feel",
+          "distinction": "A video tutorial that shows how to draw buttons as icon checkboxes using Look and Feel, SVG path data and a shared LAF callback that selects icons via the button's text property"
+        },
+        {
+          "video": "keyboard-look-and-feel",
+          "distinction": "A video tutorial that builds a custom-styled MIDI keyboard using drawWhiteNote and drawBlackNote LAF callbacks with triangle shapes, key-press animation and hover effects"
+        },
+        {
+          "video": "laf-button-images",
+          "distinction": "A video tutorial that shows how to use frame-based sprite images with Look and Feel to draw custom button states, using loadImage and drawImage inside drawToggleButton"
+        },
+        {
+          "video": "laf-buttons",
+          "distinction": "A video tutorial that shows how to build multiple button styles (icon, text, toggle, MIDI channel list) within a single drawToggleButton LAF function using obj.text prefix matching and obj.parentType"
+        },
+        {
+          "video": "led-style-button-look-and-feel",
+          "distinction": "A step-by-step video tutorial that draws a realistic LED toggle button entirely in HiseScript using a local Look and Feel, covering layered gradient fills, radial gradients, drop shadow glow and interactive hover/press feedback"
         }
       ],
       "callbackDensity": 0.15,
@@ -2071,6 +2224,54 @@
         {
           "class": "DisplayBuffer",
           "distinction": "ScriptPanel can visualize DisplayBuffer contents in its paint callback"
+        },
+        {
+          "video": "snake-game",
+          "distinction": "A step-by-step video tutorial that builds a Snake game using ScriptPanel timers, key press callbacks, paint routines and grid-based game logic"
+        },
+        {
+          "video": "custom-keyboard-panel",
+          "distinction": "A video tutorial that builds a fully custom on-screen keyboard from a ScriptPanel with painted keys, mouse interaction, MidiList-based event ID tracking and MIDI input synchronisation"
+        },
+        {
+          "video": "custom-mouse-cursor",
+          "distinction": "A video tutorial that shows how to set a custom mouse cursor on a ScriptPanel using an SVG path, with colour tinting and hit-point positioning, applied instrument-wide"
+        },
+        {
+          "video": "custom-performance-meter",
+          "distinction": "A video tutorial that builds a custom Panel-based performance meter displaying live CPU usage, RAM usage and voice count with per-metric colours and timer callbacks"
+        },
+        {
+          "video": "custom-tooltips",
+          "distinction": "A video tutorial that builds custom tooltip displays using a ScriptPanel with a timer, background drawing and SVG info icons"
+        },
+        {
+          "video": "dynamic-tabbed-interfaces",
+          "distinction": "A video tutorial that shows how to build tabbed and multi-page interfaces by grouping controls into panels and toggling their visibility with buttons, knobs or combo boxes"
+        },
+        {
+          "video": "file-drag-drop-panel",
+          "distinction": "A video tutorial that builds a custom file drag-and-drop panel using ScriptPanel's paint routine, Path-based dashed borders and the setFileDropCallback API"
+        },
+        {
+          "video": "get-local-bounds",
+          "distinction": "A video tutorial that demonstrates using getLocalBounds() to get a panel's bounds array with automatic margin/inset calculation, replacing manual coordinate math"
+        },
+        {
+          "video": "lottie-animations",
+          "distinction": "A video tutorial that shows how to load Lottie animations into HISE, display them on a Panel and wire a knob to scrub through animation frames"
+        },
+        {
+          "video": "panel-timers-progress-bar",
+          "distinction": "A video tutorial that builds a progress bar using the panel's built-in timer, demonstrating setTimerCallback, startTimer/stopTimer and looping animations with modulo"
+        },
+        {
+          "video": "xy-pad",
+          "distinction": "A video tutorial that builds an XY pad control from a ScriptPanel with mouse tracking, normalised 0-1 data storage, clamped dot rendering and wiring to LFO modulators via CC Modulator default values"
+        },
+        {
+          "video": "xy-pad-with-sliders",
+          "distinction": "A video tutorial that shows how to add two knobs that bidirectionally control the X and Y position of a Panel-based XY pad, keeping mouse and knob input in sync"
         }
       ],
       "callbackDensity": 0.18,
@@ -2290,6 +2491,14 @@
         {
           "class": "Download",
           "distinction": "Server.downloadFile() returns a Download handle; Server initiates requests while Download tracks the state of a single transfer."
+        },
+        {
+          "video": "download-file",
+          "distinction": "A complete video tutorial guide on Server.downloadFile covering the download callback, progress monitoring, pause/resume, abort with confirmation and the Server Controller debugging tool"
+        },
+        {
+          "video": "multi-file-downloader",
+          "distinction": "A video tutorial that shows how to download multiple files in parallel using Server.downloadFile() with an array of URLs, pause/abort controls and configurable concurrency"
         }
       ],
       "callbackDensity": 0.19,
@@ -2350,6 +2559,10 @@
         {
           "class": "ScriptSliderPack",
           "distinction": "SliderPackData is the data model (value array); use for programmatic access without a UI component"
+        },
+        {
+          "video": "linked-slider-packs",
+          "distinction": "A video tutorial that shows how to link multiple SliderPack components to a shared SliderPackData object using Engine.createSliderPackData() and referToData(), including cross-script linking"
         }
       ],
       "callbackDensity": 0.11,
@@ -2397,7 +2610,12 @@
         "Array"
       ],
       "references": [],
-      "seeAlso": [],
+      "seeAlso": [
+        {
+          "video": "char-to-int-ascii",
+          "distinction": "A video tutorial that shows how to convert characters to their Unicode/ASCII values using charToInt() and String.charCodeAt()"
+        }
+      ],
       "callbackDensity": 0.0,
       "statefulness": 0.15,
       "threadingExposure": 0.0,
@@ -2436,6 +2654,10 @@
         {
           "class": "ChildSynth",
           "distinction": "Synth is the implicit parent synth available in every script, while ChildSynth is a handle to a specific child sound generator retrieved via Synth.getChildSynth()."
+        },
+        {
+          "video": "synth-timer-sequencer",
+          "distinction": "A video tutorial that builds a step sequencer using Synth.startTimer with the onTimer callback, SliderPack-driven velocity and tempo-synced timing"
         }
       ],
       "callbackDensity": 0.05,
@@ -2474,6 +2696,10 @@
         {
           "class": "TableProcessor",
           "distinction": "Table is the curve data object; use TableProcessor to access tables owned by modules in the signal chain"
+        },
+        {
+          "video": "velocity-table-presets",
+          "distinction": "A video tutorial that shows how to save and restore velocity modulator table shapes using base64 strings and radio buttons with restoreFromBase64"
         }
       ],
       "callbackDensity": 0.2,
@@ -2597,6 +2823,14 @@
         {
           "class": "ScriptPanel",
           "distinction": "Timer is a standalone periodic callback object for non-UI periodic tasks"
+        },
+        {
+          "video": "timer-objects",
+          "distinction": "A complete video tutorial guide to Engine.createTimerObject() covering creation, start/stop/reset, real-time speed changes and combining multiple animations into one timer callback"
+        },
+        {
+          "video": "while-key-held-timer",
+          "distinction": "A video tutorial that shows how to repeat an action while a MIDI key is held using Engine.createTimerObject(), since HISE has no blocking wait statement"
         }
       ],
       "callbackDensity": 0.17,
@@ -2727,6 +2961,14 @@
         {
           "class": "MidiAutomationHandler",
           "distinction": "MidiAutomationHandler maps MIDI CC to parameters; UserPresetHandler manages the broader preset model including custom automation slots."
+        },
+        {
+          "video": "custom-preset-save-button",
+          "distinction": "A video tutorial that shows how to add a dedicated save button using UserPresetHandler, FileSystem.browse and Engine.saveUserPreset"
+        },
+        {
+          "video": "load-previous-next-preset-buttons",
+          "distinction": "A video tutorial that shows how to create previous/next preset navigation buttons using Engine.loadPreviousUserPreset/loadNextUserPreset, including cross-folder navigation"
         }
       ],
       "callbackDensity": 0.32,

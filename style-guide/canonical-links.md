@@ -23,6 +23,7 @@ Use `$DOMAIN.Target#fragment$` tokens. These are resolved by `publish.py` to fin
 | `$SN.factory.node$` | Scriptnode node | `$SN.math.add$` |
 | `$LANG.language$` | Language reference page | `$LANG.snex$`, `$LANG.hisescript$` |
 | `$DOC.Section.Page$` | Manual/architecture docs | `$DOC.Architecture.ModuleTree$` |
+| `$VIDEO.slug$` | Video tutorial recipe (slug = filename stem under `video_enrichment/pages/{category}/`) | `$VIDEO.scripting-101$`, `$VIDEO.namespaces$` |
 | `$FORUM_REF.tid$` | Forum topic by topic ID (page-local) | `$FORUM_REF.2054$` |
 
 **Note:** `$FORUM_REF$` is page-local — it resolves directly to `https://forum.hise.audio/topic/{tid}` via simple regex substitution, bypassing the registry cascade below. Used as inline citations: `[1]($FORUM_REF.2054$)`.

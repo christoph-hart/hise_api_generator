@@ -666,6 +666,8 @@ include("Settings.js");
 
 Each file contains a single namespace.
 
+**See also:** $VIDEO.namespaces$ -- A video tutorial that shows how to organise HiseScript code with namespaces, including reserved-name pitfalls and one-namespace-per-file file layout
+
 
 ## Usage in HISE
 

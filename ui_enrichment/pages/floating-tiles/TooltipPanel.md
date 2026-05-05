@@ -77,4 +77,4 @@ The `ColourData` object can be used to set colours for the default rendering:
 - `Fade = false` produces an instant cut between tooltip strings instead of a cross-fade. Use it on a fast-moving interface where the cross-fade feels sluggish.
 - The info icon (`ShowIcon`) is the stock HISE info glyph. There is no LAF callback — switch off `ShowIcon` and draw a custom one in an overlapping ScriptPanel if a different icon is needed.
 
-**See also:** $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper
+**See also:** $API.ScriptFloatingTile$ -- scripting API for the floating tile wrapper, $VIDEO.custom-tooltips$ -- A video tutorial that covers tooltips end-to-end, from the built-in TooltipPanel floating tile to fully custom tooltip displays using a ScriptPanel with timer and SVG icons

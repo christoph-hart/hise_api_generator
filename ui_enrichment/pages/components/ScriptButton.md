@@ -234,4 +234,4 @@ b.setLocalLookAndFeel(laf);
 - **FloatingTile popups** can be attached via `setPopupData(floatingTile, [x, y, w, h])` to show a floating tile panel when the button is toggled on.
 - **`mouseCursor`** changes the cursor when hovering, useful for indicating clickability with `"PointingHandCursor"`.
 
-**See also:** {placeholder — populated during cross-reference post-processing}
+**See also:** {placeholder — populated during cross-reference post-processing}, $VIDEO.button-filmstrips$ -- A video tutorial that shows how to assign a filmstrip image to a HISE button with the correct 6-frame layout, dimensions and HiDPI scale factor, $VIDEO.laf-buttons$ -- A video tutorial that shows how to build multiple button styles (icon, text, toggle, MIDI channel list) within a single drawToggleButton LAF function

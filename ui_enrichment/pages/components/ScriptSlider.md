@@ -359,4 +359,4 @@ For knob-style CSS, create a path in script using `Path.addArc()`, convert to a 
 - **After processor state restore,** call `updateValueFromProcessorConnection()` on all connected sliders to pull the current parameter value from the processor. Without this, sliders show stale values until the next manual interaction.
 - **Range-style sliders** expose `setMinValue()` and `setMaxValue()` for setting the two handles. These methods are only valid when `style` is `Range` — calling them on other styles logs an error.
 
-**See also:** <!-- populated during cross-reference post-processing -->
+**See also:** $VIDEO.laf-knobs-sliders$ -- A video tutorial that shows how to draw custom rotary, horizontal, and vertical sliders with drawRotarySlider and drawLinearSlider LAF callbacks

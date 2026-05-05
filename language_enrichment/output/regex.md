@@ -182,3 +182,5 @@ The only HISE-specific extension is the set of prefix operators in `Sampler.sele
 
 
 **See also:** $API.Engine.getRegexMatches$ -- full match extraction, $API.Engine.matchesRegex$ -- boolean pattern test, $API.Content.getAllComponents$ -- component filtering, $LANG.hisescript$ -- the scripting language that uses regex patterns
+
+**See also:** $VIDEO.regex-matches-count-substrings$ -- A video tutorial that shows how to use Engine.getRegexMatches() to find all occurrences of a pattern in a string and count them

@@ -73,6 +73,7 @@ class LinkRegistry:
         self._build_ui_registry()
         self._build_lang_registry()
         self._build_preprocessor_registry()
+        self._build_video_registry()
 
     def _build_api_registry(self):
         """Build API domain registry from enrichment/base/*.json."""
@@ -406,6 +407,46 @@ class LinkRegistry:
         self.targets["PP"] = targets
         self.titles["PP"] = titles
         self._build_indexes("PP")
+
+    def _build_video_registry(self):
+        """Build VIDEO registry from video_enrichment/pages/{category}/{slug}.md.
+
+        Slugs are unique across categories, so $VIDEO.slug$ resolves to the
+        full URL. The category comes from the parent directory name. Titles
+        with a `|` separator are truncated at the pipe for concise labels.
+        """
+        domain_config = self.structure.get("domains", {}).get("VIDEO", {})
+        if not domain_config:
+            self.targets["VIDEO"] = {}
+            self.titles["VIDEO"] = {}
+            self.lower_index["VIDEO"] = {}
+            self.normalized_index["VIDEO"] = {}
+            return
+
+        base_path = domain_config["basePath"]
+        pages_path = domain_config.get("sources", {}).get("pages", "")
+        pages_dir = self.script_dir / pages_path
+
+        targets = {}
+        titles = {}
+        if pages_dir.is_dir():
+            for md_file in sorted(pages_dir.rglob("*.md")):
+                if md_file.name.lower() == "readme.md":
+                    continue
+                category = md_file.parent.name
+                slug = md_file.stem
+                targets[slug] = f"{base_path}/{category}/{slug}"
+                title = ""
+                try:
+                    with open(md_file, "r", encoding="utf-8") as f:
+                        title = _extract_frontmatter_field(f.read(), "title")
+                except OSError:
+                    pass
+                titles[slug] = _clean_video_title(title) or slug
+
+        self.targets["VIDEO"] = targets
+        self.titles["VIDEO"] = titles
+        self._build_indexes("VIDEO")
 
     def get_title(self, domain: str, canonical: str) -> str:
         """Return a human-readable title for a resolved canonical key.
@@ -1120,6 +1161,66 @@ def convert_see_also(content, class_name, registry=None):
                         )
                     continue
 
+                # Parse $LANG.slug$ tokens (with optional annotation)
+                lang_ann = re.match(
+                    r'\$LANG\.([\w-]+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                lang_plain = re.match(r'\$LANG\.([\w-]+)\$', item)
+
+                if lang_ann or lang_plain:
+                    lang_match = lang_ann or lang_plain
+                    lang_slug = lang_match.group(1)
+                    desc = lang_ann.group(2).strip().replace('"', '\\"') if lang_ann else None
+
+                    url = None
+                    label = lang_slug
+                    if registry:
+                        url, canonical, _ = registry.resolve("LANG", lang_slug)
+                        if canonical:
+                            label = registry.get_title("LANG", canonical).replace('"', '\\"')
+                    if not url:
+                        url = f"/v2/reference/languages/{lang_slug}"
+
+                    if desc:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}", desc: "{desc}" }}'
+                        )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}" }}'
+                        )
+                    continue
+
+                # Parse $VIDEO.slug$ tokens (with optional annotation)
+                video_ann = re.match(
+                    r'\$VIDEO\.([\w-]+)\$\s*--\s*(.+)', item, re.DOTALL
+                )
+                video_plain = re.match(r'\$VIDEO\.([\w-]+)\$', item)
+
+                if video_ann or video_plain:
+                    video_match = video_ann or video_plain
+                    video_slug = video_match.group(1)
+                    desc = video_ann.group(2).strip().replace('"', '\\"') if video_ann else None
+
+                    url = None
+                    label = video_slug
+                    if registry:
+                        url, canonical, _ = registry.resolve("VIDEO", video_slug)
+                        if canonical:
+                            label = registry.get_title("VIDEO", canonical)
+                    if not url:
+                        url = f"/v2/videos/{video_slug}"
+
+                    if desc:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}", desc: "{desc}" }}'
+                        )
+                    else:
+                        yaml_links.append(
+                            f'  - {{ label: "{label}", to: "{url}" }}'
+                        )
+                    continue
+
                 # Parse $PP.MACRO$ tokens (with optional annotation)
                 pp_ann = re.match(
                     r'\$PP\.(\w+)\$\s*--\s*(.+)', item, re.DOTALL
@@ -1479,13 +1580,16 @@ def _load_class_survey() -> dict:
     return _CLASS_SURVEY_CACHE
 
 
-def inject_api_class_see_also(content: str, class_name: str) -> str:
+def inject_api_class_see_also(content: str, class_name: str,
+                              registry: "LinkRegistry" = None) -> str:
     """Insert a class-level ::see-also MDC block and seeAlso frontmatter field.
 
     Reads the seeAlso array from class_survey_data.json and:
-    1. Adds a seeAlso field to YAML frontmatter (class names + distinctions)
+    1. Adds a seeAlso field to YAML frontmatter (class names, video slugs + distinctions)
     2. Inserts a ::see-also MDC block after ::category-tags (or after frontmatter)
     3. For component-role classes with UI pages, prepends a cross-link to the UI reference
+    4. For entries with a `video:` key, emits a $VIDEO.slug$ link with the video's
+       registry title as the label.
     """
     survey = _load_class_survey()
     if not survey:
@@ -1518,8 +1622,22 @@ def inject_api_class_see_also(content: str, class_name: str) -> str:
     # Build ::see-also MDC block
     yaml_links = []
     for entry in see_also:
-        cls = entry.get("class", "")
         distinction = entry.get("distinction", "").replace('"', '\\"')
+        video_slug = entry.get("video", "")
+        cls = entry.get("class", "")
+
+        if video_slug:
+            # Video tutorial entry — label from registry title (fallback: slug)
+            label = video_slug
+            if registry:
+                _, canonical, _ = registry.resolve("VIDEO", video_slug)
+                if canonical:
+                    label = registry.get_title("VIDEO", canonical).replace('"', '\\"')
+            yaml_links.append(
+                f'  - {{ label: "{label}", to: "$VIDEO.{video_slug}$", desc: "{distinction}" }}'
+            )
+            continue
+
         if not cls:
             continue
         if entry.get("_token"):
@@ -1558,9 +1676,13 @@ def inject_api_class_see_also(content: str, class_name: str) -> str:
         fm_lines = []
         fm_lines.append("seeAlso:")
         for entry in see_also:
-            cls = entry.get("class", "")
             distinction = entry.get("distinction", "").replace('"', '\\"')
-            if cls:
+            video_slug = entry.get("video", "")
+            cls = entry.get("class", "")
+            if video_slug:
+                fm_lines.append(f'  - video: "{video_slug}"')
+                fm_lines.append(f'    distinction: "{distinction}"')
+            elif cls:
                 fm_lines.append(f'  - class: "{cls}"')
                 fm_lines.append(f'    distinction: "{distinction}"')
         fm_addition = "\n".join(fm_lines)
@@ -1570,11 +1692,12 @@ def inject_api_class_see_also(content: str, class_name: str) -> str:
 
 
 def apply_mdc_transforms(content: str, class_name: str,
-                         messages: list = None, filepath: str = "") -> str:
+                         messages: list = None, filepath: str = "",
+                         registry: "LinkRegistry" = None) -> str:
     """Apply all MDC transformations to API markdown content."""
     content = convert_h1_to_frontmatter(content)
     content = inject_api_category_tags(content, class_name)
-    content = inject_api_class_see_also(content, class_name)
+    content = inject_api_class_see_also(content, class_name, registry)
     content = convert_method_headings(content)
     content = convert_common_mistakes(content, messages, filepath)
     content = convert_warning_blockquotes(content, messages, filepath)
@@ -1964,6 +2087,19 @@ def _read_static_intro(path: Path) -> tuple:
     return description, body.strip()
 
 
+def _clean_video_title(title: str) -> str:
+    """Truncate a video frontmatter title at the first `|` separator.
+
+    Many tutorial titles contain a "Main Title | Subtitle" pattern; the
+    subtitle is editorial filler that bloats inbound link labels. Strips
+    surrounding whitespace and returns the head portion only.
+    """
+    if not title:
+        return title
+    head = title.split("|", 1)[0].strip()
+    return head or title
+
+
 def _yaml_escape(s: str) -> str:
     """Wrap a value in double-quotes when it needs YAML escaping."""
     if not s:
@@ -2088,6 +2224,99 @@ def generate_preprocessor_page(script_dir: Path, messages: list = None) -> None:
 
     with open(out_dir / "index.md", "w", encoding="utf-8") as f:
         f.write("\n".join(landing).rstrip() + "\n")
+
+
+def generate_video_index_page(script_dir: Path, site_structure: dict,
+                              messages: list = None) -> None:
+    """Regenerate video_enrichment/resources/index.md from inventory.
+
+    Reads the static intro from `_intro.md` (same dir), walks
+    `video_enrichment/pages/{category}/*.md` extracting frontmatter title,
+    summary, and url, groups by category in the order defined by
+    site_structure VIDEO.categories with display names from categoryNames,
+    and writes the assembled landing page so collect_sources picks it up
+    via the existing static handler.
+    """
+    domain_config = site_structure.get("domains", {}).get("VIDEO", {})
+    if not domain_config:
+        return
+
+    base_path = domain_config.get("basePath", "/v2/videos")
+    pages_dir = script_dir / domain_config.get("sources", {}).get("pages", "")
+    static_dir = script_dir / domain_config.get("sources", {}).get("static", "")
+    if not pages_dir.is_dir() or not static_dir.is_dir():
+        return
+
+    categories_order = domain_config.get("categories", [])
+    category_names = domain_config.get("categoryNames", {})
+
+    # Collect entries per category from frontmatter
+    buckets = {}  # category -> [(slug, title, summary, yt_url), ...]
+    for md_file in sorted(pages_dir.rglob("*.md")):
+        if md_file.name.lower() == "readme.md":
+            continue
+        category = md_file.parent.name
+        slug = md_file.stem
+        with open(md_file, "r", encoding="utf-8") as f:
+            content = f.read()
+        title = _clean_video_title(_extract_frontmatter_field(content, "title")) or slug
+        summary = _extract_frontmatter_field(content, "summary") or ""
+        yt_url = _extract_frontmatter_field(content, "url") or ""
+        video_id = _extract_frontmatter_field(content, "videoId") or ""
+        if not yt_url and video_id:
+            yt_url = f"https://youtube.com/watch?v={video_id}"
+        buckets.setdefault(category, []).append((slug, title, summary, yt_url))
+
+    # Stable category ordering: declared order first, then any unlisted
+    ordered = list(categories_order)
+    for cat in buckets:
+        if cat not in ordered:
+            ordered.append(cat)
+
+    # Read static intro
+    intro_path = static_dir / "_intro.md"
+    intro_body = ""
+    if intro_path.is_file():
+        with open(intro_path, "r", encoding="utf-8") as f:
+            intro_body = f.read().strip()
+    elif messages is not None:
+        messages.append({
+            "level": "WARN",
+            "file": str(intro_path),
+            "message": "Missing _intro.md for video index page",
+        })
+
+    page = [
+        "---",
+        "title: Video Tutorials",
+        "---",
+        "",
+        "# Video Tutorials",
+        "",
+    ]
+    if intro_body:
+        page.append(intro_body)
+        page.append("")
+
+    for category in ordered:
+        entries = buckets.get(category)
+        if not entries:
+            continue
+        heading = category_names.get(category, category.replace("-", " ").title())
+        page.append(f"## {heading}")
+        page.append("")
+        for slug, title, summary, yt_url in entries:
+            line = f"- [{title}]({base_path}/{category}/{slug})"
+            if summary:
+                line += f" — {summary}"
+            if yt_url:
+                line += f" ([YouTube]({yt_url}))"
+            page.append(line)
+        page.append("")
+
+    out_path = static_dir / "index.md"
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(page).rstrip() + "\n")
 
 
 def build_preprocessor_backrefs(script_dir: Path, registry: "LinkRegistry",
@@ -2219,8 +2448,8 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
         if pages_path:
             pages_dir = script_dir / pages_path
             if pages_dir.is_dir():
-                # SN uses nested {factory}/{node}.md structure
-                if domain_name == "SN":
+                # SN uses nested {factory}/{node}.md, VIDEO uses {category}/{slug}.md
+                if domain_name in ("SN", "VIDEO"):
                     glob_pattern = "**/*.md"
                 else:
                     glob_pattern = "*.md"
@@ -2243,6 +2472,12 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
                             out_rel = Path(content_dir) / rel
                         source_type = "static" if rel.name.lower() == "readme.md" else "pages"
                         sources.append((md_file, domain_name, out_rel, source_type))
+                        continue
+                    elif domain_name == "VIDEO":
+                        # VIDEO: preserve category/slug structure
+                        rel = md_file.relative_to(pages_dir)
+                        out_rel = Path(content_dir) / rel
+                        sources.append((md_file, domain_name, out_rel, "pages"))
                         continue
                     elif type_mapping:
                         # Modules: use typeMapping to determine subdirectory
@@ -2272,6 +2507,9 @@ def collect_sources(script_dir: Path, site_structure: dict) -> list:
             static_dir = script_dir / static_path
             if static_dir.is_dir():
                 for md_file in sorted(static_dir.rglob("*.md")):
+                    # Underscore-prefixed files are partials/includes, not pages
+                    if md_file.name.startswith("_"):
+                        continue
                     with open(md_file, "r", encoding="utf-8") as f:
                         file_content = f.read()
 
@@ -2380,6 +2618,9 @@ def run_topology(topology_path: Path):
 
     print("Generating preprocessor reference page...")
     generate_preprocessor_page(SCRIPT_DIR)
+
+    print("Generating video tutorial index page...")
+    generate_video_index_page(SCRIPT_DIR, site_structure)
 
     print("Building link registry...")
     registry = LinkRegistry(site_structure, SCRIPT_DIR)
@@ -2502,6 +2743,10 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
     print("Generating preprocessor reference page...")
     generate_preprocessor_page(SCRIPT_DIR, messages)
 
+    # Generate the video tutorials landing page from current inventory
+    print("Generating video tutorial index page...")
+    generate_video_index_page(SCRIPT_DIR, site_structure, messages)
+
     # Build link registry
     print("Building link registry...")
     registry = LinkRegistry(site_structure, SCRIPT_DIR)
@@ -2561,11 +2806,14 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
             content = convert_see_also(content, lang_title, registry)
         elif mdc_transform == "preprocessor":
             content = convert_see_also(content, "", registry)
+        elif mdc_transform == "video":
+            video_slug = source_path.stem
+            content = convert_see_also(content, video_slug, registry)
 
         # Step 2: Apply MDC transforms (may inject $DOMAIN$ tokens)
         if mdc_transform == "api":
             content = apply_mdc_transforms(content, class_name, messages,
-                                           str(source_path))
+                                           str(source_path), registry)
         elif mdc_transform == "module":
             content = apply_module_mdc_transforms(content, messages,
                                                     str(source_path))

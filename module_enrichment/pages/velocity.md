@@ -156,4 +156,4 @@ groups:
 ---
 ::
 
-**See also:** $MODULES.KeyNumber$ -- similar voice-start modulator that reads MIDI note number instead of velocity, $MODULES.ArrayModulator$ -- per-note modulation values from a 128-entry slider pack, offering individual control per key, $MODULES.Constant$ -- also a VoiceStartModulator but outputs a fixed value (1.0) with no MIDI input
+**See also:** $MODULES.KeyNumber$ -- similar voice-start modulator that reads MIDI note number instead of velocity, $MODULES.ArrayModulator$ -- per-note modulation values from a 128-entry slider pack, offering individual control per key, $MODULES.Constant$ -- also a VoiceStartModulator but outputs a fixed value (1.0) with no MIDI input, $VIDEO.velocity-modulation$ -- A video tutorial that shows how to add velocity-to-gain modulation using a Velocity Modulator, shared across multiple sound generators with a Global Modulator Container

@@ -223,4 +223,4 @@ IR file selection via `setFile()` is not automatically saved in user presets. To
 
 For products with many impulse responses, use the Expansion system to package IRs separately rather than embedding all of them. Alternatively, uncheck 'Embed Audio Files' in the project settings and distribute the AudioResources.dat file to the user's AppData folder.
 
-**See also:** $MODULES.SimpleReverb$ -- lightweight algorithmic reverb, much lower CPU, $SN.filters.convolution$ -- direct equivalent -- FFT partitioned convolution reverb
+**See also:** $MODULES.SimpleReverb$ -- lightweight algorithmic reverb, much lower CPU, $SN.filters.convolution$ -- direct equivalent -- FFT partitioned convolution reverb, $VIDEO.convolution-reverb-load-irs$ -- A video tutorial that shows how to load impulse response files into a Convolution Reverb effect, populate a ComboBox with IR names and handle selection with preset save/restore

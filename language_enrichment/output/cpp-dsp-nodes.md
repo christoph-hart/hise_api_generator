@@ -923,3 +923,5 @@ These restrictions apply only to code that runs on the audio thread (inside `pro
 
 
 **See also:** $LANG.snex$ -- HISE's JIT-compiled C++ subset (near-identical API, instant compilation), $LANG.faust$ -- functional DSP language integration, $LANG.cpp-raw$ -- the C++ Raw API for building full plugin architectures without scriptnode
+
+**See also:** $VIDEO.compile-scriptnode-networks$ -- A video tutorial that shows how to compile ScriptNode networks into a native DLL and load them as Hardcoded Master Effects for lower CPU overhead and simpler UI wiring

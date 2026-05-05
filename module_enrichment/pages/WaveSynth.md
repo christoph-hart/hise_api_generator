@@ -300,3 +300,5 @@ The Osc2 Pitch Modulation chain accepts audio-rate modulators, making it suitabl
 ### Limitations
 
 The Waveform Generator does not support pulse width modulation as a modulatable parameter. PulseWidth1 and PulseWidth2 are static values that only take effect on the next note-on. For PWM, use a wavetable with pre-rendered PWM sweep cycles or build a custom scriptnode oscillator.
+
+**See also:** $VIDEO.how-to-make-a-synth$ -- A video tutorial that shows how to build a complete synthesizer in HISE without any scripting using waveform generators, AHDSR, LFO and send effects

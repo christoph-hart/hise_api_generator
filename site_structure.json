@@ -118,6 +118,36 @@
       "staticPages": {
         "Preprocessor Reference": ""
       }
+    },
+    "VIDEO": {
+      "basePath": "/v2/videos",
+      "contentDir": "videos",
+      "description": "Video tutorial recipes (compressed transcripts of David Healey's HISE tutorials)",
+      "sources": {
+        "pages": "video_enrichment/pages",
+        "static": "video_enrichment/resources"
+      },
+      "mdcTransform": "video",
+      "pattern": "{category}/{slug}",
+      "categories": [
+        "guide",
+        "audio",
+        "scripting",
+        "ui",
+        "scriptnode",
+        "architecture"
+      ],
+      "categoryNames": {
+        "guide": "Getting Started",
+        "audio": "Audio & Sampling",
+        "scripting": "Scripting",
+        "ui": "User Interface",
+        "scriptnode": "ScriptNode",
+        "architecture": "Architecture"
+      },
+      "staticPages": {
+        "Video Tutorials": ""
+      }
     }
   }
 }

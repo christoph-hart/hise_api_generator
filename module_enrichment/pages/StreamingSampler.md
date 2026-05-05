@@ -490,3 +490,5 @@ for (s in selection)
 // Switch round-robin group from script
 sampler.setActiveGroup(2);
 ```
+
+**See also:** $VIDEO.exporting-extracting-monoliths-hr-archive$ -- A video tutorial that shows how to recreate sample monoliths and export a standalone with .hr archive samples, $VIDEO.auto-trimming-samples$ -- A video tutorial that shows the auto-trimming workflow for sample start and end positions, covering raw sample preparation and multi-mic/multi-dynamic mapping, $VIDEO.changing-articulations$ -- A video tutorial that explains all approaches for organising and switching between sample articulations: group-based, velocity-based, key range and multi-sampler layouts, $VIDEO.sampler-comprehensive-guide$ -- A comprehensive video tutorial that covers the HISE Sampler end-to-end: sample map creation, file naming, monolith compression, multi-mic workflows, velocity crossfading, round-robin groups and the scripted sample editor, $VIDEO.velocity-spread-mapping$ -- A video tutorial that shows how to use the Velocity Spread option in the File Name Token Parser to quickly map multi-dynamic samples across the velocity range
