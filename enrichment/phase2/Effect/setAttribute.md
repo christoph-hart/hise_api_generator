@@ -51,12 +51,8 @@ eq.setAttribute(eq.BandOffset * 2 + eq.Gain, -1.5);  // Band 3: -1.5 dB
 ```
 ```json:testMetadata:band-offset-arithmetic
 {
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "eq.getAttribute(eq.BandOffset * 0 + eq.Gain)", "value": -3.0},
-    {"type": "REPL", "expression": "eq.getAttribute(eq.BandOffset * 1 + eq.Gain)", "value": 2.0},
-    {"type": "REPL", "expression": "eq.getAttribute(eq.BandOffset * 2 + eq.Gain)", "value": -1.5}
-  ]
+  "testable": false,
+  "skipReason": "Parametriq EQ bands can only be added via editor UI or restoreState() with a serialized configuration; there is no script API to add bands programmatically, so setAttribute on band indices fails with 'Invalid attribute index' on a freshly-created EQ"
 }
 ```
 
@@ -94,9 +90,7 @@ eqs[1].setAttribute(0, eqs[0].getAttribute(0));
 ```
 ```json:testMetadata:mirror-eq-parameters
 {
-  "testable": true,
-  "verifyScript": [
-    {"type": "REPL", "expression": "eqs[1].getAttribute(0)", "value": -5.0}
-  ]
+  "testable": false,
+  "skipReason": "Parametriq EQ bands can only be added via editor UI or restoreState() with a serialized configuration; there is no script API to add bands programmatically, so setAttribute on band indices fails with 'Invalid attribute index' on a freshly-created EQ"
 }
 ```

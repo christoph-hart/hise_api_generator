@@ -86,19 +86,23 @@ sustainKnob.setControlCallback(onEnvKnobChanged);
   "testable": true,
   "verifyScript": [
     {
-      "expression": "attackKnob.setValue(0.5) || attackKnob.changed() || true",
-      "value": true
-    },
-    {
       "expression": "attackCable.getValueNormalised()",
       "value": 0.5
     },
     {
-      "expression": "sustainKnob.setValue(0.8) || sustainKnob.changed() || true",
-      "value": true
+      "expression": "sustainCable.getValueNormalised()",
+      "value": 0.8
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "Attack",
+      "value": 0.5
     },
     {
-      "expression": "sustainCable.getValueNormalised()",
+      "type": "ui-set",
+      "target": "Sustain",
       "value": 0.8
     }
   ]

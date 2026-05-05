@@ -494,8 +494,18 @@ cb.setControlCallback(onComboChanged);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "cb.setValue(2) || cb.changed()", "value": false},
-    {"type": "REPL", "expression": "callbackLog[0]", "value": "CallbackCombo: 2"}
+    {
+      "type": "REPL",
+      "expression": "callbackLog[0]",
+      "value": "CallbackCombo: 2"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "CallbackCombo",
+      "value": 2
+    }
   ]
 }
 ```

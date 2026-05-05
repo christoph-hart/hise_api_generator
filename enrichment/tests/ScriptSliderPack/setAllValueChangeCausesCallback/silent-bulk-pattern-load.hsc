@@ -1,0 +1,64 @@
+// setup
+
+# Startup & health check
+/hise
+/expect status contains online or abort
+playground open
+/exit
+
+/builder reset
+
+/script
+/callback onInit
+// end setup
+// Context: Pattern recall writes many lanes at once, then performs one explicit rebuild.
+
+const var laneA = Content.addSliderPack("LaneA", 10, 10);
+const var laneB = Content.addSliderPack("LaneB", 10, 60);
+
+laneA.set("sliderAmount", 4);
+laneB.set("sliderAmount", 4);
+
+const var lanes = [laneA, laneB];
+reg callbackHitCount = 0;
+reg isBulkLoading = false;
+
+inline function onLaneControl(component, value)
+{
+    if (!isBulkLoading)
+        callbackHitCount++;
+}
+
+laneA.setControlCallback(onLaneControl);
+laneB.setControlCallback(onLaneControl);
+
+inline function rebuildSequence()
+{
+    Console.print("Rebuild sequence once"); // Rebuild sequence once
+}
+
+inline function loadPatternData()
+{
+    isBulkLoading = true;
+
+    for (lane in lanes)
+        lane.setAllValueChangeCausesCallback(0);
+
+    laneA.setAllValues([1.0, 0.5, 0.0, 0.5]);
+    laneB.setAllValues([0.0, 1.0, 0.75, 0.25]);
+
+    isBulkLoading = false;
+
+    rebuildSequence();
+}
+
+loadPatternData();
+// test
+/compile
+
+# Verify
+/expect callbackHitCount is 0
+/expect laneA.getSliderValueAt(0) is 1.0
+/expect laneB.getSliderValueAt(1) is 1.0
+/exit
+// end test

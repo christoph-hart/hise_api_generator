@@ -39,11 +39,35 @@ Content.getComponent("TooltipButton").setControlCallback(onTooltipToggle);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "tooltipTimer.isTimerRunning()", "value": false},
-    {"type": "REPL", "expression": "Content.getComponent('TooltipButton').setValue(1) || Content.getComponent('TooltipButton').changed()", "value": false},
-    {"type": "REPL", "delay": 200, "expression": "tooltipTimer.isTimerRunning()", "value": true},
-    {"type": "REPL", "expression": "Content.getComponent('TooltipButton').setValue(0) || Content.getComponent('TooltipButton').changed()", "value": false},
-    {"type": "REPL", "delay": 200, "expression": "tooltipTimer.isTimerRunning()", "value": false}
+    {
+      "type": "REPL",
+      "expression": "tooltipTimer.isTimerRunning()",
+      "value": false
+    },
+    {
+      "type": "REPL",
+      "delay": 200,
+      "expression": "tooltipTimer.isTimerRunning()",
+      "value": true
+    },
+    {
+      "type": "REPL",
+      "delay": 200,
+      "expression": "tooltipTimer.isTimerRunning()",
+      "value": false
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "TooltipButton",
+      "value": 1
+    },
+    {
+      "type": "ui-set",
+      "target": "TooltipButton",
+      "value": 0
+    }
   ]
 }
 ```

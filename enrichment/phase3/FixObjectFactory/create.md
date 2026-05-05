@@ -32,7 +32,7 @@ obj.someOtherValue = 0.0;
 
 // This will not insert a reference into the array but copy the 
 // data values from the current state of obj
-list.push(obj);
+list[0] = obj;
 
 // You can also call trace with a FixObjectArray and it will dump it like a JSON
 Console.print(trace(list));
@@ -55,7 +55,8 @@ Console.print(idx2); // => -1
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "checks": [{"expression": "idx", "value": "0"}, {"expression": "idx2", "value": "-1"}]}
+    {"type": "REPL", "expression": "idx", "value": 0},
+    {"type": "REPL", "expression": "idx2", "value": -1}
   ]
 }
 ```

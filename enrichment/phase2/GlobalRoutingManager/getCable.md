@@ -43,8 +43,18 @@ for (c in allControls)
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "attackKnob.setValue(0.7) || attackKnob.changed()", "value": false},
-    {"type": "REPL", "expression": "attackCable.getValueNormalised()", "value": 0.7}
+    {
+      "type": "REPL",
+      "expression": "attackCable.getValueNormalised()",
+      "value": 0.7
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "Attack",
+      "value": 0.7
+    }
   ]
 }
 ```

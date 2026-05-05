@@ -529,9 +529,23 @@ Slider1.setControlCallback(onSliderControl);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "Slider1.setValue(0.25) || Slider1.changed()", "value": false},
-    {"type": "REPL", "expression": "lastControlId", "value": "Slider1"},
-    {"type": "REPL", "expression": "lastControlValue", "value": 0.25}
+    {
+      "type": "REPL",
+      "expression": "lastControlId",
+      "value": "Slider1"
+    },
+    {
+      "type": "REPL",
+      "expression": "lastControlValue",
+      "value": 0.25
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "Slider1",
+      "value": 0.25
+    }
   ]
 }
 ```

@@ -466,8 +466,18 @@ label.setControlCallback(onMyLabel);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "label.setValue(\"Ready\") || label.changed()", "value": false},
-    {"type": "REPL", "expression": "lastLabelValue", "value": "Ready"}
+    {
+      "type": "REPL",
+      "expression": "lastLabelValue",
+      "value": "Ready"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "StatusLabel",
+      "value": "Ready"
+    }
   ]
 }
 ```

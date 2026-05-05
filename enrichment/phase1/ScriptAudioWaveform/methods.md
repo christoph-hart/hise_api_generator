@@ -234,8 +234,18 @@ btn.setControlCallback(onMyButton);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "btn.setValue(1) || btn.changed()", "value": false},
-    {"type": "REPL", "expression": "callbackLog[0]", "value": "Btn1: 1"}
+    {
+      "type": "REPL",
+      "expression": "callbackLog[0]",
+      "value": "Btn1: 1"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "Btn1",
+      "value": 1
+    }
   ]
 }
 ```

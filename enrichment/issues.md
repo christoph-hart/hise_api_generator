@@ -1689,3 +1689,43 @@ Sorted by severity (critical first).
 - **Location:** ScriptingApiObjects.cpp:~5255-5276
 - **Observed:** Two failure paths produce no error message: (1) when no wavetable data is loaded (`!v.isValid()`), and (2) when the parameter is not a ScriptFile object (`dynamic_cast` fails). The user has no way to diagnose why the file was not written.
 - **Expected:** Call `reportScriptError` on both failure paths with descriptive messages.
+
+### Path.getIntersection -- returns bounding-box corner instead of intersection point
+
+- **Type:** bug
+- **Severity:** medium
+- **Location:** ScriptingGraphics.cpp PathObject::getIntersection() (uses Path::getClippedLine)
+- **Observed:** Calling `getIntersection` with a horizontal line crossing an ellipse returns the top-left corner of the ellipse's bounding box, not the actual line-path intersection point.
+- **Repro:**
+  ```javascript
+  const var p = Content.createPath();
+  p.addEllipse([0, 0, 100, 100]);
+  var hit = p.getIntersection([0, 50], [100, 50], false);
+  Console.print("Hit at: " + hit[0] + ", " + hit[1]);
+  // expected: ~(0, 50)  -- left edge crossing of horizontal line through center
+  // actual:   "Hit at: 0.0, 0.0"  -- bbox top-left, not on the input line
+  ```
+- **Expected:** Returns one of the line-vs-path intersection points (per `intersectsLine`). Currently `getClippedLine(line, false)` appears to return the path's starting point or bbox corner instead of the inner endpoint of the clipped segment.
+- **Affected docs:** The example in `Path.getIntersection` documentation matches this repro and demonstrates the broken output.
+
+### FixObjectFactory.setCompareFunction -- asymmetric override (string -> function fails)
+
+- **Type:** bug
+- **Severity:** medium
+- **Observed:** Calling `setCompareFunction("propname")` then later `setCompareFunction(customFn)` does NOT override the comparator. Subsequent `arr.sort()` calls use the cached property-based comparator and the custom function is never invoked (verified via reg counter: `fnCalls=0`). The reverse order (`setCompareFunction(customFn)` then `setCompareFunction("propname")`) works correctly — both modes apply when called in that direction.
+- **Repro:**
+  ```javascript
+  const var f = Engine.createFixObjectFactory({"score": 0.0});
+  var arr = f.createArray(3);
+  arr[0].score = 1.5; arr[1].score = 3.0; arr[2].score = 0.5;
+
+  f.setCompareFunction("score");
+  arr.sort();  // ascending: 0.5, 1.5, 3.0
+
+  reg fnCalls = 0;
+  inline function desc(a, b) { fnCalls++; return b.score - a.score; }
+  f.setCompareFunction(desc);
+  arr.sort();  // expected descending; actual: still 0.5, 1.5, 3.0
+  // fnCalls = 0 — desc never called
+  ```
+- **Expected:** Either second `setCompareFunction()` call replaces the prior one in both directions, or the API should reject the mode switch with a clear error.

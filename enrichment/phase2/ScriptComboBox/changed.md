@@ -53,9 +53,23 @@ cbOption.setControlCallback(onOptionChanged);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "cbCategory.setValue(2) || cbCategory.changed()", "value": false},
-    {"type": "REPL", "expression": "lastOptionText", "value": "Bright"},
-    {"type": "REPL", "expression": "cbOption.get(\"items\")", "value": "Bright\nDark\nDeep"}
+    {
+      "type": "REPL",
+      "expression": "lastOptionText",
+      "value": "Bright"
+    },
+    {
+      "type": "REPL",
+      "expression": "cbOption.get(\"items\")",
+      "value": "Bright\nDark\nDeep"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "Category",
+      "value": 2
+    }
   ]
 }
 ```

@@ -37,9 +37,23 @@ searchLabel.setControlCallback(onSearchChange);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "searchLabel.setValue(\"ba\") || searchLabel.changed()", "value": false},
-    {"type": "REPL", "expression": "lastResultCount", "value": 1},
-    {"type": "REPL", "expression": "lastFirstMatch", "value": "Bass"}
+    {
+      "type": "REPL",
+      "expression": "lastResultCount",
+      "value": 1
+    },
+    {
+      "type": "REPL",
+      "expression": "lastFirstMatch",
+      "value": "Bass"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "SearchField",
+      "value": "ba"
+    }
   ]
 }
 ```

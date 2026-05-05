@@ -51,8 +51,19 @@ fxBc.addComponentValueListener(displaySliders, "syncDisplays",
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "Content.getComponent(\"FXKnob1\").setValue(0.8) || Content.getComponent(\"FXKnob1\").changed()", "value": false},
-    {"type": "REPL", "delay": 300, "expression": "Content.getComponent(\"Display1\").getValue()", "value": 0.4}
+    {
+      "type": "REPL",
+      "delay": 300,
+      "expression": "Content.getComponent(\"Display1\").getValue()",
+      "value": 0.4
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "FXKnob1",
+      "value": 0.8
+    }
   ]
 }
 ```

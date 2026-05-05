@@ -438,8 +438,18 @@ img.setControlCallback(onImageClicked);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "img.setValue(1) || img.changed()", "value": false},
-    {"type": "REPL", "expression": "img.getValue()", "value": 1}
+    {
+      "type": "REPL",
+      "expression": "img.getValue()",
+      "value": 1
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "MyImage",
+      "value": 1
+    }
   ]
 }
 ```

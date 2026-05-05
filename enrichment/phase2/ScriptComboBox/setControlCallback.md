@@ -59,8 +59,18 @@ for (i = 1; i <= 2; i++)
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "Content.getComponent(\"FilterType1\").setValue(2) || Content.getComponent(\"FilterType1\").changed()", "value": false},
-    {"type": "REPL", "expression": "dispatchLog[0]", "value": "filter:1"}
+    {
+      "type": "REPL",
+      "expression": "dispatchLog[0]",
+      "value": "filter:1"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "FilterType1",
+      "value": 2
+    }
   ]
 }
 ```

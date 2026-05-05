@@ -433,8 +433,18 @@ Viewport1.setControlCallback(onViewportChanged);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "Viewport1.setValue(1) || Viewport1.changed()", "value": false},
-    {"type": "REPL", "expression": "controlLog[0]", "value": 1}
+    {
+      "type": "REPL",
+      "expression": "controlLog[0]",
+      "value": 1
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "Viewport1",
+      "value": 1
+    }
   ]
 }
 ```

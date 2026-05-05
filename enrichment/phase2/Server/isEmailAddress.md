@@ -37,10 +37,28 @@ emailInput.setControlCallback(onEmailChanged);
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "Server.isEmailAddress('user@example.com')", "value": 1},
-    {"type": "REPL", "expression": "Server.isEmailAddress('not-an-email')", "value": 0},
-    {"type": "REPL", "expression": "emailInput.setValue('test@domain.com') || emailInput.changed()", "value": false},
-    {"type": "REPL", "expression": "lastValidResult", "value": 1}
+    {
+      "type": "REPL",
+      "expression": "Server.isEmailAddress('user@example.com')",
+      "value": 1
+    },
+    {
+      "type": "REPL",
+      "expression": "Server.isEmailAddress('not-an-email')",
+      "value": 0
+    },
+    {
+      "type": "REPL",
+      "expression": "lastValidResult",
+      "value": 1
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "EmailInput",
+      "value": "test@domain.com"
+    }
   ]
 }
 ```

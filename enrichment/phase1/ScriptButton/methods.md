@@ -489,8 +489,18 @@ btn.changed();
 {
   "testable": true,
   "verifyScript": [
-    {"type": "REPL", "expression": "btn.setValue(1) || btn.changed()", "value": false},
-    {"type": "REPL", "expression": "callbackLog[0]", "value": "CbBtn:1.0"}
+    {
+      "type": "REPL",
+      "expression": "callbackLog[0]",
+      "value": "CbBtn:1.0"
+    }
+  ],
+  "triggerScript": [
+    {
+      "type": "ui-set",
+      "target": "CbBtn",
+      "value": 1
+    }
   ]
 }
 ```

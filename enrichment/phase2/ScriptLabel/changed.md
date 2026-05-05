@@ -38,8 +38,11 @@ clearButton.setControlCallback(onClear);
 ```json:testMetadata:clear-button-triggers-changed
 {
   "testable": true,
+  "triggerScript": [
+    {"type": "ui-set", "target": "SearchField", "value": "Kick"},
+    {"type": "ui-set", "target": "ClearSearch", "value": 1}
+  ],
   "verifyScript": [
-    {"type": "REPL", "expression": "searchLabel.setValue(\"Kick\") || clearButton.setValue(1) || clearButton.changed()", "value": false},
     {"type": "REPL", "expression": "lastQuery", "value": ""}
   ]
 }
