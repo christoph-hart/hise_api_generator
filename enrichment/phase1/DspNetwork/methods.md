@@ -208,7 +208,7 @@ Returns a reference to the node with the given ID. If the ID matches the network
 **Minimal Example:** `{obj}.injectAndProbe({"parent": "chain1", "signalType": "dirac"}, function(report) { Console.print(trace(report)); });`
 
 **Description:**
-Queues a one-shot test signal injection into a supported container node and executes `reportCallback` when the requested probe point has processed a buffer. The `injectData` object selects the target container (`parent`), the node index where the signal should be inserted (`injectIndex`), the node index to inspect (`probeIndex`), the signal type (`silence`, `dirac`, `noise`, or `dc`), and optional gain, seed, and probe delay settings. Returns true if the request was accepted, or false if the target container cannot be found or another injection is already pending.
+Queues a one-shot test signal injection into a supported container node and executes `reportCallback` when the requested probe point has processed a buffer. Injection targets are resolved before a child node and probe targets are resolved after a child node. You can address those targets either by child ID (`injectId`, `probeId`) or by child index (`injectIndex`, `probeIndex`). If the ID form is present it overrides the numeric index. Returns true if the request was accepted, or false if the target container cannot be found, the resolved positions are invalid, or another injection is already pending.
 
 **Parameters:**
 
@@ -216,6 +216,20 @@ Queues a one-shot test signal injection into a supported container node and exec
 |------|------|--------|-------------|-------------|
 | injectData | JSON | no | Injection configuration object | Must contain a `parent` property with the ID of a supported container node |
 | reportCallback | Function | no | Callback that receives the completed probe report | Called asynchronously with one report object |
+
+**Input Object Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| parent | String | ID of the supported container node that should receive the probe request |
+| injectId | String | Child node ID to inject before. Overrides `injectIndex` if present |
+| injectIndex | int | Child node index to inject before. Must be in the range `0..numChildren-1` |
+| probeId | String | Child node ID to probe after. Overrides `probeIndex` if present |
+| probeIndex | int | Child node index to probe after. Must be in the range `0..numChildren-1`. Use `-1` or omit it to probe the container output after the last child node |
+| signalType | String | Test signal to inject: `silence`, `dirac`, `noise`, or `dc` |
+| gain | double | Signal level used for the injected test signal |
+| seed | int | Random seed used when `signalType` is `noise` |
+| delayMs | double | Extra time to wait before capturing the probe result |
 
 **Callback Signature:** `reportCallback(report: Object)`
 
@@ -225,9 +239,10 @@ Queues a one-shot test signal injection into a supported container node and exec
 |----------|------|-------------|
 | ok | bool | True when the report completed successfully |
 | error | String | Error message string. Empty on success |
+| parent | String | ID of the container node that handled the probe |
 | delayMs | double | Remaining delay value after processing |
-| injectIndex | int | Node index where the signal was injected |
-| probeIndex | int | Node index where probing occurred |
+| injectIndex | int | Resolved internal checkpoint index where the signal was injected |
+| probeIndex | int | Resolved internal checkpoint index where probing occurred |
 | signalType | String | Injected signal type: `silence`, `dirac`, `noise`, or `dc` |
 | gain | double | Injection gain |
 | seed | int | Random seed used for noise generation |
@@ -240,7 +255,8 @@ Queues a one-shot test signal injection into a supported container node and exec
 | sampleRate | double | Processing sample rate used for the report |
 | numChannels | int | Number of processed channels |
 | blockSize | int | Processed block size |
-| polyphonic | bool | True if the processing specs included a voice index |
+| polyphonic | bool | True if the processing specs included an enabled voice index |
+| processMidi | bool | True if the resolved container sits in a MIDI-processing context |
 | channels | Array | Per-channel measurement objects |
 
 **Channel Report Properties:**
@@ -256,7 +272,11 @@ Queues a one-shot test signal injection into a supported container node and exec
 
 **Pitfalls:**
 - Only serial-style container implementations currently support this probe path. Passing the ID of another node type or an unsupported container returns false with an error.
+- `injectId` / `probeId` override `injectIndex` / `probeIndex`. Do not pass both forms expecting both to apply.
+- Injection positions are resolved before a child node, while probe positions are resolved after a child node. For example, `injectIndex = 0` targets the point before the first child, but `probeIndex = 0` targets the point after the first child.
 - If `probeIndex` is omitted or set to `-1`, the probe runs at the container output after the last child node, not at the injection point.
+- Invalid child IDs and out-of-range numeric indices fail immediately instead of falling back to another checkpoint.
+- The resolved inject position must be before the resolved probe position.
 - The callback is asynchronous and message-thread driven. It never fires during the same script call that starts the injection.
 - Backend-only in practice: the actual signal injection and probing code is wrapped in `USE_BACKEND`, so exported-plugin builds accept the method call but never produce a completed report.
 

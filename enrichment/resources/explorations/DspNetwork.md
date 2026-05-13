@@ -140,17 +140,21 @@ Call flow:
 2. Stores it in `lastInjector` on success so the timer/callback object stays alive across asynchronous polling.
 3. Schedules cleanup of the previous injector object with `MessageManager::callAsync()`.
 4. `InjectChecker` resolves `injectData["parent"]` to a node ID and requires that node to be a `NodeContainer`.
-5. The target container forwards the request to `SerialNode::DynamicSerialProcessor::injectNextBuffer()`.
-6. The processor stores `InjectData`, fills in processing specs from `prepare()`, and defaults `probeIndex` to the container output when `-1` is supplied.
-7. During audio processing, `DynamicSerialProcessor::process()` calls `injectData.process(dd, index)` before each child node and once more after the last child node.
-8. `InjectData::process()` injects the requested signal at `injectIndex`, waits until `probeIndex`, then captures min/max/avg/peak index/silence information into an internal report.
-9. A timer on the message thread polls `pollInjectedBuffer()` until the report is ready, then dispatches the report object to either a script callback (`WeakCallbackHolder`) or a native function callback.
+5. `injectId` / `probeId` override `injectIndex` / `probeIndex` when present.
+6. Inject targets resolve to the checkpoint before a child node. Probe targets resolve to the checkpoint after a child node. Numeric `probeIndex = -1` means the container output after the last child node.
+7. Unknown child IDs and out-of-range numeric indices fail immediately. After resolution, the inject checkpoint must be strictly before the probe checkpoint.
+8. The target container forwards the request to `SerialNode::DynamicSerialProcessor::injectNextBuffer()`.
+9. The processor stores `InjectData`, fills in processing specs from `prepare()`, and normalises `probeIndex == -1` to the output checkpoint (`numNodes`).
+10. During audio processing, `DynamicSerialProcessor::process()` calls `injectData.process(dd, index)` before each child node and once more after the last child node.
+11. `InjectData::process()` injects the requested signal at `injectIndex`, waits until `probeIndex`, then captures min/max/avg/peak index/silence information into an internal report.
+12. A timer on the message thread polls `pollInjectedBuffer()` until the report is ready, then dispatches the report object to either a script callback (`WeakCallbackHolder`) or a native function callback.
 
 Important constraints from the implementation:
 
 - The actual signal injection and report generation live in `NodeContainer::InjectData::process()` and are wrapped in `#if USE_BACKEND`. In frontend/exported-plugin builds the API method exists but the queued request never completes, so this should be documented as backend-only in practice.
 - Only containers that override `injectNextBuffer()` / `pollInjectedBuffer()` support the tool. At the moment the implemented path is the serial container wrapper (`NodeContainerTypes.h` forwarding to `DynamicSerialProcessor`).
 - Callback delivery is asynchronous and message-thread based. The method only queues the work and returns a bool for immediate acceptance/failure.
+- The emitted report contains the resolved parent ID at top level and includes `signal.processMidi` as a derived flag describing whether the container sits in a MIDI-processing context.
 
 ## Constants
 
