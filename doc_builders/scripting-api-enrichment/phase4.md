@@ -108,10 +108,41 @@ The `## Common Mistakes` section is optional but recommended for classes with no
 [1-3 sentences describing what this method does and how to use it.
 No heading required - the method name is inferred from the filename.]
 
+[Optional: compact markdown table for JSON input fields, callback arguments,
+returned object fields, enum-like value sets, or other method-local data
+contracts that a scripter needs in order to call the method correctly.]
+
 > [!Warning:Concise problem title] non-obvious behavioral gotcha curated from the pitfalls array
 ```
 
-Bare prose, no heading, no structured fields. Optionally followed by titled warning blockquotes for important pitfalls (see `style-guide/canonical-links.md` for the format). See "Pitfall Integration" below for curation guidance.
+Bare prose, no heading. Compact method-local tables are allowed when the method's practical contract would otherwise be lost, especially for JSON config objects, callback payloads, returned object shapes, and small enum-like value sets. Do not dump raw Phase 1 analysis wholesale - only include the fields or values that a reader needs to use the method correctly. Optionally follow with titled warning blockquotes for important pitfalls (see `style-guide/canonical-links.md` for the format). See "Pitfall Integration" below for curation guidance.
+
+### Method-level data tables
+
+Use a table when a method depends on a small structured payload that readers will need to look up while writing code. Good candidates:
+
+- JSON input objects with named fields
+- Callback payload objects
+- Returned object shapes
+- Small value sets where the allowed strings materially affect behaviour
+
+Keep these tables method-local. Do not invent a standalone schema section or repeat information already obvious from the signature.
+
+Typical formats:
+
+```markdown
+| Field | Type | Description |
+|-------|------|-------------|
+| parent | String | ID of the target container node |
+| signalType | String | `silence`, `dirac`, `noise`, or `dc` |
+
+| Callback field | Type | Description |
+|----------------|------|-------------|
+| ok | bool | True when the report completed successfully |
+| signal | Object | Measured probe report |
+```
+
+These tables should stay compact and practical. If the structure becomes large or deeply nested, summarise the top-level contract and keep the prose focused on how the method is used.
 
 ---
 

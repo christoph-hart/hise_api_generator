@@ -12,6 +12,7 @@ cpuProfile:
   scalingFactors: []
 seeAlso:
   - { id: "analyse.fft", type: companion, reason: "Often used alongside specs to verify signal context during development" }
+  - { id: "DspNetwork.injectAndProbe", type: related, reason: "Script-side development helper for injecting a test signal and probing the resulting buffer report" }
 commonMistakes:
   - title: "Removed during C++ export"
     wrong: "Relying on the specs node to be present in a compiled plugin"
@@ -39,6 +40,7 @@ llmRef: |
 
   See also:
     [companion] analyse.fft - often used alongside to verify signal context
+    [related] DspNetwork.injectAndProbe - script-side helper for injecting a test signal and probing the resulting buffer report
 ---
 
 ![Specs screenshot](/images/scriptnode/specs.png)
@@ -59,4 +61,4 @@ Place multiple instances at different points in the chain to compare how contain
 
 > [!Warning:Removed during C++ export] This node is automatically stripped when the network is compiled to a C++ class. Do not rely on it being present in an exported plugin.
 
-**See also:** $SN.analyse.fft$ -- often used alongside to verify signal context during development
+**See also:** $SN.analyse.fft$ -- often used alongside to verify signal context during development, $API.DspNetwork.injectAndProbe$ -- script-side helper for injecting a test signal and probing the resulting buffer report

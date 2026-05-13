@@ -100,6 +100,21 @@
         }
       ]
     },
+    "injectAndProbe": {
+      "signature": "bool injectAndProbe(var injectData, var reportCallback)",
+      "returnType": "bool",
+      "description": "Injects a test signal to the given container and executes a callback when the next buffer was processed.",
+      "parameters": [
+        {
+          "name": "injectData",
+          "type": "var"
+        },
+        {
+          "name": "reportCallback",
+          "type": "var"
+        }
+      ]
+    },
     "prepareToPlay": {
       "signature": "void prepareToPlay(double sampleRate, double blockSize)",
       "returnType": "void",

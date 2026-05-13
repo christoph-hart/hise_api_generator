@@ -90,7 +90,13 @@ ClassName::methodName(params) -> returnType
 
 Thread safety: SAFE|WARNING|UNSAFE|INIT + explanation
 [1-2 line description]
+Input object:
+  fieldName: Type -- meaning / allowed values
 Callback signature: f(Type1 param1, Type2 param2)
+Callback payload:
+  fieldName: Type -- meaning
+Returned object shape:
+  fieldName: Type -- meaning
 Required setup: [minimal code to call this method]
 Dispatch/mechanics: [what happens internally -- 1-3 lines]
 Pair with: [companion methods and why]
@@ -150,6 +156,39 @@ Phase 4b format: `Callback signature: f(int gridIndex, int timestamp, bool first
 Skip this field entirely if:
 - The method does not take a `Function` parameter
 - No `Callback Signature` field exists in `methods.md`
+
+### Method-local data contracts
+
+For methods that exchange structured data through JSON parameters, callback payloads,
+or returned objects, include explicit property lists. This is especially important
+for LLM consumers because they need the exact field contract in order to generate
+correct code.
+
+Include these sections when applicable:
+
+- `Input object:` -- for JSON / Object parameters with named fields
+- `Callback payload:` -- for callback argument objects with named fields
+- `Returned object shape:` -- for methods returning structured objects
+
+Format:
+
+```
+Input object:
+  parent: String -- target container node ID
+  signalType: String -- silence|dirac|noise|dc
+  probeIndex: int -- -1 = container output after last child
+
+Callback payload:
+  ok: bool -- true when the report completed successfully
+  signal: Object -- nested probe report
+
+Returned object shape:
+  channels: Array -- per-channel measurement objects
+```
+
+Keep these sections compact and practical. List field names, types, allowed values,
+and the one behavioural detail an LLM needs in order to use the field correctly.
+Do not restate prose already covered by the main description.
 
 ### Required Setup
 

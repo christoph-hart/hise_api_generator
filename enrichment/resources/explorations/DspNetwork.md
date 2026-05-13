@@ -83,7 +83,7 @@ Build-target-specific factories:
 - **Backend (`USE_BACKEND`):** `dll::BackendHostFactory` (loads project DLL nodes) + `TemplateNodeFactory`
 - **Frontend (`!USE_BACKEND`):** `hise::FrontendHostFactory` (loads compiled project nodes)
 
-### API Method Registration (constructor lines 163-175)
+### API Method Registration (constructor lines 163-176)
 
 All use plain `ADD_API_METHOD_N` (no typed variants):
 
@@ -99,11 +99,12 @@ ADD_API_METHOD_1(createTest);
 ADD_API_METHOD_2(clear);
 ADD_API_METHOD_2(createFromJSON);
 ADD_API_METHOD_0(undo);
+ADD_API_METHOD_2(injectAndProbe);
 ```
 
 Commented-out methods: `disconnectAll`, `injectAfter`.
 
-### Wrapper Struct (lines 39-54)
+### Wrapper Struct (lines 39-55)
 
 ```cpp
 struct DspNetwork::Wrapper
@@ -119,12 +120,37 @@ struct DspNetwork::Wrapper
     API_METHOD_WRAPPER_3(DspNetwork, createAndAdd);
     API_METHOD_WRAPPER_2(DspNetwork, createFromJSON);
     API_METHOD_WRAPPER_0(DspNetwork, undo);
+    API_METHOD_WRAPPER_2(DspNetwork, injectAndProbe);
 };
 ```
 
 No `deleteIfUnused` in the wrapper -- this method IS registered via ADD_API_METHOD but has no wrapper entry. Wait -- actually checking again, `deleteIfUnused` is NOT in the ADD_API_METHOD list in the constructor (lines 163-175). Looking at the base JSON, `deleteIfUnused` IS listed as a method. Let me verify... The Doxygen comment exists on line 554 but no ADD_API_METHOD call. This means `deleteIfUnused` is documented but may not be exposed to scripts. Actually, re-reading: it IS in the Wrapper? No, it's not there either. This is a method that exists as public C++ but is called internally (from `clear()` at line 930). It appears in the base JSON because it has a Doxygen comment, but it is NOT registered as a script API method.
 
 **Correction:** Looking more carefully at the base JSON, `deleteIfUnused` has a Doxygen-style comment in the header (line 554) and appears in the generated JSON. However, it is NOT in the ADD_API_METHOD list, meaning it is exposed via the API generator's Doxygen parsing but may not actually be callable from script. The Step B agent should verify whether this method is actually accessible.
+
+### injectAndProbe infrastructure
+
+The new `injectAndProbe` API is a backend-only development tool for probing a scriptnode container's signal path.
+
+**Entry point:** `DspNetwork::injectAndProbe(const var& injectData, const var& reportCallback)` in `DspNetwork.cpp`
+
+Call flow:
+
+1. Allocates a `NodeContainer::InjectChecker` reference-counted helper.
+2. Stores it in `lastInjector` on success so the timer/callback object stays alive across asynchronous polling.
+3. Schedules cleanup of the previous injector object with `MessageManager::callAsync()`.
+4. `InjectChecker` resolves `injectData["parent"]` to a node ID and requires that node to be a `NodeContainer`.
+5. The target container forwards the request to `SerialNode::DynamicSerialProcessor::injectNextBuffer()`.
+6. The processor stores `InjectData`, fills in processing specs from `prepare()`, and defaults `probeIndex` to the container output when `-1` is supplied.
+7. During audio processing, `DynamicSerialProcessor::process()` calls `injectData.process(dd, index)` before each child node and once more after the last child node.
+8. `InjectData::process()` injects the requested signal at `injectIndex`, waits until `probeIndex`, then captures min/max/avg/peak index/silence information into an internal report.
+9. A timer on the message thread polls `pollInjectedBuffer()` until the report is ready, then dispatches the report object to either a script callback (`WeakCallbackHolder`) or a native function callback.
+
+Important constraints from the implementation:
+
+- The actual signal injection and report generation live in `NodeContainer::InjectData::process()` and are wrapped in `#if USE_BACKEND`. In frontend/exported-plugin builds the API method exists but the queued request never completes, so this should be documented as backend-only in practice.
+- Only containers that override `injectNextBuffer()` / `pollInjectedBuffer()` support the tool. At the moment the implemented path is the serial container wrapper (`NodeContainerTypes.h` forwarding to `DynamicSerialProcessor`).
+- Callback delivery is asynchronous and message-thread based. The method only queues the work and returns a bool for immediate acceptance/failure.
 
 ## Constants
 

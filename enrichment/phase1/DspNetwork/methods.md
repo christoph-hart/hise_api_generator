@@ -199,6 +199,72 @@ Returns a reference to the node with the given ID. If the ID matches the network
 **Cross References:**
 - `$API.DspNetwork.create$`
 
+## injectAndProbe
+
+**Signature:** `Integer injectAndProbe(JSON injectData, Function reportCallback)`
+**Return Type:** `Integer`
+**Call Scope:** unsafe
+**Call Scope Note:** Allocates an InjectChecker helper, starts a timer, resolves the target container by ID, and updates injection state guarded by a lock. Callback dispatch happens asynchronously on the message thread.
+**Minimal Example:** `{obj}.injectAndProbe({"parent": "chain1", "signalType": "dirac"}, function(report) { Console.print(trace(report)); });`
+
+**Description:**
+Queues a one-shot test signal injection into a supported container node and executes `reportCallback` when the requested probe point has processed a buffer. The `injectData` object selects the target container (`parent`), the node index where the signal should be inserted (`injectIndex`), the node index to inspect (`probeIndex`), the signal type (`silence`, `dirac`, `noise`, or `dc`), and optional gain, seed, and probe delay settings. Returns true if the request was accepted, or false if the target container cannot be found or another injection is already pending.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| injectData | JSON | no | Injection configuration object | Must contain a `parent` property with the ID of a supported container node |
+| reportCallback | Function | no | Callback that receives the completed probe report | Called asynchronously with one report object |
+
+**Callback Signature:** `reportCallback(report: Object)`
+
+**Callback Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| ok | bool | True when the report completed successfully |
+| error | String | Error message string. Empty on success |
+| delayMs | double | Remaining delay value after processing |
+| injectIndex | int | Node index where the signal was injected |
+| probeIndex | int | Node index where probing occurred |
+| signalType | String | Injected signal type: `silence`, `dirac`, `noise`, or `dc` |
+| gain | double | Injection gain |
+| seed | int | Random seed used for noise generation |
+| signal | Object | Measured probe report |
+
+**Report Object Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| sampleRate | double | Processing sample rate used for the report |
+| numChannels | int | Number of processed channels |
+| blockSize | int | Processed block size |
+| polyphonic | bool | True if the processing specs included a voice index |
+| channels | Array | Per-channel measurement objects |
+
+**Channel Report Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| channelIndex | int | Channel number |
+| min | double | Minimum sample value in the probed block |
+| max | double | Maximum sample value in the probed block |
+| avg | double | Average sample value across the probed block |
+| peakIndex | int | Sample index of the positive peak |
+| silence | bool | Whether the block was considered silent |
+
+**Pitfalls:**
+- Only serial-style container implementations currently support this probe path. Passing the ID of another node type or an unsupported container returns false with an error.
+- If `probeIndex` is omitted or set to `-1`, the probe runs at the container output after the last child node, not at the injection point.
+- The callback is asynchronous and message-thread driven. It never fires during the same script call that starts the injection.
+- Backend-only in practice: the actual signal injection and probing code is wrapped in `USE_BACKEND`, so exported-plugin builds accept the method call but never produce a completed report.
+
+**Cross References:**
+- `$API.DspNetwork.createTest$`
+- `$API.DspNetwork.processBlock$`
+- `$API.DspNetwork.get$`
+
 ## prepareToPlay
 
 **Signature:** `undefined prepareToPlay(Double sampleRate, Double blockSize)`

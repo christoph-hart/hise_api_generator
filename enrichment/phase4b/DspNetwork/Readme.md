@@ -64,10 +64,11 @@ Example:
   // Access a node by ID (bracket syntax)
   const var ref = nw["myGain"];
 
-Methods (11):
+Methods (12):
   clear                       create
   createAndAdd                createFromJSON
   createTest                  get
+  injectAndProbe
   prepareToPlay               processBlock
   setForwardControlsToParameters
   setParameterDataFromJSON    undo
