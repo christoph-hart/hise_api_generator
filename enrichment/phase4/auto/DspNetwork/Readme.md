@@ -2,6 +2,8 @@
 
 `DspNetwork` is the top-level container for a scriptnode DSP graph and the entry point for all scriptnode scripting operations. It manages a tree of processing nodes that define an audio signal chain.
 
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode network structure, containers, parameters, routing, and compilation
+
 ![Scriptnode Class Hierarchy](topology_scriptnode-hierarchy.svg)
 
 The following modules can host a DspNetwork:

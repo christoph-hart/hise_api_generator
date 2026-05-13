@@ -7,6 +7,8 @@ Container nodes hold other nodes as children and control how they are processed.
 
 The container structure follows a strict tree hierarchy. Each container modifies the processing context for its children: changing the signal routing, block size, sample rate, channel count, or event handling. Choosing the right container is the primary way to shape the architecture of a scriptnode network.
 
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode tree structure, containers, context, modulation, routing, and compilation
+
 ## Nodes
 
 | Node | Description |

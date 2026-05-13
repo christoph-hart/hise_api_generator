@@ -2,6 +2,8 @@
 
 Node is the scripting handle for a single processing unit within a scriptnode DSP network. Every node in the graph - oscillators, filters, gain processors, containers, and modulation sources - is accessed through this interface.
 
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode nodes, containers, parameters, modulation, and processing context
+
 ![Scriptnode Class Hierarchy](topology_scriptnode-hierarchy.svg)
 
 `Node` sits inside a `DspNetwork` and owns zero or more `Parameter` objects that control its DSP behaviour.

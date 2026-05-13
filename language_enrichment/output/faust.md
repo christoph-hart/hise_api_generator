@@ -32,6 +32,8 @@ guidance:
 
 [Faust](https://faust.grame.fr) is a functional programming language for real-time audio signal processing. In HISE, Faust is a guest language inside scriptnode — your `.dsp` code compiles automatically during development and is transpiled to C++ for the final plugin binary. You get the full Faust standard library but operate within scriptnode's channel model and parameter system.
 
+Faust code runs inside a $LANG.scriptnode$ network, so channel count, parameter mapping, modulation outputs, routing, polyphony, and compilation all follow scriptnode's graph rules.
+
 The main reasons to choose Faust inside HISE:
 
 - **Instant compilation** — edit your `.dsp` file in the HISE code editor and changes compile automatically. No manual export step during development.

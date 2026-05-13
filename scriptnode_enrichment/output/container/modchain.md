@@ -95,4 +95,4 @@ The modchain itself is not a modulation source -- nodes inside it (such as [core
 
 To combine multiple modulation signals into a single output, place a [container.split]($SN.container.split$) inside the modchain with each signal as a child, then add a [core.peak]($SN.core.peak$) after the split to capture the summed result. Avoid using many send/receive nodes inside a modchain for summing or routing -- the normal top-down signal flow is simpler and more efficient. Only use send/receive when genuinely needed (e.g. for feedback loops).
 
-**See also:** $SN.container.chain$ -- audio-rate serial chain that modifies the signal
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode modulation and control-rate context, $SN.container.chain$ -- audio-rate serial chain that modifies the signal

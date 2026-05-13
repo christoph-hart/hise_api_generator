@@ -2,6 +2,8 @@
 
 Connection is a read-only handle for inspecting and removing a wiring link between a source node and a target parameter in a scriptnode `DspNetwork` graph. Each Connection represents a single link from a modulation source or container macro parameter to a destination parameter.
 
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode connection scaling, modulation cables, and routing rules
+
 ![Scriptnode Class Hierarchy](topology_scriptnode-hierarchy.svg)
 
 `Connection` represents a wiring link between two `Parameter` objects across different nodes in the same `DspNetwork`.

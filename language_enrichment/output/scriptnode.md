@@ -84,6 +84,8 @@ This tree model is the main mental model for scriptnode:
 
 The root container is usually a `container.chain`, because most networks start as a serial signal path.
 
+[](images/v2/reference/language/scriptnode/network-tree.png)
+
 ### XML Representation
 
 The natural stored form of a scriptnode network is XML. The XML records the node tree, node IDs, parameter values, ranges, connections, properties, layout, and embedded data references.
@@ -110,6 +112,8 @@ There are three practical ways to edit a network.
 | Scripting API | Runtime network creation and control | Useful when HiseScript needs to create or load a network |
 
 The UI is the most direct way to understand signal flow because the container tree, parameter cables, node headers, and modulation outputs are visible together. When cables become visually noisy, reduce cable opacity in the editor so the signal path remains readable.
+
+[](images/v2/reference/language/scriptnode/scriptnode-editor-overview.png)
 
 **See also:** $LANG.hsc#dsp$ -- edit scriptnode graphs from `hise-cli`, $API.Engine.createDspNetwork$ -- create DSP networks from HiseScript
 
@@ -174,6 +178,8 @@ Specialised serial containers also change the processing context for their child
 | `container.soft_bypass` | Crossfaded bypass | Click-free bypass of a child chain |
 
 > [!Tip:Containers are not just folders] Moving a node into a different container can change its sample rate, block size, channel count, MIDI access, and modulation update rate.
+
+[](images/v2/reference/language/scriptnode/container-types.png)
 
 **See also:** $SN.container.chain$ -- serial container, $SN.container.split$ -- parallel summing container, $SN.container.multi$ -- channel-splitting container, $SN.container.modchain$ -- control-rate container
 
@@ -287,6 +293,8 @@ Container parameters are how you design a reusable network interface. Instead of
 
 > [!Tip:Use container parameters as the public API] Treat a reusable network like a module. Internal node parameters are implementation details; root container parameters are the controls you expose to HISE, UI components, automation, and compiled hardcoded modules.
 
+[](images/v2/reference/language/scriptnode/container-parameters.png)
+
 ### Parameter Ranges
 
 Scriptnode parameter ranges are editable. A parameter has a current value, but it also has a range that defines how incoming normalised values map to useful units.
@@ -302,6 +310,8 @@ Scriptnode parameter ranges are editable. A parameter has a current value, but i
 `SkewFactor` and `StepSize` are alternative range behaviours. Use skew for continuous curved response, such as frequency. Use step size for discrete choices, such as mode indices or integer counts.
 
 Changing a target range is often the cleanest way to adjust modulation depth. For example, a normalised modulation source can still control a filter over only 300 Hz to 2000 Hz if the target parameter range is set to that window.
+
+[](images/v2/reference/language/scriptnode/parameter-range-editor.png)
 
 ### Properties
 
@@ -341,6 +351,8 @@ Modulation update rate depends on context.
 
 If a modulation cable causes zipper noise, inspect where the source is placed. Moving the source into a frame or more suitable context can change the update rate.
 
+[](images/v2/reference/language/scriptnode/modulation-cable.png)
+
 **See also:** $SN.core.global_mod$ -- read global modulators, $SN.core.extra_mod$ -- read extra modulation slots, $SN.core.pitch_mod$ -- read pitch modulation, $SN.control.midi$ -- convert MIDI events to modulation
 
 
@@ -369,6 +381,8 @@ Unscaled parameters show a `U` icon in the editor. Some nodes have explicit unsc
 
 > [!Tip:Match ranges when you can] If a source and target should represent the same unit, give them the same range. This avoids unnecessary conversion and makes the cable easier to reason about.
 
+[](images/v2/reference/language/scriptnode/scaled-unscaled-connection.png)
+
 ### Routing
 
 Routing moves audio or modulation values without following the normal parent-child signal path.
@@ -389,6 +403,8 @@ Use routing deliberately:
 - Use `local_cable` organisation when many targets need the same value and direct cables would make the graph unreadable.
 - Avoid global audio routing unless separate networks genuinely need to share audio.
 
+[](images/v2/reference/language/scriptnode/routing-send-receive.png)
+
 **See also:** $SN.routing.send$ -- local audio send, $SN.routing.receive$ -- local audio receive, $SN.routing.local_cable$ -- network-scoped control-value cable, $SN.routing.local_cable_unscaled$ -- unscaled local cable, $SN.routing.global_cable$ -- global control-value cable, $SN.routing.global_send$ -- global audio send, $SN.routing.global_receive$ -- global audio receive
 
 
@@ -405,6 +421,8 @@ Polyphonic nodes show `[poly]` in the node header. This is a quick way to see wh
 | Mono-only node in polyphonic network | Shared state, even inside the polyphonic graph |
 
 Polyphony affects MIDI handling too. Note-on, note-off, controller, pitch wheel, and aftertouch events are routed to the relevant voice context so envelopes, oscillators, and per-voice modulators can respond independently.
+
+[](images/v2/reference/language/scriptnode/polyphonic-node-header.png)
 
 ### Voice Management
 

@@ -44,6 +44,8 @@ guidance:
 
 C++ DSP nodes let you write custom signal processing code that plugs directly into the scriptnode graph. Unlike $LANG.snex$ (a restricted C++ subset interpreted at runtime) or $LANG.faust$ (a functional DSP language compiled on save), C++ nodes give you full access to the language, the JUCE framework, and the entire library of existing scriptnode building blocks.
 
+These nodes participate in the same $LANG.scriptnode$ network model as built-in nodes: containers define the processing context, parameters expose the public interface, and modulation or routing cables connect the node to the wider graph.
+
 The main reasons to choose C++ over the other DSP languages:
 
 - **Full C++ with existing code** - no language restrictions, full JUCE framework access, and the ability to wrap existing C++ DSP code. Any code that follows the standard prepare/process callback pattern - third-party DSP libraries, VST2 plugin code, custom algorithms - can be adapted to the node interface with minimal boilerplate. This includes reusing scriptnode's own building blocks (`core::oscillator`, `filters::svf`, and hundreds of other nodes) as C++ template members alongside your own code

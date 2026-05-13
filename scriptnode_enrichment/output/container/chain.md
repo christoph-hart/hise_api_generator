@@ -73,4 +73,4 @@ dispatch(input) {
 
 The `IsVertical` property controls UI layout direction (vertical or horizontal) without affecting processing. MIDI events are forwarded to all children in list order; if a child modifies an event, subsequent children see the modified version.
 
-**See also:** $SN.container.split$ -- parallel processing instead of serial, $SN.container.modchain$ -- control-rate chain for modulation sources, $SN.container.midichain$ -- serial chain with MIDI event splitting
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode tree structure and processing context, $SN.container.split$ -- parallel processing instead of serial, $SN.container.modchain$ -- control-rate chain for modulation sources, $SN.container.midichain$ -- serial chain with MIDI event splitting

@@ -270,6 +270,7 @@ Creates or retrieves a scriptnode DSP network with the given ID. The script proc
 
 **Cross References:**
 - `$API.Engine.getDspNetworkReference$`
+- `$LANG.scriptnode$`
 
 ## createBeatportManager
 

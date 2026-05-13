@@ -46,6 +46,8 @@ guidance:
 
 SNEX (Scriptnode Expression Language) is HISE's JIT-compiled C++ subset for writing custom DSP code inside scriptnode. It compiles to native machine code at runtime, giving you near-C++ performance with instant iteration - no external IDE, no DLL compilation, no restart.
 
+SNEX nodes run inside a $LANG.scriptnode$ network, so they use the same processing context, parameter ranges, modulation cables, routing rules, and polyphony model as other scriptnode nodes.
+
 The main reasons to choose SNEX:
 
 - **Instant compilation** - code compiles in the HISE editor and runs immediately. No build step, no waiting

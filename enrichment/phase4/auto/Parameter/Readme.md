@@ -2,6 +2,8 @@
 
 Parameter represents a single named parameter on a scriptnode node. Each parameter holds a double value within a configurable range and can receive modulation connections from other nodes or container macro parameters.
 
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode parameters, ranges, container macros, and modulation connections
+
 ![Scriptnode Class Hierarchy](topology_scriptnode-hierarchy.svg)
 
 `Parameter` belongs to a `Node` and can be wired to other parameters via `Connection` objects.

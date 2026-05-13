@@ -25,6 +25,8 @@ guidance:
 
 HISE uses several languages, each designed for a specific part of plugin development. This section documents the syntax, features, and HISE-specific behaviour of each language.
 
+$LANG.scriptnode$ is the visual DSP graph language that hosts HISE's DSP nodes and custom DSP languages. Start there if you need to understand how nodes, containers, parameters, modulation, and routing work together.
+
 
 ## DSP Languages
 
@@ -36,6 +38,8 @@ These languages are used inside scriptnode to write custom signal processing cod
 | Want concise functional DSP syntax or need algorithms from the Faust standard library | [Faust]($LANG.faust$) |
 | Need JUCE framework access, existing scriptnode building blocks, or hardcoded module loading | [C++ DSP Nodes]($LANG.cpp-dsp-nodes$) |
 | Already work in Max/MSP and want to bring patches into HISE | [RNBO]($LANG.rnbo$) |
+
+**[Scriptnode]($LANG.scriptnode$)** - HISE's visual DSP graph language. It defines the network tree, container behaviour, parameter ranges, modulation cables, routing rules, polyphony model, and compilation workflow used by all scriptnode-hosted DSP.
 
 **[SNEX]($LANG.snex$)** — HISE's JIT-compiled C++ subset. Compiles instantly in the HISE IDE with no external tooling. The callback API is identical to C++ DSP Nodes, so porting to full C++ later is a direct copy-paste.
 

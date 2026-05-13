@@ -27,6 +27,8 @@ guidance:
 
 [RNBO](https://rnbo.cycling74.com) is a subset of Max/MSP that exports DSP algorithms as portable C++ code. In HISE, RNBO patches are compiled into scriptnode nodes through a manual export→build→compile pipeline — you design your patch in RNBO, export C++ from it, generate a wrapper with the HISE template builder, compile a DLL, and use the resulting node. Unlike the $LANG.faust$ integration (which compiles automatically on save), each change to an RNBO patch requires a full re-export and recompile cycle.
 
+Once compiled, an RNBO patch behaves as a node inside a $LANG.scriptnode$ network, using scriptnode parameters, modulation outputs, routing, and container context like any other DSP node.
+
 The integration supports three areas beyond basic audio processing:
 
 - **MIDI and tempo sync** — MIDI note on/off and CC messages pass through to the RNBO patch, and transport state (start/stop, BPM) is synced automatically.

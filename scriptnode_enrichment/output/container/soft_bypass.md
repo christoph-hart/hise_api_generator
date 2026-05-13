@@ -94,4 +94,4 @@ The `SmoothingTime` property (default 20 ms) controls the crossfade duration. Se
 
 To derive bypass state from a continuous parameter (e.g. bypass a filter when its gain reaches zero), connect a `math.compare` node between the parameter and the soft_bypass. This gives precise threshold control rather than relying on the default 0.5 cutoff.
 
-**See also:** $SN.container.chain$ -- hard bypass with no crossfade, $SN.container.branch$ -- index-based switching that benefits from soft bypass wrappers
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode bypass, parameters, and modulation connections, $SN.container.chain$ -- hard bypass with no crossfade, $SN.container.branch$ -- index-based switching that benefits from soft bypass wrappers

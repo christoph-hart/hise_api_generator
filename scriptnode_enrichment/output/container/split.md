@@ -81,4 +81,4 @@ dispatch(input) {
 
 Each child receives an independent copy of the original input, so changes made by one child do not affect other children. Memory cost is constant regardless of child count since a single work buffer is reused for each additional child.
 
-**See also:** $SN.container.chain$ -- serial processing instead of parallel, $SN.container.multi$ -- channel splitting instead of signal copying, $SN.container.clone$ -- parallel processing with identical children
+**See also:** $LANG.scriptnode$ -- conceptual guide to scriptnode container signal flow and routing, $SN.container.chain$ -- serial processing instead of parallel, $SN.container.multi$ -- channel splitting instead of signal copying, $SN.container.clone$ -- parallel processing with identical children
