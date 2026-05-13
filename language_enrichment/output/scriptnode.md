@@ -84,7 +84,7 @@ This tree model is the main mental model for scriptnode:
 
 The root container is usually a `container.chain`, because most networks start as a serial signal path.
 
-[](images/v2/reference/language/scriptnode/network-tree.png)
+![](images/v2/reference/language/scriptnode/network-tree.png)
 
 ### XML Representation
 
@@ -113,7 +113,7 @@ There are three practical ways to edit a network.
 
 The UI is the most direct way to understand signal flow because the container tree, parameter cables, node headers, and modulation outputs are visible together. When cables become visually noisy, reduce cable opacity in the editor so the signal path remains readable.
 
-[](images/v2/reference/language/scriptnode/scriptnode-editor-overview.png)
+![](images/v2/reference/language/scriptnode/scriptnode-editor-overview.png)
 
 **See also:** $LANG.hsc#dsp$ -- edit scriptnode graphs from `hise-cli`, $API.Engine.createDspNetwork$ -- create DSP networks from HiseScript
 
@@ -179,7 +179,7 @@ Specialised serial containers also change the processing context for their child
 
 > [!Tip:Containers are not just folders] Moving a node into a different container can change its sample rate, block size, channel count, MIDI access, and modulation update rate.
 
-[](images/v2/reference/language/scriptnode/container-types.png)
+![](images/v2/reference/language/scriptnode/container-types.png)
 
 **See also:** $SN.container.chain$ -- serial container, $SN.container.split$ -- parallel summing container, $SN.container.multi$ -- channel-splitting container, $SN.container.modchain$ -- control-rate container
 
@@ -252,6 +252,8 @@ Scriptnode tries to keep channel handling implicit. Most nodes operate on howeve
 | `container.frame2_block` | Child chain is fixed to stereo frame processing |
 | `container.framex_block` | Child chain processes frames with dynamic channel count |
 
+`container.sidechain` changes the internal channel layout rather than creating a separate branch elsewhere in the graph. In a stereo network, the useful mental model is two stereo pairs inside the container: the original pair plus a second pair that downstream nodes can reinterpret as detector or control input.
+
 When compiling a network, the root channel count becomes part of the compiled network. A network compiled for stereo should not be treated as a generic four-channel effect later.
 
 ### MIDI Event Flow
@@ -282,7 +284,7 @@ For sample-accurate MIDI-driven changes, place the relevant nodes in a MIDI-awar
 
 Parameters are realtime-controllable values on nodes and containers. They use an `ID -> Number` model: each parameter has an identifier and a numeric value.
 
-Node parameters are static. A `core.gain` node exposes the parameters defined by that node type. Container parameters are dynamic macro parameters that you create on the container and connect to child parameters.
+For leaf nodes, the parameter list is defined by the node type. A `core.gain` node exposes the parameters built into that node. The main place where you create new parameters yourself is on containers, where container parameters act as macro controls connected to child parameters.
 
 | Owner | Parameter count | Typical role |
 | --- | --- | --- |
@@ -293,7 +295,7 @@ Container parameters are how you design a reusable network interface. Instead of
 
 > [!Tip:Use container parameters as the public API] Treat a reusable network like a module. Internal node parameters are implementation details; root container parameters are the controls you expose to HISE, UI components, automation, and compiled hardcoded modules.
 
-[](images/v2/reference/language/scriptnode/container-parameters.png)
+![](images/v2/reference/language/scriptnode/container-parameters.png)
 
 ### Parameter Ranges
 
@@ -311,7 +313,7 @@ Scriptnode parameter ranges are editable. A parameter has a current value, but i
 
 Changing a target range is often the cleanest way to adjust modulation depth. For example, a normalised modulation source can still control a filter over only 300 Hz to 2000 Hz if the target parameter range is set to that window.
 
-[](images/v2/reference/language/scriptnode/parameter-range-editor.png)
+![](images/v2/reference/language/scriptnode/parameter-range-editor.png)
 
 ### Properties
 
@@ -325,9 +327,9 @@ Properties are non-realtime node settings. They configure operating modes, code 
 | Typical UI | Knob or slider | Combo box, text editor, file selector, toggle |
 | Example | Gain amount | Filter mode, expression code, smoothing algorithm |
 
-Properties can be changed during editing, but they are not audio-rate controls. When a network is compiled, many property choices become fixed parts of the compiled DSP structure.
+Whether something is a parameter or a property is usually defined by the node type, not chosen ad hoc while patching. Properties can be changed during editing, but they are not audio-rate controls. When a network is compiled, many property choices become fixed parts of the compiled DSP structure.
 
-> [!Warning:Use parameters for playback controls] If a value needs to move during playback, make it a parameter. If it selects an algorithm, code snippet, data source, or structural mode, it is probably a property.
+> [!Warning:Node design decides parameter vs property] In normal graph editing, you work with the controls a node already exposes. The parameter/property split is mostly baked into the node design. The practical rule only matters when you build container macros or define custom nodes: playback controls belong on parameters, while modes, code, data sources, and structural options belong on properties.
 
 ### Modulation
 
@@ -351,7 +353,9 @@ Modulation update rate depends on context.
 
 If a modulation cable causes zipper noise, inspect where the source is placed. Moving the source into a frame or more suitable context can change the update rate.
 
-[](images/v2/reference/language/scriptnode/modulation-cable.png)
+`container.modchain` deserves a strict mental model: it creates a hidden control path. Nodes inside it do not process the audible parent audio path by default. If a modulation signal should affect audible audio, route it to a target parameter explicitly or to a node outside the modchain.
+
+![](images/v2/reference/language/scriptnode/modulation-cable.png)
 
 **See also:** $SN.core.global_mod$ -- read global modulators, $SN.core.extra_mod$ -- read extra modulation slots, $SN.core.pitch_mod$ -- read pitch modulation, $SN.control.midi$ -- convert MIDI events to modulation
 
@@ -362,10 +366,12 @@ Connections carry values from a source to a target. The source can be a containe
 
 The important rule is range conversion. By default, scriptnode treats the source value as belonging to the source range, converts it to `0..1`, then converts that normalised value into the target range.
 
-| Mode | Value flow | Use when |
+Scaled vs unscaled is a connection-mode distinction, not a decision about what a parameter fundamentally is. In practice, the mode is determined by the connection type you create or by explicit unscaled node variants.
+
+| Mode | Value flow | Typical case |
 | --- | --- | --- |
-| Scaled | Source value -> source range to `0..1` -> target range -> target value | The source is a normalised control and the target range should define depth |
-| Unscaled | Source value -> target value | The source already produces the exact value the target needs |
+| Scaled | Source value -> source range to `0..1` -> target range -> target value | Default parameter and modulation wiring |
+| Unscaled | Source value -> target value | Explicit raw-value connections or unscaled node variants |
 | Same range optimisation | Source value -> target value | Source and target ranges match exactly |
 
 Examples:
@@ -377,11 +383,11 @@ Examples:
 | `control.cable_expr` computes an exact formula result | Unscaled |
 | One parameter mirrors another with identical range | Same range |
 
-Unscaled parameters show a `U` icon in the editor. Some nodes have explicit unscaled variants, such as `control.pma_unscaled`, when the raw input value must pass through without target-range conversion.
+Unscaled connections show a `U` icon in the editor. Some nodes have explicit unscaled variants, such as `control.pma_unscaled`, when the raw input value must pass through without target-range conversion.
 
 > [!Tip:Match ranges when you can] If a source and target should represent the same unit, give them the same range. This avoids unnecessary conversion and makes the cable easier to reason about.
 
-[](images/v2/reference/language/scriptnode/scaled-unscaled-connection.png)
+![](images/v2/reference/language/scriptnode/scaled-unscaled-connection.png)
 
 ### Routing
 
@@ -396,6 +402,8 @@ Routing moves audio or modulation values without following the normal parent-chi
 
 For audio sends and receives, the processing specs must match. Sample rate, channel count, and block-size assumptions need to line up. If they do not, the receive side cannot safely add the incoming signal.
 
+Parallel or duplicated paths keep their inherited signal unless you explicitly remove or replace it. If a branch should stop carrying its inherited audio, add an explicit disposal or replacement step such as `math.clear` or a node that fully overwrites the signal.
+
 Use routing deliberately:
 
 - Use local send/receive pairs for feedback loops inside one network.
@@ -403,7 +411,7 @@ Use routing deliberately:
 - Use `local_cable` organisation when many targets need the same value and direct cables would make the graph unreadable.
 - Avoid global audio routing unless separate networks genuinely need to share audio.
 
-[](images/v2/reference/language/scriptnode/routing-send-receive.png)
+![](images/v2/reference/language/scriptnode/routing-send-receive.png)
 
 **See also:** $SN.routing.send$ -- local audio send, $SN.routing.receive$ -- local audio receive, $SN.routing.local_cable$ -- network-scoped control-value cable, $SN.routing.local_cable_unscaled$ -- unscaled local cable, $SN.routing.global_cable$ -- global control-value cable, $SN.routing.global_send$ -- global audio send, $SN.routing.global_receive$ -- global audio receive
 
@@ -422,7 +430,7 @@ Polyphonic nodes show `[poly]` in the node header. This is a quick way to see wh
 
 Polyphony affects MIDI handling too. Note-on, note-off, controller, pitch wheel, and aftertouch events are routed to the relevant voice context so envelopes, oscillators, and per-voice modulators can respond independently.
 
-[](images/v2/reference/language/scriptnode/polyphonic-node-header.png)
+![](images/v2/reference/language/scriptnode/polyphonic-node-header.png)
 
 ### Voice Management
 
@@ -457,6 +465,19 @@ Use `container.soft_bypass` when a bypass state is controlled from a parameter o
 
 ## Usage in HISE
 
+### Choose the host context
+
+Before building a network, decide where it will run. A graph that is structurally correct can still be the wrong solution if it is hosted in the wrong context.
+
+| Host context | Use for | Important consequence |
+| --- | --- | --- |
+| Script FX | Audio effects on an existing signal | Receives the host module's audio stream |
+| Script Envelope | Envelope or control generation | Built around modulation output rather than normal audio-effect processing |
+| Script Synth or synth voice | Sound generation and per-voice DSP | MIDI, polyphony, and voice lifetime become part of the graph design |
+| Host-side modulation setup | Sharing HISE modulation with scriptnode | Requires matching bridge or routing nodes as well as graph wiring |
+
+Choose this host context first, then design the graph around it. For example, a Script FX network can be perfectly correct as an audio processor and still be the wrong solution if the actual requirement is a modulation source or a per-voice synth network.
+
 ### Build networks in the Scriptnode editor
 
 The editor is the primary workflow for designing networks. Start with a root `container.chain`, add nodes, then introduce containers only when the signal flow demands them.
@@ -481,6 +502,14 @@ This is especially useful for:
 - Verifying parameter wiring.
 - Rebuilding a graph after changing node IDs or layout.
 - Running the same network construction on multiple projects.
+
+When you write reproducible graph-building procedures, keep three kinds of information separate:
+
+- host or setup prerequisites
+- locked static values such as mode choices, startup values, and channel assumptions
+- explanatory comments
+
+Do not hide required setup facts inside explanatory prose if the graph depends on them to work correctly.
 
 **See also:** $LANG.hsc#dsp$ -- command reference for `/dsp` mode
 
