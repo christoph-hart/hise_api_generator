@@ -9,7 +9,7 @@
 - Optional: `scriptnode_enrichment/resources/usage_survey.md`
 
 **Output:**
-- `scriptnode_enrichment/hsc/phase1/{factory}.{node}.md`
+- `scriptnode_enrichment/hsc/phase1/{factory}/{node}.md`
 
 **User gate:** The user approves, rejects, or edits the scenario before topology planning.
 
@@ -35,6 +35,8 @@ For each target node, read its reference page and propose a practical project co
 4. Use default stereo assumptions unless the node's purpose involves routing, channels, sidechains, multichannel processing, or channel-dependent behaviour.
 5. If the real-world use case is unclear, mark `needs_user_input: true` and ask for context instead of inventing a weak scenario.
 6. Avoid repetitive examples across neighbouring nodes in the same factory.
+7. Use `Notes For Phase 2` to record non-obvious builder constraints early: required host context, semantic containers, inherited-signal clearing, or visual-verification requirements.
+8. If a support node needs a non-default mode, exact formula, or exact startup state for the example to work, mention that in `Notes For Phase 2`.
 
 ---
 
@@ -43,7 +45,7 @@ For each target node, read its reference page and propose a practical project co
 Write one file per node:
 
 ```text
-scriptnode_enrichment/hsc/phase1/{factory}.{node}.md
+scriptnode_enrichment/hsc/phase1/{factory}/{node}.md
 ```
 
 Use this exact structure:

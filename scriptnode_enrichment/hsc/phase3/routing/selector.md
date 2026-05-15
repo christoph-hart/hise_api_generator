@@ -2,7 +2,7 @@
 
 ## Source
 
-- Phase 2: `scriptnode_enrichment/hsc/phase2/routing.selector.md`
+- Phase 2: `scriptnode_enrichment/hsc/phase2/routing/selector.md`
 - Reference: `scriptnode_enrichment/output/routing/selector.md`
 
 ## Status

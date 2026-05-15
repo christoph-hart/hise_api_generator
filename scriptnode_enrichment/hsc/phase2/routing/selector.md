@@ -2,7 +2,7 @@
 
 ## Source
 
-- Phase 1: `scriptnode_enrichment/hsc/phase1/routing.selector.md`
+- Phase 1: `scriptnode_enrichment/hsc/phase1/routing/selector.md`
 - Reference: `scriptnode_enrichment/output/routing/selector.md`
 
 ## Naming
@@ -23,19 +23,20 @@ cab_mic_selector
     UnusedPair          container.chain
 ```
 
-## Channel Plan
+## Builder Setup
 
-- Required channels: four internal channels, representing two stereo mic pairs
-- Module routing: `CabMicSelector.routing [0, 1, 2, 3]`
-- Master routing: `"Master Chain".routing [0, 1, 0, 1]`
-- Channel-specific comments needed:
-  - The ScriptFX receives four internal channels.
-  - The Master Chain folds four internal channels back to HISE's stereo output.
-  - `container.multi` is required so downstream FX only process the selected pair on channels 0-1.
+- Host context: `Script FX`
+- Additional builder steps:
+  - None
+- Channel/routing setup:
+  - Required channels: four internal channels, representing two stereo mic pairs
+  - Module routing: `CabMicSelector.routing [0, 1, 2, 3]`
+  - Master routing: `"Master Chain".routing [0, 1, 0, 1]`
+  - Channel-specific comments needed: [the ScriptFX receives four internal channels, the Master Chain folds four internal channels back to HISE's stereo output, `container.multi` isolates the selected stereo pair on channels 0-1]
 
 ## Public Parameters
 
-- `MicPosition` -> `MicPairSelector.ChannelIndex` matched
+- MicPosition -> `MicPairSelector.ChannelIndex` matched
 - Target range before connection: `[0, 2]`
 - Macro range: `[0, 2]`
 - Default: `2`
@@ -44,6 +45,10 @@ cab_mic_selector
 
 - `MicPairSelector.SelectOutput` default `0`
 - `MicPairSelector.ClearOtherChannels` default `1`
+
+## Locked Build Values
+
+- None
 
 ## Friction Comments To Weave In
 

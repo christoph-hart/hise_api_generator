@@ -5,12 +5,12 @@
 **Batch mode:** Stateful per node. Do not process large batches in one session. This phase combines live prototyping, command optimization, friction comments, and cosmetics because these steps depend on shared context.
 
 **Input:**
-- `scriptnode_enrichment/hsc/phase2/{factory}.{node}.md`
+- `scriptnode_enrichment/hsc/phase2/{factory}/{node}.md`
 - `scriptnode_enrichment/output/{factory}/{node}.md`
 - Live HISE reachable via `hise-cli`
 
 **Output:**
-- `scriptnode_enrichment/hsc/phase3/{factory}.{node}.md`
+- `scriptnode_enrichment/hsc/phase3/{factory}/{node}.md`
 
 **User gate:** The user approves the live-built network, optimized command list, comments, cosmetics, and screenshot command before Phase 4.
 
@@ -20,19 +20,22 @@
 
 1. Work one node at a time unless the user explicitly requests a small related batch.
 2. Use `hise-cli agent-context` and command-specific help when uncertain.
-3. Build incrementally and inspect after meaningful steps with `dsp tree`, `dsp show`, `dsp get`, and `dsp connections`.
-4. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts and CLI-fix exploration.
-5. Optimize the final command list:
+3. Read `## Builder Setup` from the approved Phase 2 file before running builder CLI commands. Create the planned host context first, then apply any additional builder steps.
+4. Apply all `## Locked Build Values` from the approved Phase 2 file before verification. Treat them as fixed node/example constraints, not optional build preferences.
+5. Build incrementally and inspect after meaningful steps with `dsp tree`, `dsp show`, `dsp get`, and `dsp connections`.
+6. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts and CLI-fix exploration.
+7. Optimize the final command list:
    - Add nodes directly to their final parent.
    - Omit default-value no-ops.
    - Avoid move/reparent commands if direct parent creation is possible.
    - Keep `matched` connections whenever possible.
-6. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
-7. If using `matched`, narrow the target parameter range before connecting.
-8. Use as many channels as required by the node. For most nodes, default stereo should be enough.
-9. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
-10. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
-11. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+8. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
+9. If using `matched`, narrow the target parameter range before connecting.
+10. Use as many channels as required by the node. For most nodes, default stereo should be enough.
+11. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
+12. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
+13. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
+14. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
 
 ---
 
@@ -55,7 +58,9 @@ Include comments for:
 - Host/module routing that differs from defaults.
 - Internal channels vs output channels.
 - Why a topology node such as `container.multi` is required.
+- Why a hidden control-path container such as `container.mod_chain` is required.
 - Why a branch is intentionally empty.
+- Why an inherited branch is explicitly cleared or replaced.
 - Why a parameter range is narrowed before `matched`.
 - Why a parameter range is widened.
 
@@ -68,7 +73,7 @@ Keep comments short and place them near the relevant command in the final comman
 Write one file per node:
 
 ```text
-scriptnode_enrichment/hsc/phase3/{factory}.{node}.md
+scriptnode_enrichment/hsc/phase3/{factory}/{node}.md
 ```
 
 Use this exact structure:
@@ -78,7 +83,7 @@ Use this exact structure:
 
 ## Source
 
-- Phase 2: `scriptnode_enrichment/hsc/phase2/{factory}.{node}.md`
+- Phase 2: `scriptnode_enrichment/hsc/phase2/{factory}/{node}.md`
 - Reference: `scriptnode_enrichment/output/{factory}/{node}.md`
 
 ## Status
@@ -92,6 +97,16 @@ Use this exact structure:
 - Module ID: `{CamelCase}`
 - Network ID: `{snake_case}`
 
+## Builder Setup Applied
+
+- Host context: `{Script FX | Script Envelope | HISE global mod setup}`
+- Additional builder steps applied:
+  - {step, or "None"}
+- Channel/routing setup verified:
+  - Required channels: `{value}`
+  - Module routing: `{value}`
+  - Master routing: `{value}`
+
 ## Verified Parameters
 
 - `{Node.Param}` = `{value}` range `{min..max}` stepSize `{stepSize}`
@@ -99,6 +114,11 @@ Use this exact structure:
 ## Verified Connections
 
 - `{Source.Param}` -> `{Target.Param}` matched: {true|false}
+
+## Locked Build Values Applied
+
+- `{Node.Property}` = `{value}`
+- {or "None"}
 
 ## Optimized Public Shell Commands
 

@@ -6,7 +6,7 @@
 
 **Input:**
 - `scriptnode_enrichment/hsc/phase4/{factory}/{node}.hsc`
-- `scriptnode_enrichment/hsc/phase3/{factory}.{node}.md`
+- `scriptnode_enrichment/hsc/phase3/{factory}/{node}.md`
 - Live HISE reachable via `hise-cli`
 
 **Output:**
