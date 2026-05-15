@@ -32,10 +32,10 @@ commonMistakes:
     wrong: "Using core.oscillator as a fixed-frequency LFO or test tone inside a synthesiser without blocking MIDI"
     right: "Wrap the oscillator in a container.no_midi to prevent incoming MIDI note-on events from changing its frequency."
     explanation: "The oscillator always responds to MIDI note-on for pitch. If you need a fixed frequency (e.g. as an LFO or modulation source), isolate it from the MIDI stream."
-  - title: "Output is mono -- stereo requires container.multi"
-    wrong: "Expecting stereo output from a single core.oscillator in a stereo network"
-    right: "Place two oscillator instances inside a container.multi to produce independent left and right channels."
-    explanation: "The oscillator processes a single channel. In a stereo network it only writes to channel 0. Use container.multi to split processing per channel."
+  - title: "One oscillator does not create independent stereo"
+    wrong: "Using a single core.oscillator in a stereo network and expecting different left and right channel content"
+    right: "Use one oscillator for duplicated stereo output, or place two oscillators inside a container.multi when you need independent left and right channels."
+    explanation: "In a stereo context, the oscillator adds the same generated sample to both channels. Use container.multi only when each channel needs its own oscillator instance."
   - title: "Audio-rate modulation updates only once per buffer"
     wrong: "Modulating amplitude or frequency at audio rate and expecting sample-accurate results"
     right: "Wrap the processing chain in a container.frame2_block or container.framex_block for sample-accurate modulation updates."
@@ -67,7 +67,7 @@ llmRef: |
     - Output is additive, not replacing - use math.clear before if needed
     - MIDI controls pitch only, not Gate
     - MIDI retunes even when used as a fixed source -- wrap in container.no_midi
-    - Mono output -- use container.multi for stereo
+    - One oscillator produces duplicated stereo, not independent left/right content -- use container.multi for separate per-channel oscillators
     - Audio-rate modulation needs a frame-processing context for sample accuracy
 
   Forum references: tid:13426 (MIDI retune gotcha), tid:11455 (audio-rate AM frame context)
@@ -158,6 +158,6 @@ If you need the oscillator to run at a fixed frequency (for example, as a sub-au
 
 ### Stereo output
 
-The oscillator writes to a single channel. To produce stereo output from two independent oscillators, place them inside a [container.multi]($SN.container.multi$) which automatically routes each instance to a separate channel.
+In a stereo context, the oscillator adds the same generated sample to both channels, so one node already produces duplicated stereo output. If you need different oscillator content on the left and right channels, place two oscillator instances inside a [container.multi]($SN.container.multi$) so each channel gets its own oscillator.
 
 **See also:** $SN.core.phasor$ -- naive ramp output for waveshaping pipelines, $SN.core.fm$ -- FM operator using signal input as modulator, $MODULES.SineSynth$ -- module-tree sine oscillator with saturation waveshaping
