@@ -40,6 +40,7 @@ llmRef: |
 
   Common mistakes:
     Requires C++ compilation for exported plugins -- the JIT engine is not available at runtime.
+    Requires a compile-enabled network. In CLI workflows, run `hise-cli dsp status --module <ModuleId> --autofix --agent` if status reports the expression-node compilation flag error, then verify with plain `dsp status` before tracing.
 
   See also:
     [alternative] control.cable_table -- visual lookup table, no compilation needed
@@ -49,6 +50,8 @@ llmRef: |
 Transforms a control value using a custom SNEX expression. The expression receives the incoming value as the `input` variable and returns the transformed result. Any `Math.*` function (sin, cos, pow, abs, etc.) and standard arithmetic operators are available in the expression. The output is unnormalised, forwarding the raw expression result without range conversion.
 
 This is the most frequently used cable transform node in surveyed projects (57 instances, rank 5). It handles custom scaling, clamping, or any mathematical transformation that cannot be expressed with the built-in control nodes.
+
+Because this node uses SNEX expression compilation, the network must be compile-enabled. If HISE reports that the network needs compilation enabled for this node, click the **Autofix** button in the node editor and recheck the network before relying on the transformed control value.
 
 ## Signal Path
 

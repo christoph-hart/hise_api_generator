@@ -47,6 +47,7 @@ Before writing the artifact:
 - Confirm the final topology with the user, especially any deviation from Phase 2.
 - Confirm the trace evidence that justifies the final topology and connection choices.
 - Confirm comments, cosmetics, visible nodes, folded nodes, and screenshot composition.
+- Complete the documentation feedback pass: decide which live HISE / CLI discoveries should be promoted into node docs, general Scriptnode docs, agent style docs, or kept local to this artifact.
 - Only then normalize the final network into a clean from-scratch command sequence for Phase 4.
 
 The final public command block is not a terminal log. It is the smallest consistent build-from-scratch sequence for the signed-off network.
@@ -64,30 +65,47 @@ The final public command block is not a terminal log. It is the smallest consist
 7. Apply all `## Locked Build Values` from the approved Phase 2 file before verification. Treat them as fixed node/example constraints, not optional build preferences.
 8. Build incrementally and inspect after meaningful steps with `dsp tree`, `dsp show`, `dsp get`, and `dsp connections`.
 9. Use `hise-cli dsp docs` before choosing unfamiliar nodes, parameters, properties, or connection modes.
-10. Verify parameter flow with `dsp trace` after structural checks.
-11. Verify signal flow with `dsp trace` after structural checks.
-12. During investigation, prefer incremental live edits over full rebuilds. Once the network is signed off, rewrite the final command list as a coherent from-scratch build.
-13. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts, temporary probes, cleanup commands, and CLI-fix exploration.
-14. Optimize the final command list:
+10. Run `hise-cli dsp status --module {ModuleId} --agent` before trace validation. Runtime status catches graph-level issues that structural commands can miss.
+11. If status reports an autofixable runtime error, run `hise-cli dsp status --module {ModuleId} --autofix --agent`, then run plain status again before tracing.
+12. Verify parameter flow with `dsp trace` after structural and runtime-status checks.
+13. Verify signal flow with `dsp trace` after structural and runtime-status checks.
+14. During investigation, prefer incremental live edits over full rebuilds. Once the network is signed off, rewrite the final command list as a coherent from-scratch build.
+15. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts, temporary probes, cleanup commands, and CLI-fix exploration.
+16. Optimize the final command list:
     - Add nodes directly to their final parent.
     - Omit default-value no-ops.
     - Avoid move/reparent commands if direct parent creation is possible.
     - Keep `matched` connections whenever possible.
-15. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
-16. If using `matched`, narrow the target parameter range before connecting.
-17. Use as many channels as required by the node. For most nodes, default stereo should be enough.
-18. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
-19. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
-20. If a target parameter appears to need multiple incoming controls, stop and insert a combiner node. A target parameter must not have more than one direct incoming connection.
-21. Avoid unnecessary normalisation and rescaling. Prefer root/public parameters in useful native units, and check whether unscaled control variants can preserve the same parameter logic with less range mapping.
-22. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
-23. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+17. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
+18. If using `matched`, narrow the target parameter range before connecting.
+19. Use as many channels as required by the node. For most nodes, default stereo should be enough.
+20. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
+21. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
+22. If a target parameter appears to need multiple incoming controls, stop and insert a combiner node. A target parameter must not have more than one direct incoming connection.
+23. Avoid unnecessary normalisation and rescaling. Prefer root/public parameters in useful native units, and check whether unscaled control variants can preserve the same parameter logic with less range mapping.
+24. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
+25. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
 
 ---
 
 ## Trace Validation
 
-Use trace after structural checks. Structure tells what is connected; trace tells what happened after a runtime stimulus. A graph can be structurally valid and still behave incorrectly at runtime.
+Use trace after structural and runtime-status checks. Structure tells what is connected; runtime status tells whether the graph is valid for processing; trace tells what happened after a runtime stimulus. A graph can be structurally valid and still be runtime-invalid.
+
+Runtime status validates graph-level processing errors before trace:
+
+```bash
+hise-cli dsp status --module {ModuleId} --agent
+```
+
+If HISE reports an autofixable runtime error, apply the autofix and immediately verify plain status again:
+
+```bash
+hise-cli dsp status --module {ModuleId} --autofix --agent
+hise-cli dsp status --module {ModuleId} --agent
+```
+
+Record status and autofix evidence separately from trace evidence in the Phase 3 artifact. This matters for SNEX/expression nodes, Faust nodes, compiled-node constraints, special containers, routing mismatches, context mismatches, and deprecated nodes.
 
 Parameter trace validates public/root controls and runtime parameter edges:
 
@@ -159,6 +177,49 @@ Include comments for:
 - Why a parameter range is widened.
 
 Keep comments short and place them near the relevant command in the final command sequence. In the final command list, every comment write must wrap the payload as an escaped quoted string, for example `--value '\"Control branch only.\"'`.
+
+---
+
+## Documentation Feedback Pass
+
+After the final topology, runtime behaviour, trace evidence, and optimized command list are approved, perform a short documentation feedback pass before writing or finalizing the Phase 3 artifact.
+
+Phase 3 is the first live-contact phase with HISE and `hise-cli`, so it is expected to discover practical rules that earlier static docs missed. Promote those rules into the broader documentation when they are general enough to help future nodes.
+
+Look for:
+
+- incorrect or outdated factory paths, parameter names, properties, defaults, or ranges
+- runtime requirements that are not visible from structure alone
+- `dsp status` errors, autofix behaviour, or trace caveats
+- connection-mode discoveries, especially scaled vs unscaled behaviour
+- container-context discoveries, including channel count, block size, MIDI, polyphony, or hidden routing changes
+- node semantics that differ from assumptions in Phase 1 or Phase 2
+- CLI quoting, command-ordering, reload, or validation requirements
+- reusable graph-construction rules, such as combiner nodes for multi-control targets
+- user-facing workflow notes that differ from agent-facing CLI workflow notes
+
+Promote findings at the right level:
+
+- Node-specific behaviour goes in `scriptnode_enrichment/output/{factory}/{node}.md`.
+- General Scriptnode concepts go in `language_enrichment/output/scriptnode.md`.
+- Agent construction heuristics go in `style-guide/scriptnode.md`.
+- Phase workflow requirements go in this Phase 3 guide.
+- HSC-specific command or artifact rules go in the relevant HSC builder docs.
+- If a finding changes an approved Phase 1 or Phase 2 assumption, update that phase artifact too.
+
+Keep the human and agent documentation domains separate:
+
+- User-facing docs should describe HISE UI actions, concepts, and expected behaviour.
+- `llmRef` and agent-facing docs may include exact `hise-cli` commands.
+- Do not put CLI-only workflow details into the main prose of user-facing node pages unless the page is explicitly about CLI usage.
+
+Only promote findings that are reusable. Do not overfit a broad doc page to one example graph. If a rule only matters for the current example, keep it in the Phase 3 artifact as trace evidence, caveat, or preserved HSC comment.
+
+Record the documentation feedback in the Phase 3 artifact:
+
+- list docs updated, or state `None`
+- list the general rules promoted
+- list any intentionally local findings that were not promoted
 
 ---
 
@@ -252,6 +313,16 @@ hise-cli dsp screenshot --module {ModuleId} --scale 200% --output "scriptnode_en
 ## Comments To Preserve In HSC
 
 - Before `{command/topic}`: {comment text}
+
+## Documentation Feedback
+
+- Docs updated:
+  - `{path}`: {brief reason}
+  - {or "None"}
+- General rules promoted:
+  - {rule, or "None"}
+- Local-only findings:
+  - {finding kept local, or "None"}
 
 ## Cosmetics Applied
 

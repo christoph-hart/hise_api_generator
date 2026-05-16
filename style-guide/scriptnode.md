@@ -343,6 +343,10 @@ Usually fixed after compile:
 
 Docs or agent output should frame compilation as freezing structure, not just improving performance.
 
+Runtime status is a separate validation step from structural inspection. Use `hise-cli dsp status --module {ModuleId} --agent` before trace when a graph uses SNEX/expression nodes, Faust nodes, compiled-node constraints, special containers, dynamic routing, or context-sensitive processing.
+
+If status reports an autofixable error, prefer HISE's built-in fix path with `hise-cli dsp status --module {ModuleId} --autofix --agent`, then run plain status again. For expression nodes such as `math.expr` and `control.cable_expr`, this can enable the required compile-enabled-network flag.
+
 ---
 
 ## XML / Persistence
@@ -387,6 +391,7 @@ When behaviour is wrong, inspect in this order:
 5. scaled vs unscaled connection
 6. source vs target parameter ranges
 7. whether a node is actually in the audio path or only control path
+8. runtime status for graph-level errors and autofixable issues
 
 Useful debug node:
 

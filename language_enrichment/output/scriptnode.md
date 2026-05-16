@@ -573,6 +573,8 @@ Compilation also fixes some choices that are editable in the live graph:
 
 > [!Tip:Compile stable networks, not sketches] Keep networks interpreted while the structure is changing. Compile once the node tree, parameter interface, and data dependencies are stable.
 
+Some nodes require the network to be marked as compile-enabled before they can run without a runtime warning. Expression-based nodes are the common case. If HISE reports this kind of graph-level issue, use the node editor's **Autofix** button to let HISE apply the required network property, then recheck the network before testing audio.
+
 **See also:** $VIDEO.compile-scriptnode-networks$ -- compiling scriptnode networks, $LANG.cpp-dsp-nodes$ -- writing compiled custom nodes
 
 

@@ -46,6 +46,7 @@ llmRef: |
   Common mistakes:
     Use f suffix for float literals (3.0f not 3.0) to avoid type mismatch errors.
     Only input and value are available - no variable declarations.
+    Requires a compile-enabled network. In CLI workflows, run `hise-cli dsp status --module <ModuleId> --autofix --agent` if status reports the expression-node compilation flag error, then verify with plain `dsp status` before tracing.
 
   See also:
     [alternative] math.table - visual waveshaping curve
@@ -56,6 +57,8 @@ llmRef: |
 A programmable math node that evaluates a user-defined SNEX expression for every audio sample. The expression receives two variables: `input` (the current audio sample) and `value` (the Value parameter), and the result replaces the sample. This makes it a general-purpose tool for custom waveshaping, signal transformation, or any per-sample math operation that is not covered by the built-in math nodes.
 
 The expression is JIT-compiled when edited, so there is no interpretation overhead at runtime. However, it runs per-sample without vectorised operations, so the built-in math nodes (which can use vectorised processing) may be more efficient for simple operations like addition or multiplication. For stateful processing or multi-line code, use a dedicated SNEX node instead. A related variant, [control.cable_expr]($SN.control.cable_expr$), evaluates expressions on control cable values rather than audio samples.
+
+Because this node uses SNEX expression compilation, the network must be compile-enabled. If HISE reports that the network needs compilation enabled for this node, click the **Autofix** button in the node editor and recheck the network before testing audio.
 
 ## Signal Path
 
