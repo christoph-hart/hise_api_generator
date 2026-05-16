@@ -217,6 +217,14 @@ Important composition rule:
 
 - many targets can share one source
 - if several values must feed one target, combine them first with control nodes or a macro scheme
+- one target parameter must not have multiple direct incoming connections; use a combiner node instead
+
+Native-unit control heuristic:
+
+- avoid unnecessary normalisation and rescaling
+- keep public controls in user-facing units when possible, such as dB, Hz, ms, or semitones
+- check whether an unscaled control variant can preserve the same parameter logic with less range mapping
+- use `control.pma_unscaled` when raw unit arithmetic is clearer than normalised 0..1 shaping
 
 ---
 

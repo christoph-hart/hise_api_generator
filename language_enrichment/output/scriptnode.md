@@ -374,6 +374,8 @@ Connections carry values from a source to a target. The source can be a containe
 
 The important rule is range conversion. By default, scriptnode treats the source value as belonging to the source range, converts it to `0..1`, then converts that normalised value into the target range.
 
+A target parameter must have only one direct incoming connection. If multiple controls need to affect the same target, combine them first with a control node such as `control.pma`, `control.pma_unscaled`, `control.blend`, or `control.minmax`, then connect the combined output to the target.
+
 Scaled vs unscaled is a connection-mode distinction, not a decision about what a parameter fundamentally is. In practice, the mode is determined by the connection type you create or by explicit unscaled node variants.
 
 | Mode | Value flow | Typical case |
@@ -392,6 +394,8 @@ Examples:
 | One parameter mirrors another with identical range | Same range |
 
 Unscaled connections show a `U` icon in the editor. Some nodes have explicit unscaled variants, such as `control.pma_unscaled`, when the raw input value must pass through without target-range conversion.
+
+Prefer native-unit control logic when it keeps the graph easier to read. If an input control is already expressed in the target's useful unit, such as dB, Hz, ms, or semitones, check whether an unscaled control variant can preserve that unit instead of normalising the value and remapping it back later. For example, `control.pma_unscaled` is useful when arithmetic should happen directly in the target domain without clamping or normalised range conversion.
 
 > [!Tip:Match ranges when you can] If a source and target should represent the same unit, give them the same range. This avoids unnecessary conversion and makes the cable easier to reason about.
 

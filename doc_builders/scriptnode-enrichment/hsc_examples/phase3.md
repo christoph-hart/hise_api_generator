@@ -78,8 +78,10 @@ The final public command block is not a terminal log. It is the smallest consist
 17. Use as many channels as required by the node. For most nodes, default stereo should be enough.
 18. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
 19. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
-20. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
-21. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+20. If a target parameter appears to need multiple incoming controls, stop and insert a combiner node. A target parameter must not have more than one direct incoming connection.
+21. Avoid unnecessary normalisation and rescaling. Prefer root/public parameters in useful native units, and check whether unscaled control variants can preserve the same parameter logic with less range mapping.
+22. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
+23. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
 
 ---
 

@@ -48,6 +48,8 @@ The PMA Unscaled node performs the same multiply-add operation as [control.pma](
 
 Both the Value and Add parameters receive raw values from connected sources without range conversion. The Multiply parameter, however, is range-scaled through its -1 to 1 range, so a connected modulation source is mapped into that range before being used as the scale factor.
 
+Use this node when one input is already in the correct target domain and the arithmetic should stay in that domain. For example, a control value that already represents dB, Hz, milliseconds, or semitones can enter through `Value` or `Add` as a raw value, then another modulation amount can scale or offset it without forcing a normalised 0..1 remap. This often keeps public controls more intuitive than normalising a native-unit value and converting it back later.
+
 ## Signal Path
 
 ::signal-path
@@ -97,5 +99,7 @@ groups:
 ### Limitations
 
 The output has no overflow protection. If the connected sources produce extreme values, the result can be any value including very large numbers. Ensure that downstream nodes can handle the expected output range.
+
+`Value` and `Add` are raw/unscaled inputs, but `Multiply` is range-scaled. Set the `Multiply` range deliberately before connecting a modulation source, especially when the source should behave as an amount such as `0..1`.
 
 **See also:** $SN.control.pma$ -- normalised variant that clamps output to 0-1, $SN.control.minmax$ -- maps a normalised input to a custom range

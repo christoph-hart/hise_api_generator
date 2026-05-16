@@ -16,6 +16,7 @@
 dynamic_mid_cut
   TimingBlock           container.fix16_block
     InputFollower       dynamics.envelope_follower
+    CutDepthPMA         control.pma_unscaled
     HarshBandEQ         filters.svf_eq
 ```
 
@@ -40,8 +41,8 @@ dynamic_mid_cut
 - Target range before connection: `[40, 300]`
 - Macro range: `[40, 300]`
 - Default: `120`
-- MidCutDepth -> `HarshBandEQ.Gain` matched
-- Target range before connection: `[-18, -3]`
+- MidCutDepth -> `CutDepthPMA.Value` unscaled
+- Target range before connection: `unscaled raw dB`
 - Macro range: `[-18, -3]`
 - Default: `-9`
 
@@ -56,17 +57,18 @@ dynamic_mid_cut
 ## Friction Comments To Weave In
 
 - Before `TimingBlock`: the fixed-block container is intentional because the follower's exported modulation drives `HarshBandEQ.Gain` and should update at a deterministic interval.
-- Before the modulation connection to `HarshBandEQ.Gain`: narrow and invert the follower's 0..1 output so louder playing creates attenuation instead of boost.
+- Before `CutDepthPMA`: use `control.pma_unscaled` so `MidCutDepth` is a raw max-cut dB value and the follower output scales how much of that cut reaches `HarshBandEQ.Gain`.
+- Before the modulation connection to `HarshBandEQ.Gain`: set `CutDepthPMA.Multiply` to `0..1`, connect the follower to `Multiply`, and connect the PMA output to the EQ gain target.
 - Before `set InputFollower.ProcessSignal`: keep it `Off` so the node analyses the source without replacing the audio signal.
 
 ## Cosmetic Plan
 
 - Main node: `InputFollower`
 - Accent colour: `0xFFE67E22`
-- Supporting relevant nodes: [`TimingBlock`, `HarshBandEQ`]
+- Supporting relevant nodes: [`TimingBlock`, `CutDepthPMA`, `HarshBandEQ`]
 - Supporting colour: `0xFF8F7766`
 - Folded nodes: []
-- Nodes that must stay visible: [`TimingBlock`, `InputFollower`, `HarshBandEQ`]
+- Nodes that must stay visible: [`TimingBlock`, `InputFollower`, `CutDepthPMA`, `HarshBandEQ`]
 
 ## Open Questions
 
