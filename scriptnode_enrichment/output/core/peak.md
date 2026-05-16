@@ -20,7 +20,7 @@ commonMistakes:
   - title: "Update rate depends on block size"
     wrong: "Expecting sample-accurate modulation output from core.peak"
     right: "Place core.peak inside a container.frame2_block for sample-accurate updates, or container.fix8_block for a fixed update rate."
-    explanation: "The node sends one modulation value per audio block. The update rate depends on the surrounding container's block size."
+    explanation: "The exported modulation-to-parameter connection updates at the surrounding modulation/control rate. The rate depends on the surrounding container context."
   - title: "Peak metering requires a compile definition in exported plugins"
     wrong: "Expecting peak meters to work in the compiled plugin without extra settings"
     right: "Add ENABLE_ALL_PEAK_METERS=1 to the Extra Definitions in the project settings before exporting."
@@ -28,7 +28,7 @@ commonMistakes:
 llmRef: |
   core.peak
 
-  Measures the maximum absolute input magnitude across all channels per block and sends it as a normalised (0-1) modulation signal. The audio passes through unmodified.
+  Measures the maximum absolute input magnitude across all channels in the current processing block and sends it as a normalised (0-1) modulation signal. The audio passes through unmodified.
 
   Signal flow:
     audio in -> peak detection (abs max across channels) -> modulation out (0..1)
@@ -43,7 +43,7 @@ llmRef: |
     Heavily used (rank 12, 28 instances). Use for envelope followers, level-dependent modulation, VU metering, or any scenario where you need to convert audio level into a control signal. Pair with container.fix8_block for a fixed modulation update rate.
 
   Common mistakes:
-    Update rate depends on block size -- use a fixed-block container for predictable timing.
+    Exported modulation update rate depends on context -- use a fixed-block or frame container for predictable downstream parameter timing.
     Peak metering disabled in compiled plugins by default -- add ENABLE_ALL_PEAK_METERS=1.
 
   Forum references: tid:8652 (ENABLE_ALL_PEAK_METERS compile definition), tid:7566 (peak as envelope follower)
@@ -85,7 +85,7 @@ analyse(input) {
 
 ### Update rate
 
-The modulation output updates once per audio block. To get a fixed update rate, wrap this node in a [container.fix8_block]($SN.container.fix8_block$) or similar fixed-block container. For sample-accurate control signals, use [container.frame2_block]($SN.container.frame2_block$).
+The peak analysis is block-oriented, and the exported modulation-to-parameter connection updates at the surrounding modulation/control rate. To get a smaller deterministic update interval, wrap the source and target in a [container.fix8_block]($SN.container.fix8_block$) or similar fixed-block container. For sample-accurate downstream parameter changes, use [container.frame2_block]($SN.container.frame2_block$).
 
 If you need the raw signed peak value (preserving the sign of the loudest sample), use [core.peak_unscaled]($SN.core.peak_unscaled$) instead.
 

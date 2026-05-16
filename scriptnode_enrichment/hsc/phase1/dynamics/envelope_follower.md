@@ -15,7 +15,7 @@
 
 - Required: [`container.fix16_block`, `filters.svf_eq`]
 - Optional: [`container.fix8_block`, `math.mul`, `math.add`]
-- Rationale: `filters.svf_eq` provides the actual EQ band being modulated. A fixed-block container is important here because the envelope follower update rate depends on the surrounding block size, and the example should illustrate how `container.fix16_block` or `container.fix8_block` makes time-sensitive modulation behaviour deterministic. Simple math nodes are optional if Phase 2 needs to invert or narrow the envelope follower's 0..1 output into a musically useful attenuation range.
+- Rationale: `filters.svf_eq` provides the actual EQ band being modulated. A fixed-block container is important here because the follower's exported modulation output drives another parameter, and `container.fix16_block` or `container.fix8_block` makes that modulation-to-parameter update timing deterministic. Simple math nodes are optional if Phase 2 needs to invert or narrow the envelope follower's 0..1 output into a musically useful attenuation range.
 
 ## Assumptions
 
@@ -32,6 +32,6 @@
 ## Notes For Phase 2
 
 - Keep `ProcessSignal` set to `Off`; the node should analyse the source while leaving the audio path intact.
-- Wrap the time-sensitive modulation section in `container.fix16_block` or `container.fix8_block` so the follower's control update rate is deterministic instead of inheriting an arbitrary parent block size.
+- Wrap both the follower and the target EQ in `container.fix16_block` or `container.fix8_block` if the exported modulation-to-parameter update rate should be deterministic instead of inheriting an arbitrary parent block size.
 - The modulation range will likely need narrowing and inversion so higher input level produces more mid-band attenuation rather than gain boost.
 - Because this is the only polyphonic dynamics node, the example should make clear whether the target context is per-voice modulation or a simpler monophonic demonstration.

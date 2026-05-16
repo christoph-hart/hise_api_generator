@@ -35,5 +35,5 @@
 - Set the secondary oscillator to noise and mention that a looped file-player noise source would often be more production-friendly in a real project.
 - Clear the split branch before the noise source so the texture path does not duplicate the dry input.
 - The example should make the dry branch and the noise branch visually distinct so the modulation target is obvious at a glance.
-- If the gate needs more predictable time-sensitive behaviour, wrap the relevant section in `container.fix16_block` or `container.fix8_block` so the control update rate does not depend on the parent block size.
+- If the gate modulation output drives another parameter that needs predictable timing, wrap both source and target in `container.fix16_block` or `container.fix8_block` so the exported modulation-to-parameter update rate does not depend on the parent block size.
 - If adjustable gate depth is shown, scale the modulation output before the gain target instead of turning the example into a hard on/off gate only.

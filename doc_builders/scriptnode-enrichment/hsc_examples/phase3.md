@@ -16,26 +16,116 @@
 
 ---
 
+## Required Reading
+
+Read `style-guide/scriptnode.md` before non-trivial construction work. It is the source of truth for Scriptnode graph semantics, container context, connection ranges, modulation, routing, polyphony, and compilation behaviour.
+
+Use MCP-backed CLI docs for node and parameter lookup:
+
+```bash
+hise-cli dsp docs <factory.node> --agent
+hise-cli dsp docs <factory> --agent
+```
+
+Do not guess node parameters, properties, or connection modes.
+
+---
+
+## Working Model
+
+Separate live investigation from the Phase 4 handoff artifact.
+
+During investigation:
+
+- Edit the live graph incrementally. Make the smallest change that tests the current hypothesis.
+- Use `dsp tree`, `dsp show`, `dsp get`, `dsp connections`, and `dsp trace` to verify behaviour before changing more structure.
+- Keep a mental scratch model of the final from-scratch build, but do not rebuild the whole graph just to clean up while topology is still being debated.
+- Do not write the Phase 3 artifact during investigation. The artifact documents the approved final network, not exploration history.
+
+Before writing the artifact:
+
+- Confirm the final topology with the user, especially any deviation from Phase 2.
+- Confirm the trace evidence that justifies the final topology and connection choices.
+- Confirm comments, cosmetics, visible nodes, folded nodes, and screenshot composition.
+- Only then normalize the final network into a clean from-scratch command sequence for Phase 4.
+
+The final public command block is not a terminal log. It is the smallest consistent build-from-scratch sequence for the signed-off network.
+
+---
+
 ## Construction Rules
 
 1. Work one node at a time unless the user explicitly requests a small related batch.
 2. Use `hise-cli agent-context` and command-specific help when uncertain.
-3. Read `## Builder Setup` from the approved Phase 2 file before running builder CLI commands. Create the planned host context first, then apply any additional builder steps.
-4. Apply all `## Locked Build Values` from the approved Phase 2 file before verification. Treat them as fixed node/example constraints, not optional build preferences.
-5. Build incrementally and inspect after meaningful steps with `dsp tree`, `dsp show`, `dsp get`, and `dsp connections`.
-6. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts and CLI-fix exploration.
-7. Optimize the final command list:
-   - Add nodes directly to their final parent.
-   - Omit default-value no-ops.
-   - Avoid move/reparent commands if direct parent creation is possible.
-   - Keep `matched` connections whenever possible.
-8. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
-9. If using `matched`, narrow the target parameter range before connecting.
-10. Use as many channels as required by the node. For most nodes, default stereo should be enough.
-11. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
-12. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
-13. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
-14. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+3. Run first checks before construction: `hise-cli -status --agent`, `hise-cli builder tree --agent`, and `hise-cli dsp tree --module {ModuleId} --agent` once the host exists.
+4. If no DSP host exists, create or select one intentionally. For a default Script FX host, create the module and assign the planned network before adding DSP nodes.
+5. Read `## Builder Setup` from the approved Phase 2 file before running builder CLI commands. Create the planned host context first, then apply any additional builder steps.
+6. The root container ID is the assigned network name shown by `dsp tree`; use that ID for `--container`, `create_parameter`, and root parameter paths.
+7. Apply all `## Locked Build Values` from the approved Phase 2 file before verification. Treat them as fixed node/example constraints, not optional build preferences.
+8. Build incrementally and inspect after meaningful steps with `dsp tree`, `dsp show`, `dsp get`, and `dsp connections`.
+9. Use `hise-cli dsp docs` before choosing unfamiliar nodes, parameters, properties, or connection modes.
+10. Verify parameter flow with `dsp trace` after structural checks.
+11. Verify signal flow with `dsp trace` after structural checks.
+12. During investigation, prefer incremental live edits over full rebuilds. Once the network is signed off, rewrite the final command list as a coherent from-scratch build.
+13. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts, temporary probes, cleanup commands, and CLI-fix exploration.
+14. Optimize the final command list:
+    - Add nodes directly to their final parent.
+    - Omit default-value no-ops.
+    - Avoid move/reparent commands if direct parent creation is possible.
+    - Keep `matched` connections whenever possible.
+15. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
+16. If using `matched`, narrow the target parameter range before connecting.
+17. Use as many channels as required by the node. For most nodes, default stereo should be enough.
+18. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
+19. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
+20. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
+21. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+
+---
+
+## Trace Validation
+
+Use trace after structural checks. Structure tells what is connected; trace tells what happened after a runtime stimulus. A graph can be structurally valid and still behave incorrectly at runtime.
+
+Parameter trace validates public/root controls and runtime parameter edges:
+
+```bash
+hise-cli dsp trace --module {ModuleId} --container {network_id} --inject-param {network_id}.{Parameter}=0.75 --probe-changed-parameters --agent
+```
+
+Use `--probe-changed-parameters` for discovery, then explicitly probe suspected targets with repeated `--probe-param <Node.Param>` flags. Changed-parameter traces report runtime values that changed during the stimulus, not all possible static dependencies.
+
+Signal trace validates audio flow, silence, runaway values, context, and timing:
+
+```bash
+hise-cli dsp trace --module {ModuleId} --container {network_id} --inject dirac --probe-recursive --agent
+```
+
+Use `--probe-recursive` when topology context matters. Inspect recursive `specs` for unexpected channel count, block size, MIDI policy, polyphony, or container-context changes.
+
+Mixed signal-to-parameter trace validates analysis or detector nodes that convert signal events into parameter changes:
+
+```bash
+hise-cli dsp trace --module {ModuleId} --container {network_id} --inject dirac --inject-before {NodeId} --probe-changed-parameters --agent
+```
+
+For time-domain timing, combine the requested delay, returned delay remainder, and captured peak index:
+
+```text
+eventMs = requestedDelayMs - response.delayMs + peakIndex / sampleRate * 1000
+```
+
+Probe slightly before the expected event so the peak lands inside the captured block. For feedback or container loops, account for block quantisation and loop/container latency.
+
+Trace interpretation heuristics:
+
+- Missing expected parameter edge: wrong source, target, parameter name, inactive control context, or unchanged runtime value.
+- `outOfRange`: inspect raw units, target range, and `connectionMode`.
+- `unscaled`: safe only when the source already computes exact target units.
+- Signal silence: inspect gain, routing, filters, bypass, and container context.
+- Parameter-only tests can produce silent audio by design; inspect `parameters.probed` and touched edges.
+- Unexpected timing: account for block quantisation and container / feedback-loop latency.
+- Unexpected behaviour after moving nodes: inspect recursive `specs` because context may have changed.
 
 ---
 
@@ -44,9 +134,11 @@
 1. The demonstrated node gets the accent colour and a concise Markdown comment explaining the project context.
 2. Relevant non-utilitarian support nodes get a dim/desaturated colour.
 3. Fold all nodes that are not relevant to understanding the demonstrated node.
-4. Exception: if the demonstrated node is a control/output node, keep the target node visible if needed to show the cable.
-5. Add comments to non-obvious topology containers.
-6. Use only `0xAARRGGBB` colour literals.
+4. Do not fold any ancestor container of a node that must remain visible. Folding a parent hides its children, even if the child itself is marked visible in the cosmetic plan.
+5. Exception: if the demonstrated node is a control/output node, keep the target node visible if needed to show the cable.
+6. Add comments to non-obvious topology containers.
+7. Write comments with one `hise-cli dsp set ... --param Comment --value '\"...\"' --agent` command per node. Wrap the comment payload as an escaped quoted string so spaces and Markdown punctuation survive shell parsing.
+8. Use only `0xAARRGGBB` colour literals.
 
 ---
 
@@ -64,11 +156,15 @@ Include comments for:
 - Why a parameter range is narrowed before `matched`.
 - Why a parameter range is widened.
 
-Keep comments short and place them near the relevant command in the final command sequence.
+Keep comments short and place them near the relevant command in the final command sequence. In the final command list, every comment write must wrap the payload as an escaped quoted string, for example `--value '\"Control branch only.\"'`.
 
 ---
 
 ## Output Format
+
+Do not write this file until the user has approved the live-built topology, behaviour, trace evidence, optimized command list, comments, cosmetics, and screenshot command.
+
+If the final network differs from Phase 2, record the difference and the trace evidence that justified it in `## Status`, `## Trace Validation`, and `## Comments To Preserve In HSC`.
 
 Write one file per node:
 
@@ -114,6 +210,19 @@ Use this exact structure:
 ## Verified Connections
 
 - `{Source.Param}` -> `{Target.Param}` matched: {true|false}
+
+## Trace Validation
+
+- Parameter trace commands:
+  - `{hise-cli dsp trace ...}`
+- Parameter trace evidence:
+  - `{brief evidence, touched edge, probed value, or "None"}`
+- Signal trace commands:
+  - `{hise-cli dsp trace ...}`
+- Signal trace evidence:
+  - `{brief evidence, peak/silence/timing/specs result, or "None"}`
+- Trace caveats:
+  - `{caveat, or "None"}`
 
 ## Locked Build Values Applied
 
@@ -164,6 +273,8 @@ hise-cli dsp screenshot --module {ModuleId} --scale 200% --output "scriptnode_en
 
 Return:
 - The optimized public command sequence summary.
+- Parameter trace evidence.
+- Signal trace evidence.
 - Any pipeline-only commands.
 - Any unresolved issues.
 - Whether the user must approve before Phase 4.

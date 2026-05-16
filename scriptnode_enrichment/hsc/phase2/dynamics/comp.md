@@ -20,8 +20,7 @@ sidechain_ducker
       SidechainPair     container.chain
         DetectorClear   math.clear
         PumpRamp        core.ramp
-    TimingBlock         container.fix16_block
-      DuckComp          dynamics.comp
+    DuckComp            dynamics.comp
 ```
 
 ## Builder Setup
@@ -31,9 +30,9 @@ sidechain_ducker
   - None
 - Channel/routing setup:
   - Required channels: four internal channels inside `SidechainHost`; channels 0-1 stay the program pair and channels 2-3 become the synthetic detector pair
-  - Module routing: matrix
+  - Module routing: default stereo
   - Master routing: default
-  - Channel-specific comments needed: [sidechain wrapper duplicates stereo into two internal pairs, `container.multi` only exposes the pairs visually, sidechain pair audio is intentionally cleared and replaced with a ramp, fixed block wrapper is intentional for deterministic timing]
+  - Channel-specific comments needed: [sidechain wrapper duplicates stereo into two internal pairs, `container.multi` only exposes the pairs visually, sidechain pair audio is intentionally cleared and replaced with a ramp]
 
 ## Public Parameters
 
@@ -49,10 +48,10 @@ sidechain_ducker
 - Target range before connection: `[2, 12]`
 - Macro range: `[2, 12]`
 - Default: `6`
-- PumpRate -> `PumpRamp.Frequency` matched
-- Target range before connection: `[0.25, 4.0]`
-- Macro range: `[0.25, 4.0]`
-- Default: `1.0`
+- PumpTime -> `PumpRamp.PeriodTime` matched
+- Target range before connection: `[250, 4000]`
+- Macro range: `[250, 4000]`
+- Default: `1000`
 
 ## Defaults To Omit
 
@@ -68,9 +67,8 @@ sidechain_ducker
 - Before `SidechainHost`: `container.sidechain` duplicates the stereo source into a 4-channel buffer so the compressor can separate program and detector pairs.
 - Before `PairView`: `container.multi` is only there to expose the two stereo pairs visually; `dynamics.comp` still processes the full 4-channel stream.
 - Before `DetectorClear`: clear the duplicated detector pair first so it no longer follows the source audio.
-- Before `PumpRamp`: replace the detector pair with an artificial ramp so the pumping is obvious and independent from the source material.
+- Before `PumpRamp`: replace the detector pair with an artificial ramp so the pumping is obvious and independent from the source material; `PumpTime` controls the ramp period directly.
 - Before `set DuckComp.Sidechain`: set the mode to `Sidechain`; `Disabled` and `Original` collapse this into ordinary self-keyed compression.
-- Before `TimingBlock`: fixed sub-block processing is intentional here because compressor responsiveness depends on buffer size.
 
 ## Cosmetic Plan
 
@@ -78,8 +76,8 @@ sidechain_ducker
 - Accent colour: `0xFFE67E22`
 - Supporting relevant nodes: [`SidechainHost`, `PairView`, `DetectorClear`, `PumpRamp`]
 - Supporting colour: `0xFF8F7766`
-- Folded nodes: [`ProgramPair`, `SidechainPair`]
-- Nodes that must stay visible: [`SidechainHost`, `PairView`, `SidechainPair`, `TimingBlock`, `DuckComp`]
+- Folded nodes: [`ProgramPair`, `DetectorClear`]
+- Nodes that must stay visible: [`SidechainHost`, `PairView`, `SidechainPair`, `PumpRamp`, `DuckComp`]
 
 ## Open Questions
 

@@ -22,11 +22,11 @@ commonMistakes:
 llmRef: |
   dynamics.gate
 
-  Noise gate with peak detection. Attenuates signals below the threshold based on the ratio. Outputs inverse gain reduction as a normalised modulation signal.
+  Noise gate with peak detection. Attenuates signals below the threshold based on the ratio. Outputs gain reduction amount as a normalised modulation signal.
 
   Signal flow:
     audio in -> peak detect -> gate (threshold, ratio, attack, release) -> audio out
-    gate -> modulation out (1.0 - gain reduction)
+    gate -> modulation out (gain reduction amount: 0.0 = open, 1.0 = closed)
 
   CPU: low, monophonic
 
@@ -46,7 +46,7 @@ llmRef: |
     Sidechain mode requires double the channel count (4 channels for stereo).
 
   Depth control:
-    Route gate modulation into core.pma and use multiply to scale gate depth (adjustable downward expansion instead of hard gating).
+    Invert the modulation connection range when you need an open-gate control signal (1.0 = open).
 
   See also:
     [alternative] dynamics.comp - compressor for gain reduction above threshold
@@ -59,7 +59,7 @@ forumReferences:
 
 A noise gate that attenuates signals falling below the threshold. The ratio controls the depth of attenuation: low ratios produce gentle expansion, while high ratios approach hard gating. Attack controls how quickly the gate opens when the signal rises above the threshold, and release controls how quickly it closes.
 
-The gate supports external sidechain keying and outputs inverse gain reduction as a normalised modulation signal, useful for visualising gate activity or triggering other parameters.
+The gate supports external sidechain keying and outputs the gain reduction amount as a normalised modulation signal. This output is high while the gate is closed and low while it is open, so invert the modulation connection before using it to open another parameter.
 
 ## Signal Path
 
@@ -102,7 +102,7 @@ process(input) {
     level = peakDetect(input, Sidechain)
     gain = gate(level, Threshhold, Ratio, Attack, Release)
     output = input * gain
-    modulation = 1.0 - gainReduction  // 1.0 = open, 0.0 = closed
+    modulation = gainReductionAmount  // 0.0 = open, 1.0 = closed
 }
 ```
 
@@ -127,10 +127,10 @@ groups:
 
 ### Modulation Output
 
-The modulation output sends the inverse of the gain reduction, normalised to 0..1. A value of 1.0 means the gate is fully open; 0.0 means it is fully closed. This can be routed to other parameters for gate activity metering.
+The modulation output sends the gain reduction amount, normalised to 0..1. A value near 1.0 means the gate is strongly reducing gain; a value near 0.0 means it is open. If you need a control signal that opens another parameter when the gate opens, invert the modulation connection by reversing the target range.
 
 ### Adjustable Gate Depth
 
-By default the gate fully attenuates the signal when closed. To create a downward expander with adjustable depth instead of a hard gate, route the gate modulation output into a `core.pma` node and use the multiply parameter to scale how deeply the gate closes. A multiply value of 0.5, for example, means the gate only attenuates by half when closed.
+By default the gate fully attenuates the signal when closed. To drive another target from gate-open activity, connect the gate modulation output to the target with an inverted target range. For example, a target range of `1..0` turns gain-reduction amount into open-gate activity: closed gate maps to 0, open gate maps to 1. For more detailed depth shaping, use [control.pma]($SN.control.pma$) to scale or offset the normalised gain-reduction signal before it reaches the target.
 
 **See also:** $SN.dynamics.comp$ -- compressor for reducing gain above threshold, $SN.dynamics.limiter$ -- limiter for peak control, $SN.dynamics.envelope_follower$ -- envelope tracking without gain reduction, $MODULES.Dynamics$ -- module-tree dynamics processor that combines compressor, gate, and limiter

@@ -112,4 +112,8 @@ groups:
 
 The envelope follower uses peak detection (not RMS), taking the maximum absolute sample value across all channels per frame. For RMS-based detection, use [dynamics.updown_comp]($SN.dynamics.updown_comp$) with its RMS toggle. The attack and release range (0--1000 ms) is wider than [dynamics.comp]($SN.dynamics.comp$), [dynamics.gate]($SN.dynamics.gate$), and [dynamics.limiter]($SN.dynamics.limiter$) (0--250 ms), allowing slower envelope shapes for gentle amplitude tracking.
 
+### Modulation Timing
+
+The follower's internal envelope and its exported modulation output are related but not identical timing concepts. The envelope is calculated inside the node, while a modulation cable from the follower to another node parameter updates at the surrounding modulation/control rate. Use a fixed-block or frame-based container when the downstream target parameter needs tighter timing than the parent block context provides.
+
 **See also:** $SN.dynamics.comp$ -- compressor for dynamics processing, $SN.dynamics.gate$ -- gate for dynamics processing

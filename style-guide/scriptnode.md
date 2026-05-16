@@ -204,6 +204,13 @@ Update rate depends on context, not just node type:
 - modchain/control contexts: reduced rate
 - MIDI sources: event-driven
 
+Distinguish internal DSP rate from exported modulation rate:
+
+- detector/envelope internals can run sample-by-sample inside their node
+- a modulation output driving another node parameter updates at the current modulation/control context
+- fixed-block containers make that exported modulation-to-parameter update interval smaller and deterministic
+- frame containers are required when the downstream parameter modulation itself must be sample-accurate
+
 If a modulated parameter zippers, inspect source context first.
 
 Important composition rule:
@@ -286,6 +293,8 @@ Do not recommend ordinary container bypass for automated or modulation-driven sw
 - Scriptnode UI: best for human design/debug/listening/layout
 - `hise-cli /dsp`: best for repeatable scripted construction, automation, tests
 - scripting API: best for runtime create/load/control
+
+For HSC example construction, live `hise-cli` build loops, and trace-based signal / parameter validation, use `doc_builders/scriptnode-enrichment/hsc_examples/phase3.md`. This style guide defines the Scriptnode mental model; Phase 3 defines the operational validation workflow.
 
 When agents generate reproducible build procedures, separate three kinds of information:
 

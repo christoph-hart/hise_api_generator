@@ -28,11 +28,11 @@ commonMistakes:
   - title: "Modulation output must be inverted for gain control"
     wrong: "Connecting the compressor modulation output directly to a gain node and expecting correct behaviour"
     right: "Right-click the modulation connection and swap the minimum and maximum values to invert the range."
-    explanation: "The modulation output represents gain reduction (higher value = less compression). Connecting it directly to a gain node increases gain when compression increases. Invert the range to produce the correct ducking behaviour."
-  - title: "Update rate is limited by buffer size"
-    wrong: "Expecting fast transient response from dynamics.comp at the default buffer size"
-    right: "Wrap the compressor and its split container in a fix32 or fix64 sub-buffer container for snappier response."
-    explanation: "The compressor updates its gain factor once per audio buffer (e.g. every 512 samples). At default buffer sizes this can feel sluggish. Using fix32 or fix64 containers forces more frequent updates, significantly improving transient response."
+    explanation: "The modulation output is inverse gain reduction (higher value = less compression). Connecting it directly to a gain node increases gain when compression relaxes. Invert the range to produce the correct ducking behaviour."
+  - title: "Modulation cable timing is context-based"
+    wrong: "Adding a fixed-block container because dynamics.comp itself needs one for accurate compression"
+    right: "Use fixed-block or frame containers only when the compressor modulation output drives another parameter that needs tighter update timing."
+    explanation: "The compressor's internal dynamics processing is separate from the exported modulation-to-parameter update rate. Fixed-block containers make modulation cables update more often; they are not required for ordinary sidechain compression."
 llmRef: |
   dynamics.comp
 
@@ -60,7 +60,7 @@ llmRef: |
     Sidechain mode requires double the channel count (4 channels for stereo).
     Disabled and Original modes are identical.
     Modulation output must be inverted (swap min/max on the connection) when driving a gain node.
-    Update rate depends on buffer size -- use fix32/fix64 containers for snappier transient response.
+    Modulation output connections update at the surrounding modulation/control rate -- use fixed-block or frame containers only when downstream parameter modulation needs tighter timing.
 
   Design notes:
     Hard-knee design based on chunkware SimpleComp. No soft-knee parameter available.
@@ -156,8 +156,8 @@ When routing the modulation output to control gain on another node, right-click 
 
 The compressor uses a hard-knee design. There is no soft-knee parameter. For soft-knee compression, use a custom Faust or C++ node. The compressor does not support upward compression; for that use case, see [dynamics.updown_comp]($SN.dynamics.updown_comp$).
 
-### Improving Transient Response
+### Modulation Timing
 
-The compressor updates its gain factor once per audio buffer. At the default buffer size (e.g. 512 samples) this can produce sluggish response to transients. Wrapping the split container in a `fix32` or `fix64` sub-buffer container forces more frequent updates and dramatically improves responsiveness. For the most accurate envelope following (e.g. transient shaping), frame processing is required but carries significant CPU overhead; compile the network to C++ when using frame processing in production.
+The compressor's internal detector and gain reduction should not be treated as ordinary block-rate parameter modulation. The buffer-rate limitation matters when you route the compressor's modulation output to another node parameter. That exported modulation-to-parameter connection updates at the surrounding modulation/control context, so wrap the source and target in a fixed-block or frame-based container only when the downstream parameter modulation needs tighter timing.
 
 **See also:** $SN.dynamics.gate$ -- gate for attenuating below threshold, $SN.dynamics.limiter$ -- limiter optimised for peak control, $SN.dynamics.updown_comp$ -- dual-threshold compressor with upward and downward compression, $SN.dynamics.envelope_follower$ -- envelope tracking without gain reduction, $MODULES.Dynamics$ -- module-tree dynamics processor that combines compressor, gate, and limiter

@@ -15,7 +15,7 @@
 
 - Required: [`container.sidechain`, `routing.receive`, `routing.send`]
 - Optional: [`container.fix16_block`, `math.mul`]
-- Rationale: `container.sidechain` is the standard routing wrapper because it doubles the channel count and exposes zeroed sidechain channels to the compressor. A send/receive pair provides a realistic external key signal, `container.fix16_block` is optional if the example wants deterministic sub-block updates for more predictable time-sensitive behaviour, and `math.mul` is optional if the compressor's modulation output also drives a secondary ducking target.
+- Rationale: `container.sidechain` is the standard routing wrapper because it doubles the channel count and exposes zeroed sidechain channels to the compressor. A send/receive pair provides a realistic external key signal. `container.fix16_block` is only useful if the compressor's modulation output also drives another parameter that needs deterministic sub-block updates, and `math.mul` is optional for shaping that secondary modulation target.
 
 ## Assumptions
 
@@ -35,5 +35,5 @@
 - Treat `container.sidechain` as a channel-duplicating topology node: stereo input becomes two internal stereo pairs, not a separate keyed branch.
 - The `Sidechain` parameter should be set to `Sidechain`, not `Disabled` or `Original`, otherwise the example collapses into ordinary self-keyed compression.
 - The second stereo pair should be cleared and replaced with a `core.ramp` detector so the pumping stays independent from the source audio.
-- If responsiveness is part of the example, wrap the time-sensitive section in `container.fix16_block` or `container.fix8_block` so the compressor update timing is deterministic.
+- Do not add a fixed-block container just for ordinary sidechain compression. Use `container.fix16_block` or `container.fix8_block` only if the compressor's modulation output drives another parameter and that exported modulation timing must be deterministic.
 - If the modulation output is exposed, note that it represents inverse gain reduction and must be inverted before it controls gain on another target.

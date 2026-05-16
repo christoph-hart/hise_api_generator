@@ -353,6 +353,14 @@ Modulation update rate depends on context.
 
 If a modulation cable causes zipper noise, inspect where the source is placed. Moving the source into a frame or more suitable context can change the update rate.
 
+#### Modulation Rate vs Internal DSP Rate
+
+Do not confuse a node's internal analysis rate with the rate of a modulation cable that leaves the node. A detector, envelope follower, compressor, or peak meter may analyse samples continuously inside its own DSP process, while its modulation output reaches another node parameter at the surrounding modulation/control update rate.
+
+In a normal block context, that exported modulation-to-parameter update is usually block-based. A fixed-block container such as `container.fix16_block` makes the update interval smaller and deterministic. A frame-based container such as `container.frame2_block` is required when the downstream parameter change itself must be sample-accurate.
+
+Use fixed-block or frame contexts for modulation cables that drive audible fast-changing parameters. Do not add them just because the source node's own detector or dynamics processor needs accurate internal timing.
+
 `container.modchain` deserves a strict mental model: it creates a hidden control path. Nodes inside it do not process the audible parent audio path by default. If a modulation signal should affect audible audio, route it to a target parameter explicitly or to a node outside the modchain.
 
 ![](images/v2/reference/language/scriptnode/modulation-cable.png)

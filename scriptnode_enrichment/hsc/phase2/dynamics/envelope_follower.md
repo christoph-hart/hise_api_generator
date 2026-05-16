@@ -28,7 +28,7 @@ dynamic_mid_cut
   - Required channels: default stereo; the follower analyses the same stereo program signal it leaves in place
   - Module routing: default
   - Master routing: default
-  - Channel-specific comments needed: [fixed block wrapper is deliberate because follower timing depends on parent block size]
+  - Channel-specific comments needed: [fixed block wrapper is deliberate because follower modulation drives an EQ parameter and should update at a deterministic interval]
 
 ## Public Parameters
 
@@ -55,7 +55,7 @@ dynamic_mid_cut
 
 ## Friction Comments To Weave In
 
-- Before `TimingBlock`: the fixed-block container is intentional because envelope-follower timing inherits the surrounding buffer size otherwise.
+- Before `TimingBlock`: the fixed-block container is intentional because the follower's exported modulation drives `HarshBandEQ.Gain` and should update at a deterministic interval.
 - Before the modulation connection to `HarshBandEQ.Gain`: narrow and invert the follower's 0..1 output so louder playing creates attenuation instead of boost.
 - Before `set InputFollower.ProcessSignal`: keep it `Off` so the node analyses the source without replacing the audio signal.
 
