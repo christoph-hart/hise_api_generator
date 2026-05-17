@@ -40,6 +40,7 @@ hise-cli builder tree --agent
 hise-cli builder add --type SimpleGain --id Drive --agent
 hise-cli ui set --component Cutoff --bounds 0,0,128,32 --text Cutoff --agent
 hise-cli dsp connect --module "Script FX1" --source LFO1 --target F1 --param Frequency --matched --agent
+hise-cli dsp trace --module "Script FX1" --container root --inject dirac --probe-recursive --agent
 ```
 
 The mode grammar in the sections below is the internal command grammar used by the shared execution layer. The shell parser renders direct flag-style commands to that grammar before dispatching. Workflow files are executed with `hise-cli run <file>` or `hise-cli --run <file>`.
@@ -349,6 +350,8 @@ Operates on a scriptnode network. Enter DSP mode with `/dsp`, then select the ho
 
 `matched` (on `connect`) — without `matched`, source values map from the source's range to the target's range. With `matched`, the source range copies the target range so values pass through unmodified.
 
+Inversion: scaled DSP connections use the target parameter range as the output mapping. A reversed target range is valid and intentionally inverts the connection, e.g. source `0..1` to target range `[1, 0]` maps `0.1` to `0.9`. This matches HISE's inverted connection behaviour and is independent of whether the range is set before or after connecting.
+
 `disconnect <nodeId>.<paramName>` — removes the single connection on that parameter. The path always ends in the actual parameter name (`Gain`, `Frequency`, `Cutoff`, …). Each target has at most one source, so source is never specified. Node-level `disconnect <nodeId>` (no param) is invalid.
 
 | Verb | Syntax |
@@ -363,10 +366,79 @@ Operates on a scriptnode network. Enter DSP mode with `/dsp`, then select the ho
 | `save` | `save` (writes current network to disk if file-backed; embeds in project if in-memory) |
 | `reset` | `reset` (clears network to empty `root`) |
 | `screenshot` | `screenshot scale <N> file "<path>"` |
-| `show` | `show tree` \| `show networks [<filter>]` \| `show modules [<filter>]` \| `show connections [<filter>]` \| `show <nodeId>` \| `show <nodeId>.<param>` (live HISE state only) |
+| `trace` | `trace [<container>] <trace-clause>...` |
+| `show` | `show tree` \| `show networks [<filter>]` \| `show modules [<filter>]` \| `show connections [<filter>]` \| `show status [autofix]` \| `show <nodeId>` \| `show <nodeId>.<param>` (live HISE state only) |
 | `docs` | `docs` \| `docs <factory>` \| `docs <factory.node>` \| `docs <factory.node>.<param>` (static MCP documentation) |
 | `create_parameter` | `create_parameter <container>.<paramName> [<min>, <max>] [default <d>] [stepSize <s>] [middlePosition <m>] [skewFactor <k>]` (`<paramName>` is the new parameter's id, e.g. `Cutoff`, `Drive`) |
 | `cd` / `ls` / `pwd` | navigation |
+
+`trace` runs a runtime signal and/or parameter probe against a scriptnode
+container. Omitted container uses the current DSP node context, or the root
+network container when at module root. Commas remain top-level command chaining
+only; trace clauses are repeated without commas.
+
+Trace clauses:
+
+| Clause | Meaning |
+|--------|---------|
+| `inject silence [before "<nodeId>"]` | Inject silence, optionally before a child node |
+| `inject dirac [gain <n>] [before "<nodeId>"]` | Inject a Dirac impulse |
+| `inject noise [gain <n>] [seed <n>] [before "<nodeId>"]` | Inject deterministic or random noise |
+| `inject dc [gain <n>] [before "<nodeId>"]` | Inject a DC signal |
+| `inject param <node>.<param> <value>` | Temporarily set a parameter during the trace |
+| `probe after "<nodeId>"` | Capture signal after a child node |
+| `probe recursive` | Probe child containers recursively; includes topology tree automatically |
+| `probe changed_parameters` | Report changed runtime parameters and touched edges (`parameters.probe = "*"`) |
+| `probe param <node>.<param>` | Capture an explicit parameter value |
+| `delay <ms>` | Wait before capturing the result |
+| `compact` | Request compact trace payload from HISE |
+| `no_specs` | Omit processing specs from trace reports |
+| `no_signal` | Omit signal measurements from trace reports |
+
+Boundary node IDs for `before` and `after` are forced quoted because node IDs can
+collide with trace keywords such as `gain`. Parameter paths keep normal unquoted
+dotted syntax because the dot disambiguates the path.
+
+Direct CLI trace syntax:
+
+```
+hise-cli dsp trace --module <module> [--container <container>]
+  [--inject <silence|dirac|noise|dc>] [--gain <n>] [--seed <n>]
+  [--inject-before <nodeId>] [--inject-param <node.Param=value>]...
+  [--probe-recursive] [--probe-changed-parameters] [--probe-param <node.Param>]...
+  [--probe-after <nodeId>] [--delay-ms <n>] [--trace-compact]
+  [--no-specs] [--no-signal] [--agent]
+```
+
+`--trace-compact` changes the trace payload shape. Global `--compact` is output
+envelope compaction only and does not alter trace semantics. `--probe-recursive`
+sets recursive probing and includes the recursive topology tree automatically.
+`--probe-changed-parameters` and explicit `--probe-param` flags are mutually
+exclusive.
+
+Agent/JSON trace output is a hise-cli object with a small computed `summary` and
+the preserved HISE trace payload under `trace`. Human output is a concise report
+derived from the same payload. The full signal, recursive container, parameter,
+and touched-edge details remain available in JSON output.
+
+`show status` calls `GET /api/dsp/runtime_status` as a cheap graph-level runtime
+validity check after loading, editing, recompiling, or changing network
+properties. It catches issues such as MIDI-dependent nodes in the wrong
+processing context, compilation-flag incompatibilities, mono/polyphony mismatch,
+channel/block/samplerate spec mismatches, invalid parent/container setup, clone
+container mismatches, dynamic routing errors, missing assets or third-party node
+resources, SNEX/expression compile failures, and deprecated scriptnode nodes.
+Runtime scriptnode errors are returned as endpoint status (`ok=false`) rather
+than transport failure.
+
+`show status autofix` and direct CLI `hise-cli dsp status --module <module>
+--autofix` call the same endpoint with `autofix=true`. This mutates the graph by
+running HISE's built-in ScriptnodeExceptionHandler autofix for the first
+autofixable error before returning status. Current autofixes set or unset the
+network `AllowCompilation` flag when required, and move a node that requires MIDI
+processing into a `container.midichain`. After fixing the reported issue, callers
+may need to run `/api/script/recompile` for the DSP module ID to force
+reinitialisation.
 
 Examples:
 
@@ -396,10 +468,16 @@ show networks
 docs filters
 docs filters.svf.Frequency
 show connections
+show status
+show status autofix
 show g1                                           # node summary
 show g1.Gain                                      # parameter detail
 screenshot scale 50% file "patch.png"
 create_parameter root.Cutoff [20, 20000] default 1000 stepSize 1 skewFactor 0.3
+trace root inject dirac gain 0.25 before "gain" probe after "delay"
+trace root inject dirac probe recursive compact
+trace root inject param Root.Value 0.5 probe param add.Value probe param mul.Value
+trace root inject param Root.Value 0.5 probe changed_parameters
 ```
 
 ## Quoting
@@ -410,12 +488,13 @@ create_parameter root.Cutoff [20, 20000] default 1000 stepSize 1 skewFactor 0.3
 - Reserved word in identifier-start position (where it could be parsed as a verb or role keyword): quotes required. Both verb-keywords and role-keywords work quoted: `add Synth as "to"`, `add Synth as "as"`, `add Filter as "set"` — all create nodes named literally `to`, `as`, `set`.
 - Quoted identifier always wins over keyword recognition. `show "tree"` queries a node named `tree`, not the tree listing.
 - Quoted segments inside dotted paths bypass keyword recognition for that segment. After `add Synth as "to"`, the node is referenced via `set "to".bypassed 1` or `cd "to"` — the quoted segment is one identifier in the path.
+- `trace` forces quoted node IDs in boundary clauses (`before "gain"`, `after "delay"`) so they cannot be confused with trace keywords. Trace parameter paths stay dotted and normally unquoted (`probe param gain.Gain`).
 
 ## Comma chaining
 
 Only the verb inherits across commas. Every clause provides full arguments and full identifier paths. Each verb defines what its clause shape is (see BNF).
 
-Verbs that support chaining: `set`, `get`, `add`, `remove`, `connect`, `disconnect`. Other verbs are single-statement only.
+Verbs that support chaining: `set`, `get`, `add`, `remove`, `connect`, `disconnect`. `trace` is single-statement only; repeat trace clauses instead of using commas inside a trace.
 
 ```
 set Master.Volume -6, Master.Pan 0
@@ -431,9 +510,9 @@ remove A, B, C
 
 Verbs and role keywords are reserved across all modes. Using any of them as an identifier requires quoting.
 
-Verbs: `add`, `remove`, `rename`, `clone`, `set`, `get`, `save`, `show`, `cd`, `ls`, `pwd`, `reset`, `connect`, `disconnect`, `screenshot`, `create_parameter`.
+Verbs: `add`, `remove`, `rename`, `clone`, `set`, `get`, `save`, `show`, `cd`, `ls`, `pwd`, `reset`, `connect`, `disconnect`, `screenshot`, `trace`, `create_parameter`.
 
-Catalog nouns following `show` (mode-restricted): `tree`, `types`, `networks`, `modules`, `connections`. These are reserved as direct arguments to `show` only — they may still appear inside dotted paths after a quoted segment escape.
+Catalog nouns following `show` (mode-restricted): `tree`, `types`, `networks`, `modules`, `connections`, `status`. These are reserved as direct arguments to `show` only — they may still appear inside dotted paths after a quoted segment escape.
 
 Role keywords: `as`, `to`, `file`, `scale`, `matched`, `default`, `stepSize`, `middlePosition`, `skewFactor`.
 
@@ -494,7 +573,7 @@ CreateParameterStmt  := 'create_parameter' DottedPath Array2
 TypeRef              := Identifier ['.' Identifier]          ; 2-segment for DSP factory.node
 BuilderShowNoun      := 'types' | 'tree'
 UiShowNoun           := 'tree'
-DspShowNoun          := 'networks' | 'modules' | 'connections' | 'tree'
+DspShowNoun          := 'networks' | 'modules' | 'connections' | 'status' | 'tree'
 Filter               := QuotedString | BareWord
 
 PathExpr             := DottedPath | BarePath | '..'

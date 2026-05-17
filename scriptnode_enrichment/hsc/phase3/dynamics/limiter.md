@@ -9,7 +9,7 @@
 
 - Built in HISE: true
 - User approved: true
-- Notes: Built and validated in live HISE. The network demonstrates `dynamics.limiter` as a final peak-safety stage after a small SNEX expression shaper. `math.expr` requires a compile-enabled network; `dsp status --autofix` applies HISE's built-in fix for this runtime error.
+- Notes: Built and validated in live HISE. The network demonstrates `dynamics.limiter` as a final peak-safety stage after a small SNEX expression shaper. `math.expr` requires a compile-enabled network; current CLI builds apply HISE's built-in compile-flag fix automatically when the `Code` property is set.
 - Phase 2 deviation: changed the support node factory from `core.expr` to `math.expr`, because the current Scriptnode docs and live CLI expose the audio expression node as `math.expr`.
 
 ## Naming
@@ -21,7 +21,7 @@
 
 - Host context: `Script FX`
 - Additional builder steps applied:
-  - Ran `dsp status --autofix` after adding the SNEX expression node so HISE enabled the required network compilation flag.
+  - Setting `DriveShaper.Code` applies HISE's compile-flag fix automatically for the SNEX expression node.
 - Channel/routing setup verified:
   - Required channels: `default stereo`
   - Module routing: `default stereo`
@@ -51,12 +51,8 @@
 
 - Runtime status commands:
   - `hise-cli dsp status --module SafetyPeakLimiter --agent`
-  - `hise-cli dsp status --module SafetyPeakLimiter --autofix --agent`
-  - `hise-cli dsp status --module SafetyPeakLimiter --agent`
 - Runtime status evidence:
-  - Initial status failed with `DriveShaper - You need to compile networks with this node. Check the AllowCompilation flag in the network properties to remove the error.`
-  - Autofix status returned `success=true`, `ok=true`, `autofixRequested=true`, `autofixApplied=true`, and `fixedNodeId=DriveShaper`.
-  - Follow-up status returned `success=true`, `ok=true`, `autofixRequested=false`, and `autofixApplied=false`.
+  - After `DriveShaper.Code` was set, status returned `success=true`, `ok=true`, `autofixRequested=false`, and `autofixApplied=false`; the CLI Code setter applied the required compile-flag fix automatically.
 - Parameter trace commands:
   - `hise-cli dsp trace --module SafetyPeakLimiter --container safety_peak_limiter --inject silence --inject-param safety_peak_limiter.DriveAmount=0.75 --inject-param safety_peak_limiter.LimitThreshold=-6 --inject-param safety_peak_limiter.LimitRelease=150 --inject-param safety_peak_limiter.LimitRatio=32 --probe-param DriveShaper.Value --probe-param SafetyLimiter.Threshhold --probe-param SafetyLimiter.Release --probe-param SafetyLimiter.Ratio --trace-compact --agent`
 - Parameter trace evidence:
@@ -68,7 +64,7 @@
   - Noise trace: `DriveShaper` produced about `-1.2624..1.2623`, then `SafetyLimiter` reduced the traced output to about `-0.709..-0.7099` with threshold `-3`, attack `5`, release `90`, and ratio `20`.
   - Dirac trace: `DriveShaper` produced `1.5`, then `SafetyLimiter` reduced the traced output to `0.7122` with attack `5`.
 - Trace caveats:
-  - `math.expr` is structurally valid before the network compilation flag is enabled, but runtime status and trace require resolving the compile-enabled-network error first.
+  - `math.expr` requires a compile-enabled network; current CLI builds resolve that automatically when setting the node's `Code` property.
   - `SafetyLimiter.Attack` is deliberately fixed at `5 ms`; it is not exposed as a root parameter because attack changes alter lookahead latency and can click at runtime.
 
 ## Locked Build Values Applied
@@ -87,8 +83,6 @@ hise-cli builder set --module SafetyPeakLimiter --network safety_peak_limiter --
 
 hise-cli dsp add --module SafetyPeakLimiter --type math.expr --id DriveShaper --agent
 hise-cli dsp add --module SafetyPeakLimiter --type dynamics.limiter --id SafetyLimiter --agent
-hise-cli dsp status --module SafetyPeakLimiter --autofix --agent
-
 hise-cli dsp set --module SafetyPeakLimiter --node DriveShaper --param Code --value '"input + value * input * input * input"' --agent
 hise-cli dsp set --module SafetyPeakLimiter --node DriveShaper --param Value --range "0,0.75" --stepSize 0.01 --agent
 hise-cli dsp set --module SafetyPeakLimiter --node DriveShaper --param Value --value 0.5 --agent
@@ -126,8 +120,7 @@ hise-cli dsp screenshot --module SafetyPeakLimiter --scale 200% --output "script
 
 ## Comments To Preserve In HSC
 
-- Before `DriveShaper.Code`: lock the expression to `input + value * input * input * input` so the example stays on a simple cubic shaper that compiles cleanly in SNEX.
-- Before `dsp status --autofix`: run HISE's runtime autofix so the network compilation flag required by `math.expr` is enabled before tracing.
+- Before `DriveShaper.Code`: lock the expression to `input + value * input * input * input`; setting Code also applies the compile-flag fix required by `math.expr`.
 - Before `SafetyLimiter`: place the limiter last so it reads as a safety stage after the non-linear shaper.
 - Before `SafetyLimiter.Attack`: treat attack as a fixed lookahead/latency choice, not a performance macro, because changing it at runtime causes clicks.
 
