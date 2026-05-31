@@ -79,6 +79,22 @@ Sorted by priority (high first).
 - **Rationale:** Calling `loadWeights` without first calling `build` (or `loadPytorchModel` which calls build internally) silently fails because the EmptyModel returns `Result::fail("network is not initialised")`, but the scripting wrapper discards the Result. Even once the Result-ignoring bug is fixed, a parse-time check would catch this earlier.
 - **Sketch:** When `loadWeights` is called on a NeuralNetwork variable, check if `build` was previously called on the same variable. Emit a warning if not found. Note: `loadPytorchModel`, `loadTensorFlowModel`, and `loadNAMModel` load weights internally, so `loadWeights` after those is also suspicious (redundant for TF/NAM, valid only for Pytorch two-step).
 
+### NeuralNetwork.setQualityConfiguration -- requires compiled backend and known quality ID
+
+- **Category:** state-validation
+- **Priority:** medium
+- **Methods involved:** writeCompiledModelJSON, getNetworkInfo, setQualityConfiguration
+- **Rationale:** `setQualityConfiguration` only works on compiled neural networks and the string must match one of the registered quality IDs. Calling it on a dynamic or empty network, or with a typo, reports a runtime error. A parse-time check can catch literal quality IDs that are not declared in a nearby `writeCompiledModelJSON` quality object.
+- **Sketch:** When `setQualityConfiguration` is called with a string literal, compare it against quality keys from a previous `writeCompiledModelJSON` call on the same variable when available. If no compiled export or quality list is visible, emit a weaker warning that this method requires a compiled network.
+
+### NeuralNetwork.setNAMGainMode -- validate gain mode string literals
+
+- **Category:** value-check
+- **Priority:** medium
+- **Methods involved:** setNAMGainMode
+- **Rationale:** `setNAMGainMode` accepts only `"raw"`, `"normalized"`, and `"calibrated"` as mode values. Invalid strings report a runtime error, and object arguments can hide the string inside the `mode` property. A parse-time literal check would catch typos before model export or runtime switching.
+- **Sketch:** When `setNAMGainMode` is called with a string literal, validate it against {"raw", "normalized", "calibrated"}. When called with an object literal, validate the `mode` property if it is a string literal and warn if `inputCalibrationLevelDbu` is non-numeric.
+
 ### LorisManager -- analyse before synthesise/process/createEnvelopes/createEnvelopePaths/createSnapshot
 
 - **Category:** timeline-dependency

@@ -77,7 +77,7 @@ ScriptNeuralNetwork(ProcessorWithScriptingContent* p, const String& name):
 }
 ```
 
-All methods use `ADD_API_METHOD_N` (no typed variants). The `name` parameter becomes a unique ID in the `NeuralNetwork::Holder` registry on the `MainController`. Multiple script references to the same ID share the same underlying `NeuralNetwork` instance.
+All methods use `ADD_API_METHOD_N` (no typed variants). The current registered API includes the original model loading/inference methods plus `writeCompiledModelJSON`, `getNetworkState`, `getNetworkInfo`, `setQualityConfiguration`, and `setNAMGainMode`. The `name` parameter becomes a unique ID in the `NeuralNetwork::Holder` registry on the `MainController`. Multiple script references to the same ID share the same underlying `NeuralNetwork` instance.
 
 ## Factory / ObtainedVia
 
@@ -172,6 +172,63 @@ struct Factory
 ```
 
 The factory allows pre-compiled models to be registered. When `getOrCreate(id)` is called, if a registered model matches the ID, it's used instead of an EmptyModel. This is the deployment path: train in Python -> export to C++ via `CppBuilder` -> compile into plugin -> register with factory.
+
+### Compiled model JSON and quality configurations
+
+Recent RTNeural commits added a compiled model JSON workflow:
+
+```cpp
+bool ScriptNeuralNetwork::writeCompiledModelJSON(const var& qualityConfigurations)
+{
+    auto neuralFolder = dspFolder.getChildFile("NeuralNetworks");
+    auto r = nn->writeCompiledModelJSON(neuralFolder, qualityConfigurations);
+}
+```
+
+Core implementation path:
+
+```cpp
+Result NeuralNetwork::writeCompiledModelJSON(const File& targetDirectory, const var& qualityConfigurations) const
+{
+    if(compiledModelJSON.isVoid() || compiledModelJSON.isUndefined())
+        return Result::fail("The current neural network cannot be written as compiled model JSON");
+
+    auto dataToWrite = NeuralJsonHelpers::withQualityConfigurations(compiledModelJSON, qualityConfigurations, jsonResult);
+    auto text = JSON::toString(dataToWrite, false);
+    targetFile.replaceWithText(text);
+}
+```
+
+`NeuralJsonHelpers::validateQualityConfigurations` requires the argument to be an object unless empty. Each property name must be a valid `Identifier`. Each configuration can contain `sampleRateCorrection`; accepted values are `"none"` and `"linear"`. Empty object removes/omits custom quality configurations.
+
+Quality configurations also accept `mathProvider` with values `"default"` and `"fastMath"`. During static generation, `"fastMath"` maps to `hise::CompiledNeuralNetworkHelpers::FastMathsProvider`; `"default"` maps to RTNeural's default maths provider. The development diary and user performance report frame this as an opt-in speed variant: faster for some LSTM preamp use cases, but not strictly bit-exact to the default maths provider.
+
+Current compile-exportable dynamic loader paths are TensorFlow and NAM. `loadTensorFlowModel` stores `compiledModelJSON = NeuralJsonHelpers::createRTNeuralJSON(...)`. `loadNAMModel` stores `compiledModelJSON = NeuralJsonHelpers::createNAMJSON(...)`. `loadPytorchModel` currently clears `compiledModelJSON`, so PyTorch is dynamic-only for this export workflow until canonical compiled-model JSON emission is implemented.
+
+`DspNetworks/NeuralNetworks` is the compile-source folder. It is not an import folder and not a runtime asset folder. Supported compile inputs are HISE canonical compiled-model JSON files for RTNeural/NAM and raw `.nam` files for the supported plain WaveNet subset. Raw PyTorch and raw TensorFlow import files are not compile inputs.
+
+`setQualityConfiguration(String qualityId)` validates the ID, kills voices through `KillStateHandler::killVoicesAndCall`, then calls `NeuralNetwork::setQualityConfiguration` on the sample-loading thread. The core rejects empty and dynamic networks: quality configurations require a compiled model. It creates model clones from the factory for the requested quality ID, resets each clone, swaps them under `ScopedMultiWriteLock`, updates `activeQualityConfiguration`, and refreshes NAM metadata from the factory.
+
+`getQualityConfigurations()` returns factory quality IDs for compiled linked/DLL backends and falls back to `"default"` when none are registered. For dynamic/JSON-backed state it reads `hise.qualityConfigurations` from `compiledModelJSON`, also falling back to `"default"`.
+
+### Backend state and info object
+
+`getNetworkState()` returns `nn->getBackendStateName()`, which maps `Empty -> "empty"`, `Dynamic -> "dynamic"`, and both `CompiledLinked` / `CompiledDll -> "compiled"`.
+
+`getNetworkInfo()` constructs a `DynamicObject` with these properties:
+
+- `id`, `state`, `numInputs`, `numOutputs`, `numNetworks`
+- `hasCompiledModelJSON`, `activeQualityConfiguration`, `qualityConfigurations`
+- `backend`: `"compiled-linked"`, `"compiled-dll"`, `"dynamic"`, or `"empty"`
+- NAM gain fields: `namGainMode`, `namInputCalibrationLevelDbu`, `namInputGainDb`, `namOutputGainDb`
+- NAM metadata fields: `namIsModel`, `namHasLoudness`, `namLoudnessDb`, `namHasInputLevel`, `namInputLevelDbu`, `namHasOutputLevel`, `namOutputLevelDbu`
+- backend-only source fields: `source`, `sourceExists`; source probes `{id}.json`, then `{id}.nam` if JSON is missing
+
+### NAM gain mode metadata
+
+`setNAMGainMode(const var& modeOrOptions)` accepts either a mode string or an object. If the argument is an object, it reads `mode` and optional `inputCalibrationLevelDbu`. Valid mode strings are `"raw"`, `"normalized"`, and `"calibrated"`; invalid values return `Result::fail("Unsupported NAM gain mode: ...")`.
+
+The core stores `namGainMode`, `namInputCalibrationLevelDbu`, marks the preferred mode in `namMetadata`, and calls `updateNAMGainMetadataInCompiledJSON()`. `getNAMOutputGainDb()` returns 0 for non-NAM models, 0 for raw mode, `-18.0f - namMetadata.loudnessDb` for normalized mode when loudness metadata exists, and `namMetadata.outputLevelDbu - namInputCalibrationLevelDbu` for calibrated mode when output-level metadata exists. `getNAMInputGainDb()` currently returns 0.0.
 
 ### CppBuilder
 

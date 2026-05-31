@@ -52,6 +52,18 @@
       "description": "Returns the model JSON.",
       "parameters": []
     },
+    "getNetworkInfo": {
+      "signature": "var getNetworkInfo()",
+      "returnType": "var",
+      "description": "Returns diagnostic information about the neural backend.",
+      "parameters": []
+    },
+    "getNetworkState": {
+      "signature": "String getNetworkState()",
+      "returnType": "String",
+      "description": "Returns the active neural backend state.",
+      "parameters": []
+    },
     "loadNAMModel": {
       "signature": "void loadNAMModel(var modelJSON)",
       "returnType": "void",
@@ -146,6 +158,39 @@
       "returnType": "void",
       "description": "Resets the network pipeline.",
       "parameters": []
+    },
+    "setNAMGainMode": {
+      "signature": "bool setNAMGainMode(var modeOrOptions)",
+      "returnType": "bool",
+      "description": "Sets NAM output gain compensation. Pass a mode string or an object with mode and inputCalibrationLevelDbu.",
+      "parameters": [
+        {
+          "name": "modeOrOptions",
+          "type": "var"
+        }
+      ]
+    },
+    "setQualityConfiguration": {
+      "signature": "bool setQualityConfiguration(String qualityId)",
+      "returnType": "bool",
+      "description": "Swaps to a compiled quality configuration and resets the model.",
+      "parameters": [
+        {
+          "name": "qualityId",
+          "type": "String"
+        }
+      ]
+    },
+    "writeCompiledModelJSON": {
+      "signature": "bool writeCompiledModelJSON(var qualityConfigurations)",
+      "returnType": "bool",
+      "description": "Writes the current model as canonical JSON for compiled neural export.",
+      "parameters": [
+        {
+          "name": "qualityConfigurations",
+          "type": "var"
+        }
+      ]
     }
   }
 }

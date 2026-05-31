@@ -149,6 +149,145 @@ Returns the JSON layer description of the currently loaded model. Only works wit
 - `$API.NeuralNetwork.build$`
 - `$API.NeuralNetwork.loadTensorFlowModel$`
 
+## getNetworkInfo
+
+**Signature:** `JSON getNetworkInfo()`
+**Return Type:** `JSON`
+**Call Scope:** unsafe
+**Call Scope Note:** Constructs a DynamicObject and Array on the heap, queries compiled backend metadata, and may construct backend-only File paths.
+**Minimal Example:** `var info = {obj}.getNetworkInfo();`
+
+**Description:**
+Returns a diagnostic object describing the active neural backend, model dimensions, compiled model status, quality configurations, and NAM gain metadata. Requires `HISE_INCLUDE_RT_NEURAL`. In backend builds, the object also includes the expected source path and whether the `.json` or `.nam` source file exists.
+
+**Parameters:**
+
+(No parameters.)
+
+**Callback Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| id | String | Neural network ID passed to `Engine.createNeuralNetwork` |
+| state | String | Coarse backend state: `"empty"`, `"dynamic"`, or `"compiled"` |
+| backend | String | Backend subtype: `"empty"`, `"dynamic"`, `"compiled-linked"`, or `"compiled-dll"` |
+| numInputs | Integer | Number of model input values |
+| numOutputs | Integer | Number of model output values |
+| numNetworks | Integer | Number of cloned internal model instances |
+| hasCompiledModelJSON | Integer | 1 if canonical compiled model JSON is available on the current network |
+| activeQualityConfiguration | String | Currently active quality ID, usually `"default"` when no custom quality is selected |
+| qualityConfigurations | Array | Available compiled quality IDs, or `["default"]` when no quality metadata is declared |
+| namGainMode | String | Active NAM gain mode: `"raw"`, `"normalized"`, or `"calibrated"` |
+| namInputCalibrationLevelDbu | Double | Input calibration level used by calibrated NAM gain compensation |
+| namInputGainDb | Double | Calculated NAM input gain in dB. Currently 0.0 |
+| namOutputGainDb | Double | Calculated NAM output gain in dB after the active compensation mode |
+| namIsModel | Integer | 1 if the active model metadata identifies a NAM model |
+| namHasLoudness | Integer | 1 if NAM loudness metadata is available |
+| namLoudnessDb | Double | NAM loudness metadata in dB |
+| namHasInputLevel | Integer | 1 if NAM input-level metadata is available |
+| namInputLevelDbu | Double | NAM input-level metadata in dBu |
+| namHasOutputLevel | Integer | 1 if NAM output-level metadata is available |
+| namOutputLevelDbu | Double | NAM output-level metadata in dBu |
+| source | String | Backend-only path to `DspNetworks/NeuralNetworks/{id}.json` or `{id}.nam` |
+| sourceExists | Integer | Backend-only flag indicating whether the source file exists |
+
+**Cross References:**
+- `$API.NeuralNetwork.getNetworkState$`
+- `$API.NeuralNetwork.writeCompiledModelJSON$`
+- `$API.NeuralNetwork.setQualityConfiguration$`
+- `$API.NeuralNetwork.setNAMGainMode$`
+
+**Example:**
+```javascript:get-network-info-schema
+// Title: Inspect neural backend and NAM gain metadata
+const var nn = Engine.createNeuralNetwork("MyNAM");
+
+const var info = nn.getNetworkInfo();
+
+/*
+info = {
+    "id": "MyNAM",
+    "state": "compiled",
+    "backend": "compiled-linked",
+    "numInputs": 1,
+    "numOutputs": 1,
+    "numNetworks": 1,
+    "hasCompiledModelJSON": true,
+    "activeQualityConfiguration": "high",
+    "qualityConfigurations": ["low", "high"],
+
+    "namGainMode": "calibrated",
+    "namInputCalibrationLevelDbu": -12.0,
+    "namInputGainDb": 0.0,
+    "namOutputGainDb": -3.5,
+
+    "namIsModel": true,
+    "namHasLoudness": true,
+    "namLoudnessDb": -14.5,
+    "namHasInputLevel": true,
+    "namInputLevelDbu": -12.0,
+    "namHasOutputLevel": true,
+    "namOutputLevelDbu": -15.5,
+
+    "source": "/path/to/DspNetworks/NeuralNetworks/MyNAM.nam",
+    "sourceExists": true
+};
+*/
+
+Console.print("Backend: " + info.backend);
+Console.print("NAM gain mode: " + info.namGainMode);
+```
+
+```json:testMetadata:get-network-info-schema
+{
+  "testable": false,
+  "skipReason": "Requires HISE_INCLUDE_RT_NEURAL build flag and compiled/NAM model metadata for meaningful output"
+}
+```
+
+## getNetworkState
+
+**Signature:** `String getNetworkState()`
+**Return Type:** `String`
+**Call Scope:** warning
+**Call Scope Note:** Returns a String, which involves atomic ref-count operations.
+**Minimal Example:** `var state = {obj}.getNetworkState();`
+
+**Description:**
+Returns the active neural backend state as a coarse string. Possible values are `"empty"`, `"dynamic"`, and `"compiled"`. The two compiled backend implementations (`CompiledLinked` and `CompiledDll`) both return `"compiled"`; use `getNetworkInfo` when you need the exact backend subtype. There is intentionally no `"file-based"` state: files in `DspNetworks/NeuralNetworks` are compile inputs, not runtime assets.
+
+**Parameters:**
+
+(No parameters.)
+
+**Value Descriptions:**
+
+| Value | Description |
+|-------|-------------|
+| `"empty"` | No dynamic or compiled model is active. |
+| `"dynamic"` | A runtime-loaded model is active. |
+| `"compiled"` | A compiled linked or DLL-backed model is active. |
+
+**Cross References:**
+- `$API.NeuralNetwork.getNetworkInfo$`
+- `$API.NeuralNetwork.setQualityConfiguration$`
+
+**Example:**
+```javascript:get-network-state
+// Title: Check whether the compiled backend is active
+const var nn = Engine.createNeuralNetwork("MyNAM");
+
+if (nn.getNetworkState() == "compiled")
+    Console.print("Using compiled neural backend");
+```
+
+```json:testMetadata:get-network-state
+{
+  "testable": false,
+  "skipReason": "Requires HISE_INCLUDE_RT_NEURAL build flag and backend state setup"
+}
+```
+
 ## loadNAMModel
 
 **Signature:** `undefined loadNAMModel(JSON modelJSON)`
@@ -393,3 +532,180 @@ Resets the internal state of the neural network model. For DynamicModel and Tens
 **Cross References:**
 - `$API.NeuralNetwork.loadWeights$`
 - `$API.NeuralNetwork.process$`
+
+## setNAMGainMode
+
+**Signature:** `Integer setNAMGainMode(JSON modeOrOptions)`
+**Return Type:** `Integer`
+**Call Scope:** unsafe
+**Call Scope Note:** Kills voices and executes on the sample-loading thread before mutating NAM gain metadata and compiled JSON.
+**Minimal Example:** `{obj}.setNAMGainMode({"mode": "calibrated", "inputCalibrationLevelDbu": -12.0});`
+
+**Description:**
+Sets NAM output gain compensation. Pass either a mode string (`"raw"`, `"normalized"`, or `"calibrated"`) or an object with `mode` and optional `inputCalibrationLevelDbu`. The method stores the preferred gain mode in the network metadata, updates the compiled model JSON if present, and returns 1 on success. Requires `HISE_INCLUDE_RT_NEURAL`.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| modeOrOptions | JSON | no | Mode string or options object for NAM gain compensation | String: `"raw"`, `"normalized"`, `"calibrated"`; Object keys: `mode`, `inputCalibrationLevelDbu` |
+
+**Callback Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| mode | String | NAM gain mode: `"raw"`, `"normalized"`, or `"calibrated"` |
+| inputCalibrationLevelDbu | Double | Calibration reference level used by calibrated mode. Optional; defaults to the previous calibration value |
+
+**Value Descriptions:**
+
+| Value | Description |
+|-------|-------------|
+| `"raw"` | Applies no NAM gain compensation. Model output is used as-is. |
+| `"normalized"` | Uses NAM loudness metadata, when available, to target -18 dB output loudness. |
+| `"calibrated"` | Uses NAM output-level metadata, when available, relative to `inputCalibrationLevelDbu`. |
+
+**Pitfalls:**
+- Calibrated mode only changes output gain when NAM output-level metadata exists. Check `getNetworkInfo().namHasOutputLevel` before relying on it.
+- Normalized mode only changes output gain when NAM loudness metadata exists. Check `getNetworkInfo().namHasLoudness` before relying on it.
+
+**Cross References:**
+- `$API.NeuralNetwork.loadNAMModel$`
+- `$API.NeuralNetwork.getNetworkInfo$`
+
+**Example:**
+```javascript:set-nam-gain-mode-calibrated
+// Title: Set NAM gain compensation with full options object
+const var nn = Engine.createNeuralNetwork("MyNAM");
+
+const var gainOptions = {
+    "mode": "calibrated",
+    "inputCalibrationLevelDbu": -12.0
+};
+
+nn.setNAMGainMode(gainOptions);
+```
+
+```json:testMetadata:set-nam-gain-mode-calibrated
+{
+  "testable": false,
+  "skipReason": "Requires HISE_INCLUDE_RT_NEURAL build flag and NAM model metadata"
+}
+```
+
+## setQualityConfiguration
+
+**Signature:** `Integer setQualityConfiguration(String qualityId)`
+**Return Type:** `Integer`
+**Call Scope:** unsafe
+**Call Scope Note:** Validates Identifier, kills voices, runs on the sample-loading thread, allocates compiled model clones, resets them, and swaps model arrays under ScopedMultiWriteLock.
+**Minimal Example:** `{obj}.setQualityConfiguration("high");`
+
+**Description:**
+Switches a compiled neural network to a named quality configuration and resets the model. The quality ID must be a valid HISE identifier and must exist in the compiled model factory for this network. Returns 1 on success and reports a script error if the network is empty, dynamic, or the quality ID is unknown. Requires `HISE_INCLUDE_RT_NEURAL`.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| qualityId | String | no | Quality configuration ID to activate | Must be a valid Identifier and listed in `getNetworkInfo().qualityConfigurations` |
+
+**Pitfalls:**
+- This only applies to compiled models. Calling it on an empty or dynamic network reports a script error.
+- Unknown quality IDs fail and report the available configurations.
+- The method kills active voices before switching. Do not call it from a high-frequency path.
+
+**Cross References:**
+- `$API.NeuralNetwork.writeCompiledModelJSON$`
+- `$API.NeuralNetwork.getNetworkInfo$`
+- `$API.NeuralNetwork.getNetworkState$`
+
+**Example:**
+```javascript:set-quality-configuration
+// Title: Safely switch to an exported quality configuration
+const var nn = Engine.createNeuralNetwork("MyNAM");
+
+const var info = nn.getNetworkInfo();
+
+if (info.qualityConfigurations.contains("high"))
+    nn.setQualityConfiguration("high");
+```
+
+```json:testMetadata:set-quality-configuration
+{
+  "testable": false,
+  "skipReason": "Requires HISE_INCLUDE_RT_NEURAL build flag and registered compiled quality configurations"
+}
+```
+
+## writeCompiledModelJSON
+
+**Signature:** `Integer writeCompiledModelJSON(JSON qualityConfigurations)`
+**Return Type:** `Integer`
+**Call Scope:** unsafe
+**Call Scope Note:** Backend-only file system access, directory creation, JSON serialization, and file write.
+**Minimal Example:** `{obj}.writeCompiledModelJSON({"high": {"sampleRateCorrection": "none"}});`
+
+**Description:**
+Writes the current TensorFlow or NAM model as canonical compiled neural JSON to the project's `DspNetworks/NeuralNetworks` folder. The optional `qualityConfigurations` object is written into the HISE metadata section and later controls available compiled quality IDs. Passing `{}` omits `hise.qualityConfigurations` and creates one implicit default variant during generation. Returns 1 on success, reports a script error on validation or file I/O failure, and is only available in the HISE backend. Requires `HISE_INCLUDE_RT_NEURAL`.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| qualityConfigurations | JSON | no | Object keyed by quality ID, or `{}` to write no custom quality configurations | Each key must be a valid Identifier; `mathProvider` must be `"default"` or `"fastMath"`; `sampleRateCorrection` must be `"none"` or `"linear"` |
+
+**Callback Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| qualityId | JSON | Replace `qualityId` with each quality configuration name, eg. `"low"` or `"high"` |
+| mathProvider | String | Optional maths provider: `"default"` for bit-exact standard maths or `"fastMath"` for a speed-oriented generated variant |
+| sampleRateCorrection | String | Optional correction mode for that quality: `"none"` or `"linear"` |
+
+**Value Descriptions:**
+
+| Value | Description |
+|-------|-------------|
+| `"default"` | Uses RTNeural's default maths provider. |
+| `"fastMath"` | Uses HISE's fast maths provider for generated compiled variants. Faster, but not strictly bit-exact to the default provider. |
+| `"none"` | No sample-rate correction metadata is requested for this quality. |
+| `"linear"` | Requests linear sample-rate correction metadata for this quality. |
+
+**Pitfalls:**
+- This method is backend-only. In an exported plugin or frontend build, it reports `writeCompiledModelJSON() is only available in the HISE backend` and returns 0.
+- It can only write models that have compiled model JSON available. TensorFlow and NAM loaders currently provide this; the PyTorch loader currently does not.
+- `DspNetworks/NeuralNetworks` is a compile-source folder, not a runtime asset folder.
+
+**Cross References:**
+- `$API.NeuralNetwork.setQualityConfiguration$`
+- `$API.NeuralNetwork.getNetworkInfo$`
+
+**Example:**
+```javascript:write-compiled-model-json-quality-configurations
+// Title: Export compiled neural JSON with quality configurations
+const var nn = Engine.createNeuralNetwork("MyNAM");
+
+const var qualityConfigurations = {
+    "hi": {
+        "mathProvider": "default",
+        "sampleRateCorrection": "linear"
+    },
+    "low": {
+        "mathProvider": "fastMath",
+        "sampleRateCorrection": "none"
+    }
+};
+
+nn.writeCompiledModelJSON(qualityConfigurations);
+
+// Pass an empty object to write the compiled JSON without custom quality IDs.
+// nn.writeCompiledModelJSON({});
+```
+
+```json:testMetadata:write-compiled-model-json-quality-configurations
+{
+  "testable": false,
+  "skipReason": "Requires HISE backend, HISE_INCLUDE_RT_NEURAL build flag, and compiled model JSON source data"
+}
+```

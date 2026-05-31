@@ -1998,6 +1998,8 @@ NeuralNetwork.clearModel
 NeuralNetwork.connectToGlobalCables
 NeuralNetwork.createModelJSONFromTextFile
 NeuralNetwork.getModelJSON
+NeuralNetwork.getNetworkInfo
+NeuralNetwork.getNetworkState
 NeuralNetwork.loadNAMModel
 NeuralNetwork.loadOnnxModel
 NeuralNetwork.loadPytorchModel
@@ -2006,6 +2008,9 @@ NeuralNetwork.loadWeights
 NeuralNetwork.process
 NeuralNetwork.processFFTSpectrum
 NeuralNetwork.reset
+NeuralNetwork.setNAMGainMode
+NeuralNetwork.setQualityConfiguration
+NeuralNetwork.writeCompiledModelJSON
 
 WavetableController.getResynthesisOptions
 WavetableController.loadData
