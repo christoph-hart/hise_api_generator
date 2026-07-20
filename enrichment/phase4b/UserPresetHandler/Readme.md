@@ -18,10 +18,13 @@ Complexity tiers:
      getAutomationIndex, updateAutomationValues, createObjectForAutomationValues,
      createObjectForSaveInPresetComponents, updateSaveInPresetComponents. Full
      control over preset serialization with DAW-visible automation slots.
-  4. Host integration polish: + setParameterGestureCallback,
-     sendParameterGesture, setPluginParameterGroupNames,
-     setPluginParameterSortFunction, setUseUndoForPresetLoading. Parameter
-     gesture tracking, grouping, sort order, and undo support.
+   4. Host integration polish: + setParameterGestureCallback,
+      sendParameterGesture, setPluginParameterGroupNames,
+      setPluginParameterSortFunction, setUseUndoForPresetLoading. Parameter
+      gesture tracking, grouping, sort order, and undo support.
+   5. Persistence routing: + setStateManagerProperties,
+      getStateManagersForTarget. Place MIDI, MPE, and macro state in user
+      presets, DAW plugin state, or one external XML file.
 
 Practical defaults:
   - Use setPostCallback as the first entry point for preset-aware logic. It runs
@@ -35,8 +38,12 @@ Practical defaults:
     data model is a prerequisite.
   - Set allowHostAutomation: false on internal/per-layer automation slots.
     Reserve allowHostAutomation: true for user-facing parameters.
-  - Pass a Broadcaster to setPostCallback/setPreCallback when multiple systems
-    need to react to preset changes independently.
+   - Pass a Broadcaster to setPostCallback/setPreCallback when multiple systems
+     need to react to preset changes independently.
+   - Call setStateManagerProperties once during initialization with a static
+     object. Omit ExternalFile in production to use the product app-data folder.
+   - Use getStateManagersForTarget only as a development-time configuration
+     check; results include internal and dynamically registered managers.
 
 Common mistakes:
   - Calling setCustomAutomation without enabling the custom data model first --
@@ -48,8 +55,10 @@ Common mistakes:
     throws a script error. Always wrap in an array.
   - Setting allowHostAutomation: true on every slot in a large instrument --
     creates an unusable DAW automation list.
-  - Passing non-function callbacks to setUseCustomUserPresetModel -- silently
-    does nothing, then setCustomAutomation fails with a confusing error.
+   - Passing non-function callbacks to setUseCustomUserPresetModel -- silently
+     does nothing, then setCustomAutomation fails with a confusing error.
+   - Shipping a desktop ExternalFile path -- not portable or appropriate for an
+     installed product. The default app-data path is the production choice.
 
 Example:
   const var uph = Engine.createUserPresetHandler();
@@ -66,17 +75,18 @@ Example:
       Console.print("Loaded: " + presetFile.toString(""));
   });
 
-Methods (26):
+Methods (28):
   attachAutomationCallback             clearAttachedCallbacks
   createObjectForAutomationValues      createObjectForSaveInPresetComponents
   getAutomationIndex                   getSecondsSinceLastPresetLoad
-  isCurrentlyLoadingPreset             isInternalPresetLoad
-  isOldVersion                         resetToDefaultUserPreset
-  runTest                              sendParameterGesture
-  setAutomationValue                   setCustomAutomation
-  setEnableUserPresetPreprocessing     setParameterGestureCallback
-  setPluginParameterGroupNames         setPluginParameterSortFunction
-  setPostCallback                      setPostSaveCallback
-  setPreCallback                       setUseCustomUserPresetModel
+  getStateManagersForTarget            isCurrentlyLoadingPreset
+  isInternalPresetLoad                 isOldVersion
+  resetToDefaultUserPreset             runTest
+  sendParameterGesture                 setAutomationValue
+  setCustomAutomation                  setEnableUserPresetPreprocessing
+  setParameterGestureCallback          setPluginParameterGroupNames
+  setPluginParameterSortFunction       setPostCallback
+  setPostSaveCallback                  setPreCallback
+  setStateManagerProperties            setUseCustomUserPresetModel
   setUseUndoForPresetLoading           updateAutomationValues
   updateConnectedComponentsFromModuleState  updateSaveInPresetComponents

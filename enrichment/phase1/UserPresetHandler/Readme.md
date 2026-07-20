@@ -134,7 +134,7 @@ Both integrate with `Engine.undo()`.
 
 ### State Manager Composition
 
-Presets are composed of independently managed state segments:
+Presets are composed of independently managed state segments. `setStateManagerProperties` can move MIDI, MPE, and macro state between user presets, DAW plugin state, and an external XML file without changing the other segments.
 
 | State ID | Manager | Content |
 |----------|---------|---------|
@@ -142,8 +142,21 @@ Presets are composed of independently managed state segments:
 | CustomJSON | CustomStateManager | Custom data model JSON |
 | Modules | ModuleStateManager | Module parameter states |
 | MidiAutomation | MidiControllerAutomationHandler | MIDI CC mappings |
-| MPEData | (built-in) | MPE configuration |
+| MPEData | MidiControllerAutomationHandler::MPEData | MPE configuration |
+| macro_controls | MacroControlBroadcaster::MacroPresetManager | Macro connections and values |
 | AdditionalStates | (custom) | Any user-registered state managers |
+
+The configurable target values are:
+
+| Target | Behaviour |
+|--------|-----------|
+| Default | Save and restore through both user presets and DAW plugin state |
+| PluginState | Keep per-instance state in the DAW session without changing it during preset browsing |
+| UserPreset | Treat the state as patch data without storing it in the DAW state |
+| External | Automatically load and save through one external XML file |
+| None | Exclude the state from automatic persistence |
+
+This covers the common persistence policies without compile-time preprocessors: existing HISE behaviour (`Default`), per-instance controller mappings (`PluginState`), globally shared mappings (`External`), patch-specific mappings (`UserPreset`), and script-owned state (`None`). `External` cannot be combined with a preset target.
 
 ## obtainedVia
 `Engine.createUserPresetHandler()` -- creates and returns a new UserPresetHandler instance.
@@ -163,6 +176,7 @@ uph
 |-------|-------|-------------|
 | `uph.setCustomAutomation(data)` without custom model | `uph.setUseCustomUserPresetModel(load, save, false); uph.setCustomAutomation(data);` | Custom automation requires the custom data model to be enabled first; calling setCustomAutomation without it throws a script error. |
 | `uph.isInternalPresetLoad()` outside callbacks | `uph.setPreCallback(function(f){ if(uph.isInternalPresetLoad()) ... })` | isInternalPresetLoad only returns meaningful results during pre/post callbacks; outside those callbacks the flag is undefined. |
+| Using a desktop path for production external state | Omit `ExternalFile` or use an app-data path | Desktop paths are useful for inspecting XML during development but are not suitable for installed products. |
 
 ## codeExample
 ```javascript

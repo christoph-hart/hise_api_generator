@@ -95,6 +95,25 @@
       "description": "This checks if there is a key file and applies it.",
       "parameters": []
     },
+    "performMoonbaseOp": {
+      "signature": "void performMoonbaseOp(int opType, var args, var callback)",
+      "returnType": "void",
+      "description": "Performs a Moonbase licensing op.",
+      "parameters": [
+        {
+          "name": "opType",
+          "type": "int"
+        },
+        {
+          "name": "args",
+          "type": "var"
+        },
+        {
+          "name": "callback",
+          "type": "var"
+        }
+      ]
+    },
     "setProductCheckFunction": {
       "signature": "void setProductCheckFunction(var f)",
       "returnType": "void",

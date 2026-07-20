@@ -23,7 +23,7 @@ For basic popup customisation, pair `setControllerNumbersInPopup()` with `setCon
 
 For advanced use cases, `getAutomationDataObject()` and `setAutomationDataFromObject()` provide a round-trip interface: read the current mappings as an array of JSON objects, modify entries, and write them back. This supports batch operations, undo/redo integration, and fully custom automation UIs.
 
-> [!Tip:Automation data saved with user presets] Automation data is saved and restored automatically as part of user presets. You only need this class if you want to customise the popup appearance, monitor changes, or manage mappings from script code.
+> [!Tip:Choose where automation mappings persist] By default, automation data is saved in both user presets and the DAW plugin state. Use [UserPresetHandler.setStateManagerProperties()]($API.UserPresetHandler.setStateManagerProperties$) to keep mappings per DAW instance, move them to a shared external file, or exclude them from automatic persistence.
 >
 > [!Tip:Automated CCs consumed before onController] By default, CC messages that match an automation entry are consumed before reaching `onController`. Call `setConsumeAutomatedControllers(false)` if you need automated CCs to pass through to script callbacks as well.
 

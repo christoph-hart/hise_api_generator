@@ -23,8 +23,11 @@ Practical defaults:
     CC messages to also reach onController callbacks.
   - Forward update callback data to a Broadcaster rather than handling it inline.
     Decouples the automation system from UI code and lets multiple listeners react.
-  - Always pair setControllerNumbersInPopup() with setControllerNumberNames() so
-    users see readable labels instead of raw CC numbers.
+   - Always pair setControllerNumbersInPopup() with setControllerNumberNames() so
+     users see readable labels instead of raw CC numbers.
+   - Use UserPresetHandler.setStateManagerProperties() to choose whether mappings
+     follow user presets, DAW plugin instances, or a shared external XML file.
+     ExternalFileDefault.MidiAutomation accepts this handler's callback array.
 
 Common mistakes:
   - Passing a non-function value to setUpdateCallback to "clear" it -- silently

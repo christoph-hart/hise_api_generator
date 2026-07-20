@@ -172,6 +172,56 @@ Returns the number of seconds elapsed since the last user preset was loaded. The
 - `$API.UserPresetHandler.setPreCallback$`
 - `$API.UserPresetHandler.setPostCallback$`
 
+## getStateManagersForTarget
+
+**Signature:** `Array getStateManagersForTarget(String targetId)`
+**Return Type:** `Array`
+**Call Scope:** init
+**Call Scope Note:** Allocates and returns a new array by iterating the registered state managers. Intended for development-time configuration checks.
+**Minimal Example:** `Console.print(trace({obj}.getStateManagersForTarget("External")));`
+
+**Description:**
+Returns the string IDs of all currently registered state managers that save and restore through the requested concrete target. Use this after `setStateManagerProperties` during development to inspect the effective setup. The result can contain internal and dynamically registered managers in addition to the configurable `MidiAutomation`, `MPEData`, and `macro_controls` entries, so do not depend on an exact array length or order.
+
+The supported query values are the case-sensitive strings `"PluginState"`, `"UserPreset"`, and `"External"`. An unknown string returns an empty array. A manager using `Default` appears in both the `PluginState` and `UserPreset` queries because `Default` combines those targets.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| targetId | String | yes | Concrete persistence target to inspect. | `"PluginState"`, `"UserPreset"`, or `"External"`; case-sensitive |
+
+**Returns:** Array of registered state-manager ID strings matching the target.
+
+**Cross References:**
+- `$API.UserPresetHandler.setStateManagerProperties$`
+- `$API.MidiAutomationHandler.getAutomationDataObject$`
+- `$API.MacroHandler.getMacroDataObject$`
+
+**Example:**
+```javascript:state-manager-target-query
+// Title: Inspecting state-manager targets during development
+const var uph = Engine.createUserPresetHandler();
+
+uph.setStateManagerProperties({
+    SubStates:
+    {
+        MidiAutomation: "External",
+        MPEData: "PluginState"
+    }
+});
+
+Console.print(trace(uph.getStateManagersForTarget("External")));
+Console.print(trace(uph.getStateManagersForTarget("UserPreset")));
+Console.print(trace(uph.getStateManagersForTarget("PluginState")));
+```
+```json:testMetadata:state-manager-target-query
+{
+  "testable": false,
+  "skipReason": "Development-time diagnostic output depends on the state managers registered by the current project."
+}
+```
+
 ## isCurrentlyLoadingPreset
 
 **Signature:** `Integer isCurrentlyLoadingPreset()`
@@ -792,6 +842,117 @@ uph.setPreCallback(function(presetData)
 {
   "testable": false,
   "skipReason": "Requires a preset load with an actual preset file containing version data to trigger the pre-callback."
+}
+```
+
+## setStateManagerProperties
+
+**Signature:** `undefined setStateManagerProperties(var obj)`
+**Return Type:** `undefined`
+**Call Scope:** init
+**Call Scope Note:** Performs file I/O, restores state managers, and may dispatch MIDI, MPE, or macro updates. Call once from initialisation with a static object.
+**Minimal Example:** `{obj}.setStateManagerProperties({"SubStates": {"MidiAutomation": "PluginState"}});`
+
+**Description:**
+Configures where MIDI CC assignments, MPE configuration, and macro connections are saved and restored. This separates state that belongs to a sound preset from per-instance DAW state or shared instrument-wide state. It provides the runtime equivalent of independently enabling user-preset and plugin-state persistence, while also adding automatic external-file persistence.
+
+Every registered manager starts with `Default`, which stores it in both user presets and DAW plugin state. Only `MidiAutomation`, `MPEData`, and `macro_controls` can be overridden through `SubStates`; other managers retain `Default`.
+
+**Configuration Properties:**
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| SubStates | Object | `{}` | Maps supported state IDs to a target string or array of target strings |
+| ExternalFile | String | App-data `ExternalPresetData.xml` | Absolute path of the external XML persistence file |
+| ExternalFileDefault | Object | undefined | JSON defaults used only when the external XML file is missing or cannot be parsed |
+
+**Supported SubStates:**
+
+| State ID | Content |
+|----------|---------|
+| MidiAutomation | MIDI CC-to-parameter assignments |
+| MPEData | MPE mode and modulator connections |
+| macro_controls | Macro-to-parameter connections and macro values |
+
+**Target Values:**
+
+| Target | Behaviour |
+|--------|-----------|
+| `"Default"` | Store in both user presets and DAW plugin state |
+| `"PluginState"` | Store per plugin instance in the DAW session; preset browsing does not overwrite it |
+| `"UserPreset"` | Store as patch data in user presets, but not in DAW plugin state |
+| `"External"` | Load and automatically save through the external XML file |
+| `"None"` | Exclude from automatic persistence |
+
+A target can be a string or an array. `["PluginState", "UserPreset"]` is equivalent to `"Default"`. `"External"` cannot be combined with `"PluginState"`, `"UserPreset"`, or `"Default"`. Unknown state IDs or target names report a script error.
+
+When `ExternalFile` is omitted, the recommended production location is used automatically: `ExternalPresetData.xml` in the product's app-data directory. A custom desktop path is useful for inspecting the generated XML during development, but should not be shipped in a real project.
+
+If a valid external XML file exists, it always takes precedence over `ExternalFileDefault`. Otherwise the default object initialises only managers configured as `External`, then the XML file is created. `ExternalFileDefault.MidiAutomation` accepts the exact array returned to `MidiAutomationHandler.setUpdateCallback` and by `getAutomationDataObject`. `ExternalFileDefault.macro_controls` accepts the array returned by `MacroHandler.getMacroDataObject` and its update callback.
+
+Each `MidiAutomation` element contains `Controller`, `Channel`, `Processor`, `Attribute`, `MacroIndex`, `Start`, `End`, `FullStart`, `FullEnd`, `Skew`, `Interval`, `Inverted`, and `Converter`. Each `macro_controls` element contains `MacroIndex`, `Processor`, `Attribute`, `CustomAutomation`, `Start`, `End`, `FullStart`, `FullEnd`, `Skew`, `Interval`, and `Inverted`, with an optional `converter` used during restoration.
+
+Multiple plugin instances using the same path share the file but are not live-synchronised. Each instance reads during initialisation and writes its complete external state after a relevant change; the latest write wins.
+
+**Parameters:**
+
+| Name | Type | Forced | Description | Constraints |
+|------|------|--------|-------------|-------------|
+| obj | Object | yes | Static persistence configuration. | Call once during initialisation |
+
+**Cross References:**
+- `$API.UserPresetHandler.getStateManagersForTarget$`
+- `$API.MidiAutomationHandler.getAutomationDataObject$`
+- `$API.MidiAutomationHandler.setUpdateCallback$`
+- `$API.MacroHandler.getMacroDataObject$`
+- `$API.MacroHandler.setUpdateCallback$`
+
+**Example:**
+```javascript:state-manager-persistence
+// Title: Keeping MIDI mappings external and MPE state per instance
+const var uph = Engine.createUserPresetHandler();
+
+uph.setStateManagerProperties({
+    SubStates:
+    {
+        MidiAutomation: "External",
+        MPEData: "PluginState"
+    }
+});
+```
+```json:testMetadata:state-manager-persistence
+{
+  "testable": false,
+  "skipReason": "Creates and restores persistent files in the product app-data directory."
+}
+```
+
+**Development Inspection Example:**
+```javascript:state-manager-development-path
+// Use a desktop file only while developing and inspecting the generated XML.
+// Omit ExternalFile in production to use the product app-data directory.
+const var uph = Engine.createUserPresetHandler();
+const var EXTERNAL_FILE = FileSystem.getFolder(FileSystem.Desktop)
+                                    .getChildFile("Mappings.xml")
+                                    .toString(0);
+
+uph.setStateManagerProperties({
+    SubStates:
+    {
+        MidiAutomation: "External",
+        MPEData: "PluginState"
+    },
+    ExternalFile: EXTERNAL_FILE
+});
+
+Console.print(trace(uph.getStateManagersForTarget("External")));
+Console.print(trace(uph.getStateManagersForTarget("UserPreset")));
+Console.print(trace(uph.getStateManagersForTarget("PluginState")));
+```
+```json:testMetadata:state-manager-development-path
+{
+  "testable": false,
+  "skipReason": "Development-only example writes an XML file to the desktop and prints project-dependent state-manager IDs."
 }
 ```
 

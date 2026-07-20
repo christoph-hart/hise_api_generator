@@ -23,6 +23,8 @@ For most projects, the default model handles preset serialisation automatically.
 
 The custom automation system lets you define named parameter slots that the DAW and MIDI controllers can target. Each slot specifies its range, display format, and connection targets - which can be module parameters, other automation slots (meta-parameters), or global routing cables. Use the `automationID` property on a UI component to dynamically bind it to a slot.
 
+MIDI assignments, MPE configuration, and macro connections use independent state managers. By default they are stored in both user presets and the DAW plugin state. [setStateManagerProperties()]($API.UserPresetHandler.setStateManagerProperties$) can instead keep them per DAW instance, attach them only to sound presets, exclude them, or automatically persist them in a shared external XML file. This is useful when users expect controller mappings to remain unchanged while browsing presets.
+
 You can also pass a Broadcaster directly to `setPreCallback` or `setPostCallback` instead of a plain function. This turns the preset lifecycle into an event bus that multiple listeners can subscribe to independently.
 
 > [!Tip:One instance, set custom model first] Best practice is to have only one UserPresetHandler instance in your project. Call `setUseCustomUserPresetModel` before `setCustomAutomation` - the custom data model is a prerequisite for custom automation.
@@ -46,5 +48,10 @@ You can also pass a Broadcaster directly to `setPreCallback` or `setPostCallback
 
 - **Limit host automation to essential parameters**
   **Wrong:** Setting `allowHostAutomation: true` on every automation slot in a large instrument.
-  **Right:** Set `allowHostAutomation: false` on internal per-layer slots; only expose top-level parameters to the host.
-  *Exposing hundreds of parameters to the DAW creates an unusable automation list for the end user.*
+   **Right:** Set `allowHostAutomation: false` on internal per-layer slots; only expose top-level parameters to the host.
+   *Exposing hundreds of parameters to the DAW creates an unusable automation list for the end user.*
+
+- **Use app data for production external state**
+  **Wrong:** Shipping an `ExternalFile` path that points to the developer's desktop.
+  **Right:** Omit `ExternalFile` to use the product app-data directory, or supply another writable per-user application-data path.
+  *Desktop paths are useful for inspecting XML during development but are not portable production locations.*

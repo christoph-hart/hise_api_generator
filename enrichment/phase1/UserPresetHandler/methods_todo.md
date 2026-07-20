@@ -7,6 +7,7 @@
 - [x] createObjectForSaveInPresetComponents
 - [x] getAutomationIndex
 - [x] getSecondsSinceLastPresetLoad
+- [x] getStateManagersForTarget
 - [x] isCurrentlyLoadingPreset
 - [x] isInternalPresetLoad
 - [x] isOldVersion
@@ -22,6 +23,7 @@
 - [x] setPostCallback
 - [x] setPostSaveCallback
 - [x] setPreCallback
+- [x] setStateManagerProperties
 - [x] setUseCustomUserPresetModel
 - [x] setUseUndoForPresetLoading
 - [x] updateAutomationValues
@@ -32,7 +34,9 @@
 | Method | Param 1 | Param 2 | Param 3 | Param 4 | Param 5 |
 |--------|---------|---------|---------|---------|---------|
 | attachAutomationCallback | String | Function | Number | -- | -- |
+| getStateManagersForTarget | String | -- | -- | -- | -- |
 | setParameterGestureCallback | Function | -- | -- | -- | -- |
 | setPostCallback | Function | -- | -- | -- | -- |
 | setPostSaveCallback | Function | -- | -- | -- | -- |
 | setPreCallback | Function | -- | -- | -- | -- |
+| setStateManagerProperties | var | -- | -- | -- | -- |

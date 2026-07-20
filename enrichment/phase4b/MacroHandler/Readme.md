@@ -22,9 +22,12 @@ Practical defaults:
     notifications to multiple listeners, avoiding tight coupling.
   - Clear all connections at startup with setMacroDataFromObject([]) before the
     preset model restores them -- prevents stale connections on init.
-  - Store one const var mh = Engine.createMacroHandler() at init and reuse it.
-    Each call registers a new listener; multiple instances waste resources and
-    receive duplicate notifications.
+   - Store one const var mh = Engine.createMacroHandler() at init and reuse it.
+     Each call registers a new listener; multiple instances waste resources and
+     receive duplicate notifications.
+   - Use UserPresetHandler.setStateManagerProperties() to choose whether macro
+     connections follow user presets, DAW state, or an external XML file.
+     ExternalFileDefault.macro_controls accepts getMacroDataObject() output.
 
 Common mistakes:
   - Modifying the array from getMacroDataObject and expecting changes to apply

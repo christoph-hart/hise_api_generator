@@ -157,17 +157,32 @@ ScriptUserPresetHandler implements all of these:
 class UserPresetStateManager: public RestorableObject
 {
 public:
+    enum class StateTarget
+    {
+        None,
+        PluginState,
+        UserPreset,
+        Default,
+        External
+    };
+
     using Ptr = WeakReference<UserPresetStateManager>;
     using List = Array<Ptr>;
     
     virtual Identifier getUserPresetStateId() const = 0;
-    virtual void resetUserPresetState() = 0;
+    virtual void resetUserPresetState(const var& initDefaultValues = var()) = 0;
     bool restoreUserPresetState(const ValueTree& root);
     void saveUserPresetState(ValueTree& presetRoot) const;
 };
 ```
 
-The UserPresetHandler maintains a list of state managers (`stateManagers`). During preset load/save, it iterates through them by ID. The predefined state IDs are:
+The UserPresetHandler maintains a list of state managers (`stateManagers`). During preset load/save, it filters them by ID and by the source or destination target. `Default` combines `PluginState` and `UserPreset`; `External` is mutually exclusive with both preset targets.
+
+`setStateManagerProperties` exposes target selection for `MidiAutomation`, `MPEData`, and `macro_controls`. Every manager defaults to `Default`. A manager assigned to `External` is omitted from user presets and DAW state, loaded from a shared XML file during initialisation, and saved whenever its data changes. The default file is `ExternalPresetData.xml` in the product's app-data directory, but scripts can supply another absolute path.
+
+If the external file is missing or cannot be parsed, `ExternalFileDefault` can initialise MIDI and macro data from the same arrays returned by `MidiAutomationHandler.getAutomationDataObject()` and `MacroHandler.getMacroDataObject()`. Only entries whose state manager targets `External` are applied, then the XML file is created. Existing valid XML always takes precedence.
+
+The predefined state IDs are:
 
 ```cpp
 namespace UserPresetIds
@@ -178,14 +193,18 @@ namespace UserPresetIds
     DECLARE_ID(Preset);
     DECLARE_ID(CustomJSON);
     DECLARE_ID(AdditionalStates);
+    DECLARE_ID(macro_controls);
 }
 ```
 
 **Known state managers:**
 - `MidiControllerAutomationHandler` (implements `UserPresetStateManager`) -- ID: `MidiAutomation`
+- `MidiControllerAutomationHandler::MPEData` -- ID: `MPEData`
 - `ModuleStateManager` (implements `UserPresetStateManager`) -- ID: `Modules`
-- `MacroControlBroadcaster::MacroChainData` (via `UserPresetStateManager`) -- not a direct implementer but macro state is saved/loaded separately
+- `MacroControlBroadcaster::MacroPresetManager` -- ID: `macro_controls`
 - `CustomStateManager` (inner class of UserPresetHandler) -- ID: `CustomJSON`
+
+`getStateManagersForTarget` is a development-time introspection method. It returns every currently registered manager matching `PluginState`, `UserPreset`, or `External`, including internal and dynamically registered managers that cannot be configured through `SubStates`.
 
 ### Preset Load Sequence (loadUserPresetInternal)
 

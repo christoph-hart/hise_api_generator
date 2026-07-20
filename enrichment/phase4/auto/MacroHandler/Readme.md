@@ -12,6 +12,8 @@ const var mh = Engine.createMacroHandler();
 
 Typical workflows range from simple monitoring (registering a callback to update UI indicators when macros change) to full connection management (building macro-to-parameter mappings programmatically for DAW automation or NKS integration). For custom automation workflows, macro connections can target automation parameters defined through `UserPresetHandler.setCustomAutomation()` by setting `CustomAutomation` to `true` in the connection object.
 
+By default, macro connections are stored in both user presets and the DAW plugin state. Use [UserPresetHandler.setStateManagerProperties()]($API.UserPresetHandler.setStateManagerProperties$) to keep them per instance or persist them in an external XML file. The array returned by `getMacroDataObject()` can be pasted into `ExternalFileDefault.macro_controls` as the initial external state.
+
 Each connection object contains these properties:
 
 | Property | Type | Description |
