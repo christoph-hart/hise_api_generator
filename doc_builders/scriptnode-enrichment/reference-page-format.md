@@ -2,7 +2,7 @@
 
 **Purpose:** Author a complete node reference page as MDC markdown. The page combines interactive pseudo-code, parameter tables, and prose into a single document rendered by Nuxt.js with custom Vue components. This is the final deliverable of the enrichment pipeline.
 
-**Input:** `scriptnode_enrichment/exploration/{factory}.{node}.json` (graph) + `scriptnode_enrichment/exploration/{factory}.{node}.md` (findings) + `scriptnode_enrichment/base/scriptnodeList.json`
+**Input:** `scriptnode_enrichment/exploration/{factory}.{node}.json` (graph) + `scriptnode_enrichment/exploration/{factory}.{node}.md` (findings) + `scriptnode_enrichment/base/scriptnodeList.json` + the matching file in `scriptnode_enrichment/phase3/{factory}/` when present (normally `{node}.md`; preserve legacy extensionless paths) + `scriptnode_enrichment/resources/usage_survey.md`
 **Output:** `scriptnode_enrichment/output/{factory}/{node}.md`
 **Style guides:** `style-guide/general.md` (prose), `style-guide/canonical-links.md` (links, warnings, tips)
 **Design reference:** `module_enrichment/pages/SimpleGain.md` (module page example for format reference)
@@ -56,7 +56,9 @@ llmRef: |
 ![Node screenshot](/images/custom/scriptnode/{image}.png)
 
 [1-2 paragraphs of overview prose. What the node does, when to use it,
-key characteristics. No C++ internals.]
+key characteristics. Avoid irrelevant C++ implementation details. Include
+user-facing C++ APIs and workflows when the node directly touches external
+C++ development, network compilation, generated code, or plugin export.]
 
 ## Signal Path
 
@@ -417,10 +419,11 @@ Before declaring the reference page complete:
 - [ ] **Parameter accountability:** Every parameter from scriptnodeList.json appears in the parameter table. Parameters in pseudo-code have glossary entries.
 - [ ] **Pseudo-code completeness:** The main signal path is covered. All high-importance graph nodes are represented.
 - [ ] **Glossary consistency:** Every highlighted term has a glossary entry. No unused entries.
-- [ ] **No C++ leakage:** No C++ class names, method names, template arguments, or source references in prose, pseudo-code, or table descriptions.
+- [ ] **C++ relevance:** Omit implementation-only class names, methods, templates, and source references. When users must interact with C++ directly, document the exact public API, callback signatures, template arguments, macros, generated-code workflow, compilation requirements, and export constraints needed to complete that task.
 - [ ] **See Also relevance:** Entries are closely related and non-obvious. Empty is acceptable.
 - [ ] **Prose quality:** British English. No marketing language. No filler. Leads with what the node does.
 - [ ] **Exploration incorporation:** All relevant exploration findings are reflected in the page.
+- [ ] **Legacy-doc accountability:** Every useful claim in the matching phase3 page is incorporated, corrected, superseded by clearer equivalent coverage, or explicitly rejected as obsolete or false. Do not silently omit user-facing C++ integration material.
 - [ ] **llmRef completeness:** All sections filled. Arrow notation matches pseudo-code.
 - [ ] **cpuProfile present:** Baseline tier and polyphonic flag set.
 - [ ] **Factory Readme updated:** Node is listed in the factory's Readme.md.

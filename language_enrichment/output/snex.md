@@ -678,7 +678,7 @@ When `NV == 1`, the compiler eliminates all voice management overhead.
 
 #### Polyphony note
 
-The `snex_node` itself is registered as monophonic in the scriptnode factory. Polyphonic behaviour comes from placing the node inside a polyphonic container (e.g., inside a `container.poly` or a polyphonic synthesiser module). The `NV` template parameter and `PolyData` still work correctly - the container manages voice dispatch and the node's per-voice state tracks each voice.
+`snex_node` uses one wrapper instantiation because the wrapper itself has no voice-count-dependent state. The SNEX class receives the root network's voice count, so `PolyData` works correctly when the node is used in a polyphonic network. The network manages voice dispatch and `PolyData` selects the current voice; ordinary SNEX members remain shared.
 
 
 ### Debugging

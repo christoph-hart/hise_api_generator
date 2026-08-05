@@ -120,7 +120,7 @@ The UI is the most direct way to understand signal flow because the container tr
 
 ### Factories and Node IDs
 
-Nodes are named by factory path:
+Each node type has a `FactoryPath` identity:
 
 ```
 factory.node
@@ -136,7 +136,7 @@ Examples:
 | `container.split` | Parallel container |
 | `routing.send` | Local audio send |
 
-Factories group nodes by purpose.
+The `factory.node` value identifies the type used to create the node and to serialize it in a network. Built-in factories group nodes by purpose. Exported nodes and reusable `DspNetworks` from the current project are exposed dynamically through the `project` factory.
 
 | Factory | Typical role |
 | --- | --- |

@@ -636,11 +636,11 @@ SNEX is a C++ subset. Key limitations vs. full C++:
 
 ### Polyphony
 
-- `snex_node` is monophonic only (`isPolyphonic()` returns false)
+- `snex_node` has one wrapper instantiation because it stores no voice-count-dependent C++ state. Its SNEX class receives the root network voice count and can use `PolyData<T, NumVoices>` for per-voice state.
 - `snex_osc` supports polyphony (via `polyphonic_base` and the NV template)
 - `snex_shaper` is monophonic but the shaper type receives the NumVoices
   template parameter (`TemplateArgumentIsPolyphonic`)
-- For polyphonic state, use `PolyData<T, NumVoices>` in the SNEX class
+- For polyphonic state, use `PolyData<T, NumVoices>` in the SNEX class; plain members are shared between voices
 
 ### C++ Export
 

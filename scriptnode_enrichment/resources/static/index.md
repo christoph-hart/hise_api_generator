@@ -9,7 +9,7 @@ Scriptnode is HISE's visual DSP framework. You build signal processing networks 
 
 ## Node Factories
 
-Nodes are organised by factory. Each factory groups nodes with a common purpose.
+Built-in nodes are organised by factory, with each factory grouping nodes by purpose. The table below is the static built-in catalogue. Exported nodes and reusable `DspNetworks` supplied by the current project appear dynamically under the `project` factory, so they are not listed as a fixed built-in category here.
 
 | Factory | Nodes | Description |
 |---------|-------|-------------|

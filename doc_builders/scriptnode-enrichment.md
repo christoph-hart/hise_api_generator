@@ -78,7 +78,7 @@ Per-session (operator specifies scope: factory, node subset, or single node):
 | 0B | General | DspNetwork XML files from projects/ | `resources/usage_survey.md` | This file (Usage Survey section) |
 | 1-2 | General | scriptnodeList.json entry + infrastructure docs | `scriptnode_enrichment/preliminary/{factory}.{node}.json` | `preliminary-format.md` |
 | 3 | Explorer | Preliminary JSON + C++ node source + infrastructure docs | `scriptnode_enrichment/exploration/{factory}.{node}.md` + `.json` | `exploration-guide.md` |
-| 4 | General | Graph JSON + exploration + scriptnodeList.json | `scriptnode_enrichment/output/{factory}/{node}.md` | `reference-page-format.md` |
+| 4 | General | Graph JSON + exploration + scriptnodeList.json + existing phase3 docs + usage survey | `scriptnode_enrichment/output/{factory}/{node}.md` | `reference-page-format.md` |
 
 ---
 
