@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import struct
@@ -22,6 +23,15 @@ PUBLISH_OUTPUT = HSC_ROOT / "output"
 PHASE4 = HSC_ROOT / "phase4"
 PHASE5 = HSC_ROOT / "phase5"
 MODULE_RE = re.compile(r'^\s*add\s+(?:ScriptFX|ScriptSynth|ScriptModulator)\s+as\s+"([^"]+)"', re.MULTILINE)
+MODULE_DECL_RE = re.compile(
+    r'^\s*add\s+(ScriptFX|ScriptSynth|ScriptModulator)\s+as\s+"([^"]+)"', re.MULTILINE
+)
+HSC_PARAMETER_RE = re.compile(r'^\s*create_parameter\s+\S+\.([\w]+)\s+', re.MULTILINE)
+SHELL_PARAMETER_RE = re.compile(r'\bdsp create_parameter\b[^\n]*?--id\s+(\S+)')
+NETWORK_RE = re.compile(r'^\s*set\s+\S+\.network\s+"([^"]+)"', re.MULTILINE)
+EXECUTABLE_SIDE_EFFECT_RE = re.compile(r'^\s*(?:save|screenshot)\b', re.MULTILINE)
+HSC_PLAYGROUND_OPEN = "/hise playground open"
+SHELL_PLAYGROUND_OPEN = 'hise-cli -hise "playground open" --agent'
 PHASES = {
     "phase1": ".md",
     "phase2": ".md",
@@ -65,7 +75,14 @@ class PublishJob:
 
 
 def run_hise(args: list[str], *, retries: int = 0, retry_delay: float = 1.0) -> dict:
-    command = ["hise-cli", *args, "--agent"]
+    executable = shutil.which("hise-cli")
+    if not executable:
+        raise RuntimeError("hise-cli was not found on PATH")
+
+    if os.name == "nt" and Path(executable).suffix.lower() in {".bat", ".cmd"}:
+        command = [os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", executable, *args, "--agent"]
+    else:
+        command = [executable, *args, "--agent"]
     last_error = ""
 
     for attempt in range(retries + 1):
@@ -105,7 +122,7 @@ def find_jobs(*, force: bool) -> list[ScreenshotJob]:
 
     for script in sorted(PHASE4.glob("*/*.hsc")):
         rel = script.relative_to(PHASE4)
-        output = PHASE5 / rel.with_suffix(".png")
+        output = PUBLISH_OUTPUT / rel.with_suffix(".png")
         if output.exists() and not force:
             continue
 
@@ -233,8 +250,8 @@ def collect_published_nodes() -> set[str]:
     for json_path in PUBLISH_OUTPUT.glob("*/*.json"):
         png_path = json_path.with_suffix(".png")
         key = node_key(json_path, PUBLISH_OUTPUT)
-        phase5_ref = PHASE5 / f"{key}.llm.md"
-        if png_path.exists() and phase5_ref.exists():
+        llm_path = json_path.with_suffix(".llm.md")
+        if png_path.exists() and llm_path.exists():
             nodes.add(key)
     return nodes
 
@@ -279,6 +296,12 @@ def publish(args: argparse.Namespace) -> int:
         print("No authored Phase 5 examples to publish.")
         return 0
 
+    issues = validate_jobs(jobs, check_duplicate_ids=True)
+    if issues:
+        print_validation_issues(issues)
+        print("Publish aborted before running HISE.", file=sys.stderr)
+        return 1
+
     failures = 0
     print("factory.node | json | llmRef | screenshot | success")
 
@@ -307,6 +330,8 @@ def publish(args: argparse.Namespace) -> int:
                 retries=args.retries,
                 retry_delay=args.retry_delay,
             )
+
+            png_dimensions(screenshot_path)
 
             json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
             shutil.copyfile(job.phase5_ref, llm_path)
@@ -417,9 +442,11 @@ def build_draft_payload(job: PublishJob) -> dict:
 
     description = source_meta.get("description") or scenario.get("Project context") or ""
     payload = {
+        "schemaVersion": 1,
         "id": job.label,
         "factory": job.factory,
-        "node": job.node,
+        "node": job.label,
+        "slug": job.node,
         "name": source_meta.get("title") or title_from_node(job.node),
         "description": description,
         "scenario": {
@@ -447,6 +474,7 @@ def build_draft_payload(job: PublishJob) -> dict:
         "commandList": command_list,
         "hscScript": hsc_script,
         "screenshot": f"{job.node}.png",
+        "screenshotUrl": f"/data/v2/scriptnode-examples/{job.factory}/{job.node}.png",
     }
     return payload
 
@@ -779,13 +807,365 @@ def bullet_lines(items: list[str]) -> list[str]:
     return [indent(f"- {item}") for item in items]
 
 
+def validate(args: argparse.Namespace) -> int:
+    try:
+        jobs = find_publish_jobs(node_filter=args.node)
+    except FileNotFoundError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    if not jobs:
+        message = f"No complete example found for {args.node}." if args.node else "No complete examples found."
+        print(message, file=sys.stderr)
+        return 1
+
+    issues = validate_jobs(jobs, check_duplicate_ids=True)
+    if issues:
+        print_validation_issues(issues)
+        return 1
+    print(f"Validated {len(jobs)} example(s): no issues found.")
+    return 0
+
+
+def executable_lines(text: str) -> list[str]:
+    """Return normalized HSC commands, excluding blank and comment-only lines."""
+    return [line.strip() for line in text.splitlines() if line.strip() and not line.lstrip().startswith("#")]
+
+
+def validate_hsc_script(text: str, label: str) -> list[str]:
+    lines = executable_lines(text)
+    issues: list[str] = []
+    expected_preamble = [HSC_PLAYGROUND_OPEN, "/builder", "reset"]
+
+    if lines[:3] != expected_preamble:
+        issues.append(
+            f"{label}: HSC executable lines must start with "
+            f"{HSC_PLAYGROUND_OPEN!r}, '/builder', 'reset'"
+        )
+    if lines.count(HSC_PLAYGROUND_OPEN) != 1:
+        issues.append(f"{label}: HSC must contain {HSC_PLAYGROUND_OPEN!r} exactly once")
+
+    for line in lines:
+        normalized = " ".join(line.lower().split())
+        if normalized.startswith("/hise playground close") or normalized.startswith("/hise playground disable"):
+            issues.append(f"{label}: public HSC must not close or disable the Playground")
+            break
+    return issues
+
+
+def validate_shell_activation(commands: str, label: str, phase: str) -> list[str]:
+    lines = executable_lines(commands)
+    issues: list[str] = []
+    if not lines or lines[0] != SHELL_PLAYGROUND_OPEN:
+        issues.append(f"{label}: {phase} command block must start with {SHELL_PLAYGROUND_OPEN!r}")
+    if lines.count(SHELL_PLAYGROUND_OPEN) != 1:
+        issues.append(f"{label}: {phase} command block must contain Playground activation exactly once")
+    for line in lines:
+        normalized = " ".join(line.lower().split())
+        if "playground close" in normalized or "playground disable" in normalized:
+            issues.append(f"{label}: {phase} command block must not close or disable the Playground")
+            break
+    return issues
+
+
+def validate_hsc(args: argparse.Namespace) -> int:
+    if args.node:
+        if "." not in args.node:
+            print("--node must be a factory path like dynamics.gate", file=sys.stderr)
+            return 1
+        factory, node = args.node.split(".", 1)
+        scripts = [PHASE4 / factory / f"{node}.hsc"]
+        if not scripts[0].is_file():
+            print(f"No Phase 4 HSC found for {args.node}.", file=sys.stderr)
+            return 1
+    else:
+        scripts = sorted(PHASE4.glob("*/*.hsc"))
+        if not scripts:
+            print("No Phase 4 HSC scripts found.", file=sys.stderr)
+            return 1
+
+    issues: list[str] = []
+    for script in scripts:
+        label = node_key(script, PHASE4).replace("/", ".")
+        try:
+            issues.extend(validate_hsc_script(read_text(script), label))
+        except OSError as exc:
+            issues.append(f"{label}: could not read HSC: {exc}")
+    if issues:
+        print_validation_issues(issues)
+        return 1
+    print(f"Validated {len(scripts)} Phase 4 HSC script(s): no issues found.")
+    return 0
+
+
+def validate_jobs(jobs: list[PublishJob], *, check_duplicate_ids: bool) -> list[str]:
+    issues: list[str] = []
+    for job in jobs:
+        try:
+            issues.extend(validate_job(job))
+        except Exception as exc:  # noqa: BLE001 - validation must report malformed artifacts together.
+            issues.append(f"{job.label}: could not validate artifacts: {exc}")
+
+    if check_duplicate_ids:
+        ids: dict[str, list[str]] = {}
+        for path in sorted(PHASE5.glob("*/*.llm.md")):
+            try:
+                meta, _ = parse_authored_ref(read_text(path))
+                ids.setdefault(str(meta["id"]), []).append(node_key(path, PHASE5))
+            except (KeyError, ValueError):
+                continue
+        for example_id, nodes in ids.items():
+            if len(nodes) > 1:
+                issues.append(f"phase5: duplicate id {example_id!r} used by {', '.join(nodes)}")
+    return issues
+
+
+def validate_job(job: PublishJob) -> list[str]:
+    issues: list[str] = []
+    expected = job.label
+    source = read_text(job.source_doc)
+    phase1 = read_text(job.phase1)
+    phase2 = read_text(job.phase2)
+    phase3 = read_text(job.phase3)
+    hsc = read_text(job.hsc)
+    phase5 = read_text(job.phase5_ref)
+
+    source_meta = parse_frontmatter(source)
+    identities = {
+        "source factoryPath": source_meta.get("factoryPath"),
+        "phase1 heading": parse_heading_identity(phase1),
+        "phase1 Factory path": parse_labeled_value(phase1, "Factory path"),
+        "phase2 heading": parse_heading_identity(phase2),
+        "phase3 heading": parse_heading_identity(phase3),
+    }
+    for location, value in identities.items():
+        if value != expected:
+            issues.append(f"{expected}: {location} is {value!r}, expected {expected!r}")
+
+    status = parse_keyed_section(markdown_section(phase3, "Status"))
+    for key in ("Built in HISE", "User approved"):
+        if status.get(key) is not True:
+            issues.append(f"{expected}: Phase 3 {key} must be true")
+
+    phase2_naming = parse_keyed_section(markdown_section(phase2, "Naming"))
+    phase3_naming = parse_keyed_section(markdown_section(phase3, "Naming"))
+    module_match = MODULE_DECL_RE.search(hsc)
+    network_match = NETWORK_RE.search(hsc)
+    meta, body = parse_authored_ref(phase5)
+    module_type = module_match.group(1) if module_match else ""
+    module_id = module_match.group(2) if module_match else ""
+    network_id = network_match.group(1) if network_match else ""
+    consistency = {
+        "Phase 2 module ID": phase2_naming.get("Module ID"),
+        "Phase 3 module ID": phase3_naming.get("Module ID"),
+        "Phase 5 moduleId": meta.get("moduleId"),
+    }
+    for location, value in consistency.items():
+        if value != module_id:
+            issues.append(f"{expected}: {location} is {value!r}, HSC uses {module_id!r}")
+    for location, value in {
+        "Phase 2 network ID": phase2_naming.get("Network ID"),
+        "Phase 3 network ID": phase3_naming.get("Network ID"),
+        "Phase 5 networkName": meta.get("networkName"),
+    }.items():
+        if value != network_id:
+            issues.append(f"{expected}: {location} is {value!r}, HSC uses {network_id!r}")
+    if meta.get("moduleType") != module_type:
+        issues.append(f"{expected}: Phase 5 moduleType is {meta.get('moduleType')!r}, HSC uses {module_type!r}")
+
+    phase2_host = parse_keyed_section(markdown_section(phase2, "Builder Setup")).get("Host context")
+    phase3_host = parse_keyed_section(markdown_section(phase3, "Builder Setup Applied")).get("Host context")
+    expected_host = {"ScriptFX": "Script FX", "ScriptSynth": "Script Synth", "ScriptModulator": "Script Modulator"}.get(
+        module_type
+    )
+    for location, value in (("Phase 2 host context", phase2_host), ("Phase 3 host context", phase3_host)):
+        if value != expected_host:
+            issues.append(f"{expected}: {location} is {value!r}, expected {expected_host!r}")
+
+    hsc_nodes = parse_hsc_nodes(hsc)
+    issues.extend(validate_hsc_script(hsc, expected))
+    if not any(node_type == expected for node_type, _, _ in hsc_nodes):
+        issues.append(f"{expected}: HSC does not contain the primary node")
+    if EXECUTABLE_SIDE_EFFECT_RE.search(hsc):
+        issues.append(f"{expected}: HSC contains executable save or screenshot commands")
+
+    phase3_commands = first_fenced_block(markdown_section(phase3, "Optimized Public Shell Commands"))
+    phase5_commands = first_fenced_block_after_label(body, "HISE CLI build commands")
+    issues.extend(validate_shell_activation(phase3_commands, expected, "Phase 3"))
+    issues.extend(validate_shell_activation(phase5_commands, expected, "Phase 5"))
+    if phase3_commands != phase5_commands:
+        issues.append(f"{expected}: Phase 3 and Phase 5 command blocks must match exactly")
+
+    phase2_nodes = parse_graph_nodes(first_fenced_block(markdown_section(phase2, "Graph Plan")))
+    phase3_nodes = parse_shell_nodes(phase3_commands)
+    phase5_nodes = parse_shell_nodes(phase5_commands)
+    for location, nodes in (("Phase 2 graph", phase2_nodes), ("Phase 3 commands", phase3_nodes), ("Phase 5 commands", phase5_nodes)):
+        if set(nodes) != set(hsc_nodes):
+            issues.append(f"{expected}: {location} topology does not match HSC topology")
+
+    required_support = parse_support_nodes(markdown_section(phase1, "Support Nodes"))["required"]
+    hsc_types = {node_type for node_type, _, _ in hsc_nodes}
+    for support in required_support:
+        if support not in hsc_types:
+            issues.append(f"{expected}: required Phase 1 support node {support!r} is absent from HSC")
+    phase5_support = parse_body_support(body)
+    for support in phase5_support:
+        if support not in hsc_types:
+            issues.append(f"{expected}: required Phase 5 support node {support!r} is absent from HSC")
+
+    hsc_parameters = set(HSC_PARAMETER_RE.findall(hsc))
+    phase3_parameters = set(SHELL_PARAMETER_RE.findall(phase3_commands))
+    phase5_parameters = set(SHELL_PARAMETER_RE.findall(phase5_commands))
+    phase2_parameters = set(re.findall(r'^-\s+([A-Za-z]\w*)\s+->', markdown_section(phase2, "Public Parameters"), re.MULTILINE))
+    for location, parameters in (
+        ("Phase 2 public controls", phase2_parameters),
+        ("Phase 3 commands", phase3_parameters),
+        ("Phase 5 commands", phase5_parameters),
+    ):
+        if parameters != hsc_parameters:
+            issues.append(f"{expected}: {location} controls do not match HSC public controls")
+
+    hsc_connections = parse_hsc_connections(hsc)
+    for location, commands in (
+        ("Phase 3 commands", phase3_commands),
+        ("Phase 5 commands", phase5_commands),
+    ):
+        if parse_shell_connections(commands) != hsc_connections:
+            issues.append(f"{expected}: {location} connections do not match HSC connections")
+
+    issues.extend(validate_phase5_schema(job, meta, body))
+    return issues
+
+
+def validate_phase5_schema(job: PublishJob, meta: dict, body: str) -> list[str]:
+    issues: list[str] = []
+    label = job.label
+    string_fields = ("id", "node", "domain", "category", "title", "summary", "useCase", "difficulty", "networkName", "moduleType", "moduleId")
+    for key in string_fields:
+        if not isinstance(meta.get(key), str) or not meta[key].strip():
+            issues.append(f"{label}: Phase 5 {key} must be a non-empty string")
+    for key in ("tags", "aliases", "relatedNodes"):
+        value = meta.get(key)
+        if not isinstance(value, list) or not value or not all(isinstance(item, str) and item for item in value):
+            issues.append(f"{label}: Phase 5 {key} must be a non-empty string list")
+    parameters = meta.get("parameters")
+    if not isinstance(parameters, dict) or not parameters or not all(
+        isinstance(key, str) and key and isinstance(value, str) and value for key, value in parameters.items()
+    ):
+        issues.append(f"{label}: Phase 5 parameters must be a non-empty string mapping")
+    enums = {
+        "domain": {"scriptnode"},
+        "category": {"dsp-network"},
+        "difficulty": {"beginner", "intermediate", "advanced"},
+        "moduleType": {"ScriptFX", "ScriptSynth", "ScriptModulator"},
+    }
+    for key, allowed in enums.items():
+        if meta.get(key) not in allowed:
+            issues.append(f"{label}: Phase 5 {key} must be one of {', '.join(sorted(allowed))}")
+    if meta.get("node") != label:
+        issues.append(f"{label}: Phase 5 node must be {label!r}")
+    if label not in meta.get("relatedNodes", []):
+        issues.append(f"{label}: Phase 5 relatedNodes must include the primary node")
+    if not body or not re.search(rf'^scriptnode example:\s*{re.escape(label)}\s*$', body, re.MULTILINE):
+        issues.append(f"{label}: Phase 5 body must identify the primary node")
+    for section in ("Graph:", "Host:", "Support nodes:", "Key rules:", "Public controls:", "HISE CLI build commands:"):
+        if section not in body:
+            issues.append(f"{label}: Phase 5 body is missing {section}")
+    return issues
+
+
+def parse_heading_identity(text: str) -> str:
+    match = re.search(r'^#\s+([^\s]+)\s+-\s+HSC\b', text, re.MULTILINE)
+    return match.group(1) if match else ""
+
+
+def parse_labeled_value(text: str, label: str) -> str:
+    match = re.search(rf'^-\s+{re.escape(label)}:\s+`?([^`\s]+)`?\s*$', text, re.MULTILINE)
+    return match.group(1) if match else ""
+
+
+def parse_hsc_nodes(text: str) -> list[tuple[str, str, str | None]]:
+    nodes = []
+    pattern = re.compile(r'^\s*add\s+([\w.]+)\s+as\s+"([^"]+)"(?:\s+to\s+(\S+))?\s*$')
+    for line in text.splitlines():
+        match = pattern.match(line)
+        if match and "." in match.group(1):
+            nodes.append((match.group(1), match.group(2), match.group(3)))
+    return nodes
+
+
+def parse_shell_nodes(text: str) -> list[tuple[str, str, str | None]]:
+    nodes = []
+    for line in text.splitlines():
+        if " dsp add " not in line:
+            continue
+        node_type = re.search(r'--type\s+(\S+)', line)
+        node_id = re.search(r'--id\s+(\S+)', line)
+        parent = re.search(r'--parent\s+(\S+)', line)
+        if node_type and node_id:
+            nodes.append((node_type.group(1), node_id.group(1), parent.group(1) if parent else None))
+    return nodes
+
+
+def parse_graph_nodes(text: str) -> list[tuple[str, str, str | None]]:
+    nodes = []
+    parents: list[tuple[int, str]] = []
+    for line in text.splitlines():
+        match = re.match(r'^(\s+)([A-Za-z]\w*)\s+([\w.]+)\s*$', line)
+        if match and "." in match.group(3):
+            indent = len(match.group(1))
+            while parents and parents[-1][0] >= indent:
+                parents.pop()
+            parent = parents[-1][1] if parents else None
+            nodes.append((match.group(3), match.group(2), parent))
+            parents.append((indent, match.group(2)))
+    return nodes
+
+
+def parse_hsc_connections(text: str) -> set[tuple[str, str, bool]]:
+    pattern = re.compile(r'^\s*connect\s+(\S+)\s+to\s+(\S+)(?:\s+(matched))?\s*$', re.MULTILINE)
+    return {(source, target, mode == "matched") for source, target, mode in pattern.findall(text)}
+
+
+def parse_shell_connections(text: str) -> set[tuple[str, str, bool]]:
+    connections = set()
+    for line in text.splitlines():
+        if " dsp connect " not in line:
+            continue
+        source = re.search(r'--source\s+(\S+)', line)
+        source_param = re.search(r'--source-param\s+(\S+)', line)
+        target = re.search(r'--target\s+(\S+)', line)
+        target_param = re.search(r'--param\s+(\S+)', line)
+        if source and target and target_param:
+            source_name = source.group(1)
+            if source_param:
+                source_name += "." + source_param.group(1)
+            connections.add((source_name, target.group(1) + "." + target_param.group(1), "--matched" in line))
+    return connections
+
+
+def first_fenced_block_after_label(text: str, label: str) -> str:
+    index = text.find(label)
+    return first_fenced_block(text[index:]) if index >= 0 else ""
+
+
+def parse_body_support(body: str) -> list[str]:
+    match = re.search(r'^\s+Required:\s+(.+)$', body, re.MULTILINE)
+    return re.findall(r'`([^`]+)`', match.group(1)) if match else []
+
+
+def print_validation_issues(issues: list[str]) -> None:
+    print(f"Validation failed with {len(issues)} issue(s):", file=sys.stderr)
+    for issue in issues:
+        print(f"- {issue}", file=sys.stderr)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    subparsers = parser.add_subparsers(dest="command")
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
     screenshots = subparsers.add_parser(
         "screenshots",
-        help="Generate Phase 5 screenshots for Phase 4 .hsc files that are missing PNGs.",
+        help="Generate disposable screenshots in hsc/output for Phase 4 .hsc files missing PNGs.",
     )
     screenshots.add_argument("--force", action="store_true", help="Regenerate screenshots even when PNGs already exist.")
     screenshots.add_argument("--scale", default="200%", help="Screenshot scale passed to hise-cli. Default: 200%%.")
@@ -831,6 +1211,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     draft_parser.set_defaults(func=draft_llmref)
 
+    validate_parser = subparsers.add_parser(
+        "validate",
+        help="Validate completed example artifacts without running HISE or writing output.",
+    )
+    validate_parser.add_argument(
+        "--node",
+        help="Validate one node by factory path, eg dynamics.gate. Defaults to all completed examples.",
+    )
+    validate_parser.set_defaults(func=validate)
+
+    validate_hsc_parser = subparsers.add_parser(
+        "validate-hsc",
+        help="Validate Phase 4 HSC Playground safety without requiring Phase 5 artifacts.",
+    )
+    validate_hsc_parser.add_argument(
+        "--node",
+        help="Validate one node by factory path, eg dynamics.gate. Defaults to all Phase 4 scripts.",
+    )
+    validate_hsc_parser.set_defaults(func=validate_hsc)
+
     publish_parser = subparsers.add_parser(
         "publish",
         help="Build website and MCP artifacts from completed HSC example phases.",
@@ -855,7 +1255,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     publish_parser.set_defaults(func=publish)
 
-    parser.set_defaults(func=lambda ns: screenshot_jobs(find_jobs(force=False), ns))
     parser.set_defaults(
         scale="200%",
         ui_delay=1.5,

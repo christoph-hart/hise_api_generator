@@ -7,6 +7,7 @@
 # - control.pma_unscaled keeps MidCutDepth in raw dB and multiplies it by the follower amount.
 # - EQ smoothing is disabled so the visible envelope timing comes from the envelope follower.
 
+/hise playground open
 /builder
 reset
 

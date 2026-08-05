@@ -13,6 +13,7 @@
 #   and non-selected channels are cleared.
 # - Colours use 0xAARRGGBB literals so screenshot rendering is deterministic.
 
+/hise playground open
 /builder
 reset
 

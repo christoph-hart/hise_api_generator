@@ -10,7 +10,6 @@
 - Built in HISE: true
 - User approved: true
 - Notes: Built and validated in live HISE. The network demonstrates `dynamics.limiter` as a final peak-safety stage after a small SNEX expression shaper. `math.expr` requires a compile-enabled network; current CLI builds apply HISE's built-in compile-flag fix automatically when the `Code` property is set.
-- Phase 2 deviation: changed the support node factory from `core.expr` to `math.expr`, because the current Scriptnode docs and live CLI expose the audio expression node as `math.expr`.
 
 ## Naming
 
@@ -77,6 +76,7 @@
 These shell `hise-cli` commands are intended for Phase 4 conversion to public `.hsc`. They must not include `save` or `screenshot`.
 
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id SafetyPeakLimiter --agent
 hise-cli builder set --module SafetyPeakLimiter --network safety_peak_limiter --agent
@@ -115,7 +115,7 @@ These commands are not included in public `.hsc`.
 
 ```bash
 hise-cli dsp save --module SafetyPeakLimiter --agent
-hise-cli dsp screenshot --module SafetyPeakLimiter --scale 200% --output "scriptnode_enrichment/hsc/phase5/dynamics/limiter.png" --agent
+hise-cli dsp screenshot --module SafetyPeakLimiter --scale 200% --output "scriptnode_enrichment/hsc/output/dynamics/limiter.png" --agent
 ```
 
 ## Comments To Preserve In HSC

@@ -16,6 +16,16 @@
 - Module ID: `CabMicSelector`
 - Network ID: `cab_mic_selector`
 
+## Builder Setup Applied
+
+- Host context: `Script FX`
+- Additional builder steps applied:
+  - Set Master Chain routing to `[0,1,0,1]` and `CabMicSelector` routing to `[0,1,2,3]`.
+- Channel/routing setup verified:
+  - Required channels: `four internal channels`
+  - Module routing: `[0,1,2,3]`
+  - Master routing: `[0,1,0,1]`
+
 ## Verified Parameters
 
 - `MicPairSelector.ChannelIndex` = `2` range `0..2` stepSize `2`
@@ -40,6 +50,7 @@
 These shell `hise-cli` commands are intended for Phase 4 conversion to public `.hsc`. They do not include `save` or `screenshot`.
 
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id CabMicSelector --agent
 hise-cli builder set --module CabMicSelector --network cab_mic_selector --agent
@@ -88,7 +99,7 @@ hise-cli dsp set --module CabMicSelector --node CabMakeupGain --param Folded --v
 
 ```bash
 hise-cli dsp save --module CabMicSelector --agent
-hise-cli dsp screenshot --module CabMicSelector --scale 200% --output "scriptnode_enrichment/hsc/phase5/routing/selector.png" --agent
+hise-cli dsp screenshot --module CabMicSelector --scale 200% --output "scriptnode_enrichment/hsc/output/routing/selector.png" --agent
 ```
 
 ## Comments To Preserve In HSC

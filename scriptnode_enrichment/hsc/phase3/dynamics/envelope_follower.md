@@ -82,6 +82,7 @@
 These shell `hise-cli` commands are intended for Phase 4 conversion to public `.hsc`. They must not include `save` or `screenshot`.
 
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id DynamicMidCut --agent
 hise-cli builder set --module DynamicMidCut --network dynamic_mid_cut --agent
@@ -129,7 +130,7 @@ These commands are not included in public `.hsc`.
 
 ```bash
 hise-cli dsp save --module DynamicMidCut --agent
-hise-cli dsp screenshot --module DynamicMidCut --scale 200% --output "scriptnode_enrichment/hsc/phase5/dynamics/envelope_follower.png" --agent
+hise-cli dsp screenshot --module DynamicMidCut --scale 200% --output "scriptnode_enrichment/hsc/output/dynamics/envelope_follower.png" --agent
 ```
 
 ## Comments To Preserve In HSC

@@ -7,6 +7,7 @@
 # - The detector pair is cleared before the synthetic ramp replaces it.
 # - DuckComp.Sidechain must be set to Sidechain, otherwise the compressor becomes ordinary self-keyed compression.
 
+/hise playground open
 /builder
 reset
 

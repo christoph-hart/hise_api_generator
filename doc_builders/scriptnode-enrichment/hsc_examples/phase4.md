@@ -22,7 +22,9 @@ Read `language_enrichment/resources/CLI_GRAMMAR.md` once at the start of the bat
 Use the internal mode grammar, not shell flag syntax:
 
 ```text
+/hise playground open
 /builder
+reset
 add ScriptFX as "ExampleModule"
 set ExampleModule.network "example_network"
 /exit
@@ -56,6 +58,9 @@ connect example_network.Macro to NodeId.Param matched
 14. Enter DSP mode with `/dsp`, then select the host module with `cd <ModuleId>`. Do not emit `/dsp <ModuleId>`.
 15. Translate parameter metadata as `.stepSize`, `.middlePosition`, and `.skewFactor`. Do not emit `.step`, `.mid`, or `.skew`.
 16. Preserve DSP appearance writes such as `NodeColour`, `Comment`, and `Folded`; these are valid node attributes used for screenshot-focused examples.
+17. Run `python scriptnode_enrichment/hsc/resources/hsc_pipeline.py validate-hsc --node {factory.node}` after assembly. Fix all HSC safety issues before Phase 5. The full `validate` command remains required once Phase 5 exists.
+18. The first three executable non-comment lines must be exactly `/hise playground open`, `/builder`, and `reset`, in that order. Emit Playground activation exactly once and before every builder or DSP mutation.
+19. Never emit a Playground close or disable command in a public `.hsc` script.
 
 ---
 
@@ -68,6 +73,9 @@ Use `Builder Setup Applied` and `Locked Build Values Applied` only to understand
 ### Builder
 
 ```text
+hise-cli -hise "playground open" --agent
+-> /hise playground open
+
 hise-cli builder reset --agent
 -> reset
 
@@ -148,11 +156,13 @@ hise-cli dsp set --module M --node N --param Folded --value true --agent
 Public `.hsc` files are intended for website users to run interactively.
 
 They must:
+- Open the Playground as the first executable line, exactly once.
 - Build the example network.
 - Include explanatory comments for non-obvious design decisions.
 - Avoid writing screenshots or saving files.
 
 They must not:
+- Close or disable the Playground.
 - Include `save`.
 - Include `screenshot`.
 - Include failed prototype commands.

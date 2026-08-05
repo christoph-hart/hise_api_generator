@@ -10,7 +10,6 @@
 - Built in HISE: true
 - User approved: true
 - Notes: Approved for Phase 4 conversion. The live prototype keeps the original dry signal unmodified by splitting the input into three branches: untouched dry passthrough, gate-control analysis, and synthetic noise. Trace confirmed the native gate modulation output is gain-reduction amount, so `NoiseGain.Gain` uses a reversed target range to turn closed-gate reduction into texture attenuation and open-gate activity into texture gain.
-- Phase 2 deviation: the live build uses an extra empty `DryPath` and a `GateControlPath` with `ControlClear` because `dynamics.gate` has no `ProcessSignal` parameter and would otherwise alter or duplicate the original input.
 
 ## Naming
 
@@ -81,6 +80,7 @@
 These shell `hise-cli` commands are intended for Phase 4 conversion to public `.hsc`. They must not include `save` or `screenshot`.
 
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id NoiseLayerGate --agent
 hise-cli builder set --module NoiseLayerGate --network noise_layer_gate --agent
@@ -146,7 +146,7 @@ These commands are not included in public `.hsc`.
 
 ```bash
 hise-cli dsp save --module NoiseLayerGate --agent
-hise-cli dsp screenshot --module NoiseLayerGate --scale 200% --output "scriptnode_enrichment/hsc/phase5/dynamics/gate.png" --agent
+hise-cli dsp screenshot --module NoiseLayerGate --scale 200% --output "scriptnode_enrichment/hsc/output/dynamics/gate.png" --agent
 ```
 
 ## Comments To Preserve In HSC

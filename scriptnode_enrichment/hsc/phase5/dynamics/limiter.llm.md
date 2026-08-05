@@ -77,6 +77,7 @@ Public controls:
 
 HISE CLI build commands:
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id SafetyPeakLimiter --agent
 hise-cli builder set --module SafetyPeakLimiter --network safety_peak_limiter --agent

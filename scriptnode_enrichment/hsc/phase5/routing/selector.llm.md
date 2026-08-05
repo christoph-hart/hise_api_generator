@@ -82,6 +82,7 @@ Public controls:
 
 HISE CLI build commands:
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id CabMicSelector --agent
 hise-cli builder set --module CabMicSelector --network cab_mic_selector --agent

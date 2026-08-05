@@ -8,6 +8,7 @@
 # - SafetyLimiter is placed last so it reads as a final peak-safety stage.
 # - Attack is fixed because changing limiter attack changes lookahead latency and can click at runtime.
 
+/hise playground open
 /builder
 reset
 

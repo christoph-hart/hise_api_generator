@@ -49,6 +49,7 @@ Before writing the artifact:
 - Confirm comments, cosmetics, visible nodes, folded nodes, and screenshot composition.
 - Complete the documentation feedback pass: decide which live HISE / CLI discoveries should be promoted into node docs, general Scriptnode docs, agent style docs, or kept local to this artifact.
 - Only then normalize the final network into a clean from-scratch command sequence for Phase 4.
+- Normalize approved topology and required-support changes back into Phase 1 and Phase 2 so all later artifacts describe one canonical example.
 
 The final public command block is not a terminal log. It is the smallest consistent build-from-scratch sequence for the signed-off network.
 
@@ -58,7 +59,7 @@ The final public command block is not a terminal log. It is the smallest consist
 
 1. Work one node at a time unless the user explicitly requests a small related batch.
 2. Use `hise-cli agent-context` and command-specific help when uncertain.
-3. Run first checks before construction: `hise-cli -status --agent`, `hise-cli builder tree --agent`, and `hise-cli dsp tree --module {ModuleId} --agent` once the host exists.
+3. Start every construction session with `hise-cli -hise "playground open" --agent`. It must run before reset, builder tree inspection, DSP tree inspection, or any graph mutation. Then run `hise-cli -status --agent`, `hise-cli builder tree --agent`, and `hise-cli dsp tree --module {ModuleId} --agent` once the host exists.
 4. If no DSP host exists, create or select one intentionally. For a default Script FX host, create the module and assign the planned network before adding DSP nodes.
 5. Read `## Builder Setup` from the approved Phase 2 file before running builder CLI commands. Create the planned host context first, then apply any additional builder steps.
 6. The root container ID is the assigned network name shown by `dsp tree`; use that ID for `--container`, `create_parameter`, and root parameter paths.
@@ -85,6 +86,8 @@ The final public command block is not a terminal log. It is the smallest consist
 23. Avoid unnecessary normalisation and rescaling. Prefer root/public parameters in useful native units, and check whether unscaled control variants can preserve the same parameter logic with less range mapping.
 24. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
 25. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+26. Screenshot files are disposable. Every pipeline-only screenshot command must target `scriptnode_enrichment/hsc/output/{factory}/{node}.png`, never a tracked phase directory.
+27. The optimized public shell command block must begin with the exact command `hise-cli -hise "playground open" --agent`, followed by `hise-cli builder reset --agent`. Include activation exactly once and never include a Playground close or disable command.
 
 ---
 
@@ -297,6 +300,8 @@ Use this exact structure:
 These shell `hise-cli` commands are intended for Phase 4 conversion to public `.hsc`. They must not include `save` or `screenshot`.
 
 ```bash
+hise-cli -hise "playground open" --agent
+hise-cli builder reset --agent
 {hise-cli builder ...}
 {hise-cli dsp ...}
 ```
@@ -307,7 +312,7 @@ These commands are not included in public `.hsc`.
 
 ```bash
 hise-cli dsp save --module {ModuleId} --agent
-hise-cli dsp screenshot --module {ModuleId} --scale 200% --output "scriptnode_enrichment/hsc/phase5/{factory}/{node}.png" --agent
+hise-cli dsp screenshot --module {ModuleId} --scale 200% --output "scriptnode_enrichment/hsc/output/{factory}/{node}.png" --agent
 ```
 
 ## Comments To Preserve In HSC

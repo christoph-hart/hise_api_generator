@@ -77,6 +77,7 @@ Public controls:
 
 HISE CLI build commands:
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id DynamicMidCut --agent
 hise-cli builder set --module DynamicMidCut --network dynamic_mid_cut --agent

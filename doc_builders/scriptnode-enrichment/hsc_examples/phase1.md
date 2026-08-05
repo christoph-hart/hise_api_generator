@@ -37,6 +37,7 @@ For each target node, read its reference page and propose a practical project co
 6. Avoid repetitive examples across neighbouring nodes in the same factory.
 7. Use `Notes For Phase 2` to record non-obvious builder constraints early: required host context, semantic containers, inherited-signal clearing, or visual-verification requirements.
 8. If a support node needs a non-default mode, exact formula, or exact startup state for the example to work, mention that in `Notes For Phase 2`.
+9. Each node has one canonical example. Keep `Support Nodes` aligned with that example as later phases refine it; required support must appear in the final topology.
 
 ---
 

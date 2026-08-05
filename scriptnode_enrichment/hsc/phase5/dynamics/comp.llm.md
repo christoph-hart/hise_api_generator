@@ -66,7 +66,7 @@ Host:
     - `set SidechainDucker.network "sidechain_ducker"`
 
 Support nodes:
-  Required: `container.sidechain`, `routing.receive`, `routing.send`
+  Required: `container.sidechain`, `container.multi`, `container.chain`, `math.clear`, `core.ramp`
   Optional: `container.fix16_block`, `math.mul`
 
 Key rules:
@@ -86,6 +86,7 @@ Public controls:
 
 HISE CLI build commands:
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id SidechainDucker --agent
 hise-cli builder set --module SidechainDucker --network sidechain_ducker --agent

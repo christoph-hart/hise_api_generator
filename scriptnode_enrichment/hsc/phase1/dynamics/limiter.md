@@ -13,7 +13,7 @@
 
 ## Support Nodes
 
-- Required: [`core.expr`]
+- Required: [`math.expr`]
 - Optional: [`core.gain`, `math.mul`]
 - Rationale: `core.expr` provides a realistic non-linear stage that can produce overs without relying on a nonexistent dedicated clipper node. Optional gain or modulation wiring can make the amount of limiting visible, but the limiter itself should stay the focus.
 

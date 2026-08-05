@@ -16,7 +16,9 @@
 noise_layer_gate
   TextureSplit          container.split
     DryPath             container.chain
+    GateControlPath     container.chain
       SelfGate          dynamics.gate
+      ControlClear      math.clear
     NoisePath           container.chain
       NoiseClear        math.clear
       NoiseSource       core.oscillator
@@ -62,7 +64,8 @@ noise_layer_gate
 
 ## Friction Comments To Weave In
 
-- Before `TextureSplit`: keep the dry branch and the synthetic noise branch visually separate so the modulation target is obvious.
+- Before `TextureSplit`: keep dry passthrough, gate analysis, and synthetic noise on separate branches.
+- Before `ControlClear`: clear the gated duplicate after analysis so the control branch does not add audio.
 - Before `NoiseClear`: clear the inherited split signal first so the noise branch does not double the dry source.
 - Before the modulation connection to `NoiseGain.Gain`: use the gate's output to control the texture layer depth instead of sidechain-routing the gate itself.
 - Before `NoiseSource`: set the oscillator to noise, while noting that a looped file-player noise source would often be more production-friendly.
@@ -71,10 +74,10 @@ noise_layer_gate
 
 - Main node: `SelfGate`
 - Accent colour: `0xFFE67E22`
-- Supporting relevant nodes: [`TextureSplit`, `NoiseClear`, `NoiseSource`, `NoiseGain`]
+- Supporting relevant nodes: [`TextureSplit`, `ControlClear`, `NoiseClear`, `NoiseSource`, `NoiseGain`]
 - Supporting colour: `0xFF8F7766`
 - Folded nodes: [`DryPath`]
-- Nodes that must stay visible: [`TextureSplit`, `SelfGate`, `NoisePath`, `NoiseGain`]
+- Nodes that must stay visible: [`TextureSplit`, `GateControlPath`, `SelfGate`, `NoisePath`, `NoiseGain`]
 
 ## Open Questions
 

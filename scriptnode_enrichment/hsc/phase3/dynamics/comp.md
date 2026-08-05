@@ -10,7 +10,6 @@
 - Built in HISE: true
 - User approved: true
 - Notes: Approved for Phase 4 conversion. The live build demonstrates external sidechain compression by using `container.sidechain` to create a four-channel internal layout, replacing detector channels 2-3 with a synthetic ramp, and setting `DuckComp.Sidechain` to `Sidechain`.
-- Phase 2 deviation: removed `TimingBlock` because `dynamics.comp` does not need fixed-block processing for ordinary sidechain compression. Fixed-block containers only matter here if the compressor modulation output drives another downstream parameter. Also changed `PumpRate -> PumpRamp.Frequency` to `PumpTime -> PumpRamp.PeriodTime`, because current `core.ramp` exposes `PeriodTime`, not `Frequency`.
 
 ## Naming
 
@@ -73,6 +72,7 @@
 These shell `hise-cli` commands are intended for Phase 4 conversion to public `.hsc`. They must not include `save` or `screenshot`.
 
 ```bash
+hise-cli -hise "playground open" --agent
 hise-cli builder reset --agent
 hise-cli builder add --type ScriptFX --id SidechainDucker --agent
 hise-cli builder set --module SidechainDucker --network sidechain_ducker --agent
@@ -124,7 +124,7 @@ These commands are not included in public `.hsc`.
 
 ```bash
 hise-cli dsp save --module SidechainDucker --agent
-hise-cli dsp screenshot --module SidechainDucker --scale 200% --output "scriptnode_enrichment/hsc/phase5/dynamics/comp.png" --agent
+hise-cli dsp screenshot --module SidechainDucker --scale 200% --output "scriptnode_enrichment/hsc/output/dynamics/comp.png" --agent
 ```
 
 ## Comments To Preserve In HSC

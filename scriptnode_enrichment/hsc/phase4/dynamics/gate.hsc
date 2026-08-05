@@ -7,6 +7,7 @@
 # - The noise branch clears inherited split audio before generating its synthetic texture.
 # - Gate modulation is gain-reduction amount, so NoiseGain uses a reversed target range.
 
+/hise playground open
 /builder
 reset
 

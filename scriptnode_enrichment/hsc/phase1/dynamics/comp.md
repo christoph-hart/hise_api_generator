@@ -8,14 +8,14 @@
 ## Scenario
 
 - Title: Sidechain ducking compressor
-- Project context: A stereo synth pad should dip in level whenever a kick-trigger signal arrives, creating the classic pumping effect used in dance production. The example wraps `dynamics.comp` in `container.sidechain`, routes the kick key into the extra sidechain channels, and uses external sidechain mode so the compressor responds to a second signal rather than the pad itself.
+- Project context: A stereo synth pad should dip in level from a synthetic detector signal, creating the classic pumping effect used in dance production. The example wraps `dynamics.comp` in `container.sidechain`, replaces the duplicated detector channels with a ramp, and uses external sidechain mode so the compressor responds to that detector rather than the pad itself.
 - Teaching goal: Demonstrate how `dynamics.comp` works with `container.sidechain` to compress one stereo signal from the level of another.
 
 ## Support Nodes
 
-- Required: [`container.sidechain`, `routing.receive`, `routing.send`]
+- Required: [`container.sidechain`, `container.multi`, `container.chain`, `math.clear`, `core.ramp`]
 - Optional: [`container.fix16_block`, `math.mul`]
-- Rationale: `container.sidechain` is the standard routing wrapper because it doubles the channel count and exposes zeroed sidechain channels to the compressor. A send/receive pair provides a realistic external key signal. `container.fix16_block` is only useful if the compressor's modulation output also drives another parameter that needs deterministic sub-block updates, and `math.mul` is optional for shaping that secondary modulation target.
+- Rationale: `container.sidechain` doubles the channel count for program and detector pairs. `container.multi` exposes those pairs, while `math.clear` and `core.ramp` replace the duplicated detector audio with a deterministic synthetic key. `container.fix16_block` is only useful if the compressor's modulation output also drives another parameter that needs deterministic sub-block updates, and `math.mul` is optional for shaping that secondary modulation target.
 
 ## Assumptions
 

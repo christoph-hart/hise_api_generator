@@ -39,6 +39,10 @@ ENRICHMENT_WEBSITE_DIR = SCRIPT_DIR / "enrichment" / "output" / "website"
 ENRICHMENT_PREVIEW_DIR = SCRIPT_DIR / "enrichment" / "output" / "preview"
 MODULE_ENRICHMENT_OUTPUT_DIR = SCRIPT_DIR / "module_enrichment" / "output"
 MODULE_LIST_PATH = SCRIPT_DIR / "module_enrichment" / "base" / "moduleList.json"
+HSC_PHASE5_DIR = SCRIPT_DIR / "scriptnode_enrichment" / "hsc" / "phase5"
+HSC_PHASE4_DIR = SCRIPT_DIR / "scriptnode_enrichment" / "hsc" / "phase4"
+HSC_OUTPUT_DIR = SCRIPT_DIR / "scriptnode_enrichment" / "hsc" / "output"
+SCRIPTNODE_EXAMPLE_PUBLIC_PATH = Path("data/v2/scriptnode-examples")
 
 
 # ---------------------------------------------------------------------------
@@ -1845,6 +1849,28 @@ def apply_scriptnode_mdc_transforms(content: str, messages: list = None,
     return content
 
 
+def inject_scriptnode_example(content: str, factory_path: str,
+                              examples: dict[str, dict]) -> str:
+    """Insert the website example component before the node signal path."""
+    example = examples.get(factory_path)
+    if not example or "::scriptnode-example" in content:
+        return content
+
+    block = (
+        "\n\n## Example Network\n\n"
+        "::scriptnode-example\n"
+        "---\n"
+        f'node: "{factory_path}"\n'
+        f'dataUrl: "{example["dataUrl"]}"\n'
+        "---\n"
+        "::\n"
+    )
+    signal_path = re.search(r'^## Signal Path\s*$', content, re.MULTILINE)
+    if signal_path:
+        return content[:signal_path.start()].rstrip() + block + "\n" + content[signal_path.start():]
+    return content.rstrip() + block
+
+
 def inject_ui_api_cross_link(content: str) -> str:
     """Inject a ::see-also block on UI component pages linking to the scripting API.
 
@@ -1966,6 +1992,158 @@ def _extract_frontmatter_field(content: str, field: str) -> str:
     if m:
         return m.group(1).strip().strip('"').strip("'")
     return ""
+
+
+def load_scriptnode_example_bundles(
+    phase5_dir: Path = HSC_PHASE5_DIR,
+    output_dir: Path = HSC_OUTPUT_DIR,
+    phase4_dir: Path | None = None,
+) -> dict[str, dict]:
+    """Load complete generated bundles for all tracked Phase 5 examples."""
+    phase4_dir = phase4_dir or (HSC_PHASE4_DIR if phase5_dir == HSC_PHASE5_DIR else phase5_dir.parent / "phase4")
+    examples: dict[str, dict] = {}
+    ids: set[str] = set()
+    errors: list[str] = []
+
+    for phase5_ref in sorted(phase5_dir.glob("*/*.llm.md")):
+        factory = phase5_ref.parent.name
+        node_name = phase5_ref.name.removesuffix(".llm.md")
+        node = f"{factory}.{node_name}"
+        bundle_dir = output_dir / factory
+        json_path = bundle_dir / f"{node_name}.json"
+        llm_path = bundle_dir / f"{node_name}.llm.md"
+        png_path = bundle_dir / f"{node_name}.png"
+        hsc_path = phase4_dir / factory / f"{node_name}.hsc"
+
+        missing = [path.name for path in (json_path, llm_path, png_path, hsc_path) if not path.is_file()]
+        if missing:
+            errors.append(f"{node}: missing generated bundle file(s): {', '.join(missing)}")
+            continue
+
+        try:
+            payload = json.loads(json_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{node}: invalid JSON bundle: {exc}")
+            continue
+
+        expected_values = {
+            "schemaVersion": 1,
+            "node": node,
+            "factory": factory,
+            "slug": node_name,
+            "screenshot": f"{node_name}.png",
+            "screenshotUrl": f"/data/v2/scriptnode-examples/{factory}/{node_name}.png",
+        }
+        for field, expected in expected_values.items():
+            if payload.get(field) != expected:
+                errors.append(
+                    f"{node}: {json_path.name} field {field!r} must be {expected!r}"
+                )
+
+        example_id = payload.get("id")
+        if not isinstance(example_id, str) or not example_id.startswith(f"{node}."):
+            errors.append(f"{node}: invalid canonical example id {example_id!r}")
+        elif example_id in ids:
+            errors.append(f"{node}: duplicate example id {example_id!r}")
+        else:
+            ids.add(example_id)
+
+        for field in ("title", "summary", "useCase", "hscScript"):
+            if not isinstance(payload.get(field), str) or not payload[field].strip():
+                errors.append(f"{node}: missing non-empty {field!r} in {json_path.name}")
+
+        try:
+            current_hsc = hsc_path.read_text(encoding="utf-8")
+            bundled_hsc = payload.get("hscScript")
+            if bundled_hsc != current_hsc:
+                errors.append(f"{node}: generated HSC script is stale")
+            executable = [
+                line.strip()
+                for line in current_hsc.splitlines()
+                if line.strip() and not line.lstrip().startswith("#")
+            ]
+            if executable[:3] != ["/hise playground open", "/builder", "reset"]:
+                errors.append(f"{node}: Phase 4 HSC does not have the safe Playground preamble")
+            if executable.count("/hise playground open") != 1:
+                errors.append(f"{node}: Phase 4 HSC must open the Playground exactly once")
+            if any(
+                " ".join(line.lower().split()).startswith(("/hise playground close", "/hise playground disable"))
+                for line in executable
+            ):
+                errors.append(f"{node}: Phase 4 HSC must not close or disable the Playground")
+        except OSError as exc:
+            errors.append(f"{node}: could not compare Phase 4 HSC: {exc}")
+
+        try:
+            if llm_path.read_text(encoding="utf-8") != phase5_ref.read_text(encoding="utf-8"):
+                errors.append(f"{node}: generated LLM reference is stale")
+        except OSError as exc:
+            errors.append(f"{node}: could not compare LLM reference: {exc}")
+
+        try:
+            with png_path.open("rb") as handle:
+                if handle.read(8) != b"\x89PNG\r\n\x1a\n":
+                    errors.append(f"{node}: generated screenshot is not a valid PNG")
+        except OSError as exc:
+            errors.append(f"{node}: could not read generated screenshot: {exc}")
+
+        examples[node] = {
+            "id": example_id,
+            "title": payload.get("title", ""),
+            "dataUrl": f"/data/v2/scriptnode-examples/{factory}/{node_name}.json",
+            "screenshotUrl": expected_values["screenshotUrl"],
+            "jsonPath": json_path,
+            "pngPath": png_path,
+        }
+
+    if errors:
+        formatted = "\n".join(f"  - {error}" for error in errors)
+        raise ValueError(
+            "Scriptnode example bundles are incomplete or stale. "
+            "Run hsc_pipeline.py publish first:\n" + formatted
+        )
+
+    return examples
+
+
+def scriptnode_example_public_dir(output_dir: Path) -> Path:
+    """Resolve website public data from the standard content/v2 target."""
+    if output_dir.name != "v2" or output_dir.parent.name != "content":
+        raise ValueError(
+            "Scriptnode example deployment requires an output directory ending in content/v2"
+        )
+    return output_dir.parent.parent / "public" / SCRIPTNODE_EXAMPLE_PUBLIC_PATH
+
+
+def deploy_scriptnode_example_bundles(
+    examples: dict[str, dict], public_dir: Path, *, dry_run: bool
+) -> None:
+    """Copy validated JSON/PNG files and write their website manifest."""
+    manifest_examples: dict[str, dict] = {}
+
+    for node in sorted(examples):
+        example = examples[node]
+        factory, node_name = node.split(".", 1)
+        destination = public_dir / factory
+        if not dry_run:
+            destination.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(example["jsonPath"], destination / f"{node_name}.json")
+            shutil.copy2(example["pngPath"], destination / f"{node_name}.png")
+
+        manifest_examples[node] = {
+            "id": example["id"],
+            "title": example["title"],
+            "dataUrl": example["dataUrl"],
+            "screenshotUrl": example["screenshotUrl"],
+        }
+
+    manifest = {"schemaVersion": 1, "examples": manifest_examples}
+    if not dry_run:
+        public_dir.mkdir(parents=True, exist_ok=True)
+        (public_dir / "manifest.json").write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
 
 
 def _get_module_output_subdir(module_id: str, module_list_path: Path,
@@ -2726,8 +2904,21 @@ def run_topology(topology_path: Path):
     print(f"  Orphan pages (no outgoing links): {len(orphan_pages)}")
 
 
-def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
+def run(output_dir: Path, strict: bool = False, dry_run: bool = False,
+        scriptnode_examples_only: bool = False):
     """Main publish pipeline."""
+
+    try:
+        scriptnode_examples = load_scriptnode_example_bundles()
+        example_public_dir = scriptnode_example_public_dir(output_dir)
+    except ValueError as exc:
+        print(f"ERROR: {exc}")
+        sys.exit(1)
+
+    print(
+        f"Validated {len(scriptnode_examples)} Scriptnode example bundle(s); "
+        f"website target: {example_public_dir}"
+    )
 
     # Load site structure
     if not SITE_STRUCTURE_PATH.is_file():
@@ -2766,6 +2957,19 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
     if not sources:
         print("No source files found.")
         return
+
+    if scriptnode_examples_only:
+        example_sources = []
+        for source in sources:
+            source_path, domain, _out_rel, _source_type = source
+            transform = site_structure.get("domains", {}).get(domain, {}).get("mdcTransform", "")
+            if transform != "scriptnode":
+                continue
+            source_content = source_path.read_text(encoding="utf-8")
+            factory_path = _extract_frontmatter_field(source_content, "factoryPath")
+            if factory_path in scriptnode_examples:
+                example_sources.append(source)
+        sources = example_sources
 
     print(f"\nProcessing {len(sources)} files...")
 
@@ -2818,8 +3022,12 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
             content = apply_module_mdc_transforms(content, messages,
                                                     str(source_path))
         elif mdc_transform == "scriptnode":
+            factory_path = _extract_frontmatter_field(content, "factoryPath")
             content = apply_scriptnode_mdc_transforms(content, messages,
                                                        str(source_path))
+            content = inject_scriptnode_example(
+                content, factory_path, scriptnode_examples
+            )
         elif mdc_transform == "ui":
             content = apply_ui_mdc_transforms(content, messages,
                                                str(source_path))
@@ -2844,12 +3052,20 @@ def run(output_dir: Path, strict: bool = False, dry_run: bool = False):
                 f.write(content)
             files_written += 1
 
+    deploy_scriptnode_example_bundles(
+        scriptnode_examples, example_public_dir, dry_run=dry_run
+    )
+
     # Print summary
     print(f"\n{'=' * 60}")
     if dry_run:
         print(f"DRY RUN: {len(sources)} files processed, no files written")
     else:
         print(f"Published {files_written} files to {output_dir}")
+        print(
+            f"Published {len(scriptnode_examples)} Scriptnode example bundle(s) "
+            f"to {example_public_dir}"
+        )
 
     # Group messages by level
     errors = [m for m in messages if m["level"] == "ERROR"]
@@ -2904,6 +3120,10 @@ def main():
         help="Resolve and validate only, do not write files",
     )
     parser.add_argument(
+        "--scriptnode-examples-only", action="store_true",
+        help="Publish only Scriptnode pages with HSC examples and their public bundles",
+    )
+    parser.add_argument(
         "--topology", metavar="FILE",
         help="Emit cross-reference topology JSON and exit (no publish)",
     )
@@ -2914,7 +3134,12 @@ def main():
         run_topology(Path(args.topology).resolve())
     else:
         output_dir = Path(args.output_dir).resolve()
-        run(output_dir, strict=args.strict, dry_run=args.dry_run)
+        run(
+            output_dir,
+            strict=args.strict,
+            dry_run=args.dry_run,
+            scriptnode_examples_only=args.scriptnode_examples_only,
+        )
 
 
 if __name__ == "__main__":

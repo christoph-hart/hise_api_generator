@@ -14,7 +14,7 @@
 
 ```text
 safety_peak_limiter
-  DriveShaper           core.expr
+  DriveShaper           math.expr
   SafetyLimiter         dynamics.limiter
 ```
 

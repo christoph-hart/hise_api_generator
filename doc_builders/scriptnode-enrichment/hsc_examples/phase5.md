@@ -28,7 +28,13 @@ python scriptnode_enrichment/hsc/resources/hsc_pipeline.py draft-llmref --node d
 
 2. Rewrite the draft into the concise Phase 5 format below.
 3. Write the authored reference to `scriptnode_enrichment/hsc/phase5/{factory}/{node}.llm.md`.
-4. Run publish after approval:
+4. Validate the complete artifact set:
+
+```bash
+python scriptnode_enrichment/hsc/resources/hsc_pipeline.py validate --node dynamics.gate
+```
+
+5. Run publish after approval:
 
 ```bash
 python scriptnode_enrichment/hsc/resources/hsc_pipeline.py publish --node dynamics.gate
@@ -108,7 +114,7 @@ hise-cli builder reset --agent
 
 ## Frontmatter Rules
 
-1. `id` must be stable and allow multiple examples per node: `{factory.node}.{short-slug}`.
+1. `id` must be stable: `{factory.node}.{short-slug}`. There is exactly one canonical example per node and duplicate IDs are invalid.
 2. `node` is the primary Scriptnode factory path, eg `dynamics.gate`. Every example has exactly one primary node.
 3. `domain` should be `scriptnode` and `category` should be `dsp-network`.
 4. `summary` and `useCase` should be prose-first and semantic-search friendly.
@@ -131,6 +137,7 @@ hise-cli builder reset --agent
 6. Keep `Public controls` as one line per control.
 7. Keep the `HISE CLI build commands` block complete and executable.
 8. Do not include the full `.hsc` script in the Markdown body. `publish` packages it separately for the website runner.
+9. Copy the Phase 3 optimized public shell command block exactly, preserving command parity. Its first command must be `hise-cli -hise "playground open" --agent`, followed by `hise-cli builder reset --agent`; activation appears exactly once and no Playground close or disable command is allowed.
 
 ---
 
@@ -162,3 +169,5 @@ If a default, trace caveat, or support-node rationale is behaviorally important,
 - `scriptnode_enrichment/hsc/output/{factory}/{node}.png`
 
 The JSON includes the Phase 5 frontmatter, authored body, synthesized semantic `text`, Phase 3 CLI command list, Phase 4 `.hsc` script, and screenshot filename. The semantic `text` is generated from high-signal frontmatter fields only: title, primary node, summary, use case, related nodes, tags, aliases, and parameter names.
+
+The public payload schema is version `1`. It includes `schemaVersion: 1`, `node` as the full `{factory}.{node}` path, `factory`, `slug` as the node filename, and `screenshotUrl` as `/data/v2/scriptnode-examples/{factory}/{node}.png`. Publish runs the same validation as `validate` before launching HISE or writing output, and validates the PNG before writing JSON or copying the authored reference.

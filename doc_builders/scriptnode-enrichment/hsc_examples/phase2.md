@@ -30,6 +30,8 @@
 11. Record exact static facts the builder must not improvise in `Locked Build Values`: formulas, non-default support-node modes, fixed indices, startup rates, and visual-verification defaults. These are discovered constraints of the node/example, not optional user choices.
 12. If a branch inherits or duplicates signal that should not remain audible, explicitly plan how it is cleared, replaced, or kept intentionally empty.
 13. Use `Open Questions` only for unresolved user decisions or truly unknown external setup. Do not place known setup steps or locked values there.
+14. Phase 2 is the canonical final topology plan. If live construction changes topology or required support, update Phase 1 and Phase 2 to the approved result instead of leaving the final design only as Phase 3 deviation prose.
+15. Every example is constructed in an isolated HISE Playground. Phase 3 must activate it with `hise-cli -hise "playground open" --agent` before reset, tree inspection, or any graph mutation. Public examples never close or disable the Playground.
 
 ---
 
