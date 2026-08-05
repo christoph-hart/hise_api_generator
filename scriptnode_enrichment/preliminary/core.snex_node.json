@@ -6,11 +6,11 @@
 
   "classification": {
     "signalPathRole": "audio_processor",
-    "isPolyphonic": false,
+    "isPolyphonic": true,
     "isControlNode": false,
     "outsideSignalPath": false,
     "isProcessingHiseEvent": false,
-    "voiceContext": "monophonic"
+    "voiceContext": "polyphonic when hosted in a polyphonic network"
   },
 
   "parameterGroups": [],
@@ -82,12 +82,12 @@
       "context": "Users need to know if they can use snex_node as a modulation source."
     },
     {
-      "id": "polyphony-limitation",
+      "id": "polyphony-support",
       "category": "description_accuracy",
-      "question": "The SNEX overview states snex_node is monophonic only (isPolyphonic() returns false). Confirm this is correct and that PolyData cannot be used in snex_node SNEX code.",
-      "context": "Important limitation that users must understand before choosing snex_node vs snex_osc for polyphonic use."
+      "question": "The wrapper has no separate polyphonic instantiation because it stores no voice-count-dependent state. Confirm that the SNEX class receives the root network voice count and can use PolyData for per-voice state.",
+      "context": "Users need to distinguish the wrapper registration from the polyphonic behavior available to their SNEX class."
     }
   ],
 
-  "notes": "snex_node is the most flexible SNEX node type, providing the complete callback set for arbitrary DSP processing. Parameters, external data, and modulation output are all defined dynamically by the user's SNEX code. The node is monophonic (no IsPolyphonic flag). The base JSON shows no parameters because they are defined by the user's code. ModulationTargets is present but empty, indicating optional modulation output support. The ClassId property selects which SNEX class file to load. See snex-overview.md for full callback signatures and code templates."
+  "notes": "snex_node is the most flexible SNEX node type, providing the complete callback set for arbitrary DSP processing. Parameters, external data, and modulation output are all defined dynamically by the user's SNEX code. The wrapper has no separate polyphonic instantiation because it stores no voice-count-dependent state, but the SNEX class receives the root network voice count and can use PolyData for per-voice state. The base JSON shows no parameters because they are defined by the user's code. ModulationTargets is present but empty, indicating optional modulation output support. The ClassId property selects which SNEX class file to load. See snex-overview.md for full callback signatures and code templates."
 }

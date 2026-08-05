@@ -40,9 +40,9 @@ Yes, complex data slots are dynamically determined by the SNEX code. The base JS
 
 Yes, snex_node supports modulation output. The `isNormalisedModulation()` returns true, confirming the output is normalised to 0..1. The `handleModulation()` method checks if `modDefined` is true (set during compilation if `handleModulation` is found in the SNEX code) and forwards to the JIT function. The SNEX function signature is `int handleModulation(double& value)` -- return 1 if changed, 0 if not. The editor shows a modulation dragger when `modDefined` is true.
 
-### polyphony-limitation
+### polyphony-support
 
-Confirmed. `isPolyphonic()` returns `false` (constexpr). The snex_node class is not templated on voice count and does not inherit from `polyphonic_base`. PolyData cannot be used in snex_node SNEX code because the monophonic context provides no voice indexing. For polyphonic SNEX use cases, `snex_osc` supports polyphony via its NV template parameter.
+The wrapper's `isPolyphonic()` returns `false` because it has no voice-count-dependent C++ state and therefore needs no separate polyphonic instantiation. This does not limit the user SNEX class to monophonic processing. `SnexSource` passes the root network's polyphonic state into the SNEX compiler, so the generated class receives the voice count and can use `PolyData<T, NumVoices>` for per-voice state. Plain member variables remain shared between voices.
 
 ## Parameters
 
@@ -57,7 +57,7 @@ No fixed parameters. All parameters are defined dynamically by the user's SNEX c
 ## CPU Assessment
 
 baseline: variable (depends entirely on user SNEX code)
-polyphonic: false
+polyphonic: true
 scalingFactors: []
 
 The wrapper overhead is negligible (function pointer calls with read lock). Actual CPU depends on the user's SNEX implementation.

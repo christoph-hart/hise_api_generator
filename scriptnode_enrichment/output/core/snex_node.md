@@ -3,11 +3,11 @@ title: core.snex_node
 description: "A generic SNEX node with the complete callback set for custom audio processing."
 factoryPath: core.snex_node
 factory: core
-polyphonic: false
+polyphonic: true
 tags: [core, snex, custom-dsp]
 cpuProfile:
   baseline: variable
-  polyphonic: false
+  polyphonic: true
   scalingFactors: []
 forumReferences:
   - { tid: 4364, reason: "SNEX export workflow: wrap into DSP network, compile, freeze" }
@@ -16,10 +16,10 @@ seeAlso:
   - { id: "core.snex_osc", type: alternative, reason: "SNEX interface specialised for oscillators with built-in frequency tracking" }
   - { id: "core.faust", type: alternative, reason: "Alternative custom DSP using Faust language instead of SNEX" }
 commonMistakes:
-  - title: "Expecting polyphonic voice support"
-    wrong: "Using core.snex_node for per-voice synthesis"
-    right: "Use core.snex_osc for polyphonic oscillators, or compile to a C++ node for full polyphonic support."
-    explanation: "core.snex_node is monophonic. It does not support per-voice state. For polyphonic use cases, core.snex_osc provides voice management for oscillators."
+  - title: "Sharing state between voices"
+    wrong: "Storing voice-specific state in ordinary SNEX member variables inside a polyphonic network"
+    right: "Store voice-specific state in PolyData so each rendered voice has an independent value."
+    explanation: "The SNEX class receives the network voice count. Ordinary members are shared, while PolyData selects the current voice during polyphonic rendering."
   - title: "SNEX JIT compiler is not included in exported plugins"
     wrong: "Exporting a plugin that uses core.snex_node (or cable_expr, math.expr) without compiling to a C++ DLL first"
     right: "Wrap the SNEX node into a sub-network using the 'Wrap into DSP Network' toolbar action, then compile it with 'Compile DSP Networks'. The frozen (snowflake) icon confirms the compiled version is active."
@@ -33,7 +33,7 @@ llmRef: |
     audio in + MIDI in -> SNEX process callbacks -> audio out
     (optional) -> modulation out (normalised 0-1)
 
-  CPU: variable (depends on user SNEX code), monophonic
+  CPU: variable (depends on user SNEX code), polyphonic
 
   Parameters:
     All parameters are user-defined in the SNEX code (up to 16).
@@ -41,10 +41,10 @@ llmRef: |
   When to use:
     - Custom audio processing that cannot be built from existing nodes
     - Prototyping DSP algorithms with JIT compilation
-    - Monophonic effects or utilities requiring MIDI access
+    - Polyphonic DSP that manages per-voice state with PolyData
 
   Common mistakes:
-    - Monophonic only -- use core.snex_osc for polyphonic oscillators
+    - Use PolyData for state that must remain independent per voice
     - SNEX JIT not in exported plugins -- must wrap and compile to C++ DLL first
 
   Forum references: tid:4364 (export workflow: wrap, compile, freeze)
@@ -57,7 +57,9 @@ llmRef: |
 
 The SNEX node is a general-purpose container for custom DSP written in [SNEX]($LANG.snex$). It provides the complete set of processing callbacks, giving full control over audio processing, MIDI event handling, and optionally modulation output. The SNEX code is compiled at runtime, so changes take effect immediately without restarting.
 
-Unlike the more specialised [core.snex_shaper]($SN.core.snex_shaper$) and [core.snex_osc]($SN.core.snex_osc$), this node imposes no constraints on what the SNEX code does. It receives audio input, MIDI events, and any user-defined parameters, then delegates everything to the compiled SNEX callbacks. The node is monophonic -- for polyphonic oscillators, use [core.snex_osc]($SN.core.snex_osc$) instead.
+Unlike the more specialised [core.snex_shaper]($SN.core.snex_shaper$) and [core.snex_osc]($SN.core.snex_osc$), this node imposes no constraints on what the SNEX code does. It receives audio input, MIDI events, and any user-defined parameters, then delegates everything to the compiled SNEX callbacks.
+
+The wrapper has no separate polyphonic C++ instantiation because it holds no voice-count-dependent state itself. The compiled SNEX class receives the root network's voice count, so it can use `PolyData` for independent per-voice state in a polyphonic network. Ordinary SNEX members remain shared between voices.
 
 ## Signal Path
 
@@ -89,10 +91,6 @@ process(input) {
 ## Parameters
 
 All parameters are defined dynamically by the user's SNEX code. The node itself has no built-in parameters. Up to 16 parameters can be declared in the SNEX class.
-
-### Migration from core.jit
-
-`core.snex_node` replaces the former `core.jit` node. Existing algorithms must be moved to the current node callback API below; the old `processChannel` and `processSample` callbacks are not part of this contract.
 
 ### Required callbacks
 

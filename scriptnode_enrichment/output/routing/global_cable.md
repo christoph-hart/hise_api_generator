@@ -17,6 +17,11 @@ commonMistakes:
     wrong: "Sending a value of 440.0 through a global_cable expecting it to arrive unchanged"
     right: "All values are clamped to 0..1. Use a range converter on the receiving end to map back to the target range."
     explanation: "The global cable system clamps all values to 0..1 internally. To transmit values outside this range, normalise before sending and denormalise after receiving."
+forumReferences:
+  - id: 1
+    title: "Nested compiled C++ nodes"
+    summary: "A compiled external C++ node using global cables needs fixed runtime-target metadata and a second template parameter when it is nested in another compiled network."
+    topic: 12543
 llmRef: |
   routing.global_cable
 
@@ -42,6 +47,7 @@ llmRef: |
     setGlobalCableValue<Cable>(value) sends scalar values and is realtime safe. Listener callbacks run synchronously, so avoid redundant calls from the sample loop and prefer sending once per block where possible.
     sendDataToGlobalCable<Cable>(data) sends cloned juce::var data and is not realtime safe. Use it only for non-realtime data such as analysis buffers or UI payloads.
     registerDataCallback<Cable>(callback) receives juce::var data sent through GlobalCable.sendData(); register it in the node constructor or prepare callback.
+    For an external C++ node with global cables that is nested in another network which is then compiled, add IsFixRuntimeTarget to that node's node_properties.json entry and declare a second unused template parameter defaulting to runtime_target::indexers::none. This preserves the global-cable connection through the nested compiled network.
 
   See also:
     [disambiguation] routing.local_cable -- network-scoped cable for single-network use
@@ -113,6 +119,29 @@ Place the generated declarations before the node and inherit the manager alongsi
 ```cpp
 template <int NV> struct cpp_cable_test : public data::base,
                                           public cable_manager_t
+{
+    // Node implementation
+};
+```
+
+#### Nested compiled C++ nodes
+
+If an external C++ node using global cables is placed in a network that is itself compiled and then loaded into another compiled network, add `IsFixRuntimeTarget` to that node's entry in `node_properties.json`. This makes the generated code forward the global-cable connection to the nested node. The node class must also accept the generated, otherwise unused, second template argument: [1]($FORUM_REF.12543$)
+
+```json
+{
+  "internal_cpp_node": [
+    "IsPolyphonic",
+    "IsFixRuntimeTarget",
+    "AllowPolyphonic"
+  ]
+}
+```
+
+```cpp
+template <int NV, typename UnusedHash = runtime_target::indexers::none>
+struct internal_cpp_node : public data::base,
+                           public cable_manager_t
 {
     // Node implementation
 };

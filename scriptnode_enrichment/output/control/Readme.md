@@ -12,7 +12,11 @@ The control factory contains nodes that modify values sent through modulation an
 
 By default, parameter modulation in scriptnode uses the target parameter's range to convert values. A normalised source value of 0.0 maps to the range minimum and 1.0 maps to the maximum, with skew applied. This means you do not need to convert between different ranges manually.
 
+The target range is part of that conversion. If a static target range changes, later normalised values are mapped through the updated range.
+
 Some nodes bypass this range conversion and send raw values directly -- these are the **unscaled** nodes. A valid use case is [$SN.control.tempo_sync$]($SN.control.tempo_sync$): when the tempo changes it sends an exact millisecond value regardless of the target's range. You can identify unscaled parameters by the small **U** icon next to them in the interface.
+
+Raw values are not clipped to a parameter's nominal UI range, so an unscaled connection can pass an out-of-range value to the target callback. Keep a raw chain unscaled throughout: inserting a normalised stage introduces target-range conversion and changes the value domain.
 
 > Be aware that even if a node has an unscaled Value parameter, other parameters on the same node may still be scaled. For example, [$SN.control.smoothed_parameter_unscaled$]($SN.control.smoothed_parameter_unscaled$) has a scaled SmoothingTime parameter.
 
