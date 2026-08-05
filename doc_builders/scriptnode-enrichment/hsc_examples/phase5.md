@@ -171,3 +171,20 @@ If a default, trace caveat, or support-node rationale is behaviorally important,
 The JSON includes the Phase 5 frontmatter, authored body, synthesized semantic `text`, Phase 3 CLI command list, Phase 4 `.hsc` script, and screenshot filename. The semantic `text` is generated from high-signal frontmatter fields only: title, primary node, summary, use case, related nodes, tags, aliases, and parameter names.
 
 The public payload schema is version `1`. It includes `schemaVersion: 1`, `node` as the full `{factory}.{node}` path, `factory`, `slug` as the node filename, and `screenshotUrl` as `/data/v2/scriptnode-examples/{factory}/{node}.png`. Publish runs the same validation as `validate` before launching HISE or writing output, and validates the PNG before writing JSON or copying the authored reference.
+
+## MCP Output
+
+`collect_mcp.py <mcp-data-dir>` validates every completed example across its tracked Phase 1-5 artifacts and writes `scriptnode_examples.json` alongside the other MCP datasets. This export is headless: it builds each payload directly from tracked artifacts and does not require a screenshot or a prior `hsc_pipeline.py publish` run.
+
+The aggregate schema is:
+
+```json
+{
+  "schemaVersion": 1,
+  "examples": {
+    "dynamics.gate": {}
+  }
+}
+```
+
+Each value is the complete version 1 payload described above. Collection fails if the Phase 4 and Phase 5 inventories differ, cross-phase validation fails, IDs are duplicated, or an authored ID does not begin with its `{factory}.{node}.` prefix.

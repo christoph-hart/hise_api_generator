@@ -16,6 +16,7 @@ Outputs:
     processors.json     - enriched module documentation
     ui_components.json  - enriched UI component docs
     scriptnode.json     - scriptnode node documentation
+    scriptnode_examples.json - validated Scriptnode example networks
     preprocessor.json   - preprocessor macro documentation
 """
 
@@ -26,6 +27,8 @@ import sys
 from pathlib import Path
 
 import yaml
+
+from scriptnode_enrichment.hsc.resources import hsc_pipeline
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -145,7 +148,7 @@ def collect_modules(pipeline_dir: Path) -> dict:
 
         # Merge: enriched description + base numeric values
         params = {}
-        all_param_ids = set(list(enriched_params.keys()) + list(base.keys()))
+        all_param_ids = sorted(set(enriched_params) | set(base))
         for pid in all_param_ids:
             ep = enriched_params.get(pid, {})
             bp = base.get(pid, {})
@@ -308,6 +311,67 @@ def collect_scriptnode(pipeline_dir: Path) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Scriptnode HSC examples -> scriptnode_examples.json
+# ---------------------------------------------------------------------------
+
+def collect_scriptnode_examples(pipeline_dir: Path) -> dict:
+    """Validate tracked HSC phases and build the semantic example corpus."""
+    expected_root = pipeline_dir / "scriptnode_enrichment" / "hsc"
+    if hsc_pipeline.HSC_ROOT.resolve() != expected_root.resolve():
+        raise ValueError(
+            "HSC pipeline paths do not match the requested pipeline directory: "
+            f"{hsc_pipeline.HSC_ROOT} != {expected_root}"
+        )
+
+    phase4_nodes = {
+        f"{path.parent.name}.{path.stem}"
+        for path in hsc_pipeline.PHASE4.glob("*/*.hsc")
+    }
+    phase5_nodes = {
+        f"{path.parent.name}.{path.name.removesuffix('.llm.md')}"
+        for path in hsc_pipeline.PHASE5.glob("*/*.llm.md")
+    }
+    if phase4_nodes != phase5_nodes:
+        missing_phase5 = sorted(phase4_nodes - phase5_nodes)
+        missing_phase4 = sorted(phase5_nodes - phase4_nodes)
+        details = []
+        if missing_phase5:
+            details.append("missing Phase 5: " + ", ".join(missing_phase5))
+        if missing_phase4:
+            details.append("missing Phase 4: " + ", ".join(missing_phase4))
+        raise ValueError("Incomplete Scriptnode example inventory (" + "; ".join(details) + ")")
+
+    jobs = hsc_pipeline.find_publish_jobs(node_filter=None)
+    job_nodes = {job.label for job in jobs}
+    if job_nodes != phase5_nodes:
+        missing = sorted(phase5_nodes - job_nodes)
+        raise ValueError(
+            "Cannot collect Scriptnode examples because required phase artifacts are missing: "
+            + ", ".join(missing)
+        )
+
+    issues = hsc_pipeline.validate_jobs(jobs, check_duplicate_ids=True)
+    if issues:
+        raise ValueError("Invalid Scriptnode examples:\n- " + "\n- ".join(issues))
+
+    examples = {}
+    example_ids = set()
+    for job in sorted(jobs, key=lambda item: item.label):
+        payload = hsc_pipeline.build_publish_payload(job)
+        example_id = payload.get("id", "")
+        if not isinstance(example_id, str) or not example_id.startswith(f"{job.label}."):
+            raise ValueError(
+                f"{job.label}: example id must begin with {job.label + '.'!r}, got {example_id!r}"
+            )
+        if example_id in example_ids:
+            raise ValueError(f"Duplicate Scriptnode example id: {example_id}")
+        example_ids.add(example_id)
+        examples[job.label] = payload
+
+    return {"schemaVersion": 1, "examples": examples}
+
+
+# ---------------------------------------------------------------------------
 # Preprocessor enrichment -> preprocessor.json
 # ---------------------------------------------------------------------------
 
@@ -354,13 +418,13 @@ def main():
     print(file=sys.stderr)
 
     # --- Modules ---
-    print("[1/4] Collecting module enrichment...", file=sys.stderr)
+    print("[1/5] Collecting module enrichment...", file=sys.stderr)
     modules = collect_modules(pipeline_dir)
     enriched_count = sum(1 for m in modules.values() if m.get("llmRef"))
     print(f"      {len(modules)} modules ({enriched_count} with llmRef)", file=sys.stderr)
 
     # --- UI Components ---
-    print("[2/4] Collecting UI component enrichment...", file=sys.stderr)
+    print("[2/5] Collecting UI component enrichment...", file=sys.stderr)
     ui = collect_ui_components(pipeline_dir, output_dir)
     enriched_count = sum(1 for c in ui.values() if c.get("llmRef"))
     props_count = sum(len(c.get("properties", {})) for c in ui.values())
@@ -368,14 +432,19 @@ def main():
           file=sys.stderr)
 
     # --- Scriptnode ---
-    print("[3/4] Collecting scriptnode enrichment...", file=sys.stderr)
+    print("[3/5] Collecting scriptnode enrichment...", file=sys.stderr)
     sn = collect_scriptnode(pipeline_dir)
     node_count = len(sn["nodes"])
     enriched_count = sum(1 for n in sn["nodes"].values() if n.get("llmRef"))
     print(f"      {node_count} nodes ({enriched_count} with llmRef)", file=sys.stderr)
 
+    # --- Scriptnode examples ---
+    print("[4/5] Collecting Scriptnode examples...", file=sys.stderr)
+    sn_examples = collect_scriptnode_examples(pipeline_dir)
+    print(f"      {len(sn_examples['examples'])} validated examples", file=sys.stderr)
+
     # --- Preprocessors ---
-    print("[4/4] Collecting preprocessor enrichment...", file=sys.stderr)
+    print("[5/5] Collecting preprocessor enrichment...", file=sys.stderr)
     pp = collect_preprocessors(pipeline_dir)
     pp_count = len(pp.get("preprocessors", {}))
     print(f"      {pp_count} preprocessors", file=sys.stderr)
@@ -398,6 +467,7 @@ def main():
     write_json("processors.json", modules)
     write_json("ui_components.json", ui)
     write_json("scriptnode.json", sn)
+    write_json("scriptnode_examples.json", sn_examples)
     write_json("preprocessor.json", pp)
 
     print("\nDone.", file=sys.stderr)
