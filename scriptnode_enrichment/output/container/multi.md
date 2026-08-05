@@ -1,5 +1,5 @@
 ---
-title: Multi
+title: container.multi
 description: "A parallel container that assigns each child a different slice of the audio channels."
 factoryPath: container.multi
 factory: container

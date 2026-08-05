@@ -1,5 +1,5 @@
 ---
-title: Resetter
+title: control.resetter
 description: "Sends a 0-then-1 impulse pair to the modulation output on any input change, used to re-trigger gate-like parameters."
 factoryPath: control.resetter
 factory: control

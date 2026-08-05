@@ -1,5 +1,5 @@
 ---
-title: Table
+title: core.table
 description: "A symmetrical lookup table that reads the input signal magnitude and displays the result."
 factoryPath: core.table
 factory: core

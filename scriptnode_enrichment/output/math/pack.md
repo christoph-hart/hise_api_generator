@@ -1,5 +1,5 @@
 ---
-title: Pack
+title: math.pack
 description: "A lookup table that uses a SliderPack as its data source, with linear interpolation between slider values."
 factoryPath: math.pack
 factory: math

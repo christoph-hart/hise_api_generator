@@ -1,5 +1,5 @@
 ---
-title: Mod Inv
+title: math.mod_inv
 description: "Inverts a unipolar modulation signal within the 0-1 range."
 factoryPath: math.mod_inv
 factory: math

@@ -1,5 +1,5 @@
 ---
-title: Change
+title: control.change
 description: "Filters out repeated values, only forwarding the signal when it actually changes."
 factoryPath: control.change
 factory: control

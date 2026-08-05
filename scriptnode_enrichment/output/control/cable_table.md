@@ -1,5 +1,5 @@
 ---
-title: Cable Table
+title: control.cable_table
 description: "Reshapes a control signal using a visual lookup table with linear interpolation."
 factoryPath: control.cable_table
 factory: control

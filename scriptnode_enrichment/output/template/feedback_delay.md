@@ -1,5 +1,5 @@
 ---
-title: Feedback Delay
+title: template.feedback_delay
 description: "A feedback delay loop template with send/receive routing, a delay line, and feedback gain control within fixed 32-sample blocks."
 factoryPath: template.feedback_delay
 factory: template

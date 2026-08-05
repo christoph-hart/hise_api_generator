@@ -1,5 +1,5 @@
 ---
-title: framex_block
+title: container.framex_block
 description: "Enables per-sample processing for child nodes with a dynamic channel count that adapts to the network context."
 factoryPath: container.framex_block
 factory: container

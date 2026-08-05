@@ -1,5 +1,5 @@
 ---
-title: Offline
+title: container.offline
 description: "A container for offline processing that skips the realtime audio callback."
 factoryPath: container.offline
 factory: container

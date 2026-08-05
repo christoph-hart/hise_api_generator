@@ -1,5 +1,5 @@
 ---
-title: Peak Unscaled
+title: core.peak_unscaled
 description: "Measures the peak input value preserving sign and sends it as an unnormalised modulation signal."
 factoryPath: core.peak_unscaled
 factory: core
@@ -46,7 +46,7 @@ Unlike [core.peak]($SN.core.peak$), which folds negative values to positive (abs
 
 The display graph automatically adjusts its range to show whatever values are being processed, since the output is not constrained to a fixed range. The modulation output updates once per audio block, just like [core.peak]($SN.core.peak$); wrap the node in a fixed-block container for predictable update rates.
 
-This node also supports a display buffer for UI visualisation using the [DisplayBuffer]($API.DisplayBuffer$) scripting API.
+This node also supports a display buffer for UI visualisation using the [DisplayBuffer]($API.DisplayBuffer$) scripting API. `BufferLength` must be between 512 and 65536 samples, and `NumChannels` must be `1`. Use **Show in big popup** from the display editor menu to inspect the graph in a resizable window.
 
 ## Signal Path
 

@@ -1,5 +1,5 @@
 ---
-title: Bipolar Mod
+title: template.bipolar_mod
 description: "A bipolar modulation source template that converts a signal into a bipolar offset around a base value with adjustable intensity."
 factoryPath: template.bipolar_mod
 factory: template

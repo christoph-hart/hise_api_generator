@@ -1,5 +1,5 @@
 ---
-title: Simple AR Envelope
+title: envelope.simple_ar
 description: "A lightweight attack-release envelope with curve shaping and a fixed sustain at full level."
 factoryPath: envelope.simple_ar
 factory: envelope
@@ -37,7 +37,7 @@ llmRef: |
 
   Parameters:
     Attack (0-1000 ms, default 10), Release (0-1000 ms, default 10)
-    Gate (Off/On, default Off; manual trigger)
+    Gate (Off/On, default Off; when modulated, values >0.5 start attack and values <=0.5 start release)
     AttackCurve (0-1, default 0.0; 0=exponential, 0.5=linear, 1=power curve)
 
   When to use:
@@ -53,7 +53,7 @@ llmRef: |
     [module] SimpleEnvelope -- module-tree equivalent -- two-stage attack/release envelope
 ---
 
-A lightweight two-stage envelope that ramps to full level on note-on and fades to zero on note-off. It multiplies the input audio by the envelope value and sends CV and Gate modulation outputs. The sustain level is fixed at 1.0 and cannot be adjusted.
+A lightweight two-stage envelope that ramps to full level on note-on and fades to zero on note-off. It multiplies the input audio by the envelope value and sends CV and Gate modulation outputs. The sustain level is fixed at 1.0 and cannot be adjusted. When the Gate parameter is modulated, values above 0.5 start the attack phase and values at or below 0.5 start the release phase.
 
 This envelope has the lowest CPU cost of the envelope nodes, making it a good choice when you only need a fade-in and fade-out without the additional stages of a full AHDSR. The AttackCurve parameter blends between exponential, linear, and power curve shapes for both the attack and release segments. Values between the key points (0, 0.5, 1) interpolate smoothly between the curve types.
 
@@ -76,7 +76,7 @@ glossary:
       range: "0 - 1000 ms"
       default: "10.0"
     Gate:
-      desc: "Manual gate trigger, independent of MIDI"
+      desc: "Modulated values above 0.5 start attack; values at or below 0.5 start release"
       range: "Off / On"
       default: "Off"
     AttackCurve:
@@ -132,7 +132,7 @@ groups:
       - { name: AttackCurve, desc: "Controls the ramp shape for both attack and release. 0 = exponential (default), 0.5 = linear, 1 = power curve (very slow start).", range: "0.0 - 1.0", default: "0.0" }
   - label: Control
     params:
-      - { name: Gate, desc: "Manual gate trigger, independent of MIDI note events. Useful for modulation-driven triggering.", range: "Off / On", default: "Off" }
+      - { name: Gate, desc: "Manual or modulation-driven gate, independent of MIDI note events. Values above 0.5 start attack; values at or below 0.5 start release.", range: "Off / On", default: "Off" }
 ---
 ::
 

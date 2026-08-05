@@ -1,5 +1,5 @@
 ---
-title: frame1_block
+title: container.frame1_block
 description: "Enables per-sample processing for child nodes on a single mono channel."
 factoryPath: container.frame1_block
 factory: container

@@ -1,5 +1,5 @@
 ---
-title: FM
+title: core.fm
 description: "An FM operator that reads the input signal as a modulator and outputs a sine carrier."
 factoryPath: core.fm
 factory: core

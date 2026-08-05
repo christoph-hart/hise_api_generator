@@ -1,5 +1,5 @@
 ---
-title: Event Data Writer
+title: routing.event_data_writer
 description: "Writes a value to per-event data storage for retrieval by event_data_reader nodes."
 factoryPath: routing.event_data_writer
 factory: routing

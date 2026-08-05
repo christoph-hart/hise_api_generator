@@ -1,5 +1,5 @@
 ---
-title: Envelope Follower
+title: dynamics.envelope_follower
 description: "A polyphonic envelope follower that tracks input amplitude with configurable attack and release."
 factoryPath: dynamics.envelope_follower
 factory: dynamics
@@ -35,7 +35,7 @@ llmRef: |
     ProcessSignal: Off / On (default Off). Off = pass audio through; On = replace audio with envelope.
 
   When to use:
-    Tracking input amplitude for modulation routing. Commonly paired with math.mul or core.gain for sidechain-style ducking or level-dependent effects. Use dynamics.comp/gate/limiter when gain reduction is needed directly.
+    Tracking input amplitude for modulation routing. For an auto-wah, route the envelope modulation output to a filter's frequency parameter. Commonly paired with math.mul or core.gain for sidechain-style ducking or level-dependent effects. Use dynamics.comp/gate/limiter when gain reduction is needed directly.
 
   Common mistakes:
     ProcessSignal On replaces audio with envelope DC signal.
@@ -45,7 +45,7 @@ llmRef: |
     [companion] dynamics.gate - gate for dynamics processing
 ---
 
-The only polyphonic node in the dynamics factory, this envelope follower tracks the peak amplitude of the input signal. Each voice maintains its own envelope state with independent attack and release smoothing, making it suitable for per-voice amplitude modulation in synthesiser patches. The tracked envelope is output as a normalised modulation signal (0..1), which can be routed to other parameters for amplitude-dependent processing such as ducking, auto-gain, or visual metering.
+The only polyphonic node in the dynamics factory, this envelope follower tracks the peak amplitude of the input signal. Each voice maintains its own envelope state with independent attack and release smoothing, making it suitable for per-voice amplitude modulation in synthesiser patches. The tracked envelope is output as a normalised modulation signal (0..1), which can be routed to other parameters for amplitude-dependent processing such as ducking, auto-gain, or visual metering. For a concrete auto-wah setup, route this modulation output to a filter's frequency parameter so the input amplitude sweeps the filter.
 
 By default, audio passes through the node unchanged while the envelope is tracked in the background. Enabling ProcessSignal replaces the audio output with the envelope value itself.
 

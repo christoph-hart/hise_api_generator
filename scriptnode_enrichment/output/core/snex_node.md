@@ -1,5 +1,5 @@
 ---
-title: SNEX Node
+title: core.snex_node
 description: "A generic SNEX node with the complete callback set for custom audio processing."
 factoryPath: core.snex_node
 factory: core
@@ -90,9 +90,35 @@ process(input) {
 
 All parameters are defined dynamically by the user's SNEX code. The node itself has no built-in parameters. Up to 16 parameters can be declared in the SNEX class.
 
-### Setup
+### Migration from core.jit
 
-The SNEX code must implement five required callbacks: `prepare`, `reset`, `handleHiseEvent`, `process`, and `processFrame`. If any of these is missing, compilation fails. Two additional callbacks are optional: `handleModulation` (enables the node to act as a modulation source) and `setExternalData` (enables access to tables, audio files, and other complex data).
+`core.snex_node` replaces the former `core.jit` node. Existing algorithms must be moved to the current node callback API below; the old `processChannel` and `processSample` callbacks are not part of this contract.
+
+### Required callbacks
+
+All five callbacks are required; compilation fails if any cannot be resolved.
+
+```cpp
+void prepare(PrepareSpecs ps);
+void reset();
+void handleHiseEvent(HiseEvent& e);
+template <typename T> void process(T& data);
+template <int C> void processFrame(span<float, C>& data);
+```
+
+`prepare` runs when processing specifications change and is the place to initialise sample-rate or block-size-dependent state. `reset` clears processing state after preparation and when the processing pipeline resets. `handleHiseEvent` receives HISE/MIDI events. `process` handles block processing, while `processFrame` handles frame-processing contexts.
+
+### Optional integration callbacks
+
+```cpp
+void setExternalData(const ExternalData& d, int index);
+int handleModulation(double& value);
+double getPlotValue(int getMagnitude, double freqNormalised);
+```
+
+`setExternalData` receives tables, audio files, and other complex data. `handleModulation` writes a normalised modulation value and returns `1` when it changed or `0` otherwise. `getPlotValue` supplies a filter response display and requires a `data::filter_node_base` implementation initialised with `SNEX_INIT_FILTER`.
+
+Parameters use `template <int P> void setParameter(double value)`; `P` is the parameter index. Parameter callbacks can run at audio modulation rate, so they must remain suitable for the audio thread.
 
 The `ClassId` property selects which SNEX class to compile. Parameters, complex data slots, and modulation output are all discovered from the compiled SNEX code -- nothing is configured on the node itself.
 

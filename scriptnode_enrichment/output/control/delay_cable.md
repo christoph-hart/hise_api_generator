@@ -1,5 +1,5 @@
 ---
-title: Delay Cable
+title: control.delay_cable
 description: "Delays a control signal by a configurable number of samples before forwarding it to the modulation output."
 factoryPath: control.delay_cable
 factory: control

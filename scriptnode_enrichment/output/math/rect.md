@@ -1,5 +1,5 @@
 ---
-title: Rect
+title: math.rect
 description: "Converts a normalised signal into a binary gate by thresholding at 0.5."
 factoryPath: math.rect
 factory: math

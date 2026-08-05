@@ -1,5 +1,5 @@
 ---
-title: Global Mod Gate
+title: envelope.global_mod_gate
 description: "Outputs a binary gate signal reflecting whether a global modulator's envelope is still active for the current voice."
 factoryPath: envelope.global_mod_gate
 factory: envelope

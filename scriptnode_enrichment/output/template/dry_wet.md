@@ -1,5 +1,5 @@
 ---
-title: Dry Wet
+title: template.dry_wet
 description: "A dry/wet parallel mixer template with linear crossfade between unprocessed and processed signal paths."
 factoryPath: template.dry_wet
 factory: template

@@ -1,5 +1,5 @@
 ---
-title: Global Cable
+title: routing.global_cable
 description: "Routes a normalised control value across all DspNetworks via a named cable connection."
 factoryPath: routing.global_cable
 factory: routing
@@ -36,6 +36,12 @@ llmRef: |
 
   Common mistakes:
     Values are always clamped to 0..1 -- use range converters for wider ranges.
+
+  External C++ integration:
+    Use Tools -> Create C++ code for global cables to generate the GlobalCables enum and routing::global_cable_cpp_manager setup for the current cable IDs. Inherit the generated manager in the external node.
+    setGlobalCableValue<Cable>(value) sends scalar values and is realtime safe. Listener callbacks run synchronously, so avoid redundant calls from the sample loop and prefer sending once per block where possible.
+    sendDataToGlobalCable<Cable>(data) sends cloned juce::var data and is not realtime safe. Use it only for non-realtime data such as analysis buffers or UI payloads.
+    registerDataCallback<Cable>(callback) receives juce::var data sent through GlobalCable.sendData(); register it in the node constructor or prepare callback.
 
   See also:
     [disambiguation] routing.local_cable -- network-scoped cable for single-network use
@@ -84,8 +90,71 @@ groups:
 ---
 ::
 
-### Compilation
+### External C++ Integration
 
-Global cables can be compiled to C++ for use in exported plugins. The compiled node uses hash-based addressing to connect to the cable system at runtime. External nodes can send values back to HISE through the cable system -- useful for displaying internal state such as gain reduction or level metering on the UI.
+External C++ nodes can use global cables to exchange scalar values or arbitrary data with HISE. This is useful for exposing internal state such as gain reduction, metering, or analysis data to the UI.
+
+First choose **Tools -> Create C++ code for global cables** in the network editor. HISE collects the current cable IDs and generates an enum plus a `routing::global_cable_cpp_manager` specialization with the required cable hashes:
+
+```cpp
+enum class GlobalCables
+{
+    Funky_cable = 0,
+    Another_funky_cable = 1
+};
+
+using cable_manager_t = routing::global_cable_cpp_manager<
+    SN_GLOBAL_CABLE(623777931),
+    SN_GLOBAL_CABLE(1331638607)>;
+```
+
+Place the generated declarations before the node and inherit the manager alongside the node's other base classes:
+
+```cpp
+template <int NV> struct cpp_cable_test : public data::base,
+                                          public cable_manager_t
+{
+    // Node implementation
+};
+```
+
+Use `setGlobalCableValue` for a scalar value:
+
+```cpp
+this->setGlobalCableValue<GlobalCables::Funky_cable>(value);
+```
+
+`setGlobalCableValue` is realtime safe and may be called from processing code. Connected listeners execute their callbacks synchronously, however, so avoid sending an unchanged value for every sample. Sending once per block where possible reduces redundant listener work.
+
+Use `sendDataToGlobalCable` for serialized `juce::var` payloads:
+
+```cpp
+juce::var text("someString");
+juce::var buffer(new VariantBuffer(512));
+juce::var object(JSON::fromString("{\"value\": 1234}"));
+
+this->sendDataToGlobalCable<GlobalCables::Funky_cable>(text);
+this->sendDataToGlobalCable<GlobalCables::Funky_cable>(buffer);
+this->sendDataToGlobalCable<GlobalCables::Another_funky_cable>(object);
+```
+
+This data path serializes and dispatches the `juce::var` payload and is **not realtime safe**. Reserve it for non-realtime, heavier payloads such as analysis buffers or UI data; use `setGlobalCableValue` for realtime scalar control.
+
+To receive `juce::var` data sent from HiseScript with `GlobalCable.sendData()`, register a callback in the node constructor or `prepare` callback:
+
+```cpp
+this->registerDataCallback<GlobalCables::Funky_cable>([](const var& data)
+{
+    if (auto buffer = data.getBuffer())
+    {
+        // Consume buffer data outside the realtime scalar path.
+    }
+
+    if (data.isString())
+    {
+        auto text = data.toString();
+    }
+});
+```
 
 **See also:** $SN.routing.local_cable$ -- network-scoped cable for connections within a single network, $API.GlobalCable$ -- HiseScript API for creating and connecting global cables

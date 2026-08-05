@@ -1,5 +1,5 @@
 ---
-title: Tempo Sync
+title: control.tempo_sync
 description: "Converts a musical tempo value to a duration in milliseconds and sends it as a modulation signal."
 factoryPath: control.tempo_sync
 factory: control

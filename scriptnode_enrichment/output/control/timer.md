@@ -1,5 +1,5 @@
 ---
-title: Timer
+title: control.timer
 description: "Generates a periodic modulation signal at a configurable interval, with selectable output modes."
 factoryPath: control.timer
 factory: control

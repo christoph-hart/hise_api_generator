@@ -1,5 +1,5 @@
 ---
-title: Branch Cable
+title: control.branch_cable
 description: "Routes a single input value to one of multiple output slots selected by an index parameter."
 factoryPath: control.branch_cable
 factory: control

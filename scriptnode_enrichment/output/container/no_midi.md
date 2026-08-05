@@ -1,5 +1,5 @@
 ---
-title: No MIDI
+title: container.no_midi
 description: "A serial container that blocks all MIDI events from reaching its children."
 factoryPath: container.no_midi
 factory: container

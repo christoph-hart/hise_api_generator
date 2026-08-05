@@ -1,5 +1,5 @@
 ---
-title: Ramp
+title: core.ramp
 description: "A free-running ramp generator that outputs both a modulation signal and an additive audio signal."
 factoryPath: core.ramp
 factory: core

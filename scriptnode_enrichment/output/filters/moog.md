@@ -1,5 +1,5 @@
 ---
-title: Moog
+title: filters.moog
 description: "A Moog-style transistor ladder lowpass filter with a 24 dB/octave slope."
 factoryPath: filters.moog
 factory: filters

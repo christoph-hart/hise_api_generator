@@ -1,5 +1,5 @@
 ---
-title: Delay (Thiran)
+title: jdsp.jdelay_thiran
 description: "A delay line with Thiran allpass interpolation -- flat frequency response and low CPU cost, but not suitable for fast delay time modulation."
 factoryPath: jdsp.jdelay_thiran
 factory: jdsp
@@ -23,6 +23,10 @@ commonMistakes:
     wrong: "Connecting a knob directly to the DelayTime parameter"
     right: "Place a smoothed_parameter node between the control source and DelayTime, or use core.fix_delay which has built-in smoothing."
     explanation: "The delay time is applied immediately without ramping. Abrupt changes produce audible clicks."
+  - title: "Block-rate delay modulation"
+    wrong: "Modulating DelayTime while the delay and modulation source run at the processing block size"
+    right: "For slow modulation, place both jdelay_thiran and its modulation source inside a container.frame2_block container for sample-accurate updates. Use jdelay_cubic instead for fast modulation."
+    explanation: "Without frame2_block, DelayTime updates depend on the processing block size. frame2_block makes updates sample accurate but does not remove Thiran's fast-modulation artefacts."
 llmRef: |
   jdsp.jdelay_thiran
 
@@ -40,6 +44,9 @@ llmRef: |
   When to use:
     Fixed or slowly changing delays where flat frequency response matters but fast modulation is not needed (e.g., comb filters, static delays in reverb networks). For modulated effects, use jdelay_cubic instead.
 
+  Modulation:
+    For sample-accurate slow delay modulation, put both jdelay_thiran and its modulation source inside container.frame2_block. This does not make Thiran suitable for fast modulation; use jdelay_cubic for chorus, flanger, or other rapid changes.
+
   See also:
     alternative jdsp.jdelay -- cheaper, mild HF roll-off, better for modulation
     alternative jdsp.jdelay_cubic -- best modulation, higher CPU
@@ -53,6 +60,8 @@ However, the Thiran interpolator uses an internal allpass filter that has state 
 Each voice maintains its own delay buffer. When used polyphonically, the maximum delay time is reduced from 1000 ms to 30 ms.
 
 > [!Warning:Not for fast delay modulation] The Thiran allpass filter produces artefacts when the delay time changes rapidly. For chorus or flanger effects, use [jdelay_cubic]($SN.jdsp.jdelay_cubic$) instead.
+
+> [!Tip:Use frame2_block for slow modulation] If DelayTime must change slowly, put both jdelay_thiran and its modulation source inside a [frame2_block]($SN.container.frame2_block$) container for sample-accurate updates. This avoids block-size-dependent updates, but it does not remove the Thiran interpolator's fast-modulation limitation.
 
 ## Signal Path
 

@@ -1,5 +1,5 @@
 ---
-title: Comp
+title: dynamics.comp
 description: "A downward compressor with peak detection, adjustable threshold, ratio, attack, and release."
 factoryPath: dynamics.comp
 factory: dynamics

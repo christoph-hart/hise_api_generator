@@ -1,5 +1,5 @@
 ---
-title: FFT
+title: analyse.fft
 description: "A spectrum analyser that displays the frequency content of the audio signal as an FFT graph."
 factoryPath: analyse.fft
 factory: analyse

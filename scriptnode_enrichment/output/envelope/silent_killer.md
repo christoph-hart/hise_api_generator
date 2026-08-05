@@ -1,5 +1,5 @@
 ---
-title: Silent Killer
+title: envelope.silent_killer
 description: "Sends a voice reset message when silence is detected after note-off, providing automatic voice cleanup."
 factoryPath: envelope.silent_killer
 factory: envelope

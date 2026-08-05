@@ -1,5 +1,5 @@
 ---
-title: Pack6 Writer
+title: control.pack6_writer
 description: "Writes six parameter values into a slider pack."
 factoryPath: control.pack6_writer
 factory: control

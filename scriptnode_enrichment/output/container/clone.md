@@ -1,5 +1,5 @@
 ---
-title: Clone
+title: container.clone
 description: "An array of identical child node chains with configurable processing modes."
 factoryPath: container.clone
 factory: container
@@ -59,7 +59,10 @@ llmRef: |
     Additive synthesis, unison voices, cascading filters, feedback delay networks, multistage effects (phasers). Any application requiring duplicated processing paths with per-clone parameter control.
 
   Key details:
-    NumClones is a compile-time max. The parameter only caps the active count at runtime.
+    A clone container can contain up to 128 clones. NumClones only selects how many configured clones are active at runtime.
+    Parameters and complex data are synchronised between clone siblings.
+    Compiled networks forward external data assignments to every clone.
+    The toolbar can show or hide clones, delete every clone except the first, or rebuild up to 128 clones by duplicating the first.
     For complex payloads, build the DSP chain as a separate compiled network first.
     NumClones must be the first macro control with matching ranges on all connected nodes.
     clone_forward connects to the first node only; one clone_forward per target container.
@@ -73,7 +76,7 @@ llmRef: |
     [alternative] container.split -- parallel processing with different children
 ---
 
-The clone container creates an array of identical processing chains that can be resized at runtime. This is the standard way to build additive synthesisers, unison voices, cascading filters, feedback delay networks, and multistage effects such as phasers. Instead of manually duplicating nodes and wiring parameters, clone handles the duplication automatically and keeps all clones synchronised.
+The clone container creates an array of up to 128 identical processing chains. The configured clone count determines the available slots, while `NumClones` selects how many of them are active at runtime. This is the standard way to build additive synthesisers, unison voices, cascading filters, feedback delay networks, and multistage effects such as phasers. Instead of manually duplicating nodes and wiring parameters, clone handles the duplication automatically and keeps all clones synchronised.
 
 The `SplitSignal` parameter selects between three processing modes:
 
@@ -81,7 +84,7 @@ The `SplitSignal` parameter selects between three processing modes:
 - **Parallel**: each clone receives silence, processes it, and the outputs are added to the original signal (useful for synthesis that does not require audio input)
 - **Copy** (default): each clone receives a copy of the input, and all outputs are summed together
 
-All clone parameters are synchronised by default. For per-clone differentiation - different frequencies for harmonics, detuning for unison, or panning for spatial effects - use [control.clone_cable]($SN.control.clone_cable$) or [control.clone_pack]($SN.control.clone_pack$) to distribute different values to each clone.
+Clone parameters and complex data are synchronised between sibling clones by default. In compiled networks, external data assignments are forwarded to every clone as well. For per-clone parameter differentiation - different frequencies for harmonics, detuning for unison, or panning for spatial effects - use [control.clone_cable]($SN.control.clone_cable$) or [control.clone_pack]($SN.control.clone_pack$) to distribute different values to each clone.
 
 ## Signal Path
 
@@ -129,13 +132,14 @@ groups:
         default: "1"
         hints:
           - type: tip
-            text: "The total number of clone slots is fixed at compile time. This parameter only selects how many of the pre-allocated clones are active - it cannot exceed the number of clones configured in the network."
+            text: "This parameter only selects how many configured clones are active. It cannot exceed the configured clone count, which has a maximum of 128."
       - { name: SplitSignal, desc: "Processing mode. Serial chains clones sequentially; Parallel adds clone output to the original; Copy sums copies.", range: "Serial / Parallel / Copy", default: "Copy" }
 ---
 ::
 
 ### Limitations
 
+- A clone container supports a maximum of 128 clones.
 - Each clone's root element must be a container node.
 - All clones must have the same structure. Mismatched clones produce an error.
 - Clones cannot have modulation or parameter connections to nodes outside the clone or to each other.
@@ -149,5 +153,7 @@ When forwarding a value into a clone container with [control.clone_forward]($SN.
 ### Workflow
 
 For complex clone payloads, build the DSP chain as a separate compiled network first, then load it into the clone container. This reduces compile errors and simplifies debugging. Make `NumClones` the first macro control with matching parameter ranges for every connected node.
+
+The clone toolbar can show or hide the clone children without changing processing. Its delete action removes every clone except the first. The duplicate action first performs that same cleanup, then rebuilds the requested clone count by duplicating the first clone; the entered count is limited to `1-128`.
 
 **See also:** $SN.container.split$ -- parallel processing with different children instead of identical clones

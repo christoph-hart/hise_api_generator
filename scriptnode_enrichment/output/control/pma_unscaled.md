@@ -1,5 +1,5 @@
 ---
-title: PMA Unscaled
+title: control.pma_unscaled
 description: "Scales and offsets a raw modulation signal without clamping or range conversion."
 factoryPath: control.pma_unscaled
 factory: control

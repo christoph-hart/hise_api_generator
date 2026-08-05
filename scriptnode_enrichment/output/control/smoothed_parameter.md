@@ -1,5 +1,5 @@
 ---
-title: Smoothed Parameter
+title: control.smoothed_parameter
 description: "Smoothes an incoming parameter value to prevent abrupt changes, with selectable smoothing modes."
 factoryPath: control.smoothed_parameter
 factory: control

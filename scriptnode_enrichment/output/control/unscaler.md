@@ -1,5 +1,5 @@
 ---
-title: Unscaler
+title: control.unscaler
 description: "Forwards a parameter value as an unnormalised modulation signal, bypassing the target's range conversion."
 factoryPath: control.unscaler
 factory: control

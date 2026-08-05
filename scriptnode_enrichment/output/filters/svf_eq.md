@@ -1,5 +1,5 @@
 ---
-title: SVF EQ
+title: filters.svf_eq
 description: "An SVF-based parametric EQ with five modes: LowPass, HighPass, LowShelf, HighShelf, and Peak."
 factoryPath: filters.svf_eq
 factory: filters

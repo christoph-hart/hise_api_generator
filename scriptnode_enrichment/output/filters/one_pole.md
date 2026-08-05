@@ -1,5 +1,5 @@
 ---
-title: One Pole
+title: filters.one_pole
 description: "A first-order filter with lowpass and highpass modes, providing a gentle 6 dB/octave slope."
 factoryPath: filters.one_pole
 factory: filters

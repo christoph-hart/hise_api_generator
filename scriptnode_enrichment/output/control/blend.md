@@ -1,5 +1,5 @@
 ---
-title: Blend
+title: control.blend
 description: "Linearly interpolates between two input values based on the Alpha parameter."
 factoryPath: control.blend
 factory: control

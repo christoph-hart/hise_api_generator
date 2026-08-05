@@ -1,5 +1,5 @@
 ---
-title: File Player
+title: core.file_player
 description: "A polyphonic file player with three playback modes: static, signal-driven, and MIDI pitch-tracked."
 factoryPath: core.file_player
 factory: core

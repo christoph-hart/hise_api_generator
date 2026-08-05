@@ -1,5 +1,5 @@
 ---
-title: Limiter
+title: dynamics.limiter
 description: "A peak limiter with fast envelope detection for transparent peak control."
 factoryPath: dynamics.limiter
 factory: dynamics

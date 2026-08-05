@@ -1,5 +1,5 @@
 ---
-title: Branch
+title: container.branch
 description: "A container that processes only the child selected by its Index parameter."
 factoryPath: container.branch
 factory: container
@@ -18,8 +18,8 @@ commonMistakes:
     explanation: "Branch switches immediately with no crossfade. Stateful children (filters, delays) may produce clicks when switched. The softbypass_switch templates combine soft_bypass containers with control.xfader for smooth transitions."
   - title: "Using chained soft_bypass nodes instead of branch"
     wrong: "Chaining two or more container.soft_bypass nodes in series to switch between processing paths"
-    right: "Use container.branch to select between mutually exclusive paths. It is cleaner, avoids audio bumps, and scales to any number of alternatives."
-    explanation: "Chaining multiple soft_bypass containers produces audible audio bumps on switch. Branch handles the bypass internally without artefacts."
+    right: "Use container.branch to select between mutually exclusive paths. It is cleaner and scales to any number of alternatives; use template.softbypass_switchN when switching must be click-free."
+    explanation: "Chaining multiple soft_bypass containers can produce audio bumps. Branch avoids that chained topology, but its own Index changes are immediate and do not crossfade."
 forumReferences:
   - { tid: 12946, reason: "Branch auto-bypass behaviour confirmed by author" }
   - { tid: 11223, reason: "Branch vs chained soft_bypass audio bumps" }
@@ -41,6 +41,7 @@ llmRef: |
   When to use:
     Algorithm switching, mode selection, or any case where exactly one of several processing paths should be active. For click-free switching, use template.softbypass_switchN instead.
     Prefer branch over chaining multiple soft_bypass nodes -- chained soft_bypass produces audio bumps.
+    The editor highlights the wire leading to the active child.
 
   Common mistakes:
     Index switching is immediate with no crossfade. Use template.softbypass_switchN for click-free transitions.
@@ -51,6 +52,8 @@ llmRef: |
 ---
 
 The branch container routes audio through exactly one child at a time, selected by its `Index` parameter. All other children remain idle - they do not process audio, saving CPU. This is useful for algorithm switching, mode selection, or any case where the user chooses between mutually exclusive processing paths.
+
+In the network editor, the wire leading to the currently active child is highlighted, making the selected path visible at a glance.
 
 All children are fully prepared regardless of the current index, so switching is instant. However, index changes take effect immediately with no crossfade, which may cause clicks with stateful effects. For click-free switching, use the `template.softbypass_switchN` nodes instead, which combine [container.soft_bypass]($SN.container.soft_bypass$) wrappers with crossfading.
 
@@ -96,7 +99,7 @@ The `Index` parameter range adjusts automatically when children are added or rem
 
 ### Branch vs Soft Bypass
 
-Prefer `container.branch` over chaining multiple [container.soft_bypass]($SN.container.soft_bypass$) nodes in series. Chained soft bypass nodes produce audible bumps when switching, whereas branch handles the bypass internally without artefacts. Branch also scales to any number of alternatives simply by adding more child nodes.
+Prefer `container.branch` over chaining multiple [container.soft_bypass]($SN.container.soft_bypass$) nodes in series. Branch selects one child directly and scales to any number of alternatives, but Index changes still occur without a crossfade. Use `template.softbypass_switchN` when the transition itself must be click-free.
 
 For cases where the signal paths need to coexist or be blended rather than selected exclusively, [container.clone]($SN.container.clone$) can serve as an alternative.
 

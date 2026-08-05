@@ -1,5 +1,5 @@
 ---
-title: Pitch Mod
+title: core.pitch_mod
 description: "Receives the polyphonic pitch modulation signal from the parent sound generator as raw pitch factor values."
 factoryPath: core.pitch_mod
 factory: core

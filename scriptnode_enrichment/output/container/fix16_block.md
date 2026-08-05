@@ -1,5 +1,5 @@
 ---
-title: fix16_block
+title: container.fix16_block
 description: "Splits the audio buffer into chunks of 16 samples for higher modulation update rates."
 factoryPath: container.fix16_block
 factory: container

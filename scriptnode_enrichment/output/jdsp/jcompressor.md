@@ -1,5 +1,5 @@
 ---
-title: Compressor
+title: jdsp.jcompressor
 description: "A simple compressor with threshold, ratio, attack, and release controls, plus a gain reduction modulation output."
 factoryPath: jdsp.jcompressor
 factory: jdsp

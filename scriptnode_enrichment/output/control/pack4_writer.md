@@ -1,5 +1,5 @@
 ---
-title: Pack4 Writer
+title: control.pack4_writer
 description: "Writes four parameter values into a slider pack."
 factoryPath: control.pack4_writer
 factory: control

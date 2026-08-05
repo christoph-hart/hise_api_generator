@@ -1,5 +1,5 @@
 ---
-title: Clone Forward
+title: control.clone_forward
 description: "Forwards the same unscaled value to all clones in a clone container."
 factoryPath: control.clone_forward
 factory: control

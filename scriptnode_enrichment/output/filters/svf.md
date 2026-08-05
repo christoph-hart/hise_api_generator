@@ -1,5 +1,5 @@
 ---
-title: SVF
+title: filters.svf
 description: "A state variable filter with five modes: lowpass, highpass, bandpass, notch, and allpass."
 factoryPath: filters.svf
 factory: filters

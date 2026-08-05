@@ -1,5 +1,5 @@
 ---
-title: SNEX Shaper
+title: core.snex_shaper
 description: "A custom waveshaper node using SNEX code to define the transfer function."
 factoryPath: core.snex_shaper
 factory: core

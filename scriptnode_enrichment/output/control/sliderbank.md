@@ -1,5 +1,5 @@
 ---
-title: Slider Bank
+title: control.sliderbank
 description: "Scales an input value by a slider pack and distributes the results to multiple output targets."
 factoryPath: control.sliderbank
 factory: control

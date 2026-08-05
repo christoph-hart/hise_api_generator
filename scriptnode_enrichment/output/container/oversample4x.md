@@ -1,5 +1,5 @@
 ---
-title: Oversample 4x
+title: container.oversample4x
 description: "Upsamples the audio signal by a fixed factor of 4, processes child nodes at the higher rate, then downsamples back."
 factoryPath: container.oversample4x
 factory: container

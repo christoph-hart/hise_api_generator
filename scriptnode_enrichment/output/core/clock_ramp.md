@@ -1,5 +1,5 @@
 ---
-title: Clock Ramp
+title: core.clock_ramp
 description: "A tempo-synced ramp generator that locks to the HISE/DAW clock and outputs a modulation signal."
 factoryPath: core.clock_ramp
 factory: core

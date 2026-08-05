@@ -1,5 +1,5 @@
 ---
-title: Pack Resizer
+title: control.pack_resizer
 description: "Dynamically resizes a connected slider pack at runtime."
 factoryPath: control.pack_resizer
 factory: control

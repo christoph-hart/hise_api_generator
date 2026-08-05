@@ -1,5 +1,5 @@
 ---
-title: Soft Bypass Switch 2
+title: template.softbypass_switch2
 description: "A click-free 2-way signal path switch using soft-bypassed containers."
 factoryPath: template.softbypass_switch2
 factory: template

@@ -1,5 +1,5 @@
 ---
-title: Inv
+title: math.inv
 description: "Inverts the phase of a signal by negating every sample."
 factoryPath: math.inv
 factory: math

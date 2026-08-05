@@ -1,5 +1,5 @@
 ---
-title: frame2_block
+title: container.frame2_block
 description: "Enables per-sample processing for child nodes on two stereo channels."
 factoryPath: container.frame2_block
 factory: container

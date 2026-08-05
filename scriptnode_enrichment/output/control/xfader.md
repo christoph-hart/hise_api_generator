@@ -1,5 +1,5 @@
 ---
-title: Crossfader
+title: control.xfader
 description: "Distributes fade coefficients across multiple outputs based on a single crossfade position and a selectable fade curve."
 factoryPath: control.xfader
 factory: control

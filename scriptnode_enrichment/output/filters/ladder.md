@@ -1,5 +1,5 @@
 ---
-title: Ladder
+title: filters.ladder
 description: "A simple 4-pole (24 dB/octave) ladder lowpass filter."
 factoryPath: filters.ladder
 factory: filters

@@ -1,5 +1,5 @@
 ---
-title: fix64_block
+title: container.fix64_block
 description: "Splits the audio buffer into chunks of 64 samples for higher modulation update rates."
 factoryPath: container.fix64_block
 factory: container

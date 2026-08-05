@@ -1,5 +1,5 @@
 ---
-title: Freq Split 3
+title: template.freq_split3
 description: "A 3-band frequency crossover using phase-coherent Linkwitz-Riley filters."
 factoryPath: template.freq_split3
 factory: template

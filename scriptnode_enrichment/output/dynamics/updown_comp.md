@@ -1,5 +1,5 @@
 ---
-title: Updown Comp
+title: dynamics.updown_comp
 description: "A dual-threshold compressor with upward compression below LowThreshold and downward compression above HighThreshold."
 factoryPath: dynamics.updown_comp
 factory: dynamics

@@ -1,5 +1,5 @@
 ---
-title: Sqrt
+title: math.sqrt
 description: "Applies the square root function to each sample of the signal."
 factoryPath: math.sqrt
 factory: math

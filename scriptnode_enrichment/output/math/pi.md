@@ -1,5 +1,5 @@
 ---
-title: Pi
+title: math.pi
 description: "Multiplies the signal by PI times the Value parameter."
 factoryPath: math.pi
 factory: math

@@ -1,5 +1,5 @@
 ---
-title: Local Cable Unscaled
+title: routing.local_cable_unscaled
 description: "Routes an unnormalised control value between nodes sharing the same ID within a single network."
 factoryPath: routing.local_cable_unscaled
 factory: routing

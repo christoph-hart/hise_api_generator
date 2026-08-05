@@ -1,5 +1,5 @@
 ---
-title: Global Send
+title: routing.global_send
 description: "Copies audio from the local signal chain into a shared buffer for cross-network routing."
 factoryPath: routing.global_send
 factory: routing

@@ -1,5 +1,5 @@
 ---
-title: dynamic_blocksize
+title: container.dynamic_blocksize
 description: "Processes children with a parameter-controlled block size, allowing runtime quality settings down to per-sample frame processing."
 factoryPath: container.dynamic_blocksize
 factory: container

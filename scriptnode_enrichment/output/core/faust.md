@@ -1,5 +1,5 @@
 ---
-title: Faust
+title: core.faust
 description: "A node that compiles and runs Faust DSP code with automatic parameter and modulation output mapping."
 factoryPath: core.faust
 factory: core

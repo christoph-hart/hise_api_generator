@@ -1,5 +1,5 @@
 ---
-title: Map
+title: math.map
 description: "Maps an input signal from one value range to another using linear interpolation with clamping."
 factoryPath: math.map
 factory: math

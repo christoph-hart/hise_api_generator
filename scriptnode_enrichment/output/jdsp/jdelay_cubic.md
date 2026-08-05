@@ -1,5 +1,5 @@
 ---
-title: Delay (Cubic)
+title: jdsp.jdelay_cubic
 description: "A delay line with cubic Lagrange interpolation -- flat frequency response and best modulation behaviour, but highest CPU cost."
 factoryPath: jdsp.jdelay_cubic
 factory: jdsp
@@ -19,6 +19,10 @@ commonMistakes:
     wrong: "Connecting a knob directly to the DelayTime parameter"
     right: "Place a smoothed_parameter node between the control source and DelayTime, or use core.fix_delay which has built-in smoothing."
     explanation: "The delay time is applied immediately without ramping. Abrupt changes produce audible clicks. External smoothing is required for any continuous delay time control."
+  - title: "Block-rate delay modulation"
+    wrong: "Modulating DelayTime while the delay and modulation source run at the processing block size"
+    right: "Place both jdelay_cubic and its modulation source inside a container.frame2_block container for sample-accurate updates."
+    explanation: "Without frame2_block, DelayTime updates depend on the processing block size rather than occurring for every sample."
 llmRef: |
   jdsp.jdelay_cubic
 
@@ -36,6 +40,9 @@ llmRef: |
   When to use:
     Modulated delay effects where flat frequency response is important (chorus, flanger, pitch shifting). For fixed delays where modulation quality does not matter, use jdelay (cheaper) or jdelay_thiran (flat + cheaper).
 
+  Modulation:
+    For sample-accurate delay modulation, put both jdelay_cubic and its modulation source inside container.frame2_block. Otherwise updates depend on the processing block size.
+
   See also:
     alternative jdsp.jdelay -- cheaper, mild HF roll-off
     alternative jdsp.jdelay_thiran -- flat, cheaper, not for modulation
@@ -51,6 +58,8 @@ Each voice maintains its own delay buffer. When used polyphonically, the maximum
 > [!Warning:No delay time smoothing] The delay time is applied immediately without any ramping. Connect a [smoothed_parameter]($SN.control.smoothed_parameter$) node before the DelayTime input to prevent clicks.
 
 > [!Tip:Best variant for modulation effects] For chorus and flanger effects where tonal accuracy matters, jdelay_cubic is the preferred choice. Its flat frequency response and clean modulation behaviour outweigh the higher CPU cost.
+
+> [!Tip:Use frame2_block for modulation] Put both jdelay_cubic and its modulation source inside a [frame2_block]($SN.container.frame2_block$) container for sample-accurate DelayTime updates. Without it, modulation updates depend on the processing block size.
 
 ## Signal Path
 

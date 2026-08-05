@@ -7,6 +7,8 @@ The math factory provides arithmetic and mathematical operations that process au
 
 All math nodes process each channel independently. Most are polyphonic, meaning each voice can have its own parameter value when used inside a polyphonic context.
 
+Common operations have direct signal-processing uses: multiplication changes gain, multiplying by `-1` inverts polarity, and addition introduces a DC offset. Many nodes expose a **Value** parameter for interface consistency, although some nodes do not consume it.
+
 ## Nodes
 
 | Node | Description |

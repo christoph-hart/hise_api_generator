@@ -1,5 +1,5 @@
 ---
-title: Convolution
+title: filters.convolution
 description: "A partitioned FFT convolution reverb that convolves the input signal with an impulse response loaded from an AudioFile slot."
 factoryPath: filters.convolution
 factory: filters

@@ -1,5 +1,5 @@
 ---
-title: Table
+title: math.table
 description: "A lookup table waveshaper that uses a 512-sample editable curve to transform the input signal."
 factoryPath: math.table
 factory: math

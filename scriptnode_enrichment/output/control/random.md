@@ -1,5 +1,5 @@
 ---
-title: Random
+title: control.random
 description: "Generates a random value between 0.0 and 1.0 each time the Value parameter changes."
 factoryPath: control.random
 factory: control

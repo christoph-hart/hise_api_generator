@@ -1,5 +1,5 @@
 ---
-title: Intensity
+title: control.intensity
 description: "Applies the HISE gain modulation intensity formula to scale how much a modulation signal affects the output."
 factoryPath: control.intensity
 factory: control

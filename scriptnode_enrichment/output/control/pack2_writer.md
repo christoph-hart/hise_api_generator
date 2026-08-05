@@ -1,5 +1,5 @@
 ---
-title: Pack2 Writer
+title: control.pack2_writer
 description: "Writes two parameter values into a slider pack."
 factoryPath: control.pack2_writer
 factory: control

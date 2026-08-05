@@ -1,5 +1,5 @@
 ---
-title: MS Encode
+title: routing.ms_encode
 description: "Converts a stereo left/right signal to mid/side representation."
 factoryPath: routing.ms_encode
 factory: routing

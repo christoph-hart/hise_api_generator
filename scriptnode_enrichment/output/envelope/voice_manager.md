@@ -1,5 +1,5 @@
 ---
-title: Voice Manager
+title: envelope.voice_manager
 description: "Sends a voice reset message when the input value drops below 0.5, providing gate-based voice lifecycle control."
 factoryPath: envelope.voice_manager
 factory: envelope

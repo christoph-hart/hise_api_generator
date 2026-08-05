@@ -1,5 +1,5 @@
 ---
-title: Oscilloscope
+title: analyse.oscilloscope
 description: "A waveform display with optional MIDI note-on synchronisation that locks the view to a single cycle."
 factoryPath: analyse.oscilloscope
 factory: analyse

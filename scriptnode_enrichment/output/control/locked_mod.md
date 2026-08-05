@@ -1,5 +1,5 @@
 ---
-title: Locked Mod
+title: control.locked_mod
 description: "Adds a normalised modulation output to the parent container when it is locked, exposing internal modulation as a draggable source."
 factoryPath: control.locked_mod
 factory: control

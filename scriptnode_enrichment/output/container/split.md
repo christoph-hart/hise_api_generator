@@ -1,5 +1,5 @@
 ---
-title: Split
+title: container.split
 description: "A parallel container that copies the input to each child and sums their outputs."
 factoryPath: container.split
 factory: container

@@ -1,5 +1,5 @@
 ---
-title: Clear
+title: math.clear
 description: "Sets every sample to zero, silencing the signal."
 factoryPath: math.clear
 factory: math

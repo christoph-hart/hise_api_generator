@@ -1,5 +1,5 @@
 ---
-title: Converter
+title: control.converter
 description: "Converts a control value between unit domains using one of 14 predefined conversion formulas."
 factoryPath: control.converter
 factory: control

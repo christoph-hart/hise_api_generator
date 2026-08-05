@@ -1,5 +1,5 @@
 ---
-title: Flex AHDSR Envelope
+title: envelope.flex_ahdsr
 description: "An advanced AHDSR envelope with per-segment curve shaping, three playback modes, and a draggable graph UI."
 factoryPath: envelope.flex_ahdsr
 factory: envelope

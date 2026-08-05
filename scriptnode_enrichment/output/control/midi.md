@@ -1,5 +1,5 @@
 ---
-title: MIDI
+title: control.midi
 description: "Converts incoming MIDI events into a normalised modulation signal based on a selectable mode (gate, velocity, note number, frequency, or random)."
 factoryPath: control.midi
 factory: control

@@ -1,5 +1,5 @@
 ---
-title: Stretch Player
+title: core.stretch_player
 description: "A stereo file player with independent time stretching and pitch shifting, plus optional DAW tempo sync."
 factoryPath: core.stretch_player
 factory: core

@@ -1,5 +1,5 @@
 ---
-title: Matrix Mod
+title: core.matrix_mod
 description: "A dual-source modulation bridge with modulation matrix features for combining two global modulators."
 factoryPath: core.matrix_mod
 factory: core

@@ -1,5 +1,5 @@
 ---
-title: Receive
+title: routing.receive
 description: "Receives audio from a connected send node and adds it to the current signal, scaled by the Feedback parameter."
 factoryPath: routing.receive
 factory: routing

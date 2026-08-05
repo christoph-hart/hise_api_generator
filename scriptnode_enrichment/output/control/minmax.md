@@ -1,5 +1,5 @@
 ---
-title: MinMax
+title: control.minmax
 description: "Maps a normalised 0-1 input to a custom output range with configurable skew, step quantisation, and polarity inversion."
 factoryPath: control.minmax
 factory: control

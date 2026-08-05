@@ -1,5 +1,5 @@
 ---
-title: Panner
+title: jdsp.jpanner
 description: "A stereo panner with seven selectable panning laws."
 factoryPath: jdsp.jpanner
 factory: jdsp

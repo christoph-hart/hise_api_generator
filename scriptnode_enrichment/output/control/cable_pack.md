@@ -1,5 +1,5 @@
 ---
-title: Cable Pack
+title: control.cable_pack
 description: "Reshapes a control signal using a slider pack lookup with discrete steps."
 factoryPath: control.cable_pack
 factory: control

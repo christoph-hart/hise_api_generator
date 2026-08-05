@@ -1,5 +1,5 @@
 ---
-title: Chorus
+title: jdsp.jchorus
 description: "A chorus effect with LFO-modulated delay, feedback, and wet/dry mixing."
 factoryPath: jdsp.jchorus
 factory: jdsp

@@ -1,5 +1,5 @@
 ---
-title: Chain
+title: container.chain
 description: "A serial container that processes each child node in sequence."
 factoryPath: container.chain
 factory: container

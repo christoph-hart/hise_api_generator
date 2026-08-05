@@ -1,5 +1,5 @@
 ---
-title: Gain
+title: core.gain
 description: "A gain module with decibel range and smoothed parameter changes."
 factoryPath: core.gain
 factory: core

@@ -1,5 +1,5 @@
 ---
-title: Fix Delay
+title: core.fix_delay
 description: "A non-interpolating delay line with crossfade smoothing for delay time changes."
 factoryPath: core.fix_delay
 factory: core

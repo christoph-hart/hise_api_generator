@@ -1,5 +1,5 @@
 ---
-title: Peak
+title: core.peak
 description: "Measures the peak input magnitude and sends it as a normalised modulation signal."
 factoryPath: core.peak
 factory: core
@@ -58,7 +58,7 @@ This node analyses the input signal and detects the maximum absolute value acros
 
 The peak value is computed by finding the minimum and maximum sample values in the block, taking the absolute value of each, and returning the larger of the two. For standard audio signals in the -1 to 1 range, the output naturally falls within 0 to 1. If the input exceeds this range, the modulation output will also exceed 1.0.
 
-This node also supports a display buffer that can be visualised on the UI using the [DisplayBuffer]($API.DisplayBuffer$) scripting API. The ring buffer length is configurable between 512 and 65536 samples.
+This node also supports a display buffer that can be visualised on the UI using the [DisplayBuffer]($API.DisplayBuffer$) scripting API. The ring buffer length is configurable between 512 and 65536 samples, and `NumChannels` must be `1`. Use **Show in big popup** from the display editor menu to inspect the graph in a resizable window.
 
 ## Signal Path
 

@@ -1,5 +1,5 @@
 ---
-title: XY Controller
+title: control.xy
 description: "A two-axis controller that routes X and Y values to separate output targets."
 factoryPath: control.xy
 factory: control

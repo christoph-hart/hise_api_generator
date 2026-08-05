@@ -1,5 +1,5 @@
 ---
-title: Haas
+title: fx.haas
 description: "Stereo positioning effect using inter-channel delay (Haas effect) with up to 20ms offset."
 factoryPath: fx.haas
 factory: fx

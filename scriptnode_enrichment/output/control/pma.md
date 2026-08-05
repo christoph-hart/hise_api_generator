@@ -1,5 +1,5 @@
 ---
-title: PMA
+title: control.pma
 description: "Scales and offsets a normalised modulation signal using a multiply-add formula with clamped output."
 factoryPath: control.pma
 factory: control

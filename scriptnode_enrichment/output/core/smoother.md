@@ -1,5 +1,5 @@
 ---
-title: Smoother
+title: core.smoother
 description: "A one-pole lowpass filter that smooths channel 0 of the input signal."
 factoryPath: core.smoother
 factory: core

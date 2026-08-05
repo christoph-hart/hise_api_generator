@@ -1,5 +1,5 @@
 ---
-title: Gate
+title: dynamics.gate
 description: "A noise gate that attenuates signals falling below the threshold."
 factoryPath: dynamics.gate
 factory: dynamics

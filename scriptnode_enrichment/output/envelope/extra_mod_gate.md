@@ -1,5 +1,5 @@
 ---
-title: Extra Mod Gate
+title: envelope.extra_mod_gate
 description: "Outputs a binary gate signal reflecting whether an extra modulation chain's envelope is still active for the current voice."
 factoryPath: envelope.extra_mod_gate
 factory: envelope

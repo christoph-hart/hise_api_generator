@@ -1,5 +1,5 @@
 ---
-title: Specs
+title: analyse.specs
 description: "A debug tool that displays the current processing context: sample rate, block size, channel count, and MIDI/polyphony status."
 factoryPath: analyse.specs
 factory: analyse

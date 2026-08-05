@@ -1,5 +1,5 @@
 ---
-title: Phasor
+title: core.phasor
 description: "A polyphonic ramp generator that outputs a naive 0-1 sawtooth on channel 0."
 factoryPath: core.phasor
 factory: core

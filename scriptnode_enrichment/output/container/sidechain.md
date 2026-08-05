@@ -1,5 +1,5 @@
 ---
-title: Sidechain
+title: container.sidechain
 description: "A serial container that doubles the channel count by adding empty sidechain channels."
 factoryPath: container.sidechain
 factory: container

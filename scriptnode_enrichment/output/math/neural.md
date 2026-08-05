@@ -1,5 +1,5 @@
 ---
-title: Neural
+title: math.neural
 description: "Runs per-sample neural network inference using an RTNeural model with optional DC-blocking high-pass filter."
 factoryPath: math.neural
 factory: math

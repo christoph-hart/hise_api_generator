@@ -1,5 +1,5 @@
 ---
-title: fix_blockx
+title: container.fix_blockx
 description: "Splits the audio buffer into chunks with a property-selectable block size for evaluating different tradeoffs during development."
 factoryPath: container.fix_blockx
 factory: container

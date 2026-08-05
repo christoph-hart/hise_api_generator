@@ -1,5 +1,5 @@
 ---
-title: Local Cable
+title: routing.local_cable
 description: "Routes a normalised control value between nodes sharing the same ID within a single network."
 factoryPath: routing.local_cable
 factory: routing
@@ -83,7 +83,7 @@ groups:
 
 ### Cable Management
 
-The network provides UX helpers for working with local cables. A panel lists all active cable IDs with LED indicators showing current values. Clicking an ID highlights all nodes using that cable. Right-clicking offers an option to replace the local cable with a direct connection (and vice versa from the connection editor).
+The network provides UX helpers for working with local cables. A panel lists all active cable IDs with LED indicators showing current values. Clicking an ID highlights all nodes using that cable. Right-clicking offers an option to replace the local cable with a direct connection (and vice versa from the connection editor). When converting an existing connection, HISE automatically creates `local_cable` or `local_cable_unscaled` to preserve the connection's scaled or unscaled value handling.
 
 ### Limitations
 

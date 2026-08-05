@@ -1,5 +1,5 @@
 ---
-title: Linkwitz-Riley Filter
+title: jdsp.jlinkwitzriley
 description: "A 4th-order (24 dB/octave) Linkwitz-Riley crossover filter with low-pass, high-pass, and allpass modes."
 factoryPath: jdsp.jlinkwitzriley
 factory: jdsp

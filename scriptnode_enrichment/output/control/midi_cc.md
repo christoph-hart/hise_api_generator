@@ -1,5 +1,5 @@
 ---
-title: MIDI CC
+title: control.midi_cc
 description: "Sends a normalised modulation signal in response to a specific MIDI CC message, pitch bend, aftertouch, or note event."
 factoryPath: control.midi_cc
 factory: control

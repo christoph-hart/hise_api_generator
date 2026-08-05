@@ -1,5 +1,5 @@
 ---
-title: Send
+title: routing.send
 description: "Copies the signal to an internal cable buffer for one or more receive nodes without altering the original signal."
 factoryPath: routing.send
 factory: routing

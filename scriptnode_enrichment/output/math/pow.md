@@ -1,5 +1,5 @@
 ---
-title: Pow
+title: math.pow
 description: "Raises each sample to a fixed power, shaping the signal curve."
 factoryPath: math.pow
 factory: math

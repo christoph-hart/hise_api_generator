@@ -1,5 +1,5 @@
 ---
-title: Delay (Linear)
+title: jdsp.jdelay
 description: "A delay line with linear interpolation -- lowest CPU cost but mild high-frequency roll-off at non-integer delay times."
 factoryPath: jdsp.jdelay
 factory: jdsp

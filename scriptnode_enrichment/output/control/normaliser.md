@@ -1,5 +1,5 @@
 ---
-title: Normaliser
+title: control.normaliser
 description: "Passes an unscaled input value through as a normalised modulation signal, allowing the connection system to apply the target's range."
 factoryPath: control.normaliser
 factory: control

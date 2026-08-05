@@ -1,5 +1,5 @@
 ---
-title: Abs
+title: math.abs
 description: "Folds negative sample values to positive, producing the absolute value of the signal."
 factoryPath: math.abs
 factory: math

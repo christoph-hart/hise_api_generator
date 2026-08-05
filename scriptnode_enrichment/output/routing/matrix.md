@@ -1,5 +1,5 @@
 ---
-title: Matrix
+title: routing.matrix
 description: "Applies an arbitrary channel routing matrix to the signal, configured through a visual editor."
 factoryPath: routing.matrix
 factory: routing

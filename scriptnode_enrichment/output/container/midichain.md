@@ -1,5 +1,5 @@
 ---
-title: MIDI Chain
+title: container.midichain
 description: "A serial container that enables sample-accurate MIDI event processing for its children."
 factoryPath: container.midichain
 factory: container

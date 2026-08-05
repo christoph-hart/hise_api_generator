@@ -1,5 +1,5 @@
 ---
-title: Oscillator
+title: core.oscillator
 description: "A polyphonic tone generator with five waveform modes that adds its output to the existing signal."
 factoryPath: core.oscillator
 factory: core

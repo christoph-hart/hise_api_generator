@@ -1,5 +1,5 @@
 ---
-title: Biquad
+title: filters.biquad
 description: "A second-order biquad filter with six modes: LowPass, HighPass, LowShelf, HighShelf, Peak, and ResoLow."
 factoryPath: filters.biquad
 factory: filters

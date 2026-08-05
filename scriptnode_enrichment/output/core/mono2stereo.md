@@ -1,5 +1,5 @@
 ---
-title: Mono2Stereo
+title: core.mono2stereo
 description: "Copies the left channel to the right channel to create a dual-mono stereo signal."
 factoryPath: core.mono2stereo
 factory: core

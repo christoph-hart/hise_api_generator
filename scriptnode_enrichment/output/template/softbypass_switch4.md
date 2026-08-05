@@ -1,5 +1,5 @@
 ---
-title: Soft Bypass Switch 4
+title: template.softbypass_switch4
 description: "A click-free 4-way signal path switch using soft-bypassed containers."
 factoryPath: template.softbypass_switch4
 factory: template

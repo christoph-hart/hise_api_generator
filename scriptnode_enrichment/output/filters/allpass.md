@@ -1,5 +1,5 @@
 ---
-title: Allpass
+title: filters.allpass
 description: "A six-stage cascaded allpass chain with feedback, producing phaser-style notches when the allpass output is mixed with the dry input."
 factoryPath: filters.allpass
 factory: filters

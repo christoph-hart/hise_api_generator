@@ -1,5 +1,5 @@
 ---
-title: Bipolar
+title: control.bipolar
 description: "Creates a bipolar modulation signal centred around the midpoint from a normalised 0-1 input."
 factoryPath: control.bipolar
 factory: control

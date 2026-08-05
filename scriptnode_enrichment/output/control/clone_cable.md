@@ -1,5 +1,5 @@
 ---
-title: Clone Cable
+title: control.clone_cable
 description: "Distributes different values to each clone using a selectable distribution algorithm."
 factoryPath: control.clone_cable
 factory: control

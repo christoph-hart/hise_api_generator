@@ -1,5 +1,5 @@
 ---
-title: Soft Bypass Switch 6
+title: template.softbypass_switch6
 description: "A click-free 6-way signal path switch using soft-bypassed containers."
 factoryPath: template.softbypass_switch6
 factory: template

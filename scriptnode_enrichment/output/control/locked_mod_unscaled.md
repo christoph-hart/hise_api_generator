@@ -1,5 +1,5 @@
 ---
-title: Locked Mod Unscaled
+title: control.locked_mod_unscaled
 description: "Adds an unnormalised modulation output to the parent container when it is locked, forwarding raw values without range conversion."
 factoryPath: control.locked_mod_unscaled
 factory: control

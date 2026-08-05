@@ -1,5 +1,5 @@
 ---
-title: Soft Bypass
+title: container.soft_bypass
 description: "A serial container with smoothed bypass crossfading to prevent clicks."
 factoryPath: container.soft_bypass
 factory: container

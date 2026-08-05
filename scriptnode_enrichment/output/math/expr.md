@@ -1,5 +1,5 @@
 ---
-title: Expression
+title: math.expr
 description: "A programmable math node that evaluates a user-defined SNEX expression for each audio sample."
 factoryPath: math.expr
 factory: math
@@ -100,6 +100,8 @@ groups:
 ## Writing Expressions
 
 The expression is a single line of SNEX code. The two predefined variables are `input` (the current audio sample, a float) and `value` (the Value parameter, also a float). The result of the expression becomes the output sample.
+
+The node interface displays a live input-to-output transfer curve, so you can see how the current expression reshapes the signal while editing it.
 
 Standard math operators (`+`, `-`, `*`, `/`), comparison operators (`>`, `==`, `>=`, `!=`), and the ternary operator (`x ? y : z`) are all available. The full `Math` function library mirrors the [Math]($API.Math$) scripting API: `Math.sin()`, `Math.tanh()`, `Math.abs()`, `Math.range()`, `Math.min()`, `Math.max()`, and so on.
 

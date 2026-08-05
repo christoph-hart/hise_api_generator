@@ -1,5 +1,5 @@
 ---
-title: Bang
+title: control.bang
 description: "Sends a stored value to the modulation output when triggered by a rising edge on the Bang parameter."
 factoryPath: control.bang
 factory: control

@@ -1,5 +1,5 @@
 ---
-title: Transport
+title: control.transport
 description: "Sends a modulation signal when the DAW transport state changes between playing and stopped."
 factoryPath: control.transport
 factory: control

@@ -1,5 +1,5 @@
 ---
-title: SNEX Oscillator
+title: core.snex_osc
 description: "A custom oscillator node using SNEX code with built-in frequency tracking and polyphonic voice management."
 factoryPath: core.snex_osc
 factory: core

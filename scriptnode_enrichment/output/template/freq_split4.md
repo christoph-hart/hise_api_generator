@@ -1,5 +1,5 @@
 ---
-title: Freq Split 4
+title: template.freq_split4
 description: "A 4-band frequency crossover using phase-coherent Linkwitz-Riley filters."
 factoryPath: template.freq_split4
 factory: template

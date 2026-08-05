@@ -1,5 +1,5 @@
 ---
-title: Phase Delay
+title: fx.phase_delay
 description: "A first-order allpass filter that shifts the phase of the signal without changing its amplitude, intended for building comb filters."
 factoryPath: fx.phase_delay
 factory: fx

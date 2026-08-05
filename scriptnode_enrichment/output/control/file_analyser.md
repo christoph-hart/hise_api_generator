@@ -1,5 +1,5 @@
 ---
-title: File Analyser
+title: control.file_analyser
 description: "Extracts pitch, duration, or peak level from an audio file and sends the result as a modulation signal when the file is loaded."
 factoryPath: control.file_analyser
 factory: control

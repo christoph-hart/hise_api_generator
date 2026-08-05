@@ -1,5 +1,5 @@
 ---
-title: Public Mod
+title: routing.public_mod
 description: "Exposes a value as a modulation output on the parent network, allowing compiled nodes to act as modulation sources."
 factoryPath: routing.public_mod
 factory: routing

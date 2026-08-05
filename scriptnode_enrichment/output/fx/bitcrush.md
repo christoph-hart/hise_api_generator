@@ -1,5 +1,5 @@
 ---
-title: Bitcrush
+title: fx.bitcrush
 description: "Reduces the bit depth of the audio signal, producing quantisation noise and digital distortion."
 factoryPath: fx.bitcrush
 factory: fx

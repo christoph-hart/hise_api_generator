@@ -1,5 +1,5 @@
 ---
-title: Recorder
+title: core.recorder
 description: "Records the input signal into an audio file slot for playback or UI display."
 factoryPath: core.recorder
 factory: core

@@ -1,5 +1,5 @@
 ---
-title: Pack8 Writer
+title: control.pack8_writer
 description: "Writes eight parameter values into a slider pack."
 factoryPath: control.pack8_writer
 factory: control

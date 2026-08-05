@@ -1,5 +1,5 @@
 ---
-title: Cable Expression
+title: control.cable_expr
 description: "Transforms a control value using a custom SNEX expression before forwarding it to the modulation output."
 factoryPath: control.cable_expr
 factory: control

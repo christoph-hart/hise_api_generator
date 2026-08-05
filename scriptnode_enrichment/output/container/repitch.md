@@ -1,5 +1,5 @@
 ---
-title: Repitch
+title: container.repitch
 description: "A serial container that resamples audio before and after child processing to change the effective pitch."
 factoryPath: container.repitch
 factory: container

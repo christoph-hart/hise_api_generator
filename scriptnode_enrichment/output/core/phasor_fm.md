@@ -1,5 +1,5 @@
 ---
-title: Phasor FM
+title: core.phasor_fm
 description: "A polyphonic ramp generator that uses the input signal as frequency modulation."
 factoryPath: core.phasor_fm
 factory: core

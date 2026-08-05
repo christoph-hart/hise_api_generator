@@ -1,5 +1,5 @@
 ---
-title: Voice Bang
+title: control.voice_bang
 description: "Sends the current parameter value as a modulation signal whenever a note-on message is received."
 factoryPath: control.voice_bang
 factory: control

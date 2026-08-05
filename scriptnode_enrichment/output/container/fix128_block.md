@@ -1,5 +1,5 @@
 ---
-title: fix128_block
+title: container.fix128_block
 description: "Splits the audio buffer into chunks of 128 samples for higher modulation update rates."
 factoryPath: container.fix128_block
 factory: container

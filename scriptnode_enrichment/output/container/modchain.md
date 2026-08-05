@@ -1,5 +1,5 @@
 ---
-title: Modulation Chain
+title: container.modchain
 description: "A serial container that processes children at control rate without affecting the parent audio signal."
 factoryPath: container.modchain
 factory: container

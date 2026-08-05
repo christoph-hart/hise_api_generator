@@ -1,5 +1,5 @@
 ---
-title: Extra Mod
+title: core.extra_mod
 description: "Picks up a modulation signal from an extra modulation chain of the parent module."
 factoryPath: core.extra_mod
 factory: core
@@ -57,7 +57,15 @@ llmRef: |
 
 The extra mod node bridges HISE's modulation system into scriptnode by picking up signals from the extra modulation chains of the parent module. These are the additional modulation slots that a scriptnode module can expose -- for example, a filter's frequency modulation or a custom per-parameter modulation input. The signal passes through unmodified, preserving the raw normalised value (0-1) from the modulation chain.
 
-To use this node, the parent module type must have extra modulation slots enabled via preprocessor definitions (e.g. `HISE_NUM_SCRIPTNODE_FX_MODS` for Script FX modules). Scriptnode synthesisers have two slots enabled by default. Once configured, the modulation slots appear on the parent module and any HISE modulators added to those slots are picked up by this node.
+To use this node, the parent module type must have extra modulation slots enabled with the matching preprocessor definition:
+
+| Parent module type | Interpreted network | Compiled C++ network | Default |
+|---|---|---|---|
+| Script FX | `HISE_NUM_SCRIPTNODE_FX_MODS` | `NUM_HARDCODED_FX_MODS` | 0 |
+| Polyphonic Script FX | `HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS` | `NUM_HARDCODED_POLY_FX_MODS` | 0 |
+| Scriptnode Synthesiser | `HISE_NUM_SCRIPTNODE_SYNTH_MODS` | `NUM_HARDCODED_SYNTH_MODS` | 2 |
+
+Set each macro to the required number of slots in the project settings' **Extra Definitions** field. These definitions are hot-reloaded when you reload the module; recompiling HISE is not required. Once configured, the modulation slots appear on the parent module and any HISE modulators added to those slots are picked up by this node.
 
 ## Signal Path
 
@@ -111,6 +119,8 @@ groups:
 ### Root parameter interaction
 
 The extra mod node supports an interaction with root parameters: if a root parameter is configured with the Combined modulation mode and associated with the same index as an extra_mod node, the root parameter controls the base value of the modulation chain rather than directly setting the target. This enables modulation display on UI knobs while the actual modulation happens at full resolution inside the network.
+
+If no `extra_mod` node matches the modulation index, the modulation signal is applied directly to the root parameter at the interval set by the network's `ModulationBlockSize`. A value of `0` uses the current audio buffer size.
 
 ### Compilation
 

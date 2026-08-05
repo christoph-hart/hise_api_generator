@@ -1,5 +1,5 @@
 ---
-title: Linkwitz-Riley
+title: filters.linkwitzriley
 description: "A fourth-order Linkwitz-Riley (LR4) crossover filter with a 24 dB/octave slope."
 factoryPath: filters.linkwitzriley
 factory: filters

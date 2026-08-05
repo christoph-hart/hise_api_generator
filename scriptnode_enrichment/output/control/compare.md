@@ -1,5 +1,5 @@
 ---
-title: Compare
+title: control.compare
 description: "Compares two input signals using a selectable comparator and outputs either a binary 1/0 result or the min/max of the two values."
 factoryPath: control.compare
 factory: control

@@ -1,5 +1,5 @@
 ---
-title: Soft Bypass Switch 8
+title: template.softbypass_switch8
 description: "A click-free 8-way signal path switch using soft-bypassed containers."
 factoryPath: template.softbypass_switch8
 factory: template

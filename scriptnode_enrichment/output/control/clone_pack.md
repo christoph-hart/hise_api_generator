@@ -1,5 +1,5 @@
 ---
-title: Clone Pack
+title: control.clone_pack
 description: "Sends per-clone values from a slider pack, scaled by a global multiplier."
 factoryPath: control.clone_pack
 factory: control

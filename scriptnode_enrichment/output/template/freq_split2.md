@@ -1,5 +1,5 @@
 ---
-title: Freq Split 2
+title: template.freq_split2
 description: "A 2-band frequency crossover using phase-coherent Linkwitz-Riley filters."
 factoryPath: template.freq_split2
 factory: template

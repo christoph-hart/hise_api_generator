@@ -1,5 +1,5 @@
 ---
-title: fix8_block
+title: container.fix8_block
 description: "Splits the audio buffer into chunks of 8 samples for higher modulation update rates."
 factoryPath: container.fix8_block
 factory: container

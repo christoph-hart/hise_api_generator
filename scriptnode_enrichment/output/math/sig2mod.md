@@ -1,5 +1,5 @@
 ---
-title: Sig2Mod
+title: math.sig2mod
 description: "Converts a bipolar audio signal (-1 to 1) to a unipolar modulation signal (0-1)."
 factoryPath: math.sig2mod
 factory: math

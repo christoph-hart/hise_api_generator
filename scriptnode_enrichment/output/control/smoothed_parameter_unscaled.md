@@ -1,5 +1,5 @@
 ---
-title: Smoothed Parameter (Unscaled)
+title: control.smoothed_parameter_unscaled
 description: "Smoothes an incoming parameter value with unnormalised output, sending the raw value to targets."
 factoryPath: control.smoothed_parameter_unscaled
 factory: control

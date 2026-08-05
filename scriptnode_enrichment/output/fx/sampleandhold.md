@@ -1,5 +1,5 @@
 ---
-title: Sample and Hold
+title: fx.sampleandhold
 description: "Reduces the effective sample rate by holding each captured sample for a configurable number of periods."
 factoryPath: fx.sampleandhold
 factory: fx

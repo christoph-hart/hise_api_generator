@@ -1,5 +1,5 @@
 ---
-title: Global Receive
+title: routing.global_receive
 description: "Receives audio from a global_send node and mixes it into the local signal chain."
 factoryPath: routing.global_receive
 factory: routing

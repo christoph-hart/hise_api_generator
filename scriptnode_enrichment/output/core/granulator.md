@@ -1,5 +1,5 @@
 ---
-title: Granulator
+title: core.granulator
 description: "A granular synthesiser that generates overlapping grains from an audio file with controls for position, pitch, density, spread, and detune."
 factoryPath: core.granulator
 factory: core

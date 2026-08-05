@@ -1,5 +1,5 @@
 ---
-title: Selector
+title: routing.selector
 description: "Dynamically routes channels between selected positions and the front of the buffer."
 factoryPath: routing.selector
 factory: routing

@@ -1,5 +1,5 @@
 ---
-title: Pitch Shift
+title: fx.pitch_shift
 description: "Real-time pitch shifting using time-stretch-based resampling, with a range of two octaves up or down."
 factoryPath: fx.pitch_shift
 factory: fx

@@ -1,5 +1,5 @@
 ---
-title: PPQ
+title: control.ppq
 description: "Sends a normalised modulation signal representing the host playback position within a musical time window when transport starts or the position jumps."
 factoryPath: control.ppq
 factory: control

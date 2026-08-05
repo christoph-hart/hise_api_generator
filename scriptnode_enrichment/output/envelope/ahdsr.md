@@ -1,5 +1,5 @@
 ---
-title: AHDSR Envelope
+title: envelope.ahdsr
 description: "A full AHDSR envelope with attack curve shaping, manual gate, and retrigger support."
 factoryPath: envelope.ahdsr
 factory: envelope

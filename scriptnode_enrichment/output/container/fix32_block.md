@@ -1,5 +1,5 @@
 ---
-title: fix32_block
+title: container.fix32_block
 description: "Splits the audio buffer into chunks of 32 samples for higher modulation update rates."
 factoryPath: container.fix32_block
 factory: container

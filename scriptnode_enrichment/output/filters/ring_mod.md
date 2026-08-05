@@ -1,5 +1,5 @@
 ---
-title: Ring Mod
+title: filters.ring_mod
 description: "A ring modulator that multiplies the input signal by an internal sine oscillator."
 factoryPath: filters.ring_mod
 factory: filters

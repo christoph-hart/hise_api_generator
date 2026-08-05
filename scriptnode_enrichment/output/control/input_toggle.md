@@ -1,5 +1,5 @@
 ---
-title: Input Toggle
+title: control.input_toggle
 description: "Switches between two input values and forwards the selected one to the modulation output."
 factoryPath: control.input_toggle
 factory: control

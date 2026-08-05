@@ -1,5 +1,5 @@
 ---
-title: Logic Op
+title: control.logic_op
 description: "Combines two binary input signals using a selectable logic operator (AND, OR, XOR) and outputs 1.0 or 0.0."
 factoryPath: control.logic_op
 factory: control

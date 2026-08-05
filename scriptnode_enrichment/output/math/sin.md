@@ -1,5 +1,5 @@
 ---
-title: Sin
+title: math.sin
 description: "Applies the sine function to each sample of the signal."
 factoryPath: math.sin
 factory: math

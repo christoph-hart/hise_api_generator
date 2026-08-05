@@ -1,5 +1,5 @@
 ---
-title: Global Mod
+title: core.global_mod
 description: "Receives a modulation signal from the GlobalModulatorContainer and exposes it inside scriptnode."
 factoryPath: core.global_mod
 factory: core

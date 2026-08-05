@@ -1,5 +1,5 @@
 ---
-title: MS Decode
+title: routing.ms_decode
 description: "Converts a mid/side signal back to stereo left/right."
 factoryPath: routing.ms_decode
 factory: routing

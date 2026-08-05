@@ -1,5 +1,5 @@
 ---
-title: Goniometer
+title: analyse.goniometer
 description: "A stereo correlation display that plots left and right channels as an X-Y Lissajous figure."
 factoryPath: analyse.goniometer
 factory: analyse

@@ -1,5 +1,5 @@
 ---
-title: Event Data Reader
+title: routing.event_data_reader
 description: "Reads per-event data from a storage slot and outputs it as a modulation signal."
 factoryPath: routing.event_data_reader
 factory: routing

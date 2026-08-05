@@ -1,5 +1,5 @@
 ---
-title: Reverb
+title: fx.reverb
 description: "A Freeverb-style algorithmic reverb with room size, damping, and width controls. Outputs 100% wet signal."
 factoryPath: fx.reverb
 factory: fx

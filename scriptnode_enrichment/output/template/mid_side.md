@@ -1,5 +1,5 @@
 ---
-title: Mid Side
+title: template.mid_side
 description: "A mid/side processing template that decodes stereo to M/S, processes mid and side independently, then re-encodes to stereo."
 factoryPath: template.mid_side
 factory: template
