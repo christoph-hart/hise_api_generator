@@ -78,13 +78,14 @@ class PipelineTests(unittest.TestCase):
     def current_jobs():
         return pipeline.find_publish_jobs(node_filter=None)
 
-    def test_current_five_validate(self) -> None:
+    def test_current_examples_validate(self) -> None:
         jobs = self.current_jobs()
         self.assertEqual([job.label for job in jobs], [
             "dynamics.comp",
             "dynamics.envelope_follower",
             "dynamics.gate",
             "dynamics.limiter",
+            "dynamics.updown_comp",
             "routing.selector",
         ])
         self.assertEqual(pipeline.validate_jobs(jobs, check_duplicate_ids=True), [])

@@ -1110,6 +1110,13 @@ def parse_graph_nodes(text: str) -> list[tuple[str, str, str | None]]:
     nodes = []
     parents: list[tuple[int, str]] = []
     for line in text.splitlines():
+        path_marker = re.match(r'^(\s+)([A-Za-z]\w*(?:[._][A-Za-z]\w*)+)\s*$', line)
+        if path_marker:
+            indent = len(path_marker.group(1))
+            while parents and parents[-1][0] >= indent:
+                parents.pop()
+            parents.append((indent, path_marker.group(2)))
+            continue
         match = re.match(r'^(\s+)([A-Za-z]\w*)\s+([\w.]+)\s*$', line)
         if match and "." in match.group(3):
             indent = len(match.group(1))

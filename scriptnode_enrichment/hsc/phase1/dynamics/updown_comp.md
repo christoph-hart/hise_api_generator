@@ -7,27 +7,28 @@
 
 ## Scenario
 
-- Title: Dual-threshold vocal leveler
-- Project context: A stereo vocal or dialogue stem has both whisper-quiet syllables and occasional loud peaks, and needs a single processor that gently lifts the low-level phrases while taming louder moments. `dynamics.updown_comp` is used as a broad leveler with a unity zone between the low and high thresholds so mid-level material stays natural, and its modulation output is forwarded to the global cable system for linked metering or downstream dynamics-aware processing.
-- Teaching goal: Demonstrate how `dynamics.updown_comp` combines upward and downward compression around a defined unity region while publishing its gain-change signal to a `routing.global_cable` target.
+- Title: OTT multiband compressor recreation
+- Project context: A stereo signal needs the aggressive upward and downward multiband compression associated with Ableton's famous OTT effect. The network splits the signal into low, mid, and high bands, applies independently calibrated `dynamics.updown_comp` stages, and uses a shared mix control to blend the processed bands back with their phase-matched dry counterparts.
+- Teaching goal: Demonstrate how to build a calibrated OTT-style effect from `template.freq_split3`, three band-local `template.dry_wet` mixers, and `dynamics.updown_comp` nodes while preserving the tested gain staging.
 
 ## Support Nodes
 
-- Required: [`routing.global_cable`]
-- Optional: [`math.mul`]
-- Rationale: `routing.global_cable` makes the example more practical by showing how the processor's gain-change signal can be reused elsewhere in the project for metering or linked dynamics reactions. An optional math target could further reshape that signal, but the core point is the cable handoff.
+- Required: [`template.freq_split3`, `template.dry_wet`, `math.mul`, `dynamics.updown_comp`]
+- Optional: []
+- Rationale: The frequency splitter supplies phase-coherent low, mid, and high bands. Each band-local dry/wet template keeps its dry path behind the same crossover filters as its processed path, avoiding phase and group-delay mismatch that would occur if the dry signal bypassed the splitter in a top-level mixer.
 
 ## Assumptions
 
-- Channels: default stereo
-- Public control needed: yes
-- Raw node values acceptable: yes
+- Channels: fixed stereo
+- Public control needed: yes, one global Mix macro
+- Raw node values acceptable: yes, all calibrated DSP values are hardcoded
 
 ## User Input Needed
 
 - Required: false
 - Questions:
-  - None
+- The three band dry/wet mixers intentionally share one root Mix parameter. Do not replace them with one top-level dry/wet mixer: its dry path would bypass the crossover filters.
+- Preserve every numeric value; these values were painstakingly calibrated against the reference OTT effect.
 
 ## Notes For Phase 2
 
