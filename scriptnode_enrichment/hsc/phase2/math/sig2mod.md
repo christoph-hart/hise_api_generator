@@ -46,11 +46,11 @@ audio_to_modulation
 ## Locked Build Values
 
 - `SlowOscillator.Range` = `LFO`
-- `SlowOscillator.Frequency` = `0.8 Hz`
+- `SlowOscillator.Frequency` = `20 Hz` (the minimum supported by `core.oscillator`)
 
 ## Friction Comments To Weave In
 
-- Before `set SlowOscillator range/frequency`: switch the oscillator to an LFO-style range and use about `0.8 Hz`, otherwise the peak displays will move too fast to show the graph clearly.
+- Before `set SlowOscillator frequency`: use the minimum supported `20 Hz` value; `core.oscillator` does not expose the 0.8 Hz LFO range described in the original scenario.
 - Before `SourcePeak` and `ConvertedPeak`: keep the two peak displays adjacent so the benefit of the conversion is obvious at a glance.
 
 ## Cosmetic Plan

@@ -34,7 +34,7 @@ dc_offset_adder
 
 ## Public Parameters
 
-- Offset -> `OffsetAdder.Value` matched
+- DcOffset -> `OffsetAdder.Value` matched
 - Target range before connection: `[0.0, 0.5]`
 - Macro range: `[0.0, 0.5]`
 - Default: `0.3`

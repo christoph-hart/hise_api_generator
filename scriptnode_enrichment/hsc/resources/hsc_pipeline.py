@@ -22,9 +22,13 @@ OUTPUT_ROOT = ROOT / "scriptnode_enrichment" / "output"
 PUBLISH_OUTPUT = HSC_ROOT / "output"
 PHASE4 = HSC_ROOT / "phase4"
 PHASE5 = HSC_ROOT / "phase5"
-MODULE_RE = re.compile(r'^\s*add\s+(?:ScriptFX|ScriptSynth|ScriptModulator)\s+as\s+"([^"]+)"', re.MULTILINE)
+MODULE_RE = re.compile(
+    r'^\s*add\s+(?:ScriptFX|ScriptSynth|ScriptModulator|ScriptEnvelopeModulator)\s+as\s+"([^"]+)"',
+    re.MULTILINE,
+)
 MODULE_DECL_RE = re.compile(
-    r'^\s*add\s+(ScriptFX|ScriptSynth|ScriptModulator)\s+as\s+"([^"]+)"', re.MULTILINE
+    r'^\s*add\s+(ScriptFX|ScriptSynth|ScriptModulator|ScriptEnvelopeModulator)\s+as\s+"([^"]+)"',
+    re.MULTILINE,
 )
 HSC_PARAMETER_RE = re.compile(r'^\s*create_parameter\s+\S+\.([\w]+)\s+', re.MULTILINE)
 SHELL_PARAMETER_RE = re.compile(r'\bdsp create_parameter\b[^\n]*?--id\s+(\S+)')
@@ -136,7 +140,9 @@ def read_module_id(script: Path) -> str:
     text = script.read_text(encoding="utf-8")
     match = MODULE_RE.search(text)
     if not match:
-        raise ValueError(f"Could not find ScriptFX/ScriptSynth/ScriptModulator module id in {script}")
+        raise ValueError(
+            f"Could not find ScriptFX/ScriptSynth/ScriptModulator/ScriptEnvelopeModulator module id in {script}"
+        )
     return match.group(1)
 
 
@@ -974,9 +980,12 @@ def validate_job(job: PublishJob) -> list[str]:
 
     phase2_host = parse_keyed_section(markdown_section(phase2, "Builder Setup")).get("Host context")
     phase3_host = parse_keyed_section(markdown_section(phase3, "Builder Setup Applied")).get("Host context")
-    expected_host = {"ScriptFX": "Script FX", "ScriptSynth": "Script Synth", "ScriptModulator": "Script Modulator"}.get(
-        module_type
-    )
+    expected_host = {
+        "ScriptFX": "Script FX",
+        "ScriptSynth": "Script Synth",
+        "ScriptModulator": "Script Modulator",
+        "ScriptEnvelopeModulator": "Script Envelope",
+    }.get(module_type)
     for location, value in (("Phase 2 host context", phase2_host), ("Phase 3 host context", phase3_host)):
         if value != expected_host:
             issues.append(f"{expected}: {location} is {value!r}, expected {expected_host!r}")
@@ -1056,7 +1065,7 @@ def validate_phase5_schema(job: PublishJob, meta: dict, body: str) -> list[str]:
         "domain": {"scriptnode"},
         "category": {"dsp-network"},
         "difficulty": {"beginner", "intermediate", "advanced"},
-        "moduleType": {"ScriptFX", "ScriptSynth", "ScriptModulator"},
+        "moduleType": {"ScriptFX", "ScriptSynth", "ScriptModulator", "ScriptEnvelopeModulator"},
     }
     for key, allowed in enums.items():
         if meta.get(key) not in allowed:

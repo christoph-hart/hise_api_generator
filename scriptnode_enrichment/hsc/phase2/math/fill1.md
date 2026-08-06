@@ -23,7 +23,7 @@ envelope_seed_source
 
 - Host context: `Script Envelope`
 - Additional builder steps:
-  - Create a HISE Script Envelope module and build this control-signal network inside it.
+  - Create a SineSynth host and add a Script Envelope Modulator to its Gain Modulation chain.
 - Channel/routing setup:
   - Required channels: default stereo inside the Script Envelope; the signal is a duplicated control-rate style DC source
   - Module routing: default
