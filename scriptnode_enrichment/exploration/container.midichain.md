@@ -79,6 +79,8 @@ The `prepare()` method (NodeContainerTypes.cpp:808-815) calls
 `DspHelpers::setErrorIfNotOriginalSamplerate(ps, this)`, indicating midichain
 should not be nested inside frame-based or resampled containers.
 
+The frame restriction is directional. Use `midichain -> frame*_block` when child nodes need both MIDI/event delivery and sample-by-sample processing. Do not use `frame*_block -> midichain`, because the frame container gives children `blockSize == 1` and `MidiChainNode::prepare()` throws `IllegalFrameCall` in that context.
+
 ## Parameters
 
 None. Midichain has no parameters of its own.
@@ -98,3 +100,5 @@ per block. With zero events, the cost is a single conditional check.
 - The `prepare()` method validates that midichain is not inside a frame-based
   container or a resampled context. Both would interfere with the
   timestamp-based audio splitting.
+- If frame processing is also required, place the frame container below the
+  midichain, not above it.

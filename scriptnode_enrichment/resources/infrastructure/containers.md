@@ -360,6 +360,8 @@ delegating to the serial child chain.
 
 - Wraps in `wrap::event<...>` -- ensures MIDI events are forwarded
 - No audio processing modifications
+- Cannot be prepared in frame mode (`blockSize == 1`); do not place it inside `frame*_block`
+- If a subtree needs both MIDI events and frame processing, use `midichain -> frame*_block`, not `frame*_block -> midichain`
 
 ### NoMidiChainNode (`no_midi`)
 

@@ -42,11 +42,16 @@ drawn_transfer_shaper
 
 ## Locked Build Values
 
-- None
+- `SlowRamp.PeriodTime` = `1000`
+- `TableLookup.Table` external data index = `0`
+- Interface `onInit` must create `const var tableProcessor = Synth.getTableProcessor("DrawnTransferShaper");`
+- Interface `onInit` must create `const var tableData = tableProcessor.getTable(0);`
+- Table startup points after reset = midpoint `(0.5, 0.3)` and right edge `(1.0, 1.0, 0.2)`
 
 ## Friction Comments To Weave In
 
 - Before the complex-data setup: this node has no automatable parameters, so the public interaction is the drawn table itself rather than a matched root macro.
+- Before `set_complex_data TableLookup.Table index 0`: use an external slot because embedded complex data cannot be initialized from Interface script.
 - Before `TableLookup`: keep the input in 0..1 because the node clamps its lookup domain.
 
 ## Cosmetic Plan

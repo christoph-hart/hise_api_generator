@@ -20,7 +20,7 @@
 ## Assumptions
 
 - Channels: default stereo
-- Public control needed: yes
+- Public control needed: yes, via Table complex data rather than a scalar root parameter
 - Raw node values acceptable: yes
 
 ## User Input Needed
@@ -34,3 +34,4 @@
 - Use a slow ramp such as 1000 ms so the table shape is readable in the peak display.
 - Draw a clearly non-linear response so the lookup behaviour is obvious at a glance.
 - Keep the input in the 0..1 range so the example stays about table shaping rather than range correction.
+- Phase 2 must use an external Table slot, not embedded data, because the public example needs Interface `onInit` to seed deterministic table points with `Synth.getTableProcessor("DrawnTransferShaper").getTable(0)`.

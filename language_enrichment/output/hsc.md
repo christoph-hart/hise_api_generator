@@ -894,11 +894,22 @@ Wizards are guided multi-step workflows (YAML-defined).
 | Form | Behaviour |
 | --- | --- |
 | `/wizard` \| `/wizard list` | List wizards |
-| `/wizard <id>` | Open the form (TUI) or return a wizard handle |
-| `/wizard <id> --schema` | Emit field schema as JSON |
-| `/wizard <id> --run` | Execute non-interactively using defaults |
-| `/wizard <id> --run key:value key:value` | Override fields inline |
+| `/wizard get <id>` | Run init handler (if any) and return merged default state as a table |
+| `/wizard run <id>` | Execute non-interactively using all defaults |
+| `/wizard run <id> with Key=Value, K2=V2` | Execute with inline overrides (quote values that contain spaces or commas) |
+| `/wizard <id>` | Open the form in the TUI (used by `/setup`-style aliases) |
 | `/resume` | Continue the most recently paused wizard from the failed task |
+
+The same verbs are exposed as one-shot CLI invocations:
+
+```
+hise-cli -wizard list
+hise-cli -wizard get <id>
+hise-cli -wizard run <id>
+hise-cli -wizard run <id> with Key=Value, K2=V2
+```
+
+`get` is the discovery step — it forces the wizard's `init` handler so the returned state reflects runtime defaults (e.g. project paths probed from HISE), not just the static definition. Use it before `run` to learn the field IDs and current values, then pass overrides via the `with` clause.
 
 **Shipped wizards**
 
@@ -911,8 +922,6 @@ Wizards are guided multi-step workflows (YAML-defined).
 | `compile_networks` | Compile scriptnode networks into a DLL |
 | `recompile` | Recompile scripts and clear caches |
 | `install_package_maker` | Create an installer payload |
-
-Use `--schema` first to discover field IDs, then pass them as `key:value` tokens to `--run`.
 
 
 ## Workflow Patterns

@@ -20,7 +20,7 @@
 ## Assumptions
 
 - Channels: default stereo
-- Public control needed: yes
+- Public control needed: yes, via SliderPack complex data rather than a scalar root parameter
 - Raw node values acceptable: yes
 
 ## User Input Needed
@@ -34,3 +34,4 @@
 - Use a slow ramp such as 1000 ms so the peak display can show the pack response clearly.
 - Pick a small, obviously non-linear SliderPack shape so the lookup behavior is visually distinct from `math.table`.
 - Keep the example about lookup shaping rather than turning it into a full sequencer patch.
+- Phase 2 must use an external SliderPack slot, not embedded data, because the public example needs Interface `onInit` to seed deterministic slider values with `Synth.getSliderPackProcessor("SliderPackLookupShaper").getSliderPack(0)`.

@@ -45,11 +45,12 @@ programmable_scalar_transform
 
 ## Locked Build Values
 
-- None
+- `SeedValue.Value` = `0.5`
+- `ShapeExpr.Code` = `input > value ? value : (input < -1.0f * value ? -1.0f * value : input)`
 
 ## Friction Comments To Weave In
 
-- Before `set_property Code`: use a tiny one-line SNEX formula such as `Math.range(input, -1.0f * value, 1.0f * value)` so the node teaches programmability without extra graph clutter.
+- Before `set_property Code`: use a tiny one-line SNEX clip formula so the node teaches programmability without extra graph clutter.
 - Before `set_property Code`: use explicit float literals with the `f` suffix to avoid SNEX type mismatch warnings.
 
 ## Cosmetic Plan

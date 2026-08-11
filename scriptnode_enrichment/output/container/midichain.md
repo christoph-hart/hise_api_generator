@@ -35,6 +35,11 @@ llmRef: |
   When to use:
     Required in effect plugin contexts to enable MIDI processing. Provides sample-accurate MIDI timing for nodes that respond to MIDI (oscillators, envelopes). Unnecessary in synthesiser or modulator contexts where MIDI is already enabled.
 
+  Frame-context rule:
+    - container.midichain cannot be placed inside frame1_block, frame2_block, or framex_block.
+    - If child nodes need both MIDI events and frame processing, put the frame container inside the midichain: midichain -> frame2_block -> event-sensitive nodes.
+    - The reverse order, frame2_block -> midichain, is invalid because midichain rejects blockSize=1 during prepare.
+
   See also:
     [companion] container.no_midi -- blocks MIDI events instead of enabling them
     [disambiguation] container.chain -- serial chain without MIDI event splitting
@@ -72,6 +77,24 @@ dispatch(input, events) {
 
 ### Limitations
 
-Midichain should not be nested inside frame-based or resampled containers, as both interfere with the timestamp-based audio splitting. With zero MIDI events in a block, the overhead is a single conditional check.
+Midichain should not be nested inside frame-based or resampled containers, as both interfere with the timestamp-based audio splitting. The frame restriction is directional: if a subtree needs both MIDI events and sample-by-sample processing, put the frame container inside the midichain.
+
+Correct:
+
+```text
+container.midichain
+  container.frame2_block
+    nodes needing MIDI + frame processing
+```
+
+Incorrect:
+
+```text
+container.frame2_block
+  container.midichain
+    nodes needing MIDI
+```
+
+`container.midichain` rejects frame-mode prepare specs (`blockSize == 1`), so it cannot live below `container.frame1_block`, `container.frame2_block`, or `container.framex_block`. With zero MIDI events in a block, the overhead is a single conditional check.
 
 **See also:** $SN.container.no_midi$ -- blocks MIDI events instead of enabling them, $SN.container.chain$ -- serial chain without MIDI event splitting

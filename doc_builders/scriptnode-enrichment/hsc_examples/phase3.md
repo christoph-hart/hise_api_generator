@@ -65,29 +65,31 @@ The final public command block is not a terminal log. It is the smallest consist
 6. The root container ID is the assigned network name shown by `dsp tree`; use that ID for `--container`, `create_parameter`, and root parameter paths.
 7. Apply all `## Locked Build Values` from the approved Phase 2 file before verification. Treat them as fixed node/example constraints, not optional build preferences.
 8. Build incrementally and inspect after meaningful steps with `dsp tree`, `dsp show`, `dsp get`, and `dsp connections`.
-9. Use `hise-cli dsp docs` before choosing unfamiliar nodes, parameters, properties, or connection modes.
-10. Run `hise-cli dsp status --module {ModuleId} --agent` before trace validation. Runtime status catches graph-level issues that structural commands can miss.
-11. If status reports an autofixable runtime error, run `hise-cli dsp status --module {ModuleId} --autofix --agent`, then run plain status again before tracing.
-12. Verify parameter flow with `dsp trace` after structural and runtime-status checks.
-13. Verify signal flow with `dsp trace` after structural and runtime-status checks.
-14. During investigation, prefer incremental live edits over full rebuilds. Once the network is signed off, rewrite the final command list as a coherent from-scratch build.
-15. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts, temporary probes, cleanup commands, and CLI-fix exploration.
-16. Optimize the final command list:
+9. If live construction exposes a HISE or `hise-cli` bug, stop the current node instead of working around it. Create a bug report in `scriptnode_enrichment/hsc/issues.md` with a fresh-instance DSL reproduction, observed behaviour, expected behaviour, and impact. Do not alter the example topology, command order, or public HSC to dodge the bug unless the user explicitly approves after reading the report.
+10. Use `hise-cli dsp docs` before choosing unfamiliar nodes, parameters, properties, or connection modes.
+11. Run `hise-cli dsp status --module {ModuleId} --agent` before trace validation. Runtime status catches graph-level issues that structural commands can miss.
+12. If status reports an autofixable runtime error, run `hise-cli dsp status --module {ModuleId} --autofix --agent`, then run plain status again before tracing.
+13. Verify parameter flow with `dsp trace` after structural and runtime-status checks.
+14. Verify signal flow with `dsp trace` after structural and runtime-status checks.
+15. During investigation, prefer incremental live edits over full rebuilds. Once the network is signed off, rewrite the final command list as a coherent from-scratch build.
+16. Capture only successful shell `hise-cli ...` commands for the final artifact. Exclude failed attempts, temporary probes, cleanup commands, and CLI-fix exploration.
+17. Optimize the final command list:
     - Add nodes directly to their final parent.
     - Omit default-value no-ops.
     - Avoid move/reparent commands if direct parent creation is possible.
     - Keep `matched` connections whenever possible.
-17. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
-18. If using `matched`, narrow the target parameter range before connecting.
-19. Use as many channels as required by the node. For most nodes, default stereo should be enough.
-20. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
-21. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
-22. If a target parameter appears to need multiple incoming controls, stop and insert a combiner node. A target parameter must not have more than one direct incoming connection.
-23. Avoid unnecessary normalisation and rescaling. Prefer root/public parameters in useful native units, and check whether unscaled control variants can preserve the same parameter logic with less range mapping.
-24. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
-25. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
-26. Screenshot files are disposable. Every pipeline-only screenshot command must target `scriptnode_enrichment/hsc/output/{factory}/{node}.png`, never a tracked phase directory.
-27. The optimized public shell command block must begin with the exact command `hise-cli -hise "playground open" --agent`, followed by `hise-cli builder reset --agent`. Include activation exactly once and never include a Playground close or disable command.
+18. Public/root parameters should expose raw target-node values with sensible narrowed ranges.
+19. If using `matched`, narrow the target parameter range before connecting.
+20. Use as many channels as required by the node. For most nodes, default stereo should be enough.
+21. For channel/routing examples, explicitly verify module routing, master routing, and channel-isolation topology.
+22. Verify any inherited or duplicated branches that Phase 2 planned to clear, replace, or leave intentionally empty.
+23. If a target parameter appears to need multiple incoming controls, stop and insert a combiner node. A target parameter must not have more than one direct incoming connection.
+24. Avoid unnecessary normalisation and rescaling. Prefer root/public parameters in useful native units, and check whether unscaled control variants can preserve the same parameter logic with less range mapping.
+25. Do not write HSC mode grammar in this artifact. Phase 4 performs that conversion.
+26. Do not put `save` or `screenshot` into the public command list. Keep them under pipeline-only commands.
+27. Screenshot files are disposable. Every pipeline-only screenshot command must target `scriptnode_enrichment/hsc/output/{factory}/{node}.png`, never a tracked phase directory.
+28. The optimized public shell command block must begin with the exact command `hise-cli -hise "playground open" --agent`, followed by `hise-cli builder reset --agent`. Include activation exactly once and never include a Playground close or disable command.
+29. For Table and SliderPack complex-data examples, verify the external slot binding with `dsp show`: `complexData` must report the expected `dataType`, `slotIndex`, and `dataIndex`. Verify the Interface script exposes the expected data reference with `script show tree --symbols-only`, and verify signal trace proves the node reads initialized data instead of empty-data passthrough.
 
 ---
 
@@ -294,6 +296,10 @@ Use this exact structure:
 
 - `{Node.Property}` = `{value}`
 - {or "None"}
+
+## Interface Script Setup Applied
+
+- `{processor reference and complex-data writes, or "None"}`
 
 ## Optimized Public Shell Commands
 

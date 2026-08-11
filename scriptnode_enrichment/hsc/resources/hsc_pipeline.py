@@ -23,11 +23,11 @@ PUBLISH_OUTPUT = HSC_ROOT / "output"
 PHASE4 = HSC_ROOT / "phase4"
 PHASE5 = HSC_ROOT / "phase5"
 MODULE_RE = re.compile(
-    r'^\s*add\s+(?:ScriptFX|ScriptSynth|ScriptModulator|ScriptEnvelopeModulator)\s+as\s+"([^"]+)"',
+    r'^\s*add\s+(?:ScriptFX|PolyScriptFX|ScriptSynth|ScriptModulator|ScriptEnvelopeModulator)\s+as\s+"([^"]+)"',
     re.MULTILINE,
 )
 MODULE_DECL_RE = re.compile(
-    r'^\s*add\s+(ScriptFX|ScriptSynth|ScriptModulator|ScriptEnvelopeModulator)\s+as\s+"([^"]+)"',
+    r'^\s*add\s+(ScriptFX|PolyScriptFX|ScriptSynth|ScriptModulator|ScriptEnvelopeModulator)\s+as\s+"([^"]+)"',
     re.MULTILINE,
 )
 HSC_PARAMETER_RE = re.compile(r'^\s*create_parameter\s+\S+\.([\w]+)\s+', re.MULTILINE)
@@ -141,7 +141,7 @@ def read_module_id(script: Path) -> str:
     match = MODULE_RE.search(text)
     if not match:
         raise ValueError(
-            f"Could not find ScriptFX/ScriptSynth/ScriptModulator/ScriptEnvelopeModulator module id in {script}"
+            f"Could not find ScriptFX/PolyScriptFX/ScriptSynth/ScriptModulator/ScriptEnvelopeModulator module id in {script}"
         )
     return match.group(1)
 
@@ -152,6 +152,24 @@ def png_dimensions(path: Path) -> tuple[int, int]:
     if len(signature) < 24 or signature[:8] != b"\x89PNG\r\n\x1a\n":
         raise ValueError(f"Not a valid PNG: {path}")
     return struct.unpack(">II", signature[16:24])
+
+
+def ensure_screenshot_at_requested_path(payload: dict, requested_path: Path) -> None:
+    """HISE may resolve screenshot outputs under the active project's Images folder."""
+    if requested_path.exists():
+        return
+
+    content = str(payload.get("result", {}).get("content", ""))
+    match = re.search(r"Screenshot saved to (.+) \(\d+x\d+\)$", content)
+    if not match:
+        return
+
+    actual_path = Path(match.group(1))
+    if not actual_path.exists():
+        return
+
+    requested_path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(actual_path, requested_path)
 
 
 def screenshot_jobs(jobs: list[ScreenshotJob], args: argparse.Namespace) -> int:
@@ -167,7 +185,7 @@ def screenshot_jobs(jobs: list[ScreenshotJob], args: argparse.Namespace) -> int:
             job.output.parent.mkdir(parents=True, exist_ok=True)
             run_hise(["run", str(job.script)])
             time.sleep(args.ui_delay)
-            run_hise(
+            screenshot_payload = run_hise(
                 [
                     "dsp",
                     "screenshot",
@@ -181,6 +199,7 @@ def screenshot_jobs(jobs: list[ScreenshotJob], args: argparse.Namespace) -> int:
                 retries=args.retries,
                 retry_delay=args.retry_delay,
             )
+            ensure_screenshot_at_requested_path(screenshot_payload, job.output)
             width, height = png_dimensions(job.output)
             print(f"{job.label} | {job.output.relative_to(ROOT)} | {width}x{height} | yes | no")
         except Exception as exc:  # noqa: BLE001 - batch should continue and report all failures.
@@ -322,7 +341,7 @@ def publish(args: argparse.Namespace) -> int:
 
             run_hise(["run", str(job.hsc)])
             time.sleep(args.ui_delay)
-            run_hise(
+            screenshot_payload = run_hise(
                 [
                     "dsp",
                     "screenshot",
@@ -336,6 +355,7 @@ def publish(args: argparse.Namespace) -> int:
                 retries=args.retries,
                 retry_delay=args.retry_delay,
             )
+            ensure_screenshot_at_requested_path(screenshot_payload, screenshot_path)
 
             png_dimensions(screenshot_path)
 
@@ -982,6 +1002,7 @@ def validate_job(job: PublishJob) -> list[str]:
     phase3_host = parse_keyed_section(markdown_section(phase3, "Builder Setup Applied")).get("Host context")
     expected_host = {
         "ScriptFX": "Script FX",
+        "PolyScriptFX": "PolyScriptFX",
         "ScriptSynth": "Script Synth",
         "ScriptModulator": "Script Modulator",
         "ScriptEnvelopeModulator": "Script Envelope",
@@ -1065,7 +1086,7 @@ def validate_phase5_schema(job: PublishJob, meta: dict, body: str) -> list[str]:
         "domain": {"scriptnode"},
         "category": {"dsp-network"},
         "difficulty": {"beginner", "intermediate", "advanced"},
-        "moduleType": {"ScriptFX", "ScriptSynth", "ScriptModulator", "ScriptEnvelopeModulator"},
+        "moduleType": {"ScriptFX", "PolyScriptFX", "ScriptSynth", "ScriptModulator", "ScriptEnvelopeModulator"},
     }
     for key, allowed in enums.items():
         if meta.get(key) not in allowed:

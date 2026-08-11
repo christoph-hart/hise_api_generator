@@ -543,6 +543,8 @@ This means frame mode propagates correctly through nested wrappers. A
 the modchain seeing blockSize=1, which disables the RASTER downsampling and
 processes the control chain sample-by-sample.
 
+`container.midichain` is an exception to ordinary frame nesting. Its prepare path rejects frame mode (`blockSize == 1`), so it cannot be placed inside `frame1_block`, `frame2_block`, or `framex_block`. If nodes need both MIDI events and sample-by-sample processing, place the frame container inside the midichain: `midichain -> frame2_block -> nodes`.
+
 ---
 
 ## 7. Interpolators Namespace

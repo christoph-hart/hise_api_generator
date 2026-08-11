@@ -46,21 +46,23 @@ connect example_network.Macro to NodeId.Param matched
 2. Treat `Builder Setup Applied` and `Locked Build Values Applied` in the Phase 3 artifact as authoritative context for understanding the command sequence. Do not invent alternatives.
 3. Do not reinterpret graph topology, parameter values, comments, cosmetics, applied builder setup, or locked build values.
 4. Convert only the approved Phase 3 optimized public shell command sequence.
-5. Exclude `save` from public `.hsc`.
-6. Exclude `screenshot` from public `.hsc`.
-7. Preserve friction-point comments and place them near the relevant commands.
-8. Use `add <type> as "Name"` for all creation commands.
-9. Use `set X.field value` or `set X.Param.field value` for writes.
-10. Use `create_parameter Container.Param [min, max] default D stepSize S` for macro parameters.
-11. Use `connect Source.Param to Target.Param matched` whenever Phase 3 says matched was used.
-12. Use only `0xAARRGGBB` colour literals.
-13. Ensure `scriptnode_enrichment/hsc/phase4/{factory}/` exists before writing `.hsc` files.
-14. Enter DSP mode with `/dsp`, then select the host module with `cd <ModuleId>`. Do not emit `/dsp <ModuleId>`.
-15. Translate parameter metadata as `.stepSize`, `.middlePosition`, and `.skewFactor`. Do not emit `.step`, `.mid`, or `.skew`.
-16. Preserve DSP appearance writes such as `NodeColour`, `Comment`, and `Folded`; these are valid node attributes used for screenshot-focused examples.
-17. Run `python scriptnode_enrichment/hsc/resources/hsc_pipeline.py validate-hsc --node {factory.node}` after assembly. Fix all HSC safety issues before Phase 5. The full `validate` command remains required once Phase 5 exists.
-18. The first three executable non-comment lines must be exactly `/hise playground open`, `/builder`, and `reset`, in that order. Emit Playground activation exactly once and before every builder or DSP mutation.
-19. Never emit a Playground close or disable command in a public `.hsc` script.
+5. If HSC assembly or validation exposes a HISE or `hise-cli` bug, stop the current node and create a bug report in `scriptnode_enrichment/hsc/issues.md` with a fresh-instance DSL reproduction. Do not rewrite the HSC into a workaround unless the user explicitly approves it after reviewing the bug report.
+6. Exclude `save` from public `.hsc`.
+7. Exclude `screenshot` from public `.hsc`.
+8. Preserve friction-point comments and place them near the relevant commands.
+9. Use `add <type> as "Name"` for all creation commands.
+10. Use `set X.field value` or `set X.Param.field value` for writes.
+11. Use `create_parameter Container.Param [min, max] default D stepSize S` for macro parameters.
+12. Use `connect Source.Param to Target.Param matched` whenever Phase 3 says matched was used.
+13. Use only `0xAARRGGBB` colour literals.
+14. Ensure `scriptnode_enrichment/hsc/phase4/{factory}/` exists before writing `.hsc` files.
+15. Enter DSP mode with `/dsp`, then select the host module with `cd <ModuleId>`. Do not emit `/dsp <ModuleId>`.
+16. Translate parameter metadata as `.stepSize`, `.middlePosition`, and `.skewFactor`. Do not emit `.step`, `.mid`, or `.skew`.
+17. Preserve DSP appearance writes such as `NodeColour`, `Comment`, and `Folded`; these are valid node attributes used for screenshot-focused examples.
+18. Run `python scriptnode_enrichment/hsc/resources/hsc_pipeline.py validate-hsc --node {factory.node}` after assembly. Fix all HSC safety issues before Phase 5. The full `validate` command remains required once Phase 5 exists.
+19. The first three executable non-comment lines must be exactly `/hise playground open`, `/builder`, and `reset`, in that order. Emit Playground activation exactly once and before every builder or DSP mutation.
+20. Never emit a Playground close or disable command in a public `.hsc` script.
+21. Preserve approved Interface script initialization blocks for complex-data examples. Use `/script` for the default Interface, `/callback onInit`, the exact HiseScript body, `/compile`, and `/exit` after the DSP graph exists so `Synth.getTableProcessor()` or `Synth.getSliderPackProcessor()` can resolve the host module. Do not use `/script.Interface` in public HSC scripts; the runner expects `/script` for the default processor.
 
 ---
 
@@ -125,6 +127,21 @@ hise-cli dsp set --module M --node N --param P --range "a,b" --middlePosition X 
 hise-cli dsp set --module M --node N --param P --range "a,b" --skewFactor X --agent
 -> set N.P.range [a, b], N.P.skewFactor X
 ```
+
+### DSP Complex Data
+
+```text
+hise-cli dsp set-complex-data --module M --node N --type Table --index I --agent
+-> set_complex_data N.Table index I
+
+hise-cli dsp set-complex-data --module M --node N --type SliderPack --index I --agent
+-> set_complex_data N.SliderPack index I
+
+hise-cli dsp set-complex-data --module M --node N --type Table --slot S --index I --agent
+-> set_complex_data N.Table.S index I
+```
+
+Use external indices such as `0` for Table and SliderPack examples that initialize data from Interface `onInit`. Do not convert scripted-initialization examples to embedded `index -1`.
 
 ### DSP Macro Parameters And Connections
 

@@ -38,6 +38,7 @@ For each target node, read its reference page and propose a practical project co
 7. Use `Notes For Phase 2` to record non-obvious builder constraints early: required host context, semantic containers, inherited-signal clearing, or visual-verification requirements.
 8. If a support node needs a non-default mode, exact formula, or exact startup state for the example to work, mention that in `Notes For Phase 2`.
 9. Each node has one canonical example. Keep `Support Nodes` aligned with that example as later phases refine it; required support must appear in the final topology.
+10. If the node demonstrates Table or SliderPack complex data that must be initialized programmatically, record that Phase 2 must use an external data slot plus Interface `onInit` setup. Do not plan embedded complex data for programmable examples because embedded data cannot be changed from script. Avoid AudioFile complex-data examples unless a dependency-free fixture exists; public examples must not require external project files.
 
 ---
 

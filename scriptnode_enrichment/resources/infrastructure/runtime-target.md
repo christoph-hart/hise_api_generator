@@ -313,6 +313,8 @@ Bridges an extra modulation chain from a hardcoded effect into scriptnode.
   The signal is passed through raw because the extra mod system
   handles modulation application externally via `RenderData::handleModulation`.
 - **Static assertion:** Template IndexClass must be ExtraIndexer
+- **Parent context:** event-processing node. In monophonic interpreted FX networks it needs a `container.midichain` ancestor, or a polyphonic root network. A `container.no_midi` ancestor disables this context. For sample-by-sample modulation use `midichain -> frame*_block -> extra_mod`; do not put `midichain` inside a frame container.
+- **Slot ownership:** requires a root parameter with `ExternalModulation` enabled. `Index` selects the externally modulatable root parameter by slot order. If no root parameter owns that slot, validation reports `No parameter assigned to modulation slot #N`.
 
 ### core::pitch_mod
 

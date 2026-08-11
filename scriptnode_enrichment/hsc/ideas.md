@@ -35,4 +35,19 @@ This file contains loose ideas that can be used as starting point for the exampl
 `container.soft_bypass`: A "vocal channel-strip" using different elements (HPF, compressor, waveshaper, etc). Each stage can be soft bypassed.
 `container.split`: A "silencer" that copies the signal, multiplies it with -1 and adds it back. Demonstrates how the signal is copied without latency.
 
+## control
+
+`control.bang`: a ramp modulating the value and a desynced timer sending out bang messages for quasi random (or polyrhythmic) modulation.
+`control.bipolar`: a triangle LFO oscillator modulating the freq ratio and the scale parameter controlling the vibrato amount around the center frequency value
+`control.blend`: a sine LFO and a filtered noise source (tbd) can be blended to create an LFO with "human touch"
+`branch_cable`: create a peak or RMS peak meter sending into a global cable.
+`cable_expr`: some control signal manipulation, idk
+`cable_pack`: a clock_ramp connected to this node is driving a step sequencer that modulates the filter frequency of a LPF.
+`cable_table`: control two filter frequency with root parameters, root one of them through a cable_table with a skewed graph to demonstrate a nonlinear parameter range.
+`control.change`: A ramp going into a staircase creator (cable.expr with Math.fmod(input, 0.25)), then going into the change node to filter out repetitive values.
+`compare`: a filter controlled by two root parameters: a min frequency and a frequency, then these values are compared with the `MAX` operator.
+`converter`: convert the output of the tempo_sync node to drive time-based nodes which work on another domain than ms (eg. sampleandhold which works in samples).
+`delay_cable`: a timer that triggers the gate of two oscillators for short blips, one of them is delayed a bit.
+`input_toggle`: a key tracking filter in a polyphonic FX - one input sets the frequency by the incoming midi number, the other input allows it being set with a root parameter. another root parameter is toggling between these inputs.
+`intensity`: simulating the HISE gain modulation with a modchain modulating a mul node.
 

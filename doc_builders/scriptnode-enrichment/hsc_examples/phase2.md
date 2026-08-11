@@ -32,6 +32,7 @@
 13. Use `Open Questions` only for unresolved user decisions or truly unknown external setup. Do not place known setup steps or locked values there.
 14. Phase 2 is the canonical final topology plan. If live construction changes topology or required support, update Phase 1 and Phase 2 to the approved result instead of leaving the final design only as Phase 3 deviation prose.
 15. Every example is constructed in an isolated HISE Playground. Phase 3 must activate it with `hise-cli -hise "playground open" --agent` before reset, tree inspection, or any graph mutation. Public examples never close or disable the Playground.
+16. For Table and SliderPack complex-data examples that need deterministic startup data, assign the node to an external data slot, usually index `0`, and initialize that slot from the Interface script in `onInit`. Do not use embedded slot `index -1` when the example needs scripted data writes. Record the exact `set_complex_data` target and the Interface script reference pattern in `Locked Build Values`, for example `TableLookup.Table data index = 0` with `Synth.getTableProcessor("ModuleId").getTable(0)`, or `PackLookup.SliderPack data index = 0` with `Synth.getSliderPackProcessor("ModuleId").getSliderPack(0)`. Skip AudioFile complex-data examples unless they can run without external files.
 
 ---
 
@@ -41,7 +42,7 @@ Phase 2 must identify comments for decisions that are not obvious from commands 
 
 Section roles:
 - `Builder Setup` = host context plus any additional prerequisites before graph construction.
-- `Locked Build Values` = exact node-defined values or settings that Phase 3 must reproduce without improvisation.
+- `Locked Build Values` = exact node-defined values, complex-data slot assignments, Interface script data initialization, or settings that Phase 3 must reproduce without improvisation.
 - `Friction Comments To Weave In` = explanatory comments for the final public artifact, not setup instructions.
 - `Open Questions` = unresolved items only.
 
