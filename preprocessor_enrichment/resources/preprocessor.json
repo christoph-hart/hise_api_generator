@@ -374,7 +374,7 @@
       ]
     },
     "HISE_FORCE_INACTIVE_MOD_RENDERING": {
-      "value": 0,
+      "value": 1,
       "defaultValue": 0,
       "autoConfig": false,
       "supportsHotReload": true,
@@ -587,6 +587,22 @@
         "$PP.HISE_INCLUDE_RT_NEURAL$ -- RTNeural inference consumes the xsimd header that this flag controls"
       ]
     },
+    "HISE_LEGACY_INACTIVE_MOD_VALUES": {
+      "value": 0,
+      "defaultValue": 0,
+      "autoConfig": false,
+      "supportsHotReload": true,
+      "category": "Audio Processing",
+      "category-slug": "audio-processing",
+      "brief": "Restores neutral master and monophonic effect modulation after the last voice has been reset.",
+      "description": "By default, master and monophonic effects continue using their rendered modulation values while processing effect tails after the last synth voice has been reset. Enabling this flag restores the previous behaviour, where these effects use each modulator's inactive fallback value until another voice starts. Use this compatibility option for projects whose sound design depends on modulation becoming neutral before an effect tail has ended.\n> Voice release modulation is unaffected because the inactive fallback begins on voice reset, not note-off.\n> If HISE_FORCE_INACTIVE_MOD_RENDERING is also enabled, this legacy fallback takes precedence when modulation values are read without an active voice.\n> Read from the project's Extra Definitions at runtime, so changing the value in HISE takes effect on the next prepareToPlay without a full rebuild. Exported plugins still require recompilation.",
+      "valueRange": "",
+      "vestigal": false,
+      "crossRefs": [
+        "$MODULES.Gain$ -- restores neutral modulation while processing upstream effect tails",
+        "$PP.HISE_FORCE_INACTIVE_MOD_RENDERING$ -- controls modulation target updates in suspended and inactive processing paths"
+      ]
+    },
     "HISE_LOAD_ENTIRE_SAMPLE_THRESHHOLD": {
       "value": 2147483647,
       "defaultValue": 2147483647,
@@ -782,7 +798,7 @@
       ]
     },
     "HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS": {
-      "value": 8,
+      "value": 0,
       "defaultValue": 0,
       "autoConfig": false,
       "supportsHotReload": true,
