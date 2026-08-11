@@ -39,12 +39,17 @@ llmRef: |
 
   CPU: depends on loaded network, polyphonic
     Scales linearly with active voices. Includes voice suspension for silent voices.
+    Inactive rendering retains modulation cost for one last-started voice, but not network audio-processing cost.
 
   Parameters:
     No fixed parameters (offset = 0). All parameters come from the loaded network.
 
   Modulation chains:
     Extra Modulation Chains (default 0, configurable via HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS) - see Audio Modules modulators reference for connection mode details
+
+  Inactive modulation:
+    HISE_FORCE_INACTIVE_MOD_RENDERING continues used extra-mod slots for one retained voice after all voices stop.
+    The network process() function does not run and no audio is processed. Parameter-derived displays can update while audio-derived displays remain frozen.
 
   Channel configuration:
     Standard scriptnode channel configuration (default stereo, up to 16). See Audio Modules sound-generators reference for details.
@@ -127,6 +132,12 @@ Switching networks at runtime is possible by calling `Engine.createDspNetwork()`
 ### Modulation Chain Configuration
 
 This module has no built-in Gain or Pitch modulation chains. Extra modulation slots are controlled by `HISE_NUM_POLYPHONIC_SCRIPTNODE_FX_MODS` (default: 0). The parent synth's pitch chain is connected to the network's runtime targets, allowing pitch modulation to affect `pitch_mod` nodes. See [Scriptnode Modulation Bridge](/v2/reference/audio-modules/modulators/#scriptnode-modulation-bridge) for how extra modulation slots connect to network parameters.
+
+### Inactive Modulation Rendering
+
+By default, Polyphonic Script FX stops calculating and dispatching per-voice Extra Modulation Chain values after all voices end. Set [HISE_FORCE_INACTIVE_MOD_RENDERING]($PP.HISE_FORCE_INACTIVE_MOD_RENDERING$) to `1` in Extra Definitions to continue evaluating used modulation slots for one retained voice, normally the last-started voice, and dispatch their values to connected network parameters.
+
+The network's `process()` function is not called and no audio is processed. Parameter-derived displays can continue following the retained voice, but scopes, FFT analysers, peak nodes and external display buffers remain frozen. The additional CPU cost is limited to the used modulation chains and parameter dispatch for one voice; it does not scale with the former active voice count or include network audio processing.
 
 ### Channel Configuration
 

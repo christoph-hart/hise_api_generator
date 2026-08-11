@@ -75,6 +75,9 @@ llmRef: |
     Bipolar Freq Modulation (offset mode) - adds signed offset to normalised frequency before standard frequency modulation.
     Q Modulation (gain mode) - scales the Q value.
 
+  Inactive modulation:
+    HISE_FORCE_INACTIVE_MOD_RENDERING refreshes modulation-derived filter values and response display state from one retained voice while the owner synth is idle. No idle audio is filtered.
+
   Channel routing:
     Routing matrix supports up to NUM_MAX_CHANNELS source channels (enabling-only, no source-to-destination remapping).
     Only enabled channels are processed by the filter; disabled channels pass through unmodified.
@@ -235,6 +238,8 @@ The two frequency modulation paths interact in a specific order: the Frequency v
 ### CPU and Polyphonic Processing
 
 The module automatically detects whether polyphonic processing is needed based on the modulator types in its chains. Adding even a single polyphonic modulator (e.g., velocity) to any chain forces all voices to be processed independently, significantly increasing CPU cost. [2]($FORUM_REF.404$)
+
+When the owner synth has no active voices, modulation and the filter response display normally remain at their last values. Set [HISE_FORCE_INACTIVE_MOD_RENDERING]($PP.HISE_FORCE_INACTIVE_MOD_RENDERING$) to `1` in Extra Definitions to keep calculating modulation from one retained voice, normally the last-started voice, and refresh the derived filter values while idle. This updates modulation and display state only; no idle audio is filtered.
 
 ### Non-Functional Elements
 

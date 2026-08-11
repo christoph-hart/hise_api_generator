@@ -42,6 +42,7 @@ llmRef: |
     audio in (per voice) -> [compiled network per voice] -> audio out (per voice)
 
   Modulation: extra slots only (NUM_HARDCODED_POLY_FX_MODS, default 0), no built-in chains. See modulators parent page.
+  Inactive modulation: HISE_FORCE_INACTIVE_MOD_RENDERING updates connected parameters from one retained voice after all voices stop, but does not call the compiled network process() callback. Parameter-derived displays can update while audio-derived displays remain frozen.
   Channels: fixed at compile time, must match routing matrix. See sound-generators parent page.
   Parameters: all from network, offset 0. See index parent page.
   Complex data: slot counts baked at compile time. See index parent page.
@@ -136,6 +137,12 @@ During development, the DLL hot-loads when recompiled — restart HISE or recomp
 ### Modulation Chain Configuration
 
 This module has no built-in Gain or Pitch modulation chains. Extra modulation slots are configured via `NUM_HARDCODED_POLY_FX_MODS` (default: 0). Modulation runs per voice. See [Scriptnode Modulation Bridge](/v2/reference/audio-modules/modulators/#scriptnode-modulation-bridge) for how extra modulation slots connect to network parameters.
+
+### Inactive Modulation Rendering
+
+By default, per-voice modulation stops updating connected network parameters after all voices end. Set [HISE_FORCE_INACTIVE_MOD_RENDERING]($PP.HISE_FORCE_INACTIVE_MOD_RENDERING$) to `1` in Extra Definitions to continue evaluating the used Extra Modulation Chains for the last-started voice and dispatch their values to connected parameters while the synth is idle.
+
+Only one retained voice is evaluated, and the compiled network's `process()` callback is not called. Parameter-derived displays can continue following that voice, but scopes, analysers, peak meters and other audio-derived displays remain frozen. The additional CPU cost is limited to one voice's used modulation chains and parameter dispatch rather than the network's audio processing.
 
 ### Channel Configuration
 

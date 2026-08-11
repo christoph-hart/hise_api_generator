@@ -55,6 +55,7 @@ llmRef: |
 
   CPU: depends on loaded network, monophonic
     Framework overhead is negligible.
+    With HISE_FORCE_INACTIVE_MOD_RENDERING enabled, suspended blocks retain modulation-target dispatch overhead but not network audio-processing cost.
 
   Parameters:
     All parameters are dynamic and come from the loaded scriptnode network.
@@ -62,6 +63,10 @@ llmRef: |
 
   Modulation chains:
     Extra Modulation Chains (default 0, configurable via HISE_NUM_SCRIPTNODE_FX_MODS) - see Audio Modules modulators reference for connection mode details
+
+  Inactive modulation:
+    HISE_FORCE_INACTIVE_MOD_RENDERING keeps connected network parameters updating after silence suspension, but does not call the network process() function or legacy HISEScript processBlock() callback.
+    Parameter-derived displays can update while audio-derived displays remain frozen.
 
   Channel configuration:
     Standard scriptnode channel configuration (default stereo, up to 16). See Audio Modules sound-generators reference for details.
@@ -150,6 +155,14 @@ Switching networks at runtime is possible by calling `Engine.createDspNetwork()`
 ### Modulation Chain Configuration
 
 This module has no built-in Gain or Pitch modulation chains. Extra modulation slots are controlled by `HISE_NUM_SCRIPTNODE_FX_MODS` (default: 0). See [Scriptnode Modulation Bridge](/v2/reference/audio-modules/modulators/#scriptnode-modulation-bridge) for how extra modulation slots connect to network parameters.
+
+### Inactive Modulation Rendering
+
+When a loaded scriptnode network suspends itself on silence, connected network parameters normally stop receiving the calculated Extra Modulation Chain values. Set [HISE_FORCE_INACTIVE_MOD_RENDERING]($PP.HISE_FORCE_INACTIVE_MOD_RENDERING$) to `1` in Extra Definitions to keep dispatching those values during suspended silent blocks.
+
+The scriptnode network's `process()` function is not called, and the legacy HISEScript `processBlock()` callback is not called. Parameter-derived displays can continue updating, but scopes, FFT analysers, peak nodes and external display buffers that depend on audio processing remain frozen. The flag adds modulation-target dispatch overhead during otherwise suspended blocks without restoring the network's full audio-processing cost.
+
+This behaviour only applies when a scriptnode network is loaded and reports that it can suspend on silence. Legacy HISEScript-only mode is unaffected.
 
 ### Channel Configuration
 

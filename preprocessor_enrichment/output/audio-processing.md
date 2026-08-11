@@ -18,6 +18,20 @@ Sets the divisor that every modulator, envelope and scriptnode modchain uses to 
 
 **See also:** $MODULES.LFO$ -- LFO accuracy above roughly 30 Hz improves when this divisor is lowered, $API.Engine.getControlRateDownsamplingFactor$ -- Engine.getControlRateDownsamplingFactor returns this value at runtime, $API.Synth$ -- sample-accurate timer events on the synth are rastered to this grid, $SN.container.modchain$ -- children of a modchain run at sampleRate divided by this factor, $PP.HISE_MAX_PROCESSING_BLOCKSIZE$ -- maximum block size must stay a multiple of this raster, $PP.HISE_COMPLAIN_ABOUT_ILLEGAL_BUFFER_SIZE$ -- triggers a user-facing overlay when the host buffer size is not a multiple of this raster
 
+### `HISE_FORCE_INACTIVE_MOD_RENDERING`
+
+Keeps selected effect modulation chains advancing while no voice is active or audio processing is suspended.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | yes | no |
+
+By default, modulation updates stop when a Hardcoded Master FX or Script FX suspends itself on silence, or when a Hardcoded Polyphonic FX, Polyphonic Script FX, or Polyphonic Filter has no active voice, leaving parameter targets and filter display values at their last state until processing resumes. Enabling this flag continues evaluating connected modulation chains during those inactive blocks and updates their targets without running the network's audio processing. This keeps free-running modulation in sync but consumes CPU during periods that would otherwise be idle, with the cost determined by the number and complexity of connected modulators.
+> Inactive rendering only dispatches modulation-derived parameter updates; it does not call the network's `process()` callback. Any display state that depends on audio processing rather than parameter updates will remain frozen, so enabling this flag will not affect its outcome.
+> Read from the project's Extra Definitions at runtime, so changing the value in HISE takes effect on the next prepareToPlay without a full rebuild. Exported plugins still require recompilation.
+
+**See also:** $MODULES.HardcodedMasterFX$ -- connected network parameter targets continue updating during silence suspension, $MODULES.HardcodedPolyphonicFX$ -- last-voice modulation continues updating after all voices stop, $MODULES.ScriptFX$ -- connected scriptnode parameter targets continue updating during silence suspension, $MODULES.PolyScriptFX$ -- last-voice scriptnode modulation continues updating after all voices stop, $MODULES.PolyphonicFilter$ -- filter modulation and display state continue updating while its owner synth is idle, $SN.core.extra_mod$ -- network target that receives inactive modulation updates, $PP.HISE_SUSPENSION_TAIL_MS$ -- controls when a silent master effect enters the suspended path affected by this flag
+
 ### `HISE_MAX_PROCESSING_BLOCKSIZE`
 
 Upper ceiling for the internal audio block size used by the rendering loop.

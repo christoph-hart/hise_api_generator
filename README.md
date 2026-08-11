@@ -19,6 +19,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 | **LAF function extraction** | `laf_style_guide.json` | Active | [laf-extraction.md](doc_builders/laf-extraction.md) |
 | **Component properties** | TBD | Planned | [component-properties.md](doc_builders/component-properties.md) |
 | **Module enrichment** | `module_enrichment/pages/` + `module_enrichment/resources/static/` | Active | [module-enrichment.md](doc_builders/module-enrichment.md) |
+| **Preprocessor enrichment** | `preprocessor_enrichment/resources/preprocessor.json` | Active | [preprocessor-enrichment.md](doc_builders/preprocessor-enrichment.md) |
 
 
 ## Directory Structure
@@ -71,6 +72,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   ├── module-enrichment.md               # Module enrichment orchestrator guide
 │   ├── module-enrichment/                 # Module enrichment sub-phase details
 │   │   ├── intermediate-format.md         # Signal flow JSON specification
+|   |-- preprocessor-enrichment.md          # Preprocessor database authoring and publication
 │   ├── laf-extraction.md
 │   ├── component-properties.md
 │   └── module-list.md
