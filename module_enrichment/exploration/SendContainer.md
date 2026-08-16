@@ -23,9 +23,9 @@ The SendContainer does NOT use the standard ModulatorSynth voice rendering at al
 
 **Question:** What effects can go in the FX chain?
 
-**Answer:** The FX chain is constrained by `NoMidiInputConstrainer` (RouteFX.h:122-124). The metadata also uses `.withFXConstrainer<NoMidiInputConstrainer>()` (line 113). Additionally, `effectChain->setForceMonophonicProcessingOfPolyphonicEffects(true)` is called in the constructor (line 125), meaning any polyphonic effects placed in the chain are forced to process monophonically.
+**Answer:** The FX chain is constrained by `NoMidiInputConstrainer` (RouteFX.h:122-124). The metadata also uses `.withFXConstrainer<NoMidiInputConstrainer>()` (line 113). The Polyphonic Filter detects this constrainer and processes the accumulated signal through its monophonic filter path.
 
-The constrainer type from moduleList.json is "MasterEffect", meaning only MasterEffect-subtype effects can be added.
+The constrainer permits master effects, monophonic effects, and Polyphonic Filter as the summed-buffer voice-effect exception.
 
 ### multichannel-routing
 

@@ -5,14 +5,14 @@
 
 ## Signal Path
 
-MIDI events arrive and are optionally filtered by channel (root chain only), then processed by the MIDI processor chain. Each non-bypassed child SoundGenerator renders additively into a shared internal buffer. After all children have rendered, monophonic gain modulation is applied to the summed buffer. The effect chain then processes in two stages: voice-level effects (forced monophonic) followed by master effects. Finally, the static Gain parameter and Balance are applied when copying to the output buffer.
+MIDI events arrive and are optionally filtered by channel (root chain only), then processed by the MIDI processor chain. Each non-bypassed child SoundGenerator renders additively into a shared internal buffer. After all children have rendered, monophonic gain modulation is applied to the summed buffer. The effect chain then processes its allowed summed-buffer effects followed by master effects. Finally, the static Gain parameter and Balance are applied when copying to the output buffer.
 
 ```
 MIDI in -> [root: channel filter] -> MidiProcessorChain
     -> for each child: render additively into internalBuffer
     -> forward controller/pitchwheel to chain-level handlers
     -> monophonic gain modulation (multiply onto internalBuffer)
-    -> effectChain->renderNextBlock (voice FX, forced monophonic)
+    -> effectChain->renderNextBlock (allowed summed-buffer effects)
     -> effectChain->renderMasterEffects (master FX)
     -> apply static Gain * Balance -> output buffer
 ```
@@ -34,7 +34,7 @@ The constrainer is `*` (any SoundGenerator). There is no explicit depth limit in
 ### fx-chain-placement: Where does the FX chain apply?
 
 The FX chain runs in two stages, both after gain modulation:
-1. `effectChain->renderNextBlock()` in `postVoiceRendering` - processes any voice-level effects (forced monophonic via `setForceMonophonicProcessingOfPolyphonicEffects(true)`)
+1. `effectChain->renderNextBlock()` in `postVoiceRendering` - processes allowed summed-buffer effects; the Polyphonic Filter selects its monophonic path from the chain's `NoMidiInputConstrainer`
 2. `effectChain->renderMasterEffects()` - processes master effects (reverb, delay, convolution, etc.)
 
 Both run after all children have been summed and gain modulation applied. The static Gain + Balance are applied after the FX chain, in the final output copy.
@@ -68,7 +68,7 @@ Nested SynthChains behave like simple mixer containers without these global resp
 4. **Child rendering loop** - Each child `renderNextBlockWithModulators` adds to internalBuffer. CPU: depends entirely on children.
 5. **Controller/pitchwheel forwarding** - Forwards only controller and pitchwheel events to chain-level handlers. CPU: negligible.
 6. **Monophonic gain modulation** - `calculateMonophonicModulationValues` then multiply onto all channels. CPU: low (per-block multiply).
-7. **Voice FX (forced monophonic)** - `effectChain->renderNextBlock`. CPU: depends on effects added.
+7. **Summed-buffer FX** - `effectChain->renderNextBlock`. CPU: depends on effects added.
 8. **Master FX** - `effectChain->renderMasterEffects`. CPU: depends on effects added.
 9. **Output routing** - Multiply by static Gain * Balance, add to output buffer. CPU: negligible.
 

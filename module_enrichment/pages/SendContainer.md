@@ -30,10 +30,10 @@ commonMistakes:
     wrong: "Expecting the Gain or Balance knobs on the Send Container to affect the output level"
     right: "Control the output level using a SimpleGain effect in the container's FX chain, or adjust the Send Effect gain"
     explanation: "The Gain and Balance parameters are inherited from the base class but are not applied in the Send Container's render path. The output level is determined entirely by the Send Effect gain and the effects in the FX chain."
-  - title: "Polyphonic effects forced to monophonic"
+  - title: "Unsupported polyphonic effects"
     wrong: "Adding polyphonic effects to the Send Container's FX chain and expecting per-voice processing"
-    right: "All effects in the Send Container run monophonically"
-    explanation: "The Send Container forces monophonic processing for all effects in its chain, regardless of whether the effect supports polyphonic mode."
+    right: "Use master or monophonic effects; Polyphonic Filter is the supported exception and processes the summed signal"
+    explanation: "The Send Container has no per-voice audio. Its constrainer permits master effects, monophonic effects, and Polyphonic Filter, which detects the constrainer and uses its summed-buffer path."
 customEquivalent:
   approach: scriptnode
   moduleType: SoundGenerator
@@ -45,7 +45,7 @@ llmRef: |
   Receive end of a send/return routing pair. Accumulates audio from one or more Send Effect instances, processes it through an effect chain, and routes the result to the output via a routing matrix. Does not generate sound - acts as a summing bus with effects.
 
   Signal flow:
-    Send Effects (external) -> internal buffer (additive sum) -> effect chain (MasterEffect only) -> routing matrix -> audio out -> clear buffer
+    Send Effects (external) -> internal buffer (additive sum) -> constrained effect chain -> routing matrix -> audio out -> clear buffer
 
   CPU: very low base, depends on FX chain contents. Monophonic (no per-voice processing).
 
@@ -60,7 +60,7 @@ llmRef: |
     Pitch Modulation - NOT applicable (no oscillator)
 
   FX chain:
-    MasterEffect only (NoMidiInputConstrainer). All effects forced to monophonic. This is the primary user-facing feature.
+    Master and monophonic effects plus Polyphonic Filter (NoMidiInputConstrainer). Polyphonic Filter processes the summed signal through its monophonic filter path.
 
   Routing:
     Resizable routing matrix maps internal channels to output channels. SendEffect channel offset determines which internal channel pair receives the send signal. Multiple SendEffects can target the same container (additive summing).
@@ -70,7 +70,7 @@ llmRef: |
 
   Common mistakes:
     Gain/Balance knobs have no effect - use FX chain or SendEffect gain instead.
-    Polyphonic effects are forced monophonic in this container.
+    General polyphonic effects are unsupported; Polyphonic Filter is the summed-buffer exception.
 
   See also:
     alternative SendFX - the send side of the pair
@@ -156,7 +156,7 @@ The Send Container must be placed **after** all Send Effects that route to it in
 
 ### FX Chain
 
-The FX chain accepts MasterEffect-type effects only. Polyphonic effects placed in the chain are forced to process monophonically. The inherited Gain and Balance parameters in the header are not applied in the render path - control the output level by placing a $MODULES.SimpleGain$ in the FX chain. [2]($FORUM_REF.9104$)
+The FX chain accepts master and monophonic effects. Polyphonic Filter is the supported voice-effect exception and processes the summed signal through its monophonic filter path. The inherited Gain and Balance parameters in the header are not applied in the render path - control the output level by placing a $MODULES.SimpleGain$ in the FX chain. [2]($FORUM_REF.9104$)
 
 ### Multichannel Routing
 

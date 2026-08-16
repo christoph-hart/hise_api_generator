@@ -191,7 +191,7 @@ Uses `FilterEditor` - standard parameter editor with frequency response display.
 
 - The module auto-switches between polyphonic and monophonic processing based on whether any modulation chain contains polyphonic modulators. This is detected by `ModulatorChain::Handler::Listener::processorChanged()` callback.
 - In mono mode, the `monoFilters` FilterBank (1 voice) processes the summed signal. In poly mode, `voiceFilters` FilterBank (N voices) has independent filter state per voice.
-- The `forceMono` flag (inherited from `EffectProcessor`) can override the poly detection, forcing mono-path processing even when poly mods exist.
+- In a chain using `NoMidiInputConstrainer`, the filter processes the summed signal through `monoFilters` even when restored modulation state would otherwise select polyphonic processing.
 - `startVoice()` resets the per-voice filter state and sets `blockIsActive = true`. The first voice after idle also resets the mono filter.
 - The gain modulation formula `dB2gain(gain * (gainMod - 1.0))` is asymmetric: at gainMod=1.0 it produces 0 dB (unity). At gainMod=0.5, it applies half the gain in dB (attenuated shelf). At gainMod=0.0, it applies the full negative gain as dB.
 - `HISE_LOG_FILTER_FREQMOD` (default: 0/disabled) would add logarithmic skewing to frequency modulation if enabled, making the modulation more perceptually linear across the frequency range.
