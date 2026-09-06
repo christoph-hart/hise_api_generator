@@ -14,7 +14,7 @@
 
 ```text
 timer_gated_ar_modulator
-  InternalModHost       container.mod_chain
+  InternalModHost       container.modchain
     PulseTimer          control.timer
     EnvelopeSeed        math.fill1
     ArEnvelope          envelope.simple_ar
@@ -46,10 +46,10 @@ timer_gated_ar_modulator
 - Target range before connection: `[0.0, 1.0]`
 - Macro range: `[0.0, 1.0]`
 - Default: `0.0`
-- PulseRate -> `PulseTimer.Frequency` matched
-- Target range before connection: `[0.5, 8.0]`
-- Macro range: `[0.5, 8.0]`
-- Default: `2.0`
+- PulseRate -> `PulseTimer.Interval` matched
+- Target range before connection: `[125, 2000]`
+- Macro range: `[125, 2000]`
+- Default: `500`
 
 ## Defaults To Omit
 
@@ -64,7 +64,7 @@ timer_gated_ar_modulator
 
 - Before `InternalModHost`: keep this as a monophonic Script FX modulation example, not a Script Envelope module.
 - Before the modulation connection to `ArEnvelope.Gate`: the timer is driving the manual gate input, which is the core point of this example.
-- Before the modulation connection to `ModTarget.Gain`: place the gain node outside `container.mod_chain`, because the mod-chain signal is hidden control data and does not process the audible path by itself.
+- Before the modulation connection to `ModTarget.Gain`: place the gain node outside `container.modchain`, because the mod-chain signal is hidden control data and does not process the audible path by itself.
 - Before the parameter notes: sustain is fixed at 1.0 here, so avoid layering AHDSR-style controls onto the example.
 
 ## Cosmetic Plan

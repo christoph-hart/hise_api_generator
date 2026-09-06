@@ -21,7 +21,7 @@ global_mod_cleanup
 
 ## Builder Setup
 
-- Host context: `HISE global mod setup`
+- Host context: `Script Envelope`
 - Additional builder steps:
   - Add a `GlobalModulatorContainer` in HISE before building the scriptnode graph.
   - Add one `AHDSR` envelope modulator to that container.

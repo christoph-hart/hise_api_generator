@@ -15,7 +15,7 @@
 
 - Required: [`math.fill1`, `envelope.voice_manager`]
 - Optional: []
-- Rationale: `math.fill1` provides the static modulation source for the Script Envelope output. `envelope.voice_manager` receives the Gate output so the looping or note-based envelope still participates in normal voice cleanup.
+- Rationale: `math.fill1` provides the static modulation source for the Script Envelope output. `envelope.voice_manager` is included as a lifecycle contrast, but cannot be connected directly because `envelope.flex_ahdsr` does not expose a Gate output.
 
 ## Assumptions
 

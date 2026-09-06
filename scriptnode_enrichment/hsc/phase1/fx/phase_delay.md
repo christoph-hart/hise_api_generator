@@ -13,9 +13,9 @@
 
 ## Support Nodes
 
-- Required: [`template.feedback_delay`, `template.dry_wet`, `core.ramp`, `control.bipolar`, `fx.phase_delay`]
+- Required: [`template.feedback_delay`, `template.dry_wet`, `container.midichain`, `container.frame2_block`, `core.extra_mod`, `control.minmax`, `fx.phase_delay`]
 - Optional: [`core.gain`]
-- Rationale: The feedback template supplies the safe feedback routing needed to approximate PhaseFX resonance, the dry/wet template supplies the final insert-style mix, multiple `fx.phase_delay` nodes form the allpass cascade, and the modulation support nodes sweep their shared Frequency value.
+- Rationale: The feedback template supplies the safe feedback routing needed to approximate PhaseFX resonance, the dry/wet template supplies the final insert-style mix, `core.extra_mod` and `control.minmax` provide the external sweep, and multiple `fx.phase_delay` nodes form the allpass cascade.
 
 ## Assumptions
 

@@ -68,7 +68,7 @@ script_envelope_flex_ahdsr
 
 ## Friction Comments To Weave In
 
-- Before `EnvelopeSeed`: this stays in a Script Envelope context, not a free-running audio patch.
+- Before `EnvelopeSeed`: this stays in a Script Envelope context, not a free-running audio patch. Unlike `envelope.ahdsr`, `envelope.flex_ahdsr` exposes no Gate output, so `VoiceKill` is shown only as a lifecycle contrast and cannot be connected directly.
 - Before `create_parameter Mode`: expose mode as a direct raw enum so users can compare Trigger, Note, and Loop without rebuilding the network.
 - Before the parameter setup notes: avoid realtime modulation-slot automation of flex envelope parameters because the reference page calls out deferred/update limitations.
 

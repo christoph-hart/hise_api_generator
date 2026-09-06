@@ -13,9 +13,9 @@
 
 ## Support Nodes
 
-- Required: [`container.mod_chain`, `core.extra_mod`, `envelope.voice_manager`]
+- Required: [`container.modchain`, `core.extra_mod`, `envelope.voice_manager`]
 - Optional: [`core.gain`, `filters.svf_eq`]
-- Rationale: `container.mod_chain` provides the internal modulation context, `core.extra_mod` provides the continuous modulation value from the same extra chain, and `envelope.extra_mod_gate` provides the matching lifecycle gate. `envelope.voice_manager` performs the actual voice reset.
+- Rationale: `container.modchain` provides the internal modulation context, `core.extra_mod` provides the continuous modulation value from the same extra chain, and `envelope.extra_mod_gate` provides the matching lifecycle gate. `envelope.voice_manager` performs the actual voice reset.
 
 ## Assumptions
 

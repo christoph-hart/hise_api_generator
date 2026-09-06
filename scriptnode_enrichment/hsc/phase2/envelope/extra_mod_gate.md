@@ -14,7 +14,7 @@
 
 ```text
 extra_mod_cleanup
-  ExtraModHost          container.mod_chain
+  ExtraModHost          container.modchain
     ExtraModValue       core.extra_mod
     ExtraEnvelopeGate   envelope.extra_mod_gate
     VoiceKill           envelope.voice_manager
@@ -22,11 +22,11 @@ extra_mod_cleanup
 
 ## Builder Setup
 
-- Host context: `Script FX`
+- Host context: `PolyScriptFX`
 - Additional builder steps:
   - Create a polyphonic Script FX module before building the graph.
-  - Configure at least one extra modulation slot for that module type.
-  - Ensure one container parameter is modulatable from the chosen extra modulation chain.
+  - Configure one extra modulation slot for that module type.
+  - Create a root parameter with `ExternalModulation Combined` before adding `core.extra_mod`.
 - Channel/routing setup:
   - Required channels: default stereo in a polyphonic Script FX context; the node's lifecycle logic is per-voice rather than channel-topology driven
   - Module routing: default
@@ -35,14 +35,11 @@ extra_mod_cleanup
 
 ## Public Parameters
 
-- ExtraSlot -> `ExtraEnvelopeGate.Index` matched
-- Target range before connection: `[1, 2]`
-- Macro range: `[1, 2]`
+- ModInput -> external modulation slot `0`
+- Target range before connection: `[0, 1]`
+- Macro range: `[0, 1]`
 - Default: `1`
-- ExtraSlot -> `ExtraModValue.Index` matched
-- Target range before connection: `[1, 2]`
-- Macro range: `[1, 2]`
-- Default: `1`
+- External modulation mode: `Combined`
 
 ## Defaults To Omit
 
@@ -50,12 +47,14 @@ extra_mod_cleanup
 
 ## Locked Build Values
 
+- `ExtraModValue.Index` = `0`
+- `ExtraEnvelopeGate.Index` = `0`
 - `ExtraModValue.ProcessSignal` = `Enabled`
 
 ## Friction Comments To Weave In
 
 - Before `ExtraModHost`: build this in a polyphonic Script FX, not a monophonic utility network.
-- Before the paired `Index` assignments: `core.extra_mod` and `envelope.extra_mod_gate` must monitor the same extra modulation slot.
+- Before the paired `Index` assignments: `core.extra_mod` and `envelope.extra_mod_gate` must both monitor slot `0`, the only slot enabled by `HISE_NUM_SCRIPTNODE_FX_MODS=1`.
 - Before `set ExtraModValue.ProcessSignal`: enable `ProcessSignal` so `core.extra_mod` writes the raw extra-mod chain to the signal path and the effect behaves as a gain modulator.
 - Before the runtime target hookup: this example depends on an actual extra modulation chain feeding the selected slot; otherwise the gate stays active.
 
@@ -70,4 +69,4 @@ extra_mod_cleanup
 
 ## Open Questions
 
-- Which extra modulation slot should be preconfigured in HISE before Phase 3?
+- None

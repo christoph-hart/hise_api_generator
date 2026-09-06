@@ -14,20 +14,19 @@
 
 ```text
 phase_fx_recreation
-  MidiContext           container.midichain
-    FramePhaseFX        container.frame2_block
-      PhaseMod          core.extra_mod
-      SweepRange        control.minmax
-      PhaseMix          template.dry_wet
+  MidiContext       container.midichain
+    FramePhaseFX    container.frame2_block
+      PhaseMod      core.extra_mod
+      SweepRange    control.minmax
+      PhaseMix      template.dry_wet
         PhaseMix_wet_path
           ResonantLoop  template.feedback_delay
-            ResonantLoop_fx
-              Stage1    fx.phase_delay
-              Stage2    fx.phase_delay
-              Stage3    fx.phase_delay
-              Stage4    fx.phase_delay
-              Stage5    fx.phase_delay
-              Stage6    fx.phase_delay
+            Stage1     fx.phase_delay
+            Stage2     fx.phase_delay
+            Stage3     fx.phase_delay
+            Stage4     fx.phase_delay
+            Stage5     fx.phase_delay
+            Stage6     fx.phase_delay
 ```
 
 ## Builder Setup
@@ -47,6 +46,10 @@ phase_fx_recreation
 
 ## Public Parameters
 
+- ModDepth -> root external modulation slot `0`, mode `Combined`, not connected to a target
+- Target range: `[0, 1]`
+- Macro range: `[0, 1]`
+- Default: `0.5`
 - Mix -> `PhaseMix.DryWet` matched
 - Target range before connection: `[0, 1]`
 - Macro range: `[0, 1]`

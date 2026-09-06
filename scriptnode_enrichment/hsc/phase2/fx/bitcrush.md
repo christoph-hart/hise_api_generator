@@ -15,9 +15,8 @@
 ```text
 crushed_echo_trail
   EchoLoop         template.feedback_delay
-    EchoLoop_fx
-      EchoCrusher  fx.bitcrush
-      FeedbackTone filters.one_pole
+    EchoCrusher     fx.bitcrush
+    FeedbackTone    filters.one_pole
 ```
 
 ## Builder Setup
