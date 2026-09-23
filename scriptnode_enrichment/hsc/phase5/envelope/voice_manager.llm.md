@@ -77,4 +77,5 @@ hise-cli builder set --module GateBasedVoiceCleanup --network gate_based_voice_c
 hise-cli dsp add --module GateBasedVoiceCleanup --type math.fill1 --id EnvelopeSeed --agent
 hise-cli dsp add --module GateBasedVoiceCleanup --type envelope.ahdsr --id MainEnvelope --agent
 hise-cli dsp add --module GateBasedVoiceCleanup --type envelope.voice_manager --id VoiceKill --agent
+hise-cli dsp connect --module GateBasedVoiceCleanup --source MainEnvelope --source-output Gate --target VoiceKill --param 'Kill Voice' --agent
 ```

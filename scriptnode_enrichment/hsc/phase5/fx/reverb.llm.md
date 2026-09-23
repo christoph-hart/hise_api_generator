@@ -85,6 +85,8 @@ hise-cli dsp create_parameter --module WetReverbWrapper --container wet_reverb_w
 hise-cli dsp connect --module WetReverbWrapper --source wet_reverb_wrapper --source-param Mix --target RoomMix --param DryWet --matched --agent
 hise-cli dsp connect --module WetReverbWrapper --source wet_reverb_wrapper --source-param Size --target RoomVerb --param Size --matched --agent
 hise-cli dsp connect --module WetReverbWrapper --source wet_reverb_wrapper --source-param Damping --target RoomVerb --param Damping --matched --agent
+# Expose DryWet so the root Mix cable is visible on the inner container.
+hise-cli dsp set --module WetReverbWrapper --node RoomMix --param ShowParameters --value true --agent
 hise-cli dsp set --module WetReverbWrapper --node RoomVerb --param NodeColour --value 0xFF2F80ED --agent
 hise-cli dsp set --module WetReverbWrapper --node RoomMix --param NodeColour --value 0xFF6F8FAF --agent
 hise-cli dsp set --module WetReverbWrapper --node RoomMix_dry_wet_mixer --param Folded --value true --agent

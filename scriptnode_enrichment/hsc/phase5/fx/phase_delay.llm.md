@@ -150,6 +150,8 @@ hise-cli dsp connect --module PhaseFXRecreation --source SweepRange --target Sta
 hise-cli dsp connect --module PhaseFXRecreation --source SweepRange --target Stage6 --param Frequency --agent
 hise-cli dsp connect --module PhaseFXRecreation --source phase_fx_recreation --source-param Mix --target PhaseMix --param DryWet --matched --agent
 hise-cli dsp connect --module PhaseFXRecreation --source phase_fx_recreation --source-param Feedback --target ResonantLoop_fb_out --param Feedback --matched --agent
+# Expose DryWet so the root Mix cable is visible on the inner container.
+hise-cli dsp set --module PhaseFXRecreation --node PhaseMix --param ShowParameters --value true --agent
 hise-cli dsp connect --module PhaseFXRecreation --source phase_fx_recreation --source-param Frequency1 --target SweepRange --param Minimum --matched --agent
 hise-cli dsp connect --module PhaseFXRecreation --source phase_fx_recreation --source-param Frequency2 --target SweepRange --param Maximum --matched --agent
 ```

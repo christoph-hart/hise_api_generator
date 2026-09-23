@@ -159,4 +159,8 @@ hise-cli dsp create_parameter --module OTTCompressor --container ott_compressor 
 hise-cli dsp connect --module OTTCompressor --source ott_compressor --source-param Mix --target LowBand --param DryWet --matched --agent
 hise-cli dsp connect --module OTTCompressor --source ott_compressor --source-param Mix --target MidBand --param DryWet --matched --agent
 hise-cli dsp connect --module OTTCompressor --source ott_compressor --source-param Mix --target HighBand --param DryWet --matched --agent
+# Expose each DryWet row so all three root Mix cables are visible.
+hise-cli dsp set --module OTTCompressor --node LowBand --param ShowParameters --value true --agent
+hise-cli dsp set --module OTTCompressor --node MidBand --param ShowParameters --value true --agent
+hise-cli dsp set --module OTTCompressor --node HighBand --param ShowParameters --value true --agent
 ```

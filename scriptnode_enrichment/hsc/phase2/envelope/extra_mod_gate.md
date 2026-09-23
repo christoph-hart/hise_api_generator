@@ -24,7 +24,7 @@ extra_mod_cleanup
 
 - Host context: `PolyScriptFX`
 - Additional builder steps:
-  - Create a polyphonic Script FX module before building the graph.
+  - Create a Polyphonic Script FX module before building the graph; the module ID used internally is `PolyScriptFX`.
   - Configure one extra modulation slot for that module type.
   - Create a root parameter with `ExternalModulation Combined` before adding `core.extra_mod`.
 - Channel/routing setup:

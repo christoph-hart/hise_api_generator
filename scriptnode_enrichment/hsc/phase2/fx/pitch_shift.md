@@ -66,6 +66,7 @@ microshift_doubler
 - Supporting relevant nodes: [`ShiftMix`]
 - Supporting colour: `0xFF6F8FAF`
 - Folded nodes: [`WetTrim`]
+- ShowParameters containers: [`ShiftMix`]
 - Nodes that must stay visible: [`ShiftMix`, `MicroPitch`]
 
 ## Open Questions

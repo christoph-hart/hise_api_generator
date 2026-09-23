@@ -50,6 +50,7 @@ hise-cli dsp connect --module ScriptEnvelopeAhdsr --source script_envelope_ahdsr
 hise-cli dsp connect --module ScriptEnvelopeAhdsr --source script_envelope_ahdsr --source-param Decay --target MainEnvelope --param Decay --matched --agent
 hise-cli dsp connect --module ScriptEnvelopeAhdsr --source script_envelope_ahdsr --source-param Sustain --target MainEnvelope --param Sustain --matched --agent
 hise-cli dsp connect --module ScriptEnvelopeAhdsr --source script_envelope_ahdsr --source-param Release --target MainEnvelope --param Release --matched --agent
+hise-cli dsp connect --module ScriptEnvelopeAhdsr --source MainEnvelope --source-output Gate --target VoiceKill --param 'Kill Voice' --agent
 ```
 
 ## Key rules

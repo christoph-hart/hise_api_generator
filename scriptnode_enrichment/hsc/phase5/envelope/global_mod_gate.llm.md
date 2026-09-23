@@ -74,6 +74,7 @@ hise-cli builder set --module GlobalModCleanup --network global_mod_cleanup --ag
 hise-cli dsp add --module GlobalModCleanup --type core.global_mod --id GlobalModValue --agent
 hise-cli dsp add --module GlobalModCleanup --type envelope.global_mod_gate --id GlobalEnvelopeGate --agent
 hise-cli dsp add --module GlobalModCleanup --type envelope.voice_manager --id VoiceKill --agent
+hise-cli dsp connect --module GlobalModCleanup --source GlobalEnvelopeGate --target VoiceKill --param 'Kill Voice' --agent
 ```
 
 Key rules:

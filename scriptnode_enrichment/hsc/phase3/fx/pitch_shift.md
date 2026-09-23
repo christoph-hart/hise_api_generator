@@ -43,6 +43,8 @@ hise-cli dsp set --module MicroshiftDoubler --node ShiftMix --param DryWet --val
 hise-cli dsp create_parameter --module MicroshiftDoubler --container microshift_doubler --id Mix --range "0,1" --default 0.35 --agent
 hise-cli dsp create_parameter --module MicroshiftDoubler --container microshift_doubler --id Ratio --range "0.96,1.04" --default 1.015 --agent
 hise-cli dsp connect --module MicroshiftDoubler --source microshift_doubler --source-param Mix --target ShiftMix --param DryWet --matched --agent
+# Expose DryWet so the root Mix cable is visible on the inner container.
+hise-cli dsp set --module MicroshiftDoubler --node ShiftMix --param ShowParameters --value true --agent
 hise-cli dsp connect --module MicroshiftDoubler --source microshift_doubler --source-param Ratio --target MicroPitch --param FreqRatio --matched --agent
 ```
 

@@ -79,6 +79,7 @@ hise-cli dsp add --module ExtraModCleanup --type container.modchain --id ExtraMo
 hise-cli dsp add --module ExtraModCleanup --type core.extra_mod --id ExtraModValue --parent ExtraModHost --agent
 hise-cli dsp add --module ExtraModCleanup --type envelope.extra_mod_gate --id ExtraEnvelopeGate --parent ExtraModHost --agent
 hise-cli dsp add --module ExtraModCleanup --type envelope.voice_manager --id VoiceKill --parent ExtraModHost --agent
+hise-cli dsp connect --module ExtraModCleanup --source ExtraEnvelopeGate --target VoiceKill --param 'Kill Voice' --agent
 ```
 
 Key rules:

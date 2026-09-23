@@ -24,7 +24,7 @@ voice_haas_scatter
 
 - Host context: `PolyScriptFX`
 - Additional builder steps:
-  - Add a `PolyScriptFX` module, not a `ScriptFX`, because the example must process each active voice independently.
+  - Add a Polyphonic Script FX module (`PolyScriptFX` internally), not a normal Script FX (`ScriptFX`), because the example must process each active voice independently.
   - Place the module in a voice-level/polyphonic FX context when building outside the Playground.
 - Channel/routing setup:
   - Required channels: stereo; `fx.haas` requires two channels
@@ -57,7 +57,7 @@ voice_haas_scatter
 
 ## Friction Comments To Weave In
 
-- Before the builder setup: use `PolyScriptFX`; a normal `ScriptFX` processes the mixed signal once and cannot demonstrate per-voice Haas positions.
+- Before the builder setup: use Polyphonic Script FX; a normal Script FX processes the mixed signal once and cannot demonstrate per-voice Haas positions.
 - Before `control.voice_bang`: `control.voice_bang` must live in a polyphonic context because it emits one trigger per note-on voice.
 - Before `control.bipolar`: centre and scale the random value before it reaches `fx.haas.Position`; this lets Spread collapse to centre at `0` and reach the full random width at `1` without adding a second direct connection to Position.
 - Before `fx.haas`: `fx.haas` is not amplitude panning; it delays one stereo channel by up to 20 ms at full Position.
@@ -74,4 +74,4 @@ voice_haas_scatter
 
 ## Open Questions
 
-- Phase 3 must verify the exact builder command for adding `PolyScriptFX` and whether additional parent synth setup is required in the current HISE Playground.
+- Phase 3 must verify the exact builder command for adding the Polyphonic Script FX module (`PolyScriptFX`) and whether additional parent synth setup is required in the current HISE Playground.

@@ -21,12 +21,14 @@ phase_fx_recreation
       PhaseMix      template.dry_wet
         PhaseMix_wet_path
           ResonantLoop  template.feedback_delay
+            ResonantLoop_fb_out routing.receive
             Stage1     fx.phase_delay
             Stage2     fx.phase_delay
             Stage3     fx.phase_delay
             Stage4     fx.phase_delay
             Stage5     fx.phase_delay
             Stage6     fx.phase_delay
+            ResonantLoop_fb_in  routing.send
 ```
 
 ## Builder Setup
@@ -111,6 +113,7 @@ phase_fx_recreation
 - Supporting relevant nodes: [`MidiContext`, `FramePhaseFX`, `Stage2`, `Stage3`, `Stage4`, `Stage5`, `Stage6`, `ResonantLoop`, `PhaseMix`, `PhaseMod`, `SweepRange`]
 - Supporting colour: `0xFF6F8FAF`
 - Folded nodes: []
+- ShowParameters containers: [`PhaseMix`]
 - Nodes that must stay visible: [`MidiContext`, `FramePhaseFX`, `PhaseMix`, `ResonantLoop`, `Stage1`, `Stage2`, `Stage3`, `Stage4`, `Stage5`, `Stage6`, `PhaseMod`, `SweepRange`]
 
 ## Open Questions

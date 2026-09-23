@@ -81,6 +81,7 @@ ott_compressor
 - Supporting relevant nodes: [`FrequencySplit`, `LowBand`, `MidBand`, `HighBand`]
 - Supporting colour: `0xFF8F7766`
 - Folded nodes: [`LowPreGain`, `LowPostGain`, `MidPreGain`, `MidPostGain`, `HighPreGain`, `HighPostGain`]
+- ShowParameters containers: [`LowBand`, `MidBand`, `HighBand`]
 - Nodes that must stay visible: [`FrequencySplit`, `LowBand`, `LowCompressor`, `MidBand`, `MidCompressor`, `HighBand`, `HighCompressor`]
 
 ## Open Questions

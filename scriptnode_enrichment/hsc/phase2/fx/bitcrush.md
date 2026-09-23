@@ -15,8 +15,10 @@
 ```text
 crushed_echo_trail
   EchoLoop         template.feedback_delay
+    EchoLoop_fb_out routing.receive
     EchoCrusher     fx.bitcrush
     FeedbackTone    filters.one_pole
+    EchoLoop_fb_in  routing.send
 ```
 
 ## Builder Setup

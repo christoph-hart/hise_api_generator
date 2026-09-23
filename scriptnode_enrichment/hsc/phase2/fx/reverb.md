@@ -74,6 +74,7 @@ wet_reverb_wrapper
 - Supporting relevant nodes: [`RoomMix`]
 - Supporting colour: `0xFF6F8FAF`
 - Folded nodes: []
+- ShowParameters containers: [`RoomMix`]
 - Nodes that must stay visible: [`RoomMix`, `RoomVerb`]
 
 ## Open Questions
