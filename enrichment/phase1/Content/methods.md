@@ -229,7 +229,7 @@ Creates a ScriptShader object for GLSL-based rendering in ScriptPanels. If `file
 
 **Cross References:**
 - `$API.ScriptShader.setFragmentShader$`
-- `$API.ScriptPanel.setShader$`
+- `$API.Graphics.applyShader$`
 - `$API.Content.createPath$`
 - `$API.Content.createSVG$`
 

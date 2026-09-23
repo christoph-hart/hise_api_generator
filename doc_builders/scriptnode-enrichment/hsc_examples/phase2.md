@@ -33,6 +33,7 @@
 14. Phase 2 is the canonical final topology plan. If live construction changes topology or required support, update Phase 1 and Phase 2 to the approved result instead of leaving the final design only as Phase 3 deviation prose.
 15. Every example is constructed in an isolated HISE Playground. Phase 3 must activate it with `hise-cli -hise "playground open" --agent` before reset, tree inspection, or any graph mutation. Public examples never close or disable the Playground.
 16. For Table and SliderPack complex-data examples that need deterministic startup data, assign the node to an external data slot, usually index `0`, and initialize that slot from the Interface script in `onInit`. Do not use embedded slot `index -1` when the example needs scripted data writes. Record the exact `set_complex_data` target and the Interface script reference pattern in `Locked Build Values`, for example `TableLookup.Table data index = 0` with `Synth.getTableProcessor("ModuleId").getTable(0)`, or `PackLookup.SliderPack data index = 0` with `Synth.getSliderPackProcessor("ModuleId").getSliderPack(0)`. Skip AudioFile complex-data examples unless they can run without external files.
+17. If a root parameter targets a parameter on an inner container, plan `ShowParameters = true` for that inner container. The exposed parameter row is required to make the root-to-container cable visible in the final graph. Record every affected container under `Cosmetic Plan` and do not fold it. Exception: do not enable `ShowParameters` for a bypass target because its cable terminates at the container power button, which is always visible.
 
 ---
 
@@ -133,6 +134,7 @@ Use this exact structure:
 - Supporting relevant nodes: [`NodeId`, ...]
 - Supporting colour: `0xAARRGGBB`
 - Folded nodes: [`NodeId`, ...]
+- ShowParameters containers: [`ContainerId`, ...]
 - Nodes that must stay visible: [`NodeId`, ...]
 
 ## Open Questions

@@ -18,8 +18,11 @@ const var displayPanel = Content.addPanel("DisplayPanel", 10, 10);
 displayPanel.set("width", 400);
 displayPanel.set("height", 300);
 
-// Attach the shader to the panel
-displayPanel.setShader(shader, []);
+// Render the shader in the panel's paint routine
+displayPanel.setPaintRoutine(function(g)
+{
+    g.applyShader(shader, this.getLocalBounds(0));
+});
 
 // Pass dynamic data to the shader via uniforms
 displayPanel.setTimerCallback(function()

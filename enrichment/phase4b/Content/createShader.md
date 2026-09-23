@@ -15,7 +15,7 @@ Dispatch/mechanics:
 
 Pair with:
   ScriptShader.setFragmentShader -- load/change shader file after creation
-  ScriptPanel.setShader -- assign shader to a panel for rendering
+  Graphics.applyShader -- render the shader in a panel paint routine
 
 Source:
   ScriptingApiContent.cpp:8747  Content::createShader()

@@ -164,6 +164,7 @@ Trace interpretation heuristics:
 6. Add comments to non-obvious topology containers.
 7. Write comments with one `hise-cli dsp set ... --param Comment --value '\"...\"' --agent` command per node. Wrap the comment payload as an escaped quoted string so spaces and Markdown punctuation survive shell parsing.
 8. Use only `0xAARRGGBB` colour literals.
+9. Whenever a root parameter is connected to a parameter on an inner container, set that inner container's `ShowParameters` property to `true`. This exposes the parameter row and makes the root-to-container cable visible in the example. Apply it before screenshot capture, keep the container unfolded, and include the property command in the optimized public command list. Exception: a bypass connection targets the container power button, which is always visible, so leave `ShowParameters` disabled when bypass is the only root-targeted container control.
 
 ---
 
@@ -340,6 +341,7 @@ hise-cli dsp screenshot --module {ModuleId} --scale 200% --output "scriptnode_en
 - Main node: `{NodeId}` colour `0xAARRGGBB`
 - Support nodes: [`NodeId`, ...] colour `0xAARRGGBB`
 - Folded nodes: [`NodeId`, ...]
+- ShowParameters containers: [`ContainerId`, ...]
 - Visible target nodes: [`NodeId`, ...]
 
 ## Defaults Omitted
