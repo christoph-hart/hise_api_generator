@@ -2991,5 +2991,37 @@
     "topicIds": [
       7074
     ]
+  },
+  "api:ModulationMatrix": {
+    "lastRun": "2026-08-22",
+    "queries": [
+      "ModulationMatrix",
+      "Modulation Matrix",
+      "Matrix Modulation",
+      "Matrix modulator",
+      "ModMatrix"
+    ],
+    "topicIds": [
+      12247,
+      13091,
+      13203,
+      13240,
+      13365,
+      13367,
+      13369,
+      13379,
+      13409,
+      13759,
+      13812,
+      13907,
+      13977,
+      14088,
+      14218,
+      14348,
+      14354,
+      14476,
+      14670,
+      14958
+    ]
   }
 }

@@ -20,17 +20,32 @@ Sets the divisor that every modulator, envelope and scriptnode modchain uses to 
 
 ### `HISE_FORCE_INACTIVE_MOD_RENDERING`
 
-Keeps selected effect modulation chains advancing while no voice is active or audio processing is suspended.
+Keeps selected effect modulation targets updating while no voice is active or audio processing is suspended.
 
 | Default | Hot Reload | Auto Config |
 |---|---|---|
 | `0` | yes | no |
 
-By default, modulation updates stop when a Hardcoded Master FX or Script FX suspends itself on silence, or when a Hardcoded Polyphonic FX, Polyphonic Script FX, or Polyphonic Filter has no active voice, leaving parameter targets and filter display values at their last state until processing resumes. Enabling this flag continues evaluating connected modulation chains during those inactive blocks and updates their targets without running the network's audio processing. This keeps free-running modulation in sync but consumes CPU during periods that would otherwise be idle, with the cost determined by the number and complexity of connected modulators.
+By default, connected network parameters stop receiving modulation updates when a Hardcoded Master FX or Script FX suspends itself on silence, while Hardcoded Polyphonic FX, Polyphonic Script FX and Polyphonic Filter stop inactive voice updates after all voices end. Enabling this flag continues dispatching connected modulation values during those inactive blocks; the polyphonic effects use one retained voice and the filter refreshes its modulation-derived display state. This keeps free-running modulation in sync but consumes CPU during periods that would otherwise be idle, with the cost determined by the number and complexity of connected modulators.
 > Inactive rendering only dispatches modulation-derived parameter updates; it does not call the network's `process()` callback. Any display state that depends on audio processing rather than parameter updates will remain frozen, so enabling this flag will not affect its outcome.
 > Read from the project's Extra Definitions at runtime, so changing the value in HISE takes effect on the next prepareToPlay without a full rebuild. Exported plugins still require recompilation.
 
 **See also:** $MODULES.HardcodedMasterFX$ -- connected network parameter targets continue updating during silence suspension, $MODULES.HardcodedPolyphonicFX$ -- last-voice modulation continues updating after all voices stop, $MODULES.ScriptFX$ -- connected scriptnode parameter targets continue updating during silence suspension, $MODULES.PolyScriptFX$ -- last-voice scriptnode modulation continues updating after all voices stop, $MODULES.PolyphonicFilter$ -- filter modulation and display state continue updating while its owner synth is idle, $SN.core.extra_mod$ -- network target that receives inactive modulation updates, $PP.HISE_SUSPENSION_TAIL_MS$ -- controls when a silent master effect enters the suspended path affected by this flag
+
+### `HISE_LEGACY_INACTIVE_MOD_VALUES`
+
+Restores neutral master and monophonic effect modulation after the last voice has been reset.
+
+| Default | Hot Reload | Auto Config |
+|---|---|---|
+| `0` | yes | no |
+
+By default, master and monophonic effects continue using their rendered modulation values while processing effect tails after the last synth voice has been reset. Enabling this flag restores the previous behaviour, where these effects use each modulator's inactive fallback value until another voice starts. Use this compatibility option for projects whose sound design depends on modulation becoming neutral before an effect tail has ended.
+> Voice release modulation is unaffected because the inactive fallback begins on voice reset, not note-off.
+> If HISE_FORCE_INACTIVE_MOD_RENDERING is also enabled, this legacy fallback takes precedence when modulation values are read without an active voice.
+> Read from the project's Extra Definitions at runtime, so changing the value in HISE takes effect on the next prepareToPlay without a full rebuild. Exported plugins still require recompilation.
+
+**See also:** $MODULES.Gain$ -- restores neutral modulation while processing upstream effect tails, $PP.HISE_FORCE_INACTIVE_MOD_RENDERING$ -- controls modulation target updates in suspended and inactive processing paths
 
 ### `HISE_MAX_PROCESSING_BLOCKSIZE`
 

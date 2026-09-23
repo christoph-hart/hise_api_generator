@@ -151,6 +151,13 @@ Best practice:
 
 This matters more after compilation because internals become fixed structure.
 
+Visual cable rule for educational graphs:
+
+- when a root parameter targets a parameter on an inner container, set the inner container's `ShowParameters` property to `true`
+- this exposes the container parameter row so the cable is visible in the graph
+- keep that container unfolded in screenshots; otherwise the public control relationship is hidden even though the network works
+- exception: bypass cables terminate at the always-visible container power button, so do not enable `ShowParameters` when bypass is the only root-targeted container control
+
 ---
 
 ## Range Model

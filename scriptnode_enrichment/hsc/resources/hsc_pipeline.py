@@ -8,6 +8,7 @@ import json
 import os
 import re
 import shutil
+import shlex
 import struct
 import subprocess
 import sys
@@ -36,6 +37,13 @@ NETWORK_RE = re.compile(r'^\s*set\s+\S+\.network\s+"([^"]+)"', re.MULTILINE)
 EXECUTABLE_SIDE_EFFECT_RE = re.compile(r'^\s*(?:save|screenshot)\b', re.MULTILINE)
 HSC_PLAYGROUND_OPEN = "/hise playground open"
 SHELL_PLAYGROUND_OPEN = 'hise-cli -hise "playground open" --agent'
+AUTHORING_FORBIDDEN_PHRASES = (
+    "follow the Phase 1 teaching goal and keep support nodes minimal",
+    "preserve the hierarchy shown above",
+    "values not listed as public or locked remain at node defaults",
+    "provide the supporting signal, modulation, routing, or analysis context required by the scenario",
+    "confirm nested nodes resolve under the intended container path",
+)
 PHASES = {
     "phase1": ".md",
     "phase2": ".md",
@@ -327,9 +335,7 @@ def publish(args: argparse.Namespace) -> int:
         print("Publish aborted before running HISE.", file=sys.stderr)
         return 1
 
-    failures = 0
     print("factory.node | json | llmRef | screenshot | success")
-
     for job in jobs:
         try:
             payload = build_publish_payload(job)
@@ -366,12 +372,12 @@ def publish(args: argparse.Namespace) -> int:
                 f"{job.label} | {json_path.relative_to(ROOT)} | {llm_path.relative_to(ROOT)} | "
                 f"{screenshot_path.relative_to(ROOT)} | yes"
             )
-        except Exception as exc:  # noqa: BLE001 - publish should report every failing artifact.
-            failures += 1
-            print(f"{job.label} | n/a | n/a | n/a | no")
-            print(f"  error: {exc}", file=sys.stderr)
+        except Exception as exc:  # noqa: BLE001 - publish is a hard gate.
+            print(f"{job.label} | n/a | n/a | n/a | no", file=sys.stderr)
+            print(f"Publish stopped at {job.label}: {exc}", file=sys.stderr)
+            return 1
 
-    return 1 if failures else 0
+    return 0
 
 
 def find_publish_jobs(*, node_filter: str | None) -> list[PublishJob]:
@@ -844,12 +850,36 @@ def validate(args: argparse.Namespace) -> int:
         print(message, file=sys.stderr)
         return 1
 
-    issues = validate_jobs(jobs, check_duplicate_ids=True)
+    issues = validate_authoring_files(node_filter=args.node)
+    issues.extend(validate_jobs(jobs, check_duplicate_ids=True))
     if issues:
         print_validation_issues(issues)
         return 1
     print(f"Validated {len(jobs)} example(s): no issues found.")
     return 0
+
+
+def find_forbidden_authoring_boilerplate(text: str, label: str) -> list[str]:
+    lowered = text.lower()
+    return [
+        f"{label}: forbidden generic authoring boilerplate: {phrase!r}"
+        for phrase in AUTHORING_FORBIDDEN_PHRASES
+        if phrase.lower() in lowered
+    ]
+
+
+def validate_authoring_files(*, node_filter: str | None) -> list[str]:
+    issues: list[str] = []
+    for phase in (HSC_ROOT / "phase1", HSC_ROOT / "phase2"):
+        for path in sorted(phase.glob("*/*.md")):
+            label = node_key(path, phase).replace("/", ".")
+            if node_filter and label != node_filter:
+                continue
+            try:
+                issues.extend(find_forbidden_authoring_boilerplate(read_text(path), f"{phase.name}/{label}"))
+            except OSError as exc:
+                issues.append(f"{phase.name}/{label}: could not read authoring file: {exc}")
+    return issues
 
 
 def executable_lines(text: str) -> list[str]:
@@ -1113,6 +1143,29 @@ def parse_labeled_value(text: str, label: str) -> str:
     return match.group(1) if match else ""
 
 
+def expand_implicit_nodes(nodes: list[tuple[str, str, str | None]], text: str) -> list[tuple[str, str, str | None]]:
+    # Template and clone commands create helper nodes implicitly in HISE.
+    expanded = list(nodes)
+    clone = re.search(
+        r'(?:container\.clone)\s+as\s+"([^"]+)"|--type\s+container\.clone\s+--id\s+(\S+)', text
+    )
+    renamed = re.search(r'(?:rename clone_child as "([^"]+)"|--node\s+clone_child.*?--id\s+([A-Za-z]\w*))', text)
+    if clone and renamed:
+        name = renamed.group(1) or renamed.group(2)
+        parent = clone.group(1) or clone.group(2)
+        item = ("container.chain", name, parent)
+        if item not in expanded:
+            expanded.append(item)
+    for node_type, name, _ in nodes:
+        if node_type != "template.feedback_delay":
+            continue
+        for implicit_type, suffix in (("routing.receive", "_fb_out"), ("routing.send", "_fb_in")):
+            item = (implicit_type, name + suffix, name)
+            if item not in expanded:
+                expanded.append(item)
+    return expanded
+
+
 def parse_hsc_nodes(text: str) -> list[tuple[str, str, str | None]]:
     nodes = []
     pattern = re.compile(r'^\s*add\s+([\w.]+)\s+as\s+"([^"]+)"(?:\s+to\s+(\S+))?\s*$')
@@ -1120,7 +1173,7 @@ def parse_hsc_nodes(text: str) -> list[tuple[str, str, str | None]]:
         match = pattern.match(line)
         if match and "." in match.group(1):
             nodes.append((match.group(1), match.group(2), match.group(3)))
-    return nodes
+    return expand_implicit_nodes(nodes, text)
 
 
 def parse_shell_nodes(text: str) -> list[tuple[str, str, str | None]]:
@@ -1129,11 +1182,12 @@ def parse_shell_nodes(text: str) -> list[tuple[str, str, str | None]]:
         if " dsp add " not in line:
             continue
         node_type = re.search(r'--type\s+(\S+)', line)
-        node_id = re.search(r'--id\s+(\S+)', line)
-        parent = re.search(r'--parent\s+(\S+)', line)
+        node_id = re.search(r'--id\s+("[^"]+"|\S+)', line)
+        parent = re.search(r'--parent\s+("[^"]+"|\S+)', line)
         if node_type and node_id:
-            nodes.append((node_type.group(1), node_id.group(1), parent.group(1) if parent else None))
-    return nodes
+            unquote = lambda value: value[1:-1] if value.startswith('"') and value.endswith('"') else value
+            nodes.append((node_type.group(1), unquote(node_id.group(1)), unquote(parent.group(1)) if parent else None))
+    return expand_implicit_nodes(nodes, text)
 
 
 def parse_graph_nodes(text: str) -> list[tuple[str, str, str | None]]:
@@ -1159,8 +1213,13 @@ def parse_graph_nodes(text: str) -> list[tuple[str, str, str | None]]:
 
 
 def parse_hsc_connections(text: str) -> set[tuple[str, str, bool]]:
-    pattern = re.compile(r'^\s*connect\s+(\S+)\s+to\s+(\S+)(?:\s+(matched))?\s*$', re.MULTILINE)
-    return {(source, target, mode == "matched") for source, target, mode in pattern.findall(text)}
+    path = r'(?:[A-Za-z0-9_.]+)(?:\."[^"]+")?'
+    pattern = re.compile(r'^\s*connect\s+(' + path + r')\s+to\s+(' + path + r')(?:\s+(matched))?\s*$', re.MULTILINE)
+
+    def normalize(path: str) -> str:
+        return re.sub(r'\."([^"]+)"', r'.\1', path)
+
+    return {(normalize(source), normalize(target), mode == "matched") for source, target, mode in pattern.findall(text)}
 
 
 def parse_shell_connections(text: str) -> set[tuple[str, str, bool]]:
@@ -1168,15 +1227,20 @@ def parse_shell_connections(text: str) -> set[tuple[str, str, bool]]:
     for line in text.splitlines():
         if " dsp connect " not in line:
             continue
-        source = re.search(r'--source\s+(\S+)', line)
-        source_param = re.search(r'--source-param\s+(\S+)', line)
-        target = re.search(r'--target\s+(\S+)', line)
-        target_param = re.search(r'--param\s+(\S+)', line)
+        try:
+            tokens = shlex.split(line)
+        except ValueError:
+            continue
+        def option(name: str) -> str | None:
+            try:
+                return tokens[tokens.index(name) + 1]
+            except (ValueError, IndexError):
+                return None
+        source, source_output = option("--source"), option("--source-output")
+        source_param, target, target_param = option("--source-param"), option("--target"), option("--param")
         if source and target and target_param:
-            source_name = source.group(1)
-            if source_param:
-                source_name += "." + source_param.group(1)
-            connections.add((source_name, target.group(1) + "." + target_param.group(1), "--matched" in line))
+            source_name = source + (("." + source_param) if source_param else (("." + source_output) if source_output else ""))
+            connections.add((source_name, target + "." + target_param, "--matched" in tokens))
     return connections
 
 

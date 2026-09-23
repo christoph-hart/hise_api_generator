@@ -49,6 +49,12 @@ class ParserTests(unittest.TestCase):
         script = "#!/usr/bin/env hise-cli run\n# note\n\n/hise playground open\n/builder\nreset\nadd ScriptFX as \"Safe\"\n"
         self.assertEqual(pipeline.validate_hsc_script(script, "test.safe"), [])
 
+    def test_generic_phase_authoring_boilerplate_is_rejected(self) -> None:
+        text = "Before building the graph: follow the Phase 1 teaching goal and keep support nodes minimal."
+        issues = pipeline.find_forbidden_authoring_boilerplate(text, "phase2/test.node")
+        self.assertEqual(len(issues), 1)
+        self.assertIn("forbidden generic authoring boilerplate", issues[0])
+
     def test_hsc_playground_rejects_missing_out_of_order_and_duplicate_open(self) -> None:
         cases = {
             "missing": "/builder\nreset\n",
