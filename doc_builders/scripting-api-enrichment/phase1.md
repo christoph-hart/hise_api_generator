@@ -22,6 +22,8 @@ consult during Phase 1. These files are shared across all class enrichments.
 | `style-guide/scripting-api/hisescript-rules.md` | HISEScript syntax, callback, and LAF rules for code examples | Step B |
 | `resources/laf_style_guide.json` | LAF callback property definitions | Step B |
 | `resources/deprecated_methods.md` | Deprecated method registry with C++ macro status | Step B |
+| `resources/return_object_types.json` | Concrete `getClassName()` results for methods returning `ScriptObject` | Merge, downstream targets |
+| `resources/required_argument_counts.json` | Minimum argument counts for methods with optional parameters | Merge, downstream targets |
 | `resources/base_methods/*.md` | Pre-distilled method entries for base classes (e.g. ScriptComponent) | Step B |
 | `resources/explorations/*_base.md` | Raw exploration output for base classes | Step A1, Step B |
 | `resources/explorations/ClassName.md` | Raw exploration output for individual classes | Step B |
@@ -307,6 +309,27 @@ Parameter and return types must use these names:
 | `NotUndefined` | anything except undefined | 255 |
 
 **For return types:** Use `undefined` for methods that return nothing (void in C++).
+
+### Concrete ScriptObject Return Types
+
+Methods returning `ScriptObject` retain that broad VarTypes value in `returnType`.
+The merge additionally reads `resources/return_object_types.json` and writes a
+`returnObjectType` field containing the concrete scripting class name returned
+by `T::getClassName()`. Unresolved entries use `null`.
+
+The resource is keyed by `ClassName.methodName`. Its `signature` field is context
+for source-analysis agents; `objectType` is the only value merged into the final
+API JSON. The merge reports missing and stale inventory entries.
+
+### Required Argument Counts
+
+Every merged method receives a `numRequiredArgs` field. The default is the number
+of entries in its `parameters` array. Methods with optional parameters override
+that default in `resources/required_argument_counts.json`.
+
+The override resource is intentionally sparse and keyed by
+`ClassName.methodName`. The merge rejects negative counts and counts larger than
+the documented parameter list, and reports stale method keys.
 
 ### Type Inference Rules
 

@@ -45,6 +45,8 @@ PHASE4_MANUAL_DIR = ENRICHMENT_DIR / "phase4" / "manual"
 PHASE4B_DIR = ENRICHMENT_DIR / "phase4b"
 TESTS_DIR = ENRICHMENT_DIR / "tests"
 RESOURCES_DIR = ENRICHMENT_DIR / "resources"
+RETURN_OBJECT_TYPES_FILE = RESOURCES_DIR / "return_object_types.json"
+REQUIRED_ARGUMENT_COUNTS_FILE = RESOURCES_DIR / "required_argument_counts.json"
 OUTPUT_DIR = ENRICHMENT_DIR / "output"
 SCANNED_FILE = ENRICHMENT_DIR / "phase1_scanned.txt"
 
@@ -1933,6 +1935,72 @@ def write_phase4a_decision_placeholder(class_name: str, p3_readme: dict,
         f.write(content)
 
 
+def load_return_object_types() -> dict:
+    """Load concrete object names for methods returning ScriptObject."""
+    if not RETURN_OBJECT_TYPES_FILE.is_file():
+        print(f"WARNING: Return object type resource not found: {RETURN_OBJECT_TYPES_FILE}")
+        return {}
+
+    with open(RETURN_OBJECT_TYPES_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    if data.get("schemaVersion") != 1:
+        raise ValueError(
+            f"Unsupported return object type schema in {RETURN_OBJECT_TYPES_FILE}"
+        )
+
+    methods = data.get("methods")
+    if not isinstance(methods, dict):
+        raise ValueError(
+            f"Expected a methods object in {RETURN_OBJECT_TYPES_FILE}"
+        )
+
+    for method_key, metadata in methods.items():
+        if not isinstance(metadata, dict):
+            raise ValueError(f"Invalid return object type entry: {method_key}")
+
+        object_type = metadata.get("objectType")
+        if object_type is not None and (
+            not isinstance(object_type, str) or not object_type.strip()
+        ):
+            raise ValueError(f"Invalid objectType for {method_key}")
+
+    return methods
+
+
+def load_required_argument_counts() -> dict:
+    """Load minimum argument counts for methods with optional parameters."""
+    if not REQUIRED_ARGUMENT_COUNTS_FILE.is_file():
+        print(
+            "WARNING: Required argument count resource not found: "
+            f"{REQUIRED_ARGUMENT_COUNTS_FILE}"
+        )
+        return {}
+
+    with open(REQUIRED_ARGUMENT_COUNTS_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    if data.get("schemaVersion") != 1:
+        raise ValueError(
+            f"Unsupported required argument count schema in "
+            f"{REQUIRED_ARGUMENT_COUNTS_FILE}"
+        )
+
+    methods = data.get("methods")
+    if not isinstance(methods, dict):
+        raise ValueError(
+            f"Expected a methods object in {REQUIRED_ARGUMENT_COUNTS_FILE}"
+        )
+
+    for method_key, num_required in methods.items():
+        if not isinstance(num_required, int) or isinstance(num_required, bool):
+            raise ValueError(f"Invalid numRequiredArgs for {method_key}")
+        if num_required < 0:
+            raise ValueError(f"Negative numRequiredArgs for {method_key}")
+
+    return methods
+
+
 def run_merge():
     """Merge all phases into output/api_reference.json."""
     if not BASE_DIR.is_dir():
@@ -1954,6 +2022,15 @@ def run_merge():
 
     # Build class lookup for raw docs link conversion (Phase 3)
     class_lookup = build_class_lookup(BASE_DIR)
+
+    # Concrete getClassName() results for methods whose VarTypes return type is
+    # ScriptObject. Unresolved entries remain null until source analysis fills
+    # them in.
+    return_object_types = load_return_object_types()
+    required_argument_counts = load_required_argument_counts()
+    object_return_methods = set()
+    resolved_object_return_count = 0
+    merged_method_keys = set()
 
     for json_path in base_files:
         with open(json_path, "r", encoding="utf-8") as f:
@@ -2129,6 +2206,31 @@ def run_merge():
             else:
                 entry["llmRef"] = None
 
+            method_key = f"{class_name}.{method_name}"
+            merged_method_keys.add(method_key)
+
+            # Keep the broad VarTypes returnType for validation and add the
+            # concrete scripting class name as separate metadata.
+            if entry.get("returnType") == "ScriptObject":
+                object_return_methods.add(method_key)
+                object_metadata = return_object_types.get(method_key, {})
+                object_type = object_metadata.get("objectType")
+                entry["returnObjectType"] = object_type
+                if object_type:
+                    resolved_object_return_count += 1
+
+            # Fixed-arity methods require every documented parameter. The
+            # resource overrides this default for APIs with optional trailing
+            # parameters or fully defaulted argument lists.
+            total_args = len(entry.get("parameters", []))
+            num_required_args = required_argument_counts.get(method_key, total_args)
+            if num_required_args > total_args:
+                raise ValueError(
+                    f"numRequiredArgs exceeds parameter count for {method_key}: "
+                    f"{num_required_args} > {total_args}"
+                )
+            entry["numRequiredArgs"] = num_required_args
+
             methods_output[method_name] = entry
 
         # --- Resolve minimalObjectToken and substitute {obj} ---
@@ -2166,6 +2268,27 @@ def run_merge():
         # --- Write decision file placeholder (notes Phase 3 input for Phase 4a agent) ---
         write_phase4a_decision_placeholder(class_name, p3_readme, p3_methods)
 
+    missing_object_returns = object_return_methods - set(return_object_types)
+    stale_object_returns = set(return_object_types) - object_return_methods
+    stale_required_argument_counts = (
+        set(required_argument_counts) - merged_method_keys
+    )
+    if missing_object_returns:
+        print(
+            "WARNING: Missing return object type inventory entries: "
+            + ", ".join(sorted(missing_object_returns))
+        )
+    if stale_object_returns:
+        print(
+            "WARNING: Stale return object type inventory entries: "
+            + ", ".join(sorted(stale_object_returns))
+        )
+    if stale_required_argument_counts:
+        print(
+            "WARNING: Stale required argument count entries: "
+            + ", ".join(sorted(stale_required_argument_counts))
+        )
+
     # Write output
     output_path = OUTPUT_DIR / "api_reference.json"
     with open(output_path, "w", encoding="utf-8") as f:
@@ -2178,6 +2301,13 @@ def run_merge():
     print(f"Merge complete:")
     print(f"  Classes: {class_count}")
     print(f"  Total methods: {method_count}")
+    print(f"  ScriptObject returns: {len(object_return_methods)}")
+    print(f"  Concrete object types: {resolved_object_return_count}")
+    print(
+        f"  Unresolved object types: "
+        f"{len(object_return_methods) - resolved_object_return_count}"
+    )
+    print(f"  Methods with optional arguments: {len(required_argument_counts)}")
     print(f"  Output: {output_path}")
 
 
@@ -3813,6 +3943,14 @@ def run_filter_binary(output_path=None):
                 "description": brief,
             }
 
+            return_object_type = method_data.get("returnObjectType")
+            if return_object_type:
+                entry["returnObjectType"] = return_object_type
+
+            entry["numRequiredArgs"] = method_data.get(
+                "numRequiredArgs", len(params)
+            )
+
             # Only include callScope if present and valid
             call_scope = method_data.get("callScope")
             if call_scope in ("safe", "warning", "unsafe", "init"):
@@ -3996,6 +4134,12 @@ def run_filter_mcp(output_path=None, fallback_path=None):
             # Return type
             rt = method_data.get("returnType", "")
             method_out["returnType"] = rt
+            return_object_type = method_data.get("returnObjectType")
+            if return_object_type:
+                method_out["returnObjectType"] = return_object_type
+            method_out["numRequiredArgs"] = method_data.get(
+                "numRequiredArgs", len(method_data.get("parameters", []))
+            )
 
             # Description
             method_out["description"] = method_data.get("description", "")

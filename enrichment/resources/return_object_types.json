@@ -1,0 +1,574 @@
+{
+  "schemaVersion": 1,
+  "description": "Concrete scripting object return types for methods whose VarTypes returnType is ScriptObject. A null objectType requires source analysis.",
+  "methods": {
+    "AudioSampleProcessor.getAudioFile": {
+      "signature": "ScriptAudioFile getAudioFile(int slotIndex)",
+      "objectType": "AudioFile"
+    },
+    "Builder.get": {
+      "signature": "var get(int buildIndex, String interfaceType)",
+      "objectType": "ModuleReference"
+    },
+    "ChildSynth.getChildSynthByIndex": {
+      "signature": "ChildSynth getChildSynthByIndex(int index)",
+      "objectType": "ChildSynth"
+    },
+    "Connection.getSourceNode": {
+      "signature": "var getSourceNode(int getSignalSource)",
+      "objectType": "Node"
+    },
+    "Connection.getTarget": {
+      "signature": "var getTarget()",
+      "objectType": "Parameter"
+    },
+    "ContainerChild.addChildComponent": {
+      "signature": "var addChildComponent(JSON childData)",
+      "objectType": "ContainerChild"
+    },
+    "ContainerChild.getComponent": {
+      "signature": "var getComponent(String childId)",
+      "objectType": "ContainerChild"
+    },
+    "ContainerChild.getParent": {
+      "signature": "var getParent()",
+      "objectType": "ContainerChild"
+    },
+    "Content.createLocalLookAndFeel": {
+      "signature": "ScriptLookAndFeel createLocalLookAndFeel()",
+      "objectType": "ScriptLookAndFeel"
+    },
+    "Content.createMarkdownRenderer": {
+      "signature": "MarkdownRenderer createMarkdownRenderer()",
+      "objectType": "MarkdownRenderer"
+    },
+    "Content.createPath": {
+      "signature": "Path createPath()",
+      "objectType": "Path"
+    },
+    "Content.createSVG": {
+      "signature": "ScriptObject createSVG(String base64Data)",
+      "objectType": "SVG"
+    },
+    "Content.createShader": {
+      "signature": "ScriptShader createShader(String fileName)",
+      "objectType": "ScriptShader"
+    },
+    "Content.getComponent": {
+      "signature": "ScriptComponent getComponent(var componentName)",
+      "objectType": "ScriptComponent"
+    },
+    "DisplayBuffer.createPath": {
+      "signature": "ScriptObject createPath(Array dstArea, Array sourceRange, Number normalisedStartValue)",
+      "objectType": "Path"
+    },
+    "DisplayBufferSource.getDisplayBuffer": {
+      "signature": "ScriptObject getDisplayBuffer(int index)",
+      "objectType": "DisplayBuffer"
+    },
+    "Download.getDownloadedTarget": {
+      "signature": "ScriptObject getDownloadedTarget()",
+      "objectType": "File"
+    },
+    "DspNetwork.create": {
+      "signature": "ScriptObject create(String path, String id)",
+      "objectType": "Node"
+    },
+    "DspNetwork.createAndAdd": {
+      "signature": "ScriptObject createAndAdd(String path, String id, ScriptObject parent)",
+      "objectType": "Node"
+    },
+    "DspNetwork.createFromJSON": {
+      "signature": "ScriptObject createFromJSON(JSON jsonData, ScriptObject parent)",
+      "objectType": "Node"
+    },
+    "DspNetwork.createTest": {
+      "signature": "ScriptObject createTest(JSON testData)",
+      "objectType": "NetworkTest"
+    },
+    "DspNetwork.get": {
+      "signature": "ScriptObject get(String id)",
+      "objectType": "Node"
+    },
+    "Effect.addGlobalModulator": {
+      "signature": "var addGlobalModulator(var chainIndex, var globalMod, String modName)",
+      "objectType": "Modulator"
+    },
+    "Effect.addModulator": {
+      "signature": "var addModulator(var chainIndex, var typeName, var modName)",
+      "objectType": "Modulator"
+    },
+    "Effect.addStaticGlobalModulator": {
+      "signature": "var addStaticGlobalModulator(var chainIndex, var timeVariantMod, String modName)",
+      "objectType": "Modulator"
+    },
+    "Effect.getModulatorChain": {
+      "signature": "var getModulatorChain(var chainIndex)",
+      "objectType": "Modulator"
+    },
+    "Engine.createAndRegisterAudioFile": {
+      "signature": "ScriptAudioFile createAndRegisterAudioFile(int index)",
+      "objectType": "AudioFile"
+    },
+    "Engine.createAndRegisterRingBuffer": {
+      "signature": "ScriptRingBuffer createAndRegisterRingBuffer(int index)",
+      "objectType": "DisplayBuffer"
+    },
+    "Engine.createAndRegisterSliderPackData": {
+      "signature": "ScriptSliderPackData createAndRegisterSliderPackData(int index)",
+      "objectType": "SliderPackData"
+    },
+    "Engine.createAndRegisterTableData": {
+      "signature": "ScriptTableData createAndRegisterTableData(int index)",
+      "objectType": "Table"
+    },
+    "Engine.createBXLicenser": {
+      "signature": "ScriptBXLicenser createBXLicenser()",
+      "objectType": "BXLicenser"
+    },
+    "Engine.createBackgroundTask": {
+      "signature": "ScriptBackgroundTask createBackgroundTask(String name)",
+      "objectType": "BackgroundTask"
+    },
+    "Engine.createBeatportManager": {
+      "signature": "BeatportManager createBeatportManager()",
+      "objectType": "BeatportManager"
+    },
+    "Engine.createBroadcaster": {
+      "signature": "ScriptBroadcaster createBroadcaster(var defaultValues)",
+      "objectType": "Broadcaster"
+    },
+    "Engine.createDspNetwork": {
+      "signature": "DspNetwork createDspNetwork(String id)",
+      "objectType": "DspNetwork"
+    },
+    "Engine.createErrorHandler": {
+      "signature": "ScriptErrorHandler createErrorHandler()",
+      "objectType": "ErrorHandler"
+    },
+    "Engine.createExpansionHandler": {
+      "signature": "ScriptExpansionHandler createExpansionHandler()",
+      "objectType": "ExpansionHandler"
+    },
+    "Engine.createFFT": {
+      "signature": "ScriptFFT createFFT()",
+      "objectType": "FFT"
+    },
+    "Engine.createFixObjectFactory": {
+      "signature": "fixobj::Factory createFixObjectFactory(var layoutDescription)",
+      "objectType": "FixObjectFactory"
+    },
+    "Engine.createGlobalScriptLookAndFeel": {
+      "signature": "ScriptedLookAndFeel createGlobalScriptLookAndFeel()",
+      "objectType": "ScriptedLookAndFeel"
+    },
+    "Engine.createLicenseUnlocker": {
+      "signature": "ScriptUnlocker createLicenseUnlocker()",
+      "objectType": "Unlocker"
+    },
+    "Engine.createMacroHandler": {
+      "signature": "ScriptedMacroHandler createMacroHandler()",
+      "objectType": "MacroHandler"
+    },
+    "Engine.createMessageHolder": {
+      "signature": "ScriptingMessageHolder createMessageHolder()",
+      "objectType": "MessageHolder"
+    },
+    "Engine.createMidiAutomationHandler": {
+      "signature": "var createMidiAutomationHandler()",
+      "objectType": "MidiAutomationHandler"
+    },
+    "Engine.createMidiList": {
+      "signature": "MidiList createMidiList()",
+      "objectType": "MidiList"
+    },
+    "Engine.createModulationMatrix": {
+      "signature": "var createModulationMatrix(String containerId)",
+      "objectType": "ScriptModulationMatrix"
+    },
+    "Engine.createNKSManager": {
+      "signature": "var createNKSManager()",
+      "objectType": "NKSManager"
+    },
+    "Engine.createNeuralNetwork": {
+      "signature": "ScriptNeuralNetwork createNeuralNetwork(String id)",
+      "objectType": "NeuralNetwork"
+    },
+    "Engine.createThreadSafeStorage": {
+      "signature": "var createThreadSafeStorage()",
+      "objectType": "ThreadSafeStorage"
+    },
+    "Engine.createTimerObject": {
+      "signature": "TimerObject createTimerObject()",
+      "objectType": "Timer"
+    },
+    "Engine.createTransportHandler": {
+      "signature": "var createTransportHandler()",
+      "objectType": "TransportHandler"
+    },
+    "Engine.createUnorderedStack": {
+      "signature": "ScriptUnorderedStack createUnorderedStack()",
+      "objectType": "UnorderedStack"
+    },
+    "Engine.createUserPresetHandler": {
+      "signature": "ScriptUserPresetHandler createUserPresetHandler()",
+      "objectType": "UserPresetHandler"
+    },
+    "Engine.getComplexDataReference": {
+      "signature": "var getComplexDataReference(String dataType, String moduleId, int index)",
+      "objectType": "ComplexDataReference"
+    },
+    "Engine.getDspNetworkReference": {
+      "signature": "var getDspNetworkReference(String processorId, String id)",
+      "objectType": "Node"
+    },
+    "Engine.getFilterModeList": {
+      "signature": "var getFilterModeList()",
+      "objectType": "FilterModes"
+    },
+    "Engine.getGlobalRoutingManager": {
+      "signature": "var getGlobalRoutingManager()",
+      "objectType": "GlobalRoutingManager"
+    },
+    "Engine.getLorisManager": {
+      "signature": "var getLorisManager()",
+      "objectType": "LorisManager"
+    },
+    "Expansion.getRootFolder": {
+      "signature": "ScriptObject getRootFolder()",
+      "objectType": "File"
+    },
+    "Expansion.getSampleFolder": {
+      "signature": "ScriptObject getSampleFolder()",
+      "objectType": "File"
+    },
+    "ExpansionHandler.getCurrentExpansion": {
+      "signature": "var getCurrentExpansion()",
+      "objectType": "Expansion"
+    },
+    "ExpansionHandler.getExpansion": {
+      "signature": "var getExpansion(var name)",
+      "objectType": "Expansion"
+    },
+    "ExpansionHandler.getExpansionForInstallPackage": {
+      "signature": "var getExpansionForInstallPackage(var packageFile)",
+      "objectType": "Expansion"
+    },
+    "File.createDirectory": {
+      "signature": "ScriptObject createDirectory(String directoryName)",
+      "objectType": "File"
+    },
+    "File.getChildFile": {
+      "signature": "ScriptObject getChildFile(String childFileName)",
+      "objectType": "File"
+    },
+    "File.getNonExistentSibling": {
+      "signature": "ScriptObject getNonExistentSibling()",
+      "objectType": "File"
+    },
+    "File.getParentDirectory": {
+      "signature": "ScriptObject getParentDirectory()",
+      "objectType": "File"
+    },
+    "File.getRedirectedFolder": {
+      "signature": "ScriptObject getRedirectedFolder()",
+      "objectType": "File"
+    },
+    "FileSystem.fromAbsolutePath": {
+      "signature": "ScriptObject fromAbsolutePath(String path)",
+      "objectType": "File"
+    },
+    "FileSystem.fromReferenceString": {
+      "signature": "ScriptObject fromReferenceString(String referenceStringOrFullPath, Integer locationType)",
+      "objectType": "File"
+    },
+    "FileSystem.getFolder": {
+      "signature": "ScriptObject getFolder(Integer locationType)",
+      "objectType": "File"
+    },
+    "FixObjectFactory.create": {
+      "signature": "FixObject create()",
+      "objectType": "FixObject"
+    },
+    "FixObjectFactory.createArray": {
+      "signature": "FixObjectArray createArray(int numElements)",
+      "objectType": "FixObjectArray"
+    },
+    "FixObjectFactory.createStack": {
+      "signature": "FixObjectStack createStack(int numElements)",
+      "objectType": "FixObjectStack"
+    },
+    "GlobalRoutingManager.getCable": {
+      "signature": "ScriptObject getCable(String cableId)",
+      "objectType": "GlobalCable"
+    },
+    "MessageHolder.clone": {
+      "signature": "var clone()",
+      "objectType": "MessageHolder"
+    },
+    "MidiPlayer.asMidiProcessor": {
+      "signature": "ScriptObject asMidiProcessor()",
+      "objectType": "MidiProcessor"
+    },
+    "MidiProcessor.asMidiPlayer": {
+      "signature": "var asMidiPlayer()",
+      "objectType": "MidiPlayer"
+    },
+    "Modulator.addGlobalModulator": {
+      "signature": "ScriptObject addGlobalModulator(Integer chainIndex, ScriptObject globalMod, String modName)",
+      "objectType": "Modulator"
+    },
+    "Modulator.addModulator": {
+      "signature": "ScriptObject addModulator(Integer chainIndex, String typeName, String modName)",
+      "objectType": "Modulator"
+    },
+    "Modulator.addStaticGlobalModulator": {
+      "signature": "ScriptObject addStaticGlobalModulator(Integer chainIndex, ScriptObject timeVariantMod, String modName)",
+      "objectType": "Modulator"
+    },
+    "Modulator.asTableProcessor": {
+      "signature": "ScriptObject asTableProcessor()",
+      "objectType": "TableProcessor"
+    },
+    "Modulator.getModulatorChain": {
+      "signature": "ScriptObject getModulatorChain(Integer chainIndex)",
+      "objectType": "Modulator"
+    },
+    "Node.getOrCreateParameter": {
+      "signature": "var getOrCreateParameter(var indexOrId)",
+      "objectType": "Parameter"
+    },
+    "Parameter.addConnectionFrom": {
+      "signature": "var addConnectionFrom(var connectionData)",
+      "objectType": "Connection"
+    },
+    "Path.createStrokedPath": {
+      "signature": "ScriptObject createStrokedPath(NotUndefined strokeData, Array dotData)",
+      "objectType": "Path"
+    },
+    "Rectangle.constrainedWithin": {
+      "signature": "Rectangle constrainedWithin(var targetArea)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.expanded": {
+      "signature": "Rectangle expanded(double x, double optionalY)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.getIntersection": {
+      "signature": "Rectangle getIntersection(var otherRect)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.getUnion": {
+      "signature": "Rectangle getUnion(var otherRect)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.reduced": {
+      "signature": "Rectangle reduced(double x, double optionalY)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.removeFromBottom": {
+      "signature": "Rectangle removeFromBottom(double numToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.removeFromLeft": {
+      "signature": "Rectangle removeFromLeft(double numToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.removeFromRight": {
+      "signature": "Rectangle removeFromRight(double numToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.removeFromTop": {
+      "signature": "Rectangle removeFromTop(double numToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.scaled": {
+      "signature": "Rectangle scaled(double factorX, double optionalFactorY)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.translated": {
+      "signature": "Rectangle translated(double deltaX, double deltaY)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withAspectRatioLike": {
+      "signature": "Rectangle withAspectRatioLike(var otherRect)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withBottom": {
+      "signature": "Rectangle withBottom(double newBottom)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withBottomY": {
+      "signature": "Rectangle withBottomY(double newBottomY)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withCentre": {
+      "signature": "Rectangle withCentre(double newCentreX, double newCentreY)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withHeight": {
+      "signature": "Rectangle withHeight(double newHeight)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withLeft": {
+      "signature": "Rectangle withLeft(double newLeft)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withRight": {
+      "signature": "Rectangle withRight(double newRight)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withSize": {
+      "signature": "Rectangle withSize(double newWidth, double newHeight)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withSizeKeepingCentre": {
+      "signature": "Rectangle withSizeKeepingCentre(double newWidth, double newHeight)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withTrimmedBottom": {
+      "signature": "Rectangle withTrimmedBottom(double amountToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withTrimmedLeft": {
+      "signature": "Rectangle withTrimmedLeft(double amountToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withTrimmedRight": {
+      "signature": "Rectangle withTrimmedRight(double amountToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withTrimmedTop": {
+      "signature": "Rectangle withTrimmedTop(double amountToRemove)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withWidth": {
+      "signature": "Rectangle withWidth(double newWidth)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withX": {
+      "signature": "Rectangle withX(double newX)",
+      "objectType": "Rectangle"
+    },
+    "Rectangle.withY": {
+      "signature": "Rectangle withY(double newY)",
+      "objectType": "Rectangle"
+    },
+    "Sample.duplicateSample": {
+      "signature": "Sample duplicateSample()",
+      "objectType": "Sample"
+    },
+    "Sampler.getComplexGroupManager": {
+      "signature": "ScriptObject getComplexGroupManager()",
+      "objectType": "ComplexGroupManager"
+    },
+    "ScriptAudioWaveform.registerAtParent": {
+      "signature": "ScriptObject registerAtParent(Integer index)",
+      "objectType": "AudioFile"
+    },
+    "ScriptDynamicContainer.setData": {
+      "signature": "ScriptObject setData(var newData)",
+      "objectType": "ScriptDynamicContainer"
+    },
+    "ScriptModulationMatrix.getComponent": {
+      "signature": "var getComponent(String targetId)",
+      "objectType": "ScriptComponent"
+    },
+    "ScriptSlider.createModifiers": {
+      "signature": "ScriptObject createModifiers()",
+      "objectType": "Modifiers"
+    },
+    "ScriptTable.registerAtParent": {
+      "signature": "ScriptObject registerAtParent(Integer index)",
+      "objectType": "Table"
+    },
+    "Server.downloadFile": {
+      "signature": "ScriptObject downloadFile(String subURL, JSON parameters, ScriptObject targetFile, Function callback)",
+      "objectType": "File"
+    },
+    "SliderPackProcessor.getSliderPack": {
+      "signature": "ScriptObject getSliderPack(int sliderPackIndex)",
+      "objectType": "SliderPack"
+    },
+    "SlotFX.getCurrentEffect": {
+      "signature": "ScriptObject getCurrentEffect()",
+      "objectType": "Effect"
+    },
+    "SlotFX.setEffect": {
+      "signature": "ScriptObject setEffect(var effectName)",
+      "objectType": "Effect"
+    },
+    "Synth.addEffect": {
+      "signature": "ScriptEffect addEffect(String type, String id, Integer index)",
+      "objectType": "Effect"
+    },
+    "Synth.addModulator": {
+      "signature": "ScriptObject addModulator(Integer chainId, String type, String id)",
+      "objectType": "Modulator"
+    },
+    "Synth.createBuilder": {
+      "signature": "ScriptObject createBuilder()",
+      "objectType": "Builder"
+    },
+    "Synth.getAudioSampleProcessor": {
+      "signature": "ScriptObject getAudioSampleProcessor(String name)",
+      "objectType": "AudioSampleProcessor"
+    },
+    "Synth.getChildSynth": {
+      "signature": "ScriptObject getChildSynth(String name)",
+      "objectType": "ChildSynth"
+    },
+    "Synth.getChildSynthByIndex": {
+      "signature": "ScriptObject getChildSynthByIndex(Integer index)",
+      "objectType": "ChildSynth"
+    },
+    "Synth.getDisplayBufferSource": {
+      "signature": "ScriptObject getDisplayBufferSource(String name)",
+      "objectType": "DisplayBufferSource"
+    },
+    "Synth.getEffect": {
+      "signature": "ScriptObject getEffect(String name)",
+      "objectType": "Effect"
+    },
+    "Synth.getMidiPlayer": {
+      "signature": "ScriptObject getMidiPlayer(String playerId)",
+      "objectType": "MidiPlayer"
+    },
+    "Synth.getMidiProcessor": {
+      "signature": "ScriptObject getMidiProcessor(String name)",
+      "objectType": "MidiProcessor"
+    },
+    "Synth.getModulator": {
+      "signature": "ScriptObject getModulator(String name)",
+      "objectType": "Modulator"
+    },
+    "Synth.getRoutingMatrix": {
+      "signature": "ScriptObject getRoutingMatrix(String processorId)",
+      "objectType": "RoutingMatrix"
+    },
+    "Synth.getSampler": {
+      "signature": "ScriptObject getSampler(String name)",
+      "objectType": "Sampler"
+    },
+    "Synth.getSliderPackProcessor": {
+      "signature": "ScriptObject getSliderPackProcessor(String name)",
+      "objectType": "SliderPackProcessor"
+    },
+    "Synth.getSlotFX": {
+      "signature": "ScriptObject getSlotFX(String name)",
+      "objectType": "SlotFX"
+    },
+    "Synth.getTableProcessor": {
+      "signature": "ScriptObject getTableProcessor(String name)",
+      "objectType": "TableProcessor"
+    },
+    "Synth.getWavetableController": {
+      "signature": "ScriptObject getWavetableController(String processorId)",
+      "objectType": "WavetableController"
+    },
+    "TableProcessor.getTable": {
+      "signature": "var getTable(int tableIndex)",
+      "objectType": "Table"
+    }
+  }
+}

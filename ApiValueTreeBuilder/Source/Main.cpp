@@ -18,27 +18,31 @@ ValueTree buildApiValueTree(const var& jsonData)
 
 		ValueTree classNode(className);
 
-		auto* methodsObj = classData->getProperty("methods").getDynamicObject();
-		if (methodsObj == nullptr)
+		auto* constantsObj = classData->getProperty("constants").getDynamicObject();
+		if (constantsObj != nullptr)
 		{
-			root.addChild(classNode, -1, nullptr);
-			continue;
+			for (auto& constantPair : constantsObj->getProperties())
+				classNode.setProperty(constantPair.name, constantPair.value, nullptr);
 		}
 
-		for (auto& methodPair : methodsObj->getProperties())
+		auto* methodsObj = classData->getProperty("methods").getDynamicObject();
+		if (methodsObj != nullptr)
 		{
-			auto* methodData = methodPair.value.getDynamicObject();
-			if (methodData == nullptr) continue;
+			for (auto& methodPair : methodsObj->getProperties())
+			{
+				auto* methodData = methodPair.value.getDynamicObject();
+				if (methodData == nullptr) continue;
 
-			ValueTree methodNode("method");
+				ValueTree methodNode("method");
 
-			// Copy all properties from the JSON method object into the ValueTree.
-			// The Python filter-binary stage already curates exactly which fields
-			// belong in the blob, so no filtering is needed here.
-			for (auto& prop : methodData->getProperties())
-				methodNode.setProperty(prop.name, prop.value, nullptr);
+				// Copy all properties from the JSON method object into the ValueTree.
+				// The Python filter-binary stage already curates exactly which fields
+				// belong in the blob, so no filtering is needed here.
+				for (auto& prop : methodData->getProperties())
+					methodNode.setProperty(prop.name, prop.value, nullptr);
 
-			classNode.addChild(methodNode, -1, nullptr);
+				classNode.addChild(methodNode, -1, nullptr);
+			}
 		}
 
 		root.addChild(classNode, -1, nullptr);
