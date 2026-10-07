@@ -1,0 +1,3070 @@
+{
+  "AudioFile": {
+    "loadBuffer": {
+      "sampleRate": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setDisplayCallback": {
+      "displayFunction": [
+        "CallbackArgCheck.Function(double)"
+      ]
+    },
+    "setRange": {
+      "min": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    }
+  },
+  "AudioSampleProcessor": {
+    "getAttribute": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "getAttributeId": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "setAttribute": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    }
+  },
+  "BackgroundTask": {
+    "callOnBackgroundThread": {
+      "backgroundTaskFunction": [
+        "CallbackArgCheck.Function(BackgroundTask)"
+      ]
+    },
+    "killVoicesAndCall": {
+      "loadingFunction": [
+        "CallbackArgCheck.Function()"
+      ]
+    },
+    "runProcess": {
+      "logFunction": [
+        "CallbackArgCheck.Function(BackgroundTask, bool, var)"
+      ]
+    },
+    "setFinishCallback": {
+      "newFinishCallback": [
+        "CallbackArgCheck.Function(bool, bool)"
+      ]
+    },
+    "setProgress": {
+      "p": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    }
+  },
+  "Broadcaster": {
+    "addComponentPropertyListener": {
+      "object": [
+        "RuntimeIdCheck.ScriptComponent"
+      ],
+      "propertyList": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "addComponentRefreshListener": {
+      "componentIds": [
+        "RuntimeIdCheck.ScriptComponent"
+      ]
+    },
+    "addComponentValueListener": {
+      "object": [
+        "RuntimeIdCheck.ScriptComponent"
+      ]
+    },
+    "addDelayedListener": {
+      "delayInMilliSeconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "attachToComplexData": {
+      "moduleIds": [
+        "RuntimeIdCheck.ExternalDataHolder"
+      ]
+    },
+    "attachToComponentMouseEvents": {
+      "componentIds": [
+        "RuntimeIdCheck.ScriptComponent"
+      ]
+    },
+    "attachToComponentProperties": {
+      "componentIds": [
+        "RuntimeIdCheck.ScriptComponent"
+      ],
+      "propertyIds": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "attachToComponentValue": {
+      "componentIds": [
+        "RuntimeIdCheck.ScriptComponent"
+      ]
+    },
+    "attachToComponentVisibility": {
+      "componentIds": [
+        "RuntimeIdCheck.ScriptComponent"
+      ]
+    },
+    "attachToContextMenu": {
+      "componentIds": [
+        "RuntimeIdCheck.ScriptComponent"
+      ],
+      "stateFunction": [
+        "CallbackArgCheck.Function(String, int)"
+      ]
+    },
+    "attachToEqEvents": {
+      "moduleIds": [
+        "RuntimeIdCheck.CurveEq"
+      ],
+      "eventTypes": [
+        "StringValidator.Option[\"BandAdded\",\"BandRemoved\",\"BandSelected\",\"FFTEnabled\"]"
+      ]
+    },
+    "attachToRadioGroup": {
+      "radioGroupIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "callWithDelay": {
+      "delayInMilliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "argArray": [
+        "ObjectType.Array"
+      ]
+    },
+    "attachToOtherBroadcaster": {
+      "otherBroadcaster": [
+        "ObjectType.Broadcaster"
+      ]
+    }
+  },
+  "Buffer": {
+    "resample": {
+      "ratio": [
+        "RangeCheck.{\"min\":0.01,\"max\":1000.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "applyMedianFilter": {
+      "windowSize": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getNextZeroCrossing": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "getPeakRange": {
+      "startSample": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "getRMSLevel": {
+      "startSample": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    }
+  },
+  "ChildSynth": {
+    "addGlobalModulator": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "addModulator": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "addStaticGlobalModulator": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "setModulationInitialValue": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    }
+  },
+  "Colours": {
+    "mix": {
+      "colour1": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "colour2": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "alpha": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "toHsl": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "toVec4": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "withAlpha": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "alpha": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "withBrightness": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "brightness": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "withHue": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "hue": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "withMultipliedAlpha": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "factor": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "withMultipliedBrightness": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "factor": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "withMultipliedSaturation": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "factor": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "withSaturation": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "saturation": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    }
+  },
+  "ComplexGroupManager": {
+    "addGroupEventStartOffset": {
+      "offsetSamples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "delayGroupEvent": {
+      "delayInSamples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "fadeInGroupEvent": {
+      "fadeInTimeMs": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "fadeOutGroupEvent": {
+      "fadeOutTimeMs": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "isNoteNumberMapped": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setFixedGroupEventLength": {
+      "numSamplesToPlayBeforeFadeout": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    }
+  },
+  "ContainerChild": {
+    "set": {
+      "newValue": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setBounds": {
+      "area": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "setChildCallback": {
+      "newChildCallback": [
+        "CallbackArgCheck.Function(String, bool)"
+      ]
+    },
+    "setControlCallback": {
+      "controlCallback": [
+        "CallbackArgCheck.Function(var)"
+      ]
+    },
+    "getChildComponentIndex": {
+      "childIdOrComponent": [
+        "ObjectType.ContainerChild"
+      ]
+    },
+    "isEqual": {
+      "other": [
+        "ObjectType.ContainerChild"
+      ]
+    }
+  },
+  "Content": {
+    "addAudioWaveform": {
+      "audioWaveformName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addButton": {
+      "buttonName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addComboBox": {
+      "boxName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addDynamicContainer": {
+      "containerId": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addFloatingTile": {
+      "floatingTileName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addImage": {
+      "imageName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addKnob": {
+      "knobName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addLabel": {
+      "label": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addMultipageDialog": {
+      "dialogId": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addPanel": {
+      "panelName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addSliderPack": {
+      "sliderPackName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addTable": {
+      "tableName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addViewport": {
+      "viewportName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addVisualGuide": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "addWebView": {
+      "webviewName": [
+        "StringValidator.ValidVariableId"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "callAfterDelay": {
+      "milliSeconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "function": [
+        "CallbackArgCheck.Function()"
+      ]
+    },
+    "getComponent": {
+      "componentName": [
+        "RuntimeIdCheck.ScriptComponent"
+      ]
+    },
+    "makeFrontInterface": {
+      "width": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "height": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setHeight": {
+      "newHeight": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setWidth": {
+      "newWidth": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "showModalTextInput": {
+      "callback": [
+        "CallbackArgCheck.Function(bool, String)"
+      ]
+    }
+  },
+  "DisplayBuffer": {
+    "createPath": {
+      "dstArea": [
+        "GraphicsCheck.Area"
+      ],
+      "sourceRange": [
+        "RangeCheck.{\"min\":-1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "getResizedBuffer": {
+      "numDestSamples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    }
+  },
+  "DspNetwork": {
+    "createTest": {
+      "testData": [
+        "ObjectType.JSON"
+      ]
+    },
+    "prepareToPlay": {
+      "sampleRate": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":false}"
+      ]
+    }
+  },
+  "Effect": {
+    "addGlobalModulator": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "addModulator": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "addStaticGlobalModulator": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "getAttribute": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "getAttributeId": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "getModulatorChain": {
+      "chainIndex": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "setAttribute": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    }
+  },
+  "Engine": {
+    "createFixObjectFactory": {
+      "layoutDescription": [
+        "ObjectType.JSON"
+      ]
+    },
+    "doubleToString": {
+      "digits": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "dumpAsJSON": {
+      "object": [
+        "ObjectType.JSON"
+      ]
+    },
+    "getComplexDataReference": {
+      "dataType": [
+        "StringValidator.Option[\"Table\",\"SliderPack\",\"AudioFile\",\"DisplayBuffer\"]"
+      ],
+      "moduleId": [
+        "RuntimeIdCheck.ExternalDataHolder"
+      ],
+      "index": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "getDspNetworkReference": {
+      "processorId": [
+        "RuntimeIdCheck.DspNetwork"
+      ],
+      "id": [
+        "RuntimeIdCheck.DspNetwork"
+      ]
+    },
+    "getMacroName": {
+      "index": [
+        "RangeCheck.{\"min\":1,\"max\":8,\"inclusive\":true}"
+      ]
+    },
+    "getMidiNoteName": {
+      "midiNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "getMilliSecondsForQuarterBeats": {
+      "quarterBeats": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getMilliSecondsForQuarterBeatsWithTempo": {
+      "quarterBeats": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "bpm": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getMilliSecondsForTempo": {
+      "tempoIndex": [
+        "RangeCheck.{\"min\":0,\"max\":18,\"inclusive\":true}"
+      ]
+    },
+    "getPitchRatioFromSemitones": {
+      "semiTones": [
+        "RangeCheck.{\"min\":-12,\"max\":12,\"inclusive\":true}"
+      ]
+    },
+    "getQuarterBeatsForMilliSeconds": {
+      "milliSeconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getQuarterBeatsForMilliSecondsWithTempo": {
+      "milliSeconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getQuarterBeatsForSamples": {
+      "samples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getQuarterBeatsForSamplesWithTempo": {
+      "samples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getSamplesForQuarterBeats": {
+      "quarterBeats": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getSamplesForQuarterBeatsWithTempo": {
+      "quarterBeats": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getSemitonesFromPitchRatio": {
+      "pitchRatio": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getTempoName": {
+      "tempoIndex": [
+        "RangeCheck.{\"min\":0,\"max\":18,\"inclusive\":true}"
+      ]
+    },
+    "isControllerUsedByAutomation": {
+      "controllerNumber": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ]
+    },
+    "playBuffer": {
+      "callback": [
+        "CallbackArgCheck.Function(bool, double)"
+      ]
+    },
+    "renderAudio": {
+      "eventList": [
+        "ObjectType.Array"
+      ]
+    },
+    "setCurrentExpansion": {
+      "expansionName": [
+        "RuntimeIdCheck.Expansions"
+      ]
+    },
+    "setFrontendMacros": {
+      "nameList": [
+        "ObjectType.Array"
+      ]
+    },
+    "setGlobalPitchFactor": {
+      "pitchFactorInSemitones": [
+        "RangeCheck.{\"min\":-12.0,\"max\":12.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setHostBpm": {
+      "newTempo": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setKeyColour": {
+      "keyNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setLatencySamples": {
+      "latency": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setLowestKeyToDisplay": {
+      "keyNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true,\"clamps\":false}"
+      ]
+    },
+    "setMinimumSampleRate": {
+      "minimumSampleRate": [
+        "RangeCheck.{\"min\":1.0,\"max\":384000.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setUserPresetTagList": {
+      "listOfTags": [
+        "ObjectType.Array"
+      ]
+    },
+    "showYesNoWindow": {
+      "callback": [
+        "CallbackArgCheck.Function(bool)"
+      ]
+    },
+    "sortWithFunction": {
+      "arrayToSort": [
+        "ObjectType.Array"
+      ]
+    }
+  },
+  "ErrorHandler": {
+    "clearErrorLevel": {
+      "stateToClear": [
+        "RangeCheck.{\"min\":0,\"max\":13,\"inclusive\":true}"
+      ]
+    },
+    "setCustomMessageToShow": {
+      "state": [
+        "RangeCheck.{\"min\":0,\"max\":13,\"inclusive\":true}"
+      ]
+    },
+    "simulateErrorEvent": {
+      "state": [
+        "RangeCheck.{\"min\":0,\"max\":13,\"inclusive\":true}"
+      ]
+    }
+  },
+  "Expansion": {
+    "setSampleFolder": {
+      "newSampleFolder": [
+        "ObjectType.File"
+      ]
+    }
+  },
+  "ExpansionHandler": {
+    "encodeWithCredentials": {
+      "hxiFile": [
+        "ObjectType.File"
+      ]
+    },
+    "getExpansion": {
+      "name": [
+        "RuntimeIdCheck.Expansions"
+      ]
+    },
+    "getExpansionForInstallPackage": {
+      "packageFile": [
+        "ObjectType.File"
+      ]
+    },
+    "getMetaDataFromPackage": {
+      "packageFile": [
+        "ObjectType.File"
+      ]
+    },
+    "installExpansionFromPackage": {
+      "packageFile": [
+        "ObjectType.File"
+      ],
+      "sampleDirectory": [
+        "ObjectType.File"
+      ]
+    },
+    "setAllowedExpansionTypes": {
+      "typeList": [
+        "ObjectType.Array"
+      ]
+    },
+    "setCredentials": {
+      "newCredentials": [
+        "ObjectType.JSON"
+      ]
+    }
+  },
+  "FFT": {
+    "prepare": {
+      "maxNumChannels": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setMagnitudeFunction": {
+      "newMagnitudeFunction": [
+        "CallbackArgCheck.Inline(Buffer, int)"
+      ]
+    },
+    "setOverlap": {
+      "percentageOfOverlap": [
+        "RangeCheck.{\"min\":0.0,\"max\":0.99,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setPhaseFunction": {
+      "newPhaseFunction": [
+        "CallbackArgCheck.Inline(Buffer, int)"
+      ]
+    },
+    "setWindowType": {
+      "windowType": [
+        "RangeCheck.{\"min\":0,\"max\":6,\"inclusive\":true}"
+      ]
+    }
+  },
+  "File": {
+    "copy": {
+      "target": [
+        "ObjectType.File"
+      ]
+    },
+    "copyDirectory": {
+      "target": [
+        "ObjectType.File"
+      ]
+    },
+    "extractZipFile": {
+      "targetDirectory": [
+        "ObjectType.File"
+      ],
+      "callback": [
+        "CallbackArgCheck.Function(Object)"
+      ]
+    },
+    "getRelativePathFrom": {
+      "otherFile": [
+        "ObjectType.File"
+      ]
+    },
+    "isChildOf": {
+      "otherFile": [
+        "ObjectType.File"
+      ]
+    },
+    "isSameFileAs": {
+      "otherFile": [
+        "ObjectType.File"
+      ]
+    },
+    "move": {
+      "target": [
+        "ObjectType.File"
+      ]
+    },
+    "toString": {
+      "formatType": [
+        "RangeCheck.{\"min\":0,\"max\":3,\"inclusive\":true}"
+      ]
+    },
+    "writeAsXmlFile": {
+      "jsonData": [
+        "ObjectType.JSON"
+      ]
+    },
+    "writeMidiFile": {
+      "eventList": [
+        "ObjectType.Array"
+      ],
+      "metadataObject": [
+        "ObjectType.JSON"
+      ]
+    }
+  },
+  "FileSystem": {
+    "browse": {
+      "callback": [
+        "CallbackArgCheck.Function(File)"
+      ]
+    },
+    "browseForDirectory": {
+      "callback": [
+        "CallbackArgCheck.Function(File)"
+      ]
+    },
+    "browseForMultipleDirectories": {
+      "callback": [
+        "CallbackArgCheck.Function(Array)"
+      ]
+    },
+    "browseForMultipleFiles": {
+      "callback": [
+        "CallbackArgCheck.Function(Array)"
+      ]
+    },
+    "getFolder": {
+      "locationType": [
+        "RangeCheck.{\"min\":0,\"max\":11,\"inclusive\":true}"
+      ]
+    }
+  },
+  "FixObjectFactory": {
+    "createArray": {
+      "numElements": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "createStack": {
+      "numElements": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    }
+  },
+  "GlobalCable": {
+    "connectToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":-1,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "connectToModuleParameter": {
+      "targetObject": [
+        "ObjectType.JSON"
+      ]
+    },
+    "setRangeWithStep": {
+      "stepSize": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setValueNormalised": {
+      "normalisedInput": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    }
+  },
+  "GlobalRoutingManager": {
+    "addOSCCallback": {
+      "callback": [
+        "CallbackArgCheck.Function(String, var)"
+      ]
+    },
+    "connectToOSC": {
+      "errorFunction": [
+        "CallbackArgCheck.Function(String)"
+      ]
+    },
+    "getEventData": {
+      "dataSlot": [
+        "RangeCheck.{\"min\":0,\"max\":15,\"inclusive\":true}"
+      ]
+    },
+    "setEventData": {
+      "dataSlot": [
+        "RangeCheck.{\"min\":0,\"max\":15,\"inclusive\":true}"
+      ]
+    }
+  },
+  "Graphics": {
+    "addDropShadowFromAlpha": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "addNoise": {
+      "noiseAmount": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "applyGamma": {
+      "gamma": [
+        "RangeCheck.{\"min\":1.0,\"inclusive\":false}"
+      ]
+    },
+    "boxBlur": {
+      "blurAmount": [
+        "RangeCheck.{\"min\":0,\"max\":100,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "drawAlignedTextShadow": {
+      "shadowData": [
+        "ObjectType.JSON"
+      ]
+    },
+    "drawDropShadow": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "drawDropShadowFromPath": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "path": [
+        "ObjectType.Path"
+      ]
+    },
+    "drawInnerShadowFromPath": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ],
+      "path": [
+        "ObjectType.Path"
+      ]
+    },
+    "drawMultiLineText": {
+      "xy": [
+        "GraphicsCheck.Point"
+      ]
+    },
+    "fillAll": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "gaussianBlur": {
+      "blurAmount": [
+        "RangeCheck.{\"min\":0,\"max\":100,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "rotate": {
+      "center": [
+        "GraphicsCheck.Point"
+      ]
+    },
+    "setColour": {
+      "colour": [
+        "GraphicsCheck.ValidColour"
+      ]
+    },
+    "applyMask": {
+      "path": [
+        "ObjectType.Path"
+      ]
+    },
+    "drawFFTSpectrum": {
+      "fftObject": [
+        "ObjectType.FFT"
+      ]
+    },
+    "drawPath": {
+      "path": [
+        "ObjectType.Path"
+      ]
+    },
+    "fillPath": {
+      "path": [
+        "ObjectType.Path"
+      ]
+    }
+  },
+  "LorisManager": {
+    "analyse": {
+      "rootFrequency": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "createEnvelopePaths": {
+      "harmonicIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "createEnvelopes": {
+      "harmonicIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "processCustom": {
+      "processCallback": [
+        "CallbackArgCheck.Function(Object)"
+      ]
+    }
+  },
+  "MarkdownRenderer": {
+    "setImageProvider": {
+      "data": [
+        "ObjectType.JSON"
+      ]
+    }
+  },
+  "Math": {
+    "acos": {
+      "value": [
+        "RangeCheck.{\"min\":-1.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "acosh": {
+      "value": [
+        "RangeCheck.{\"min\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "asin": {
+      "value": [
+        "RangeCheck.{\"min\":-1.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "atanh": {
+      "value": [
+        "RangeCheck.{\"min\":-1.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "from0To1": {
+      "value": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "log": {
+      "value": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":false}"
+      ]
+    },
+    "log10": {
+      "value": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":false}"
+      ]
+    },
+    "sqrt": {
+      "value": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "wrap": {
+      "limit": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":false}"
+      ]
+    }
+  },
+  "Message": {
+    "delayEvent": {
+      "samplesToDelay": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setAllNotesOffCallback": {
+      "callback": [
+        "CallbackArgCheck.Inline()"
+      ]
+    },
+    "setChannel": {
+      "newChannel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ]
+    },
+    "setCoarseDetune": {
+      "semiToneDetune": [
+        "RangeCheck.{\"min\":-128,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setControllerNumber": {
+      "newControllerNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setControllerValue": {
+      "newControllerValue": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setFineDetune": {
+      "cents": [
+        "RangeCheck.{\"min\":-128,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setGain": {
+      "gainInDecibels": [
+        "RangeCheck.{\"min\":-100,\"max\":36,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setMonophonicAfterTouchPressure": {
+      "pressure": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setNoteNumber": {
+      "newNoteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setPolyAfterTouchNoteNumberAndPressureValue": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "aftertouchAmount": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setStartOffset": {
+      "newStartOffset": [
+        "RangeCheck.{\"min\":0,\"max\":65535,\"inclusive\":true}"
+      ]
+    },
+    "setTransposeAmount": {
+      "transposeValue": [
+        "RangeCheck.{\"min\":-128,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setVelocity": {
+      "newVelocity": [
+        "RangeCheck.{\"min\":1,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "store": {
+      "messageEventHolder": [
+        "ObjectType.MessageHolder"
+      ]
+    }
+  },
+  "MessageHolder": {
+    "addToTimestamp": {
+      "deltaSamples": [
+        "RangeCheck.{\"min\":-32768,\"max\":32767,\"inclusive\":true}"
+      ]
+    },
+    "setChannel": {
+      "newChannel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ]
+    },
+    "setCoarseDetune": {
+      "semiToneDetune": [
+        "RangeCheck.{\"min\":-128,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setControllerNumber": {
+      "newControllerNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setFineDetune": {
+      "cents": [
+        "RangeCheck.{\"min\":-128,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setGain": {
+      "gainInDecibels": [
+        "RangeCheck.{\"min\":-100,\"max\":36,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setMonophonicAfterTouchPressure": {
+      "pressure": [
+        "RangeCheck.{\"min\":0,\"max\":255,\"inclusive\":true}"
+      ]
+    },
+    "setNoteNumber": {
+      "newNoteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setPolyAfterTouchNoteNumberAndPressureValue": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":255,\"inclusive\":true}"
+      ],
+      "aftertouchAmount": [
+        "RangeCheck.{\"min\":0,\"max\":255,\"inclusive\":true}"
+      ]
+    },
+    "setStartOffset": {
+      "offset": [
+        "RangeCheck.{\"min\":0,\"max\":65535,\"inclusive\":true}"
+      ]
+    },
+    "setTimestamp": {
+      "timestampSamples": [
+        "RangeCheck.{\"min\":0,\"max\":1073741823,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setTransposeAmount": {
+      "transposeValue": [
+        "RangeCheck.{\"min\":-128,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setType": {
+      "type": [
+        "RangeCheck.{\"min\":0,\"max\":13,\"inclusive\":true}"
+      ]
+    },
+    "setVelocity": {
+      "newVelocity": [
+        "RangeCheck.{\"min\":0,\"max\":255,\"inclusive\":true}"
+      ]
+    }
+  },
+  "MidiAutomationHandler": {
+    "setAutomationDataFromObject": {
+      "automationData": [
+        "ObjectType.Array"
+      ]
+    },
+    "setControllerNumbersInPopup": {
+      "numberArray": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    }
+  },
+  "MidiPlayer": {
+    "convertEventListToNoteRectangles": {
+      "targetBounds": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "create": {
+      "nominator": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "denominator": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "barLength": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "flushMessageListToSequence": {
+      "sequenceIndexOneBased": [
+        "RangeCheck.{\"min\":1,\"inclusive\":true}"
+      ]
+    },
+    "getEventListFromSequence": {
+      "sequenceIndexOneBased": [
+        "RangeCheck.{\"min\":1,\"inclusive\":true}"
+      ]
+    },
+    "getNoteRectangleList": {
+      "targetBounds": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "isSequenceEmpty": {
+      "indexOneBased": [
+        "RangeCheck.{\"min\":1,\"inclusive\":true}"
+      ]
+    },
+    "saveAsMidiFile": {
+      "trackIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setGlobalPlaybackRatio": {
+      "globalRatio": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setSequence": {
+      "sequenceIndex": [
+        "RangeCheck.{\"min\":1,\"inclusive\":true}"
+      ]
+    },
+    "setTimeSignature": {
+      "timeSignatureObject": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setTrack": {
+      "trackIndex": [
+        "RangeCheck.{\"min\":1,\"inclusive\":true}"
+      ]
+    },
+    "connectToPanel": {
+      "panel": [
+        "ObjectType.ScriptPanel"
+      ]
+    }
+  },
+  "MidiProcessor": {
+    "getAttribute": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "getAttributeId": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "setAttribute": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    }
+  },
+  "Modulator": {
+    "addGlobalModulator": {
+      "globalMod": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "addStaticGlobalModulator": {
+      "timeVariantMod": [
+        "RuntimeIdCheck.Modulator"
+      ]
+    },
+    "getAttribute": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "getAttributeId": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "setAttribute": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    }
+  },
+  "NeuralNetwork": {
+    "build": {
+      "modelJSON": [
+        "ObjectType.JSON"
+      ]
+    },
+    "loadOnnxModel": {
+      "numOutputs": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "processFFTSpectrum": {
+      "numFreqPixels": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "numTimePixels": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    }
+  },
+  "Node": {
+    "set": {
+      "value": [
+        "Conditional.propertyId"
+      ]
+    }
+  },
+  "Parameter": {
+    "setRangeFromObject": {
+      "propertyObject": [
+        "ObjectType.JSON"
+      ]
+    },
+    "setRangeProperty": {
+      "newValue": [
+        "Conditional.propertyId"
+      ]
+    }
+  },
+  "Path": {
+    "addArc": {
+      "area": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "addArrow": {
+      "start": [
+        "GraphicsCheck.Point"
+      ],
+      "end": [
+        "GraphicsCheck.Point"
+      ],
+      "thickness": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "headWidth": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "headLength": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "addEllipse": {
+      "area": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "addPieSegment": {
+      "area": [
+        "GraphicsCheck.Area"
+      ],
+      "innerCircleProportionalSize": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "addPolygon": {
+      "center": [
+        "GraphicsCheck.Point"
+      ],
+      "radius": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "addQuadrilateral": {
+      "xy1": [
+        "GraphicsCheck.Point"
+      ],
+      "xy2": [
+        "GraphicsCheck.Point"
+      ],
+      "xy3": [
+        "GraphicsCheck.Point"
+      ],
+      "xy4": [
+        "GraphicsCheck.Point"
+      ]
+    },
+    "addRectangle": {
+      "area": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "addRoundedRectangle": {
+      "area": [
+        "GraphicsCheck.Area"
+      ],
+      "cornerSize": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "addRoundedRectangleCustomisable": {
+      "area": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "addStar": {
+      "center": [
+        "GraphicsCheck.Point"
+      ],
+      "innerRadius": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "addTriangle": {
+      "xy1": [
+        "GraphicsCheck.Point"
+      ],
+      "xy2": [
+        "GraphicsCheck.Point"
+      ],
+      "xy3": [
+        "GraphicsCheck.Point"
+      ]
+    },
+    "contains": {
+      "point": [
+        "GraphicsCheck.Point"
+      ]
+    },
+    "createStrokedPath": {
+      "strokeData": [
+        "ObjectType.JSON"
+      ]
+    },
+    "getBounds": {
+      "scaleFactor": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getIntersection": {
+      "start": [
+        "GraphicsCheck.Point"
+      ],
+      "end": [
+        "GraphicsCheck.Point"
+      ]
+    },
+    "getPointOnPath": {
+      "distanceFromStart": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "roundCorners": {
+      "radius": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setBounds": {
+      "boundingBox": [
+        "GraphicsCheck.Area"
+      ]
+    }
+  },
+  "Rectangle": {
+    "constrainedWithin": {
+      "targetArea": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "getIntersection": {
+      "otherRect": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "getUnion": {
+      "otherRect": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "intersects": {
+      "otherRect": [
+        "GraphicsCheck.Area"
+      ]
+    },
+    "withAspectRatioLike": {
+      "otherRect": [
+        "GraphicsCheck.Area"
+      ]
+    }
+  },
+  "RoutingMatrix": {
+    "setNumChannels": {
+      "numSourceChannels": [
+        "RangeCheck.{\"min\":0,\"max\":16,\"inclusive\":true}"
+      ]
+    }
+  },
+  "Sample": {
+    "get": {
+      "propertyIndex": [
+        "RangeCheck.{\"min\":1,\"max\":23,\"inclusive\":true}"
+      ]
+    },
+    "getId": {
+      "id": [
+        "RangeCheck.{\"min\":1,\"max\":23,\"inclusive\":true}"
+      ]
+    },
+    "getRange": {
+      "propertyIndex": [
+        "RangeCheck.{\"min\":1,\"max\":23,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyIndex": [
+        "RangeCheck.{\"min\":1,\"max\":23,\"inclusive\":true}"
+      ]
+    },
+    "refersToSameSample": {
+      "otherSample": [
+        "ObjectType.Sample"
+      ]
+    }
+  },
+  "Sampler": {
+    "getAttributeId": {
+      "parameterIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumAttributes() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "getRRGroupsForMessage": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "velocity": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "getSoundProperty": {
+      "propertyIndex": [
+        "RangeCheck.{\"min\":1,\"max\":24,\"inclusive\":true}"
+      ],
+      "soundIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumSelectedSounds() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "isNoteNumberMapped": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "loadSampleForAnalysis": {
+      "soundIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumSelectedSounds() - 1$\",\"inclusive\":true}"
+      ]
+    },
+    "setSoundProperty": {
+      "soundIndex": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getNumSelectedSounds() - 1$\",\"inclusive\":true}"
+      ],
+      "propertyIndex": [
+        "RangeCheck.{\"min\":1,\"max\":24,\"inclusive\":true}"
+      ],
+      "newValue": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setSoundPropertyForAllSamples": {
+      "propertyIndex": [
+        "RangeCheck.{\"min\":1,\"max\":24,\"inclusive\":true}"
+      ],
+      "newValue": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setSoundPropertyForSelection": {
+      "propertyId": [
+        "RangeCheck.{\"min\":1,\"max\":24,\"inclusive\":true}"
+      ],
+      "newValue": [
+        "Conditional.propertyId"
+      ]
+    }
+  },
+  "ScriptAudioWaveform": {
+    "registerAtParent": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptAudioWaveform, var)"
+      ]
+    },
+    "setDefaultFolder": {
+      "newDefaultFolder": [
+        "ObjectType.ScriptFile"
+      ]
+    },
+    "setPlaybackPosition": {
+      "normalisedPosition": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    }
+  },
+  "ScriptButton": {
+    "addToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":0,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptButton, var)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setPropertiesFromJSON": {
+      "jsonData": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptComboBox": {
+    "addToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":0,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptComboBox, var)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setValueNormalized": {
+      "normalizedValue": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptDynamicContainer": {
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptDynamicContainer, var)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptedViewport": {
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptedViewport, var)"
+      ]
+    },
+    "setEventTypesForValueCallback": {
+      "eventTypeList": [
+        "ObjectType.Array"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptFloatingTile": {
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptImage": {
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptImage, var)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptLabel": {
+    "addToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":0,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptLabel, var)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptModulationMatrix": {
+    "getConnectionProperty": {
+      "propertyId": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "setConnectionCallback": {
+      "updateFunction": [
+        "CallbackArgCheck.Function(String, String, bool)"
+      ]
+    },
+    "setConnectionProperty": {
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setDragCallback": {
+      "newDragCallback": [
+        "CallbackArgCheck.Function(String, String, String)"
+      ]
+    },
+    "setEditCallback": {
+      "editFunction": [
+        "CallbackArgCheck.Function(int, String)"
+      ]
+    },
+    "setSourceSelectionCallback": {
+      "newCallback": [
+        "CallbackArgCheck.Function(String)"
+      ]
+    }
+  },
+  "ScriptPanel": {
+    "addToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":0,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "get": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "set": {
+      "propertyName": [
+        "RuntimeIdCheck.ScriptComponentProperty"
+      ],
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptPanel, var)"
+      ]
+    },
+    "setFileDropCallback": {
+      "dropFunction": [
+        "CallbackArgCheck.Inline(Object)"
+      ]
+    },
+    "setImage": {
+      "xOffset": [
+        "Conditional.yOffset"
+      ],
+      "yOffset": [
+        "Conditional.yOffset"
+      ]
+    },
+    "setLoadingCallback": {
+      "loadingFunction": [
+        "CallbackArgCheck.Inline(bool)"
+      ]
+    },
+    "setMouseCallback": {
+      "mouseFunction": [
+        "CallbackArgCheck.Inline(Object)"
+      ]
+    },
+    "setMouseCursor": {
+      "hitPoint": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "setPaintRoutine": {
+      "paintFunction": [
+        "CallbackArgCheck.Function(Graphics)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setTimerCallback": {
+      "timerFunction": [
+        "CallbackArgCheck.Inline()"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptShader": {
+    "setUniformData": {
+      "data": [
+        "RangeCheck.{\"min\":2,\"max\":4,\"inclusive\":true}"
+      ]
+    }
+  },
+  "ScriptSlider": {
+    "addToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":0,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptSlider, double)"
+      ]
+    },
+    "setMode": {
+      "mode": [
+        "StringValidator.Option[\"Slider\",\"Decibel\",\"Pan\",\"Time\",\"Frequency\"]"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setRange": {
+      "stepSize": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "setValuePopupFunction": {
+      "newFunction": [
+        "CallbackArgCheck.Function(double)"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    },
+    "setModifiers": {
+      "action": [
+        "StringValidator.Option[\"TextInput\",\"FineTune\",\"ResetToDefault\",\"ContextMenu\",\"ScaleModulation\"]"
+      ]
+    }
+  },
+  "ScriptSliderPack": {
+    "addToMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":0,\"max\":7,\"inclusive\":true}"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "registerAtParent": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptSliderPack, var)"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setUsePreallocatedLength": {
+      "numMaxSliders": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "ScriptTable": {
+    "registerAtParent": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setSnapValues": {
+      "snapValueArray": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "setTablePoint": {
+      "x": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "curve": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    }
+  },
+  "ScriptWebView": {
+    "addBufferToWebSocket": {
+      "bufferIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ],
+      "buffer": [
+        "ObjectType.Buffer"
+      ]
+    },
+    "bindCallback": {
+      "functionToCall": [
+        "CallbackArgCheck.Function(var)"
+      ]
+    },
+    "fadeComponent": {
+      "milliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "getLocalBounds": {
+      "reduceAmount": [
+        "RangeCheck.{\"min\":0.0,\"inclusive\":true}"
+      ]
+    },
+    "sendToWebSocket": {
+      "data": [
+        "ObjectType.JSON"
+      ]
+    },
+    "set": {
+      "value": [
+        "Conditional.propertyId"
+      ]
+    },
+    "setControlCallback": {
+      "controlFunction": [
+        "CallbackArgCheck.Inline(ScriptWebView, var)"
+      ]
+    },
+    "setIndexFile": {
+      "indexFile": [
+        "ObjectType.File"
+      ]
+    },
+    "setPosition": {
+      "x": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ],
+      "w": [
+        "RangeCheck.{\"min\":0,\"max\":900,\"inclusive\":true}"
+      ],
+      "h": [
+        "RangeCheck.{\"min\":0,\"max\":\"$PP.MAX_SCRIPT_HEIGHT$\",\"inclusive\":true}"
+      ]
+    },
+    "setStyleSheetProperty": {
+      "value": [
+        "Conditional.type"
+      ]
+    },
+    "setWebSocketCallback": {
+      "callbackFunction": [
+        "CallbackArgCheck.Function(var)"
+      ]
+    },
+    "setZLevel": {
+      "zLevel": [
+        "StringValidator.Option[\"Back\",\"Default\",\"Front\",\"AlwaysOnTop\"]"
+      ]
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": [
+        "ObjectType.ScriptedLookAndFeel"
+      ]
+    }
+  },
+  "Server": {
+    "callWithGET": {
+      "callback": [
+        "CallbackArgCheck.Function(int, var)"
+      ]
+    },
+    "callWithPOST": {
+      "callback": [
+        "CallbackArgCheck.Function(int, var)"
+      ]
+    },
+    "downloadFile": {
+      "targetFile": [
+        "ObjectType.File"
+      ],
+      "callback": [
+        "CallbackArgCheck.Function()"
+      ]
+    },
+    "setNumAllowedDownloads": {
+      "maxNumberOfParallelDownloads": [
+        "RangeCheck.{\"min\":1,\"inclusive\":true}"
+      ]
+    },
+    "setServerCallback": {
+      "callback": [
+        "CallbackArgCheck.Function(bool)"
+      ]
+    }
+  },
+  "Settings": {
+    "isMidiChannelEnabled": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"max\":16,\"inclusive\":true}"
+      ]
+    },
+    "setSampleFolder": {
+      "sampleFolder": [
+        "ObjectType.File"
+      ]
+    },
+    "setZoomLevel": {
+      "newLevel": [
+        "RangeCheck.{\"min\":0.25,\"max\":2.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "stopPerfettoTracing": {
+      "traceFileToUse": [
+        "ObjectType.File"
+      ]
+    },
+    "toggleMidiChannel": {
+      "index": [
+        "RangeCheck.{\"min\":0,\"max\":16,\"inclusive\":true}"
+      ]
+    }
+  },
+  "SliderPackData": {
+    "setContentCallback": {
+      "contentFunction": [
+        "CallbackArgCheck.Function(int)"
+      ]
+    },
+    "setDisplayCallback": {
+      "displayFunction": [
+        "CallbackArgCheck.Function(float)"
+      ]
+    },
+    "setNumSliders": {
+      "numSliders": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setRange": {
+      "stepSize": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "setUsePreallocatedLength": {
+      "length": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    }
+  },
+  "SliderPackProcessor": {
+    "getSliderPack": {
+      "sliderPackIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    }
+  },
+  "Synth": {
+    "addController": {
+      "channel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ],
+      "number": [
+        "RangeCheck.{\"min\":0,\"max\":129,\"inclusive\":true}"
+      ],
+      "value": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "timeStampSamples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "addNoteOff": {
+      "channel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ],
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "timeStampSamples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "addNoteOn": {
+      "channel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ],
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "velocity": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "timeStampSamples": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "addPitchFade": {
+      "eventId": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "fadeTimeMilliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ],
+      "targetFinePitch": [
+        "RangeCheck.{\"min\":0,\"max\":100,\"inclusive\":true}"
+      ]
+    },
+    "addVolumeFade": {
+      "eventId": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "fadeTimeMilliseconds": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "getAttribute": {
+      "attributeIndex": [
+        "Conditional.attributeIndex"
+      ]
+    },
+    "isKeyDown": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "noteOffByEventId": {
+      "eventId": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ]
+    },
+    "noteOffDelayedByEventId": {
+      "eventId": [
+        "RangeCheck.{\"min\":0,\"inclusive\":false}"
+      ],
+      "timestamp": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "noteOffFromUI": {
+      "channel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ],
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "playNote": {
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "velocity": [
+        "RangeCheck.{\"min\":1,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "playNoteFromUI": {
+      "channel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ],
+      "noteNumber": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "velocity": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "playNoteWithStartOffset": {
+      "channel": [
+        "RangeCheck.{\"min\":1,\"max\":16,\"inclusive\":true}"
+      ],
+      "number": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ],
+      "velocity": [
+        "RangeCheck.{\"min\":1,\"max\":127,\"inclusive\":true}"
+      ],
+      "offset": [
+        "RangeCheck.{\"min\":0,\"max\":65535,\"inclusive\":true}"
+      ]
+    },
+    "sendController": {
+      "number": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ],
+      "value": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "sendControllerToChildSynths": {
+      "controllerNumber": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ],
+      "controllerValue": [
+        "RangeCheck.{\"min\":0,\"max\":127,\"inclusive\":true}"
+      ]
+    },
+    "setAttribute": {
+      "attributeIndex": [
+        "Conditional.attributeIndex"
+      ]
+    },
+    "setMacroControl": {
+      "macroIndex": [
+        "RangeCheck.{\"min\":1,\"max\":8,\"inclusive\":true}"
+      ],
+      "newValue": [
+        "RangeCheck.{\"min\":0.0,\"max\":127.0,\"inclusive\":true}"
+      ]
+    },
+    "setModulatorAttribute": {
+      "modulatorIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ],
+      "attributeIndex": [
+        "Conditional.attributeIndex"
+      ],
+      "newValue": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "setVoiceGainValue": {
+      "voiceIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setVoicePitchValue": {
+      "voiceIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true,\"clamps\":true}"
+      ],
+      "pitchValue": [
+        "RangeCheck.{\"min\":0.5,\"max\":2.0,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "startTimer": {
+      "seconds": [
+        "RangeCheck.{\"min\":0.004,\"inclusive\":true}"
+      ]
+    },
+    "addMessageFromHolder": {
+      "messageHolder": [
+        "ObjectType.MessageHolder"
+      ]
+    }
+  },
+  "Table": {
+    "addTablePoint": {
+      "x": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "getTableValueNormalised": {
+      "normalisedInput": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "setContentCallback": {
+      "contentFunction": [
+        "CallbackArgCheck.Function(int)"
+      ]
+    },
+    "setDisplayCallback": {
+      "displayFunction": [
+        "CallbackArgCheck.Function(double)"
+      ]
+    },
+    "setTablePoint": {
+      "x": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ],
+      "curve": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    },
+    "linkTo": {
+      "otherTable": [
+        "ObjectType.Table"
+      ]
+    }
+  },
+  "TableProcessor": {
+    "addTablePoint": {
+      "tableIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "exportAsBase64": {
+      "tableIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "getTable": {
+      "tableIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "reset": {
+      "tableIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "restoreFromBase64": {
+      "tableIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ]
+    },
+    "setTablePoint": {
+      "tableIndex": [
+        "RangeCheck.{\"min\":0,\"inclusive\":true}"
+      ],
+      "x": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ],
+      "y": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ],
+      "curve": [
+        "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true}"
+      ]
+    }
+  },
+  "Threads": {
+    "killVoicesAndCall": {
+      "functionToExecute": [
+        "CallbackArgCheck.Function()"
+      ]
+    },
+    "startProfiling": {
+      "options": [
+        "RangeCheck.{\"min\":10,\"max\":10000,\"inclusive\":true}"
+      ],
+      "finishCallback": [
+        "CallbackArgCheck.Function(String)"
+      ]
+    }
+  },
+  "Timer": {
+    "startTimer": {
+      "intervalInMilliSeconds": [
+        "RangeCheck.{\"min\":10,\"inclusive\":false}"
+      ]
+    }
+  },
+  "TransportHandler": {
+    "setEnableGrid": {
+      "tempoFactor": [
+        "RangeCheck.{\"min\":0,\"max\":18,\"inclusive\":true}"
+      ]
+    },
+    "setSyncMode": {
+      "syncMode": [
+        "RangeCheck.{\"min\":0,\"max\":5,\"inclusive\":true}"
+      ]
+    }
+  },
+  "Unlocker": {
+    "checkMuseHub": {
+      "resultCallback": [
+        "CallbackArgCheck.Function(bool)"
+      ]
+    },
+    "setProductCheckFunction": {
+      "checkFunction": [
+        "CallbackArgCheck.Function(String)"
+      ]
+    }
+  },
+  "UserPresetHandler": {
+    "attachAutomationCallback": {
+      "updateCallback": [
+        "CallbackArgCheck.Function(int, double)"
+      ]
+    },
+    "setCustomAutomation": {
+      "automationData": [
+        "ObjectType.Array"
+      ]
+    },
+    "setParameterGestureCallback": {
+      "callbackFunction": [
+        "CallbackArgCheck.Function(int, int, bool)"
+      ]
+    },
+    "setPluginParameterGroupNames": {
+      "pluginParameterGroupNames": [
+        "ObjectType.Array"
+      ]
+    },
+    "setPluginParameterSortFunction": {
+      "customSortFunction": [
+        "CallbackArgCheck.Function(Object, Object)"
+      ]
+    },
+    "setPostCallback": {
+      "presetPostCallback": [
+        "CallbackArgCheck.Function(ScriptFile)"
+      ]
+    },
+    "setPostSaveCallback": {
+      "presetPostSaveCallback": [
+        "CallbackArgCheck.Function(ScriptFile)"
+      ]
+    },
+    "setPreCallback": {
+      "presetPreCallback": [
+        "CallbackArgCheck.Function(var)"
+      ]
+    },
+    "setUseCustomUserPresetModel": {
+      "loadCallback": [
+        "CallbackArgCheck.Function(var)"
+      ],
+      "saveCallback": [
+        "CallbackArgCheck.Function(String)"
+      ]
+    },
+    "updateAutomationValues": {
+      "data": [
+        "ObjectType.JSON"
+      ]
+    },
+    "updateSaveInPresetComponents": {
+      "obj": [
+        "ObjectType.JSON"
+      ]
+    }
+  },
+  "WavetableController": {
+    "saveAsHwt": {
+      "outputFile": [
+        "ObjectType.ScriptFile"
+      ]
+    },
+    "setPostFXProcessors": {
+      "postFXData": [
+        "ObjectType.JSON"
+      ]
+    }
+  },
+  "SlotFX": {
+    "swap": {
+      "otherSlot": [
+        "ObjectType.SlotFX"
+      ]
+    }
+  },
+  "UnorderedStack": {
+    "removeIfEqual": {
+      "holder": [
+        "ObjectType.MessageHolder"
+      ]
+    },
+    "storeEvent": {
+      "holder": [
+        "ObjectType.MessageHolder"
+      ]
+    }
+  },
+  "ScriptLookAndFeel": {
+    "registerFunction": {
+      "functionName": [
+        "StringValidator.Options[$CUSTOM.LafFunctions$]"
+      ],
+      "paintFunction": [
+        "Conditional.functionName"
+      ]
+    }
+  }
+}

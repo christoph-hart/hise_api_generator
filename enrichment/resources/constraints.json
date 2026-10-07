@@ -1,0 +1,4626 @@
+{
+  "Array": {
+    "concat": {
+      "arrayToConcat": "Variadic; non-array values silently ignored"
+    },
+    "contains": {
+      "value": "Loose comparison (1 == 1.0)"
+    },
+    "every": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "filter": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "find": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "findIndex": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "forEach": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "includes": {
+      "value": "Loose comparison (1 == 1.0)"
+    },
+    "indexOf": {
+      "elementToLookFor": "--",
+      "startOffset": "Default: 0",
+      "typeStrictness": "Default: 0"
+    },
+    "insert": {
+      "index": "--",
+      "value1": "Variadic: additional arguments insert at consecutive positions"
+    },
+    "isArray": {
+      "value": "--"
+    },
+    "join": {
+      "separator": "Default: empty string"
+    },
+    "lastIndexOf": {
+      "value": "Loose comparison only"
+    },
+    "map": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "push": {
+      "value1": "Variadic: additional arguments each appended"
+    },
+    "pushIfNotAlreadyThere": {
+      "value1": "Variadic: each argument checked independently"
+    },
+    "remove": {
+      "value": "Loose comparison"
+    },
+    "removeElement": {
+      "index": "Out-of-range indices are silently ignored"
+    },
+    "reserve": {
+      "numElements": "--"
+    },
+    "slice": {
+      "start": "--",
+      "end": "Default: array length"
+    },
+    "some": {
+      "callback": "Must be a function",
+      "thisArg": "Optional"
+    },
+    "sort": {
+      "comparator": "Return negative if a < b, 0 if equal, positive if a > b"
+    }
+  },
+  "AudioFile": {
+    "getLoopRange": {
+      "subtractStart": "0 or 1"
+    },
+    "linkTo": {
+      "otherAudioFile": "Must be same data type"
+    },
+    "loadBuffer": {
+      "bufferData": "--",
+      "sampleRate": "> 0",
+      "loopRange": "2 elements or empty"
+    },
+    "loadFile": {
+      "filePath": "--"
+    },
+    "setContentCallback": {
+      "contentFunction": "`this` = the AudioFile"
+    },
+    "setDisplayCallback": {
+      "displayFunction": "Must accept 1 argument"
+    },
+    "setRange": {
+      "min": ">= 0, clamped to valid range",
+      "max": "<= total length, clamped"
+    }
+  },
+  "AudioSampleProcessor": {
+    "getAttribute": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeId": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeIndex": {
+      "parameterId": "Must match a valid parameter name for the wrapped processor"
+    },
+    "getAudioFile": {
+      "slotIndex": "Use 0 for AudioSampleProcessor (single slot)"
+    },
+    "getLoopRange": {
+      "subtractStart": "Boolean (0 or 1)"
+    },
+    "setAttribute": {
+      "parameterIndex": "0 to getNumAttributes()-1",
+      "newValue": "Range depends on the parameter"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "Boolean (0 or 1)"
+    },
+    "setFile": {
+      "fileName": "Must use HISE pool reference format"
+    },
+    "setSampleRange": {
+      "start": "0 to total file length",
+      "end": "start to total file length"
+    }
+  },
+  "BackgroundTask": {
+    "callOnBackgroundThread": {
+      "backgroundTaskFunction": "Must accept 1 argument (the BackgroundTask)"
+    },
+    "getProperty": {
+      "id": "--"
+    },
+    "killVoicesAndCall": {
+      "loadingFunction": "Must accept 0 arguments"
+    },
+    "runProcess": {
+      "command": "--",
+      "args": "Array of strings, or a single String (tokenized by spaces respecting quotes)",
+      "logFunction": "Must accept 3 arguments"
+    },
+    "sendAbortSignal": {
+      "blockUntilStopped": "Boolean (0 or 1)"
+    },
+    "setFinishCallback": {
+      "newFinishCallback": "Must accept 2 arguments"
+    },
+    "setForwardStatusToLoadingThread": {
+      "enabled": "Boolean (0 or 1)"
+    },
+    "setProgress": {
+      "p": "0.0-1.0 (clamped)"
+    },
+    "setProperty": {
+      "id": "--",
+      "value": "Any type"
+    },
+    "setStatusMessage": {
+      "m": "--"
+    },
+    "setTimeOut": {
+      "newTimeout": "Default: 500"
+    }
+  },
+  "BeatportManager": {
+    "setProductId": {
+      "productId": "--"
+    }
+  },
+  "Broadcaster": {
+    "addComponentPropertyListener": {
+      "object": "Must resolve to valid ScriptComponent(s)",
+      "propertyList": "Must be valid properties on all target components",
+      "metadata": "Non-empty string or object with `id`",
+      "optionalFunction": "If a function, must accept `numArgs + 1` parameters and return a value"
+    },
+    "addComponentRefreshListener": {
+      "componentIds": "Must resolve to at least one valid ScriptComponent",
+      "refreshType": "One of: `\"repaint\"`, `\"changed\"`, `\"updateValueFromProcessorConnection\"`, `\"loseFocus\"`, `\"resetValueToDefault\"`",
+      "metadata": "Non-empty string or object with `id`"
+    },
+    "addComponentValueListener": {
+      "object": "Must resolve to valid ScriptComponent(s)",
+      "metadata": "Non-empty string or object with `id`",
+      "optionalFunction": "If a function, must accept `numArgs + 1` parameters and return a value"
+    },
+    "addDelayedListener": {
+      "delayInMilliSeconds": ">= 0",
+      "obj": "--",
+      "metadata": "Non-empty string or object with `id`",
+      "function": "Must accept the broadcaster's argument count"
+    },
+    "addListener": {
+      "object": "--",
+      "metadata": "Non-empty string or object with `id`",
+      "function": "Must accept the broadcaster's argument count. Must be realtime-safe if broadcaster is in realtime mode"
+    },
+    "addModuleParameterSyncer": {
+      "moduleId": "Must match an existing module in the processor tree",
+      "parameterIndex": "Must resolve to a valid parameter index on the target module",
+      "metadata": "Non-empty string or object with `id`"
+    },
+    "attachToComplexData": {
+      "dataTypeAndEvent": "Both parts must be non-empty; DataType must match a valid ExternalData type name",
+      "moduleIds": "Each must resolve to a processor that implements ExternalDataHolder",
+      "dataIndexes": "Each index must be valid for the specified data type on the target module",
+      "optionalMetadata": "--"
+    },
+    "attachToComponentMouseEvents": {
+      "componentIds": "Must resolve to valid ScriptComponent(s)",
+      "callbackLevel": "Must be one of the valid callback level strings (see table above)",
+      "optionalMetadata": "--"
+    },
+    "attachToComponentProperties": {
+      "componentIds": "Must resolve to valid ScriptComponent(s)",
+      "propertyIds": "Must be valid properties on all target components",
+      "optionalMetadata": "--"
+    },
+    "attachToComponentValue": {
+      "componentIds": "Must resolve to valid ScriptComponent(s)",
+      "optionalMetadata": "--"
+    },
+    "attachToComponentVisibility": {
+      "componentIds": "Must resolve to valid ScriptComponent(s)",
+      "optionalMetadata": "--"
+    },
+    "attachToContextMenu": {
+      "componentIds": "Must resolve to valid ScriptComponent(s)",
+      "stateFunction": "If a function, must accept 2 arguments (type: String, index: int) and return a value",
+      "itemList": "At least one item",
+      "optionalMetadata": "--",
+      "useLeftClick": "Boolean"
+    },
+    "attachToEqEvents": {
+      "moduleIds": "Each must resolve to a processor implementing ProcessorFilterStatistics::Holder",
+      "eventTypes": "Each must be one of: `\"BandAdded\"`, `\"BandRemoved\"`, `\"BandSelected\"`, `\"FFTEnabled\"`",
+      "optionalMetadata": "--"
+    },
+    "attachToInterfaceSize": {
+      "optionalMetadata": "--"
+    },
+    "attachToModuleParameter": {
+      "moduleIds": "Each must resolve to a valid processor. Multiple modules must be the same type",
+      "parameterIds": "String names must resolve to valid parameters. Special IDs: `\"Bypassed\"`, `\"Enabled\"`, `\"Intensity\"` (Modulator only)",
+      "optionalMetadata": "--"
+    },
+    "attachToNonRealtimeChange": {
+      "optionalMetadata": "--"
+    },
+    "attachToOtherBroadcaster": {
+      "otherBroadcaster": "Must be Broadcaster instance(s)",
+      "argTransformFunction": "If a function, receives the source broadcaster's args and should return an array",
+      "async": "`true` or `false`",
+      "optionalMetadata": "Non-empty string or object with `id`"
+    },
+    "attachToProcessingSpecs": {
+      "optionalMetadata": "Non-empty string or object with `id`"
+    },
+    "attachToRadioGroup": {
+      "radioGroupIndex": "Must be > 0 and match at least one component's `radioGroup` property",
+      "optionalMetadata": "Non-empty string or object with `id`"
+    },
+    "attachToRoutingMatrix": {
+      "moduleIds": "Each must reference a processor with a routing matrix (RoutableProcessor)",
+      "optionalMetadata": "Non-empty string or object with `id`"
+    },
+    "attachToSampleMap": {
+      "samplerIds": "Must reference ModulatorSampler processors",
+      "eventTypes": "Valid strings: `\"SampleMapChanged\"`, `\"SamplesAddedOrRemoved\"`. Integers index into `SampleIds` for `SampleChanged`",
+      "optionalMetadata": "Non-empty string or object with `id`"
+    },
+    "callWithDelay": {
+      "delayInMilliseconds": "Must be a positive integer",
+      "argArray": "Must be an array",
+      "function": "Must be a valid JavaScript function"
+    },
+    "removeListener": {
+      "idFromMetadata": "Must match the metadata used when the listener was registered"
+    },
+    "removeSource": {
+      "metadata": "Must match the metadata used when the source was attached"
+    },
+    "resendLastMessage": {
+      "isSync": "Use notification type constants, not raw booleans"
+    },
+    "sendAsyncMessage": {
+      "args": "Array length must equal `defaultValues.size()`, or be a non-array for 1-arg broadcasters"
+    },
+    "sendMessageWithDelay": {
+      "args": "Length must equal `defaultValues.size()`",
+      "delayInMilliseconds": "Must be > 0 for meaningful delay"
+    },
+    "sendSyncMessage": {
+      "args": "Length must equal the broadcaster's argument count"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "Boolean",
+      "sendMessageIfEnabled": "Boolean",
+      "async": "Boolean or notification constant"
+    },
+    "setEnableQueue": {
+      "shouldUseQueue": "Boolean"
+    },
+    "setForceSynchronousExecution": {
+      "shouldExecuteSynchronously": "Boolean"
+    },
+    "setRealtimeMode": {
+      "enableRealTimeMode": "Boolean"
+    },
+    "setReplaceThisReference": {
+      "shouldReplaceThisReference": "Boolean"
+    },
+    "setSendMessageForUndefinedArgs": {
+      "shouldSendWhenUndefined": "Boolean"
+    }
+  },
+  "Buffer": {
+    "applyMedianFilter": {
+      "windowSize": "Should be > 0."
+    },
+    "decompose": {
+      "sampleRate": "Defaults to `44100.0` when omitted.",
+      "configData": "Property names are case-sensitive and must match C++ keys."
+    },
+    "detectPitch": {
+      "sampleRate": "Required.",
+      "startSample": "Defaults to `0` when omitted.",
+      "numSamples": "Defaults to remaining buffer length."
+    },
+    "fromBase64": {
+      "b64String": "Maximum decoded size is 44100 samples."
+    },
+    "getMagnitude": {
+      "startSample": "Clamped to valid range.",
+      "numSamples": "Clamped to available range."
+    },
+    "getNextZeroCrossing": {
+      "index": "Should be >= 0 and `< length - 1`."
+    },
+    "getPeakRange": {
+      "startSample": "Should be >= 0.",
+      "numSamples": "Defaults to full remaining length."
+    },
+    "getRMSLevel": {
+      "startSample": "Should be >= 0.",
+      "numSamples": "Defaults to full remaining length."
+    },
+    "getSlice": {
+      "offsetInBuffer": "Defaults to `0`.",
+      "numSamples": "Defaults to remaining length after offset."
+    },
+    "indexOfPeak": {
+      "startSample": "Defaults to `0`.",
+      "numSamples": "Defaults to full remaining length."
+    },
+    "normalise": {
+      "gainInDecibels": "Defaults to 0 dB when omitted."
+    },
+    "resample": {
+      "ratio": "Clamped to `0.01..1000.0`.",
+      "interpolationType": "One of `WindowedSinc`, `Lagrange`, `CatmullRom`, `Linear`, `ZeroOrderHold`.",
+      "wrapAround": "Defaults to `0` (false)."
+    },
+    "toCharString": {
+      "numChars": "Defaults to buffer length.",
+      "range": "Defaults to `[0.0, 1.0]`."
+    },
+    "trim": {
+      "trimFromStart": "Clamped to `0..length-1`.",
+      "trimFromEnd": "Clamped to the remaining range."
+    }
+  },
+  "Builder": {
+    "clearChildren": {
+      "buildIndex": "Must be a valid build index",
+      "chainIndex": "Use ChainIndexes constants"
+    },
+    "connectToScript": {
+      "buildIndex": "Must point to a JavascriptProcessor",
+      "relativePath": "Must be a valid .js file path"
+    },
+    "create": {
+      "type": "Must match a registered factory type",
+      "id": "Should be unique within the parent scope",
+      "rootBuildIndex": "0 = MainSynthChain",
+      "chainIndex": "Use ChainIndexes constants"
+    },
+    "get": {
+      "buildIndex": "Must be a valid build index",
+      "interfaceType": "Must match the module's actual type"
+    },
+    "getExisting": {
+      "processorId": "Must match an existing processor's ID"
+    },
+    "setAttributes": {
+      "buildIndex": "Must be a valid build index",
+      "attributeValues": "Keys must match the module's parameter identifiers"
+    }
+  },
+  "ChildSynth": {
+    "addGlobalModulator": {
+      "chainIndex": "Must be a valid ModulatorChain index",
+      "globalMod": "Must be a ScriptingModulator",
+      "modName": "--"
+    },
+    "addModulator": {
+      "chainIndex": "Must be a valid ModulatorChain index",
+      "typeName": "Must match an existing modulator type",
+      "modName": "--"
+    },
+    "addStaticGlobalModulator": {
+      "chainIndex": "Must be a valid ModulatorChain index",
+      "timeVariantMod": "Must be a ScriptingModulator",
+      "modName": "--"
+    },
+    "getAttribute": {
+      "parameterIndex": "Must be a valid parameter index for the wrapped processor"
+    },
+    "getAttributeId": {
+      "parameterIndex": "Must be a valid parameter index"
+    },
+    "getAttributeIndex": {
+      "parameterId": "--"
+    },
+    "getChildSynthByIndex": {
+      "index": "0 to numChildren-1"
+    },
+    "getCurrentLevel": {
+      "leftChannel": "--"
+    },
+    "getModulatorChain": {
+      "chainIndex": "Must be a valid child processor index that casts to Modulator"
+    },
+    "restoreState": {
+      "base64State": "Must be a valid base64-encoded ValueTree"
+    },
+    "setAttribute": {
+      "parameterIndex": "Must be a valid parameter index",
+      "newValue": "Range depends on the specific parameter"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "--"
+    },
+    "setEffectChainOrder": {
+      "doPoly": "Currently ignored -- see pitfall",
+      "slotRange": "Parsed as a Point via ApiHelpers::getPointFromVar",
+      "chainOrder": "Indices must be within the slot range"
+    },
+    "setModulationInitialValue": {
+      "chainIndex": "Must be a valid ModulatorChain index",
+      "initialValue": "--"
+    }
+  },
+  "Colours": {
+    "fromHsl": {
+      "hsl": "Must be exactly 4 elements"
+    },
+    "fromVec4": {
+      "vec4": "Must be exactly 4 elements"
+    },
+    "mix": {
+      "colour1": "ARGB integer, hex string, or named constant",
+      "colour2": "ARGB integer, hex string, or named constant",
+      "alpha": "0.0-1.0 typical; not clamped"
+    },
+    "toHsl": {
+      "colour": "ARGB integer, hex string, or named constant"
+    },
+    "toVec4": {
+      "colour": "ARGB integer, hex string, or named constant"
+    },
+    "withAlpha": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "alpha": "Clamped to 0.0-1.0"
+    },
+    "withBrightness": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "brightness": "Clamped to 0.0-1.0"
+    },
+    "withHue": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "hue": "Clamped to 0.0-1.0 (0.0 = red, 0.333 = green, 0.667 = blue)"
+    },
+    "withMultipliedAlpha": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "factor": ">= 0.0 (no upper bound; result clamped to byte range)"
+    },
+    "withMultipliedBrightness": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "factor": ">= 0.0 (no upper bound; result clamped internally)"
+    },
+    "withMultipliedSaturation": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "factor": ">= 0.0 (no upper bound; result clamped internally)"
+    },
+    "withSaturation": {
+      "colour": "ARGB integer, hex string, or named constant",
+      "saturation": "Clamped to 0.0-1.0"
+    }
+  },
+  "ComplexGroupManager": {
+    "addGroupEventStartOffset": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "offsetSamples": ">= 0"
+    },
+    "createNoteMap": {
+      "layerIdOrIndex": "Also accepts String layer ID"
+    },
+    "delayGroupEvent": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "delayInSamples": ">= 0"
+    },
+    "fadeInGroupEvent": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "fadeInTimeMs": ">= 0",
+      "targetGainDb": "0.0 = unity gain, negative = attenuation"
+    },
+    "fadeOutGroupEvent": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "fadeOutTimeMs": ">= 0"
+    },
+    "getCurrentPeak": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "eventId": "Valid event ID from Message.getEventId()"
+    },
+    "getLayerIndex": {
+      "layerIdOrIndex": "Also accepts String layer ID"
+    },
+    "getLayerProperty": {
+      "layerIndex": "0 to numLayers-1",
+      "propertyId": "See Value Descriptions"
+    },
+    "getNumGroupsInLayer": {
+      "layerIndex": "0 to numLayers-1"
+    },
+    "isNoteNumberMapped": {
+      "layerIndex": "0 to numLayers-1",
+      "noteNumber": "0-127"
+    },
+    "registerGroupStartCallback": {
+      "layerIdOrIndex": "Also accepts String layer ID",
+      "callback": "Must be an inline function"
+    },
+    "setActiveGroup": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1; IgnoreFlag (255) rejected"
+    },
+    "setEnableGainTracking": {
+      "layerIdOrIndex": "Also accepts String layer ID",
+      "groupIndex": "0 to numGroups-1; IgnoreFlag rejected",
+      "shouldBeActive": "0 or 1"
+    },
+    "setFixedGroupEventLength": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "numSamplesToPlayBeforeFadeout": "> 0"
+    },
+    "setGroupVolume": {
+      "layerIndex": "0 to numLayers-1",
+      "groupIndex": "0 to numGroups-1",
+      "gainFactor": "0.0 = silence, 1.0 = unity gain"
+    },
+    "setLayerProperty": {
+      "layerIndex": "0 to numLayers-1",
+      "propertyId": "See Value Descriptions",
+      "value": "Must match expected type for the property"
+    }
+  },
+  "Connection": {
+    "getSourceNode": {
+      "getSignalSource": "Boolean (0 or 1)"
+    }
+  },
+  "Console": {
+    "assertEqual": {
+      "v1": "--",
+      "v2": "--"
+    },
+    "assertIsDefined": {
+      "value": "--"
+    },
+    "assertIsObjectOrArray": {
+      "value": "--"
+    },
+    "assertLegalNumber": {
+      "value": "--"
+    },
+    "assertNoString": {
+      "value": "--"
+    },
+    "assertTrue": {
+      "condition": "--"
+    },
+    "assertWithMessage": {
+      "condition": "--",
+      "errorMessage": "--"
+    },
+    "print": {
+      "x": "--"
+    },
+    "sample": {
+      "label": "--",
+      "dataToSample": "--"
+    },
+    "startSampling": {
+      "sessionId": "--"
+    },
+    "stop": {
+      "condition": "--"
+    },
+    "testCallback": {
+      "obj": "Must be a valid UI component reference.",
+      "callbackId": "--",
+      "argList": "--"
+    }
+  },
+  "ContainerChild": {
+    "addChildComponent": {
+      "childData": "Must contain valid dyncomp properties"
+    },
+    "addStateToUserPreset": {
+      "shouldAdd": "Boolean"
+    },
+    "fromBase64": {
+      "b64": "Must be a valid zstd-compressed Base64 string"
+    },
+    "get": {
+      "id": "Must be a valid dyncomp property name"
+    },
+    "getAllComponents": {
+      "regex": "Uses `*` and `?` glob syntax, not regex"
+    },
+    "getChildComponentIndex": {
+      "childIdOrComponent": "String or ScriptObject (ContainerChild)"
+    },
+    "getComponent": {
+      "childId": "Exact string match"
+    },
+    "getLocalBounds": {
+      "margin": "Non-negative"
+    },
+    "isEqual": {
+      "other": "String or ScriptObject (ContainerChild)"
+    },
+    "loseFocus": {
+      "recursive": "Boolean"
+    },
+    "resetValueToDefault": {
+      "recursive": "Boolean"
+    },
+    "sendRepaintMessage": {
+      "recursive": "Boolean"
+    },
+    "set": {
+      "id": "Must be a valid dyncomp property name",
+      "newValue": "Type depends on the property"
+    },
+    "setBounds": {
+      "area": "Must be a valid rectangle array"
+    },
+    "setChildCallback": {
+      "newChildCallback": "Must accept 2 arguments"
+    },
+    "setControlCallback": {
+      "controlCallback": "Must accept 1 argument"
+    },
+    "setPaintRoutine": {
+      "newPaintRoutine": "Must accept 1 argument (Graphics)"
+    },
+    "setValue": {
+      "newValue": "Any type"
+    },
+    "setValueWithUndo": {
+      "newValue": "Any type"
+    },
+    "toBase64": {
+      "includeValues": "Boolean"
+    },
+    "updateValueFromProcessorConnection": {
+      "recursive": "Boolean"
+    }
+  },
+  "Content": {
+    "addAudioWaveform": {
+      "audioWaveformName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addButton": {
+      "buttonName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addComboBox": {
+      "boxName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addDynamicContainer": {
+      "containerId": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addFloatingTile": {
+      "floatingTileName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addImage": {
+      "imageName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addKnob": {
+      "knobName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addLabel": {
+      "label": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addMultipageDialog": {
+      "dialogId": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addPanel": {
+      "panelName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addSliderPack": {
+      "sliderPackName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addTable": {
+      "tableName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addViewport": {
+      "viewportName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "addVisualGuide": {
+      "guideData": "`[x,y,w,h]` for rect, `[0,y]` for h-line, `[x,0]` for v-line",
+      "colour": "0xAARRGGBB or Colours constant"
+    },
+    "addWebView": {
+      "webviewName": "No whitespace",
+      "x": ">= 0 (clamped via jmax)",
+      "y": ">= 0 (clamped via jmax)"
+    },
+    "callAfterDelay": {
+      "milliSeconds": "> 0",
+      "function": "Takes 0 arguments",
+      "thisObject": "--"
+    },
+    "componentExists": {
+      "name": "Case-sensitive"
+    },
+    "createSVG": {
+      "base64Data": "Must be valid base64"
+    },
+    "createScreenshot": {
+      "area": "--",
+      "directory": "Must be a directory",
+      "name": ".png added automatically"
+    },
+    "createShader": {
+      "fileName": "Empty string to skip loading"
+    },
+    "getAllComponents": {
+      "regex": "\".*\" for all"
+    },
+    "getComponent": {
+      "componentName": "Must match a created component"
+    },
+    "getScreenBounds": {
+      "getTotalArea": "--"
+    },
+    "makeFrontInterface": {
+      "width": "> 0",
+      "height": "> 0"
+    },
+    "restoreAllControlsFromPreset": {
+      "fileName": "Must be a valid XML preset file"
+    },
+    "setContentTooltip": {
+      "tooltipText": "--"
+    },
+    "setHeight": {
+      "newHeight": "> 0"
+    },
+    "setKeyPressCallback": {
+      "keyPress": "Must parse to a valid KeyPress",
+      "callback": "--"
+    },
+    "setName": {
+      "newName": "--"
+    },
+    "setPropertiesFromJSON": {
+      "name": "Must exist",
+      "jsonData": "Keys must be valid property names"
+    },
+    "setSuspendTimerCallback": {
+      "suspendFunction": "Must be a JS function"
+    },
+    "setUpdateExistingPosition": {
+      "shouldUpdateExistingComponents": "Default: true"
+    },
+    "setUseHighResolutionForPanels": {
+      "shouldUseDoubleResolution": "Boolean"
+    },
+    "setValuePopupData": {
+      "jsonData": "See schema below"
+    },
+    "setWidth": {
+      "newWidth": "> 0"
+    },
+    "showModalTextInput": {
+      "properties": "See schema below",
+      "callback": "Must have 2 args"
+    },
+    "storeAllControlsAsPreset": {
+      "fileName": "Should end in .xml",
+      "automationData": "ValueTree or undefined"
+    }
+  },
+  "Date": {
+    "ISO8601ToMilliseconds": {
+      "iso8601": "Valid ISO-8601 format"
+    },
+    "getSystemTimeISO8601": {
+      "includeDividerCharacters": "Boolean (0 or 1)"
+    },
+    "millisecondsToISO8601": {
+      "miliseconds": "64-bit integer",
+      "includeDividerCharacters": "Boolean (0 or 1)"
+    }
+  },
+  "DisplayBuffer": {
+    "copyReadBuffer": {
+      "targetBuffer": "Buffer size must match read buffer sample count; array length must match channel count"
+    },
+    "createPath": {
+      "dstArea": "4-element array parseable as rectangle",
+      "sourceRange": "minValue clamped to >= -1.0, maxValue clamped to <= 1.0, startSample clamped to >= 0",
+      "normalisedStartValue": "--"
+    },
+    "fromBase64": {
+      "b64": "--",
+      "useUndoManager": "0 or 1"
+    },
+    "getResizedBuffer": {
+      "numDestSamples": "Must be > 0 for useful output",
+      "resampleMode": "--"
+    },
+    "setActive": {
+      "shouldBeActive": "--"
+    },
+    "setRingBufferProperties": {
+      "propertyData": "Keys must match the active PropertyObject's supported properties"
+    }
+  },
+  "DisplayBufferSource": {
+    "getDisplayBuffer": {
+      "index": "0 to numDisplayBuffers-1"
+    }
+  },
+  "DspNetwork": {
+    "clear": {
+      "removeNodesFromSignalChain": "Boolean: 0 or 1",
+      "removeUnusedNodes": "Boolean: 0 or 1"
+    },
+    "create": {
+      "path": "Must match a registered node factory",
+      "id": "If empty, auto-generated from path suffix"
+    },
+    "createAndAdd": {
+      "path": "Must match a registered node factory",
+      "id": "If empty, auto-generated from path suffix",
+      "parent": "Must be a container node (e.g. container.chain)"
+    },
+    "createFromJSON": {
+      "jsonData": "Must be a valid object with FactoryPath and ID properties",
+      "parent": "Must be a container node"
+    },
+    "createTest": {
+      "testData": "Must be a valid JSON object"
+    },
+    "get": {
+      "id": "--"
+    },
+    "injectAndProbe": {
+      "injectData": "Must contain a `parent` property with the ID of a supported container node",
+      "reportCallback": "Called asynchronously with one report object"
+    },
+    "prepareToPlay": {
+      "sampleRate": "Must be > 0.0 for initialization to proceed",
+      "blockSize": "Positive value"
+    },
+    "processBlock": {
+      "data": "All buffers must have equal sample counts"
+    },
+    "setForwardControlsToParameters": {
+      "shouldForward": "Boolean: 0 or 1"
+    },
+    "setParameterDataFromJSON": {
+      "jsonData": "Keys must use dot-separated `nodeId.parameterId` format"
+    }
+  },
+  "Effect": {
+    "addGlobalModulator": {
+      "chainIndex": "Must reference a valid ModulatorChain child processor",
+      "globalMod": "Must be inside a GlobalModulatorContainer",
+      "modName": "--"
+    },
+    "addModulator": {
+      "chainIndex": "Must reference a valid ModulatorChain child processor",
+      "typeName": "Must be a valid modulator type name",
+      "modName": "--"
+    },
+    "addStaticGlobalModulator": {
+      "chainIndex": "Must reference a valid ModulatorChain child processor",
+      "timeVariantMod": "Must be inside a GlobalModulatorContainer",
+      "modName": "--"
+    },
+    "getAttribute": {
+      "index": "0 to getNumAttributes()-1"
+    },
+    "getAttributeId": {
+      "index": "0 to getNumAttributes()-1"
+    },
+    "getAttributeIndex": {
+      "id": "Must match a valid parameter name"
+    },
+    "getCurrentLevel": {
+      "leftChannel": "--"
+    },
+    "getModulatorChain": {
+      "chainIndex": "Must reference a valid ModulatorChain child processor"
+    },
+    "restoreScriptControls": {
+      "base64Controls": "Must be from exportScriptControls()"
+    },
+    "restoreState": {
+      "base64State": "Must be a valid state from exportState()"
+    },
+    "setAttribute": {
+      "parameterIndex": "0 to getNumAttributes()-1",
+      "newValue": "Parameter-dependent range"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "--"
+    },
+    "setDraggableFilterData": {
+      "filterData": "See Callback Properties for schema"
+    }
+  },
+  "Engine": {
+    "addModuleStateToUserPreset": {
+      "moduleId": "Must match an existing processor name, or be an empty string."
+    },
+    "compressJSON": {
+      "object": "Must be a valid JSON-serializable value."
+    },
+    "copyToClipboard": {
+      "textToCopy": "--"
+    },
+    "createAndRegisterAudioFile": {
+      "index": "Zero-based index."
+    },
+    "createAndRegisterRingBuffer": {
+      "index": "Zero-based index."
+    },
+    "createAndRegisterSliderPackData": {
+      "index": "Zero-based index."
+    },
+    "createAndRegisterTableData": {
+      "index": "Zero-based index."
+    },
+    "createBackgroundTask": {
+      "name": "--"
+    },
+    "createBroadcaster": {
+      "defaultValues": "When using JSON format, must have both `id` (String) and `args` (Array or Object) properties."
+    },
+    "createDspNetwork": {
+      "id": "Must be unique per processor. In backend, matches against `.xml` filenames in the DspNetworks folder."
+    },
+    "createFixObjectFactory": {
+      "layoutDescription": "Must be a DynamicObject (not an array or primitive). An empty or non-object value causes an internal \"No data\" error."
+    },
+    "createModulationMatrix": {
+      "containerId": "Must match an existing module ID"
+    },
+    "createNeuralNetwork": {
+      "id": "--"
+    },
+    "decodeBase64ValueTree": {
+      "b64Data": "Must be valid Base64."
+    },
+    "doubleToString": {
+      "value": "--",
+      "digits": "0 or positive integer."
+    },
+    "dumpAsJSON": {
+      "object": "Must be a DynamicObject (not an array or primitive).",
+      "fileName": "--"
+    },
+    "extendTimeOut": {
+      "additionalMilliseconds": "Positive integer."
+    },
+    "getComplexDataReference": {
+      "dataType": "Must be one of: `\"Table\"`, `\"SliderPack\"`, `\"AudioFile\"`, `\"DisplayBuffer\"`",
+      "moduleId": "Must match an existing `ExternalDataHolder` module in the processor tree.",
+      "index": ">= 0. Returns `undefined` if out of range."
+    },
+    "getDecibelsForGainFactor": {
+      "gainFactor": "Typically 0.0 to 1.0 for attenuation, > 1.0 for boost. 0.0 returns -100.0 dB."
+    },
+    "getDspNetworkReference": {
+      "processorId": "Must match a `DspNetwork::Holder` processor in the module tree.",
+      "id": "Must be a valid network ID registered on the target processor."
+    },
+    "getFrequencyForMidiNoteNumber": {
+      "midiNumber": "Typically 0-127, but not range-checked."
+    },
+    "getGainFactorForDecibels": {
+      "decibels": "Values at or below -100 dB return 0.0."
+    },
+    "getMacroName": {
+      "index": "1-8"
+    },
+    "getMasterPeakLevel": {
+      "channel": "0 = left, 1 = right"
+    },
+    "getMidiNoteFromName": {
+      "midiNoteName": "Must match JUCE's `MidiMessage::getMidiNoteName()` output format."
+    },
+    "getMidiNoteName": {
+      "midiNumber": "0-127"
+    },
+    "getMilliSecondsForQuarterBeats": {
+      "quarterBeats": "Any positive number."
+    },
+    "getMilliSecondsForQuarterBeatsWithTempo": {
+      "quarterBeats": "Any positive number.",
+      "bpm": "Must be positive."
+    },
+    "getMilliSecondsForSamples": {
+      "samples": "Any non-negative number."
+    },
+    "getMilliSecondsForTempo": {
+      "tempoIndex": "0-18 (standard), or 0-23 with `HISE_USE_EXTENDED_TEMPO_VALUES`."
+    },
+    "getPitchRatioFromSemitones": {
+      "semiTones": "Any number. Typical range: -12 to 12."
+    },
+    "getQuarterBeatsForMilliSeconds": {
+      "milliSeconds": "Any positive number."
+    },
+    "getQuarterBeatsForMilliSecondsWithTempo": {
+      "milliSeconds": "Any positive number.",
+      "bpm": "Positive number. 0.0 defaults to 120 internally."
+    },
+    "getQuarterBeatsForSamples": {
+      "samples": "Any positive number."
+    },
+    "getQuarterBeatsForSamplesWithTempo": {
+      "samples": "Any positive number.",
+      "bpm": "Positive number. 0.0 defaults to 120 internally."
+    },
+    "getRegexMatches": {
+      "stringToMatch": "Any string.",
+      "regex": "Must be a valid ECMAScript regex (std::regex default grammar)."
+    },
+    "getSampleFilesFromDirectory": {
+      "relativePathFromSampleFolder": "Must point to an existing directory; a script error is thrown if not found.",
+      "recursive": "Boolean: 0 or 1."
+    },
+    "getSamplesForMilliSeconds": {
+      "milliSeconds": "Any number. Negative values produce negative results."
+    },
+    "getSamplesForQuarterBeats": {
+      "quarterBeats": "Any positive number."
+    },
+    "getSamplesForQuarterBeatsWithTempo": {
+      "quarterBeats": "Any positive number.",
+      "bpm": "Positive number."
+    },
+    "getSemitonesFromPitchRatio": {
+      "pitchRatio": "Any positive number."
+    },
+    "getStringWidth": {
+      "text": "--",
+      "fontName": "Must be a loaded font name or falls back to default.",
+      "fontSize": "Positive value.",
+      "fontSpacing": "--"
+    },
+    "getSystemTime": {
+      "includeDividerCharacters": "--"
+    },
+    "getTempoName": {
+      "tempoIndex": "0-18 (standard) or 0-23 (extended). Out-of-range returns \"Invalid\"."
+    },
+    "getTextForValue": {
+      "value": "--",
+      "converterMode": "One of: `\"Frequency\"`, `\"Time\"`, `\"TempoSync\"`, `\"Pan\"`, `\"NormalizedPercentage\"`, `\"Decibel\"`, `\"Semitones\"`."
+    },
+    "getValueForText": {
+      "text": "Should match the format produced by the corresponding `getTextForValue` mode.",
+      "convertedMode": "One of: `\"Frequency\"`, `\"Time\"`, `\"TempoSync\"`, `\"Pan\"`, `\"NormalizedPercentage\"`, `\"Decibel\"`, `\"Semitones\"`."
+    },
+    "intToHexString": {
+      "value": "Any integer value."
+    },
+    "isControllerUsedByAutomation": {
+      "controllerNumber": "When using an array, the first element is the MIDI channel (1-16), the second is the CC number (0-127)."
+    },
+    "isUserPresetReadOnly": {
+      "optionalFile": "Only effective in compiled plugins with `READ_ONLY_FACTORY_PRESETS` defined."
+    },
+    "loadAudioFileIntoBufferArray": {
+      "audioFileReference": "Must resolve to a valid audio file in the pool."
+    },
+    "loadFontAs": {
+      "fileName": "Must exist in the project's Images directory (backend only).",
+      "fontId": "Should be unique and consistent across platforms."
+    },
+    "loadFromJSON": {
+      "fileName": "Should point to a valid JSON file."
+    },
+    "loadImageIntoPool": {
+      "id": "Backend only."
+    },
+    "loadNextUserPreset": {
+      "stayInDirectory": "--"
+    },
+    "loadPreviousUserPreset": {
+      "stayInDirectory": "--"
+    },
+    "loadUserPreset": {
+      "relativePathOrFileObject": "Must resolve to an existing `.preset` file."
+    },
+    "logSettingWarning": {
+      "methodName": "--"
+    },
+    "matchesRegex": {
+      "stringToMatch": "--",
+      "regex": "Must be a valid regex; invalid patterns produce a console error."
+    },
+    "openWebsite": {
+      "url": "Must be a well-formed URL (validated by `URL::isWellFormed()`)."
+    },
+    "performUndoAction": {
+      "thisObject": "--",
+      "undoAction": "Must accept 1 argument (isUndo: bool)."
+    },
+    "playBuffer": {
+      "bufferData": "Must contain valid buffer data with non-zero length.",
+      "callback": "Must accept 2 arguments (isPlaying, position).",
+      "fileSampleRate": "--"
+    },
+    "renderAudio": {
+      "eventList": "Must be an Array of MessageHolder objects.",
+      "finishCallback": "--"
+    },
+    "saveUserPreset": {
+      "presetName": "--"
+    },
+    "setAllowDuplicateSamples": {
+      "shouldAllow": "--"
+    },
+    "setCurrentExpansion": {
+      "expansionName": "Must match an installed expansion name."
+    },
+    "setFrontendMacros": {
+      "nameList": "Must be an Array. Length should match `HISE_NUM_MACROS` (default 8)."
+    },
+    "setGlobalFont": {
+      "fontName": "Must match a loaded font ID or be empty."
+    },
+    "setGlobalPitchFactor": {
+      "pitchFactorInSemitones": "Clamped to -12.0 .. 12.0."
+    },
+    "setHostBpm": {
+      "newTempo": "-1 for host sync, or a positive BPM value."
+    },
+    "setKeyColour": {
+      "keyNumber": "0-127. Values outside this range are silently ignored.",
+      "colourAsHex": "Full 32-bit colour with alpha."
+    },
+    "setLatencySamples": {
+      "latency": "Should be >= 0."
+    },
+    "setLowestKeyToDisplay": {
+      "keyNumber": "0-127. No range validation is performed."
+    },
+    "setMaximumBlockSize": {
+      "numSamplesPerBlock": "Rounded down to nearest multiple of `HISE_EVENT_RASTER` (8). Clamped to 16 .. `HISE_MAX_PROCESSING_BLOCKSIZE` (512)."
+    },
+    "setMinimumSampleRate": {
+      "minimumSampleRate": "Clamped to 1.0 .. 384000.0"
+    },
+    "setPreloadMessage": {
+      "message": "--"
+    },
+    "setUserPresetTagList": {
+      "listOfTags": "Must be an array; non-array values are silently ignored."
+    },
+    "showErrorMessage": {
+      "message": "--",
+      "isCritical": "--"
+    },
+    "showMessage": {
+      "message": "--"
+    },
+    "showMessageBox": {
+      "title": "--",
+      "markdownMessage": "--",
+      "type": "0 = Info, 1 = Warning, 2 = Question, 3 = Error"
+    },
+    "showYesNoWindow": {
+      "title": "--",
+      "markdownMessage": "--",
+      "callback": "Must accept 1 argument."
+    },
+    "sortWithFunction": {
+      "arrayToSort": "Must be a valid Array",
+      "sortFunction": "Must be a JavaScript function; return negative/zero/positive int"
+    },
+    "uncompressJSON": {
+      "b64": "Must be output from `Engine.compressJSON()` or equivalent zstd+Base64 encoding"
+    }
+  },
+  "ErrorHandler": {
+    "clearErrorLevel": {
+      "stateToClear": "Valid ErrorHandler state constant (0-13)"
+    },
+    "setCustomMessageToShow": {
+      "state": "Valid ErrorHandler state constant (0-13)",
+      "messageToShow": "--"
+    },
+    "setErrorCallback": {
+      "errorCallback": "Must be a JavaScript function"
+    },
+    "simulateErrorEvent": {
+      "state": "Valid ErrorHandler state constant (0-13)"
+    }
+  },
+  "Expansion": {
+    "getWildcardReference": {
+      "relativePath": "--"
+    },
+    "loadDataFile": {
+      "relativePath": "--"
+    },
+    "setAllowDuplicateSamples": {
+      "shouldAllowDuplicates": "--"
+    },
+    "setSampleFolder": {
+      "newSampleFolder": "Must be a File object, not a string path"
+    },
+    "writeDataFile": {
+      "relativePath": "--",
+      "dataToWrite": "--"
+    }
+  },
+  "ExpansionHandler": {
+    "encodeWithCredentials": {
+      "hxiFile": "Must be a File object; non-File triggers script error"
+    },
+    "getExpansion": {
+      "name": "Matched against the expansion's Name property"
+    },
+    "getExpansionForInstallPackage": {
+      "packageFile": "Must be a File object; non-File triggers script error"
+    },
+    "getMetaDataFromPackage": {
+      "packageFile": "Must be a File object"
+    },
+    "installExpansionFromPackage": {
+      "packageFile": "Must be a File object; non-File triggers script error",
+      "sampleDirectory": "FileSystem.Expansions, FileSystem.Samples, or a File object pointing to an existing directory"
+    },
+    "setAllowedExpansionTypes": {
+      "typeList": "Must be an array; non-array triggers script error"
+    },
+    "setCredentials": {
+      "newCredentials": "Must be a DynamicObject; non-object triggers error callback, not script error"
+    },
+    "setCurrentExpansion": {
+      "expansionName": "Accepts String (expansion name) or ScriptObject (Expansion reference); empty string clears current expansion"
+    },
+    "setErrorFunction": {
+      "newErrorFunction": "Must be a function"
+    },
+    "setErrorMessage": {
+      "errorMessage": "Converted to String via toString()"
+    },
+    "setExpansionCallback": {
+      "expansionLoadedCallback": "Must be a function"
+    },
+    "setInstallCallback": {
+      "installationCallback": "Must be a function"
+    },
+    "setInstallFullDynamics": {
+      "shouldInstallFullDynamics": "Boolean value (0 or 1)"
+    }
+  },
+  "FFT": {
+    "prepare": {
+      "powerOfTwoSize": "Must be a power of two",
+      "maxNumChannels": "1-16 (clamped)"
+    },
+    "process": {
+      "dataToProcess": "Single Buffer for mono, Array of Buffers for multi-channel"
+    },
+    "setEnableInverseFFT": {
+      "shouldApplyReverseTransformToInput": "Boolean"
+    },
+    "setEnableSpectrum2D": {
+      "shouldBeEnabled": "Boolean"
+    },
+    "setMagnitudeFunction": {
+      "newMagnitudeFunction": "Must be an inline function with 2 parameters",
+      "convertToDecibels": "Boolean (0 or 1)"
+    },
+    "setOverlap": {
+      "percentageOfOverlap": "0.0-0.99 (clamped)"
+    },
+    "setPhaseFunction": {
+      "newPhaseFunction": "Must be an inline function with 2 parameters"
+    },
+    "setSpectrum2DParameters": {
+      "jsonData": "See Callback Properties table"
+    },
+    "setUseFallbackEngine": {
+      "shouldUseFallback": "Boolean"
+    },
+    "setUseSpectrumList": {
+      "numRows": "Positive integer"
+    },
+    "setWindowType": {
+      "windowType": "0-6 (use FFT constant properties)"
+    }
+  },
+  "File": {
+    "copy": {
+      "target": "Must be a File object; reports script error otherwise"
+    },
+    "copyDirectory": {
+      "target": "Must be a File object; target path must be a directory"
+    },
+    "createDirectory": {
+      "directoryName": "--"
+    },
+    "extractZipFile": {
+      "targetDirectory": "Must be a File object or an absolute path string",
+      "overwriteFiles": "`true` to overwrite, `false` to skip",
+      "callback": "Must accept 1 argument"
+    },
+    "getChildFile": {
+      "childFileName": "--"
+    },
+    "getRelativePathFrom": {
+      "otherFile": "Must be a File object pointing to a directory"
+    },
+    "isChildOf": {
+      "otherFile": "Must be a File object",
+      "checkSubdirectories": "Boolean"
+    },
+    "isSameFileAs": {
+      "otherFile": "Must be a File object"
+    },
+    "loadAsMidiFile": {
+      "trackIndex": "Must be a valid track index in the file"
+    },
+    "loadEncryptedObject": {
+      "key": "Max 72 bytes; must match the key used for writing"
+    },
+    "move": {
+      "target": "Must be a File object; reports script error otherwise"
+    },
+    "rename": {
+      "newName": "--"
+    },
+    "setExecutePermission": {
+      "shouldBeExecutable": "Boolean"
+    },
+    "setReadOnly": {
+      "shouldBeReadOnly": "Boolean",
+      "applyRecursively": "Boolean"
+    },
+    "startAsProcess": {
+      "parameters": "Pass empty string for no parameters"
+    },
+    "toReferenceString": {
+      "folderType": "Must be one of: `AudioFiles`, `Images`, `SampleMaps`, `MidiFiles`, `UserPresets`, `Samples`, `Scripts`, `Binaries`, `Presets`, `XmlPresetBackups`, `AdditionalSourceCode`, `Documentation`"
+    },
+    "toString": {
+      "formatType": "Must be 0-3; use File constants `FullPath`, `NoExtension`, `Extension`, `Filename`"
+    },
+    "writeAsXmlFile": {
+      "jsonData": "Should be a JSON object (DynamicObject)",
+      "tagName": "Must be a valid XML tag name (no spaces or special characters)"
+    },
+    "writeAudioFile": {
+      "audioData": "Must be a Buffer, Array of Buffers, Array of number arrays, or plain number array",
+      "sampleRate": "Positive value (e.g., 44100.0, 48000.0, 96000.0)",
+      "bitDepth": "Depends on format; common values: 16, 24, 32"
+    },
+    "writeEncryptedObject": {
+      "jsonData": "Any JSON-serializable value",
+      "key": "Max effective length 72 bytes; longer keys are silently truncated"
+    },
+    "writeMidiFile": {
+      "eventList": "Must be an Array; non-MessageHolder elements silently skipped",
+      "metadataObject": "Optional; uses defaults if not a JSON object"
+    },
+    "writeObject": {
+      "jsonData": "Any value that `JSON::toString` can serialize (objects, arrays, primitives)"
+    },
+    "writeString": {
+      "text": "--"
+    }
+  },
+  "FileSystem": {
+    "browse": {
+      "startFolder": "Does not accept absolute path strings -- use `FileSystem.fromAbsolutePath()` first.",
+      "forSaving": "Boolean value (0 or 1).",
+      "wildcard": "Standard wildcard pattern, e.g. `\"*.wav\"`, `\"*.json\"`.",
+      "callback": "Must accept 1 argument."
+    },
+    "browseForDirectory": {
+      "startFolder": "Does not accept absolute path strings -- use `FileSystem.fromAbsolutePath()` first.",
+      "callback": "Must accept 1 argument."
+    },
+    "browseForMultipleDirectories": {
+      "startFolder": "--",
+      "callback": "Must accept 1 argument."
+    },
+    "browseForMultipleFiles": {
+      "startFolder": "--",
+      "wildcard": "Standard wildcard pattern, e.g. `\"*.wav\"`, `\"*.json\"`.",
+      "callback": "Must accept 1 argument."
+    },
+    "decryptWithRSA": {
+      "dataToDecrypt": "Must be a valid hexadecimal string.",
+      "publicKey": "Must pass `RSAKey::isValid()` or the method returns empty string."
+    },
+    "descriptionOfSizeInBytes": {
+      "bytes": "Non-negative integer."
+    },
+    "encryptWithRSA": {
+      "dataToEncrypt": "Length limited by RSA key size.",
+      "privateKey": "--"
+    },
+    "findFiles": {
+      "directory": "Must be a `File` object, not a `SpecialLocations` constant. Use `FileSystem.getFolder()` to convert.",
+      "wildcard": "Standard wildcard, e.g. `\"*.wav\"`, `\"*.json\"`, `\"*\"`.",
+      "recursive": "Boolean value (0 or 1)."
+    },
+    "fromAbsolutePath": {
+      "path": "Must be an absolute path. Relative paths return `undefined`."
+    },
+    "fromReferenceString": {
+      "referenceStringOrFullPath": "--",
+      "locationType": "Must be `FileSystem.AudioFiles`, `FileSystem.Samples`, or `FileSystem.UserPresets`. Others trigger a script error."
+    },
+    "getBytesFreeOnVolume": {
+      "folder": "Does not accept absolute path strings -- use `FileSystem.fromAbsolutePath()` first."
+    },
+    "getFolder": {
+      "locationType": "Must be a valid `SpecialLocations` constant (0-11)."
+    }
+  },
+  "FixObjectArray": {
+    "contains": {
+      "obj": "Must be a FixObject from the same factory layout"
+    },
+    "copy": {
+      "propertyName": "Must match a property in the factory layout",
+      "target": "Buffer must have size == array length"
+    },
+    "fill": {
+      "obj": "FixObject must be from the same factory layout"
+    },
+    "fromBase64": {
+      "b64": "Decoded size must match array allocation exactly"
+    },
+    "indexOf": {
+      "obj": "Must be a FixObject from the same factory layout"
+    }
+  },
+  "FixObjectFactory": {
+    "createArray": {
+      "numElements": "Must be > 0"
+    },
+    "createStack": {
+      "numElements": "Must be > 0"
+    },
+    "setCompareFunction": {
+      "newCompareFunction": "String must reference valid layout member names; comma-separated limited to 2-4 properties"
+    }
+  },
+  "FixObjectStack": {
+    "contains": {
+      "obj": "Must be a FixObject from the same factory"
+    },
+    "copy": {
+      "propertyName": "Must match a property in the factory layout",
+      "target": "Must have at least `length` elements"
+    },
+    "fill": {
+      "obj": "Must be a FixObject from the same factory"
+    },
+    "fromBase64": {
+      "b64": "Must match the stack's memory layout size"
+    },
+    "indexOf": {
+      "obj": "Must be a FixObject from the same factory"
+    },
+    "insert": {
+      "obj": "Must be a FixObject from the same factory"
+    },
+    "remove": {
+      "obj": "Must be a FixObject from the same factory"
+    },
+    "removeElement": {
+      "index": "0 to `size() - 1`"
+    },
+    "set": {
+      "obj": "Must be a FixObject from the same factory"
+    }
+  },
+  "GlobalCable": {
+    "connectToGlobalModulator": {
+      "lfoId": "Must match a modulator name that is a child of a GlobalModulatorContainer.",
+      "addToMod": "`true` or `false`."
+    },
+    "connectToMacroControl": {
+      "macroIndex": "-1 to 7.",
+      "macroIsTarget": "Must be `true`.",
+      "filterRepetitions": "`true` or `false`."
+    },
+    "connectToModuleParameter": {
+      "processorId": "Must match a processor name, or empty string for clearing.",
+      "parameterIndexOrId": "Valid parameter index or name for the target processor, or -1 for removal.",
+      "targetObject": "JSON object with range properties."
+    },
+    "deregisterCallback": {
+      "callbackFunction": "Must be the same function reference used during registration."
+    },
+    "registerCallback": {
+      "callbackFunction": "Must be a valid JavaScript function. For synchronous mode, must be an `inline function`.",
+      "synchronous": "`SyncNotification` or `AsyncNotification`."
+    },
+    "registerDataCallback": {
+      "dataCallbackFunction": "Must be a valid JavaScript function."
+    },
+    "sendData": {
+      "dataToSend": "Must not be undefined."
+    },
+    "setRange": {
+      "max": "Must be greater than min."
+    },
+    "setRangeWithSkew": {
+      "max": "Must be greater than min.",
+      "midPoint": "Must be between min and max."
+    },
+    "setRangeWithStep": {
+      "max": "Must be greater than min.",
+      "stepSize": "Must be greater than 0."
+    },
+    "setValue": {
+      "inputWithinRange": "Must be within the range set by `setRange`/`setRangeWithSkew`/`setRangeWithStep`; values outside are clamped after normalisation."
+    },
+    "setValueNormalised": {
+      "normalisedInput": "0.0 to 1.0; values outside this range are clamped."
+    }
+  },
+  "GlobalRoutingManager": {
+    "addOSCCallback": {
+      "oscSubAddress": "Combined with domain to form full address",
+      "callback": "2 arguments"
+    },
+    "connectToOSC": {
+      "connectionData": "See Callback Properties",
+      "errorFunction": "1 argument; pass `false` to clear"
+    },
+    "getCable": {
+      "cableId": "Use `/` prefix for OSC-addressable cables"
+    },
+    "getEventData": {
+      "eventId": "Obtained via Message.getEventId() in MIDI callbacks",
+      "dataSlot": "0-15 (masked to 4 bits internally)"
+    },
+    "removeOSCCallback": {
+      "oscSubAddress": "Must match the string used in addOSCCallback"
+    },
+    "sendOSCMessage": {
+      "oscSubAddress": "Must form a valid OSC address with the domain",
+      "data": "Double, Integer, String, or Array of these. Other types throw \"illegal var type for OSC data\"."
+    },
+    "setEventData": {
+      "eventId": "Obtained via Message.getEventId() in MIDI callbacks",
+      "dataSlot": "0-15 (masked to 4 bits internally)",
+      "value": "Any double"
+    }
+  },
+  "Graphics": {
+    "addDropShadowFromAlpha": {
+      "colour": "Must include alpha channel",
+      "radius": "0 disables the shadow"
+    },
+    "addNoise": {
+      "noiseAmount": "Alpha is clamped to 0.0-1.0; scaleFactor clamped to 0.125-2.0"
+    },
+    "applyGamma": {
+      "gamma": "1.0 = no change; < 1.0 brightens; > 1.0 darkens"
+    },
+    "applyGradientMap": {
+      "darkColour": "0xAARRGGBB format",
+      "brightColour": "0xAARRGGBB format"
+    },
+    "applyHSL": {
+      "hue": "Wraps cyclically",
+      "saturation": "--",
+      "lightness": "--"
+    },
+    "applyMask": {
+      "path": "Must be a valid Path object",
+      "area": "--",
+      "invert": "Boolean value"
+    },
+    "applyShader": {
+      "shader": "Must be a valid ScriptShader",
+      "area": "Converted to nearest integer rectangle"
+    },
+    "applySharpness": {
+      "delta": "Cast to int internally"
+    },
+    "applyVignette": {
+      "amount": "--",
+      "radius": "--",
+      "falloff": "--"
+    },
+    "beginBlendLayer": {
+      "blendMode": "Must be one of the 25 supported blend modes",
+      "alpha": "--"
+    },
+    "beginLayer": {
+      "drawOnParent": "Boolean value"
+    },
+    "boxBlur": {
+      "blurAmount": "Clamped to 0-100; cast to int"
+    },
+    "drawAlignedText": {
+      "text": "--",
+      "area": "--",
+      "alignment": "Must be a valid alignment string"
+    },
+    "drawAlignedTextShadow": {
+      "text": "--",
+      "area": "--",
+      "alignment": "Must be a valid alignment string",
+      "shadowData": "Must be a JSON object"
+    },
+    "drawDropShadow": {
+      "area": "Converted to integer rectangle via `getIntRectangleFromVar`",
+      "colour": "Alpha channel controls shadow opacity",
+      "radius": "0 produces no visible shadow"
+    },
+    "drawDropShadowFromPath": {
+      "path": "Must be a valid Path object",
+      "area": "Float precision",
+      "colour": "Alpha channel controls shadow opacity",
+      "radius": "--",
+      "offset": "Converted to integer point"
+    },
+    "drawEllipse": {
+      "area": "Float precision",
+      "lineThickness": "--"
+    },
+    "drawFFTSpectrum": {
+      "fftObject": "Must be a valid FFT object",
+      "area": "Converted to nearest integer rectangle"
+    },
+    "drawHorizontalLine": {
+      "y": "Integer; no sub-pixel positioning",
+      "x1": "SANITIZED against NaN/Inf",
+      "x2": "SANITIZED against NaN/Inf"
+    },
+    "drawImage": {
+      "imageName": "Must match a loaded image",
+      "area": "Zero width produces no output",
+      "xOffset": "Ignored in current implementation",
+      "yOffset": "Used for filmstrip frame selection"
+    },
+    "drawInnerShadowFromPath": {
+      "path": "Must be a valid Path object",
+      "area": "Float precision",
+      "colour": "Alpha channel controls shadow intensity",
+      "radius": "--",
+      "offset": "Converted to integer point"
+    },
+    "drawLine": {
+      "x1": "SANITIZED",
+      "x2": "SANITIZED",
+      "y1": "SANITIZED",
+      "y2": "SANITIZED",
+      "lineThickness": "SANITIZED"
+    },
+    "drawMarkdownText": {
+      "markdownRenderer": "Must have setTextBounds() called first"
+    },
+    "drawMultiLineText": {
+      "text": "--",
+      "xy": "2-element array; values cast to int",
+      "maxWidth": "Cast to int",
+      "alignment": "Must be a valid alignment string",
+      "leading": "0.0 = default spacing"
+    },
+    "drawPath": {
+      "path": "Must be a valid Path object",
+      "area": "Path drawn at original coords if not an array",
+      "strokeStyle": "Thickness SANITIZED"
+    },
+    "drawRect": {
+      "area": "Float precision",
+      "borderSize": "SANITIZED"
+    },
+    "drawRepaintMarker": {
+      "label": "Empty string defaults to \"anonymous repaint\""
+    },
+    "drawRoundedRectangle": {
+      "area": "Float precision",
+      "cornerData": "CornerSize SANITIZED",
+      "borderSize": "SANITIZED"
+    },
+    "drawSVG": {
+      "svgObject": "Must be a valid SVG object",
+      "bounds": "Float precision",
+      "opacity": "0.0 = transparent, 1.0 = opaque"
+    },
+    "drawTriangle": {
+      "area": "Float precision",
+      "angle": "SANITIZED",
+      "lineThickness": "--"
+    },
+    "drawVerticalLine": {
+      "x": "Integer; no sub-pixel positioning",
+      "y1": "SANITIZED against NaN/Inf",
+      "y2": "SANITIZED against NaN/Inf"
+    },
+    "fillAll": {
+      "colour": "Alpha channel controls opacity"
+    },
+    "fillEllipse": {
+      "area": "Float precision"
+    },
+    "fillPath": {
+      "path": "Must be a valid Path object",
+      "area": "Path drawn at original coords if not an array"
+    },
+    "fillRect": {
+      "area": "Float precision"
+    },
+    "fillRoundedRectangle": {
+      "area": "Float precision",
+      "cornerData": "CornerSize SANITIZED"
+    },
+    "fillTriangle": {
+      "area": "Float precision",
+      "angle": "--"
+    },
+    "flip": {
+      "horizontally": "Boolean value",
+      "totalArea": "Converted to integer rectangle"
+    },
+    "gaussianBlur": {
+      "blurAmount": "Clamped to 0-100; cast to int"
+    },
+    "getStringWidth": {
+      "text": "--"
+    },
+    "rotate": {
+      "angleInRadian": "SANITIZED",
+      "center": "2-element array"
+    },
+    "setColour": {
+      "colour": "Alpha channel controls opacity"
+    },
+    "setFont": {
+      "fontName": "Must be an embedded, system, or global font",
+      "fontSize": "SANITIZED; 0.0 produces invisible text"
+    },
+    "setFontWithSpacing": {
+      "fontName": "Must be an embedded, system, or global font",
+      "fontSize": "SANITIZED; 0.0 produces invisible text",
+      "spacing": "Typically small values like -0.1 to 0.2; 0.0 is no extra spacing"
+    },
+    "setGradientFill": {
+      "gradientData": "Minimum 6 elements; see format above"
+    },
+    "setOpacity": {
+      "alphaValue": "0.0 (transparent) to 1.0 (opaque)"
+    }
+  },
+  "LorisManager": {
+    "analyse": {
+      "file": "ScriptFile only",
+      "rootFrequency": "> 0"
+    },
+    "createEnvelopePaths": {
+      "file": "ScriptFile only",
+      "parameter": "See Value Descriptions",
+      "harmonicIndex": ">= 0"
+    },
+    "createEnvelopes": {
+      "file": "ScriptFile only",
+      "parameter": "See Value Descriptions",
+      "harmonicIndex": ">= 0"
+    },
+    "createSnapshot": {
+      "file": "ScriptFile only",
+      "parameter": "See Value Descriptions",
+      "time": "Interpreted per timedomain setting"
+    },
+    "get": {
+      "optionId": "See Value Descriptions"
+    },
+    "process": {
+      "file": "ScriptFile only",
+      "command": "See Value Descriptions",
+      "data": "Structure varies by command"
+    },
+    "processCustom": {
+      "file": "ScriptFile only",
+      "processCallback": "Must accept 1 argument"
+    },
+    "set": {
+      "optionId": "See Value Descriptions",
+      "newValue": "Type depends on option"
+    },
+    "synthesise": {
+      "file": "ScriptFile only"
+    }
+  },
+  "MacroHandler": {
+    "setExclusiveMode": {
+      "shouldBeExclusive": "Boolean: true to enable, false to disable"
+    },
+    "setMacroDataFromObject": {
+      "jsonData": "Each element must have MacroIndex, Processor, and Attribute properties"
+    },
+    "setUpdateCallback": {
+      "callback": "Must be a JavaScript function"
+    }
+  },
+  "MarkdownRenderer": {
+    "setImageProvider": {
+      "data": "Each element must be an object with a `URL` property"
+    },
+    "setStyleData": {
+      "styleData": "See getStyleData for the full property schema"
+    },
+    "setText": {
+      "markdownText": "--"
+    },
+    "setTextBounds": {
+      "area": "4-element numeric array; reports a script error if the format is invalid"
+    }
+  },
+  "Math": {
+    "abs": {
+      "value": "--"
+    },
+    "acos": {
+      "value": "-1.0 to 1.0"
+    },
+    "acosh": {
+      "value": ">= 1.0"
+    },
+    "asin": {
+      "value": "-1.0 to 1.0"
+    },
+    "asinh": {
+      "value": "--"
+    },
+    "atan": {
+      "value": "--"
+    },
+    "atanh": {
+      "value": "-1.0 to 1.0 (exclusive)"
+    },
+    "ceil": {
+      "value": "--"
+    },
+    "clamp": {
+      "value": "--",
+      "lowerLimit": "--",
+      "upperLimit": "Must be >= lowerLimit"
+    },
+    "cos": {
+      "value": "--"
+    },
+    "cosh": {
+      "value": "--"
+    },
+    "exp": {
+      "value": "--"
+    },
+    "floor": {
+      "value": "--"
+    },
+    "fmod": {
+      "value": "--",
+      "limit": "Non-zero"
+    },
+    "from0To1": {
+      "value": "0.0 to 1.0",
+      "rangeObj": "Must use a recognized naming convention"
+    },
+    "isinf": {
+      "value": "--"
+    },
+    "isnan": {
+      "value": "--"
+    },
+    "log": {
+      "value": "> 0.0"
+    },
+    "log10": {
+      "value": "> 0.0"
+    },
+    "max": {
+      "first": "--",
+      "second": "--"
+    },
+    "min": {
+      "first": "--",
+      "second": "--"
+    },
+    "pow": {
+      "base": "--",
+      "exp": "--"
+    },
+    "randInt": {
+      "low": "--",
+      "high": "Must be > low"
+    },
+    "range": {
+      "value": "--",
+      "lowerLimit": "--",
+      "upperLimit": "Must be >= lowerLimit"
+    },
+    "round": {
+      "value": "--"
+    },
+    "sanitize": {
+      "value": "--"
+    },
+    "sign": {
+      "value": "--"
+    },
+    "sin": {
+      "value": "--"
+    },
+    "sinh": {
+      "value": "--"
+    },
+    "skew": {
+      "start": "--",
+      "end": "Must be > start",
+      "midPoint": "Must be between start and end"
+    },
+    "smoothstep": {
+      "input": "--",
+      "lower": "--",
+      "upper": "Must be > lower for meaningful output"
+    },
+    "sqr": {
+      "value": "--"
+    },
+    "sqrt": {
+      "value": ">= 0.0"
+    },
+    "tan": {
+      "value": "--"
+    },
+    "tanh": {
+      "value": "--"
+    },
+    "to0To1": {
+      "value": "--",
+      "rangeObj": "Must use a recognized naming convention"
+    },
+    "toDegrees": {
+      "value": "--"
+    },
+    "toRadians": {
+      "value": "--"
+    },
+    "trunc": {
+      "value": "--"
+    },
+    "wrap": {
+      "value": "--",
+      "limit": "> 0.0"
+    }
+  },
+  "Message": {
+    "delayEvent": {
+      "samplesToDelay": "Result clamped to >= 0"
+    },
+    "ignoreEvent": {
+      "shouldBeIgnored": "Boolean-like (0/1)"
+    },
+    "setAllNotesOffCallback": {
+      "callback": "Must be an inline function; takes 0 arguments"
+    },
+    "setChannel": {
+      "newChannel": "1-16"
+    },
+    "setCoarseDetune": {
+      "semiToneDetune": "Stored as int8 (-128 to 127)"
+    },
+    "setControllerNumber": {
+      "newControllerNumber": "0-127"
+    },
+    "setControllerValue": {
+      "newControllerValue": "0-127"
+    },
+    "setFineDetune": {
+      "cents": "Stored as int8 (-128 to 127)"
+    },
+    "setGain": {
+      "gainInDecibels": "-100 to 36 (clamped)"
+    },
+    "setMonophonicAfterTouchPressure": {
+      "pressure": "0-127"
+    },
+    "setNoteNumber": {
+      "newNoteNumber": "0-127 (clamped)"
+    },
+    "setPolyAfterTouchNoteNumberAndPressureValue": {
+      "noteNumber": "0-127",
+      "aftertouchAmount": "0-127"
+    },
+    "setStartOffset": {
+      "newStartOffset": "0-65535 (uint16 max)"
+    },
+    "setTransposeAmount": {
+      "transposeValue": "Stored as int8 (-128 to 127)"
+    },
+    "setVelocity": {
+      "newVelocity": "1-127 (standard MIDI range for note-on)"
+    },
+    "store": {
+      "messageEventHolder": "Must be a MessageHolder from `Engine.createMessageHolder()`"
+    }
+  },
+  "MessageHolder": {
+    "addToTimestamp": {
+      "deltaSamples": "Effective range -32768..32767 due to int16 cast"
+    },
+    "ignoreEvent": {
+      "shouldBeIgnored": "Boolean-like: any truthy value sets the flag"
+    },
+    "setChannel": {
+      "newChannel": "1-16 for standard MIDI, 0-255 for extended range"
+    },
+    "setCoarseDetune": {
+      "semiToneDetune": "Stored as int8 (-128..127)"
+    },
+    "setControllerNumber": {
+      "newControllerNumber": "0-127 for standard CC; 128/129 for type coercion"
+    },
+    "setControllerValue": {
+      "newControllerValue": "Range depends on event type"
+    },
+    "setFineDetune": {
+      "cents": "Stored as int8 (-128..127)"
+    },
+    "setGain": {
+      "gainInDecibels": "Clamped to -100..36"
+    },
+    "setMonophonicAfterTouchPressure": {
+      "pressure": "Stored as uint8 (0-255)"
+    },
+    "setNoteNumber": {
+      "newNoteNumber": "Clamped to 0-127"
+    },
+    "setPolyAfterTouchNoteNumberAndPressureValue": {
+      "noteNumber": "Stored as uint8 (0-255)",
+      "aftertouchAmount": "Stored as uint8 (0-255)"
+    },
+    "setStartOffset": {
+      "offset": "Cast to uint16 (0-65535)"
+    },
+    "setTimestamp": {
+      "timestampSamples": "Clamped to 0..1073741823"
+    },
+    "setTransposeAmount": {
+      "transposeValue": "Stored as int8 (-128..127)"
+    },
+    "setType": {
+      "type": "0-13 (use MessageHolder constants: Empty, NoteOn, NoteOff, Controller, PitchBend, Aftertouch, AllNotesOff, SongPosition, MidiStart, MidiStop, VolumeFade, PitchFade, TimerEvent, ProgramChange)"
+    },
+    "setVelocity": {
+      "newVelocity": "Cast to uint8 (0-255); standard MIDI range is 0-127"
+    }
+  },
+  "MidiAutomationHandler": {
+    "setAutomationDataFromObject": {
+      "automationData": "Must be an Array"
+    },
+    "setConsumeAutomatedControllers": {
+      "shouldBeConsumed": "--"
+    },
+    "setControllerNumberNames": {
+      "ccName": "--",
+      "nameArray": "Elements are converted to strings via `toString()`"
+    },
+    "setControllerNumbersInPopup": {
+      "numberArray": "Values 0-127"
+    },
+    "setExclusiveMode": {
+      "shouldBeExclusive": "--"
+    },
+    "setUpdateCallback": {
+      "callback": "Must be a valid function"
+    }
+  },
+  "MidiList": {
+    "fill": {
+      "valueToFill": "--"
+    },
+    "getIndex": {
+      "value": "--"
+    },
+    "getValue": {
+      "index": "--"
+    },
+    "getValueAmount": {
+      "valueToCheck": "--"
+    },
+    "restoreFromBase64String": {
+      "base64encodedValues": "--"
+    },
+    "setRange": {
+      "startIndex": "--",
+      "numToFill": "--",
+      "value": "--"
+    },
+    "setValue": {
+      "index": "--",
+      "value": "--"
+    }
+  },
+  "MidiPlayer": {
+    "connectToMetronome": {
+      "metronome": "Must be a valid MidiMetronome processor ID."
+    },
+    "connectToPanel": {
+      "panel": "Must be a ScriptPanel instance."
+    },
+    "convertEventListToNoteRectangles": {
+      "eventList": "Each element must be a MessageHolder.",
+      "targetBounds": "Must be a valid 4-element bounds array."
+    },
+    "create": {
+      "nominator": "Must be > 0.",
+      "denominator": "Must be > 0.",
+      "barLength": "Must be > 0."
+    },
+    "flushMessageList": {
+      "messageList": "Each element must be a MessageHolder. Non-MessageHolder items trigger a script error."
+    },
+    "flushMessageListToSequence": {
+      "messageList": "Each element must be a MessageHolder.",
+      "sequenceIndexOneBased": "Must be >= 1. Invalid index triggers a script error."
+    },
+    "getEventListFromSequence": {
+      "sequenceIndexOneBased": "Must be >= 1. Index 0 triggers a script error (\"Nope. One based!!!\")."
+    },
+    "getNoteRectangleList": {
+      "targetBounds": "Must be a valid 4-element bounds array."
+    },
+    "getTimeSignatureFromSequence": {
+      "index": "One-based, or -1 for current."
+    },
+    "isSequenceEmpty": {
+      "indexOneBased": "Must be >= 1."
+    },
+    "play": {
+      "timestamp": "0 for immediate, or use `Message.getTimestamp()` for sample-accurate timing."
+    },
+    "record": {
+      "timestamp": "0 for immediate."
+    },
+    "saveAsMidiFile": {
+      "file": "Must be a valid file path. Empty string triggers a script error.",
+      "trackIndex": ">= 0."
+    },
+    "setAutomationHandlerConsumesControllerEvents": {
+      "shouldBeEnabled": "Boolean (0 or 1)."
+    },
+    "setFile": {
+      "fileName": "Empty string is valid (no-op).",
+      "clearExistingSequences": "Boolean (0 or 1).",
+      "selectNewSequence": "Boolean (0 or 1)."
+    },
+    "setGlobalPlaybackRatio": {
+      "globalRatio": "Must be > 0."
+    },
+    "setPlaybackCallback": {
+      "playbackCallback": "Must be a JavaScript function.",
+      "synchronous": "Boolean-like: 0 = async, 1/true = sync."
+    },
+    "setPlaybackPosition": {
+      "newPosition": "Clamped to [0.0, 1.0]."
+    },
+    "setRecordEventCallback": {
+      "recordEventCallback": "Must be an inline function (realtime-safe). Non-callable objects throw a script error."
+    },
+    "setRepaintOnPositionChange": {
+      "shouldRepaintPanel": "Boolean (0 or 1)."
+    },
+    "setSequence": {
+      "sequenceIndex": "Must be >= 1."
+    },
+    "setSequenceCallback": {
+      "updateFunction": "Must be a JavaScript function."
+    },
+    "setSyncToMasterClock": {
+      "shouldSyncToMasterClock": "Boolean (0 or 1)."
+    },
+    "setTimeSignature": {
+      "timeSignatureObject": "Must have Nominator > 0, Denominator > 0, NumBars > 0."
+    },
+    "setTimeSignatureToSequence": {
+      "index": "One-based, or -1.",
+      "timeSignatureObject": "See setTimeSignature for property format."
+    },
+    "setTrack": {
+      "trackIndex": "Must be >= 1."
+    },
+    "setUseGlobalUndoManager": {
+      "shouldUseGlobalUndoManager": "Boolean (0 or 1)."
+    },
+    "setUseTimestampInTicks": {
+      "shouldUseTicksAsTimestamps": "Boolean (0 or 1)."
+    },
+    "stop": {
+      "timestamp": "0 for immediate."
+    }
+  },
+  "MidiProcessor": {
+    "getAttribute": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeId": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeIndex": {
+      "parameterName": "Must match an existing parameter name"
+    },
+    "restoreScriptControls": {
+      "base64Controls": "Must be a valid base64 processor state"
+    },
+    "restoreState": {
+      "base64State": "Must be a valid base64 processor state"
+    },
+    "setAttribute": {
+      "parameterIndex": "0 to getNumAttributes()-1",
+      "value": "Module-dependent range"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "Boolean value"
+    }
+  },
+  "Modulator": {
+    "addGlobalModulator": {
+      "chainIndex": "Must be a valid child chain index",
+      "globalMod": "Must be a valid Modulator inside a GlobalModulatorContainer",
+      "modName": "Should be unique within the module tree"
+    },
+    "addModulator": {
+      "chainIndex": "Must be a valid child chain index",
+      "typeName": "Must be a valid modulator type name (e.g., \"LFO\", \"Velocity\", \"Constant\")",
+      "modName": "Should be unique within the module tree"
+    },
+    "addStaticGlobalModulator": {
+      "chainIndex": "Must be a valid child chain index",
+      "timeVariantMod": "Must be a valid Modulator inside a GlobalModulatorContainer",
+      "modName": "Should be unique within the module tree"
+    },
+    "connectToGlobalModulator": {
+      "globalModulationContainerId": "Must match an existing container",
+      "modulatorId": "Must match an existing modulator in the container"
+    },
+    "getAttribute": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeId": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeIndex": {
+      "parameterId": "Must match an existing attribute name"
+    },
+    "getModulatorChain": {
+      "chainIndex": "Must be a valid child chain index"
+    },
+    "restoreScriptControls": {
+      "base64Controls": "Must be a valid base64 control state"
+    },
+    "restoreState": {
+      "base64State": "Must be a valid base64 processor state"
+    },
+    "setAttribute": {
+      "index": "0 to getNumAttributes()-1",
+      "value": "Range depends on parameter"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "--"
+    },
+    "setIntensity": {
+      "newIntensity": "Range depends on modulation mode"
+    },
+    "setIsBipolar": {
+      "shouldBeBipolar": "--"
+    },
+    "setMatrixProperties": {
+      "matrixData": "Must be a valid RangeData JSON structure"
+    }
+  },
+  "NeuralNetwork": {
+    "build": {
+      "modelJSON": "Must be a valid layer array"
+    },
+    "connectToGlobalCables": {
+      "inputId": "Empty string to skip",
+      "outputId": "Empty string to skip"
+    },
+    "createModelJSONFromTextFile": {
+      "fileObject": "Must be a valid ScriptFile"
+    },
+    "loadNAMModel": {
+      "modelJSON": "Must be valid NAM JSON"
+    },
+    "loadOnnxModel": {
+      "base64Data": "Must be valid base64",
+      "numOutputs": "Must be positive"
+    },
+    "loadPytorchModel": {
+      "modelJSON": "Must contain both keys"
+    },
+    "loadTensorFlowModel": {
+      "modelJSON": "Must be valid RTNeural TF format"
+    },
+    "loadWeights": {
+      "weightData": "Must match current model topology"
+    },
+    "process": {
+      "input": "Number, Array, or Buffer matching model input size"
+    },
+    "processFFTSpectrum": {
+      "fftObject": "Must be a valid ScriptFFT",
+      "numFreqPixels": "Must be positive",
+      "numTimePixels": "Must be positive"
+    },
+    "setNAMGainMode": {
+      "modeOrOptions": "String: `\"raw\"`, `\"normalized\"`, `\"calibrated\"`; Object keys: `mode`, `inputCalibrationLevelDbu`"
+    },
+    "setQualityConfiguration": {
+      "qualityId": "Must be a valid Identifier and listed in `getNetworkInfo().qualityConfigurations`"
+    },
+    "writeCompiledModelJSON": {
+      "qualityConfigurations": "Each key must be a valid Identifier; `mathProvider` must be `\"default\"` or `\"fastMath\"`; `sampleRateCorrection` must be `\"none\"` or `\"linear\"`"
+    }
+  },
+  "Node": {
+    "connectTo": {
+      "parameterTarget": "Must be a Node Parameter reference",
+      "sourceInfo": "Depends on the source node type"
+    },
+    "connectToBypass": {
+      "sourceInfo": "Internal drag details format"
+    },
+    "get": {
+      "id": "Must match a node-type-specific property ID"
+    },
+    "getChildNodes": {
+      "recursive": "true for full subtree, false for direct children only"
+    },
+    "getOrCreateParameter": {
+      "indexOrId": "See Callback Properties for JSON creation format"
+    },
+    "set": {
+      "id": "Node property or ValueTree property ID",
+      "value": "Type depends on the property"
+    },
+    "setBypassed": {
+      "shouldBeBypassed": "true to bypass, false to enable"
+    },
+    "setComplexDataIndex": {
+      "dataType": "See Value Descriptions",
+      "dataSlot": "0-based, must be a valid slot",
+      "indexValue": "0-based"
+    },
+    "setParent": {
+      "parentNode": "Must be a container node or DspNetwork",
+      "indexInParent": "-1 to append at end"
+    }
+  },
+  "Parameter": {
+    "addConnectionFrom": {
+      "connectionData": "Object for add mode, non-object for remove mode"
+    },
+    "setRangeFromObject": {
+      "propertyObject": "Must be a JSON object"
+    },
+    "setRangeProperty": {
+      "id": "MinValue, MaxValue, StepSize, or SkewFactor",
+      "newValue": "Depends on the property"
+    },
+    "setUseExternalConnection": {
+      "usesExternalConnection": "Boolean value"
+    },
+    "setValue": {
+      "newValue": "Should be within the parameter's range"
+    },
+    "setValueAsync": {
+      "newValue": "Should be within the parameter's range"
+    },
+    "setValueSync": {
+      "newValue": "Should be within the parameter's range"
+    }
+  },
+  "Path": {
+    "addArc": {
+      "area": "4-element array or Rectangle object",
+      "fromRadians": "Sanitized against NaN/Inf",
+      "toRadians": "Sanitized against NaN/Inf"
+    },
+    "addArrow": {
+      "start": "2-element array",
+      "end": "2-element array",
+      "thickness": "> 0",
+      "headWidth": "> 0",
+      "headLength": "> 0"
+    },
+    "addEllipse": {
+      "area": "4-element array or Rectangle object"
+    },
+    "addPieSegment": {
+      "area": "4-element array or Rectangle object",
+      "fromRadians": "Sanitized against NaN/Inf",
+      "toRadians": "Sanitized against NaN/Inf",
+      "innerCircleProportionalSize": "0.0 - 1.0"
+    },
+    "addPolygon": {
+      "center": "2-element array",
+      "numSides": ">= 3 for meaningful shapes",
+      "radius": "> 0",
+      "angle": "Any value"
+    },
+    "addQuadrilateral": {
+      "xy1": "2-element array",
+      "xy2": "2-element array",
+      "xy3": "2-element array",
+      "xy4": "2-element array"
+    },
+    "addRectangle": {
+      "area": "4-element array or Rectangle object"
+    },
+    "addRoundedRectangle": {
+      "area": "4-element array or Rectangle object",
+      "cornerSize": ">= 0"
+    },
+    "addRoundedRectangleCustomisable": {
+      "area": "4-element array or Rectangle object",
+      "cornerSizeXY": "2-element array, values >= 0",
+      "boolCurves": "4-element boolean array"
+    },
+    "addStar": {
+      "center": "2-element array",
+      "numPoints": ">= 2 for meaningful shapes",
+      "innerRadius": "> 0",
+      "outerRadius": "> 0, typically > innerRadius",
+      "angle": "Any value"
+    },
+    "addTriangle": {
+      "xy1": "2-element array",
+      "xy2": "2-element array",
+      "xy3": "2-element array"
+    },
+    "contains": {
+      "point": "2-element array"
+    },
+    "createStrokedPath": {
+      "strokeData": "Numeric > 0, or JSON object",
+      "dotData": "Array of Numbers"
+    },
+    "cubicTo": {
+      "cxy1": "2-element array. Not sanitized against NaN/Inf",
+      "cxy2": "2-element array. Not sanitized against NaN/Inf",
+      "x": "Not sanitized against NaN/Inf",
+      "y": "Not sanitized against NaN/Inf"
+    },
+    "fromString": {
+      "stringPath": "Must be valid JUCE path format"
+    },
+    "getBounds": {
+      "scaleFactor": "Any positive number"
+    },
+    "getIntersection": {
+      "start": "2-element array",
+      "end": "2-element array",
+      "keepSectionOutsidePath": "Boolean (0 or 1)"
+    },
+    "getPointOnPath": {
+      "distanceFromStart": ">= 0"
+    },
+    "getYAt": {
+      "xPos": "Should be within the path's horizontal bounds"
+    },
+    "lineTo": {
+      "x": "Sanitized against NaN/Inf",
+      "y": "Sanitized against NaN/Inf"
+    },
+    "loadFromData": {
+      "data": "Must be String, Array, or Path"
+    },
+    "quadraticTo": {
+      "cx": "Not sanitized against NaN/Inf",
+      "cy": "Not sanitized against NaN/Inf",
+      "x": "Not sanitized against NaN/Inf",
+      "y": "Not sanitized against NaN/Inf"
+    },
+    "roundCorners": {
+      "radius": ">= 0"
+    },
+    "scaleToFit": {
+      "x": "Any value",
+      "y": "Any value",
+      "width": "> 0 for meaningful results",
+      "height": "> 0 for meaningful results",
+      "preserveProportions": "Boolean (0 or 1)"
+    },
+    "setBounds": {
+      "boundingBox": "4-element array or Rectangle object"
+    },
+    "startNewSubPath": {
+      "x": "Sanitized against NaN/Inf",
+      "y": "Sanitized against NaN/Inf"
+    }
+  },
+  "Rectangle": {
+    "constrainedWithin": {
+      "targetArea": "Must be a valid rectangle"
+    },
+    "contains": {
+      "otherRectOrPoint": "Must be parseable as rectangle or point"
+    },
+    "expanded": {
+      "x": "Any number; negative values shrink",
+      "optionalY": "Any number; negative values shrink"
+    },
+    "getIntersection": {
+      "otherRect": "Must be a valid rectangle"
+    },
+    "getUnion": {
+      "otherRect": "Must be a valid rectangle"
+    },
+    "intersects": {
+      "otherRect": "Must be a valid rectangle"
+    },
+    "reduced": {
+      "x": "Any number; negative values expand",
+      "optionalY": "Any number; negative values expand"
+    },
+    "removeFromBottom": {
+      "numToRemove": "Any number"
+    },
+    "removeFromLeft": {
+      "numToRemove": "Any number"
+    },
+    "removeFromRight": {
+      "numToRemove": "Any number"
+    },
+    "removeFromTop": {
+      "numToRemove": "Any number"
+    },
+    "scaled": {
+      "factorX": "Any number",
+      "optionalFactorY": "Any number"
+    },
+    "setCentre": {
+      "centerX": "Any number",
+      "centerY": "Any number"
+    },
+    "setPosition": {
+      "x": "Any number",
+      "y": "Any number"
+    },
+    "setSize": {
+      "width": "Any number",
+      "height": "Any number"
+    },
+    "translated": {
+      "deltaX": "Any number",
+      "deltaY": "Any number"
+    },
+    "withAspectRatioLike": {
+      "otherRect": "Must be a valid rectangle with non-zero width"
+    },
+    "withBottom": {
+      "newBottom": "Any number"
+    },
+    "withBottomY": {
+      "newBottomY": "Any number"
+    },
+    "withCentre": {
+      "newCentreX": "Any number",
+      "newCentreY": "Any number"
+    },
+    "withHeight": {
+      "newHeight": "Any number"
+    },
+    "withLeft": {
+      "newLeft": "Any number"
+    },
+    "withRight": {
+      "newRight": "Any number"
+    },
+    "withSize": {
+      "newWidth": "Any number",
+      "newHeight": "Any number"
+    },
+    "withSizeKeepingCentre": {
+      "newWidth": "Any number",
+      "newHeight": "Any number"
+    },
+    "withTrimmedBottom": {
+      "amountToRemove": "Any number"
+    },
+    "withTrimmedLeft": {
+      "amountToRemove": "Any number"
+    },
+    "withTrimmedRight": {
+      "amountToRemove": "Any number"
+    },
+    "withTrimmedTop": {
+      "amountToRemove": "Any number"
+    },
+    "withWidth": {
+      "newWidth": "Any number"
+    },
+    "withX": {
+      "newX": "Any number"
+    },
+    "withY": {
+      "newY": "Any number"
+    }
+  },
+  "RoutingMatrix": {
+    "addConnection": {
+      "sourceIndex": "0 to numSourceChannels-1",
+      "destinationIndex": "0 to numDestinationChannels-1"
+    },
+    "addSendConnection": {
+      "sourceIndex": "0 to numSourceChannels-1",
+      "destinationIndex": "0 to numDestinationChannels-1"
+    },
+    "getDestinationChannelForSource": {
+      "sourceIndex": "0 to numSourceChannels-1 per element"
+    },
+    "getSourceChannelsForDestination": {
+      "destinationIndex": "0 to numDestinationChannels-1 per element"
+    },
+    "getSourceGainValue": {
+      "channelIndex": "0 to numSourceChannels-1"
+    },
+    "removeConnection": {
+      "sourceIndex": "0 to numSourceChannels-1",
+      "destinationIndex": "0 to numDestinationChannels-1"
+    },
+    "removeSendConnection": {
+      "sourceIndex": "0 to numSourceChannels-1",
+      "destinationIndex": "0 to numDestinationChannels-1"
+    },
+    "setNumChannels": {
+      "numSourceChannels": "0-16 (validated against NUM_MAX_CHANNELS)"
+    }
+  },
+  "Sample": {
+    "get": {
+      "propertyIndex": "Use Sample.FileName through Sample.Reversed (1-23)"
+    },
+    "getId": {
+      "id": "Use Sample.FileName through Sample.Reversed (1-23)"
+    },
+    "getRange": {
+      "propertyIndex": "Use Sample.FileName through Sample.Reversed (1-23)"
+    },
+    "refersToSameSample": {
+      "otherSample": "Must be a Sample object"
+    },
+    "replaceAudioFile": {
+      "audioData": "Buffer count must match total channels across mic positions"
+    },
+    "set": {
+      "propertyIndex": "Use Sample.FileName through Sample.Reversed (1-23)",
+      "newValue": "Automatically clipped to valid range"
+    },
+    "setFromJSON": {
+      "object": "Keys must be SampleIds identifier strings"
+    }
+  },
+  "Sampler": {
+    "createSelection": {
+      "regex": "Valid regex pattern"
+    },
+    "createSelectionFromIndexes": {
+      "indexData": "-1 or valid sample indices"
+    },
+    "createSelectionWithFilter": {
+      "filterFunction": "Must return Integer"
+    },
+    "enableRoundRobin": {
+      "shouldUseRoundRobin": "--"
+    },
+    "getActiveRRGroupForEventId": {
+      "eventId": "-1 or valid event ID"
+    },
+    "getAttribute": {
+      "index": "Valid parameter index"
+    },
+    "getAttributeId": {
+      "parameterIndex": "0 to getNumAttributes()-1"
+    },
+    "getAttributeIndex": {
+      "parameterId": "Valid parameter name"
+    },
+    "getAudioWaveformContentAsBase64": {
+      "presetObj": "Must contain valid file path in `data`"
+    },
+    "getMicPositionName": {
+      "channelIndex": "0 to getNumMicPositions()-1"
+    },
+    "getRRGroupsForMessage": {
+      "noteNumber": "0-127",
+      "velocity": "0-127"
+    },
+    "getSoundProperty": {
+      "propertyIndex": "1-24 (SampleIds range)",
+      "soundIndex": "0 to getNumSelectedSounds()-1"
+    },
+    "importSamples": {
+      "fileNameList": "Non-empty array",
+      "skipExistingSamples": "--"
+    },
+    "isMicPositionPurged": {
+      "micIndex": "0 to getNumMicPositions()-1"
+    },
+    "isNoteNumberMapped": {
+      "noteNumber": "0-127"
+    },
+    "loadSampleForAnalysis": {
+      "soundIndex": "0 to getNumSelectedSounds()-1"
+    },
+    "loadSampleMap": {
+      "fileName": "Non-empty, valid pool reference"
+    },
+    "loadSampleMapFromBase64": {
+      "b64": "Valid encoded string"
+    },
+    "loadSampleMapFromJSON": {
+      "jsonSampleList": "Each must have at least FileName"
+    },
+    "loadSfzFile": {
+      "sfzFile": "Must point to existing .sfz file"
+    },
+    "parseSampleFile": {
+      "sampleFile": "Must point to valid audio file"
+    },
+    "purgeMicPosition": {
+      "micName": "Non-empty, must match existing mic name",
+      "shouldBePurged": "--"
+    },
+    "purgeSampleSelection": {
+      "selection": "Must contain valid Sample objects"
+    },
+    "saveCurrentSampleMap": {
+      "relativePathWithoutXml": "Non-empty"
+    },
+    "selectSounds": {
+      "regexWildcard": "Valid regex pattern"
+    },
+    "setActiveGroup": {
+      "activeGroupIndex": "1 to RRGroupAmount"
+    },
+    "setActiveGroupForEventId": {
+      "eventId": "-1 or valid event ID",
+      "activeGroupIndex": "1 to RRGroupAmount"
+    },
+    "setAllowReleaseStart": {
+      "eventId": "Valid event ID",
+      "shouldBeAllowed": "--"
+    },
+    "setAttribute": {
+      "index": "Valid parameter index",
+      "newValue": "Depends on parameter"
+    },
+    "setGUISelection": {
+      "sampleList": "Must contain Sample objects",
+      "addToSelection": "--"
+    },
+    "setMultiGroupIndex": {
+      "groupIndex": "Valid group indices",
+      "enabled": "--"
+    },
+    "setMultiGroupIndexForEventId": {
+      "eventId": "-1 or valid event ID",
+      "groupIndex": "Valid group indices",
+      "enabled": "--"
+    },
+    "setRRGroupVolume": {
+      "groupIndex": "-1 or valid group index",
+      "gainInDecibels": "Negative for attenuation"
+    },
+    "setReleaseStartOptions": {
+      "data": "See getReleaseStartOptions for schema"
+    },
+    "setSortByRRGroup": {
+      "shouldSort": "--"
+    },
+    "setSoundProperty": {
+      "soundIndex": "0 to getNumSelectedSounds()-1",
+      "propertyIndex": "1-24 (SampleIds range)",
+      "newValue": "Depends on property"
+    },
+    "setSoundPropertyForAllSamples": {
+      "propertyIndex": "1-24 (SampleIds range)",
+      "newValue": "Depends on property"
+    },
+    "setSoundPropertyForSelection": {
+      "propertyId": "1-24 (SampleIds range)",
+      "newValue": "Depends on property"
+    },
+    "setTimestretchOptions": {
+      "newOptions": "See getTimestretchOptions for schema"
+    },
+    "setTimestretchRatio": {
+      "newRatio": "Positive value, 1.0 = original speed"
+    },
+    "setUseStaticMatrix": {
+      "shouldUseStaticMatrix": "--"
+    }
+  },
+  "ScriptAudioWaveform": {
+    "referToData": {
+      "audioData": "Must be a valid data reference or -1"
+    },
+    "registerAtParent": {
+      "index": ">= 0"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setDefaultFolder": {
+      "newDefaultFolder": "Must be a ScriptFile object"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setPlaybackPosition": {
+      "normalisedPosition": "0.0 to 1.0"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    }
+  },
+  "ScriptButton": {
+    "addToMacroControl": {
+      "macroIndex": "0-7"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPopupData": {
+      "jsonData": "Must be a valid FloatingTile content type configuration",
+      "position": "Must be a 4-element array of integers"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setPropertiesFromJSON": {
+      "jsonData": "Keys must be valid property IDs"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setValue": {
+      "newValue": "0 (off) or 1 (on); must not be a String"
+    },
+    "setValueNormalized": {
+      "normalizedValue": "0.0 (off) or 1.0 (on)"
+    },
+    "setValueWithUndo": {
+      "newValue": "0 (off) or 1 (on); must not be a String"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptComboBox": {
+    "addItem": {
+      "newName": "Truncated to 128 characters"
+    },
+    "addToMacroControl": {
+      "macroIndex": "0-7"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setValue": {
+      "newValue": "Must not be a String; integer 0..N where N is item count"
+    },
+    "setValueNormalized": {
+      "normalizedValue": "0.0 to 1.0"
+    },
+    "setValueWithUndo": {
+      "newValue": "Must not be a String"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptDynamicContainer": {
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid active property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid active property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setData": {
+      "newData": "Each object should have `id` and `type` properties at minimum"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple; \"\" to clear"
+    },
+    "setValue": {
+      "newValue": "Must not be a String"
+    },
+    "setValueCallback": {
+      "valueFunction": "Must be a JavaScript function"
+    },
+    "setValueWithUndo": {
+      "newValue": "Must not be a String"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptedViewport": {
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "getOriginalRowIndex": {
+      "rowIndex": "Must be within 0..numRows-1"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setEventTypesForValueCallback": {
+      "eventTypeList": "Must be an array of valid, non-illegal event type strings"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setTableCallback": {
+      "callbackFunction": "Must be a JavaScript function"
+    },
+    "setTableColumns": {
+      "columnMetadata": "Must be called in onInit, after setTableMode()"
+    },
+    "setTableMode": {
+      "tableMetadata": "Must be called in onInit"
+    },
+    "setTableRowData": {
+      "tableData": "Must be called after setTableMode()"
+    },
+    "setTableSortFunction": {
+      "sortFunction": "Must return negative, 0, or positive integer"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setValue": {
+      "newValue": "Must not be a String"
+    },
+    "setValueWithUndo": {
+      "newValue": "Must not be a String"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptFloatingTile": {
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setContentData": {
+      "data": "Must contain a \"Type\" property with a valid frontend panel type ID"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptImage": {
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setAlpha": {
+      "newAlphaValue": "0.0 (fully transparent) to 1.0 (fully opaque)"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setImageFile": {
+      "absoluteFileName": "Must be a valid image pool reference, or \"\" to clear",
+      "forceUseRealFile": "Currently ignored -- has no effect"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setValue": {
+      "newValue": "Must not be a String"
+    },
+    "setValueWithUndo": {
+      "newValue": "Must not be a String"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptLabel": {
+    "addToMacroControl": {
+      "macroIndex": "0-7"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setEditable": {
+      "shouldBeEditable": "1 = editable, 0 = read-only"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptLookAndFeel": {
+    "isImageLoaded": {
+      "prettyName": "Case-sensitive match"
+    },
+    "loadImage": {
+      "imageName": "Supports expansion pack references via `{EXP::Name}` prefix",
+      "prettyName": "Must be unique per LAF instance; reusing an alias replaces the image"
+    },
+    "registerFunction": {
+      "functionName": "Must be one of the 62 predefined function names (see Value Descriptions)",
+      "paintFunction": "Draw functions: `function(g, obj)`. Data functions: `function(obj)` returning a value"
+    },
+    "setGlobalFont": {
+      "fontName": "Must be a font loaded via `Engine.loadFontAs()` or a system font name",
+      "fontSize": "Positive value"
+    },
+    "setInlineStyleSheet": {
+      "cssCode": "Must be valid CSS syntax; empty string disables CSS mode"
+    },
+    "setStyleSheet": {
+      "fileName": "Must have `.css` extension"
+    },
+    "setStyleSheetProperty": {
+      "variableId": "Valid CSS identifier",
+      "value": "Type depends on the `type` parameter",
+      "type": "One of: `\"\"`, `\"px\"`, `\"%\"`, `\"em\"`, `\"vh\"`, `\"deg\"`, `\"color\"`, `\"path\"`"
+    }
+  },
+  "ScriptModulationMatrix": {
+    "canConnect": {
+      "source": "Must exist in getSourceList()",
+      "target": "Must exist in getTargetList()"
+    },
+    "clearAllConnections": {
+      "targetId": "Empty string clears all connections"
+    },
+    "connect": {
+      "sourceId": "Must exist in getSourceList()",
+      "targetId": "Must exist in getTargetList()",
+      "addConnection": "--"
+    },
+    "fromBase64": {
+      "b64": "--"
+    },
+    "getComponent": {
+      "targetId": "Must match a target from getTargetList()"
+    },
+    "getConnectionProperty": {
+      "sourceId": "Must exist in getSourceList()",
+      "targetId": "Must exist in getTargetList()",
+      "propertyId": "One of the valid property IDs"
+    },
+    "getModulationDisplayData": {
+      "targetId": "Must match a target from getTargetList()"
+    },
+    "getTargetId": {
+      "componentOrId": "--"
+    },
+    "setConnectionCallback": {
+      "updateFunction": "Must accept 3 arguments"
+    },
+    "setConnectionProperty": {
+      "sourceId": "Must exist in getSourceList()",
+      "targetId": "Must exist in getTargetList()",
+      "propertyId": "See getConnectionProperty for valid values",
+      "value": "Type depends on property"
+    },
+    "setCurrentlySelectedSource": {
+      "sourceId": "Must exist in getSourceList()"
+    },
+    "setDragCallback": {
+      "newDragCallback": "Must accept 3 arguments"
+    },
+    "setEditCallback": {
+      "menuItems": "Array of Strings or single String",
+      "editFunction": "Must accept 2 arguments"
+    },
+    "setMatrixModulationProperties": {
+      "newProperties": "See Callback Properties for schema"
+    },
+    "setSourceSelectionCallback": {
+      "newCallback": "Must accept 1 argument"
+    }
+  },
+  "ScriptPanel": {
+    "addToMacroControl": {
+      "macroIndex": "0-7"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for this component type"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "isImageLoaded": {
+      "prettyName": "--"
+    },
+    "loadImage": {
+      "imageName": "Must be a valid image resource path",
+      "prettyName": "Should be unique among loaded images"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for this component type",
+      "value": "Type must match the property's expected type"
+    },
+    "setAnimation": {
+      "base64LottieAnimation": "Must be valid base64-encoded Lottie JSON"
+    },
+    "setAnimationFrame": {
+      "numFrame": "0 to numFrames-1"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions and callback properties below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setDraggingBounds": {
+      "area": "Array with 4 numeric elements"
+    },
+    "setFileDropCallback": {
+      "callbackLevel": "See value descriptions",
+      "wildcard": "e.g. \"*.wav;*.aif\"",
+      "dropFunction": "Must be an inline function with 1 parameter"
+    },
+    "setImage": {
+      "imageName": "Must have been loaded via loadImage()",
+      "xOffset": "One of xOffset or yOffset must be 0",
+      "yOffset": "One of xOffset or yOffset must be 0"
+    },
+    "setIsModalPopup": {
+      "shouldBeModal": "1 = modal, 0 = non-modal"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLoadingCallback": {
+      "loadingFunction": "Must be an inline function with 1 parameter"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setMouseCallback": {
+      "mouseFunction": "Must be an inline function with 1 parameter"
+    },
+    "setMouseCursor": {
+      "pathOrName": "See value descriptions for valid string names",
+      "colour": "Only used with Path; ignored for string cursors",
+      "hitPoint": "Values 0.0-1.0; only used with Path"
+    },
+    "setPaintRoutine": {
+      "paintFunction": "Must have exactly 1 parameter"
+    },
+    "setPanelValueWithUndo": {
+      "oldValue": "--",
+      "newValue": "--",
+      "actionName": "--"
+    },
+    "setPopupData": {
+      "jsonData": "--",
+      "position": "Array with 4 numeric elements"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple; pass \"\" to clear"
+    },
+    "setTimerCallback": {
+      "timerFunction": "Must be an inline function with 0 parameters"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setValue": {
+      "newValue": "Must not be a String"
+    },
+    "setValueWithUndo": {
+      "newValue": "Must not be a String"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showAsPopup": {
+      "closeOtherPopups": "1 = close others, 0 = keep others"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    },
+    "startExternalFileDrag": {
+      "fileToDrag": "Must be valid file paths",
+      "moveOriginal": "1 = move, 0 = copy",
+      "finishCallback": "--"
+    },
+    "startInternalDrag": {
+      "dragData": "--"
+    }
+  },
+  "ScriptShader": {
+    "fromBase64": {
+      "b64": "Must be produced by `toBase64()`"
+    },
+    "setBlendFunc": {
+      "enabled": "true/false",
+      "sFactor": "Must be a GL_* constant from the shader object",
+      "dFactor": "Must be a GL_* constant from the shader object"
+    },
+    "setEnableCachedBuffer": {
+      "shouldEnable": "true/false"
+    },
+    "setFragmentShader": {
+      "shaderFile": "--"
+    },
+    "setPreprocessor": {
+      "name": "--",
+      "value": "--"
+    },
+    "setUniformData": {
+      "id": "--",
+      "data": "Array must have 2-4 elements for vec2/vec3/vec4"
+    }
+  },
+  "ScriptSlider": {
+    "addToMacroControl": {
+      "macroIndex": "0-7"
+    },
+    "connectToModulatedParameter": {
+      "moduleId": "Must resolve to an existing processor",
+      "parameterId": "Integer index or valid parameter name"
+    },
+    "contains": {
+      "valueToCheck": "Numeric value"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid ScriptSlider property"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "set": {
+      "propertyName": "Must be a valid ScriptSlider property",
+      "value": "Must match expected property type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "Supports special values and KeyPress descriptors"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be inline and take exactly 2 parameters"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Call `setConsumedKeyPresses` first"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel object"
+    },
+    "setMaxValue": {
+      "max": "Range style only"
+    },
+    "setMidPoint": {
+      "valueForMidPoint": "Non-numeric strings must be exactly `\"disabled\"`"
+    },
+    "setMinValue": {
+      "min": "Range style only"
+    },
+    "setMode": {
+      "mode": "Must match one of the valid mode strings"
+    },
+    "setModifiers": {
+      "action": "`TextInput`, `FineTune`, `ResetToDefault`, `ContextMenu`, `ScaleModulation`",
+      "modifiers": "Use values from `createModifiers()`"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setPropertiesFromJSON": {
+      "jsonData": "Keys must be valid ScriptSlider property names"
+    },
+    "setRange": {
+      "min": "Must be < max for usable range",
+      "max": "Must be > min for usable range",
+      "stepSize": "Must be >= 0.0"
+    },
+    "setStyle": {
+      "style": "Must match one of the valid style names"
+    },
+    "setStyleSheetClass": {
+      "classIds": "CSS selector tokens"
+    },
+    "setStyleSheetProperty": {
+      "variableId": "Any valid variable key",
+      "value": "Must match selected conversion",
+      "type": "See value descriptions"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Use valid pseudo-state tokens or empty string"
+    },
+    "setTooltip": {
+      "tooltip": "Any string"
+    },
+    "setValue": {
+      "newValue": "Must not be String"
+    },
+    "setValueNormalized": {
+      "normalizedValue": "Typically 0.0..1.0"
+    },
+    "setValuePopupFunction": {
+      "newFunction": "Must accept exactly 1 argument"
+    },
+    "setValueWithUndo": {
+      "newValue": "Must not be String"
+    },
+    "setZLevel": {
+      "zLevel": "Must match valid z-level string"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptSliderPack": {
+    "addToMacroControl": {
+      "macroIndex": "0-7"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid ScriptSliderPack property"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "getSliderValueAt": {
+      "index": "0 to `getNumSliders() - 1`"
+    },
+    "referToData": {
+      "sliderPackData": "`ScriptSliderPackData`, compatible complex-data component, or `-1`"
+    },
+    "registerAtParent": {
+      "index": ">= 0"
+    },
+    "set": {
+      "propertyName": "Must be a valid ScriptSliderPack property",
+      "value": "Must match property type"
+    },
+    "setAllValueChangeCausesCallback": {
+      "shouldBeEnabled": "1 = enabled, 0 = disabled"
+    },
+    "setAllValues": {
+      "value": "Buffer / Array values beyond slider count are ignored"
+    },
+    "setAllValuesWithUndo": {
+      "value": "Buffer / Array values are copied into an undo action"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "Must be valid JUCE key descriptions"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be inline and accept exactly 2 args"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be inline and consume one event object"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a `ScriptedLookAndFeel` object"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setSliderAtIndex": {
+      "index": "0 to `getNumSliders() - 1`",
+      "value": "Typically within current min/max range"
+    },
+    "setStyleSheetClass": {
+      "classIds": "Component type class is prepended automatically"
+    },
+    "setStyleSheetProperty": {
+      "variableId": "Non-empty string",
+      "value": "Must match selected conversion",
+      "type": "See value descriptions"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Multiple states can be concatenated"
+    },
+    "setTooltip": {
+      "tooltip": "--"
+    },
+    "setUsePreallocatedLength": {
+      "numMaxSliders": ">= 0"
+    },
+    "setWidthArray": {
+      "normalizedWidths": "Array length should be `getNumSliders() + 1`"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of `Back`, `Default`, `Front`, `AlwaysOnTop`"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    }
+  },
+  "ScriptTable": {
+    "addTablePoint": {
+      "x": "Intended range: 0.0-1.0",
+      "y": "Intended range: 0.0-1.0"
+    },
+    "getTableValue": {
+      "inputValue": "Intended range: 0.0-1.0"
+    },
+    "referToData": {
+      "tableData": "`ScriptTableData`, compatible complex-data component, or `-1`"
+    },
+    "registerAtParent": {
+      "index": ">= 0"
+    },
+    "setMouseHandlingProperties": {
+      "propertyObject": "Uses known property keys listed below"
+    },
+    "setSnapValues": {
+      "snapValueArray": "Values should be in 0.0-1.0"
+    },
+    "setTablePoint": {
+      "pointIndex": "Must reference an existing point",
+      "x": "Clamped to 0.0-1.0 (edge points keep x)",
+      "y": "Clamped to 0.0-1.0",
+      "curve": "Clamped to 0.0-1.0"
+    },
+    "setTablePopupFunction": {
+      "newFunction": "Should return a String-compatible value"
+    }
+  },
+  "ScriptWebView": {
+    "addBufferToWebSocket": {
+      "bufferIndex": ">= 0",
+      "buffer": "Must be a Buffer"
+    },
+    "bindCallback": {
+      "callbackId": "Must be unique across all bound callbacks",
+      "functionToCall": "Must accept 1 parameter"
+    },
+    "callFunction": {
+      "javascriptFunction": "Must exist in the webview's global JS scope",
+      "args": "Any type; passed as-is to JS"
+    },
+    "evaluate": {
+      "identifier": "Should be unique per logical evaluation; reusing a key overwrites the previous code",
+      "jsCode": "Must be valid JavaScript"
+    },
+    "fadeComponent": {
+      "shouldBeVisible": "1 = show, 0 = hide",
+      "milliseconds": "> 0"
+    },
+    "get": {
+      "propertyName": "Must be a valid property ID for ScriptWebView"
+    },
+    "getLocalBounds": {
+      "reduceAmount": ">= 0.0"
+    },
+    "sendToWebSocket": {
+      "id": "--",
+      "data": "Must be String, Buffer, or JSON Object"
+    },
+    "set": {
+      "propertyName": "Must be a valid property ID for ScriptWebView",
+      "value": "Type must match the property's expected type"
+    },
+    "setConsumedKeyPresses": {
+      "listOfKeys": "See value descriptions below"
+    },
+    "setControlCallback": {
+      "controlFunction": "Must be an inline function with exactly 2 parameters"
+    },
+    "setEnableWebSocket": {
+      "port": "Use -1 for a random available port"
+    },
+    "setHtmlContent": {
+      "htmlCode": "Must be valid HTML"
+    },
+    "setIndexFile": {
+      "indexFile": "Must be a File object (from FileSystem API)"
+    },
+    "setKeyPressCallback": {
+      "keyboardFunction": "Must be an inline function"
+    },
+    "setLocalLookAndFeel": {
+      "lafObject": "Must be a ScriptedLookAndFeel instance"
+    },
+    "setPosition": {
+      "x": "0-900",
+      "y": "0-MAX_SCRIPT_HEIGHT",
+      "w": "0-900",
+      "h": "0-MAX_SCRIPT_HEIGHT"
+    },
+    "setStyleSheetClass": {
+      "classIds": "e.g. \".myClass .highlighted\""
+    },
+    "setStyleSheetProperty": {
+      "variableId": "--",
+      "value": "Type must match the conversion specified by the type parameter",
+      "type": "See value descriptions below"
+    },
+    "setStyleSheetPseudoState": {
+      "pseudoState": "Can combine multiple states; pass \"\" to clear"
+    },
+    "setValue": {
+      "newValue": "Must not be a String"
+    },
+    "setWebSocketCallback": {
+      "callbackFunction": "Must accept 1 parameter"
+    },
+    "setZLevel": {
+      "zLevel": "Must be one of the four valid values (case-sensitive)"
+    },
+    "showControl": {
+      "shouldBeVisible": "1 = show, 0 = hide"
+    },
+    "updateBuffer": {
+      "bufferIndex": "Must match an index used in addBufferToWebSocket"
+    }
+  },
+  "Server": {
+    "callWithGET": {
+      "subURL": "Must not be empty",
+      "parameters": "--",
+      "callback": "Must accept 2 arguments"
+    },
+    "callWithPOST": {
+      "subURL": "Must not be empty",
+      "parameters": "--",
+      "callback": "Must accept 2 arguments"
+    },
+    "downloadFile": {
+      "subURL": "Must not be empty",
+      "parameters": "Pass `{}` for no parameters",
+      "targetFile": "Must be a File object, not a directory",
+      "callback": "Must accept 0 arguments; `this` is the Download object"
+    },
+    "isEmailAddress": {
+      "email": "--"
+    },
+    "setBaseURL": {
+      "url": "Should be a valid HTTP/HTTPS URL"
+    },
+    "setEnforceTrailingSlash": {
+      "shouldAddSlash": "--"
+    },
+    "setHttpHeader": {
+      "additionalHeader": "Standard HTTP header format"
+    },
+    "setNumAllowedDownloads": {
+      "maxNumberOfParallelDownloads": "Should be >= 1"
+    },
+    "setServerCallback": {
+      "callback": "Must accept 1 argument"
+    },
+    "setTimeoutMessageString": {
+      "timeoutMessage": "--"
+    }
+  },
+  "Settings": {
+    "isIppEnabled": {
+      "returnTrueIfMacOS": "Boolean"
+    },
+    "isMidiChannelEnabled": {
+      "index": "0-16"
+    },
+    "isMidiInputEnabled": {
+      "midiInputName": "Must match an available device name"
+    },
+    "setAudioDevice": {
+      "name": "Must match an available device name"
+    },
+    "setAudioDeviceType": {
+      "deviceName": "Must match an available device type"
+    },
+    "setBufferSize": {
+      "newBlockSize": "Should match an available buffer size"
+    },
+    "setDiskMode": {
+      "mode": "0 (SSD) or 1 (HDD)"
+    },
+    "setEnableDebugMode": {
+      "shouldBeEnabled": "Boolean"
+    },
+    "setEnableOpenGL": {
+      "shouldBeEnabled": "Boolean"
+    },
+    "setOutputChannel": {
+      "index": "Must be a valid pair index"
+    },
+    "setSampleFolder": {
+      "sampleFolder": "Must be a File object pointing to an existing directory"
+    },
+    "setSampleRate": {
+      "sampleRate": "Should match an available sample rate"
+    },
+    "setVoiceMultiplier": {
+      "newVoiceAmount": "Positive integer"
+    },
+    "setZoomLevel": {
+      "newLevel": "Clamped to 0.25-2.0"
+    },
+    "stopPerfettoTracing": {
+      "traceFileToUse": "Must be a File with `.pftrace` extension"
+    },
+    "toggleMidiChannel": {
+      "index": "0-16",
+      "value": "Boolean"
+    },
+    "toggleMidiInput": {
+      "midiInputName": "Must match an available device name",
+      "enableInput": "Boolean"
+    }
+  },
+  "SliderPackData": {
+    "fromBase64": {
+      "b64": "Non-empty string"
+    },
+    "getValue": {
+      "index": "0 to getNumSliders()-1"
+    },
+    "linkTo": {
+      "other": "Must be SliderPackData type"
+    },
+    "setAllValues": {
+      "value": "--"
+    },
+    "setAllValuesWithUndo": {
+      "value": "--"
+    },
+    "setAssignIsUndoable": {
+      "shouldBeUndoable": "true/false"
+    },
+    "setContentCallback": {
+      "contentFunction": "1 argument"
+    },
+    "setDisplayCallback": {
+      "displayFunction": "1 argument"
+    },
+    "setNumSliders": {
+      "numSliders": "Must be > 0"
+    },
+    "setRange": {
+      "minValue": "--",
+      "maxValue": "Must be > minValue",
+      "stepSize": "> 0"
+    },
+    "setUsePreallocatedLength": {
+      "length": ">= 0"
+    },
+    "setValue": {
+      "sliderIndex": "0 to getNumSliders()-1",
+      "value": "Should be within range"
+    },
+    "setValueWithUndo": {
+      "sliderIndex": "0 to getNumSliders()-1",
+      "value": "Should be within range"
+    }
+  },
+  "SliderPackProcessor": {
+    "getSliderPack": {
+      "sliderPackIndex": ">= 0, must be less than the number of slider packs owned by the module"
+    }
+  },
+  "SlotFX": {
+    "setEffect": {
+      "effectName": "Valid effect type name or network ID"
+    },
+    "swap": {
+      "otherSlot": "Must be a valid SlotFX object in HotswappableProcessor mode"
+    }
+  },
+  "String": {
+    "charAt": {
+      "position": "--"
+    },
+    "charCodeAt": {
+      "position": "--"
+    },
+    "concat": {
+      "arg1": "--",
+      "...": "--"
+    },
+    "contains": {
+      "searchString": "--"
+    },
+    "decrypt": {
+      "key": "Max 72 bytes (silently clamped)"
+    },
+    "encrypt": {
+      "key": "Max 72 bytes (silently clamped)"
+    },
+    "endsWith": {
+      "suffix": "--"
+    },
+    "includes": {
+      "searchString": "--"
+    },
+    "indexOf": {
+      "searchString": "--"
+    },
+    "lastIndexOf": {
+      "searchString": "--"
+    },
+    "match": {
+      "regex": "--"
+    },
+    "replace": {
+      "search": "--",
+      "replacement": "--"
+    },
+    "replaceAll": {
+      "search": "--",
+      "replacement": "--"
+    },
+    "slice": {
+      "start": "--",
+      "end": "Optional"
+    },
+    "split": {
+      "separator": "Only the first character is used"
+    },
+    "startsWith": {
+      "prefix": "--"
+    },
+    "substring": {
+      "start": "--",
+      "end": "Optional"
+    }
+  },
+  "Synth": {
+    "addController": {
+      "channel": "1-16",
+      "number": "0-129",
+      "value": "0-127 for CC/aftertouch, 0-16383 for pitch bend",
+      "timeStampSamples": ">= 0"
+    },
+    "addEffect": {
+      "type": "Must be a valid factory type",
+      "id": "If an existing effect has this ID, it is returned",
+      "index": "-1 to append, or 0-based index"
+    },
+    "addMessageFromHolder": {
+      "messageHolder": "Must be a valid MessageHolder, not empty"
+    },
+    "addModulator": {
+      "chainId": "1 = GainModulation, 2 = PitchModulation",
+      "type": "Must be a valid factory type for the target chain",
+      "id": "If existing, returns that modulator"
+    },
+    "addNoteOff": {
+      "channel": "1-16",
+      "noteNumber": "0-127",
+      "timeStampSamples": ">= 0 (clamped to minimum 1)"
+    },
+    "addNoteOn": {
+      "channel": "1-16",
+      "noteNumber": "0-127",
+      "velocity": "0-127",
+      "timeStampSamples": ">= 0"
+    },
+    "addPitchFade": {
+      "eventId": "> 0",
+      "fadeTimeMilliseconds": ">= 0",
+      "targetCoarsePitch": "Cast to uint8",
+      "targetFinePitch": "Cast to uint8 (0-100 typical)"
+    },
+    "addToFront": {
+      "addToFront": "Boolean (0 or 1)"
+    },
+    "addVolumeFade": {
+      "eventId": "> 0",
+      "fadeTimeMilliseconds": ">= 0",
+      "targetVolume": "Cast to uint8 internally"
+    },
+    "attachNote": {
+      "originalNoteId": "Valid active event ID",
+      "artificialNoteId": "Must be an artificial event ID"
+    },
+    "deferCallbacks": {
+      "makeAsynchronous": "Boolean (0 or 1)"
+    },
+    "getAllEffects": {
+      "regex": "Supports `*` glob wildcard"
+    },
+    "getAllModulators": {
+      "regex": "Supports `*` glob wildcard"
+    },
+    "getAttribute": {
+      "attributeIndex": "Processor-type-specific"
+    },
+    "getAudioSampleProcessor": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getChildSynth": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getChildSynthByIndex": {
+      "index": "0 to getNumChildSynths()-1"
+    },
+    "getDisplayBufferSource": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getEffect": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getIdList": {
+      "type": "Must match the processor's getName() string exactly"
+    },
+    "getMidiPlayer": {
+      "playerId": "Must match exactly (case-sensitive)"
+    },
+    "getMidiProcessor": {
+      "name": "Must match exactly; cannot be the current script processor's own ID"
+    },
+    "getModulator": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getModulatorIndex": {
+      "chainId": "1 = GainModulation, 2 = PitchModulation",
+      "id": "Must match exactly (case-sensitive)"
+    },
+    "getRoutingMatrix": {
+      "processorId": "Must match exactly (case-sensitive)"
+    },
+    "getSampler": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getSliderPackProcessor": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getSlotFX": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getTableProcessor": {
+      "name": "Must match exactly (case-sensitive)"
+    },
+    "getWavetableController": {
+      "processorId": "Must match exactly (case-sensitive)"
+    },
+    "isArtificialEventActive": {
+      "eventId": "Cast to uint16 internally"
+    },
+    "isKeyDown": {
+      "noteNumber": "0-127"
+    },
+    "noteOffByEventId": {
+      "eventId": "> 0; must refer to an artificial event"
+    },
+    "noteOffDelayedByEventId": {
+      "eventId": "> 0; cast to uint16 internally",
+      "timestamp": ">= 0 (adjusted by backwards-compatible timestamp logic)"
+    },
+    "noteOffFromUI": {
+      "channel": "1-16 (standard MIDI range)",
+      "noteNumber": "0-127"
+    },
+    "playNote": {
+      "noteNumber": "0-127",
+      "velocity": "1-127 (0 rejected with error)"
+    },
+    "playNoteFromUI": {
+      "channel": "1-16 (standard MIDI range)",
+      "noteNumber": "0-127",
+      "velocity": "0-127"
+    },
+    "playNoteWithStartOffset": {
+      "channel": "1-16",
+      "number": "0-127",
+      "velocity": "1-127 (0 rejected with error)",
+      "offset": "0-65535 (stored as uint16)"
+    },
+    "removeEffect": {
+      "effect": "Must be a ScriptEffect (dynamic_cast check)"
+    },
+    "removeModulator": {
+      "mod": "Must be a ScriptModulator (dynamic_cast check)"
+    },
+    "sendController": {
+      "number": ">= 0",
+      "value": "0-127 for CC/aftertouch, 0-16383 for pitch bend"
+    },
+    "sendControllerToChildSynths": {
+      "controllerNumber": ">= 0",
+      "controllerValue": "0-127 for CC/aftertouch, 0-16383 for pitch bend"
+    },
+    "setAttribute": {
+      "attributeIndex": "Processor-type-specific",
+      "newAttribute": "Range depends on the specific parameter"
+    },
+    "setClockSpeed": {
+      "clockSpeed": "0, 1, 2, 4, 8, 16, or 32"
+    },
+    "setFixNoteOnAfterNoteOff": {
+      "shouldBeFixed": "Boolean (0 or 1)"
+    },
+    "setMacroControl": {
+      "macroIndex": "1-8",
+      "newValue": "0.0-127.0"
+    },
+    "setModulatorAttribute": {
+      "chainId": "1 = GainModulation, 2 = PitchModulation",
+      "modulatorIndex": ">= 0, must be within chain bounds",
+      "attributeIndex": "Processor-type-specific for positive values",
+      "newValue": "Range depends on parameter; Intensity: 0.0-1.0 for gain, -12.0 to 12.0 semitones for pitch"
+    },
+    "setShouldKillRetriggeredNote": {
+      "killNote": "Boolean (0 or 1); default is true"
+    },
+    "setVoiceGainValue": {
+      "voiceIndex": ">= 0 (negative values clamped to 0); must be < voice count",
+      "gainValue": "Linear gain (not dB); 1.0 = unity"
+    },
+    "setVoicePitchValue": {
+      "voiceIndex": ">= 0 (negative values clamped to 0); must be < voice count",
+      "pitchValue": "0.5-2.0 documented range (no clamping applied)"
+    },
+    "startTimer": {
+      "seconds": ">= 0.004 (4ms minimum)"
+    }
+  },
+  "Table": {
+    "addTablePoint": {
+      "x": "0.0--1.0",
+      "y": "0.0--1.0"
+    },
+    "getTableValueNormalised": {
+      "normalisedInput": "0.0--1.0"
+    },
+    "linkTo": {
+      "otherTable": "Must be a Table instance"
+    },
+    "setContentCallback": {
+      "contentFunction": "Must accept 1 argument"
+    },
+    "setDisplayCallback": {
+      "displayFunction": "Must accept 1 argument"
+    },
+    "setTablePoint": {
+      "pointIndex": "0 to numPoints-1",
+      "x": "0.0--1.0 (ignored for edge points)",
+      "y": "0.0--1.0",
+      "curve": "0.0--1.0 (0.5 = linear)"
+    },
+    "setTablePointsFromArray": {
+      "pointList": "Min 2 sub-arrays, each with exactly 3 elements"
+    }
+  },
+  "TableProcessor": {
+    "addTablePoint": {
+      "tableIndex": ">= 0",
+      "x": "0.0-1.0 recommended",
+      "y": "0.0-1.0 recommended"
+    },
+    "exportAsBase64": {
+      "tableIndex": ">= 0"
+    },
+    "getTable": {
+      "tableIndex": ">= 0"
+    },
+    "reset": {
+      "tableIndex": ">= 0"
+    },
+    "restoreFromBase64": {
+      "tableIndex": ">= 0",
+      "state": "Valid base64 or empty string"
+    },
+    "setTablePoint": {
+      "tableIndex": ">= 0",
+      "pointIndex": "0 to numPoints-1",
+      "x": "0.0-1.0",
+      "y": "0.0-1.0",
+      "curve": "0.0-1.0"
+    }
+  },
+  "Threads": {
+    "getLockerThread": {
+      "threadThatIsLocked": "One of `Threads.Audio`, `Threads.Scripting`, `Threads.Loading`, `Threads.UI`"
+    },
+    "isLocked": {
+      "thread": "One of `Threads.Audio`, `Threads.Scripting`, `Threads.Loading`, `Threads.UI`"
+    },
+    "isLockedByCurrentThread": {
+      "thread": "One of `Threads.Audio`, `Threads.Scripting`, `Threads.Loading`, `Threads.UI`"
+    },
+    "killVoicesAndCall": {
+      "functionToExecute": "Must take 0 arguments"
+    },
+    "startProfiling": {
+      "options": "Number: 10-10000; Object: see Callback Properties",
+      "finishCallback": "Must take 1 argument"
+    },
+    "toString": {
+      "thread": "One of the `Threads` constants"
+    }
+  },
+  "ThreadSafeStorage": {
+    "store": {
+      "dataToStore": "Any type"
+    },
+    "storeWithCopy": {
+      "dataToStore": "Any type"
+    },
+    "tryLoad": {
+      "returnValueIfLocked": "Should match the expected data type"
+    }
+  },
+  "Timer": {
+    "setTimerCallback": {
+      "callbackFunction": "Must be a function."
+    },
+    "startTimer": {
+      "intervalInMilliSeconds": "Must be > 10."
+    }
+  },
+  "TransportHandler": {
+    "getGridPosition": {
+      "timestamp": "0 to current block size"
+    },
+    "setEnableGrid": {
+      "shouldBeEnabled": "Boolean: true/false",
+      "tempoFactor": "0-18 (see table below). Reports script error if out of range."
+    },
+    "setLinkBpmToSyncMode": {
+      "shouldPrefer": "Boolean: true/false"
+    },
+    "setLocalGridBypassed": {
+      "shouldBeBypassed": "Boolean: true/false"
+    },
+    "setLocalGridMultiplier": {
+      "factor": "Must be 1 or a power of two (2, 4, 8, 16, 32, 64). Reports script error if not. Clamped to [1, 64]."
+    },
+    "setOnBeatChange": {
+      "sync": "`SyncNotification`, `AsyncNotification`, or `AsyncHiPriorityNotification`",
+      "f": "Must be `inline function` if sync is `SyncNotification`. Must accept 2 parameters."
+    },
+    "setOnBypass": {
+      "f": "Must accept 1 parameter."
+    },
+    "setOnGridChange": {
+      "sync": "`SyncNotification`, `AsyncNotification`, or `AsyncHiPriorityNotification`",
+      "f": "Must be `inline function` if sync is `SyncNotification`. Must accept 3 parameters."
+    },
+    "setOnSignatureChange": {
+      "sync": "`SyncNotification`, `AsyncNotification`, or `AsyncHiPriorityNotification`",
+      "f": "Must be `inline function` if sync is `SyncNotification`. Must accept 2 parameters."
+    },
+    "setOnTempoChange": {
+      "sync": "`SyncNotification`, `AsyncNotification`, or `AsyncHiPriorityNotification`",
+      "f": "Must be `inline function` if sync is `SyncNotification`. Must accept 1 parameter."
+    },
+    "setOnTransportChange": {
+      "sync": "`SyncNotification`, `AsyncNotification`, or `AsyncHiPriorityNotification`",
+      "f": "Must be `inline function` if sync is `SyncNotification`. Must accept 1 parameter."
+    },
+    "setSyncMode": {
+      "syncMode": "0-5, use TransportHandler constants (e.g. `th.PreferExternal`)"
+    },
+    "startInternalClock": {
+      "timestamp": "0 to current block size"
+    },
+    "stopInternalClock": {
+      "timestamp": "0 to current block size"
+    },
+    "stopInternalClockOnExternalStop": {
+      "shouldStop": "Boolean: true/false"
+    }
+  },
+  "Unlocker": {
+    "checkExpirationData": {
+      "encodedTimeString": "Must start with `\"0x\"`"
+    },
+    "checkMuseHub": {
+      "resultCallback": "Must accept 1 argument"
+    },
+    "contains": {
+      "otherString": "--"
+    },
+    "isValidKeyFile": {
+      "possibleKeyData": "Must start with `\"Keyfile for \"` to pass"
+    },
+    "setProductCheckFunction": {
+      "checkFunction": "Must accept 1 argument, must return bool"
+    },
+    "unlockExpansionList": {
+      "expansionIdList": "--"
+    },
+    "writeExpansionKeyFile": {
+      "keyData": "Must start with `\"Expansion List\"`"
+    },
+    "writeKeyFile": {
+      "keyData": "Should start with `\"Keyfile for \"` for validity"
+    }
+  },
+  "UnorderedStack": {
+    "asBuffer": {
+      "getAllElements": "0 or 1"
+    },
+    "contains": {
+      "value": "--"
+    },
+    "copyTo": {
+      "target": "Must match stack mode for Buffer/Stack targets"
+    },
+    "insert": {
+      "value": "Max 128 elements"
+    },
+    "remove": {
+      "value": "--"
+    },
+    "removeElement": {
+      "index": "0 to size()-1"
+    },
+    "removeIfEqual": {
+      "holder": "Must be a MessageHolder"
+    },
+    "setIsEventStack": {
+      "isEventStack": "0 or 1",
+      "eventCompareFunction": "Constants: 0-4; or inline function with 2 params"
+    },
+    "storeEvent": {
+      "index": "0 to size()-1",
+      "holder": "Must be a MessageHolder"
+    }
+  },
+  "UserPresetHandler": {
+    "attachAutomationCallback": {
+      "automationId": "Must match a registered automation ID",
+      "updateCallback": "Must accept 2 arguments",
+      "isSynchronous": "`SyncNotification`, `AsyncNotification`, or `AsyncHiPriorityNotification`"
+    },
+    "getAutomationIndex": {
+      "automationID": "Must match an ID registered via `setCustomAutomation`"
+    },
+    "getStateManagersForTarget": {
+      "targetId": "`\"PluginState\"`, `\"UserPreset\"`, or `\"External\"`; case-sensitive"
+    },
+    "isOldVersion": {
+      "version": "Must be in \"major.minor.patch\" format (e.g., \"1.2.0\")"
+    },
+    "sendParameterGesture": {
+      "automationType": "0=Macro, 1=CustomAutomation, 2=ScriptControl, 3=NKSWrapper",
+      "indexWithinType": "Must be a valid index for the given type",
+      "gestureActive": "Boolean value"
+    },
+    "setAutomationValue": {
+      "automationIndex": "Must be in range [0, numAutomationSlots)",
+      "newValue": "Clamped to [min, max] from setCustomAutomation"
+    },
+    "setCustomAutomation": {
+      "automationData": "Must be an Array; each element must be a JSON object with at least `ID` and `connections`"
+    },
+    "setEnableUserPresetPreprocessing": {
+      "processBeforeLoading": "Boolean value",
+      "shouldUnpackComplexData": "Boolean value; only meaningful when processBeforeLoading is true"
+    },
+    "setParameterGestureCallback": {
+      "callbackFunction": "Must accept 3 arguments"
+    },
+    "setPluginParameterGroupNames": {
+      "pluginParameterGroupNames": "Must be an Array; throws a script error if not"
+    },
+    "setPluginParameterSortFunction": {
+      "customSortFunction": "Must accept 2 arguments when a function; must return Integer"
+    },
+    "setPostCallback": {
+      "presetPostCallback": "Must accept 1 argument"
+    },
+    "setPostSaveCallback": {
+      "presetPostSaveCallback": "Must accept 1 argument"
+    },
+    "setPreCallback": {
+      "presetPreCallback": "Must accept 1 argument"
+    },
+    "setStateManagerProperties": {
+      "obj": "Call once during initialisation"
+    },
+    "setUseCustomUserPresetModel": {
+      "loadCallback": "Must be a JavaScript function; must accept 1 argument",
+      "saveCallback": "Must be a JavaScript function; must accept 1 argument",
+      "usePersistentObject": "Boolean value"
+    },
+    "setUseUndoForPresetLoading": {
+      "shouldUseUndoManager": "Boolean value"
+    },
+    "updateAutomationValues": {
+      "data": "Integer or Array; passing a single JSON object throws a script error",
+      "sendMessage": "`SyncNotification`, `AsyncNotification`, `AsyncHiPriorityNotification`, or `false` (dontSendNotification)",
+      "useUndoManager": "Boolean value"
+    },
+    "updateSaveInPresetComponents": {
+      "obj": "Must be a valid JSON object with the structure produced by `createObjectForSaveInPresetComponents`"
+    }
+  },
+  "WavetableController": {
+    "loadData": {
+      "bufferOrFile": "See description for accepted types",
+      "sampleRate": "Ignored when loading from ScriptFile",
+      "loopRange": "Must have exactly 2 integer elements"
+    },
+    "saveAsAudioFile": {
+      "outputFile": "--"
+    },
+    "saveAsHwt": {
+      "outputFile": "Must be a ScriptFile instance"
+    },
+    "setEnableResynthesisCache": {
+      "cacheDirectory": "Must be a valid directory path",
+      "clearCache": "true/false"
+    },
+    "setErrorHandler": {
+      "errorCallback": "Must be a JavaScript function"
+    },
+    "setPostFXProcessors": {
+      "postFXData": "Each element must be a JSON object with a Type property"
+    },
+    "setResynthesisOptions": {
+      "optionData": "See Callback Properties for valid keys"
+    }
+  }
+}
