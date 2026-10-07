@@ -7,7 +7,17 @@
 
 This document describes the procedure to extract LookAndFeel (LAF) function documentation from the HISE source code for use by an MCP server.
 
-**Output Location:** `hi_scripting/scripting/api/laf_style_guide.json`
+**Output Location:** `enrichment/resources/laf_style_guide.json`
+
+The `batchCreateMeta.bat` pipeline also converts this JSON into a compiled JUCE
+ValueTree blob:
+
+- `hi_scripting/scripting/api/LafObjects.h`
+- `hi_scripting/scripting/api/LafObjects.cpp`
+
+The blob has a `LafObjects` root. Each LAF function is a direct child with
+`description` and `target` properties. Its callback properties are child nodes
+with `type` and `description` properties.
 
 ---
 

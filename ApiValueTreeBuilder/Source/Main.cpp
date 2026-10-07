@@ -2,6 +2,76 @@
 
 using namespace juce;
 
+ValueTree buildLafValueTree(const var& jsonData)
+{
+	ValueTree root("LafObjects");
+	auto* categories = jsonData.getProperty("categories", {}).getDynamicObject();
+
+	if (categories == nullptr)
+		return root;
+
+	auto addFunctions = [&root](DynamicObject* targets)
+	{
+		if (targets == nullptr)
+			return;
+
+		for (auto& targetPair : targets->getProperties())
+		{
+			auto* targetData = targetPair.value.getDynamicObject();
+			if (targetData == nullptr)
+				continue;
+
+			auto* functions = targetData->getProperty("lafFunctions").getDynamicObject();
+			if (functions == nullptr)
+				continue;
+
+			for (auto& functionPair : functions->getProperties())
+			{
+				auto* functionData = functionPair.value.getDynamicObject();
+				if (functionData == nullptr)
+					continue;
+
+				ValueTree functionNode(functionPair.name);
+				functionNode.setProperty("target", targetPair.name.toString(), nullptr);
+
+				if (functionData->hasProperty("description"))
+					functionNode.setProperty("description", functionData->getProperty("description"), nullptr);
+
+				auto* callbackProperties = functionData->getProperty("callbackProperties").getDynamicObject();
+				if (callbackProperties != nullptr)
+				{
+					for (auto& propertyPair : callbackProperties->getProperties())
+					{
+						auto* propertyData = propertyPair.value.getDynamicObject();
+						if (propertyData == nullptr)
+							continue;
+
+						ValueTree propertyNode(propertyPair.name);
+						if (propertyData->hasProperty("type"))
+							propertyNode.setProperty("type", propertyData->getProperty("type"), nullptr);
+						if (propertyData->hasProperty("description"))
+							propertyNode.setProperty("description", propertyData->getProperty("description"), nullptr);
+						functionNode.addChild(propertyNode, -1, nullptr);
+					}
+				}
+
+				root.addChild(functionNode, -1, nullptr);
+			}
+		}
+	};
+
+	if (auto* scriptComponents = categories->getProperty("ScriptComponents").getDynamicObject())
+		addFunctions(scriptComponents->getProperty("components").getDynamicObject());
+
+	if (auto* floatingTiles = categories->getProperty("FloatingTileContentTypes").getDynamicObject())
+		addFunctions(floatingTiles->getProperty("contentTypes").getDynamicObject());
+
+	if (auto* global = categories->getProperty("Global").getDynamicObject())
+		addFunctions(global->getProperty("categories").getDynamicObject());
+
+	return root;
+}
+
 ValueTree buildApiValueTree(const var& jsonData)
 {
 	ValueTree root("Api");
@@ -147,7 +217,9 @@ int main(int argc, char* argv[])
 	}
 
 	// Build ValueTree
-	auto tree = buildApiValueTree(jsonData);
+	auto tree = namespaceName == "LafObjects"
+		? buildLafValueTree(jsonData)
+		: buildApiValueTree(jsonData);
 
 	// Count stats
 	int classCount = tree.getNumChildren();

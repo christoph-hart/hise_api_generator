@@ -8,7 +8,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 
 > **To regenerate `XmlApi.h`/`XmlApi.cpp`, run `batchCreateMeta.bat`.**
 > This supersedes the old `batchCreate.bat` by running the full enriched pipeline in one step:
-> Doxygen XML generation, Phase 0 parsing, merge, filter, and C++ binary blob generation.
+> Doxygen XML generation, Phase 0 parsing, merge, filter, API/LAF ValueTree blob generation.
 > Prerequisites: Python 3.x and Doxygen on PATH.
 
 ## Extraction Processes
@@ -30,7 +30,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 ├── api_enrich.py              # CLI tool: phase0, prepare, merge, preview, filter-binary
 ├── run_all_tests.py           # Runs all .hsc test files, writes report to enrichment/output/
 ├── rerun_failing.py           # Re-runs only the .hsc tests that previously failed
-├── ApiValueTreeBuilder.exe    # Converts filtered JSON into C++ binary blob
+├── ApiValueTreeBuilder.exe    # Converts API and LAF JSON into C++ binary blobs
 ├── ApiValueTreeBuilder/       # JUCE console app source for the above
 ├── xml.doxyfile               # Doxygen configuration
 ├── xml/                       # Doxygen XML output (gitignored, regenerated)

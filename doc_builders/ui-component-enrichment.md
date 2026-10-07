@@ -135,7 +135,7 @@ TRACK B: Floating Tiles (26 content types, one C++ step + authoring)
 | Property tables (ScriptComponents) | `enrichment/phase4b/{ClassName}/set.md` | Complete |
 | Property tables (ScriptDynamicContainer) | `enrichment/phase4b/ScriptDynamicContainer/set.md` | Complete |
 | FloatingTile JSON config properties | C++ panel classes (extracted per Track B Step 1) | Per-item |
-| LAF `obj` properties | `hi_scripting/scripting/api/laf_style_guide.json` | Complete |
+| LAF `obj` properties | `enrichment/resources/laf_style_guide.json` | Complete |
 | LAF code examples | `ui_enrichment/resources/custom_lookandfeel.md` + MCP snippets | ~80% coverage |
 | CSS selector mapping | `ui_enrichment/resources/css_component_mapping.md` | Complete |
 | CSS examples | `ui_enrichment/phase3/plugin-components/*.md` + `phase3/floating-tiles/*.md` | ~8 components |
