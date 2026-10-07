@@ -12,7 +12,7 @@ REM  Steps:
 REM    1. batchCreate.bat           - Run Doxygen, copy/rename XML
 REM    2. api_enrich.py phase0      - Parse XML into base JSON
 REM    3. api_enrich.py merge       - Merge all enrichment phases
-REM    4. api_enrich.py filter-binary - Strip to autocomplete fields
+REM    4. api_enrich.py filter-binary - Strip fields and merge argument checks
 REM    5. ApiValueTreeBuilder.exe   - Emit XmlApi.h + XmlApi.cpp
 REM    6. api_enrich.py filter-mcp  - Generate MCP server data
 REM ============================================================================
@@ -29,7 +29,7 @@ echo === Step 3/6: Merging all enrichment phases ===
 python api_enrich.py merge
 if %ERRORLEVEL% NEQ 0 ( echo FAILED at Step 3 & goto :END )
 
-echo === Step 4/6: Filtering for binary (autocomplete fields only) ===
+echo === Step 4/6: Filtering for binary and merging argument checks ===
 python api_enrich.py filter-binary
 if %ERRORLEVEL% NEQ 0 ( echo FAILED at Step 4 & goto :END )
 

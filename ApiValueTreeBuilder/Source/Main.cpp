@@ -35,11 +35,23 @@ ValueTree buildApiValueTree(const var& jsonData)
 
 				ValueTree methodNode("method");
 
-				// Copy all properties from the JSON method object into the ValueTree.
-				// The Python filter-binary stage already curates exactly which fields
-				// belong in the blob, so no filtering is needed here.
+				// Copy scalar method properties. Argument checks are converted to direct
+				// child nodes so the argument identifier becomes the ValueTree type.
 				for (auto& prop : methodData->getProperties())
-					methodNode.setProperty(prop.name, prop.value, nullptr);
+				{
+					if (prop.name != Identifier("checks"))
+						methodNode.setProperty(prop.name, prop.value, nullptr);
+				}
+
+				if (auto* checks = methodData->getProperty("checks").getDynamicObject())
+				{
+					for (auto& argument : checks->getProperties())
+					{
+						ValueTree argumentNode(argument.name);
+						argumentNode.setProperty("check", argument.value.toString(), nullptr);
+						methodNode.addChild(argumentNode, -1, nullptr);
+					}
+				}
 
 				classNode.addChild(methodNode, -1, nullptr);
 			}

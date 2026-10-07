@@ -59,7 +59,7 @@ Extraction tooling that produces structured JSON data from the HISE C++ source c
 │   ├── resources/             # Supporting data: explorations, survey
 │   ├── issues.md              # Bugs discovered during C++ source analysis
 │   ├── phase1_scanned.txt     # Diff manifest
-│   └── output/                # Final merged JSON (gitignored, regenerated)
+│   └── output/                # Final merged JSON and normalized diagnostics (gitignored)
 ├── doc_builders/
 │   ├── scripting-api-enrichment.md        # Orchestrator guide
 │   ├── scripting-api-enrichment/          # Sub-phase details
@@ -116,7 +116,7 @@ python api_enrich.py merge
 # 5. Preview HTML pages (review + web if userDocs exist)
 python api_enrich.py preview Console
 
-# 6. Generate binary blob
+# 6. Generate binary blob (filter-binary also merges constraints_normalized.json)
 python api_enrich.py filter-binary
 ApiValueTreeBuilder.exe enrichment\output\filtered_api.json "..\..\hi_scripting\scripting\api" XmlApi
 ```

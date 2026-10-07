@@ -3895,8 +3895,69 @@ def generate_class_markdown(class_name: str, c: dict,
     return "\n".join(lines)
 
 
+def _load_binary_constraints(full_api):
+    """Load and validate argument checks for the binary API metadata."""
+    constraints_path = OUTPUT_DIR / "constraints_normalized.json"
+    if not constraints_path.is_file():
+        print(f"ERROR: No normalized diagnostics found: {constraints_path}")
+        sys.exit(1)
+
+    with open(constraints_path, "r", encoding="utf-8") as f:
+        constraints = json.load(f)
+
+    classes = full_api.get("classes", {})
+    normalized = {}
+
+    for class_name, methods in constraints.items():
+        class_data = classes.get(class_name)
+        if class_data is None:
+            print(f"ERROR: Diagnostic constraints reference unknown class: {class_name}")
+            sys.exit(1)
+
+        for method_name, arguments in methods.items():
+            method_data = class_data.get("methods", {}).get(method_name)
+            if method_data is None:
+                print(f"ERROR: Diagnostic constraints reference unknown method: {class_name}.{method_name}")
+                sys.exit(1)
+            if method_data.get("disabled"):
+                print(f"ERROR: Diagnostic constraints reference disabled method: {class_name}.{method_name}")
+                sys.exit(1)
+
+            parameter_names = {p.get("name") for p in method_data.get("parameters", [])}
+            method_checks = {}
+
+            for argument_name, checks in arguments.items():
+                if argument_name not in parameter_names:
+                    print(
+                        "ERROR: Diagnostic constraints reference unknown argument: "
+                        f"{class_name}.{method_name}.{argument_name}"
+                    )
+                    sys.exit(1)
+                if not isinstance(checks, list) or not all(isinstance(c, str) for c in checks):
+                    print(
+                        "ERROR: Diagnostic constraints must be an array of strings: "
+                        f"{class_name}.{method_name}.{argument_name}"
+                    )
+                    sys.exit(1)
+                if any("|" in check for check in checks):
+                    print(
+                        "ERROR: Diagnostic constraint contains reserved '|' separator: "
+                        f"{class_name}.{method_name}.{argument_name}"
+                    )
+                    sys.exit(1)
+
+                unique_checks = list(dict.fromkeys(check for check in checks if check))
+                if unique_checks:
+                    method_checks[argument_name] = "|".join(unique_checks)
+
+            if method_checks:
+                normalized.setdefault(class_name, {})[method_name] = method_checks
+
+    return normalized
+
+
 def run_filter_binary(output_path=None):
-    """Filter merged JSON -> minimal JSON for C++ binary embedding."""
+    """Filter merged JSON and argument checks for C++ binary embedding."""
     input_path = OUTPUT_DIR / "api_reference.json"
     if not input_path.is_file():
         print("ERROR: No merged JSON found. Run 'merge' first.")
@@ -3910,6 +3971,7 @@ def run_filter_binary(output_path=None):
     with open(input_path, "r", encoding="utf-8") as f:
         full_api = json.load(f)
 
+    binary_constraints = _load_binary_constraints(full_api)
     filtered = {"classes": {}}
 
     for class_name, class_data in full_api.get("classes", {}).items():
@@ -3960,6 +4022,10 @@ def run_filter_binary(output_path=None):
             if call_scope_note:
                 entry["callScopeNote"] = call_scope_note
 
+            checks = binary_constraints.get(class_name, {}).get(method_name)
+            if checks:
+                entry["checks"] = checks
+
             methods_out[method_name] = entry
 
         # Extract constants (name -> value only, minimal for binary)
@@ -3981,10 +4047,16 @@ def run_filter_binary(output_path=None):
     class_count = len(filtered["classes"])
     method_count = sum(len(c.get("methods", {})) for c in filtered["classes"].values())
     constant_count = sum(len(c.get("constants", {})) for c in filtered["classes"].values())
+    check_count = sum(
+        len(m.get("checks", {}))
+        for c in filtered["classes"].values()
+        for m in c.get("methods", {}).values()
+    )
     print(f"Filter-binary complete:")
     print(f"  Classes: {class_count}")
     print(f"  Methods: {method_count}")
     print(f"  Constants: {constant_count}")
+    print(f"  Checked arguments: {check_count}")
     print(f"  Output: {output_path}")
 
 
