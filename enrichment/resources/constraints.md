@@ -77,6 +77,14 @@ CallbackArgCheck.Inline(ScriptSlider, double)
 
 The typed form contains the callback mode followed by the callback argument types in order. It is preferred when the C++ source or established API semantics provide the types. `ScriptPanel.setPaintRoutine` always receives a `Graphics` object, while `ScriptSlider.setControlCallback` receives `(ScriptSlider, double)` even though the original constraint only states the callback arity.
 
+If the argument is a generic Object, you can override this with a custom diagnostic type using the syntax
+
+```text
+CallbackArgCheck.Function(MetaObjects::ClassId)
+```
+
+`ClassId` must be registered in `hise::LightweightDiagnostics::Factory::registerMetaType()` and be implemented as custom check class that performs custom diagnostics.
+
 Modes established so far:
 
 - `Function`: callback/function required; use only when the arity is known.

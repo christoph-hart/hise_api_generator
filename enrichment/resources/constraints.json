@@ -3526,7 +3526,7 @@
       "lafObject": "Must be a ScriptedLookAndFeel instance"
     },
     "setMouseCallback": {
-      "mouseFunction": "Must be an inline function with 1 parameter"
+      "mouseFunction": "Must be a function with 1 parameter"
     },
     "setMouseCursor": {
       "pathOrName": "See value descriptions for valid string names",

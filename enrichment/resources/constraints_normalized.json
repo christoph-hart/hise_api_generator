@@ -983,6 +983,16 @@
         "RangeCheck.{\"min\":0,\"inclusive\":false}"
       ]
     },
+    "registerCallback": {
+      "callbackFunction": [
+        "CallbackArgCheck.Realtime?synchronous(double)"
+      ]
+    },
+    "registerDataCallback": {
+      "callbackFunction": [
+        "CallbackArgCheck.Function(var)"
+      ]
+    },
     "setValueNormalised": {
       "normalisedInput": [
         "RangeCheck.{\"min\":0.0,\"max\":1.0,\"inclusive\":true,\"clamps\":true}"
@@ -1063,9 +1073,22 @@
         "GraphicsCheck.Point"
       ]
     },
+    "drawText": {
+      "text": [
+        "Deprecated.drawAlignedText?Warning:use drawAlignedText for better placement"
+      ]
+    },
     "fillAll": {
       "colour": [
         "GraphicsCheck.ValidColour"
+      ]
+    },
+    "fillRect": {
+      "this": [
+        "MethodTouched.setColour,setGradientFill?Warning:Colour not set"
+      ],
+      "area": [
+        "GraphicsCheck.Area"
       ]
     },
     "gaussianBlur": {
@@ -1399,6 +1422,16 @@
         "RangeCheck.{\"min\":1,\"inclusive\":true}"
       ]
     },
+    "setPlaybackCallback": {
+      "playbackCallback": [
+        "CallbackArgCheck.Realtime?synchronous(int, int)"
+      ]
+    },
+    "setRecordEventCallback": {
+      "recordEventCallback": [
+        "CallbackArgCheck.Realtime(MessageHolder)"
+      ]
+    },
     "setTimeSignature": {
       "timeSignatureObject": [
         "RangeCheck.{\"min\":0,\"inclusive\":false}"
@@ -1492,6 +1525,16 @@
         "ObjectType.JSON"
       ]
     },
+    "setValueAsync": {
+      "newValue": [
+        "Deprecated.setValue?Warning:Use setUseExternalConnection(), then setValue() instead."
+      ]
+    },
+    "setValueSync": {
+      "newValue": [
+        "Deprecated.setValue?Warning:Use setUseExternalConnection(), then setValue() instead."
+      ]
+    },
     "setRangeProperty": {
       "newValue": [
         "Conditional.propertyId"
@@ -1500,6 +1543,9 @@
   },
   "Path": {
     "addArc": {
+      "this": [
+        "MethodTouched.startNewSubPath$?warning$:addArc needs a bounding box to be rendered consistently$>Call startNewSubPath twice with the top-left and bottom right corner of the area for a consistent bounding"
+      ],
       "area": [
         "GraphicsCheck.Area"
       ]
@@ -1597,6 +1643,9 @@
       "point": [
         "GraphicsCheck.Point"
       ]
+    },
+    "clear": {
+      "this": "MethodTouched.$Reset$"
     },
     "createStrokedPath": {
       "strokeData": [
@@ -1766,7 +1815,7 @@
     },
     "setDefaultFolder": {
       "newDefaultFolder": [
-        "ObjectType.ScriptFile"
+        "ObjectType.File"
       ]
     },
     "setPlaybackPosition": {
@@ -1845,7 +1894,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -1914,7 +1963,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -1960,7 +2009,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -2024,7 +2073,18 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
+      ]
+    },
+    "setTableSortFunction":
+    {
+      "sortFunction": [
+        "CallbackArgCheck.Function(var, var)"
+      ]
+    },
+    "setTableCallback": {
+      "callbackFunction": [
+        "CallbackArgCheck.Function(JSON{\"Type\":\"String\",\"rowIndex\":\"int\",\"columnId\":\"String\",\"value\":\"var\"})"
       ]
     }
   },
@@ -2078,7 +2138,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -2137,7 +2197,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -2201,7 +2261,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -2291,7 +2351,7 @@
     },
     "setMouseCallback": {
       "mouseFunction": [
-        "CallbackArgCheck.Inline(Object)"
+        "CallbackArgCheck.Function(MetaObjects::event)"
       ]
     },
     "setMouseCursor": {
@@ -2325,7 +2385,7 @@
     },
     "setTimerCallback": {
       "timerFunction": [
-        "CallbackArgCheck.Inline()"
+        "CallbackArgCheck.Function()"
       ]
     },
     "setZLevel": {
@@ -2335,7 +2395,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -2398,7 +2458,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     },
     "setModifiers": {
@@ -2454,7 +2514,7 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
@@ -2556,27 +2616,45 @@
     },
     "setLocalLookAndFeel": {
       "lafObject": [
-        "ObjectType.ScriptedLookAndFeel"
+        "ObjectType.ScriptLookAndFeel"
       ]
     }
   },
   "Server": {
     "callWithGET": {
+      "subURL": [
+        "ObjectType.String"
+      ],
+      "parameters": [
+        "ObjectType.JSON"
+      ],
       "callback": [
-        "CallbackArgCheck.Function(int, var)"
+        "CallbackArgCheck.Function(int, var)",
+        "MethodTouched.setBaseURL"
       ]
     },
     "callWithPOST": {
+      "subURL": [
+        "ObjectType.String"
+      ],
+      "parameters": [
+        "ObjectType.JSON"
+      ],
       "callback": [
-        "CallbackArgCheck.Function(int, var)"
+        "CallbackArgCheck.Function(int, var)",
+        "MethodTouched.setBaseURL"
       ]
     },
     "downloadFile": {
       "targetFile": [
         "ObjectType.File"
       ],
+      "parameters": [
+        "ObjectType.JSON"
+      ],
       "callback": [
-        "CallbackArgCheck.Function()"
+        "CallbackArgCheck.Function()",
+        "MethodTouched.setBaseURL"
       ]
     },
     "setNumAllowedDownloads": {
@@ -2940,17 +3018,72 @@
       "intervalInMilliSeconds": [
         "RangeCheck.{\"min\":10,\"inclusive\":false}"
       ]
+    },
+    "setTimerCallback": {
+      "callbackFunction": [
+        "CallbackArgCheck.Function()" 
+      ]
     }
   },
   "TransportHandler": {
+    "getGridPosition": {
+      "timestamp": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getBufferSizeForCurrentBlock()$\",\"inclusive\":true}"
+      ]
+    },
     "setEnableGrid": {
       "tempoFactor": [
         "RangeCheck.{\"min\":0,\"max\":18,\"inclusive\":true}"
       ]
     },
+    "setLocalGridMultiplier": {
+      "factor": [
+        "RangeCheck.{\"min\":1,\"max\":64,\"inclusive\":true,\"clamps\":true}"
+      ]
+    },
+    "setOnBeatChange": {
+      "f": [
+        "CallbackArgCheck.Realtime?sync(int, bool)"
+      ]
+    },
+    "setOnBypass": {
+      "f": [
+        "CallbackArgCheck.Function(bool)"
+      ]
+    },
+    "setOnGridChange": {
+      "f": [
+        "CallbackArgCheck.Realtime?sync(int, int, bool)"
+      ]
+    },
+    "setOnSignatureChange": {
+      "f": [
+        "CallbackArgCheck.Realtime?sync(int, int)"
+      ]
+    },
+    "setOnTempoChange": {
+      "f": [
+        "CallbackArgCheck.Realtime?sync(double)"
+      ]
+    },
+    "setOnTransportChange": {
+      "f": [
+        "CallbackArgCheck.Realtime?sync(bool)"
+      ]
+    },
     "setSyncMode": {
       "syncMode": [
-        "RangeCheck.{\"min\":0,\"max\":5,\"inclusive\":true}"
+        "RangeCheck.{\"min\":0,\"max\":5,\"inclusive\":true,\"clamps\":false}"
+      ]
+    },
+    "startInternalClock": {
+      "timestamp": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getBufferSizeForCurrentBlock()$\",\"inclusive\":true}"
+      ]
+    },
+    "stopInternalClock": {
+      "timestamp": [
+        "RangeCheck.{\"min\":0,\"max\":\"$CUSTOM.getBufferSizeForCurrentBlock()$\",\"inclusive\":true}"
       ]
     }
   },
@@ -2994,12 +3127,12 @@
     },
     "setPostCallback": {
       "presetPostCallback": [
-        "CallbackArgCheck.Function(ScriptFile)"
+        "CallbackArgCheck.Function(File)"
       ]
     },
     "setPostSaveCallback": {
       "presetPostSaveCallback": [
-        "CallbackArgCheck.Function(ScriptFile)"
+        "CallbackArgCheck.Function(File)"
       ]
     },
     "setPreCallback": {
@@ -3029,7 +3162,7 @@
   "WavetableController": {
     "saveAsHwt": {
       "outputFile": [
-        "ObjectType.ScriptFile"
+        "ObjectType.File"
       ]
     },
     "setPostFXProcessors": {
@@ -3063,7 +3196,12 @@
         "StringValidator.Options[$CUSTOM.LafFunctions$]"
       ],
       "paintFunction": [
-        "Conditional.functionName"
+        "CallbackArgCheck.Function(Graphics,MetaObjects::obj)"
+      ]
+    },
+    "setInlineStyleSheet": {
+      "cssCode": [
+        "Conditional.cssCode"
       ]
     }
   }

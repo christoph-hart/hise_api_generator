@@ -3897,7 +3897,7 @@ def generate_class_markdown(class_name: str, c: dict,
 
 def _load_binary_constraints(full_api):
     """Load and validate argument checks for the binary API metadata."""
-    constraints_path = OUTPUT_DIR / "constraints_normalized.json"
+    constraints_path = RESOURCES_DIR / "constraints_normalized.json"
     if not constraints_path.is_file():
         print(f"ERROR: No normalized diagnostics found: {constraints_path}")
         sys.exit(1)
