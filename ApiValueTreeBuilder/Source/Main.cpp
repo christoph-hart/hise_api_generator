@@ -158,7 +158,8 @@ void writeBinarySource(const File& outputFile, const String& namespaceName,
 	MemoryOutputStream cpp;
 	cpp << "/* (Auto-generated binary data file). */\n\n";
 	cpp << "#include \"" << headerName << "\"\n\n";
-	cpp << "static const unsigned char temp1[] = {";
+	const auto binaryDataName = namespaceName + "_binaryData";
+	cpp << "static const unsigned char " << binaryDataName << "[] = {";
 
 	auto* bytes = static_cast<const unsigned char*>(data);
 
@@ -171,7 +172,7 @@ void writeBinarySource(const File& outputFile, const String& namespaceName,
 
 	cpp << "};\n";
 	cpp << "const char* " << namespaceName << "::" << varName
-	    << " = (const char*) temp1;\n";
+	    << " = (const char*) " << binaryDataName << ";\n";
 
 	outputFile.replaceWithText(cpp.toString());
 }
